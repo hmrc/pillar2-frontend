@@ -33,7 +33,7 @@ lazy val root = (project in file("."))
       "controllers.routes._",
       "viewmodels.govuk.all._"
     ),
-    PlayKeys.playDefaultPort := 9000,
+    PlayKeys.playDefaultPort := 10050,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
     ScoverageKeys.coverageMinimumStmtTotal := 78,
@@ -81,5 +81,8 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
     baseDirectory.value / "it" / "resources"
   ),
   parallelExecution := false,
-  fork := true
+  fork := true,
+  javaOptions ++= Seq(
+    "-Dconfig.resource=it.application.conf"
+  )
 )
