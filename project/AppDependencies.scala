@@ -5,11 +5,11 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"             % "3.22.0-play-28",
-    "uk.gov.hmrc"       %% "play-conditional-form-mapping"  % "1.11.0-play-28",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"     % "6.4.0",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"             % "3.32.0-play-28",
+    "uk.gov.hmrc"       %% "play-conditional-form-mapping"  % "1.12.0-play-28",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"     % "7.11.0",
     "uk.gov.hmrc"       %% "play-language"                  % "5.3.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"             % "0.68.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"             % "0.73.0",
   "com.typesafe.play" %% "play-json-joda"                 % "2.7.4",
   "org.julienrf"      %% "play-json-derived-codecs"       % "10.0.2"
   )
@@ -24,7 +24,7 @@ object AppDependencies {
     "com.typesafe.play"       %% "play-test"               % PlayVersion.current,
     "org.mockito"             %% "mockito-scala"           % "1.16.42",
     "org.scalacheck"          %% "scalacheck"              % "1.15.4",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28" % "0.68.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28" % "0.73.0",
     "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.2"
   ).map(_ % "test, it")
 

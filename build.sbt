@@ -2,7 +2,7 @@ import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-
+import uk.gov.hmrc.DefaultBuildSettings
 lazy val appName: String = "pillar2-frontend"
 
 lazy val root = (project in file("."))
@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(useSuperShell in ThisBuild := false)
   .settings(
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.13.8",
     name := appName,
     RoutesKeys.routesImport ++= Seq(
       "models._",
@@ -36,12 +36,13 @@ lazy val root = (project in file("."))
     PlayKeys.playDefaultPort := 10050,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 78,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
+    Compile / scalafmtOnCompile      := true,
+    Test / scalafmtOnCompile         := true,
         scalacOptions ++= Seq(
       "-feature",
-      "-Ypartial-unification",
       "-rootdir",
       baseDirectory.value.getCanonicalPath,
       "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"

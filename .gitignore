@@ -8,6 +8,7 @@ eclipse
 *.eml
 .history
 .idea
+.bsp
 /.idea_modules
 *.iml
 lib
