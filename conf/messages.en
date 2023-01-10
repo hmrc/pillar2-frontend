@@ -1,4 +1,4 @@
-service.name = pillar2-frontend
+service.name = OECD Pillar Two
 
 site.back = Back
 site.remove = Remove
@@ -35,8 +35,8 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = pillar2-frontend
-index.heading = pillar2-frontend
+index.title = Welcome to OECD Pillar Two
+index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 checkYourAnswers.title = Check Your Answers
