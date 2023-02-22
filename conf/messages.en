@@ -38,6 +38,7 @@ error.summary.title = There is a problem
 index.title = Welcome to OECD Pillar Two
 index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+index.continue = Continue
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers

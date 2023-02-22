@@ -15,7 +15,9 @@
  *@
 
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -24,8 +26,14 @@
     pageTitle    = titleNoForm(messages("index.title")),
     showBackLink = false
 ) {
+    @formHelper(action = routes.IndexController.onSubmit) {
+        <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
 
-    <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
+        <p class="govuk-body">@messages("index.guidance")</p>
 
-    <p class="govuk-body">@messages("index.guidance")</p>
+        @govukButton(
+            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+        )
+    }
+
 }
