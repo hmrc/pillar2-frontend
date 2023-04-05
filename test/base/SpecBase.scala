@@ -16,8 +16,9 @@
 
 package base
 
+import config.FrontendAppConfig
+import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
 import models.UserAnswers
-import navigation.controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -35,6 +36,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
+  def appConfig(app: Application): FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

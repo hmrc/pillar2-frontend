@@ -17,10 +17,15 @@
 package controllers.actions
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.UserAnswers
 import models.requests.{IdentifierRequest, OptionalDataRequest}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import repositories.SessionRepository
 
@@ -29,7 +34,8 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository) {
+  val mockUserAnswersConnectors = mock[UserAnswersConnectors]
+  class Harness(userAnswersConnectors: UserAnswersConnectors) extends DataRetrievalActionImpl(userAnswersConnectors) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
@@ -39,13 +45,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must set userAnswers to 'None' in the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
-        val action = new Harness(sessionRepository)
+        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(None)
+        val action = new Harness(mockUserAnswersConnectors)
 
         val result = action.callTransform(IdentifierRequest(FakeRequest(), "id")).futureValue
 
-        result.userAnswers must not be defined
+        result.userAnswers.get.data shouldBe Json.obj()
       }
     }
 
@@ -53,9 +58,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must build a userAnswers object and add it to the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
-        val action = new Harness(sessionRepository)
+        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(Some(Json.obj("abc" -> "def")))
+        val action = new Harness(mockUserAnswersConnectors)
 
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id")).futureValue
 
