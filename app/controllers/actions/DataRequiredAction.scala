@@ -17,7 +17,6 @@
 package controllers.actions
 
 import javax.inject.Inject
-import controllers.routes
 import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.mvc.Results.Redirect

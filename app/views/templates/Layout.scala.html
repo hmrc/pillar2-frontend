@@ -19,7 +19,6 @@
 @import views.html.helper.CSPNonce
 
 @this(
-    appConfig: FrontendAppConfig,
     govukLayout: GovukLayout,
     govukBackLink: GovukBackLink,
     hmrcHead: HmrcHead,
@@ -33,7 +32,7 @@
     alphaBanner: StandardAlphaBanner
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
 

@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import models.Mode
 
@@ -25,11 +26,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
+import scala.concurrent.ExecutionContext
+
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   view:                     IndexView
-) extends FrontendBaseController
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
@@ -37,7 +41,7 @@ class IndexController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.CheckYourAnswersController.onPageLoad)
+    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
   }
 
 }

@@ -16,8 +16,8 @@
 
 package base
 
-import controllers.actions._
 import models.UserAnswers
+import navigation.controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

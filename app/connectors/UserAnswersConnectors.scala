@@ -16,11 +16,8 @@
 
 package connectors
 
-import models.UserAnswers
-import org.bson.json.JsonObject
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
-import uk.gov.hmrc.http.HttpReads.is2xx
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
@@ -35,7 +32,7 @@ class UserAnswersConnectors @Inject() (
   private val url = s"$pillar2BaseUrl/pillar2"
 
   def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =
-    httpClient.POST[JsValue, HttpResponse](s"$url/registration-subscription/$id", data).map { response =>
+    httpClient.POST[JsValue, HttpResponse](s"$url/user-cache/registration-subscription/$id", data).map { response =>
       response.status match {
         case OK => data
         case _  => throw new HttpException(response.body, response.status)
@@ -44,7 +41,7 @@ class UserAnswersConnectors @Inject() (
     }
 
   def get(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
-    httpClient.GET[HttpResponse](s"$url/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
+    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
       response.status match {
         case OK        => Some(response.json)
         case NOT_FOUND => None
@@ -55,8 +52,8 @@ class UserAnswersConnectors @Inject() (
   def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[String] =
     httpClient.DELETE[String](s"$url/registration-subscription/$id")
 
-  /*  def lastUpdated(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] = {
-    httpClient.g
-  }*/
+  //TODO
+  def lastUpdated(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
+    ???
 
 }
