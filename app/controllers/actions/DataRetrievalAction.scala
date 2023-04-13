@@ -44,9 +44,6 @@ class DataRetrievalActionImpl @Inject() (
       )
     }
   }
-  /*    sessionRepository.get(request.externalId).map {
-        OptionalDataRequest(request.request, request.externalId, _)
-    }*/
 }
 
 trait DataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalDataRequest]

@@ -28,7 +28,6 @@ import pages.TradingBusinessConfirmationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TradingBusinessConfirmationView
 
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TradingBusinessConfirmationController @Inject() (
   override val messagesApi:  MessagesApi,
-  sessionRepository:         SessionRepository,
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,
@@ -68,8 +66,7 @@ class TradingBusinessConfirmationController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TradingBusinessConfirmationPage, value))
-            // _              <- sessionRepository.set(updatedAnswers)
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
       )
   }

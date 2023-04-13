@@ -19,8 +19,9 @@ package helpers
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig}
+import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
-import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcScripts, HmrcStandardHeader, HmrcTrackingConsentSnippet}
+import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcReportTechnicalIssueHelper, HmrcScripts, HmrcStandardFooter, HmrcStandardHeader, HmrcTrackingConsentSnippet}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.templates.Layout
 
@@ -40,6 +41,10 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
       hmrcUserResearchBanner = new HmrcUserResearchBanner(),
       govukPhaseBanner = new GovukPhaseBanner(govukTag = new GovukTag())
     )
+  )
+  val hmrcStandardFooter = new HmrcStandardFooter(
+    new HmrcFooter,
+    new HmrcFooterItems(new AccessibilityStatementConfig(configuration))
   )
 
   val hmrcNewTabLink = new HmrcNewTabLink
@@ -73,14 +78,27 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val govukNotificationBanner = new GovukNotificationBanner()
 
-  /*  val mainTemplate =
-    new Layout(
-      govukLayout,
-      new GovukBackLink,
-      new head(hmrcTrackingConsent),
-      new uk.gov.hmrc.goodsmovementsystemfrontend.views.html.main.partials.LanguageSelect(new HmrcLanguageSelect()),
-      scripts,
-      new MultiLanguageSelect(new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel))
-    )*/
+  val govukLayout = new GovukLayout(
+    govukTemplate = govukTemplate,
+    govukHeader = govukHeader,
+    govukFooter = new GovukFooter,
+    govukBackLink = govukBackLink,
+    defaultMainContentLayout = new TwoThirdsMainContent,
+    fixedWidthPageLayout = new FixedWidthPageLayout
+  )
+
+  val pillar2layout = new Layout(
+    govukLayout,
+    new GovukBackLink,
+    new HmrcHead(hmrcTrackingConsent, assetsConfig),
+    hmrcStandardHeader,
+    hmrcStandardFooter,
+    hmrcTrackingConsent,
+    new HmrcLanguageSelect(),
+    hmrcTimeoutDilogue,
+    new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
+    hmrcScripts,
+    new StandardAlphaBanner
+  )
 
 }

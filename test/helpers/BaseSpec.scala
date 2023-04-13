@@ -18,11 +18,12 @@ package helpers
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import config.FrontendAppConfig
 import org.scalatest._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.{HeaderNames, Status}
-import play.api.i18n.DefaultLangs
+import play.api.i18n.{DefaultLangs, DefaultMessagesApi, MessagesApi}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, ResultExtractors}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -44,13 +45,15 @@ trait BaseSpec
     with AllMocks
     with ViewInstances {
 
-  implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val hc:           HeaderCarrier    = HeaderCarrier()
-  implicit lazy val system:       ActorSystem      = ActorSystem()
-  implicit lazy val materializer: Materializer     = Materializer(system)
+  implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
+  implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration)
+  implicit lazy val system:       ActorSystem       = ActorSystem()
+  implicit lazy val materializer: Materializer      = Materializer(system)
 
   val languageUtil = new LanguageUtils(new DefaultLangs(), configuration)
 
   def countOccurrences(src: String, tgt: String): Int =
     src.sliding(tgt.length).count(window => window == tgt)
+
 }
