@@ -34,7 +34,6 @@ import views.html.TradingBusinessConfirmationView
 import scala.concurrent.{ExecutionContext, Future}
 
 class TradingBusinessConfirmationController @Inject() (
-  override val messagesApi:  MessagesApi,
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,

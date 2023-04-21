@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
-import models.Mode
 import navigation.Navigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.HttpClient
+
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 //TODO: Add all mocking instants in here.
@@ -46,6 +46,12 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
     Seq(
       mockAuditConnector,
       mockAuthConnector,
-      mockFrontendAppConfig
+      mockFrontendAppConfig,
+      mockUserAnswersConnectors,
+      mockNavigator,
+      mockIdentifierAction,
+      mockDataRetrievalAction,
+      mockDataRequiredAction,
+      mockTradingBusinessConfirmationFormProvider
     ).foreach(Mockito.reset(_))
 }

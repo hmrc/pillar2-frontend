@@ -19,6 +19,7 @@ package helpers
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.FrontendAppConfig
+import models.UserAnswers
 import org.scalatest._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -50,6 +51,10 @@ trait BaseSpec
   implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration)
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
+
+  val userAnswersId: String = "id"
+
+  def testUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   val languageUtil = new LanguageUtils(new DefaultLangs(), configuration)
 

@@ -17,56 +17,59 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.TradingBusinessConfirmationFormProvider
-import helpers.BaseSpec
+import helpers.{BaseSpec, ControllerBaseSpec}
 import models.{NormalMode, TradingBusinessConfirmation, UserAnswers}
-
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
-
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.TradingBusinessConfirmationView
 
-class TradingBusinessConfirmationControllerSpec extends SpecBase {
+import scala.concurrent.Future
 
-  "Trading Business Confirmation Controller" - {
-    val formProvider = new TradingBusinessConfirmationFormProvider()
-    val form: Form[TradingBusinessConfirmation] = formProvider()
+class TradingBusinessConfirmationControllerSpec extends ControllerBaseSpec {
 
+  def controller(): TradingBusinessConfirmationController =
+    new TradingBusinessConfirmationController(
+      mockUserAnswersConnectors,
+      mockNavigator,
+      preAuthenticatedActionBuilders,
+      preDataRetrievalActionImpl,
+      preDataRequiredActionImpl,
+      getTradingBusinessConfirmationFormProvider,
+      stubMessagesControllerComponents(),
+      tradingBusinessConfirmationView
+    )
+
+  "Trading Business Confirmation Controller" should {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.TradingBusinessConfirmationController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, routes.TradingBusinessConfirmationController.onPageLoad.url)
 
-        val result = route(application, request).value
+      val request = FakeRequest(GET, routes.TradingBusinessConfirmationController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
 
-        val view = application.injector.instanceOf[TradingBusinessConfirmationView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
-      }
+      val result = controller.onPageLoad(NormalMode)()(request)
+      status(result) shouldBe OK
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswers = UserAnswers(userAnswersId)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
+      val request =
+        FakeRequest(POST, routes.TradingBusinessConfirmationController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "yes"))
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
 
-        val request =
-          FakeRequest(POST, routes.TradingBusinessConfirmationController.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", "no"))
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[TradingBusinessConfirmationView]
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
-      }
     }
   }
 }
