@@ -45,7 +45,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
   @Singleton
   def registerGmsUrlProvider(servicesConfig: ServicesConfig): String =
     servicesConfig.baseUrl("pillar2")
-
+  /*
   @Provides
   @Named("pillar2StubUrl")
   @Singleton
@@ -68,6 +68,6 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
   @Named("platformAnalyticsTrackingId")
   @Singleton
   protected def platformAnalyticsTrackingIdProvider(configuration: Configuration): String =
-    configuration.get[String](s"google-analytics.trackingId")
+    configuration.get[String](s"google-analytics.trackingId")*/
 
 }
