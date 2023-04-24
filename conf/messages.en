@@ -40,6 +40,13 @@ index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
+businessActivityUK.title = Does any business in your group have business activity in the UK?
+businessActivityUK.heading = Does any business in your group have business activity in the UK?
+businessActivityUK.check.liable.text = Check if your group is liable
+businessActivityUK.yes = Yes
+businessActivityUK.no = No
+businessActivityUK.error.required = Select yes if your group has business activities in the UK
+
 tradingBusinessConfirmation.title = Do you have trading business address in UK?
 tradingBusinessConfirmation.heading = Do you have trading business address in UK?
 tradingBusinessConfirmation.yes = Yes
