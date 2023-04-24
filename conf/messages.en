@@ -40,6 +40,11 @@ index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
+tradingBusinessConfirmation.title = Do you have trading business address in UK?
+tradingBusinessConfirmation.heading = Do you have trading business address in UK?
+tradingBusinessConfirmation.yes = Yes
+tradingBusinessConfirmation.no = No
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
