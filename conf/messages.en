@@ -45,6 +45,11 @@ tradingBusinessConfirmation.heading = Do you have trading business address in UK
 tradingBusinessConfirmation.yes = Yes
 tradingBusinessConfirmation.no = No
 
+groupTerritories.title = Group Territories
+groupTerritories.heading = Does your group have businesses in more than one country?
+groupTerritories.yes = Yes
+groupTerritories.no = No
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
@@ -61,3 +66,11 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+groupTerritories.title = groupTerritories
+groupTerritories.heading = groupTerritories
+groupTerritories.yes = Yes
+groupTerritories.no = No
+groupTerritories.checkYourAnswersLabel = groupTerritories
+groupTerritories.error.required = Select groupTerritories
+groupTerritories.change.hidden = GroupTerritories

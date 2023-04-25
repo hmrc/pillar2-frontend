@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import models.GroupTerritories
+import play.api.libs.json.JsPath
 
-trait ModelGenerators {}
+case object GroupTerritoriesPage extends QuestionPage[GroupTerritories] {
 
-  implicit lazy val arbitraryGroupTerritories: Arbitrary[GroupTerritories] =
-    Arbitrary {
-      Gen.oneOf(GroupTerritories.values.toSeq)
-    }
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "groupTerritories"
+}

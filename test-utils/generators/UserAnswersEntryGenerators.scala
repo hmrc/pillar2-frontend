@@ -23,3 +23,11 @@ import pages._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {}
+
+  implicit lazy val arbitraryGroupTerritoriesUserAnswersEntry: Arbitrary[(GroupTerritoriesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[GroupTerritoriesPage.type]
+        value <- arbitrary[GroupTerritories].map(Json.toJson(_))
+      } yield (page, value)
+    }

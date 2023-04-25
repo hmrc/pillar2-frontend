@@ -20,3 +20,6 @@ import org.scalacheck.Arbitrary
 import pages._
 
 trait PageGenerators {}
+
+  implicit lazy val arbitraryGroupTerritoriesPage: Arbitrary[GroupTerritoriesPage.type] =
+    Arbitrary(GroupTerritoriesPage)

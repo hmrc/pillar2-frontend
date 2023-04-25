@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import forms.mappings.Mappings
+import models.GroupTerritories
+import play.api.data.Form
 
-trait ModelGenerators {}
+import javax.inject.Inject
 
-  implicit lazy val arbitraryGroupTerritories: Arbitrary[GroupTerritories] =
-    Arbitrary {
-      Gen.oneOf(GroupTerritories.values.toSeq)
-    }
+class GroupTerritoriesFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[GroupTerritories] =
+    Form(
+      "value" -> enumerable[GroupTerritories]("GroupTerritories.error.required")
+    )
+}
