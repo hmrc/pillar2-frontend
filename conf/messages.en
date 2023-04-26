@@ -47,18 +47,17 @@ businessActivityUK.yes = Yes
 businessActivityUK.no = No
 businessActivityUK.error.required = Select yes if your group has business activities in the UK
 
+groupTerritories.title = Does your group have businesses in more than one country?
+groupTerritories.heading = Does your group have businesses in more than one country?
+businessActivityUK.check.liable.text = Check if your group is liable
+groupTerritories.yes = Yes
+groupTerritories.no = No
+groupTerritories.error.required = Select yes if your group has business in more than one country
+
 tradingBusinessConfirmation.title = Do you have trading business address in UK?
 tradingBusinessConfirmation.heading = Do you have trading business address in UK?
 tradingBusinessConfirmation.yes = Yes
 tradingBusinessConfirmation.no = No
-
-groupTerritories.title = Group Territories
-groupTerritories.heading = Does your group have businesses in more than one country?
-groupTerritories.yes = Yes
-groupTerritories.no = No
-groupTerritories.checkYourAnswersLabel = groupTerritories
-groupTerritories.error.required = Select yes if your group has business in more than one country
-groupTerritories.change.hidden = Select yes if your group has business in more than one country
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
