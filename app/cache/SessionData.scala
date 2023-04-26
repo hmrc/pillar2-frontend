@@ -15,13 +15,8 @@
  */
 
 package cache
-
-import com.google.inject.Inject
-import models.BusinessActivityUK
-import play.api.i18n.MessagesApi
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result, Session}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import utils.Pillar2SessionKeys
 
 import javax.inject.Singleton
@@ -31,7 +26,5 @@ class SessionData {
   def updateBusinessActivityUKYesNo(value: String)(implicit request: Request[AnyContent]): Session =
     request.session +
       (Pillar2SessionKeys.businessActivityUKPageYesNo -> value)
-  def updateSessionWithEvidenceFlag()(implicit request: Request[AnyContent]): Session =
-    request.session + (Pillar2SessionKeys.evidenceRequestedFlag -> "true")
 
 }

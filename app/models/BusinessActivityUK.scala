@@ -26,11 +26,14 @@ object BusinessActivityUK extends Enumerable.Implicits {
 
   case object Yes extends WithName("yes") with BusinessActivityUK
   case object No extends WithName("no") with BusinessActivityUK
+  case object None extends WithName("none") with BusinessActivityUK
 
   val values: Seq[BusinessActivityUK] = Seq(
     Yes,
     No
   )
+  def withName(name: String): BusinessActivityUK =
+    values.find(_.toString == name).getOrElse(None)
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(

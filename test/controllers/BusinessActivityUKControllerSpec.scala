@@ -16,6 +16,7 @@
 
 package controllers
 
+import cache.SessionData
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -39,7 +40,8 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       preDataRequiredActionImpl,
       getBusinessActivityUKFormProvider,
       stubMessagesControllerComponents(),
-      businessActivityUKView
+      businessActivityUKView,
+      mockSessionData
     )
 
   "Trading Business Confirmation Controller" should {

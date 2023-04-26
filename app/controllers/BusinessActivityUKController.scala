@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.BusinessActivityUKFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{BusinessActivityUK, Mode}
 import navigation.Navigator
 import pages.BusinessActivityUKPage
 import play.api.i18n.I18nSupport
@@ -51,11 +51,9 @@ class BusinessActivityUKController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    println("****************************************" + request.session.data.get(Pillar2SessionKeys.businessActivityUKPageYesNo))
-    //val preparedForm = request.userAnswers.get(BusinessActivityUKPage) match
-    val preparedForm = request.userAnswers.get(BusinessActivityUKPage) match {
+    val preparedForm = request.session.data.get(Pillar2SessionKeys.businessActivityUKPageYesNo) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => form.fill(BusinessActivityUK.withName(value))
     }
 
     Ok(view(preparedForm, mode))
@@ -70,11 +68,6 @@ class BusinessActivityUKController @Inject() (
           Future.successful(
             Redirect(routes.CheckYourAnswersController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value.toString)))
           )
-//          for {
-//
-//            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessActivityUKPage, value))
-//            // _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-//          } yield Redirect(routes.CheckYourAnswersController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
       )
   }
 }
