@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.GroupTerritoriesFormProvider
-import models.Mode
+import models.{GroupTerritories, Mode}
 import navigation.Navigator
 import pages.GroupTerritoriesPage
 import play.api.i18n.I18nSupport
@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
-import views.html.{GroupTerritoriesView, TradingBusinessConfirmationView}
+import views.html.GroupTerritoriesView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +67,7 @@ class GroupTerritoriesController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           Future.successful(
-            Redirect(routes.BusinessActivityUKController.onPageLoad).withSession((sessionData.updateGroupTerritoriesUKYesNo(value.toString)))
+            Redirect(routes.BusinessActivityUKController.onPageLoad).withSession((sessionData.updateGroupTerritoriesYesNo(value.toString)))
           )
       )
   }
