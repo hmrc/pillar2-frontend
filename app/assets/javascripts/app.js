@@ -2,6 +2,10 @@
 if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
   window.history.replaceState(null, null, window.location.href);
 }
+        if ( window.history.replaceState ) {
+           window.history.replaceState( {}, "" , window.location.href );
+        }
+
 
 document.addEventListener('DOMContentLoaded', function(event) {
 

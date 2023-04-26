@@ -16,6 +16,8 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
 GET         /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onSubmit(mode: Mode = NormalMode)
+GET         /eligibility/activities-within-the-uk            controllers.BusinessActivityUKController.onPageLoad(mode: Mode = NormalMode)
+POST        /eligibility/activities-within-the-uk        controllers.BusinessActivityUKController.onSubmit(mode: Mode = NormalMode)
 
 GET         /group-in-multiple-territories               controllers.GroupTerritoriesController.onPageLoad(mode: Mode = NormalMode)
 POST        /group-in-multiple-territories               controllers.GroupTerritoriesController.onSubmit(mode: Mode = NormalMode)
