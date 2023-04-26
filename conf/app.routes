@@ -25,8 +25,3 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
-
-GET        /GroupTerritories                                   controllers.GroupTerritoriesController.onPageLoad(mode: Mode = NormalMode)
-POST       /GroupTerritories                                   controllers.GroupTerritoriesController.onSubmit(mode: Mode = NormalMode)
-GET        /changeGroupTerritories                             controllers.GroupTerritoriesController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeGroupTerritories                             controllers.GroupTerritoriesController.onSubmit(mode: Mode = CheckMode)

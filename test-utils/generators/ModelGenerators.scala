@@ -21,8 +21,3 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {}
-
-  implicit lazy val arbitraryGroupTerritories: Arbitrary[GroupTerritories] =
-    Arbitrary {
-      Gen.oneOf(GroupTerritories.values.toSeq)
-    }

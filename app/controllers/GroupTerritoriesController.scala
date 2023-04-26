@@ -47,6 +47,13 @@ class GroupTerritoriesController @Inject() (
 
   val form = formProvider()
 
+  /*
+
+  TO DO:
+  - Remove (identify andThen getData andThen requireData) -- AND update section to have session data only
+  - Update submit to a non auth one, the same as IndexController
+
+   */
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(GroupTerritoriesPage) match {
       case None        => form
