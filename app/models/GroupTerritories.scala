@@ -26,11 +26,14 @@ object GroupTerritories extends Enumerable.Implicits {
 
   case object Yes extends WithName("yes") with GroupTerritories
   case object No extends WithName("no") with GroupTerritories
+  case object None extends WithName("none") with GroupTerritories
 
   val values: Seq[GroupTerritories] = Seq(
     Yes,
     No
   )
+  def withName(name: String): GroupTerritories =
+    values.find(_.toString == name).getOrElse(None)
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(

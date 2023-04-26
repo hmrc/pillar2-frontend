@@ -19,18 +19,21 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider}
+import forms.GroupTerritoriesFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{GroupTerritoriesPage, TradingBusinessConfirmationPage}
+import pages.GroupTerritoriesPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Pillar2SessionKeys
 import views.html.{GroupTerritoriesView, TradingBusinessConfirmationView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import cache.SessionData
+import utils.Pillar2SessionKeys
 
 class GroupTerritoriesController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -40,24 +43,18 @@ class GroupTerritoriesController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              GroupTerritoriesFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupTerritoriesView
+  view:                      GroupTerritoriesView,
+  sessionData:               SessionData
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  /*
-
-  TO DO:
-  - Remove (identify andThen getData andThen requireData) -- AND update section to have session data only
-  - Update submit to a non auth one, the same as IndexController
-
-   */
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(GroupTerritoriesPage) match {
+    val preparedForm = request.session.data.get(Pillar2SessionKeys.groupTerritoriesPageYesNo) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => form.fill(GroupTerritories.withName(value))
     }
 
     Ok(view(preparedForm, mode))
@@ -69,10 +66,9 @@ class GroupTerritoriesController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(GroupTerritoriesPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+          Future.successful(
+            Redirect(routes.BusinessActivityUKController.onPageLoad).withSession((sessionData.updateGroupTerritoriesUKYesNo(value.toString)))
+          )
       )
   }
 }
