@@ -32,7 +32,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BusinessActivityUKView
 
 import scala.concurrent.{ExecutionContext, Future}
-
+import cache.SessionData
+import utils.Pillar2SessionKeys
 class BusinessActivityUKController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
@@ -41,7 +42,8 @@ class BusinessActivityUKController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              BusinessActivityUKFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      BusinessActivityUKView
+  view:                      BusinessActivityUKView,
+  sessionData:               SessionData
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -49,6 +51,8 @@ class BusinessActivityUKController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    println("****************************************" + request.session.data.get(Pillar2SessionKeys.businessActivityUKPageYesNo))
+    //val preparedForm = request.userAnswers.get(BusinessActivityUKPage) match
     val preparedForm = request.userAnswers.get(BusinessActivityUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -63,11 +67,14 @@ class BusinessActivityUKController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
-
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessActivityUKPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+          Future.successful(
+            Redirect(routes.CheckYourAnswersController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value.toString)))
+          )
+//          for {
+//
+//            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessActivityUKPage, value))
+//            // _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+//          } yield Redirect(routes.CheckYourAnswersController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
       )
   }
 }
