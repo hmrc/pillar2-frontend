@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package forms
+package controllers
 
-import play.api.data.Form
+import config.FrontendAppConfig
+
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.UnderConstruction
 
 import javax.inject.Inject
 
-class BusinessActivityUKFormProvider @Inject() extends CommonFormats {
+class UnderConstructionController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  view:                     UnderConstruction
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> textWithErrorOverride("businessActivityUK.error.required")
-    )
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(view())
+  }
+
 }

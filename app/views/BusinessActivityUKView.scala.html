@@ -25,11 +25,11 @@
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("businessActivityUK.title"))) {
 
-    @formHelper(action = routes.BusinessActivityUKController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

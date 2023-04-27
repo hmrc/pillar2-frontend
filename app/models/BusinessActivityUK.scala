@@ -32,8 +32,6 @@ object BusinessActivityUK extends Enumerable.Implicits {
     Yes,
     No
   )
-  def withName(name: String): BusinessActivityUK =
-    values.find(_.toString == name).getOrElse(None)
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
