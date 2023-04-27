@@ -40,6 +40,8 @@ index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
+under_construction.heading = Under Construction
+
 businessActivityUK.title = Does any business in your group have business activity in the UK?
 businessActivityUK.heading = Does any business in your group have business activity in the UK?
 businessActivityUK.check.liable.text = Check if your group is liable
