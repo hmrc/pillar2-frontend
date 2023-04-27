@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package cache
+@import config.FrontendAppConfig
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
+)
 
-import play.api.mvc.{AnyContent, Request, Result, Session}
-import utils.Pillar2SessionKeys
 
-import javax.inject.Singleton
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@Singleton
-class SessionData {
-  def updateBusinessActivityUKYesNo(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.businessActivityUKPageYesNo -> value)
+@layout(
+    pageTitle    = titleNoForm(messages("index.title")),
+    showBackLink = true
+) {
+    @formHelper(action = routes.IndexController.onSubmit) {
+        <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
 
-  def updateGroupTerritoriesYesNo(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
+
+
+        @govukButton(
+            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+        )
+    }
 
 }

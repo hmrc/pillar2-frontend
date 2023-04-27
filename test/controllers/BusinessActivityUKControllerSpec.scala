@@ -17,6 +17,7 @@
 package controllers
 
 import cache.SessionData
+import controllers.eligibility.BusinessActivityUKController
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
