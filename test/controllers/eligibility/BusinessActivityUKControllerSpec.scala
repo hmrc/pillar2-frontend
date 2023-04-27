@@ -56,7 +56,6 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "yes"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
