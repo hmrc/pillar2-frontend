@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.eligibility
 
-import cache.SessionData
-import controllers.eligibility.BusinessActivityUKController
+import controllers.routes
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -34,11 +33,6 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
 
   def controller(): BusinessActivityUKController =
     new BusinessActivityUKController(
-      mockUserAnswersConnectors,
-      mockNavigator,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
       getBusinessActivityUKFormProvider,
       stubMessagesControllerComponents(),
       businessActivityUKView,
@@ -46,25 +40,26 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
     )
 
   "Trading Business Confirmation Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.BusinessActivityUKController.onPageLoad())
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+      val request =
+        FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
 
-      val result = controller.onPageLoad(NormalMode)()(request)
+      val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.BusinessActivityUKController.onSubmit.url)
+        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
+      val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
 
     }
   }
