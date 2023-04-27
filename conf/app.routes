@@ -16,7 +16,7 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
 GET         /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onSubmit(mode: Mode = NormalMode)
-GET         /eligibility/activities-within-the-uk            controllers.eligibility.BusinessActivityUKController.onPageLoad
+GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
 
 
