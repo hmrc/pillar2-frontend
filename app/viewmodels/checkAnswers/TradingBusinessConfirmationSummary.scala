@@ -16,7 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
+import controllers.routes
+import models.{CheckMode, UserAnswers}
 import pages.TradingBusinessConfirmationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat

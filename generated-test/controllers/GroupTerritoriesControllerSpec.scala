@@ -21,7 +21,7 @@ class GroupTerritoriesControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val groupTerritoriesRoute = routes.GroupTerritoriesController.onPageLoad(NormalMode).url
+  lazy val groupTerritoriesRoute = eligibility.routes.GroupTerritoriesController.onPageLoad(NormalMode).url
 
   val formProvider = new GroupTerritoriesFormProvider()
   val form = formProvider()
