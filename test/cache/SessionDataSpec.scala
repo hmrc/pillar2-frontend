@@ -16,22 +16,24 @@
 
 package cache
 import helpers.ControllerBaseSpec
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 
-class SessionDataSpec @Inject() (sessionData: SessionData) extends ControllerBaseSpec {
-
-  "Session Data Spec" should {
-    //  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+class SessionDataSpec extends ControllerBaseSpec {
+  val sessionData = new SessionData();
+  "SessionDataSpec" should {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
     "must store data into session in  Post" in {
       implicit val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "yes"))
+          .withFormUrlEncodedBody(("value", "no"))
+          .withSession((Pillar2SessionKeys.businessActivityUKPageYesNo, "no"))
       sessionData.updateBusinessActivityUKYesNo("no")
-      println("session**********************" + request.session)
-      OK shouldBe OK
+      request.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
     }
   }
 }
