@@ -33,35 +33,35 @@ trait CommonFormats extends Constraints {
       def unbind(key: String, value: String) = Map(key -> value)
     }
 
-  private def intFormat(errorKey: String): Formatter[Int] =
-    new Formatter[Int] {
-      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
-        for {
-          str <- data.get(key).toRight(Seq(FormError(key, errorKey, Nil)))
-          int <- Try(str.toInt).toOption.toRight(Seq(FormError(key, errorKey, Nil)))
-        } yield int
-
-      def unbind(key: String, value: Int) = Map(key -> value.toString)
-    }
+//  private def intFormat(errorKey: String): Formatter[Int] =
+//    new Formatter[Int] {
+//      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
+//        for {
+//          str <- data.get(key).toRight(Seq(FormError(key, errorKey, Nil)))
+//          int <- Try(str.toInt).toOption.toRight(Seq(FormError(key, errorKey, Nil)))
+//        } yield int
+//
+//      def unbind(key: String, value: Int) = Map(key -> value.toString)
+//    }
 
   def textWithErrorOverride(key: String): FieldMapping[String] = of[String](stringFormat(key))
 
-  def nonEmptyTextWithErrorOverride(key: String): Mapping[String] =
-    of[String](stringFormat(key))
-      .transform[String](_.trim, identity)
-      .verifying(Constraints.nonEmpty(errorMessage = key))
-
-  def nonEmptySanitisedTextWithErrorOverride(key: String, sanitisingRegex: String): Mapping[String] =
-    of[String](stringFormat(key))
-      .transform[String](_.replaceAll(sanitisingRegex, "").toUpperCase, identity)
-      .verifying(Constraints.nonEmpty(errorMessage = key))
-
-  def numberWithErrorOverride(key: String): FieldMapping[Int] = of[Int](intFormat(key))
-
-  def checkRegex(regex: String, text: Option[String]): Boolean =
-    text match {
-      case Some(x) => x.matches(regex)
-      case _       => true
-    }
+//  def nonEmptyTextWithErrorOverride(key: String): Mapping[String] =
+//    of[String](stringFormat(key))
+//      .transform[String](_.trim, identity)
+//      .verifying(Constraints.nonEmpty(errorMessage = key))
+//
+//  def nonEmptySanitisedTextWithErrorOverride(key: String, sanitisingRegex: String): Mapping[String] =
+//    of[String](stringFormat(key))
+//      .transform[String](_.replaceAll(sanitisingRegex, "").toUpperCase, identity)
+//      .verifying(Constraints.nonEmpty(errorMessage = key))
+//
+//  def numberWithErrorOverride(key: String): FieldMapping[Int] = of[Int](intFormat(key))
+//
+//  def checkRegex(regex: String, text: Option[String]): Boolean =
+//    text match {
+//      case Some(x) => x.matches(regex)
+//      case _       => true
+//    }
 
 }
