@@ -18,15 +18,13 @@ package controllers.actions
 
 import connectors.UserAnswersConnectors
 import models.UserAnswers
-
-import javax.inject.Inject
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.ActionTransformer
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject() (
