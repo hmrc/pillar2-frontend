@@ -44,10 +44,10 @@ trait ControllerBaseSpec
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
 
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        block(IdentifierRequest(request, "internalId"))
+        Future.successful(Right(IdentifierRequest(request, "internalId")))
       }
     }
 

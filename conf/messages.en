@@ -44,6 +44,7 @@ tradingBusinessConfirmation.title = Do you have trading business address in UK?
 tradingBusinessConfirmation.heading = Do you have trading business address in UK?
 tradingBusinessConfirmation.yes = Yes
 tradingBusinessConfirmation.no = No
+tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers

@@ -20,6 +20,66 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
+import play.api.Logging
+import play.api.mvc.Results._
+import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
+import scala.concurrent.{ExecutionContext, Future}
+
+trait IdentifierAction
+    extends ActionRefiner[Request, IdentifierRequest]
+    with ActionBuilder[IdentifierRequest, AnyContent]
+    with ActionFunction[Request, IdentifierRequest]
+
+class AuthenticatedIdentifierAction @Inject() (
+  override val authConnector:    AuthConnector,
+  config:                        FrontendAppConfig,
+  val parser:                    BodyParsers.Default
+)(implicit val executionContext: ExecutionContext)
+    extends IdentifierAction
+    with AuthorisedFunctions
+    with Logging {
+
+  override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
+      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup) {
+        case Some(_) ~ _ ~ Some(Individual)                 => Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+        case Some(internalId) ~ enrolments ~ Some(affinity) => getSubscriptionId(request, enrolments, internalId, affinity)
+        case _ =>
+          logger.warn("Unable to retrieve internal id or affinity group")
+          Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+      } recover {
+      case _: NoActiveSession =>
+        Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
+      case _: AuthorisationException =>
+        Left(Redirect(routes.UnauthorisedController.onPageLoad))
+    }
+  }
+
+  private def getSubscriptionId[A](
+    request:       Request[A],
+    enrolments:    Enrolments,
+    internalId:    String,
+    affinityGroup: AffinityGroup
+  ): Future[Either[Result, IdentifierRequest[A]]] =
+    Future.successful(Right(IdentifierRequest(request, internalId)))
+
+}
+
+/*
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import controllers.routes
+import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -72,4 +132,4 @@ class SessionIdentifierAction @Inject() (
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }
   }
-}
+}*/
