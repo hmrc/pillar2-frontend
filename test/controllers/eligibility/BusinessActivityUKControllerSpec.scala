@@ -19,13 +19,15 @@ package controllers.eligibility
 import controllers.routes
 import helpers.ControllerBaseSpec
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.{any, contains}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, _}
 
 import scala.concurrent.Future
 
@@ -38,6 +40,9 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       businessActivityUKView,
       mockSessionData
     )
+
+  val mockFormYesData = Map("confirmForm" -> "yes")
+  val mockFormNoData  = Map("confirmForm" -> "no")
 
   "Trading Business Confirmation Controller" should {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
@@ -60,6 +65,13 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
 
+    }
+    "must show error page with 400 if no option is selected " in {
+      val formData = Map("value" -> "")
+      val request =
+        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
+      val result = controller.onSubmit()()(request)
+      status(result) shouldBe 400
     }
   }
 }

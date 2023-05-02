@@ -24,6 +24,6 @@ class BusinessActivityUKFormProvider @Inject() extends CommonFormats {
 
   def apply(): Form[String] =
     Form(
-      "value" -> textWithErrorOverride("businessActivityUK.error.required")
+      "value" -> nonEmptyTextWithErrorOverride("businessActivityUK.error.required")
     )
 }
