@@ -22,4 +22,13 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import play.api.libs.json.{JsValue, Json}
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {}
+trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryTradingBusinessConfirmationUserAnswersEntry: Arbitrary[(TradingBusinessConfirmationPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[TradingBusinessConfirmationPage.type]
+        value <- arbitrary[TradingBusinessConfirmation].map(Json.toJson(_))
+      } yield (page, value)
+    }
+}

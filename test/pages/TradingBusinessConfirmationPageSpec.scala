@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import models.TradingBusinessConfirmation
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
+class TradingBusinessConfirmationSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryTradingBusinessConfirmationPage: Arbitrary[TradingBusinessConfirmationPage.type] =
-    Arbitrary(TradingBusinessConfirmationPage)
+  "TradingBusinessConfirmationPage" - {
+
+    beRetrievable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
+
+    beSettable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
+
+    beRemovable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
+  }
 }
