@@ -54,6 +54,9 @@ businessActivityUK.yes = Yes
 businessActivityUK.no = No
 businessActivityUK.error.required = Select yes if your group has business activities in the UK
 
+KBIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
+KBIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
