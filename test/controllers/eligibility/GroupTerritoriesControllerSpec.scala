@@ -33,7 +33,7 @@ class GroupTerritoriesControllerSpec extends ControllerBaseSpec {
 
   def controller(): GroupTerritoriesController =
     new GroupTerritoriesController(
-      getGroupTerritoriesFormProvider,
+      getgroupTerritoriesFormProvider,
       stubMessagesControllerComponents(),
       groupTerritoriesView,
       mockSessionData
