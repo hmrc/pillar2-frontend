@@ -54,16 +54,16 @@ class TradingBusinessConfirmationControllerSpec extends ControllerBaseSpec {
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.TradingBusinessConfirmationController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.TradingBusinessConfirmationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
 
-      val result = controller.onPageLoad(NormalMode)()(request)
+      val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.TradingBusinessConfirmationController.onSubmit.url)
+        FakeRequest(POST, routes.TradingBusinessConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
