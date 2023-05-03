@@ -19,6 +19,5 @@ package utils
 object Pillar2SessionKeys {
 
   val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
   val evidenceRequestedFlag       = "evidenceRequestedFlag"
 }

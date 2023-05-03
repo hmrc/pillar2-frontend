@@ -27,8 +27,4 @@ class SessionData {
     request.session +
       (Pillar2SessionKeys.businessActivityUKPageYesNo -> value)
 
-  def updateGroupTerritoriesYesNo(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
-
 }

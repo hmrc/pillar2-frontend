@@ -17,7 +17,7 @@
 package helpers
 
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredActionImpl, DataRetrievalActionImpl}
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider}
+import forms.{BusinessActivityUKFormProvider, TradingBusinessConfirmationFormProvider}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import play.api.http.{HttpProtocol, MimeTypes}
@@ -44,10 +44,10 @@ trait ControllerBaseSpec
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
 
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        block(IdentifierRequest(request, "internalId"))
+        Future.successful(Right(IdentifierRequest(request, "internalId")))
       }
     }
 
@@ -65,6 +65,5 @@ trait ControllerBaseSpec
 
   def getTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = new TradingBusinessConfirmationFormProvider()
   def getBusinessActivityUKFormProvider:          BusinessActivityUKFormProvider          = new BusinessActivityUKFormProvider()
-  def getGroupTerritoriesFormProvider:            GroupTerritoriesFormProvider            = new GroupTerritoriesFormProvider()
 
 }

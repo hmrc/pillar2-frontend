@@ -40,13 +40,13 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
   @Provides
   @Named("pillar2Url")
   @Singleton
-  def registerGmsUrlProvider(servicesConfig: ServicesConfig): String =
+  def registerPillar2UrlProvider(servicesConfig: ServicesConfig): String =
     servicesConfig.baseUrl("pillar2")
   /*
   @Provides
   @Named("pillar2StubUrl")
   @Singleton
-  def registerGmsStubUrlProvider(servicesConfig: ServicesConfig): String =
+  def registerPillar2StubUrlProvider(servicesConfig: ServicesConfig): String =
     servicesConfig.baseUrl("pillar2-stubs")
 
   @Provides

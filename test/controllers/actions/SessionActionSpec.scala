@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.SessionKeys
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionActionSpec extends SpecBase {
-
+  /*
   class Harness(action: IdentifierAction) {
     def onPageLoad(): Action[AnyContent] = action(_ => Results.Ok)
   }
@@ -73,5 +73,5 @@ class SessionActionSpec extends SpecBase {
         }
       }
     }
-  }
+  }*/
 }

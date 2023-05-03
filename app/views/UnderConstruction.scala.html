@@ -25,9 +25,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")),
-    showBackLink = true
-) {
+    pageTitle    = titleNoForm(messages("index.title")), showSignOut = false) {
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
 

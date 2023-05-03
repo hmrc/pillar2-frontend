@@ -45,12 +45,18 @@ trait CommonFormats extends Constraints {
 //    }
 
   def textWithErrorOverride(key: String): FieldMapping[String] = of[String](stringFormat(key))
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/PIL-117
   def nonEmptyTextWithErrorOverride(key: String): Mapping[String] =
     of[String](stringFormat(key))
       .transform[String](_.trim, identity)
       .verifying(Constraints.nonEmpty(errorMessage = key))
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/PIL-117
 //  def nonEmptySanitisedTextWithErrorOverride(key: String, sanitisingRegex: String): Mapping[String] =
 //    of[String](stringFormat(key))
 //      .transform[String](_.replaceAll(sanitisingRegex, "").toUpperCase, identity)
