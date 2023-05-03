@@ -54,7 +54,7 @@ groupTerritories.heading = Does your group have businesses in more than one coun
 businessActivityUK.check.liable.text = Check if your group is liable
 groupTerritories.yes = Yes
 groupTerritories.no = No
-GroupTerritories.error.required = Select yes if your group has business in more than one country
+GroupTerritories.error.required = Select yes if your group has businesses in more than one country
 
 tradingBusinessConfirmation.title = Do you have trading business address in UK?
 tradingBusinessConfirmation.heading = Do you have trading business address in UK?
