@@ -55,10 +55,17 @@ class GroupTerritoriesController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
-          Future.successful(
-            Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-              .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-          )
+          if (value == "yes") {
+            Future.successful(
+              Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+                .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
+            )
+          } else {
+            Future.successful(
+              Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
+            )
+          }
       )
   }
 }
