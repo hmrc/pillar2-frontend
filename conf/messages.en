@@ -46,6 +46,14 @@ tradingBusinessConfirmation.yes = Yes
 tradingBusinessConfirmation.no = No
 tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
 
+under_construction.heading = Under Construction
+businessActivityUK.title = Does any business in your group have business activity in the UK?
+businessActivityUK.heading = Does any business in your group have business activity in the UK?
+businessActivityUK.check.liable.text = Check if your group is liable
+businessActivityUK.yes = Yes
+businessActivityUK.no = No
+businessActivityUK.error.required = Select yes if your group has business activities in the UK
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
