@@ -45,7 +45,6 @@ trait CommonFormats extends Constraints {
 //    }
 
   def textWithErrorOverride(key: String): FieldMapping[String] = of[String](stringFormat(key))
-
   def nonEmptyTextWithErrorOverride(key: String): Mapping[String] =
     of[String](stringFormat(key))
       .transform[String](_.trim, identity)
