@@ -35,7 +35,7 @@ class GroupTerritoriesControllerSpec extends ControllerBaseSpec {
     new GroupTerritoriesController(
       getGroupTerritoriesFormProvider,
       stubMessagesControllerComponents(),
-      GroupTerritoriesView,
+      groupTerritoriesView,
       mockSessionData
     )
 
@@ -61,7 +61,7 @@ class GroupTerritoriesControllerSpec extends ControllerBaseSpec {
           .withFormUrlEncodedBody(("value", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url
 
     }
   }

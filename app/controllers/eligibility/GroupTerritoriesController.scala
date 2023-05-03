@@ -56,7 +56,8 @@ class GroupTerritoriesController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
           Future.successful(
-            Redirect(routes.UnderConstructionController.onPageLoad).withSession((sessionData.updateGroupTerritoriesYesNo(value)))
+            Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+              .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
           )
       )
   }
