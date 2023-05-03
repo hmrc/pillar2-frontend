@@ -27,7 +27,7 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("groupTerritories.title"))) {
+@layout(pageTitle = title(form, messages("groupTerritories.title")), showSignOut = false) {
 
     @formHelper(action = eligibility.routes.GroupTerritoriesController.onSubmit, 'autoComplete -> "off") {
 
