@@ -49,7 +49,6 @@ trait CommonFormats extends Constraints {
     of[String](stringFormat(key))
       .transform[String](_.trim, identity)
       .verifying(Constraints.nonEmpty(errorMessage = key))
-
 //  def nonEmptySanitisedTextWithErrorOverride(key: String, sanitisingRegex: String): Mapping[String] =
 //    of[String](stringFormat(key))
 //      .transform[String](_.replaceAll(sanitisingRegex, "").toUpperCase, identity)
