@@ -27,7 +27,7 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false ) {
+@layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false ) {
 
     @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
 

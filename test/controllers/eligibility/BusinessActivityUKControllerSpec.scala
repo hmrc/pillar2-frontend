@@ -66,6 +66,16 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
 
     }
+    "must redirect to the next page when valid data is submitted with no selected" in {
+
+      val request =
+        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "no"))
+      val result = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.KBIneligibleController.onPageLoad.url
+
+    }
     "must show error page with 400 if no option is selected " in {
       val formData = Map("value" -> "")
       val request =

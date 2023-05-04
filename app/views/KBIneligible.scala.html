@@ -25,7 +25,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("KBIneligible.title")), showSignOut = false) {
+    pageTitle    = titleNoForm(messages("KBIneligible.title")), showSignOut = false, timeout = false) {
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("KBIneligible.heading")</h1>
 

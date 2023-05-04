@@ -19,7 +19,7 @@ POST        /trading-business-confirmation               controllers.TradingBusi
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
-GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KBIneligibleController.onPageLoad
+GET         /eligibility/kb-in-the-uk-ineligible         controllers.eligibility.KBIneligibleController.onPageLoad
 
 GET         /kb-mne-ineligible                         controllers.UnderConstructionController.onPageLoad
 
