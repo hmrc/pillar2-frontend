@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
+class TurnOverEligibilityPageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryTurnOverEligibilityPage: Arbitrary[TurnOverEligibilityPage.type] =
-    Arbitrary(TurnOverEligibilityPage)
+  "TurnOverEligibilityPage" - {
 
-  implicit lazy val arbitraryTradingBusinessConfirmationPage: Arbitrary[TradingBusinessConfirmationPage.type] =
-    Arbitrary(TradingBusinessConfirmationPage)
+    beRetrievable[Boolean](TurnOverEligibilityPage)
+
+    beSettable[Boolean](TurnOverEligibilityPage)
+
+    beRemovable[Boolean](TurnOverEligibilityPage)
+  }
 }

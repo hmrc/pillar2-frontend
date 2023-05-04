@@ -19,20 +19,20 @@ package controllers.eligibility
 import cache.SessionData
 import config.FrontendAppConfig
 import controllers.routes
-
-import forms.BusinessActivityUKFormProvider
+import forms.TurnOverEligibilityFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
-import views.html.BusinessActivityUKView
+import views.html.TurnOverEligibilityView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-class BusinessActivityUKController @Inject() (
-  formProvider:             BusinessActivityUKFormProvider,
+
+class TurnOverEligibilityController @Inject() (
+  formProvider:             TurnOverEligibilityFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     BusinessActivityUKView,
+  view:                     TurnOverEligibilityView,
   sessionData:              SessionData
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -41,7 +41,7 @@ class BusinessActivityUKController @Inject() (
   val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.businessActivityUKPageYesNo) match {
+    val preparedForm = request.session.data.get(Pillar2SessionKeys.turnOverEligibilityValue) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -56,14 +56,13 @@ class BusinessActivityUKController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
           value match {
-            case "yes" =>
+            case "true" =>
               Future.successful(
-                Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
-                  .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
+                Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
-            case "no" =>
+            case "false" =>
               Future.successful(
-                Redirect(routes.UnderConstructionController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
+                Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
           }
       )

@@ -20,4 +20,5 @@ object Pillar2SessionKeys {
 
   val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
   val evidenceRequestedFlag       = "evidenceRequestedFlag"
+  val turnOverEligibilityValue    = "turnOverEligibilityValue"
 }

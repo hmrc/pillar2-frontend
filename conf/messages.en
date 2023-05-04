@@ -54,6 +54,13 @@ businessActivityUK.yes = Yes
 businessActivityUK.no = No
 businessActivityUK.error.required = Select yes if your group has business activities in the UK
 
+turnOverEligibility.title = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
+turnOverEligibility.heading = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
+turnOverEligibility.check.liable.text = Check if your group is liable
+turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
+turnOverEligibility.error.required = Select yes if your group had more than 750 million euros in 2 of the last 4 accounting periods
+turnOverEligibility.change.hidden = Change
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
@@ -70,3 +77,5 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+
