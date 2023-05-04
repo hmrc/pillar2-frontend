@@ -65,6 +65,6 @@ trait ControllerBaseSpec
 
   def getTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = new TradingBusinessConfirmationFormProvider()
   def getBusinessActivityUKFormProvider:          BusinessActivityUKFormProvider          = new BusinessActivityUKFormProvider()
-  def getgroupTerritoriesFormProvider:            GroupTerritoriesFormProvider            = new GroupTerritoriesFormProvider()
+  def getGroupTerritoriesFormProvider:            GroupTerritoriesFormProvider            = new GroupTerritoriesFormProvider()
 
 }

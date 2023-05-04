@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import models.GroupTerritories
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class GroupTerritoriesSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryGroupTerritories: Arbitrary[GroupTerritories] =
-    Arbitrary {
-      Gen.oneOf(GroupTerritories.values.toSeq)
-    }
+  "GroupTerritories" - {
 
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+    beRetrievable[GroupTerritories](GroupTerritoriesPage)
+
+    beSettable[GroupTerritories](GroupTerritoriesPage)
+
+    beRemovable[GroupTerritories](GroupTerritoriesPage)
+  }
 }
