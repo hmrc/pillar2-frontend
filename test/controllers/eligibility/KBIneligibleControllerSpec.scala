@@ -17,14 +17,9 @@
 package controllers.eligibility
 
 import base.SpecBase
-import org.jsoup.Jsoup
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.i18n.Messages
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.i18n.Messages
-import views.html.UnauthorisedView
+import views.html.KBIneligibleView
 
 class KBIneligibleControllerSpec extends SpecBase {
 
@@ -39,11 +34,9 @@ class KBIneligibleControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[UnauthorisedView]
-
+        val view = application.injector.instanceOf[KBIneligibleView]
         status(result) mustEqual OK
-        val doc = Jsoup.parse(contentAsString(result))
-        doc.getElementsByClass("govuk-heading-xl").text() mustEqual "Based on your answers, you’re not covered by Pillar 2 top-up tax"
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }

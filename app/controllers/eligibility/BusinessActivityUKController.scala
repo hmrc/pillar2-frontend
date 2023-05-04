@@ -54,15 +54,16 @@ class BusinessActivityUKController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
-          if (value == "yes") {
-            Future.successful(
-              Redirect(routes.UnderConstructionController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
-            )
-          } else {
-            Future.successful(
-              Redirect(controllers.eligibility.routes.KBIneligibleController.onPageLoad)
-                .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
-            )
+          value match {
+            case "yes" =>
+              Future.successful(
+                Redirect(routes.UnderConstructionController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
+              )
+            case "no" =>
+              Future.successful(
+                Redirect(controllers.eligibility.routes.KBIneligibleController.onPageLoad)
+                  .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
+              )
           }
       )
   }
