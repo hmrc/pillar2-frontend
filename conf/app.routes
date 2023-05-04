@@ -19,9 +19,9 @@ POST        /trading-business-confirmation               controllers.TradingBusi
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
-GET         /eligibility/kb-in-the-uk-ineligible         controllers.eligibility.KBIneligibleController.onPageLoad
+GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KBIneligibleController.onPageLoad
 
-GET         /kb-mne-ineligible                         controllers.UnderConstructionController.onPageLoad
+GET         /kb-mne-ineligible-construction                         controllers.UnderConstructionController.onPageLoad
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
