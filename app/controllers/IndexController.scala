@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -27,17 +26,16 @@ import javax.inject.Inject
 
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
   view:                     IndexView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view())
   }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
+  def onSubmit: Action[AnyContent] = Action { implicit request =>
     Redirect(eligibility.routes.GroupTerritoriesController.onPageLoad)
   }
 

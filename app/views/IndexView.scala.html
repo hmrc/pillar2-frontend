@@ -26,8 +26,10 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")),
-    showBackLink = false
-) {
+    showSignOut = false,
+    showBackLink = false,
+    timeout = false
+ ) {
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
 
