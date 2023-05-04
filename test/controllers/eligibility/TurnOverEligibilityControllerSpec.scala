@@ -54,7 +54,7 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("value", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
@@ -65,7 +65,7 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "false"))
+          .withFormUrlEncodedBody(("value", "no"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url

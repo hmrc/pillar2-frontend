@@ -56,11 +56,11 @@ class TurnOverEligibilityController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
           value match {
-            case "true" =>
+            case "yes" =>
               Future.successful(
                 Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
-            case "false" =>
+            case "no" =>
               Future.successful(
                 Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
