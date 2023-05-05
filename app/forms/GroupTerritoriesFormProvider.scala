@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package cache
+package forms
 
-import play.api.mvc.{AnyContent, Request, Result, Session}
-import utils.Pillar2SessionKeys
+import play.api.data.Form
 
-import javax.inject.Singleton
+import javax.inject.Inject
 
-@Singleton
-class SessionData {
-  def updateBusinessActivityUKYesNo(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.businessActivityUKPageYesNo -> value)
+class GroupTerritoriesFormProvider @Inject() extends CommonFormats {
 
-  def updateGroupTerritoriesYesNo(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
-
+  def apply(): Form[String] =
+    Form(
+      "value" -> textWithErrorOverride(key = "GroupTerritories.error.required")
+    )
 }
