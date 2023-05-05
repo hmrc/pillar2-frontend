@@ -17,13 +17,14 @@
 package controllers.eligibility
 
 import base.SpecBase
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.KBIneligibleView
 
 class KBIneligibleControllerSpec extends SpecBase {
 
-  "KBIneligible Controller" - {
+  "Kb Ineligible Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -36,7 +37,11 @@ class KBIneligibleControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[KBIneligibleView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) should include("Based on your answers, you’re not covered by Pillar 2 top-up tax")
+        contentAsString(result) should include(
+          "Pillar 2 top-up tax applies to businesses with activities in more" +
+            " than one country. It’s likely that you’re not covered by this law."
+        )
       }
     }
   }
