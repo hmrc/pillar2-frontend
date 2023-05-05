@@ -73,7 +73,7 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
           .withFormUrlEncodedBody(("value", "no"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.KBIneligibleController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url
 
     }
     "must show error page with 400 if no option is selected " in {
