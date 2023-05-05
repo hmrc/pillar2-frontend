@@ -20,7 +20,6 @@ import base.SpecBase
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.KBIneligibleView
 
 class KBIneligibleControllerSpec extends SpecBase {
 
@@ -34,8 +33,6 @@ class KBIneligibleControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.eligibility.routes.KBIneligibleController.onPageLoad.url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[KBIneligibleView]
         status(result) mustEqual OK
         contentAsString(result) should include("Based on your answers, you’re not covered by Pillar 2 top-up tax")
         contentAsString(result) should include(
