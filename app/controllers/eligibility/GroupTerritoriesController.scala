@@ -28,7 +28,6 @@ import views.html.GroupTerritoriesView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
 class GroupTerritoriesController @Inject() (
   formProvider:             GroupTerritoriesFormProvider,
   val controllerComponents: MessagesControllerComponents,
