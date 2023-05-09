@@ -29,12 +29,12 @@
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-l">@messages("KBMnIneligible.heading")</h1>
 
-<p class="govuk-body">Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.</p>
+<p class="govuk-body">@messages("KBMnIneligible.p1")</p>
 
-<p class="govuk-body">Your business should continue to pay tax as usual in the country where you operate.</p>
+<p class="govuk-body">@messages("KBMnIneligible.p2")</p>
 
 
-<p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">More about Pillar 2 top-up tax</a></p>
+<p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">@messages("KBMnIneligible.link")</a></p>
 
 }
 

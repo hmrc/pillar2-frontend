@@ -70,10 +70,16 @@ groupTerritories.no = No
 GroupTerritories.error.required = Select yes if your group has businesses in more than one country
 KBMnIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
 KBMnIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
+KBMnIneligible.p1=Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.
+KBMnIneligible.p2=Your business should continue to pay tax as usual in the country where you operate.
+KBMnIneligible.link=More about Pillar 2 top-up tax
+
 
 KbUKIneligible.title = Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK
 KbUKIneligible.heading = Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK
-
+KbUKIneligible.p1=Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.
+KbUKIneligible.p2=Your business should continue to pay tax as usual in the country where you operate.
+KbUKIneligible.link=More about Pillar 2 top-up tax
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
