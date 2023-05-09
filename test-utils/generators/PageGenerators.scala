@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryTurnOverEligibilityPage: Arbitrary[TurnOverEligibilityPage.type] =
+    Arbitrary(TurnOverEligibilityPage)
+
   implicit lazy val arbitraryTradingBusinessConfirmationPage: Arbitrary[TradingBusinessConfirmationPage.type] =
     Arbitrary(TradingBusinessConfirmationPage)
 }

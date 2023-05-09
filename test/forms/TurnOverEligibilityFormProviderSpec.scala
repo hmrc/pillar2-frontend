@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Pillar2SessionKeys {
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
+class TurnOverEligibilityFormProviderSpec extends BooleanFieldBehaviours {
+
+  val requiredKey = "turnOverEligibility.error.required"
+  val invalidKey  = "error.boolean"
+
+  val form = new TurnOverEligibilityFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

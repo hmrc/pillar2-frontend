@@ -20,6 +20,11 @@ POST        /trading-business-confirmation               controllers.TradingBusi
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
 
+GET         /eligibility/global-gross-revenue            controllers.eligibility.TurnOverEligibilityController.onPageLoad
+POST        /eligibility/global-gross-revenue             controllers.eligibility.TurnOverEligibilityController.onSubmit
+
+GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
+
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
 
@@ -29,3 +34,6 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+
+
