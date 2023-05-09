@@ -25,9 +25,9 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("KBIneligible.title")), showSignOut = false, timeout = false) {
+    pageTitle    = titleNoForm(messages("KbUKIneligible.title")), showSignOut = false, timeout = false) {
     @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("KBIneligible.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("KbUKIneligible.heading")</h1>
 
 <p class="govuk-body">Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.</p>
 

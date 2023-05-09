@@ -22,7 +22,7 @@ POST        /eligibility/activities-within-the-uk        controllers.eligibility
 
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
-GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KBIneligibleController.onPageLoad
+GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KbMnIneligibleController.onPageLoad
 GET         /eligibility/kb-in-the-uk-ineligible         controllers.eligibility.KbUKIneligibleController.onPageLoad
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad

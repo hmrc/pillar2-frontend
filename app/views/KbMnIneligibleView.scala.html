@@ -25,13 +25,13 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("KbUKIneligible.title")), showSignOut = false, timeout = false) {
+    pageTitle    = titleNoForm(messages("KBMnIneligible.title")), showSignOut = false, timeout = false) {
     @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("KbUKIneligible.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("KBMnIneligible.heading")</h1>
 
-<p class="govuk-body">Pillar 2 top-up tax may be collected in the UK when you have business activity here.</p>
+<p class="govuk-body">Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.</p>
 
-<p class="govuk-body">If your group only operates in other countries, you should check where any liability might apply.</p>
+<p class="govuk-body">Your business should continue to pay tax as usual in the country where you operate.</p>
 
 
 <p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">More about Pillar 2 top-up tax</a></p>

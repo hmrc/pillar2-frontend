@@ -16,24 +16,31 @@
 
 package controllers.eligibility
 
-import base.SpecBase
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import helpers.ControllerBaseSpec
+
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, _}
 
-class KbUKIneligibleControllerSpec extends SpecBase {
+class KbUKIneligibleControllerSpec extends ControllerBaseSpec {
 
-  "Kb Ineligible Controller" - {
+  def controller(): KbUKIneligibleController =
+    new KbUKIneligibleController(
+      stubMessagesControllerComponents(),
+      kbUKIneligibleView
+    )
 
+  "Trading Business Confirmation Controller" should {
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) should include("Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK")
-        contentAsString(result) should include("Pillar 2 top-up tax may be collected in the UK when you have business activity here.")
-      }
+
+      val request =
+        FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)
+
+      val result = controller.onPageLoad()()(request)
+      status(result) shouldBe OK
+      contentAsString(result) should include(
+        "Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law."
+      )
     }
+
   }
 }

@@ -60,8 +60,8 @@ businessActivityUK.check.liable.text = Check if your group is liable
 groupTerritories.yes = Yes
 groupTerritories.no = No
 GroupTerritories.error.required = Select yes if your group has businesses in more than one country
-KBIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
-KBIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
+KBMnIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
+KBMnIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
 
 KbUKIneligible.title = Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK
 KbUKIneligible.heading = Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK

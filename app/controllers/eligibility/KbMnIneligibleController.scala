@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.KBIneligibleView
+import views.html.KBMnIneligibleView
 
 import javax.inject.Inject
 
-class KBIneligibleController @Inject() (
+class KbMnIneligibleController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     KBIneligibleView
+  view:                     KBMnIneligibleView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
