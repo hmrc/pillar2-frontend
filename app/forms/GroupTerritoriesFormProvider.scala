@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Pillar2SessionKeys {
+import play.api.data.Form
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
+import javax.inject.Inject
+
+class GroupTerritoriesFormProvider @Inject() extends CommonFormats {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> textWithErrorOverride(key = "GroupTerritories.error.required")
+    )
 }

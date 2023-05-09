@@ -23,7 +23,9 @@ import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBann
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcReportTechnicalIssueHelper, HmrcScripts, HmrcStandardFooter, HmrcStandardHeader, HmrcTrackingConsentSnippet}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{BusinessActivityUKView, TradingBusinessConfirmationView, TurnOverEligibilityView}
+
+import views.html.{BusinessActivityUKView, GroupTerritoriesView, TradingBusinessConfirmationView, TurnOverEligibilityView}
+
 import views.html.templates.Layout
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
@@ -104,6 +106,9 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val tradingBusinessConfirmationView: TradingBusinessConfirmationView =
     new TradingBusinessConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val groupTerritoriesView: GroupTerritoriesView =
+    new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val businessActivityUKView: BusinessActivityUKView =
     new BusinessActivityUKView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

@@ -17,7 +17,7 @@
 package helpers
 
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredActionImpl, DataRetrievalActionImpl}
-import forms.{BusinessActivityUKFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider}
+import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import play.api.http.{HttpProtocol, MimeTypes}
@@ -66,5 +66,6 @@ trait ControllerBaseSpec
   def getTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = new TradingBusinessConfirmationFormProvider()
   def getBusinessActivityUKFormProvider:          BusinessActivityUKFormProvider          = new BusinessActivityUKFormProvider()
   def getTurnOverEligibilityProvider:             TurnOverEligibilityFormProvider         = new TurnOverEligibilityFormProvider()
+  def getGroupTerritoriesFormProvider:            GroupTerritoriesFormProvider            = new GroupTerritoriesFormProvider()
 
 }

@@ -30,4 +30,8 @@ class SessionData {
   def updateTurnOverEligibilitySessionData(value: String)(implicit request: Request[AnyContent]): Session =
     request.session +
       (Pillar2SessionKeys.turnOverEligibilityValue -> value)
+  def updateGroupTerritoriesYesNo(value: String)(implicit request: Request[AnyContent]): Session =
+    request.session +
+      (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
+
 }

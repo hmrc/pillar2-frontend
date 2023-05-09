@@ -62,6 +62,13 @@ turnOverEligibility.no = No
 turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
 turnOverEligibility.error.required = Select yes if your group had more than 750 million euros in 2 of the last 4 accounting periods
 turnOverEligibility.change.hidden = Change
+groupTerritories.title = Does your group have businesses in more than one country?
+groupTerritories.heading = Does your group have businesses in more than one country?
+businessActivityUK.check.liable.text = Check if your group is liable
+groupTerritories.yes = Yes
+groupTerritories.no = No
+GroupTerritories.error.required = Select yes if your group has businesses in more than one country
+
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
