@@ -63,7 +63,8 @@ class BusinessActivityUKController @Inject() (
               )
             case "no" =>
               Future.successful(
-                Redirect(routes.UnderConstructionController.onPageLoad).withSession((sessionData.updateBusinessActivityUKYesNo(value)))
+                Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)
+                  .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
               )
           }
       )

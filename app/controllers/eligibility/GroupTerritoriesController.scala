@@ -63,7 +63,7 @@ class GroupTerritoriesController @Inject() (
               )
             case "no" =>
               Future.successful(
-                Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
                   .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
               )
           }

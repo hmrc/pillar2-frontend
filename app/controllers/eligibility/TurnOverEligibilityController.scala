@@ -62,7 +62,8 @@ class TurnOverEligibilityController @Inject() (
               )
             case "no" =>
               Future.successful(
-                Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
+                Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)
+                  .withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
           }
       )

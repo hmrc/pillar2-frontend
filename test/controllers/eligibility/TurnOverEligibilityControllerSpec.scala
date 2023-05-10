@@ -68,7 +68,7 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
           .withFormUrlEncodedBody(("value", "no"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url
 
     }
 
