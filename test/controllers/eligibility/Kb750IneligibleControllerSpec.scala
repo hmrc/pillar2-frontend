@@ -36,6 +36,9 @@ class Kb750IneligibleControllerSpec extends ControllerBaseSpec {
 
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
+      contentAsString(result) should include(
+        "Pillar 2 top-up tax may apply to businesses with revenue of over 750 million euros in 2 of the last 4 accounting periods."
+      )
     }
 
   }

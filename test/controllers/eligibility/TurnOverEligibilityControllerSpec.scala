@@ -44,10 +44,14 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url).withFormUrlEncodedBody(("value", "false"))
+        FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
 
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
+      contentAsString(result) should include(
+        "Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?"
+      )
+
     }
 
     "must redirect to the next page when chosen Yes and submitted" in {
