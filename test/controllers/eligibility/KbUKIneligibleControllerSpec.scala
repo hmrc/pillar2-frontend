@@ -36,7 +36,9 @@ class KbUKIneligibleControllerSpec extends ControllerBaseSpec {
         FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)
 
       val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
+      status(result)        shouldBe OK
+      contentAsString(result) should include("Based on your answers, you do not need to pay Pillar 2 top-up tax in the UK")
+
     }
 
   }
