@@ -18,7 +18,6 @@ package controllers.eligibility
 
 import cache.SessionData
 import config.FrontendAppConfig
-import controllers.routes
 import forms.GroupTerritoriesFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
