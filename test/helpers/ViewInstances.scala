@@ -121,4 +121,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val kb750IneligibleView: Kb750IneligibleView =
     new Kb750IneligibleView(pillar2layout, formWithCSRF, govukButton)
 
+  val eligibilityConfirmationView: EligibilityConfirmationView =
+    new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
+
 }

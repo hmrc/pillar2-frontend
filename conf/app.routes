@@ -23,6 +23,8 @@ POST        /eligibility/activities-within-the-uk        controllers.eligibility
 GET         /eligibility/global-gross-revenue            controllers.eligibility.TurnOverEligibilityController.onPageLoad
 POST        /eligibility/global-gross-revenue             controllers.eligibility.TurnOverEligibilityController.onSubmit
 
+GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
+
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad

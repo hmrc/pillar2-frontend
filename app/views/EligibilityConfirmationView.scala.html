@@ -25,18 +25,15 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("KbUKIneligible.title")), showSignOut = false, timeout = false) {
-    @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("KbUKIneligible.heading")</h1>
+    pageTitle    = titleNoForm(messages("EligibilityConfirmation.title")), showSignOut = false, timeout = false) {
+    @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
+        <h1 class="govuk-heading-l">@messages("EligibilityConfirmation.heading")</h1>
+        <h2 class="govuk-heading-m">@messages("EligibilityConfirmation.h2")</h2>
 
-<p class="govuk-body">@messages("KbUKIneligible.p1")</p>
+<p class="govuk-body">@messages("EligibilityConfirmation.p1")</p>
 
-<p class="govuk-body">@messages("KbUKIneligible.p2")</p>
-
-
-<p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">@messages("KbUKIneligible.link")</a></p>
+<p class="govuk-body"><a class="govuk-link" href="/pillar-two/">@messages("site.continue")</a></p>
 
 }
-
 
 }

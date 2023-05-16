@@ -20,14 +20,15 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.KbUKIneligibleView
+import views.html.EligibilityConfirmationView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class KbUKIneligibleController @Inject() (
+class EligibilityConfirmationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     KbUKIneligibleView
-)(implicit appConfig:       FrontendAppConfig)
+  view:                     EligibilityConfirmationView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -35,4 +36,9 @@ class KbUKIneligibleController @Inject() (
     Ok(view())
   }
 
+  def onSubmit: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(
+      Redirect(controllers.routes.TradingBusinessConfirmationController.onPageLoad)
+    )
+  }
 }

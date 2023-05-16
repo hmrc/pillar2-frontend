@@ -17,16 +17,15 @@
 package controllers.eligibility
 
 import helpers.ControllerBaseSpec
-
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, _}
+import play.api.test.Helpers._
 
-class KbMnIneligibleControllerSpec extends ControllerBaseSpec {
+class EligibilityConfirmationControllerSpec extends ControllerBaseSpec {
 
-  def controller(): KbMnIneligibleController =
-    new KbMnIneligibleController(
+  def controller(): EligibilityConfirmationController =
+    new EligibilityConfirmationController()(
       stubMessagesControllerComponents(),
-      kBMneIneligibleView
+      eligibilityConfirmationView
     )
 
   "Trading Business Confirmation Controller" should {
