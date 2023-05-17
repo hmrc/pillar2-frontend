@@ -23,7 +23,7 @@ import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBann
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcReportTechnicalIssueHelper, HmrcScripts, HmrcStandardFooter, HmrcStandardHeader, HmrcTrackingConsentSnippet}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{BusinessActivityUKView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, TradingBusinessConfirmationView, TurnOverEligibilityView}
+import views.html.{BusinessActivityUKView, EligibilityConfirmationView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, TradingBusinessConfirmationView, TurnOverEligibilityView}
 import views.html.templates.Layout
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
