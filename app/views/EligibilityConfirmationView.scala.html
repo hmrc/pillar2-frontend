@@ -24,16 +24,21 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(
-    pageTitle    = titleNoForm(messages("EligibilityConfirmation.title")), showSignOut = false, timeout = false) {
-    @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("EligibilityConfirmation.heading")</h1>
-        <h2 class="govuk-heading-m">@messages("EligibilityConfirmation.h2")</h2>
+    @layout(
+        pageTitle    = titleNoForm(messages("eligibilityconfirmation.title")),
+        showBackLink = false,
+        showSignOut = false,
+        timeout = false
+    ) {
+        @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
 
-<p class="govuk-body">@messages("EligibilityConfirmation.p1")</p>
+            <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
+            <h2 class="govuk-heading-m">@messages("eligibilityconfirmation.h2")</h2>
+            <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
 
-<p class="govuk-body"><a class="govuk-link" href="/pillar-two/">@messages("site.continue")</a></p>
+            @govukButton(
+                ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+            )
+        }
 
-}
-
-}
+    }

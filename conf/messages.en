@@ -89,11 +89,11 @@ Kb750Ineligible.p1=Pillar 2 top-up tax may apply to businesses with revenue of o
 Kb750Ineligible.p2=You will not be covered by this law if your revenue is lower.
 Kb750Ineligible.link=More about Pillar 2 top-up tax
 
-EligibilityConfirmation.title = You need to register this group for global minimum tax
-EligibilityConfirmation.heading = You need to register this group for global minimum tax
-EligibilityConfirmation.h2 = What happens next
-EligibilityConfirmation.p1=You will now need to sign in to HMRC online services to register.
-EligibilityConfirmation.link=More about Pillar 2 top-up tax
+eligibilityconfirmation.title = You need to register this group for global minimum tax
+eligibilityconfirmation.heading = You need to register this group for global minimum tax
+eligibilityconfirmation.h2 = What happens next
+eligibilityconfirmation.p1=You will now need to sign in to HMRC online services to register.
+eligibilityconfirmation.link=More about Pillar 2 top-up tax
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
