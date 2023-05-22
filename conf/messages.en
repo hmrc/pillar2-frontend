@@ -61,6 +61,35 @@ groupTerritories.yes = Yes
 groupTerritories.no = No
 GroupTerritories.error.required = Select yes if your group has businesses in more than one country
 
+registrationPage.title = Register for Plastic Packaging Tax
+registrationPage.subheading.complete = Registration complete
+registrationPage.subheading.incomplete = Registration incomplete
+registrationPage.completedSections = You have completed {0} of {1} sections.
+registrationPage.task.eligibility.heading = Liability details
+registrationPage.task.eligibility = Find out your tax start date
+registrationPage.task.organisation.heading = Organisation details
+registrationPage.task.organisation.heading.group = Representative member details
+registrationPage.task.organisation.heading.partnership = Enter partnership details
+registrationPage.task.organisation = Enter organisation details
+registrationPage.task.organisation.group = Enter representative member details
+registrationPage.task.organisation.partnership = Partnership details
+registrationPage.task.contactDetails.heading = Contact details
+registrationPage.task.contactDetails.heading.group = Main contact details
+registrationPage.task.contactDetails.heading.partnership = Enter details of partners in the partnership
+registrationPage.task.contactDetails = Enter contact details
+registrationPage.task.contactDetails.group = Enter main contact details
+registrationPage.task.contactDetails.partnership = Enter details of the nominated partner
+registrationPage.task.contactDetails.partnership.otherPartners = Enter details of the other partners
+registrationPage.task.otherOrganisation.heading = Other organisations in the group
+registrationPage.task.otherOrganisation = Enter details of other organisations in the group
+registrationPage.task.review.heading = Review and send
+registrationPage.task.review = Submit registration
+
+task.status.notStarted = Not Started
+task.status.inProgress = In Progress
+task.status.completed = Completed
+task.status.cannotStartYet = Cannot Start Yet
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
