@@ -25,15 +25,17 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
+    pageTitle    = titleNoForm(messages("KBMnIneligible.title")), showSignOut = false, timeout = false) {
     @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("KBMnIneligible.heading")</h1>
+
+<p class="govuk-body">@messages("KBMnIneligible.p1")</p>
+
+<p class="govuk-body">@messages("KBMnIneligible.p2")</p>
 
 
+<p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">@messages("KBMnIneligible.link")</a></p>
 
-        @govukButton(
-            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-        )
-    }
+}
 
 }

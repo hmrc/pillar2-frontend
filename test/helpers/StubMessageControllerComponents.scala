@@ -36,7 +36,7 @@ trait StubMessageControllerComponents extends Configs {
 
   implicit val messages: Map[String, String] =
     Messages
-      .parse(UrlMessageSource(this.getClass.getClassLoader.getResource("messages")), "")
+      .parse(UrlMessageSource(this.getClass.getClassLoader.getResource("messages.en")), "")
       .toOption
       .getOrElse(Map.empty[String, String])
 

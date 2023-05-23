@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package pages
 
-object Pillar2SessionKeys {
+import pages.behaviours.PageBehaviours
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
+class TurnOverEligibilityPageSpec extends PageBehaviours {
+
+  "TurnOverEligibilityPage" - {
+
+    beRetrievable[Boolean](TurnOverEligibilityPage)
+
+    beSettable[Boolean](TurnOverEligibilityPage)
+
+    beRemovable[Boolean](TurnOverEligibilityPage)
+  }
 }

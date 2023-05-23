@@ -17,72 +17,69 @@
 package controllers.eligibility
 
 import controllers.routes
+
 import helpers.ControllerBaseSpec
-import models.NormalMode
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, contains}
-import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.i18n.Messages
-import play.api.libs.json.Json
+
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, _}
+import play.api.test.Helpers._
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-import scala.concurrent.Future
+class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
 
-class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
-
-  def controller(): BusinessActivityUKController =
-    new BusinessActivityUKController(
-      getBusinessActivityUKFormProvider,
+  def controller(): TurnOverEligibilityController =
+    new TurnOverEligibilityController(
+      getTurnOverEligibilityProvider,
       stubMessagesControllerComponents(),
-      businessActivityUKView,
+      turnOverEligibilityView,
       mockSessionData
     )
 
-  val mockFormYesData = Map("confirmForm" -> "yes")
-  val mockFormNoData  = Map("confirmForm" -> "no")
+  val mockFormYesData = Map("confirmForm" -> "true")
+  val mockFormNoData  = Map("confirmForm" -> "false")
 
-  "Trading Business Confirmation Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+  "Turn Over Eligibility Controller" should {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+        FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
 
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Does any business in your group have business activity in the UK"
+        "Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?"
       )
+
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when chosen Yes and submitted" in {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url
+      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
 
     }
-    "must redirect to the next page when valid data is submitted with no selected" in {
+
+    "must redirect to the next page when chosen No and submitted" in {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "no"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url
 
     }
+
     "must show error page with 400 if no option is selected " in {
       val formData = Map("value" -> "")
       val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
+        FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
       val result = controller.onSubmit()()(request)
       status(result) shouldBe 400
     }

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Pillar2SessionKeys {
+import javax.inject.Inject
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
+import forms.mappings.Mappings
+import play.api.data.Form
+
+class TurnOverEligibilityFormProvider @Inject() extends CommonFormats {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> nonEmptyTextWithErrorOverride("turnOverEligibility.error.required")
+    )
 }

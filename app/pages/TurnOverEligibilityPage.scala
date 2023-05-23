@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package pages
 
-object Pillar2SessionKeys {
+import play.api.libs.json.JsPath
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
+case object TurnOverEligibilityPage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "turnOverEligibility"
 }
