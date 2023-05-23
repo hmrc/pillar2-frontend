@@ -35,3 +35,4 @@ bin
 /.classpath
 *.iws
 **/sbt.json
+.g8
