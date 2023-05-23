@@ -37,7 +37,7 @@ class EligibilityConfirmationControllerSpec extends ControllerBaseSpec {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "You need to register this group for global minimum tax"
+        "You need to register this group for Global Minimum Tax"
       )
 
     }

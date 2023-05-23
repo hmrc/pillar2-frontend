@@ -21,10 +21,11 @@ import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig}
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
-import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcReportTechnicalIssueHelper, HmrcScripts, HmrcStandardFooter, HmrcStandardHeader, HmrcTrackingConsentSnippet}
+import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{BusinessActivityUKView, EligibilityConfirmationView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, TradingBusinessConfirmationView, TurnOverEligibilityView}
+import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.templates.Layout
+import views.html._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
