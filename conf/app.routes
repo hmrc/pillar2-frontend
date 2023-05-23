@@ -4,6 +4,8 @@
 
 GET         /                                            controllers.IndexController.onPageLoad
 POST        /submit                                      controllers.IndexController.onSubmit
+GET         /task-list/register-for-global-minimum-tax   controllers.TaskListController.onPageLoad
+POST        /task-list/register-for-global-minimum-tax   controllers.TaskListController.onSubmit
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
