@@ -15,18 +15,27 @@
  *@
 
 @import config.FrontendAppConfig
-
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
 )
 
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(
+    pageTitle    = titleNoForm(messages("index.title")),
+    showBackLink = false
+) {
+    @formHelper(action = routes.TaskListController.onSubmit) {
+        <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+        <p class="govuk-body">@messages("index.guidance")</p>
 
-    @govukSummaryList(list)
+        @govukButton(
+            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+        )
+    }
+
 }
