@@ -31,62 +31,65 @@
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
 
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">You have completed 0 of 5 sections.</p>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections")</p>
 
         <ol class="app-task-list">
             <li>
                 <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">1. </span> Business details
+                    <span class="app-task-list__section-number">1. </span>
+                    @messages("taskList.task.business.heading")
                 </h2>
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="/current/business-matching/ultimate-parent/match-hmrc-records" aria-describedby="eligibility-status">
-                Enter ultimate parent's details
-              </a>
-            </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag"> Not Started </strong>
+                        <span class="app-task-list__task-name">
+                          <a href="/current/business-matching/ultimate-parent/match-hmrc-records" aria-describedby="eligibility-status">
+                             @messages("taskList.task.business.ultimate")
+                          </a>
+                        </span>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
                     </li>
                     <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              Enter filing member's details
-            </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag"> Cannot start yet</strong>
+                        <span class="app-task-list__task-name">
+                           @messages("taskList.task.business.filingMember")
+                        </span>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet") </strong>
                     </li>
                     <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              Enter further registration details
-            </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag"> Cannot start yet</strong>
+                        <span class="app-task-list__task-name">
+                           @messages("taskList.task.business.more")
+                        </span>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet")</strong>
                     </li>
                 </ul>
             </li>
 
             <li>
                 <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">2. </span> Contact details
+                    <span class="app-task-list__section-number">2. </span>
+                    @messages("taskList.task.contact.heading")
                 </h2>
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              Add contact details
-            </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="submit-pay-status">Cannot start yet</strong>
+                        <span class="app-task-list__task-name">
+                           @messages("taskList.task.contact")
+                        </span>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
                     </li>
                 </ul>
             </li>
 
             <li>
                 <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">3. </span> Review and submit
+                    <span class="app-task-list__section-number">3. </span>
+                    @messages("taskList.task.review.heading")
                 </h2>
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              Check your answers
-            </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="submit-pay-status">Cannot start yet</strong>
+                        <span class="app-task-list__task-name">
+                           @messages("taskList.task.review")
+                        </span>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
                     </li>
                 </ul>
             </li>
