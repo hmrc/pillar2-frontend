@@ -18,7 +18,6 @@ package controllers.eligibility
 
 import cache.SessionData
 import config.FrontendAppConfig
-import controllers.routes
 import forms.TurnOverEligibilityFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -58,7 +57,8 @@ class TurnOverEligibilityController @Inject() (
           value match {
             case "yes" =>
               Future.successful(
-                Redirect(routes.UnderConstructionController.onPageLoad).withSession(sessionData.updateTurnOverEligibilitySessionData(value))
+                Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
+                  .withSession(sessionData.updateTurnOverEligibilitySessionData(value))
               )
             case "no" =>
               Future.successful(
