@@ -47,12 +47,12 @@ tradingBusinessConfirmation.no = No
 tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
 
 under_construction.heading = Under Construction
-businessActivityUK.title = Does any business in your group have business activity in the UK?
-businessActivityUK.heading = Does any business in your group have business activity in the UK?
-businessActivityUK.check.liable.text = Check if your group is liable
+businessActivityUK.title = Does any entity in this group have business activity in the UK?
+businessActivityUK.heading = Does any entity in this group have business activity in the UK?
+businessActivityUK.check.liable.text = Check if this group needs to register
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.error.required = Select yes if your group has business activities in the UK
+businessActivityUK.error.required = Select yes if this group has business activities in the UK
 
 turnOverEligibility.title = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
 turnOverEligibility.heading = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?

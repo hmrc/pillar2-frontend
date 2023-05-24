@@ -55,7 +55,7 @@ class BusinessActivityUKControllerSpec extends ControllerBaseSpec {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Does any business in your group have business activity in the UK"
+        "Does any entity in this group have business activity in the UK?"
       )
     }
 
