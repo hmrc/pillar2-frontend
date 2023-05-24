@@ -16,14 +16,11 @@
 
 package controllers.eligibility
 
-import controllers.routes
-
 import helpers.ControllerBaseSpec
-
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
 
@@ -61,7 +58,7 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
           .withFormUrlEncodedBody(("value", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url
 
     }
 

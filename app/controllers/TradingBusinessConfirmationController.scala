@@ -20,17 +20,16 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.TradingBusinessConfirmationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TradingBusinessConfirmationView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TradingBusinessConfirmationController @Inject() (

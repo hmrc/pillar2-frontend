@@ -25,8 +25,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
-
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
