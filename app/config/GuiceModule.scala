@@ -18,15 +18,12 @@ package config
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
-import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, IdentifierAction}
-import play.api.i18n.DefaultMessagesApiProvider
-import play.api.mvc.MessagesControllerComponents
+import controllers.actions._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.Singleton
-import scala.concurrent.ExecutionContext
 
 class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
 
