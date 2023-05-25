@@ -38,7 +38,7 @@ class EligibilityConfirmationController @Inject() (
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(
-      Redirect(controllers.routes.TradingBusinessConfirmationController.onPageLoad)
+      Redirect(controllers.routes.TaskListController.onPageLoad)
     )
   }
 }
