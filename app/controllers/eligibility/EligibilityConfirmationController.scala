@@ -16,56 +16,29 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
-import forms.GroupTerritoriesFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
-import views.html.GroupTerritoriesView
+import views.html.eligibilityview.EligibilityConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GroupTerritoriesController @Inject() (
-  formProvider:             GroupTerritoriesFormProvider,
+class EligibilityConfirmationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     GroupTerritoriesView,
-  sessionData:              SessionData
+  view:                     EligibilityConfirmationView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.groupTerritoriesPageYesNo) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
-    Ok(view(preparedForm))
+    Ok(view())
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        value =>
-          value match {
-            case "yes" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-            case "no" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-          }
-      )
+    Future.successful(
+      Redirect(controllers.routes.TradingBusinessConfirmationController.onPageLoad)
+    )
   }
 }

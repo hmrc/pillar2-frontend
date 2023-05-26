@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import controllers.eligibility.routes
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.TurnOverEligibilityPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

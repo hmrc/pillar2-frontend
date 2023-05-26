@@ -21,8 +21,6 @@ import play.api.data.format.Formatter
 import play.api.data.validation.Constraints
 import play.api.data.{FieldMapping, FormError, Mapping}
 
-import scala.util.Try
-
 trait CommonFormats extends Constraints {
 
   type FormDataValidator = (String, Map[String, String]) => Seq[FormError]

@@ -16,7 +16,7 @@
 
 package cache
 
-import play.api.mvc.{AnyContent, Request, Result, Session}
+import play.api.mvc.{AnyContent, Request, Session}
 import utils.Pillar2SessionKeys
 
 import javax.inject.Singleton
