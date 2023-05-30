@@ -64,7 +64,6 @@ turnOverEligibility.error.required = Select yes if your group had more than 750 
 turnOverEligibility.change.hidden = Change
 groupTerritories.title = Does your group have businesses in more than one country?
 groupTerritories.heading = Does your group have businesses in more than one country?
-businessActivityUK.check.liable.text = Check if your group is liable
 groupTerritories.yes = Yes
 groupTerritories.no = No
 GroupTerritories.error.required = Select yes if your group has businesses in more than one country
