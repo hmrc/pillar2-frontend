@@ -18,23 +18,20 @@ This can be start or stop by running:
 To run the unit tests:
 
     Run 'sbt test' from within the project
+
+To check code coverage:
+
+    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport
+
+
 ### Eligibility question
 
 Eligibility questions journey start  with this url '/eligibility/group-in-multiple-territories' and there are four different questions to check eligibility.
 User does not need to be authenticated for this journey.
 
-Endpoint for eligibility questions.
+Endpoint to start eligibility questions.
     
     /eligibility/group-in-multiple-territories
-    /eligibility/activities-within-the-uk
-    /eligibility/global-gross-revenue
-    /eligibility/confirmation
-
-End point for eligibility guidance pages
-
-    /eligibility/kb-mne-ineligible
-    /eligibility/kb-in-the-uk-ineligible
-    /eligibility/kb-750-ineligible
 
 
 if all question asked in this journey answered with 'yes' then this mean you need to pay Global Minimum Tax, User will be redirected to  HMRC online services to register.
