@@ -43,19 +43,7 @@ class TaskListControllerSpec extends SpecBase {
           "Register for Global Minimum Tax"
         )
         contentAsString(result) should include(
-          "Enter ultimate parent's details"
-        )
-        contentAsString(result) should include(
-          "Enter filing members details"
-        )
-        contentAsString(result) should include(
-          "Enter further registration details"
-        )
-        contentAsString(result) should include(
-          "Contact details"
-        )
-        contentAsString(result) should include(
-          "Enter contact details"
+          "Application incomplete"
         )
         contentAsString(result) should include(
           "Review and submit"
