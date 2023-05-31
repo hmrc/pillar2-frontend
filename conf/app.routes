@@ -29,6 +29,7 @@ GET         /eligibility/confirmation                   controllers.eligibility.
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
+GET         /eligibility/clear-session                   controllers.UnderConstructionController.onPageLoadClear
 
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
