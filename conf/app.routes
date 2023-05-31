@@ -32,7 +32,7 @@ GET         /eligibility/clear-session                   controllers.UnderConstr
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
 GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KbMnIneligibleController.onPageLoad
-GET         /eligibility/kb-in-the-uk-ineligible         controllers.eligibility.KbUKIneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
 GET         /eligibility/kb-750-ineligible               controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad

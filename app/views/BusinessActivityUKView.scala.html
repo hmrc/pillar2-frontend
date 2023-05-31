@@ -34,7 +34,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">Check if your group is liable</span>
+        <span class="govuk-caption-l">@messages("businessActivityUK.check.liable.text")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
