@@ -17,6 +17,12 @@ GET         /check-your-answers                          controllers.CheckYourAn
 GET         /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /business-matching/match-hmrc-records               controllers.registration.StartPageRegistrationController.onPageLoad
+POST        /business-matching/match-hmrc-records               controllers.registration.StartPageRegistrationController.onSubmit
+
+
+
+
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
 

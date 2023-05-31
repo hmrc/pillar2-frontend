@@ -46,6 +46,13 @@ tradingBusinessConfirmation.yes = Yes
 tradingBusinessConfirmation.no = No
 tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
 
+
+startPageRegistration.title = We need to match the details of this ultimate parent entity to HMRC records
+startPageRegistration.heading = We need to match the details of this ultimate parent entity to HMRC records
+startPageRegistration.p1=We will ask you for several pieces of identifying information about the ultimate parent of this group so that we can best match the ultimate parent to our records.
+startPageRegistration.heading.caption=Business details
+
+
 under_construction.heading = Under Construction
 businessActivityUK.title = Does any entity in this group have business activity in the UK?
 businessActivityUK.heading = Does any entity in this group have business activity in the UK?

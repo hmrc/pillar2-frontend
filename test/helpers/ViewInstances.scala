@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.templates.Layout
 import views.html._
+import views.html.registrationview.StartPageRegistrationView
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -124,5 +125,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val eligibilityConfirmationView: EligibilityConfirmationView =
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
+
+  val startPageRegistrationView: StartPageRegistrationView =
+    new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
 
 }
