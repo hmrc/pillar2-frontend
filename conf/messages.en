@@ -52,7 +52,7 @@ businessActivityUK.heading = Does any entity in this group have business activit
 businessActivityUK.check.liable.text = Check if this group needs to register
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.error.required = Select yes if this group has business activities in the UK
+businessActivityUK.error.required = Select yes if the group has business activities in the UK
 
 turnOverEligibility.title = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
 turnOverEligibility.heading = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
