@@ -125,4 +125,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val eligibilityConfirmationView: EligibilityConfirmationView =
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
 
+  val upeRegisteredInUKConfirmationView: UPERegisteredInUKConfirmationView =
+    new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 }

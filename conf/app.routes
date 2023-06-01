@@ -26,6 +26,9 @@ POST        /eligibility/global-gross-revenue             controllers.eligibilit
 GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
+GET         /business-matching/ultimate-parent/registered-in-uk controllers.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/registered-in-uk controllers.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /eligibility/clear-session                   controllers.UnderConstructionController.onPageLoadClear
 
