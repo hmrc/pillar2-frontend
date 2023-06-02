@@ -111,7 +111,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-isUPEBasedInUK.title = Business details
+isUPEBasedInUK.heading.caption = Business details
 isUPEBasedInUK.heading = Is this ultimate parent entity based in the UK?
 isUPEBasedInUK.yes = Yes
 isUPEBasedInUK.no = No

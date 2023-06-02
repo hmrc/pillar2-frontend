@@ -35,6 +35,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
+        <span class="govuk-caption-l">@messages("isUPEBasedInUK.heading.caption")</span>
+
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
