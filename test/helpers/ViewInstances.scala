@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.templates.Layout
 import views.html._
-import views.html.registrationview.StartPageRegistrationView
+import views.html.registrationview.{StartPageRegistrationView, UpeNameRegistrationView}
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -128,5 +128,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val startPageRegistrationView: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
+
+  val upeNameRegistrationView: UpeNameRegistrationView =
+    new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
 }
