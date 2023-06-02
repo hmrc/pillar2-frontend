@@ -23,5 +23,5 @@ case object UPERegisteredInUKConfirmationPage extends QuestionPage[UPERegistered
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isUPEBasedInUK"
+  override def toString: String = "registration.isUPEBasedInUK"
 }
