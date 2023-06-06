@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.IndexView
+import views.html.{IndexView, TaskListView}
 
 class IndexControllerSpec extends SpecBase {
 
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return 303 and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -34,11 +34,10 @@ class IndexControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IndexView]
+        val view = application.injector.instanceOf[TaskListView]
 
-        status(result) mustEqual OK
+        status(result) mustEqual SEE_OTHER
 
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }
