@@ -17,17 +17,10 @@
 package controllers.registration
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions.IdentifierAction
-
-import models.Mode
-import navigation.Navigator
-
 import play.api.i18n.I18nSupport
-
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import views.html.registrationview.StartPageRegistrationView
 
 import javax.inject.Inject
@@ -46,6 +39,6 @@ class StartPageRegistrationController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    Future.successful(Redirect(controllers.routes.UPERegisteredInUKConfirmationController.onPageLoad))
   }
 }
