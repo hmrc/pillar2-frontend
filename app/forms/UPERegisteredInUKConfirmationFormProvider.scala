@@ -26,6 +26,6 @@ class UPERegisteredInUKConfirmationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UPERegisteredInUKConfirmation] =
     Form(
-      "value" -> enumerable[UPERegisteredInUKConfirmation]("isUPEBasedInUK.error.required")
+      "value" -> enumerable[UPERegisteredInUKConfirmation]("isUPERegisteredInUK.error.required")
     )
 }
