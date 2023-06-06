@@ -37,7 +37,9 @@ Endpoint to start eligibility questions.
 if all question asked in this journey answered with 'yes' then this mean you need to pay Global Minimum Tax, User will be redirected to  HMRC online services to register.
 
 
+To use testonly route locally .
 
+    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 
 
 ### License
