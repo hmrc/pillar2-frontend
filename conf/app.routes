@@ -4,6 +4,8 @@
 
 GET         /                                            controllers.IndexController.onPageLoad
 POST        /submit                                      controllers.IndexController.onSubmit
+GET         /task-list/register-for-global-minimum-tax   controllers.TaskListController.onPageLoad
+POST        /task-list/register-for-global-minimum-tax   controllers.TaskListController.onSubmit
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -30,7 +32,7 @@ GET         /business-matching/ultimate-parent/registered-in-uk controllers.UPER
 POST        /business-matching/ultimate-parent/registered-in-uk controllers.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
-GET         /eligibility/clear-session                   controllers.UnderConstructionController.onPageLoadClear
+GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
