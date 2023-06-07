@@ -22,6 +22,10 @@ POST        /trading-business-confirmation               controllers.TradingBusi
 GET         /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onPageLoad
 POST        /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onSubmit
 
+GET         /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+
+
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
 

@@ -17,16 +17,17 @@
 package helpers
 
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredActionImpl, DataRetrievalActionImpl}
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider}
+import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import play.api.http.{HttpProtocol, MimeTypes}
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerBaseSpec
     extends BaseSpec
@@ -63,6 +64,7 @@ trait ControllerBaseSpec
   }
 
   def getTradingBusinessConfirmationFormProvider:   TradingBusinessConfirmationFormProvider   = new TradingBusinessConfirmationFormProvider()
+  def getUpeNameRegistrationFormProvider: UpeNameRegistrationFormProvider = new UpeNameRegistrationFormProvider()
   def getBusinessActivityUKFormProvider:            BusinessActivityUKFormProvider            = new BusinessActivityUKFormProvider()
   def getTurnOverEligibilityProvider:               TurnOverEligibilityFormProvider           = new TurnOverEligibilityFormProvider()
   def getGroupTerritoriesFormProvider:              GroupTerritoriesFormProvider              = new GroupTerritoriesFormProvider()
