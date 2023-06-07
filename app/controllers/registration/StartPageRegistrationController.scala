@@ -39,6 +39,6 @@ class StartPageRegistrationController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UPERegisteredInUKConfirmationController.onPageLoad))
+    Future.successful(Redirect(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad))
   }
 }

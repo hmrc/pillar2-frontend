@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.registration
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
-import models.Mode
+import models.{Mode, UPERegisteredInUKConfirmation}
 import navigation.Navigator
 import pages.UPERegisteredInUKConfirmationPage
 import play.api.i18n.I18nSupport
@@ -28,7 +29,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.UPERegisteredInUKConfirmationView
+import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,10 +64,18 @@ class UPERegisteredInUKConfirmationController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+          value match {
+            case UPERegisteredInUKConfirmation.Yes =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            case UPERegisteredInUKConfirmation.No =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+          }
       )
   }
 }

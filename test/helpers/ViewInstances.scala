@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.templates.Layout
 import views.html._
-import views.html.registrationview.StartPageRegistrationView
+import views.html.registrationview.{StartPageRegistrationView, UPERegisteredInUKConfirmationView}
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 

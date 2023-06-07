@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.registration.UPERegisteredInUKConfirmationController
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -43,21 +44,35 @@ class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
     )
 
   "Is UPE Registered in UK Confirmation Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UPERegisteredInUKConfirmationController.onPageLoad())
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UPERegisteredInUKConfirmationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad().url)
+        .withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+
+    }
+
+    "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
+
+      val request =
+        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+          .withFormUrlEncodedBody(("value", "no"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
