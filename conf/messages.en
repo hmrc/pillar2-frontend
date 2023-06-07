@@ -73,7 +73,7 @@ startPageRegistration.heading.caption=Business details
 upeNameRegistration.heading.caption=Business details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
-upeNameRegistration.error.required= Enter the name of the ultimate parent
+upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 
 
 under_construction.heading = Under Construction
