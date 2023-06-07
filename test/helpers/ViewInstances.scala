@@ -28,7 +28,6 @@ import views.html.templates.Layout
 import views.html._
 import views.html.registrationview.{StartPageRegistrationView, UPERegisteredInUKConfirmationView, UpeNameRegistrationView}
 
-
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
