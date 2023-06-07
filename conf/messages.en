@@ -70,6 +70,11 @@ startPageRegistration.heading = We need to match the details of this ultimate pa
 startPageRegistration.p1=We will ask you for several pieces of identifying information about the ultimate parent of this group so that we can best match the ultimate parent to our records.
 startPageRegistration.heading.caption=Business details
 
+upeNameRegistration.heading.caption=Business details
+upeNameRegistration.title = What is the name of the ultimate parent entity?
+upeNameRegistration.heading = What is the name of the ultimate parent entity?
+upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
+
 
 under_construction.heading = Under Construction
 businessActivityUK.title = Does any entity in this group have business activity in the UK?
