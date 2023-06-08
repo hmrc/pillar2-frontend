@@ -74,7 +74,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
           }
       )
   }
