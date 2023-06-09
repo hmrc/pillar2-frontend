@@ -15,6 +15,18 @@ date.day = Day
 date.month = Month
 date.year = Year
 
+upe-registered-address.title=Where is the registered office address of {0}?
+upe-registered-address.heading=Where is the registered office address of {0}?
+upe-registered-address.address-line-1 = Address line 1
+upe-registered-address.address-line-2 = Address line 2 (optional)
+upe-registered-address.town-city = Town or City
+upe-registered-address.region = Region (optional)
+upe-registered-address.postcode = Postcode (if applicable)
+upe-registered-address.country = Country
+upe-registered-address.address-line-1.error.required = Enter the address line 1 of [user name input]
+upe-registered-address.town-city.error.required = Enter the city of [user name input]
+upe-registered-address.country.error.required = Enter the country of [user name input]
+
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete
