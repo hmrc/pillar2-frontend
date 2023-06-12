@@ -35,11 +35,11 @@ package models
 import play.api.libs.json.{Json, OFormat}
 
 case class UpeRegisteredAddress(
-  addressLine1: String = "",
-  addressLine2: Option[String] = None,
+  addressLine1: String,
+  addressLine2: Option[String],
   townOrCity:   String = "",
-  region:       Option[String] = None,
-  postcode:     Option[String] = None,
+  region:       Option[String],
+  postcode:     Option[String],
   country:      String = ""
 )
 

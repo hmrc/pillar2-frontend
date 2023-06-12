@@ -22,7 +22,7 @@ import models.address.Address
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
-class UpeRegisteredAddressFormProvider @Inject() extends AddressMapping {
+class AddressFormProvider @Inject() extends AddressMapping {
 
   def apply(): Form[Address] = Form(
     mapping(
@@ -49,11 +49,13 @@ class UpeRegisteredAddressFormProvider @Inject() extends AddressMapping {
           "messages__error__address_line_1_invalid"
         ),
       "region" ->
-        regionMapping("messages__error__postcode"),
+        optionalRegionMapping("messages__error__address_line_4_length", "messages__error__address_line_4_invalid"),
       "postCode" ->
         postCodMapping("messages__error__postcode"),
       "country" ->
-        countryMapping("messages__error_country_required")
+        countryMapping(
+          "messages__error__address_line_1_required"
+        )
     )(Address.apply)(Address.unapply)
   )
 }

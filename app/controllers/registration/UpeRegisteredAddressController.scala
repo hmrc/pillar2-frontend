@@ -19,10 +19,13 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
+import forms.address.AddressFormProvider
+
 import models.Mode
+import models.address.Address
 import navigation.Navigator
 import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,14 +41,14 @@ class UpeRegisteredAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeRegisteredAddressFormProvider,
+  formProvider:              AddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  protected val form: Form[Address] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {

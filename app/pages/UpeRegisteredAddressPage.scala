@@ -17,9 +17,10 @@
 package pages
 
 import models.UpeRegisteredAddress
+import models.address.Address
 import play.api.libs.json.JsPath
 
-case object UpeRegisteredAddressPage extends QuestionPage[String] {
+case object UpeRegisteredAddressPage extends QuestionPage[Address] {
 
   override def path: JsPath = JsPath \ toString
 
