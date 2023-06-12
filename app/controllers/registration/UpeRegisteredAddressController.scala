@@ -49,8 +49,8 @@ class UpeRegisteredAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+      case None          => form
+      case Some(address) => form.fill(address)
     }
 
     Ok(view(preparedForm, mode))
