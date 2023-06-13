@@ -40,7 +40,7 @@ class AddressFormProvider @Inject() extends Mappings {
           text("")
             .verifying(maxLength(textLength, "upe-registered-address.region.error.length"))
         ),
-      "postCode" ->
+      "postcode" ->
         optional(
           text("")
             .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))

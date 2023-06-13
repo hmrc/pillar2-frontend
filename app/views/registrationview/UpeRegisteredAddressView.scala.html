@@ -26,14 +26,14 @@
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upe-registered-address.title"))) {
+@layout(pageTitle = title(form, messages("upe-registered-address.title", UserName ))) {
 
     @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit()) {
 
-        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("upe-registered-address.heading", "John")</h1>
+        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption", UserName)</span>
+        <h1 class="govuk-heading-l">@messages("upe-registered-address.heading", UserName)</h1>
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

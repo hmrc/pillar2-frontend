@@ -67,7 +67,7 @@ class UpeNameRegistrationController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad)
       )
   }
 }
