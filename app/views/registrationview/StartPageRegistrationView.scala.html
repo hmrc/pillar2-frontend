@@ -33,7 +33,7 @@
 <p class="govuk-body">@messages("startPageRegistration.p1")</p>
 
      @govukButton(
-      ButtonViewModel(messages("site.continue")).asLink(routes.UnderConstructionController.onPageLoad.url)
+      ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad.url)
      )
 }
 
