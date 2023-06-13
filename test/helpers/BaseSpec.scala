@@ -48,7 +48,7 @@ trait BaseSpec
 
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
-  implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration)
+  implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
 
