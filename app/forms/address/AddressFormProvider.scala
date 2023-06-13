@@ -23,17 +23,17 @@ import play.api.data.Forms.{mapping, optional}
 import forms.mappings.Mappings
 class AddressFormProvider @Inject() extends Mappings {
   private val textLength = 200
-  def apply(): Form[Address] = Form(
+  def apply(userName: String): Form[Address] = Form(
     mapping(
       "addressLine1" ->
-        text("upe-registered-address.messages.error.address-line-1.required")
+        text("upe-registered-address.messages.error.address-line-1.required", Seq(userName))
           .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-1.length")),
       "addressLine2" -> optional(
         text("")
           .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-2.length"))
       ),
       "townOrCity" ->
-        text("upe-registered-address.town-city.error.required")
+        text("upe-registered-address.town-city.error.required", Seq(userName))
           .verifying(maxLength(textLength, "upe-registered-address.town-city.error.length")),
       "region" ->
         optional(
@@ -46,7 +46,7 @@ class AddressFormProvider @Inject() extends Mappings {
             .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))
         ),
       "country" ->
-        text("upe-registered-address.country.error.required")
+        text("upe-registered-address.country.error.required", Seq(userName))
           .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
     )(Address.apply)(Address.unapply)
   )
