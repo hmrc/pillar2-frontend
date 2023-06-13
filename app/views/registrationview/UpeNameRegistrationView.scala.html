@@ -16,6 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -39,9 +40,9 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("upeNameRegistration.heading")).asPageHeading()
+                label = LabelViewModel(messages("upeNameRegistration.heading")).asPageHeading(Large)
             )
-            .withWidth(Full)
+            .withWidth(TwoThirds)
         )
 
         @govukButton(
