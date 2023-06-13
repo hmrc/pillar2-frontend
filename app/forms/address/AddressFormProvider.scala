@@ -16,46 +16,38 @@
 
 package forms.address
 
-import forms.mappings.AddressMapping
 import javax.inject.Inject
 import models.address.Address
 import play.api.data.Form
-import play.api.data.Forms.mapping
-
-class AddressFormProvider @Inject() extends AddressMapping {
-
+import play.api.data.Forms.{mapping, optional}
+import forms.mappings.Mappings
+class AddressFormProvider @Inject() extends Mappings {
+  private val textLength = 200
   def apply(): Form[Address] = Form(
     mapping(
       "addressLine1" ->
-        addressLineMapping(
-          "messages__error__address_line_1_required",
-          "messages__error__address_line_1_length",
-          "messages__error__address_line_1_invalid"
-        ),
-      "addressLine2" ->
-        addressLineMapping(
-          "messages__error__address_line_2_required",
-          "messages__error__address_line_2_length",
-          "messages__error__address_line_2_invalid"
-        ),
-      "addressLine3" ->
-        optionalAddressLineMapping("messages__error__address_line_3_length", "messages__error__address_line_3_invalid"),
-      "addressLine4" ->
-        optionalAddressLineMapping("messages__error__address_line_4_length", "messages__error__address_line_4_invalid"),
+        text("upe-registered-address.messages.error.address-line-1.required")
+          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-1.length")),
+      "addressLine2" -> optional(
+        text("")
+          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-2.length"))
+      ),
       "townOrCity" ->
-        townOrCityMapping(
-          "messages__error__address_line_1_required",
-          "messages__error__address_line_1_length",
-          "messages__error__address_line_1_invalid"
-        ),
+        text("upe-registered-address.town-city.error.required")
+          .verifying(maxLength(textLength, "upe-registered-address.town-city.error.length")),
       "region" ->
-        optionalRegionMapping("messages__error__address_line_4_length", "messages__error__address_line_4_invalid"),
+        optional(
+          text("")
+            .verifying(maxLength(textLength, "upe-registered-address.region.error.length"))
+        ),
       "postCode" ->
-        postCodMapping("messages__error__postcode"),
+        optional(
+          text("")
+            .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))
+        ),
       "country" ->
-        countryMapping(
-          "messages__error__address_line_1_required"
-        )
+        text("upe-registered-address.country.error.required")
+          .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
     )(Address.apply)(Address.unapply)
   )
 }

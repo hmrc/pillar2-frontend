@@ -24,35 +24,6 @@ import scala.collection.immutable.Seq
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
-
-  private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data
-        .get(key)
-        .map(standardiseText)
-        .filter(_.lengthCompare(0) > 0)
-        .toRight(Seq(FormError(key, errorKey)))
-
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value)
-  }
-
-  private def standardiseText(s: String): String =
-    s.replaceAll("""\s{1,}""", " ").trim
-
-  private[mappings] val optionalStringFormatter: Formatter[Option[String]] = new Formatter[Option[String]] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
-      Right(
-        data
-          .get(key)
-          .map(standardiseText)
-          .filter(_.lengthCompare(0) > 0)
-      )
-
-    override def unbind(key: String, value: Option[String]): Map[String, String] =
-      Map(key -> value.getOrElse(""))
-  }
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =

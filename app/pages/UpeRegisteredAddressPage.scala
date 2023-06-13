@@ -16,7 +16,6 @@
 
 package pages
 
-import models.UpeRegisteredAddress
 import models.address.Address
 import play.api.libs.json.JsPath
 
