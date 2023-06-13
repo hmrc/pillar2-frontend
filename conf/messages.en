@@ -141,4 +141,10 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+isUPERegisteredInUK.heading.caption = Business details
+isUPERegisteredInUK.heading = Is the ultimate parent entity registered in the UK?
+isUPERegisteredInUK.yes = Yes
+isUPERegisteredInUK.no = No
+isUPERegisteredInUK.error.required= Select yes if the ultimate parent entity is registered in the UK
+
 

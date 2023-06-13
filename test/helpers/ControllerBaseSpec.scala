@@ -17,7 +17,7 @@
 package helpers
 
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredActionImpl, DataRetrievalActionImpl}
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UpeNameRegistrationFormProvider}
+import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import play.api.http.{HttpProtocol, MimeTypes}
@@ -63,10 +63,11 @@ trait ControllerBaseSpec
     }
   }
 
-  def getTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = new TradingBusinessConfirmationFormProvider()
-  def getUpeNameRegistrationFormProvider:         UpeNameRegistrationFormProvider         = new UpeNameRegistrationFormProvider()
-  def getBusinessActivityUKFormProvider:          BusinessActivityUKFormProvider          = new BusinessActivityUKFormProvider()
-  def getTurnOverEligibilityProvider:             TurnOverEligibilityFormProvider         = new TurnOverEligibilityFormProvider()
-  def getGroupTerritoriesFormProvider:            GroupTerritoriesFormProvider            = new GroupTerritoriesFormProvider()
+  def getTradingBusinessConfirmationFormProvider:   TradingBusinessConfirmationFormProvider   = new TradingBusinessConfirmationFormProvider()
+  def getUpeNameRegistrationFormProvider:           UpeNameRegistrationFormProvider           = new UpeNameRegistrationFormProvider()
+  def getBusinessActivityUKFormProvider:            BusinessActivityUKFormProvider            = new BusinessActivityUKFormProvider()
+  def getTurnOverEligibilityProvider:               TurnOverEligibilityFormProvider           = new TurnOverEligibilityFormProvider()
+  def getGroupTerritoriesFormProvider:              GroupTerritoriesFormProvider              = new GroupTerritoriesFormProvider()
+  def getUPERegisteredInUKConfirmationFormProvider: UPERegisteredInUKConfirmationFormProvider = new UPERegisteredInUKConfirmationFormProvider()
 
 }

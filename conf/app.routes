@@ -19,7 +19,9 @@ GET         /check-your-answers                          controllers.CheckYourAn
 GET         /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onSubmit(mode: Mode = NormalMode)
 
-GET         /business-matching/match-hmrc-records               controllers.registration.StartPageRegistrationController.onPageLoad
+GET         /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onPageLoad
+POST        /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onSubmit
+
 GET         /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 
@@ -32,6 +34,9 @@ POST        /eligibility/global-gross-revenue             controllers.eligibilit
 
 GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
+
+GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
