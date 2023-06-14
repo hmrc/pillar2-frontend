@@ -14,39 +14,40 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
 @import config.FrontendAppConfig
-@import viewmodels.LabelSize.Large
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upeNameRegistration.title"))) {
+@layout(pageTitle = title(form, messages("isUPERegisteredInUK.title"))) {
 
-    @formHelper(action = controllers.registration.routes.UpeNameRegistrationController.onSubmit()) {
+    @formHelper(action = controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("upeNameRegistration.heading")).asPageHeading(Large)
+
+        <span class="govuk-caption-l">@messages("isUPERegisteredInUK.heading.caption")</span>
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("value"),
+                legend = LegendViewModel(messages("isUPERegisteredInUK.heading")).asPageHeading(Large),
+                items  = UPERegisteredInUKConfirmation.options
             )
-            .withWidth(TwoThirds)
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )
     }
 }
