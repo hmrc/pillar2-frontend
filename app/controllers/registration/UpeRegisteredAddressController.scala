@@ -19,7 +19,7 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.address.AddressFormProvider
+import forms.UpeRegisteredAddressFormProvider
 
 import models.Mode
 import models.address.Address
@@ -41,7 +41,7 @@ class UpeRegisteredAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              AddressFormProvider,
+  formProvider:              UpeRegisteredAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)

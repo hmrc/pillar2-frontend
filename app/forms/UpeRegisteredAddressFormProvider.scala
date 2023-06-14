@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package forms.address
+package forms
 
-import javax.inject.Inject
+import forms.mappings.Mappings
 import models.address.Address
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
-import forms.mappings.Mappings
-class AddressFormProvider @Inject() extends Mappings {
+
+import javax.inject.Inject
+class UpeRegisteredAddressFormProvider @Inject() extends Mappings {
   private val textLength = 200
   def apply(userName: String): Form[Address] = Form(
     mapping(
