@@ -17,24 +17,30 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import pages.UPERegisteredInUKConfirmationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{IndexView, TaskListView}
+import views.html.TaskListView
 
 import javax.inject.Inject
 
 class TaskListController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
+  def onPageLoad: Action[AnyContent] = (identify andThen getData) { implicit request =>
+    val upeRegInUK = request.userAnswers.get.get(UPERegisteredInUKConfirmationPage) match {
+      case None        => ""
+      case Some(value) => value
+    }
+    Ok(view(upeRegInUK.toString))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>
