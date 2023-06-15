@@ -20,9 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-
-import models.Mode
-import models.address.Address
+import models.{Mode, UpeRegisteredAddress}
 import navigation.Navigator
 import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.data.Form
@@ -50,7 +48,7 @@ class UpeRegisteredAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val form: Form[Address] = formProvider(userName.getOrElse(""))
+    val form: Form[UpeRegisteredAddress] = formProvider(userName.getOrElse(""))
     val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
       case None          => form
       case Some(address) => form.fill(address)
@@ -61,7 +59,7 @@ class UpeRegisteredAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val form: Form[Address] = formProvider(userName.getOrElse(""))
+    val form: Form[UpeRegisteredAddress] = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(
