@@ -22,7 +22,7 @@
 )
 
 
-@(upeRegInUK:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(regInProgress:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -47,7 +47,7 @@
                              @messages("taskList.task.business.ultimate")
                           </a>
                         </span>
-                        @if(upeRegInUK == "yes" || upeRegInUK == "no"){
+                        @if(regInProgress){
                         <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
                         } else {
                         <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>

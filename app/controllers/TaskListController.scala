@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.UPERegisteredInUKConfirmationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,21 +30,25 @@ class TaskListController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData) { implicit request =>
-    val upeRegInUK = request.userAnswers.get.get(UPERegisteredInUKConfirmationPage) match {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
       case None        => ""
       case Some(value) => value
     }
-    Ok(view(upeRegInUK.toString))
+    val regInProgress = getRegStatus(isUPERegInUK.toString)
+    Ok(view(regInProgress))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>
     Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
   }
 
+  private def getRegStatus(isUPERegInUK: String): Boolean =
+    isUPERegInUK == "yes" || isUPERegInUK == "no"
 }
