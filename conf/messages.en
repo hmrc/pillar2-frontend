@@ -37,7 +37,10 @@ upe-registered-address.messages.error.address-line-1.invalid=The first line of t
 upe-registered-address.messages.error.address-line-2.length=The second line of address cannot be more than 200 characters
 upe-registered-address.messages.error.address-line-2.invalid=The second line of the address contains invalid characters
 
-
+upe-input-business-name.title=What is the name of the person or team we should contact from the ultimate parent entity?
+upe-input-business-name.caption = Business details
+upe-input-business-name.heading = What is the name of the person or team we should contact from the ultimate parent entity?
+upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
