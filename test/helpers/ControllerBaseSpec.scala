@@ -17,7 +17,7 @@
 package helpers
 
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredActionImpl, DataRetrievalActionImpl}
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
+import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeContactNameFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import play.api.http.{HttpProtocol, MimeTypes}
@@ -66,6 +66,7 @@ trait ControllerBaseSpec
   def getTradingBusinessConfirmationFormProvider:   TradingBusinessConfirmationFormProvider   = new TradingBusinessConfirmationFormProvider()
   def getUpeRegisteredAddressFormProvider:          UpeRegisteredAddressFormProvider          = new UpeRegisteredAddressFormProvider()
   def getUpeNameRegistrationFormProvider:           UpeNameRegistrationFormProvider           = new UpeNameRegistrationFormProvider()
+  def getUpeContactNameFormProvider:                UpeContactNameFormProvider                = new UpeContactNameFormProvider()
   def getBusinessActivityUKFormProvider:            BusinessActivityUKFormProvider            = new BusinessActivityUKFormProvider()
   def getTurnOverEligibilityProvider:               TurnOverEligibilityFormProvider           = new TurnOverEligibilityFormProvider()
   def getGroupTerritoriesFormProvider:              GroupTerritoriesFormProvider              = new GroupTerritoriesFormProvider()

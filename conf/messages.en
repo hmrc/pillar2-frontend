@@ -41,7 +41,8 @@ upe-input-business-name.title=What is the name of the person or team we should c
 upe-input-business-name.caption = Business details
 upe-input-business-name.heading = What is the name of the person or team we should contact from the ultimate parent entity?
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-
+upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
+upe-input-business-name.error.length = Name cannot be more than 200 characters
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete

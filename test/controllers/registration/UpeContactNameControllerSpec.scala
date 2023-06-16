@@ -30,41 +30,48 @@ import scala.concurrent.Future
 
 class UpeContactNameControllerSpec extends ControllerBaseSpec {
 
-  def controller(): UpeNameRegistrationController =
-    new UpeNameRegistrationController(
+  def controller(): UpeContactNameController =
+    new UpeContactNameController(
       mockUserAnswersConnectors,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeNameRegistrationFormProvider,
+      getUpeContactNameFormProvider,
       stubMessagesControllerComponents(),
-      upeNameRegistrationView
+      upeContactNameView
     )
 
-  "UpeNameRegistration Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad())
+  "UpeContactName Controller" should {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad().url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "What is the name of the ultimate parent entity"
+        "What is the name of the person or team we should contact from the ultimate parent entity?"
       )
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "ABC Corp"))
+        FakeRequest(POST, routes.UpeContactNameController.onSubmit().url)
+          .withFormUrlEncodedBody(("upeContactName", "Ashley Smith"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+    }
+    "Bad request when no data" in {
+      val request =
+        FakeRequest(POST, routes.UpeContactNameController.onSubmit().url)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual BAD_REQUEST
 
     }
   }

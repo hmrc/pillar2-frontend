@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("upe-input-business-name.title"))) {
 
-    @formHelper(action = controllers.registration.routes.UpeNameRegistrationController.onSubmit()) {
+    @formHelper(action = controllers.registration.routes.UpeContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -42,10 +42,10 @@
                 field = form("upeContactName"),
                 label = LabelViewModel(messages("upe-input-business-name.heading")).asPageHeading(Large),
             )
+            .withHint(Hint(content = Text(messages("upe-input-business-name.hint"))))
             .withWidth(TwoThirds)
         )
 
-        <div id="contact-name-hint" class="govuk-hint">@messages("upe-input-business-name.hint")</div>
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
