@@ -25,30 +25,30 @@ import play.api.data.Forms.{mapping, optional}
 import javax.inject.Inject
 class UpeRegisteredAddressFormProvider @Inject() extends Mappings {
   private val textLength = 200
-  def apply(userName: String): Form[UpeRegisteredAddress] = Form(
+  def apply(): Form[UpeRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("upe-registered-address.messages.error.address-line-1.required", Seq(userName))
+        text("upe-registered-address.messages.error.address-line-1.required")
           .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-1.length")),
       "addressLine2" -> optional(
         text("")
           .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-2.length"))
       ),
-      "townOrCity" ->
-        text("upe-registered-address.town-city.error.required", Seq(userName))
+      "addressLine3" ->
+        text("upe-registered-address.town-city.error.required")
           .verifying(maxLength(textLength, "upe-registered-address.town-city.error.length")),
-      "region" ->
+      "addressLine4" ->
         optional(
           text("")
             .verifying(maxLength(textLength, "upe-registered-address.region.error.length"))
         ),
-      "postcode" ->
+      "postalCode" ->
         optional(
           text("")
             .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))
         ),
-      "country" ->
-        text("upe-registered-address.country.error.required", Seq(userName))
+      "countryCode" ->
+        text("upe-registered-address.country.error.required")
           .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
     )(UpeRegisteredAddress.apply)(UpeRegisteredAddress.unapply)
   )

@@ -55,28 +55,29 @@
         )
         @govukInput(
             InputViewModel(
-                field = form("townOrCity"),
+                field = form("addressLine3"),
                 label = LabelViewModel(messages("upe-registered-address.town-city"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
-                field = form("region"),
+                field = form("addressLine4"),
                 label = LabelViewModel(messages("upe-registered-address.region"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
-                field = form("postcode"),
+                field = form("postalCode"),
                 label = LabelViewModel(messages("upe-registered-address.postcode"))
             )
                     .withWidth(Fixed10)
         )
+
         @govukInput(
             InputViewModel(
-                field = form("country"),
+                field = form("countryCode"),
                 label = LabelViewModel(messages("upe-registered-address.country"))
             )
                     .withWidth(TwoThirds)

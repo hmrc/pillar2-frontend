@@ -45,10 +45,10 @@ class UpeRegisteredAddressController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-
+  val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val form: Form[UpeRegisteredAddress] = formProvider(userName.getOrElse(""))
+
     val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
       case None          => form
       case Some(address) => form.fill(address)
@@ -59,7 +59,6 @@ class UpeRegisteredAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val form: Form[UpeRegisteredAddress] = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(

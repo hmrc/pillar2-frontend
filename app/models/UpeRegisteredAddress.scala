@@ -37,10 +37,10 @@ import play.api.libs.json.{Json, OFormat}
 case class UpeRegisteredAddress(
   addressLine1: String,
   addressLine2: Option[String],
-  townOrCity:   String = "",
-  region:       Option[String],
-  postcode:     Option[String],
-  country:      String = ""
+  addressLine3: String = "",
+  addressLine4: Option[String],
+  postalCode:   Option[String],
+  countryCode:  String = ""
 )
 
 object UpeRegisteredAddress {

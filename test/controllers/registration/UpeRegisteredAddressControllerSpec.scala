@@ -60,7 +60,14 @@ class UpeRegisteredAddressControllerSpec extends ControllerBaseSpec {
 
       val request =
         FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
-          .withFormUrlEncodedBody(("addressLine1", "27 house"), ("addressLine2", "Drive"), ("townOrCity", "Newcastle"), ("country", "United Kingdom"))
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
