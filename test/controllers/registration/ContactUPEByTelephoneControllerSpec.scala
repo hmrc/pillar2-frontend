@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.registration
 
-import controllers.registration.UPERegisteredInUKConfirmationController
+import controllers.routes
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -29,27 +29,27 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
+class ContactUPEByTelephoneControllerSpec extends ControllerBaseSpec {
 
-  def controller(): UPERegisteredInUKConfirmationController =
-    new UPERegisteredInUKConfirmationController(
+  def controller(): ContactUPEByTelephoneController =
+    new ContactUPEByTelephoneController(
       mockUserAnswersConnectors,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUPERegisteredInUKConfirmationFormProvider,
+      getContactUPEByTelephoneFormProvider,
       stubMessagesControllerComponents(),
-      upeRegisteredInUKConfirmationView
+      contactUPEByTelephoneView
     )
 
-  "Is UPE Registered in UK Confirmation Controller" should {
+  "Can we contact UPE by Telephone Controller" should {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad())
+      FakeRequest(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad().url)
         .withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
@@ -59,7 +59,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
     "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
@@ -68,15 +68,15 @@ class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
 
     }
 
-    "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
+    "must redirect to Under Construction page when valid data is submitted with value NO" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "no"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad.url
+      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
 
     }
   }

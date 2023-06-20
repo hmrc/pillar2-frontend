@@ -147,4 +147,11 @@ isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
 isUPERegisteredInUK.error.required= Select yes if the ultimate parent entity is registered in the UK
 
+contactUPEByTelephone.heading.caption = Business details
+contactUPEByTelephone.heading = Can we contact {0} by telephone?
+contactUPEByTelephone.p1 = We will call if we have any questions about the management of Pillar 2 top-up tax for this business
+contactUPEByTelephone.yes = Yes
+contactUPEByTelephone.no = No
+contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone.
+
 

@@ -38,6 +38,9 @@ POST        /eligibility/confirmation                   controllers.eligibility.
 GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
+
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
