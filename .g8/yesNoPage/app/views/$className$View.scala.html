@@ -1,3 +1,7 @@
+
+@import config.FrontendAppConfig
+@import viewmodels.LegendSize.Large
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -6,11 +10,11 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("$className;format="decap"$.title"))) {
 
-    @formHelper(action = routes.$className$Controller.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.$className$Controller.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -19,12 +23,12 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading()
+                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(Large)
             )
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )
     }
 }
