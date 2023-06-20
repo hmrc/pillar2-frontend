@@ -25,6 +25,9 @@ POST        /business-matching/match-hmrc-records        controllers.registratio
 GET         /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
