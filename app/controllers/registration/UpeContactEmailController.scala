@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.{UpeContactEmailFormProvider, UpeContactNameFormProvider}
 import models.Mode
 import navigation.Navigator
-import pages.{UpeContactEmailPage, UpeContactNamePage}
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,22 +45,24 @@ class UpeContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     val preparedForm = request.userAnswers.get(UpeContactEmailPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
 
-    Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode, userName.getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
           for {
 

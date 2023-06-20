@@ -27,9 +27,9 @@
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upe-input-business-email.title"))) {
+@layout(pageTitle = title(form, messages("upe-input-business-email.title", UserName))) {
 
     @formHelper(action = controllers.registration.routes.UpeContactEmailController.onSubmit()) {
 
@@ -39,11 +39,12 @@
         <span class="govuk-caption-l">@messages("upe-input-business-email.caption")</span>
         @govukInput(
             InputViewModel(
-                field = form("upeContactName"),
-                label = LabelViewModel(messages("upe-input-business-email.heading")).asPageHeading(Large),
+                field = form("emailAddress"),
+                label = LabelViewModel(messages("upe-input-business-email.heading", UserName)).asPageHeading(Large),
             )
             .withHint(Hint(content = Text(messages("upe-input-business-email.hint"))))
             .withWidth(TwoThirds)
+            .withInputType("email")
         )
 
 

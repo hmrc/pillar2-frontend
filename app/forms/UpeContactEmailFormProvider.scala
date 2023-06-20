@@ -24,9 +24,9 @@ import javax.inject.Inject
 class UpeContactEmailFormProvider @Inject() extends Mappings {
 
   val max = 200
-  def apply(): Form[String] =
+  def apply(userName: String): Form[String] =
     Form(
-      "upeContactEmail" -> text("upe-input-business-contact.email.error.required")
+      "emailAddress" -> text("upe-input-business-contact.email.error.required", Seq(userName))
         .verifying(maxLength(max, "upe-input-business-contact.email.error.length"))
     )
 }
