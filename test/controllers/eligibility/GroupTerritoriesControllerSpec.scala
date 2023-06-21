@@ -16,24 +16,20 @@
 
 package controllers.eligibility
 
-import controllers.routes
-import helpers.ControllerBaseSpec
-import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.libs.json.Json
+import base.SpecBase
+import forms.GroupTerritoriesFormProvider
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-import scala.concurrent.Future
+class GroupTerritoriesControllerSpec extends SpecBase {
 
-class GroupTerritoriesControllerSpec extends ControllerBaseSpec {
+  val formProvider = new GroupTerritoriesFormProvider()
 
   def controller(): GroupTerritoriesController =
     new GroupTerritoriesController(
-      getGroupTerritoriesFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
       groupTerritoriesView,
       mockSessionData
@@ -42,7 +38,7 @@ class GroupTerritoriesControllerSpec extends ControllerBaseSpec {
   val mockFormYesData = Map("confirmForm" -> "yes")
   val mockFormNoData  = Map("confirmForm" -> "no")
 
-  "Group Territories Controller" should {
+  "Group Territories Controller" when {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {

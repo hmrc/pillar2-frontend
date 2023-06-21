@@ -16,11 +16,12 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class StartPageRegistrationControllerSpec extends ControllerBaseSpec {
+class StartPageRegistrationControllerSpec extends SpecBase {
 
   def controller(): StartPageRegistrationController =
     new StartPageRegistrationController(
@@ -29,7 +30,7 @@ class StartPageRegistrationControllerSpec extends ControllerBaseSpec {
       startPageRegistrationView
     )
 
-  "StartPageRegistrationController" should {
+  "StartPageRegistrationController" when {
     "must return OK and the correct view for a GET" in {
 
       val request =

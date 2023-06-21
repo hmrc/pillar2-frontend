@@ -16,17 +16,20 @@
 
 package controllers.eligibility
 
-import helpers.ControllerBaseSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import base.SpecBase
+import forms.TurnOverEligibilityFormProvider
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
+class TurnOverEligibilityControllerSpec extends SpecBase {
+
+  val formProvider = new TurnOverEligibilityFormProvider()
 
   def controller(): TurnOverEligibilityController =
     new TurnOverEligibilityController(
-      getTurnOverEligibilityProvider,
+      formProvider,
       stubMessagesControllerComponents(),
       turnOverEligibilityView,
       mockSessionData
@@ -35,7 +38,7 @@ class TurnOverEligibilityControllerSpec extends ControllerBaseSpec {
   val mockFormYesData = Map("confirmForm" -> "true")
   val mockFormNoData  = Map("confirmForm" -> "false")
 
-  "Turn Over Eligibility Controller" should {
+  "Turn Over Eligibility Controller" when {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {

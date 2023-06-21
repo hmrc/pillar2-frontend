@@ -20,7 +20,6 @@ import base.SpecBase
 import config.FrontendAppConfig
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -29,9 +28,9 @@ import repositories.SessionRepository
 import java.net.URLEncoder
 import scala.concurrent.Future
 
-class AuthControllerSpec extends SpecBase with MockitoSugar {
+class AuthControllerSpec extends SpecBase {
 
-  "signOut" - {
+  "signOut" must {
 
     "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
 
@@ -60,7 +59,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
     }
   }
 
-  "signOutNoSurvey" - {
+  "signOutNoSurvey" must {
 
     "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
 

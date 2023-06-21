@@ -16,11 +16,12 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -28,7 +29,8 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeRegisteredAddressControllerSpec extends ControllerBaseSpec {
+class UpeRegisteredAddressControllerSpec extends SpecBase {
+  val formProvider = new UpeRegisteredAddressFormProvider()
 
   def controller(): UpeRegisteredAddressController =
     new UpeRegisteredAddressController(
@@ -37,12 +39,12 @@ class UpeRegisteredAddressControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeRegisteredAddressFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
       UpeRegisteredAddressView
     )
 
-  "UpeRegisteredAddress Controller" should {
+  "UpeRegisteredAddress Controller" must {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeRegisteredAddressController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {

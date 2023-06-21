@@ -24,9 +24,9 @@ import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
 
 class JourneyRecoveryControllerSpec extends SpecBase {
 
-  "JourneyRecovery Controller" - {
+  "JourneyRecovery Controller" when {
 
-    "when a relative continue Url is supplied" - {
+    "when a relative continue Url is supplied" must {
 
       "must return OK and the continue view" in {
 
@@ -46,7 +46,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
       }
     }
 
-    "when an absolute continue Url is supplied" - {
+    "when an absolute continue Url is supplied" must {
 
       "must return OK and the start again view" in {
 
@@ -66,7 +66,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
       }
     }
 
-    "when no continue Url is supplied" - {
+    "when no continue Url is supplied" must {
 
       "must return OK and the start again view" in {
 
