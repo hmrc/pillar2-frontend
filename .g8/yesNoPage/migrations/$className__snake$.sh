@@ -25,8 +25,8 @@ echo "Adding to ViewInstances"
 awk '/trait ViewInstances/ {\
     print;\
     print "";\
-    print "   val $className$View: $className$View =";\
-    print "    new view$className$(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
+    print "   val view$className$: $className$View =";\
+    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
     next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
 
 echo "Migration $className;format="snake"$ completed"

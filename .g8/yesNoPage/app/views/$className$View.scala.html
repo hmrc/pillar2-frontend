@@ -14,7 +14,7 @@
 
 @layout(pageTitle = title(form, messages("$className;format="decap"$.title"))) {
 
-    @formHelper(action = controllers.registration.routes.$className$Controller.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.$className$Controller.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
