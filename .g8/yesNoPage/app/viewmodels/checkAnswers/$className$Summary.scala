@@ -18,9 +18,9 @@ object $className$Summary  {
 
         SummaryListRowViewModel(
           key     = "$className;format="decap"$.checkYourAnswersLabel",
-      value   = ValueViewModel(value),
-      actions = Seq(
-        ActionItemViewModel("site.change", routes.$className$Controller.onPageLoad(CheckMode).url)
+          value   = ValueViewModel(value),
+          actions = Seq(
+          ActionItemViewModel("site.change", routes.$className$Controller.onPageLoad().url)
           .withVisuallyHiddenText(messages("$className;format="decap"$.change.hidden"))
       )
       )
