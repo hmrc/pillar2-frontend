@@ -1,5 +1,7 @@
 @import config.FrontendAppConfig
-
+$if(!package.empty)$
+@import controllers.$package$.routes
+$endif$
 
 @this(
     layout: templates.Layout,
