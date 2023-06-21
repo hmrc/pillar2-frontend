@@ -26,7 +26,7 @@ class EligibilityConfirmationControllerSpec extends SpecBase {
   def controller(): EligibilityConfirmationController =
     new EligibilityConfirmationController(
       stubMessagesControllerComponents(),
-      eligibilityConfirmationView
+      viewEligibilityConfirmation
     )
 
   "Eligibility Confirmation Controller" when {

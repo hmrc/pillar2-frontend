@@ -31,7 +31,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
     new GroupTerritoriesController(
       formProvider,
       stubMessagesControllerComponents(),
-      groupTerritoriesView,
+      viewGroupTerritories,
       mockSessionData
     )
 

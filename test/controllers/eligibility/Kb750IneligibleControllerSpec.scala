@@ -26,7 +26,7 @@ class Kb750IneligibleControllerSpec extends SpecBase {
   def controller(): Kb750IneligibleController =
     new Kb750IneligibleController(
       stubMessagesControllerComponents(),
-      kb750IneligibleView
+      viewKb750Ineligible
     )
 
   "Trading Business Confirmation Controller" when {

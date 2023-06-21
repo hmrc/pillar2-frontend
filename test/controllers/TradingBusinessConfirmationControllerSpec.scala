@@ -40,7 +40,7 @@ class TradingBusinessConfirmationControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      tradingBusinessConfirmationView
+      viewTradingBusinessConfirmation
     )
 
   "Trading Business Confirmation Controller" must {

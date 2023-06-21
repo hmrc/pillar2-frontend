@@ -42,12 +42,10 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      upeRegisteredInUKConfirmationView
+      viewUPERegisteredInUKConfirmation
     )
 
   "Is UPE Registered in UK Confirmation Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

@@ -29,7 +29,7 @@ class BusinessActivityUKControllerSpec extends SpecBase {
     new BusinessActivityUKController(
       formProvider,
       stubMessagesControllerComponents(),
-      businessActivityUKView,
+      viewBusinessActivityUK,
       mockSessionData
     )
 

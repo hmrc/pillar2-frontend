@@ -20,20 +20,13 @@ echo "$className;format="decap"$.checkYourAnswersLabel = $className;format="deca
 echo "$className;format="decap"$.error.required = Select yes if $className;format="decap"$" >> ../conf/messages.en
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
 
-echo "Adding to ControllerBaseSpec"
-awk '/trait ControllerBaseSpec/ {\
-    print;\
-    print "";\
-    print "  def get$className$FormProvider:$className$FormProvider = new $className$FormProvider()";\
-    print "    }";\
-    next }1' ../helpers/ControllerBaseSpec.scala > tmp && mv tmp ../helpers/ControllerBaseSpec.scala
 
 echo "Adding to ViewInstances"
 awk '/trait ViewInstances/ {\
     print;\
     print "";\
     print "   val $className$View: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
-    next }1' ../helpers/ViewInstances.scala > tmp && mv tmp  ../helpers/ViewInstances.scala
+    print "    new view$className$(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
+    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
 
 echo "Migration $className;format="snake"$ completed"

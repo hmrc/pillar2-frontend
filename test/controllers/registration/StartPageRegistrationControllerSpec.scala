@@ -27,7 +27,7 @@ class StartPageRegistrationControllerSpec extends SpecBase {
     new StartPageRegistrationController(
       preAuthenticatedActionBuilders,
       stubMessagesControllerComponents(),
-      startPageRegistrationView
+      viewStartPageRegistration
     )
 
   "StartPageRegistrationController" when {

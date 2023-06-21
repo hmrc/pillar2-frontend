@@ -31,7 +31,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
     new TurnOverEligibilityController(
       formProvider,
       stubMessagesControllerComponents(),
-      turnOverEligibilityView,
+      viewTurnOverEligibility,
       mockSessionData
     )
 

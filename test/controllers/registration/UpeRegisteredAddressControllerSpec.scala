@@ -41,7 +41,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      UpeRegisteredAddressView
+      viewUPERegisteredAddress
     )
 
   "UpeRegisteredAddress Controller" must {

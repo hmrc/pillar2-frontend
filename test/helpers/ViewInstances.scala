@@ -104,38 +104,38 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StandardAlphaBanner
   )
 
-  val tradingBusinessConfirmationView: TradingBusinessConfirmationView =
+  val viewTradingBusinessConfirmation: TradingBusinessConfirmationView =
     new TradingBusinessConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val groupTerritoriesView: GroupTerritoriesView =
+  val viewGroupTerritories: GroupTerritoriesView =
     new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val businessActivityUKView: BusinessActivityUKView =
+  val viewBusinessActivityUK: BusinessActivityUKView =
     new BusinessActivityUKView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val turnOverEligibilityView: TurnOverEligibilityView =
+  val viewTurnOverEligibility: TurnOverEligibilityView =
     new TurnOverEligibilityView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val kbUKIneligibleView: KbUKIneligibleView =
+  val viewKbUKIneligible: KbUKIneligibleView =
     new KbUKIneligibleView(pillar2layout, formWithCSRF, govukButton)
-  val kBMneIneligibleView: KbMnIneligibleView =
+  val viewKBMneIneligible: KbMnIneligibleView =
     new KbMnIneligibleView(pillar2layout, formWithCSRF, govukButton)
-  val kb750IneligibleView: Kb750IneligibleView =
+  val viewKb750Ineligible: Kb750IneligibleView =
     new Kb750IneligibleView(pillar2layout, formWithCSRF, govukButton)
 
-  val eligibilityConfirmationView: EligibilityConfirmationView =
+  val viewEligibilityConfirmation: EligibilityConfirmationView =
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
 
-  val upeRegisteredInUKConfirmationView: UPERegisteredInUKConfirmationView =
+  val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val startPageRegistrationView: StartPageRegistrationView =
+  val viewStartPageRegistration: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
 
-  val upeNameRegistrationView: UpeNameRegistrationView =
+  val viewUPENameRegistration: UpeNameRegistrationView =
     new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
-  val UpeRegisteredAddressView: UpeRegisteredAddressView =
+  val viewUPERegisteredAddress: UpeRegisteredAddressView =
     new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
 }

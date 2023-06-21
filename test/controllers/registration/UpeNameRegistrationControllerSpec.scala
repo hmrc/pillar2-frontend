@@ -42,7 +42,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      upeNameRegistrationView
+      viewUPENameRegistration
     )
 
   "UpeNameRegistration Controller" must {

@@ -26,7 +26,7 @@ class KbUKIneligibleControllerSpec extends SpecBase {
   def controller(): KbUKIneligibleController =
     new KbUKIneligibleController(
       stubMessagesControllerComponents(),
-      kbUKIneligibleView
+      viewKbUKIneligible
     )
 
   "Trading Business Confirmation Controller" when {

@@ -17,14 +17,24 @@ import views.html.$className$View
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends ControllerBaseSpec {
+class $className$ControllerSpec extends SpecBase {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new $className$FormProvider()
-  val form = formProvider()
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  def controller(): $className$Controller =
+    new $className$Controller(
+      mockUserAnswersConnectors,
+      preAuthenticatedActionBuilders,
+      preDataRetrievalActionImpl,
+      preDataRequiredActionImpl,
+      formProvider,
+      stubMessagesControllerComponents(),
+      view$className$
+    )
+
+
 
   "$className$ Controller" - {
 
@@ -33,14 +43,14 @@ class $className$ControllerSpec extends ControllerBaseSpec {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -48,43 +58,36 @@ class $className$ControllerSpec extends ControllerBaseSpec {
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[$className$View]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+    "must redirect to Under Construction page when valid data is submitted with value YES" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
+            .withFormUrlEncodedBody(("value", "yes"))
+
+        val boundForm = formProvider().bind(Map("value" -> "yes"))
 
         val view = application.injector.instanceOf[$className$View]
 
         val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
       }
     }
 
@@ -94,17 +97,17 @@ class $className$ControllerSpec extends ControllerBaseSpec {
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;format="decap"$Route)
+          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[$className$View]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -113,7 +116,7 @@ class $className$ControllerSpec extends ControllerBaseSpec {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -128,7 +131,7 @@ class $className$ControllerSpec extends ControllerBaseSpec {
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;format="decap"$Route)
+          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -137,5 +140,5 @@ class $className$ControllerSpec extends ControllerBaseSpec {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-  }
+
 }
