@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models.grs
+package models.registration
 
+import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate

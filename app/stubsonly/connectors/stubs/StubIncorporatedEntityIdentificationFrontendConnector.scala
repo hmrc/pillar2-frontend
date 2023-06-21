@@ -19,7 +19,8 @@ package stubsonly.connectors.stubs
 import connectors.IncorporatedEntityIdentificationFrontendConnector
 import models.Mode
 import models.grs.OrgType.UkLimitedCompany
-import models.grs.{GrsCreateRegistrationResponse, IncorporatedEntityRegistrationData}
+import models.grs.GrsCreateRegistrationResponse
+import models.registration.IncorporatedEntityRegistrationData
 import play.api.libs.json.Json
 import stubsonly.utils.Base64Utils
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +33,8 @@ class StubIncorporatedEntityIdentificationFrontendConnector @Inject() () extends
   override def createLimitedCompanyJourney(mode: Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
     Future.successful(
       GrsCreateRegistrationResponse(
-        journeyStartUrl = s"/pillar2/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${UkLimitedCompany.toString}"
+        journeyStartUrl =
+          s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${UkLimitedCompany.toString}"
       )
     )
 

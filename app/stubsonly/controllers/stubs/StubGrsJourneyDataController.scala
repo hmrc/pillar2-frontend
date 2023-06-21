@@ -99,7 +99,7 @@ class StubGrsJourneyDataController @Inject() (
           ),
         grsStubFormData =>
           Redirect(
-            s"/register-for-economic-crime-levy/grs-continue/" +
+            s"/pillar-two/grs-return/" +
               s"$continueUrl?journeyId=${Base64Utils
                 .base64UrlEncode(grsStubFormData.grsJourneyDataJson)}"
           )

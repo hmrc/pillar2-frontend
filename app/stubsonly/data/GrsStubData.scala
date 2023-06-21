@@ -19,7 +19,9 @@ package stubsonly.data
 import models.grs.OrgType.UkLimitedCompany
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
-import models.grs.{BusinessVerificationResult, CompanyProfile, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, OrgType}
+import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure, OrgType}
+import models.registration
+import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -30,7 +32,7 @@ trait GrsStubData {
     businessVerification: Option[BusinessVerificationResult],
     registrationResult:   GrsRegistrationResult,
     identifiersMatch:     Boolean
-  ): IncorporatedEntityRegistrationData = IncorporatedEntityRegistrationData(
+  ): IncorporatedEntityRegistrationData = registration.IncorporatedEntityRegistrationData(
     companyProfile = validCompanyProfile(partnership = false),
     ctutr = "1234567890",
     identifiersMatch = identifiersMatch,
@@ -39,24 +41,24 @@ trait GrsStubData {
   )
 
   private def validCompanyProfile(partnership: Boolean): CompanyProfile = CompanyProfile(
-    companyName = if (partnership) "Test Partnership Name" else "Test Company Name",
-    companyNumber = "01234567",
-    dateOfIncorporation = LocalDate.parse("2007-12-03"),
+    companyName = if (partnership) "Test Example Partnership Name" else "Test Example Company Name",
+    companyNumber = "76543210",
+    dateOfIncorporation = LocalDate.parse("2010-12-12"),
     unsanitisedCHROAddress = IncorporatedEntityAddress(
-      address_line_1 = Some("Test Address Line 1"),
-      address_line_2 = Some("Test Address Line 2"),
+      address_line_1 = Some("Address Line 1"),
+      address_line_2 = Some("Address Line 2"),
       country = Some("United Kingdom"),
-      locality = Some("Test Town"),
+      locality = Some("Town"),
       po_box = None,
-      postal_code = Some("AB1 2CD"),
+      postal_code = Some("AB12 3CD"),
       premises = None,
-      region = Some("Test Region")
+      region = Some("Region")
     )
   )
 
   val registered: GrsRegistrationResult = GrsRegistrationResult(
     registrationStatus = Registered,
-    registeredBusinessPartnerId = Some("XA0000000000001"),
+    registeredBusinessPartnerId = Some("XB0000000000001"),
     failures = None
   )
 
