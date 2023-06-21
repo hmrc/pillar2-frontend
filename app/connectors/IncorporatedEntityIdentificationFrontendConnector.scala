@@ -17,8 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.Mode
-import models.grs.{GrsCreateRegistrationResponse, IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, ServiceName}
+import models.{Mode, registration}
+import models.grs.{GrsCreateRegistrationResponse, ServiceName}
+import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -48,7 +49,7 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
 
     httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
       s"$apiUrl/limited-company-journey",
-      IncorporatedEntityCreateRegistrationRequest(
+      registration.IncorporatedEntityCreateRegistrationRequest(
         continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}",
         businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,
         optServiceName = Some(serviceName.en.optServiceName),

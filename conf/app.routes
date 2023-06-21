@@ -46,14 +46,25 @@ POST        /eligibility/confirmation                   controllers.eligibility.
 GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /grs-return/normalmode                                          controllers.registration.GrsReturnController.continue(mode: Mode = NormalMode, journeyId)
+
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
+
+
+
+
 
 GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
 GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KbMnIneligibleController.onPageLoad
 GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
 GET         /eligibility/kb-750-ineligible               controllers.eligibility.Kb750IneligibleController.onPageLoad
+
+
+
+
+
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut

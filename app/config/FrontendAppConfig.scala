@@ -69,4 +69,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val privateBetaEnabled: Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
+  val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
 }
