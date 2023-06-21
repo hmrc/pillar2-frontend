@@ -20,31 +20,20 @@ echo "$className;format="decap"$.checkYourAnswersLabel = $className;format="deca
 echo "$className;format="decap"$.error.required = Select yes if $className;format="decap"$" >> ../conf/messages.en
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
 
-echo "Adding to UserAnswersEntryGenerators"
-awk '/trait UserAnswersEntryGenerators/ {\
+echo "Adding to ControllerBaseSpec"
+awk '/trait ControllerBaseSpec/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
-    print "    Arbitrary {";\
-    print "      for {";\
-    print "        page  <- arbitrary[$className$Page.type]";\
-    print "        value <- arbitrary[Boolean].map(Json.toJson(_))";\
-    print "      } yield (page, value)";\
+    print "  def get$className$FormProvider:$className$FormProvider = new $className$FormProvider()";\
     print "    }";\
-    next }1' ../test-utils/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test-utils/generators/UserAnswersEntryGenerators.scala
+    next }1' ../helpers/ControllerBaseSpec.scala > tmp && mv tmp ../helpers/ControllerBaseSpec.scala
 
-echo "Adding to PageGenerators"
-awk '/trait PageGenerators/ {\
+echo "Adding to ViewInstances"
+awk '/trait ViewInstances/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$className$Page: Arbitrary[$className$Page.type] =";\
-    print "    Arbitrary($className$Page)";\
-    next }1' ../test-utils/generators/PageGenerators.scala > tmp && mv tmp ../test-utils/generators/PageGenerators.scala
-
-echo "Adding to UserAnswersGenerator"
-awk '/val generators/ {\
-    print;\
-    print "    arbitrary[($className$Page.type, JsValue)] ::";\
-    next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
+    print "   val $className$View: $className$View =";\
+    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
+    next }1' ../helpers/ViewInstances.scala > tmp && mv tmp  ../helpers/ViewInstances.scala
 
 echo "Migration $className;format="snake"$ completed"
