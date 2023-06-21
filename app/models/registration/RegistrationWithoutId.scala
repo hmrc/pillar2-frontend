@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package models.grs
+package models.registration
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class IncorporatedEntityCreateRegistrationRequest(
-  continueUrl:               String,
-  businessVerificationCheck: Boolean,
-  optServiceName:            Option[String],
-  deskProServiceId:          String,
-  signOutUrl:                String,
-  regime:                    String = "PILLAR2",
-  accessibilityUrl:          String,
-  labels:                    ServiceName
+final case class RegistrationWithoutId(
+  userId:                        String,
+  registrationWithoutIdRequest:  RegistrationWithoutIdRequest,
+  registrationWithoutIdResponse: Option[IncorporatedEntityRegistrationData]
 )
 
-object IncorporatedEntityCreateRegistrationRequest {
-  implicit val format: OFormat[IncorporatedEntityCreateRegistrationRequest] =
-    Json.format[IncorporatedEntityCreateRegistrationRequest]
+object RegistrationWithoutId {
+  implicit val format: OFormat[RegistrationWithoutId] = Json.format[RegistrationWithoutId]
 }
