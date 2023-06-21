@@ -19,64 +19,56 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
-import forms.ContactUPEByTelephoneFormProvider
-import models.{ContactUPEByTelephone, Mode}
+import forms.UpeRegisteredAddressFormProvider
+import models.{Mode, UpeRegisteredAddress}
 import navigation.Navigator
-import pages.{ContactUPEByTelephonePage, UpeNameRegistrationPage}
+import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.ContactUPEByTelephoneView
+import views.html.registrationview.{UpeNameRegistrationView, UpeRegisteredAddressView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CaptureTelephoneDetailsController @Inject() (
+class UpeRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactUPEByTelephoneFormProvider,
+  formProvider:              UpeRegisteredAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactUPEByTelephoneView
+  view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-
-  val form = formProvider()
-
+  val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val preparedForm = request.userAnswers.get(ContactUPEByTelephonePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+
+    val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
+      case None          => form
+      case Some(address) => form.fill(address)
     }
 
     Ok(view(preparedForm, mode, userName.getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = request.userAnswers.get(UpeNameRegistrationPage)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
-          value match {
-            case ContactUPEByTelephone.Yes =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
-            case ContactUPEByTelephone.No =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
-          }
+          for {
+
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredAddressPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
 }

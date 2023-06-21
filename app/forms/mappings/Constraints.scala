@@ -21,7 +21,14 @@ import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
+  val regexAddressLine   = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
+  val regexPostcode      = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+  val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
+  val regexSortCode: String = """\d{6,}""".r.toString()
+  val regexUtr  = """^([kK]{0,1}\d{10})$|^(\d{10}[kK]{0,1})$|^([kK]{0,1}\d{13})$|^(\d{13}[kK]{0,1})$"""
+  val regexName = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
 
+  protected def addressLine(errorKey: String): Constraint[String] = regexp(regexAddressLine, errorKey)
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
       constraints

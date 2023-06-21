@@ -63,6 +63,7 @@ trait ControllerBaseSpec
   }
 
   def getTradingBusinessConfirmationFormProvider:   TradingBusinessConfirmationFormProvider   = new TradingBusinessConfirmationFormProvider()
+  def getUpeRegisteredAddressFormProvider:          UpeRegisteredAddressFormProvider          = new UpeRegisteredAddressFormProvider()
   def getUpeNameRegistrationFormProvider:           UpeNameRegistrationFormProvider           = new UpeNameRegistrationFormProvider()
   def getBusinessActivityUKFormProvider:            BusinessActivityUKFormProvider            = new BusinessActivityUKFormProvider()
   def getTurnOverEligibilityProvider:               TurnOverEligibilityFormProvider           = new TurnOverEligibilityFormProvider()

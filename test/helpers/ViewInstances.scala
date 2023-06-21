@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.templates.Layout
 import views.html._
-import views.html.registrationview.{ContactUPEByTelephoneView, StartPageRegistrationView, UPERegisteredInUKConfirmationView, UpeNameRegistrationView}
+import views.html.registrationview.{ContactUPEByTelephoneView, StartPageRegistrationView, UPERegisteredInUKConfirmationView, UpeNameRegistrationView, UpeRegisteredAddressView}
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -137,5 +137,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val contactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val UpeRegisteredAddressView: UpeRegisteredAddressView =
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
 }
