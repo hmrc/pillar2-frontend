@@ -4,12 +4,11 @@ import base.SpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import pages.$className$Page
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$className$View
 
-import scala.concurrent.Future
+
 
 class $className$ControllerSpec extends SpecBase {
 
@@ -29,7 +28,7 @@ class $className$ControllerSpec extends SpecBase {
   val validAnswer = $minimum$
 
 
-  "$className$ Controller" - {
+  "$className$ Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
