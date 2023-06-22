@@ -27,7 +27,7 @@ awk '/trait ViewInstances/ {\
     print;\
     print "";\
     print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, viewinstances, govukButton)";\
+    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)";\
     next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
 
 echo "Migration $className;format="snake"$ completed"
