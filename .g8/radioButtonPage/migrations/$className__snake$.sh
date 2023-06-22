@@ -23,6 +23,15 @@ echo "$className;format="decap"$.error.required = Select $className;format="deca
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
 
 
+echo "Adding to ModelGenerators"
+awk '/trait ModelGenerators/ {\
+    print;\
+    print "";\
+    print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
+    print "    Arbitrary {";\
+    print "      Gen.oneOf($className$.values.toSeq)";\
+    print "    }";\
+    next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
 
 echo "Adding to ViewInstances"
 awk '/trait ViewInstances/ {\
