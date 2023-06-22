@@ -80,7 +80,7 @@ class $className$ControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
+          FakeRequest(POST, routes.$className$Controller.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
