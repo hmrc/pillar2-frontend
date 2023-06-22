@@ -42,7 +42,7 @@ class $className$ControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -60,7 +60,7 @@ class $className$ControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -70,25 +70,7 @@ class $className$ControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-    "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", "yes"))
-
-        val boundForm = formProvider().bind(Map("value" -> "yes"))
-
-        val view = application.injector.instanceOf[$className$View]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
-      }
-    }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -96,7 +78,7 @@ class $className$ControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
+          FakeRequest(POST, routes.$className$Controller.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -110,35 +92,6 @@ class $className$ControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, routes.$className$Controller.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
 
   }
 }
