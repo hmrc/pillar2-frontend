@@ -62,6 +62,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukHint         = new GovukHint
   val govukRadios       = new GovukRadios(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
   val govukInput        = new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel)
+  val govukDateInput    = new GovukDateInput(new GovukErrorMessage,  new GovukHint, new GovukFieldset, govukInput)
   val govukLabel        = new GovukLabel()
   val govukDetails      = new GovukDetails
   val govukPanel        = new GovukPanel

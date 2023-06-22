@@ -9,12 +9,12 @@ import pages.$className$Page
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$className$View
-
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 
 
 class $className$ControllerSpec extends SpecBase {
 
-  val formProvider = new $className$FormProvider()
+
 
   def controller(): $className$Controller =
     new $className$Controller(
@@ -48,7 +48,7 @@ class $className$ControllerSpec extends SpecBase {
         "value.year"  -> validAnswer.getYear.toString
       )
 
-  "$className$ Controller" - {
+  "$className$ Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
