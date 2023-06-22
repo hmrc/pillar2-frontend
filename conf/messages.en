@@ -102,7 +102,7 @@ upeNameRegistration.heading.caption=Business details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
-
+upeNameRegistration.error.length = The name cannot be more than 200 characters
 upe-input-business-email.title=What is the email address for {0}?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to contact the person or team who manages Pillar 2 top-up tax for this business

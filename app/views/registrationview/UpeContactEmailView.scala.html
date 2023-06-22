@@ -32,7 +32,6 @@
 @layout(pageTitle = title(form, messages("upe-input-business-email.title", UserName))) {
 
     @formHelper(action = controllers.registration.routes.UpeContactEmailController.onSubmit()) {
-
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
@@ -40,11 +39,14 @@
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
-                label = LabelViewModel(messages("upe-input-business-email.heading", UserName)).asPageHeading(Large),
+                label = LabelViewModel(messages("upe-input-business-email.heading", UserName)).asPageHeading(Large)
+                .withCssClass("long-word")
+
             )
             .withHint(Hint(content = Text(messages("upe-input-business-email.hint"))))
             .withWidth(TwoThirds)
             .withInputType("email")
+
         )
 
 
