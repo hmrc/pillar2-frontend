@@ -21,7 +21,6 @@ import scala.concurrent.Future
 class $className$ControllerSpec extends SpecBase {
 
 
-
   val formProvider = new $className$FormProvider()
 
   def controller(): $className$Controller =
@@ -36,8 +35,7 @@ class $className$ControllerSpec extends SpecBase {
     )
 
 
-
-  "$className$ Controller" - {
+  "$className$ Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -143,3 +141,4 @@ class $className$ControllerSpec extends SpecBase {
     }
 
   }
+}
