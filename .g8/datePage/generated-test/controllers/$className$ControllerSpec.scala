@@ -60,7 +60,7 @@ class $className$ControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(getRequest, appConfig(application), messages(application)).toString
       }
     }
 
@@ -76,7 +76,7 @@ class $className$ControllerSpec extends SpecBase {
         val result = route(application, getRequest).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode)(getRequest, appConfig(application), messages(application)).toString
       }
     }
 
