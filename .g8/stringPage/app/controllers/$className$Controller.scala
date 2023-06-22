@@ -16,7 +16,7 @@ import views.html.$className$View
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class $className;format="cap"$$Controller @Inject()(
+class $className;format="cap"$Controller @Inject()(
                                        val userAnswersConnectors: UserAnswersConnectors,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
