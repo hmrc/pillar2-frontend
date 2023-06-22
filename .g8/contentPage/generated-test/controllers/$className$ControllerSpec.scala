@@ -7,7 +7,7 @@ import views.html.$className$View
 
 class $className$ControllerSpec extends SpecBase {
 
-  "$className$ Controller" - {
+  "$className$ Controller" when {
 
     "must return OK and the correct view for a GET" in {
 

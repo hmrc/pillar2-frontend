@@ -7,6 +7,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.$className$View
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import scala.concurrent.ExecutionContext
 
 class $className$Controller @Inject()(
                                        getData: DataRetrievalAction,
