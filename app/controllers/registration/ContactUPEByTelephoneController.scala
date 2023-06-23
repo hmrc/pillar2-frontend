@@ -70,7 +70,7 @@ class ContactUPEByTelephoneController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad)
             case ContactUPEByTelephone.No =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))

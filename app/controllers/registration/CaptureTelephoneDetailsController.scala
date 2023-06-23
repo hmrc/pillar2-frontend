@@ -19,17 +19,16 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
-import forms.ContactUPEByTelephoneFormProvider
-import models.{ContactUPEByTelephone, Mode}
+import forms.CaptureTelephoneDetailsFormProvider
+import models.Mode
 import navigation.Navigator
-import pages.{ContactUPEByTelephonePage, UpeNameRegistrationPage}
+import pages.{CaptureTelephoneDetailsPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.ContactUPEByTelephoneView
+import views.html.registrationview.CaptureTelephoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,9 +39,9 @@ class CaptureTelephoneDetailsController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactUPEByTelephoneFormProvider,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactUPEByTelephoneView
+  view:                      CaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -51,7 +50,7 @@ class CaptureTelephoneDetailsController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = request.userAnswers.get(UpeNameRegistrationPage)
-    val preparedForm = request.userAnswers.get(ContactUPEByTelephonePage) match {
+    val preparedForm = request.userAnswers.get(CaptureTelephoneDetailsPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -60,23 +59,17 @@ class CaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = request.userAnswers.get(UpeNameRegistrationPage)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
-          value match {
-            case ContactUPEByTelephone.Yes =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
-            case ContactUPEByTelephone.No =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
-          }
+          for {
+
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(CaptureTelephoneDetailsPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
 }

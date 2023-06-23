@@ -70,5 +70,6 @@ trait ControllerBaseSpec
   def getGroupTerritoriesFormProvider:              GroupTerritoriesFormProvider              = new GroupTerritoriesFormProvider()
   def getUPERegisteredInUKConfirmationFormProvider: UPERegisteredInUKConfirmationFormProvider = new UPERegisteredInUKConfirmationFormProvider()
   def getContactUPEByTelephoneFormProvider:         ContactUPEByTelephoneFormProvider         = new ContactUPEByTelephoneFormProvider()
+  def getCaptureTelephoneDetailsFormProvider:       CaptureTelephoneDetailsFormProvider       = new CaptureTelephoneDetailsFormProvider()
 
 }

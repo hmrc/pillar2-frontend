@@ -16,7 +16,6 @@
 
 package controllers.registration
 
-import controllers.routes
 import helpers.ControllerBaseSpec
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -29,54 +28,55 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class ContactUPEByTelephoneControllerSpec extends ControllerBaseSpec {
+class CaptureTelephoneDetailsControllerSpec extends ControllerBaseSpec {
 
-  def controller(): ContactUPEByTelephoneController =
-    new ContactUPEByTelephoneController(
+  def controller(): CaptureTelephoneDetailsController =
+    new CaptureTelephoneDetailsController(
       mockUserAnswersConnectors,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getContactUPEByTelephoneFormProvider,
+      getCaptureTelephoneDetailsFormProvider,
       stubMessagesControllerComponents(),
-      contactUPEByTelephoneView
+      captureTelephoneDetailsView
     )
 
-  "Can we contact UPE by Telephone Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad())
+  "Capture Telephone Details Controller" should {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.CaptureTelephoneDetailsController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad().url)
-        .withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad().url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
+      contentAsString(result) should include(
+        "What is the telephone number for"
+      )
     }
 
-    "must redirect to Under Construction page when valid data is submitted with value YES" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "yes"))
+        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
+          .withFormUrlEncodedBody(
+            ("telephoneNumber", "123456789")
+          )
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
 
     }
-
-    "must redirect to Under Construction page when valid data is submitted with value NO" in {
+    "return bad request if required fields are not filled" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "no"))
+        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
+          .withFormUrlEncodedBody(("telephoneNumber", ""))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+      status(result) mustEqual BAD_REQUEST
 
     }
   }

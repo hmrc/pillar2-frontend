@@ -14,40 +14,41 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton
 )
 
 
 @(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactUPEByTelephone.title"))) {
+@layout(pageTitle = title(form, messages("captureTelephoneDetails.title", UserName ))) {
 
-    @formHelper(action = controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
+        <h1 class="govuk-heading-l">@messages("captureTelephoneDetails.heading", UserName)</h1>
 
-        <span class="govuk-caption-l">@messages("contactUPEByTelephone.heading.caption")</span>
-
-        @govukRadios(
-            RadiosViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("contactUPEByTelephone.heading",UserName)).asPageHeading(Large),
-                items  = ContactUPEByTelephone.options
+        @govukInput(
+            InputViewModel(
+                field = form("telephoneNumber"),
+                label = LabelViewModel(messages("captureTelephoneDetails.p1"))
             )
-            .withHint(Hint(content = Text(messages("contactUPEByTelephone.hint"))))
+            .withWidth(TwoThirds)
         )
+
+
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.continue"))
         )
     }
 }
