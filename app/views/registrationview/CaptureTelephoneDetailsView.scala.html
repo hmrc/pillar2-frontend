@@ -36,14 +36,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("captureTelephoneDetails.heading", UserName)</h1>
 
         @govukInput(
             InputViewModel(
                 field = form("telephoneNumber"),
-                label = LabelViewModel(messages("captureTelephoneDetails.p1"))
+                label = LabelViewModel(messages("captureTelephoneDetails.heading")).asPageHeading()
             )
             .withWidth(TwoThirds)
+            .withHint(Hint(content = Text(messages("captureTelephoneDetails.hint"))))
         )
 
 
