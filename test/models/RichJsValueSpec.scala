@@ -16,15 +16,13 @@
 
 package models
 
+import base.SpecBase
 import generators.ModelGenerators
 import org.scalacheck.{Gen, Shrink}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.OptionValues
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
 import play.api.libs.json._
 
-class RichJsValueSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
 
   implicit def dontShrink[A]: Shrink[A] = Shrink.shrinkAny
 
@@ -37,7 +35,7 @@ class RichJsValueSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       acc + (key -> Json.toJson[B](value))
     }
 
-  "set" - {
+  "set" must {
 
     "must return an error if the path is empty" in {
 
@@ -222,7 +220,7 @@ class RichJsValueSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
   }
 
-  "remove" - {
+  "remove" must {
     "must return an error if the path is empty" in {
 
       val value = Json.obj()

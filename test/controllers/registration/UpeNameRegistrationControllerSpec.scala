@@ -16,11 +16,12 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -28,7 +29,9 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
+class UpeNameRegistrationControllerSpec extends SpecBase {
+
+  val formProvider = new UpeNameRegistrationFormProvider()
 
   def controller(): UpeNameRegistrationController =
     new UpeNameRegistrationController(
@@ -37,12 +40,12 @@ class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeNameRegistrationFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      upeNameRegistrationView
+      viewUPENameRegistration
     )
 
-  "UpeNameRegistration Controller" should {
+  "UpeNameRegistration Controller" must {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
@@ -50,7 +53,7 @@ class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
       val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
+      status(result) mustBe OK
       contentAsString(result) should include(
         "What is the name of the ultimate parent entity"
       )

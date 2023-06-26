@@ -18,16 +18,16 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import pages._
 import models._
+import pages._
 
 class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
 
-  "Navigator" - {
+  "Navigator" when {
 
-    "in Normal mode" - {
+    "in Normal mode" must {
 
       "must go from a page that doesn't exist in the route map to Index" in {
 
@@ -36,7 +36,7 @@ class NavigatorSpec extends SpecBase {
       }
     }
 
-    "in Check mode" - {
+    "in Check mode" must {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 

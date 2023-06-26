@@ -25,6 +25,7 @@ import navigation.Navigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.MessagesApi
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -35,6 +36,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAuthConnector:                           AuthConnector                           = mock[AuthConnector]
   val mockFrontendAppConfig:                       FrontendAppConfig                       = mock[FrontendAppConfig]
   val mockUserAnswersConnectors:                   UserAnswersConnectors                   = mock[UserAnswersConnectors]
+  val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionData:                             SessionData                             = mock[SessionData]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockIdentifierAction:                        IdentifierAction                        = mock[IdentifierAction]
