@@ -18,7 +18,7 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
 import navigation.Navigator
@@ -43,7 +43,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
   val mockTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = mock[TradingBusinessConfirmationFormProvider]
-  val
+  val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
+    mock[IncorporatedEntityIdentificationFrontendConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
