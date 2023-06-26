@@ -27,13 +27,14 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.UpeContactEmailView
 
 import scala.concurrent.Future
 
 class UpeContactEmailControllerSpec extends SpecBase {
 
   def getUpeContactEmailFormProvider: UpeContactEmailFormProvider = new UpeContactEmailFormProvider()
-
+  val formProvider = new UpeContactEmailFormProvider()
   def controller(): UpeContactEmailController =
     new UpeContactEmailController(
       mockUserAnswersConnectors,
@@ -47,17 +48,24 @@ class UpeContactEmailControllerSpec extends SpecBase {
     )
 
   "UpeContactEmail Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactEmailController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeContactEmailController.onPageLoad().url)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad().url)
 
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "We will use this to contact the person or team who manages Pillar 2 top-up tax for this business"
-      )
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpeContactEmailView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("Test user Name"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {

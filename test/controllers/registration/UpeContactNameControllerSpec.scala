@@ -27,11 +27,13 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.UpeContactNameView
 
 import scala.concurrent.Future
 
 class UpeContactNameControllerSpec extends SpecBase {
   def getUpeContactNameFormProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
+  val formProvider = new UpeContactNameFormProvider()
   def controller(): UpeContactNameController =
     new UpeContactNameController(
       mockUserAnswersConnectors,
@@ -49,13 +51,21 @@ class UpeContactNameControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad().url)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad().url)
 
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "What is the name of the person or team we should contact from the ultimate parent entity?"
-      )
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpeContactNameView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
