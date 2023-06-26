@@ -20,10 +20,10 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 import models.Enumerable
 
+import scala.collection.immutable.Seq
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
-
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =

@@ -28,31 +28,31 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
+class UpeRegisteredAddressControllerSpec extends ControllerBaseSpec {
 
-  def controller(): UpeNameRegistrationController =
-    new UpeNameRegistrationController(
+  def controller(): UpeRegisteredAddressController =
+    new UpeRegisteredAddressController(
       mockUserAnswersConnectors,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeNameRegistrationFormProvider,
+      getUpeRegisteredAddressFormProvider,
       stubMessagesControllerComponents(),
-      upeNameRegistrationView
+      UpeRegisteredAddressView
     )
 
-  "UpeNameRegistration Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad())
+  "UpeRegisteredAddress Controller" should {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeRegisteredAddressController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad().url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "What is the name of the ultimate parent entity"
+        "Where is the registered office address of"
       )
     }
 
@@ -60,11 +60,28 @@ class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
 
       val request =
         FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "ABC Corp"))
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+
+    }
+    "return bad request if required fields are not filled" in {
+
+      val request =
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+          .withFormUrlEncodedBody(("addressLine1", "27 house"))
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual BAD_REQUEST
 
     }
   }
