@@ -16,11 +16,13 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import forms.UpeContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -28,8 +30,8 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeContactNameControllerSpec extends ControllerBaseSpec {
-
+class UpeContactNameControllerSpec extends SpecBase {
+  def getUpeContactNameFormProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   def controller(): UpeContactNameController =
     new UpeContactNameController(
       mockUserAnswersConnectors,
@@ -39,10 +41,10 @@ class UpeContactNameControllerSpec extends ControllerBaseSpec {
       preDataRequiredActionImpl,
       getUpeContactNameFormProvider,
       stubMessagesControllerComponents(),
-      upeContactNameView
+      viewUpeContactName
     )
 
-  "UpeContactName Controller" should {
+  "UpeContactName Controller" when {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {

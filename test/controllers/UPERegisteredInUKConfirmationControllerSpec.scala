@@ -16,44 +16,48 @@
 
 package controllers
 
+import base.SpecBase
 import controllers.registration.UPERegisteredInUKConfirmationController
-import helpers.ControllerBaseSpec
+import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import scala.concurrent.Future
 
-class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
+class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
+
+  val formProvider = new UPERegisteredInUKConfirmationFormProvider()
 
   def controller(): UPERegisteredInUKConfirmationController =
     new UPERegisteredInUKConfirmationController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUPERegisteredInUKConfirmationFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      upeRegisteredInUKConfirmationView
+      viewUPERegisteredInUKConfirmation
     )
 
-  "Is UPE Registered in UK Confirmation Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad())
+  "Is UPE Registered in UK Confirmation Controller" must {
 
     "must return OK and the correct view for a GET" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad().url)
-        .withFormUrlEncodedBody(("value", "no"))
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad().url)
+        val view    = application.injector.instanceOf[UPERegisteredInUKConfirmationView]
+        val result  = route(application, request).value
 
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        status(result) mustBe OK
+      }
     }
 
     "must redirect to Under Construction page when valid data is submitted with value YES" in {
