@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.Mode
 import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, OrgType}
 import models.grs.OrgType.UkLimitedCompany
-import models.grs.RegistrationStatus.RegistrationFailed
+import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.registration.IncorporatedEntityRegistrationData
 import pages.{RegistrationWithoutIdRequestPage, RegistrationWithoutIdResponsePage, UpeNameRegistrationPage}
@@ -76,6 +76,8 @@ class GrsReturnController @Inject() (
       case (_, Some(BusinessVerificationResult(Fail)), _, _) =>
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       case (_, _, _, Some(businessPartnerId)) =>
+        Redirect(controllers.routes.TaskListController.onPageLoad)
+      case (true, _, Registered, Some(businessPartnerId)) =>
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
         grsResult.failures match {
