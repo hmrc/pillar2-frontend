@@ -18,10 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.UPERegisteredInUKConfirmationPage
+import models.grs.RegistrationStatus.Registered
+import models.registration.IncorporatedEntityRegistrationData
+import pages.{RegistrationWithoutIdResponsePage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -41,8 +44,20 @@ class TaskListController @Inject() (
       case None        => ""
       case Some(value) => value
     }
+
+    //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
     val regInProgress = getRegStatus(isUPERegInUK.toString)
-    Ok(view(regInProgress))
+    val regComplete = request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithoutIdResponsePage) match {
+      case Some(value) => (value.registration.registrationStatus == Registered)
+      case None        => false
+    }
+
+    if (regComplete)
+      Ok(view(RowStatus.Completed))
+    else if (regInProgress)
+      Ok(view(RowStatus.InProgress))
+    else
+      Ok(view(RowStatus.NotStarted))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>

@@ -34,6 +34,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
   def controller(): UPERegisteredInUKConfirmationController =
     new UPERegisteredInUKConfirmationController(
       mockUserAnswersConnectors,
+      mockIncorporatedEntityIdentificationFrontendConnector,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
@@ -62,6 +63,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends ControllerBaseSpec {
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
