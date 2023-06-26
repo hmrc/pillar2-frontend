@@ -43,16 +43,15 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UPERegisteredInUKConfirmationController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val userAnswersConnectors:                         UserAnswersConnectors,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              UPERegisteredInUKConfirmationFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      UPERegisteredInUKConfirmationView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
-
+  identify:                                          IdentifierAction,
+  getData:                                           DataRetrievalAction,
+  requireData:                                       DataRequiredAction,
+  formProvider:                                      UPERegisteredInUKConfirmationFormProvider,
+  val controllerComponents:                          MessagesControllerComponents,
+  view:                                              UPERegisteredInUKConfirmationView
+)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
