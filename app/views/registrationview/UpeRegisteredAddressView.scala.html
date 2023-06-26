@@ -35,8 +35,8 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption", UserName)</span>
-        <h1 class="govuk-heading-l">@messages("upe-registered-address.heading", UserName)</h1>
+        <span class="govuk-caption-l">@messages("upe-registered-address.heading.caption")</span>
+        <h1 class="govuk-heading-l long-word">@messages("upe-registered-address.heading", UserName)</h1>
 
 
         @govukInput(
