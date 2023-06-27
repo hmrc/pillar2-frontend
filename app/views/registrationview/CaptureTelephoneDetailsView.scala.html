@@ -15,6 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
 @import config.FrontendAppConfig
 
 @this(
@@ -40,7 +41,7 @@
         @govukInput(
             InputViewModel(
                 field = form("telephoneNumber"),
-                label = LabelViewModel(messages("captureTelephoneDetails.heading",UserName)).asPageHeading()
+                label = LabelViewModel(messages("captureTelephoneDetails.heading",UserName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
             .withHint(Hint(content = Text(messages("captureTelephoneDetails.hint"))))
