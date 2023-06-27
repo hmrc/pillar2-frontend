@@ -28,7 +28,7 @@
 
 @(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactUPEByTelephone.title"))) {
+@layout(pageTitle = title(form, messages("contactUPEByTelephone.title",UserName))) {
 
     @formHelper(action = controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(), 'autoComplete -> "off") {
 
