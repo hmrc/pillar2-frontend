@@ -19,15 +19,15 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{UpeContactEmailFormProvider, UpeContactNameFormProvider}
+import forms.UpeContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage}
+import pages.{UpeContactEmailPage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.{UpeContactEmailView, UpeContactNameView}
+import views.html.registrationview.UpeContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,7 +68,7 @@ class UpeContactEmailController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactEmailPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad)
       )
   }
 }
