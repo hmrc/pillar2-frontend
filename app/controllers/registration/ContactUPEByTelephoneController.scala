@@ -23,7 +23,7 @@ import controllers.routes
 import forms.ContactUPEByTelephoneFormProvider
 import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
-import pages.{ContactUPEByTelephonePage, UpeNameRegistrationPage}
+import pages.{ContactUPEByTelephonePage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,10 +47,9 @@ class ContactUPEByTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     val preparedForm = request.userAnswers.get(ContactUPEByTelephonePage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -60,10 +59,12 @@ class ContactUPEByTelephoneController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
           value match {
             case ContactUPEByTelephone.Yes =>

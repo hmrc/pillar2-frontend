@@ -25,10 +25,10 @@ import javax.inject.Inject
 
 class CaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24
-  def apply(): Form[CaptureTelephoneDetails] = Form(
+  def apply(userName: String): Form[CaptureTelephoneDetails] = Form(
     mapping(
       "telephoneNumber" ->
-        text("captureTelephoneDetails.error.required")
+        text("captureTelephoneDetails.error.required", Seq(userName: String))
           .verifying(maxLength(phoneNumberLength, "captureTelephoneDetails.messages.error.length"))
     )(CaptureTelephoneDetails.apply)(CaptureTelephoneDetails.unapply)
   )

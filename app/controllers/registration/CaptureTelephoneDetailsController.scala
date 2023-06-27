@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{CaptureTelephoneDetailsPage, UpeNameRegistrationPage}
+import pages.{CaptureTelephoneDetailsPage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,10 +46,9 @@ class CaptureTelephoneDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     val preparedForm = request.userAnswers.get(CaptureTelephoneDetailsPage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -59,7 +58,8 @@ class CaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = request.userAnswers.get(UpeContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(

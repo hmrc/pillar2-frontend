@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 class ContactUPEByTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ContactUPEByTelephone] =
+  def apply(userName: String): Form[ContactUPEByTelephone] =
     Form(
-      "value" -> enumerable[ContactUPEByTelephone]("contactUPEByTelephone.error.required")
+      "value" -> enumerable[ContactUPEByTelephone]("contactUPEByTelephone.error.required", userName)
     )
 }
