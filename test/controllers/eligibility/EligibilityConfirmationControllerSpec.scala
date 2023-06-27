@@ -16,19 +16,20 @@
 
 package controllers.eligibility
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class EligibilityConfirmationControllerSpec extends ControllerBaseSpec {
+class EligibilityConfirmationControllerSpec extends SpecBase {
 
   def controller(): EligibilityConfirmationController =
     new EligibilityConfirmationController(
       stubMessagesControllerComponents(),
-      eligibilityConfirmationView
+      viewEligibilityConfirmation
     )
 
-  "Eligibility Confirmation Controller" should {
+  "Eligibility Confirmation Controller" when {
     "must return OK and the correct view for a GET" in {
 
       val request =

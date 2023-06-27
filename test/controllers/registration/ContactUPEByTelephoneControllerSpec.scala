@@ -16,12 +16,12 @@
 
 package controllers.registration
 
+import base.SpecBase
 import controllers.routes
-import helpers.ControllerBaseSpec
+import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -29,7 +29,9 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class ContactUPEByTelephoneControllerSpec extends ControllerBaseSpec {
+class ContactUPEByTelephoneControllerSpec extends SpecBase {
+
+  val formProvider = new ContactUPEByTelephoneFormProvider()
 
   def controller(): ContactUPEByTelephoneController =
     new ContactUPEByTelephoneController(
@@ -38,9 +40,9 @@ class ContactUPEByTelephoneControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getContactUPEByTelephoneFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      contactUPEByTelephoneView
+      viewContactUPEByTelephoneView
     )
 
   "Can we contact UPE by Telephone Controller" should {
@@ -53,7 +55,7 @@ class ContactUPEByTelephoneControllerSpec extends ControllerBaseSpec {
         .withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
+      status(result) mustBe OK
     }
 
     "must redirect to Under Construction page when valid data is submitted with value YES" in {

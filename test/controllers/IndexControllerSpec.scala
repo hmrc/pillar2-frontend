@@ -23,7 +23,7 @@ import views.html.{IndexView, TaskListView}
 
 class IndexControllerSpec extends SpecBase {
 
-  "Index Controller" - {
+  "Index Controller" must {
 
     "must return 303 and the correct view for a GET" in {
 

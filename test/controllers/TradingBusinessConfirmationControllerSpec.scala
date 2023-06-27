@@ -17,25 +17,19 @@
 package controllers
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.TradingBusinessConfirmationFormProvider
-import helpers.{BaseSpec, ControllerBaseSpec}
-import models.{NormalMode, TradingBusinessConfirmation, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsEmpty, Call, MessagesControllerComponents}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.TradingBusinessConfirmationView
 
 import scala.concurrent.Future
 
-class TradingBusinessConfirmationControllerSpec extends ControllerBaseSpec {
+class TradingBusinessConfirmationControllerSpec extends SpecBase {
+  val formProvider = new TradingBusinessConfirmationFormProvider()
 
   def controller(): TradingBusinessConfirmationController =
     new TradingBusinessConfirmationController(
@@ -44,12 +38,12 @@ class TradingBusinessConfirmationControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getTradingBusinessConfirmationFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      tradingBusinessConfirmationView
+      viewTradingBusinessConfirmation
     )
 
-  "Trading Business Confirmation Controller" should {
+  "Trading Business Confirmation Controller" must {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.TradingBusinessConfirmationController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
@@ -57,7 +51,7 @@ class TradingBusinessConfirmationControllerSpec extends ControllerBaseSpec {
       val request = FakeRequest(GET, routes.TradingBusinessConfirmationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
+      status(result) mustBe OK
     }
 
     "must redirect to the next page when valid data is submitted" in {

@@ -16,11 +16,11 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -28,7 +28,9 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class CaptureTelephoneDetailsControllerSpec extends ControllerBaseSpec {
+class CaptureTelephoneDetailsControllerSpec extends SpecBase {
+
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
 
   def controller(): CaptureTelephoneDetailsController =
     new CaptureTelephoneDetailsController(
@@ -37,9 +39,9 @@ class CaptureTelephoneDetailsControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getCaptureTelephoneDetailsFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      captureTelephoneDetailsView
+      viewCaptureTelephoneDetailsView
     )
 
   "Capture Telephone Details Controller" should {
@@ -50,8 +52,8 @@ class CaptureTelephoneDetailsControllerSpec extends ControllerBaseSpec {
       val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad().url)
 
       val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
+      status(result) mustBe OK
+      contentAsString(result) must include(
         "What is the telephone number for"
       )
     }

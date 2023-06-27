@@ -15,17 +15,16 @@
  */
 
 package cache
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.Pillar2SessionKeys
 
-import javax.inject.Inject
-
-class SessionDataSpec extends ControllerBaseSpec {
+class SessionDataSpec extends SpecBase {
   val sessionData = new SessionData();
-  "SessionDataSpec" should {
+  "SessionDataSpec" when {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
     "must store data into session in  Post" in {
       implicit val request =
