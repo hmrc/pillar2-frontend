@@ -27,7 +27,8 @@ POST        /business-matching/ultimate-parent/no-id/input-name               co
 
 GET         /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-
+GET         /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
