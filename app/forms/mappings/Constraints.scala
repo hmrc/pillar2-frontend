@@ -25,8 +25,9 @@ trait Constraints {
   val regexPostcode      = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
-  val regexUtr  = """^([kK]{0,1}\d{10})$|^(\d{10}[kK]{0,1})$|^([kK]{0,1}\d{13})$|^(\d{13}[kK]{0,1})$"""
-  val regexName = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
+  val regexUtr         = """^([kK]{0,1}\d{10})$|^(\d{10}[kK]{0,1})$|^([kK]{0,1}\d{13})$|^(\d{13}[kK]{0,1})$"""
+  val regexName        = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
+  val regexPhoneNumber = """^[0-9 ()+--]{1,24}$"""
 
   protected def addressLine(errorKey: String): Constraint[String] = regexp(regexAddressLine, errorKey)
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =

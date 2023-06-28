@@ -19,28 +19,29 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeContactEmailFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{UpeContactEmailPage, UpeContactNamePage}
+import pages.{CaptureTelephoneDetailsPage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UpeContactEmailView
+import views.html.registrationview.CaptureTelephoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpeContactEmailController @Inject() (
+class CaptureTelephoneDetailsController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeContactEmailFormProvider,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeContactEmailView
+  view:                      CaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -48,7 +49,7 @@ class UpeContactEmailController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = request.userAnswers.get(UpeContactNamePage)
     val form     = formProvider(userName.getOrElse(""))
-    val preparedForm = request.userAnswers.get(UpeContactEmailPage) match {
+    val preparedForm = request.userAnswers.get(CaptureTelephoneDetailsPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -66,9 +67,9 @@ class UpeContactEmailController @Inject() (
         value =>
           for {
 
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactEmailPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(CaptureTelephoneDetailsPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad)
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
 }

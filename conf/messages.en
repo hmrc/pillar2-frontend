@@ -181,4 +181,17 @@ isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
 isUPERegisteredInUK.error.required= Select yes if the ultimate parent entity is registered in the UK
 
+contactUPEByTelephone.heading.caption = Business details
+contactUPEByTelephone.title = Can we contact {0} by telephone?
+contactUPEByTelephone.heading = Can we contact {0} by telephone?
+contactUPEByTelephone.hint = We will call if we have any questions about the management of Pillar 2 top-up tax for this business
+contactUPEByTelephone.yes = Yes
+contactUPEByTelephone.no = No
+contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
 
+captureTelephoneDetails.heading.caption = Business details
+captureTelephoneDetails.title = What is the telephone number for {0}?
+captureTelephoneDetails.heading = What is the telephone number for {0}?
+captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
+captureTelephoneDetails.error.required = You need to enter the telephone for {0}
+captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
