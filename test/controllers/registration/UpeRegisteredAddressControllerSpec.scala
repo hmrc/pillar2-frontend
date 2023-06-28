@@ -41,15 +41,14 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewUPERegisteredAddress
+      viewUpeRegisteredAddress
     )
 
   "UpeRegisteredAddress Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeRegisteredAddressController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
@@ -73,7 +72,27 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+
+    }
+
+    "return bad request if fields are greater than 200 in length" in {
+      val testValue =
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+          "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      val request =
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", testValue),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual BAD_REQUEST
 
     }
     "return bad request if required fields are not filled" in {

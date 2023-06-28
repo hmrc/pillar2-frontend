@@ -16,24 +16,24 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.UpeRegisteredAddressPage
+import models.UserAnswers
+import pages.UpeNameRegistrationPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeRegisteredAddressSummary {
+object UpeContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UpeRegisteredAddressPage).map { answer =>
+    answers.get(UpeNameRegistrationPage).map { answer =>
       SummaryListRowViewModel(
-        key = "upe-registered-address.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(answer.toString)),
+        key = "upe-input-business-email.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upe-registered-address.change.hidden"))
+          ActionItemViewModel("site.change", controllers.registration.routes.UpeContactNameController.onPageLoad().url)
+            .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))
         )
       )
     }

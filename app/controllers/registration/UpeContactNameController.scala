@@ -19,29 +19,28 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeNameRegistrationFormProvider
+import forms.UpeContactNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.UpeNameRegistrationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import pages.UpeContactNamePage
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UpeNameRegistrationView
+import views.html.registrationview.UpeContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpeNameRegistrationController @Inject() (
+class UpeContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeNameRegistrationFormProvider,
+  formProvider:              UpeContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeNameRegistrationView
+  view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -49,7 +48,7 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UpeNameRegistrationPage) match {
+    val preparedForm = request.userAnswers.get(UpeContactNamePage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -65,9 +64,9 @@ class UpeNameRegistrationController @Inject() (
         value =>
           for {
 
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeNameRegistrationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad)
       )
   }
 }
