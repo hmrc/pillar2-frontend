@@ -60,7 +60,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
             ("addressLine2", "Drive"),
@@ -72,7 +72,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
 
     }
 
@@ -81,7 +81,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
           "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(
             ("addressLine1", testValue),
             ("addressLine2", "Drive"),
@@ -98,7 +98,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     "return bad request if required fields are not filled" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("addressLine1", "27 house"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)

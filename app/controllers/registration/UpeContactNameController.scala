@@ -66,7 +66,7 @@ class UpeContactNameController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
       )
   }
 }

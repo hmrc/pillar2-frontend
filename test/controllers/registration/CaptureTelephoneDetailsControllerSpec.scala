@@ -17,67 +17,64 @@
 package controllers.registration
 
 import base.SpecBase
-import forms.UpeContactEmailFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.UpeContactEmailView
 
 import scala.concurrent.Future
 
-class UpeContactEmailControllerSpec extends SpecBase {
+class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
-  def getUpeContactEmailFormProvider: UpeContactEmailFormProvider = new UpeContactEmailFormProvider()
-  val formProvider = new UpeContactEmailFormProvider()
-  def controller(): UpeContactEmailController =
-    new UpeContactEmailController(
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
+
+  def controller(): CaptureTelephoneDetailsController =
+    new CaptureTelephoneDetailsController(
       mockUserAnswersConnectors,
       mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeContactEmailFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      viewUpeContactEmail
+      viewCaptureTelephoneDetailsView
     )
 
-  "UpeContactEmail Controller" when {
+  "Capture Telephone Details Controller" should {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
+      val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UpeContactEmailView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("Test user Name"), NormalMode)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
-      }
+      val result = controller.onPageLoad(NormalMode)(request)
+      status(result) mustBe OK
+      contentAsString(result) must include(
+        "What is the telephone number for"
+      )
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to checkYourAnswers when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
+        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("telephoneNumber", "123456789")
+          )
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.CheckYourAnswersController.onPageLoad.url
+
     }
-    "Bad request when no data" in {
+    "return bad request if required fields are not filled" in {
+
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
+        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("telephoneNumber", ""))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST

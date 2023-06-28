@@ -46,11 +46,11 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     )
 
   "UpeNameRegistration Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad())
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) mustBe OK
@@ -62,7 +62,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "ABC Corp"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)

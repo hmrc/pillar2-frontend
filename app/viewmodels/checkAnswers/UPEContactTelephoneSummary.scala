@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import pages.UpeNameRegistrationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -32,7 +32,7 @@ object UPEContactTelephoneSummary {
         key = "captureTelephoneDetails.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad().url)
+          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
         )
       )

@@ -47,13 +47,13 @@ class UpeContactNameControllerSpec extends SpecBase {
     )
 
   "UpeContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad())
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -71,16 +71,16 @@ class UpeContactNameControllerSpec extends SpecBase {
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit().url)
+        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("upeContactName", "Ashley Smith"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactEmailController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url
     }
     "Bad request when no data" in {
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit().url)
+        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST
