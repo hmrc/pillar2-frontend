@@ -24,7 +24,7 @@ import models.grs.OrgType.UkLimitedCompany
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.registration.IncorporatedEntityRegistrationData
-import pages.{RegistrationWithoutIdRequestPage, RegistrationWithoutIdResponsePage, UpeNameRegistrationPage}
+import pages.{RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UpeNameRegistrationPage}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,13 +45,13 @@ class GrsReturnController @Inject() (
     extends FrontendBaseController {
 
   def continue(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(RegistrationWithoutIdRequestPage) match {
-      case Some(registrationWithoutIdRequest) =>
-        registrationWithoutIdRequest.orgType match {
+    request.userAnswers.get(RegistrationWithIdRequestPage) match {
+      case Some(registrationWithIdRequest) =>
+        registrationWithIdRequest.orgType match {
           case Some(e @ UkLimitedCompany) =>
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithoutIdResponsePage, entityRegData))
+              userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithIdResponsePage, entityRegData))
               -             <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
             } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
 

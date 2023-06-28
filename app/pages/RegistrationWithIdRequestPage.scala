@@ -16,12 +16,12 @@
 
 package pages
 
-import models.registration.{IncorporatedEntityRegistrationData, RegistrationWithoutIdRequest}
+import models.registration.{RegistrationWithoutId, RegistrationWithoutIdRequest}
 import play.api.libs.json.JsPath
 
-case object RegistrationWithoutIdResponsePage extends QuestionPage[IncorporatedEntityRegistrationData] {
+case object RegistrationWithIdRequestPage extends QuestionPage[RegistrationWithoutIdRequest] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "registrationWithoutIdResponse"
+  override def toString: String = "registrationWithIdRequest"
 }

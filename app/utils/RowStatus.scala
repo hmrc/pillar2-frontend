@@ -58,8 +58,4 @@ object RowStatus {
       }
   }
 
-  def getStatus(isCompleted: Boolean, inProgress: Boolean) =
-    if (inProgress) InProgress
-    else if (isCompleted) Completed
-    else NotStarted
 }

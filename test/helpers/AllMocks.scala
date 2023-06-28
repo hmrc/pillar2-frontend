@@ -27,6 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 //TODO: Add all mocking instants in here.
@@ -45,6 +46,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = mock[TradingBusinessConfirmationFormProvider]
   val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
     mock[IncorporatedEntityIdentificationFrontendConnector]
+  val mockHttpClient: HttpClient = mock[HttpClient]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -56,6 +58,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockIdentifierAction,
       mockDataRetrievalAction,
       mockDataRequiredAction,
-      mockTradingBusinessConfirmationFormProvider
+      mockTradingBusinessConfirmationFormProvider,
+      mockIncorporatedEntityIdentificationFrontendConnector,
+      mockHttpClient
     ).foreach(Mockito.reset(_))
 }

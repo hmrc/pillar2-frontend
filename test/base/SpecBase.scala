@@ -20,6 +20,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.testdata.Pillar2TestData
 import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import helpers.{AllMocks, ViewInstances}
 import models.UserAnswers
@@ -29,7 +30,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import play.api.Application
+import play.api.{Application, Configuration}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
@@ -59,7 +60,8 @@ trait SpecBase
     with EssentialActionCaller
     with HeaderNames
     with ViewInstances
-    with IntegrationPatience {
+    with IntegrationPatience
+    with Pillar2TestData {
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
@@ -68,7 +70,7 @@ trait SpecBase
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
-  implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration)
+  implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
 
@@ -93,7 +95,7 @@ trait SpecBase
 
   def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
     override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, UserAnswers("12345"))))
+      Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsData)))
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {
@@ -104,6 +106,9 @@ trait SpecBase
   }
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
+      .configure(
+        Configuration("metrics.enabled" -> "false", "auditing.enabled" -> false)
+      )
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
