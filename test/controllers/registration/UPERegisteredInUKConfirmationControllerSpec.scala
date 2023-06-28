@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
+import models.grs.GrsCreateRegistrationResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
@@ -66,7 +67,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any())).thenReturn(???)
+      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any()))
+        .thenReturn(Future(GrsCreateRegistrationResponse("/pillar-two/under-construction")))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url

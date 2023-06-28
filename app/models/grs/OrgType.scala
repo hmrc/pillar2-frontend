@@ -35,18 +35,6 @@ object OrgType {
     Other
   )
 
-  def options(appConfig: FrontendAppConfig)(implicit messages: Messages): Seq[RadioItem] = {
-    val radioItems = values.zipWithIndex.map { case (value, index) =>
-      RadioItem(
-        content = Text(messages(s"entityType.${value.toString}")),
-        value = Some(value.toString),
-        id = Some(s"value_$index")
-      )
-    }
-
-    if (appConfig.privateBetaEnabled) radioItems.filterNot(_.value.contains(Other.toString)) else radioItems
-  }
-
   implicit val enumerable: Enumerable[OrgType] = Enumerable(values.map(v => (v.toString, v)): _*)
 
   implicit val format: Format[OrgType] = new Format[OrgType] {
@@ -55,7 +43,7 @@ object OrgType {
         value match {
           case "UkLimitedCompany" => JsSuccess(UkLimitedCompany)
           case "Other"            => JsSuccess(Other)
-          case s                  => JsError(s"$s is not a valid EntityType")
+          case s                  => JsError(s"$s is not a valid OrgType")
         }
       case e: JsError => e
     }

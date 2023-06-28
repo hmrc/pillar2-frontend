@@ -29,7 +29,7 @@ import models.grs.{OrgType, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
 import models.{Mode, UPERegisteredInUKConfirmation, registration}
 import navigation.Navigator
-import pages.{RegistrationWithoutIdRequestPage, UPERegisteredInUKConfirmationPage}
+import pages.{RegistrationWithIdRequestPage, UPERegisteredInUKConfirmationPage}
 
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -79,7 +79,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 updatedRequest <-
                   Future.fromTry(
-                    updatedAnswers.set(RegistrationWithoutIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.UkLimitedCompany)))
+                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.UkLimitedCompany)))
                   )
                 _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector

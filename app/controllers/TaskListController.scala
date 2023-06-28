@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.grs.RegistrationStatus.Registered
 import models.registration.IncorporatedEntityRegistrationData
-import pages.{RegistrationWithoutIdResponsePage, UPERegisteredInUKConfirmationPage}
+import pages.{RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,7 +47,7 @@ class TaskListController @Inject() (
 
     //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
     val regInProgress = getRegStatus(isUPERegInUK.toString)
-    val regComplete = request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithoutIdResponsePage) match {
+    val regComplete = request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage) match {
       case Some(value) => (value.registration.registrationStatus == Registered)
       case None        => false
     }
