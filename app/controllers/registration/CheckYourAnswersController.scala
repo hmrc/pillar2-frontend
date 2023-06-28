@@ -19,14 +19,14 @@ package controllers.registration
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.registrationview.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
@@ -38,7 +38,13 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val list = SummaryListViewModel(
-      rows = Seq.empty
+      rows = Seq(
+        UpeNameRegistrationSummary.row(request.userAnswers),
+        UpeRegisteredAddressSummary.row(request.userAnswers),
+        UpeContactNameSummary.row(request.userAnswers),
+        UpeContactEmailSummary.row(request.userAnswers),
+        UPEContactTelephoneSummary.row(request.userAnswers)
+      ).flatten
     )
 
     Ok(view(list))

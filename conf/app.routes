@@ -53,6 +53,8 @@ GET         /business-matching/ultimate-parent/no-id/input-telephone controllers
 POST        /business-matching/ultimate-parent/no-id/input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/check-answers                          controllers.registration.CheckYourAnswersController.onPageLoad
+
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
