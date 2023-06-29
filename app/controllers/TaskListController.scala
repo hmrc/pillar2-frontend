@@ -51,4 +51,6 @@ class TaskListController @Inject() (
 
   private def getRegStatus(isUPERegInUK: String): Boolean =
     isUPERegInUK == "yes" || isUPERegInUK == "no"
+
+//  private def upeNoIDStatus()
 }

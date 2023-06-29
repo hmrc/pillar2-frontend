@@ -34,7 +34,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -68,7 +67,7 @@ class UpeContactEmailController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactEmailPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad())
+          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
       )
   }
 }

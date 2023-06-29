@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("contactUPEByTelephone.title",UserName))) {
 
-    @formHelper(action = controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
@@ -39,10 +39,9 @@
         <span class="govuk-caption-l">@messages("contactUPEByTelephone.heading.caption")</span>
 
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field  = form("value"),
                 legend = LegendViewModel(messages("contactUPEByTelephone.heading",UserName)).asPageHeading(Large),
-                items  = ContactUPEByTelephone.options
             )
             .withHint(Hint(content = Text(messages("contactUPEByTelephone.hint"))))
         )

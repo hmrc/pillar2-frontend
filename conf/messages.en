@@ -50,7 +50,7 @@ upe-input-business-name.checkYourAnswersLabel = Contact name
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete
-taskList.completedSections = You have completed 0 of 5 sections.
+taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Business details
 taskList.task.business.ultimate = Enter ultimate parent''s details
 taskList.task.business.filingMember = Enter filing member''s details
@@ -194,7 +194,7 @@ contactUPEByTelephone.hint = We will call if we have any questions about the man
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
-
+contactUPEByTelephone.checkYourAnswersLabel= Telephone contact
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
 captureTelephoneDetails.heading = What is the telephone number for {0}?

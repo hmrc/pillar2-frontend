@@ -19,9 +19,8 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.ContactUPEByTelephoneFormProvider
-import models.{ContactUPEByTelephone, Mode}
+import models.Mode
 import navigation.Navigator
 import pages.{ContactUPEByTelephonePage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
@@ -67,16 +66,16 @@ class ContactUPEByTelephoneController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
           value match {
-            case ContactUPEByTelephone.Yes =>
+            case true =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
-            case ContactUPEByTelephone.No =>
+            case false =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.CheckYourAnswersController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.CheckYourAnswersController.onPageLoad)
           }
       )
   }

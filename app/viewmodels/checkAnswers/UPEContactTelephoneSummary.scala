@@ -32,7 +32,7 @@ object UPEContactTelephoneSummary {
         key = "captureTelephoneDetails.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer.telephoneNumber).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
         )
       )

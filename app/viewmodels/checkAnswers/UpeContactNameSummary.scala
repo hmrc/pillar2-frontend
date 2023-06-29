@@ -32,7 +32,7 @@ object UpeContactNameSummary {
         key = "upe-input-business-name.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.registration.routes.UpeContactNameController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("upe-input-business-name.change.hidden"))
         )
       )
