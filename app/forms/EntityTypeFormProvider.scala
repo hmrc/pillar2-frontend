@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import javax.inject.Inject
 
-trait ModelGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.EntityType
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
+class EntityTypeFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+  def apply(): Form[EntityType] =
+    Form(
+      "value" -> enumerable[EntityType]("entityType.error.required")
+    )
 }
