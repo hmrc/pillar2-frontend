@@ -195,3 +195,13 @@ captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
+
+NominateFilingMemberYesNo.title = Do you want to register a nominated filing member for this group?
+NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member for this group?
+NominateFilingMemberYesNo.heading.caption = Business details
+NominateFilingMemberYesNo.p1 = This step is optional. If you do not enter the details for a nominated filing member, the ultimate parent entity (UPE) will be used as the default.
+NominateFilingMemberYesNo.insetText =You must have permission from the UPE to nominate a company as a filing member and  be able to access the information required to file Pillar 2 top-up tax on the group's behalf.
+
+
+
+
