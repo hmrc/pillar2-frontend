@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -48,22 +49,22 @@
                           </a>
                         </span>
                         @if(regInProgress){
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.filingMember")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet") </strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.more")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -78,7 +79,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.contact")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -93,7 +94,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.review")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag app-task-list__tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
