@@ -16,12 +16,12 @@
 
 package stubsonly.data
 
-import models.grs.OrgType.UkLimitedCompany
+import models.grs.OrgType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
 import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure, OrgType}
 import models.registration
-import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -39,6 +39,20 @@ trait GrsStubData {
     businessVerification = businessVerification,
     registration = registrationResult
   )
+
+  private def defaultPartnershipJourneyData(
+    businessVerification: Option[BusinessVerificationResult],
+    registrationResult:   GrsRegistrationResult,
+    identifiersMatch:     Boolean
+  ): PartnershipEntityRegistrationData =
+    PartnershipEntityRegistrationData(
+      Some(validCompanyProfile(partnership = true)),
+      sautr = Some("1234567890"),
+      postcode = Some("AA11AA"),
+      identifiersMatch = identifiersMatch,
+      businessVerification = businessVerification,
+      registration = registrationResult
+    )
 
   private def validCompanyProfile(partnership: Boolean): CompanyProfile = CompanyProfile(
     companyName = if (partnership) "Test Example Partnership Name" else "Test Example Company Name",
@@ -100,6 +114,11 @@ trait GrsStubData {
       Json.prettyPrint(
         Json.toJson(defaultIncorporatedEntityJourneyData(businessVerification, registrationResult, identifiersMatch))
       )
+    case LimitedLiabilityPartnership =>
+      Json.prettyPrint(
+        Json.toJson(defaultPartnershipJourneyData(businessVerification, registrationResult, identifiersMatch))
+      )
+
     case o => throw new IllegalStateException(s"$o is not a valid GRS entity type")
   }
 

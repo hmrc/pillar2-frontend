@@ -37,7 +37,8 @@ class GrsReturnControllerSpec extends SpecBase {
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       stubMessagesControllerComponents(),
-      mockIncorporatedEntityIdentificationFrontendConnector
+      mockIncorporatedEntityIdentificationFrontendConnector,
+      mockPartnershipIdentificationFrontendConnector
     )
 
   "GrsReturn Controller" when {
