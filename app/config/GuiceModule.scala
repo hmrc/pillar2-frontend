@@ -18,10 +18,10 @@ package config
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl}
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl, PartnershipIdentificationFrontendConnector, PartnershipIdentificationFrontendConnectorImpl}
 import controllers.actions._
 import play.api.{Configuration, Environment}
-import stubsonly.connectors.stubs.StubIncorporatedEntityIdentificationFrontendConnector
+import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{Clock, ZoneOffset}
@@ -43,9 +43,17 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
         .to(classOf[StubIncorporatedEntityIdentificationFrontendConnector])
         .asEagerSingleton()
 
+      bind(classOf[PartnershipIdentificationFrontendConnector])
+        .to(classOf[StubPartnershipEntityIdentificationFrontendConnector])
+        .asEagerSingleton()
+
     } else {
       bind(classOf[IncorporatedEntityIdentificationFrontendConnector])
         .to(classOf[IncorporatedEntityIdentificationFrontendConnectorImpl])
+        .asEagerSingleton()
+
+      bind(classOf[PartnershipIdentificationFrontendConnector])
+        .to(classOf[PartnershipIdentificationFrontendConnectorImpl])
         .asEagerSingleton()
 
     }

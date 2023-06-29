@@ -16,15 +16,14 @@
 
 package controllers.registration
 
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Mode
 import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, OrgType}
-import models.grs.OrgType.UkLimitedCompany
+import models.grs.OrgType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
-import models.registration.IncorporatedEntityRegistrationData
-import pages.{RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UpeNameRegistrationPage}
+import pages.{RegistrationWithIdPartnershipResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UpeNameRegistrationPage}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +39,8 @@ class GrsReturnController @Inject() (
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
-  incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector
+  incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
+  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector
 )(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController {
 
@@ -52,6 +52,13 @@ class GrsReturnController @Inject() (
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
               userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithIdResponsePage, entityRegData))
+              -             <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+
+          case Some(e @ LimitedLiabilityPartnership) =>
+            for {
+              entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+              userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithIdPartnershipResponsePage, entityRegData))
               -             <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
             } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
 

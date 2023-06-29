@@ -28,10 +28,12 @@ sealed trait OrgType
 
 object OrgType {
   case object UkLimitedCompany extends OrgType
+  case object LimitedLiabilityPartnership extends OrgType
   case object Other extends OrgType
 
   val values: Seq[OrgType] = Seq(
     UkLimitedCompany,
+    LimitedLiabilityPartnership,
     Other
   )
 
@@ -41,9 +43,10 @@ object OrgType {
     override def reads(json: JsValue): JsResult[OrgType] = json.validate[String] match {
       case JsSuccess(value, _) =>
         value match {
-          case "UkLimitedCompany" => JsSuccess(UkLimitedCompany)
-          case "Other"            => JsSuccess(Other)
-          case s                  => JsError(s"$s is not a valid OrgType")
+          case "UkLimitedCompany"            => JsSuccess(UkLimitedCompany)
+          case "LimitedLiabilityPartnership" => JsSuccess(LimitedLiabilityPartnership)
+          case "Other"                       => JsSuccess(Other)
+          case s                             => JsError(s"$s is not a valid OrgType")
         }
       case e: JsError => e
     }
