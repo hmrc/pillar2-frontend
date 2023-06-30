@@ -22,7 +22,7 @@
 )
 
 
-@(regInProgress:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(regInProgress:Boolean, filingInProgress:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -55,9 +55,15 @@
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                           @messages("taskList.task.business.filingMember")
+                            <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="filing-member-status">
+                            @messages("taskList.task.business.filingMember")
+                            </a>
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet") </strong>
+                        @if(filingInProgress){
+                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
+                        } else {
+                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                        }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">

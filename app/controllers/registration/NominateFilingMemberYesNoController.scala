@@ -72,7 +72,7 @@ class NominateFilingMemberYesNoController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
+              } yield Redirect(controllers.routes.TaskListController.onPageLoad)
           }
       )
   }

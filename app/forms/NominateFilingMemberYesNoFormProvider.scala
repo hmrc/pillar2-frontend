@@ -26,6 +26,6 @@ class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
 
   def apply(): Form[NominateFilingMemberYesNo] =
     Form(
-      "NominateFilingMemberYesNoPage" -> enumerable[NominateFilingMemberYesNo]("isUPERegisteredInUK.error.required")
+      "nominateFilingMember" -> enumerable[NominateFilingMemberYesNo]("NominateFilingMemberYesNo.error.required")
     )
 }

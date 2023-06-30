@@ -23,5 +23,5 @@ case object NominateFilingMemberYesNoPage extends QuestionPage[NominateFilingMem
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "registration.NominateFilingMemberYesNo"
+  override def toString: String = "registration.nominateFilingMemberYesNo"
 }

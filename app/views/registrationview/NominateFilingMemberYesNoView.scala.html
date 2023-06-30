@@ -31,10 +31,10 @@
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
 
-    @formHelper(action = controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.NominateFilingMemberYesNoController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("isUPERegisteredInUK" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("nominateFilingMember" -> "value_0")))
         }
 
         <span class="govuk-caption-l">@messages("NominateFilingMemberYesNo.heading.caption")</span>
@@ -45,9 +45,9 @@
         ))
         @govukRadios(
             RadiosViewModel(
-                field  = form("NominateFilingMemberYesNo"),
+                field  = form("nominateFilingMember"),
                 legend = LegendViewModel(messages("NominateFilingMemberYesNo.heading")).withCssClass("govuk-visually-hidden"),
-                items  = UPERegisteredInUKConfirmation.options,
+                items  = NominateFilingMemberYesNo.options,
             )
         )
 
