@@ -55,7 +55,6 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
       bind(classOf[PartnershipIdentificationFrontendConnector])
         .to(classOf[PartnershipIdentificationFrontendConnectorImpl])
         .asEagerSingleton()
-
     }
   }
 

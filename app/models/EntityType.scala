@@ -24,7 +24,7 @@ sealed trait EntityType
 
 object EntityType extends Enumerable.Implicits {
 
-  case object UkLimitedCompany extends WithName("ukLimitedcompany") with EntityType
+  case object UkLimitedCompany extends WithName("ukLimitedCompany") with EntityType
   case object LimitedLiabilityPartnership extends WithName("limitedLiabilityPartnership") with EntityType
 
   val values: Seq[EntityType] = Seq(

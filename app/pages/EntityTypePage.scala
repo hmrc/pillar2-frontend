@@ -23,5 +23,5 @@ case object EntityTypePage extends QuestionPage[EntityType] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "entityType"
+  override def toString: String = "orgType"
 }

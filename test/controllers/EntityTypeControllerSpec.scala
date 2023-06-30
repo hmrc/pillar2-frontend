@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import controllers.registration.EntityTypeController
 import forms.EntityTypeFormProvider
 import models.{EntityType, NormalMode, UserAnswers}
 import pages.EntityTypePage
@@ -32,6 +33,8 @@ class EntityTypeControllerSpec extends SpecBase {
   def controller(): EntityTypeController =
     new EntityTypeController(
       mockUserAnswersConnectors,
+      mockIncorporatedEntityIdentificationFrontendConnector,
+      mockPartnershipIdentificationFrontendConnector,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -47,7 +50,7 @@ class EntityTypeControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.EntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -65,7 +68,7 @@ class EntityTypeControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.EntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[EntityTypeView]
 
@@ -86,7 +89,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.EntityTypeController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
@@ -97,6 +100,38 @@ class EntityTypeControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to GRS for UK Limited company" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+      }
+    }
+
+    "must redirect to GRS for Limited Liability Partnership" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(
+          result
+        ).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
       }
     }
 

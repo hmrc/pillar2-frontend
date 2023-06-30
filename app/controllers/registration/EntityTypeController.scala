@@ -17,40 +17,34 @@
 package controllers.registration
 
 import config.FrontendAppConfig
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
-import forms.UPERegisteredInUKConfirmationFormProvider
-
-import models.{Mode, UPERegisteredInUKConfirmation}
-import pages.UPERegisteredInUKConfirmationPage
-
-import models.grs.{OrgType, ServiceName}
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
-import models.{Mode, UPERegisteredInUKConfirmation, registration}
-import navigation.Navigator
-import pages.{RegistrationWithIdRequestPage, UPERegisteredInUKConfirmationPage}
-
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
+import controllers.actions._
+import forms.EntityTypeFormProvider
+import models.grs.OrgType
+import models.registration.RegistrationWithoutIdRequest
+import models.{EntityType, Mode}
+import pages.{EntityTypePage, RegistrationWithIdRequestPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UPERegisteredInUKConfirmationView
+import views.html.EntityTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UPERegisteredInUKConfirmationController @Inject() (
+class EntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
+  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   identify:                                          IdentifierAction,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
-  formProvider:                                      UPERegisteredInUKConfirmationFormProvider,
+  formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
-  view:                                              UPERegisteredInUKConfirmationView
+  view:                                              EntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -58,7 +52,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
+    val preparedForm = request.userAnswers.get(EntityTypePage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -73,30 +67,32 @@ class UPERegisteredInUKConfirmationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case UPERegisteredInUKConfirmation.Yes =>
+            case EntityType.UkLimitedCompany =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(EntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedRequest <-
+                  Future.fromTry(
+                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.UkLimitedCompany)))
+                  )
+                _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
+                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
+                                      .createLimitedCompanyJourney(mode)
+              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
-              } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
-
-            case UPERegisteredInUKConfirmation.No =>
+            case EntityType.LimitedLiabilityPartnership =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(EntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
+                updatedRequest <-
+                  Future.fromTry(
+                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.LimitedLiabilityPartnership)))
+                  )
+                _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
+                createJourneyRes <- partnershipIdentificationFrontendConnector
+                                      .createPartnershipJourney(OrgType.LimitedLiabilityPartnership, mode)
+              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )
   }
-
-  private def createRegistrationRequest(mode: Mode): IncorporatedEntityCreateRegistrationRequest =
-    registration.IncorporatedEntityCreateRegistrationRequest(
-      continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}",
-      businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,
-      optServiceName = Some(ServiceName().en.optServiceName),
-      deskProServiceId = appConfig.appName,
-      signOutUrl = appConfig.signOutUrl,
-      accessibilityUrl = appConfig.accessibilityStatementPath,
-      labels = ServiceName()
-    )
 }

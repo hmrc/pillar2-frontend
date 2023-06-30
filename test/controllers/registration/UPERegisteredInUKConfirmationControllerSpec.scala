@@ -61,7 +61,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction page when valid data is submitted with value YES" in {
+    "must redirect to Entity Type page when valid data is submitted with value YES" in {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
@@ -71,7 +71,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         .thenReturn(Future(GrsCreateRegistrationResponse("/pillar-two/under-construction")))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
 
     }
 

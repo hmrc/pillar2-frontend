@@ -95,7 +95,7 @@ trait SpecBase
 
   def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
     override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsData)))
+      Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsDataForLimitedCompany)))
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {
@@ -107,7 +107,11 @@ trait SpecBase
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        Configuration("metrics.enabled" -> "false", "auditing.enabled" -> false)
+        Configuration(
+          "metrics.enabled"         -> "false",
+          "auditing.enabled"        -> false,
+          "features.grsStubEnabled" -> true
+        )
       )
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
