@@ -37,7 +37,10 @@
     <p class="govuk-body">
         @govukButton(
             ButtonViewModel(messages("site.signIn"))
-                .asLink(routes.IndexController.onPageLoad.url)
+                .asLink(routes.TaskListController.onPageLoad.url)
         )
     </p>
+            <p class="govuk-body"><a href="@appConfig.exitSurveyUrl" class="govuk-link govuk-link--no-visited-state">@messages("signedOut.feedback")</a>
+    </p>
+
 }
