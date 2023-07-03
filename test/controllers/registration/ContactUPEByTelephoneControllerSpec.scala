@@ -76,7 +76,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.CheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
 
     }
   }

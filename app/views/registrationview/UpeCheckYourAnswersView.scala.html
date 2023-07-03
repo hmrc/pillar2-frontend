@@ -18,7 +18,6 @@
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton
 )
@@ -27,7 +26,7 @@
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
-    @formHelper(action = controllers.routes.TaskListController.onPageLoad) {
+
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
@@ -35,8 +34,10 @@
 
     @govukButton(
     ButtonViewModel(messages("site.save-and-continue"))
-    )
+    .withAttribute("id","continue")
+    .asLink(controllers.routes.TaskListController.onPageLoad.url)
+)
 
 
-}}
+}
 

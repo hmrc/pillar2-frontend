@@ -25,14 +25,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.registrationview.CheckYourAnswersView
+import views.html.registrationview.UpeCheckYourAnswersView
 
-class CheckYourAnswersController @Inject() (
+class UpeCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     CheckYourAnswersView
+  view:                     UpeCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

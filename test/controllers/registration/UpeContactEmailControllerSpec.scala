@@ -35,7 +35,6 @@ class UpeContactEmailControllerSpec extends SpecBase {
   def controller(): UpeContactEmailController =
     new UpeContactEmailController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,

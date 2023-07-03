@@ -45,8 +45,10 @@ upe-input-business-name.heading = What is the name of the person or team we shou
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.error.length = Name cannot be more than 200 characters
-upe-input-business-name.change.hidden= Change the name of the ultimate parent entity
+upe-input-business-name.change.hidden= Change the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
+
+
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete
@@ -107,6 +109,8 @@ upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name cannot be more than 200 characters
 upeNameRegistration.checkYourAnswersLabel= Company name
+upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
+
 upe-input-business-email.title=What is the email address for {0}?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
@@ -195,6 +199,7 @@ contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
 contactUPEByTelephone.checkYourAnswersLabel= Telephone contact
+contactUPEByTelephone.change.hidden = Change your response to whether we make contact by telephone or not
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
 captureTelephoneDetails.heading = What is the telephone number for {0}?

@@ -33,7 +33,7 @@ object UpeTelephonePreferenceSummary {
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upe-registered-address.change.hidden"))
+            .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
         )
       )
     }
