@@ -108,7 +108,7 @@ upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name cannot be more than 200 characters
-upeNameRegistration.checkYourAnswersLabel= Company name
+upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
 
 upe-input-business-email.title=What is the email address for {0}?

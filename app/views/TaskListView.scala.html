@@ -22,7 +22,7 @@
 )
 
 
-@(upeNoIDStatus:String, counter: Int)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="not started", counter: Int, filingMemberStatus:String="not started")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),

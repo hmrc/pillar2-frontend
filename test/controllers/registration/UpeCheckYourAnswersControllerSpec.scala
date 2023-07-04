@@ -17,13 +17,13 @@
 package controllers.registration
 
 import base.SpecBase
-import models.{CaptureTelephoneDetails, UpeRegisteredAddress, UserAnswers}
+import models.{CaptureTelephoneDetails, UpeRegisteredAddress}
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.registrationview.CheckYourAnswersView
+import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -102,7 +102,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
+        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual OK
@@ -116,7 +116,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
+        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
         val list = SummaryListViewModel(phonenumberProvided)
 
         status(result) mustEqual OK
@@ -131,7 +131,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
+        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
         val list = SummaryListViewModel(noPhonenumber)
 
         status(result) mustEqual OK
