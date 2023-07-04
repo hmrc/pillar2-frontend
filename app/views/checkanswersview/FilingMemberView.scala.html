@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import config.FrontendAppConfig
 
-import forms.mappings.Mappings
-import play.api.data.Form
+@this(
+layout: templates.Layout,
+govukSummaryList: GovukSummaryList
+)
 
-import javax.inject.Inject
 
-class ContactUPEByTelephoneFormProvider @Inject() extends Mappings {
+@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-  def apply(userName: String): Form[Boolean] =
-    Form(
-      "value" -> boolean("contactUPEByTelephone.error.required", args = Seq(userName))
-    )
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
+<h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+
+@govukSummaryList(list)
 }

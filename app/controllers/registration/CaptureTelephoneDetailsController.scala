@@ -69,7 +69,7 @@ class CaptureTelephoneDetailsController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CaptureTelephoneDetailsPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
       )
   }
 }
