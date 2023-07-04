@@ -18,9 +18,10 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.UPERegisteredInUKConfirmationPage
+import pages.{NominateFilingMemberYesNoPage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.routing.sird.?
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TaskListView
 
@@ -41,8 +42,16 @@ class TaskListController @Inject() (
       case None        => ""
       case Some(value) => value
     }
+    var taskCompleted = 0
     val regInProgress = getRegStatus(isUPERegInUK.toString)
-    Ok(view(regInProgress))
+
+    val isFilingMember = request.userAnswers.get(NominateFilingMemberYesNoPage) match {
+      case None        => ""
+      case Some(value) => value
+    }
+    val filingInProgress = getFilingStatus(isFilingMember.toString)
+    if (filingInProgress == "no") taskCompleted = 2
+    Ok(view(regInProgress, filingInProgress, taskCompleted))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>
@@ -51,4 +60,7 @@ class TaskListController @Inject() (
 
   private def getRegStatus(isUPERegInUK: String): Boolean =
     isUPERegInUK == "yes" || isUPERegInUK == "no"
+
+  private def getFilingStatus(isFilingMember: String): String =
+    isFilingMember
 }
