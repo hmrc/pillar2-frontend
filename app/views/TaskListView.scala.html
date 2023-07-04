@@ -22,17 +22,15 @@
 )
 
 
-@(regInProgress:Boolean, filingInProgress:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
+@(regInProgress:Boolean, filingInProgress:String, taskCompleted:Int=0)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
     @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
-
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections")</p>
+        <h1 class="govuk-heading-xl">@messages("task-list.heading")@filingInProgress </h1>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete") @taskCompleted</h2>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections",taskCompleted)</p>
 
         <ol class="app-task-list">
             <li>
@@ -59,10 +57,12 @@
                             @messages("taskList.task.business.filingMember")
                             </a>
                         </span>
-                        @if(filingInProgress){
+                        @if(filingInProgress=="yes"){
                             <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
+                        } else if(filingInProgress=="no") {
+                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.completed") </strong>
                         } else {
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
                         }
                     </li>
                     <li class="app-task-list__item">

@@ -42,14 +42,16 @@ class TaskListController @Inject() (
       case None        => ""
       case Some(value) => value
     }
+    var taskCompleted = 0
     val regInProgress = getRegStatus(isUPERegInUK.toString)
 
     val isFilingMember = request.userAnswers.get(NominateFilingMemberYesNoPage) match {
       case None        => ""
       case Some(value) => value
     }
-    val filingInProgress = getRegStatus(isFilingMember.toString)
-    Ok(view(regInProgress, filingInProgress))
+    val filingInProgress = getFilingStatus(isFilingMember.toString)
+    if (filingInProgress == "no") taskCompleted = 2
+    Ok(view(regInProgress, filingInProgress, taskCompleted))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>
@@ -59,6 +61,6 @@ class TaskListController @Inject() (
   private def getRegStatus(isUPERegInUK: String): Boolean =
     isUPERegInUK == "yes" || isUPERegInUK == "no"
 
-  private def getFilingStatus(isFilingMember: String): Boolean =
-    isFilingMember == "yes"
+  private def getFilingStatus(isFilingMember: String): String =
+    isFilingMember
 }
