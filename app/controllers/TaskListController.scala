@@ -17,28 +17,37 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, Page, QuestionPage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{IndexView, TaskListView}
+import views.html.TaskListView
 
 import javax.inject.Inject
 
 class TaskListController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
-  }
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val counter: Int = 0
+    val telephonePreference = request.userAnswers.get(ContactUPEByTelephonePage).isDefined
+    val upeAddress          = request.userAnswers.get(UPERegisteredInUKConfirmationPage).isDefined
+    val telephoneNumber     = request.userAnswers.get(CaptureTelephoneDetailsPage).isDefined
+    (telephonePreference, upeAddress, telephoneNumber) match {
+      case (_, true, true) => Ok(view("completed", counter + 1))
+      case (true, true, _) => Ok(view("completed", counter + 1))
+      case (_, true, _)    => Ok(view("in progress", counter))
+      case _               => Ok(view("not started", counter))
+    }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
   }
 
 }

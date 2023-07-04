@@ -23,7 +23,7 @@ import views.html.auth.SignedOutView
 
 class SignedOutControllerSpec extends SpecBase {
 
-  "SignedOut Controller" - {
+  "SignedOut Controller" should {
 
     "must return OK and the correct view for a GET" in {
 

@@ -24,7 +24,7 @@ import views.html.TaskListView
 
 class TaskListControllerSpec extends SpecBase {
 
-  "Task List Controller" - {
+  "Task List Controller" must {
 
     "must return OK and the correct view for a GET" in {
 

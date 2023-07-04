@@ -22,7 +22,7 @@
 )
 
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String, counter: Int)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -32,7 +32,7 @@
         <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections")</p>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
 
         <ol class="app-task-list">
             <li>
@@ -47,7 +47,13 @@
                              @messages("taskList.task.business.ultimate")
                           </a>
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                        @if(upeNoIDStatus == "completed"){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(upeNoIDStatus == "in progress") {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">

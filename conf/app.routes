@@ -5,7 +5,7 @@
 GET         /                                            controllers.IndexController.onPageLoad
 POST        /submit                                      controllers.IndexController.onSubmit
 GET         /task-list/register-for-global-minimum-tax   controllers.TaskListController.onPageLoad
-POST        /task-list/register-for-global-minimum-tax   controllers.TaskListController.onSubmit
+
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -22,11 +22,41 @@ POST        /trading-business-confirmation               controllers.TradingBusi
 GET         /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onPageLoad
 POST        /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onSubmit
 
-GET         /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-name               controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/input-name              controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-name              controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-name              controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-name              controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = CheckMode)
 
 GET         /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/no-id/input-business-name             controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-business-name              controllers.registration.UpeContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-business-name             controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-business-name              controllers.registration.UpeContactNameController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /business-matching/ultimate-parent/no-id/input-email               controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-email               controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-email               controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-email               controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+
+GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/no-id/input-telephone controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/check-answers                          controllers.registration.UpeCheckYourAnswersController.onPageLoad
+
 
 
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
@@ -37,9 +67,6 @@ POST        /eligibility/global-gross-revenue             controllers.eligibilit
 
 GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
-
-GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear

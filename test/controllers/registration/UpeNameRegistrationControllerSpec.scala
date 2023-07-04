@@ -16,11 +16,12 @@
 
 package controllers.registration
 
-import helpers.ControllerBaseSpec
+import base.SpecBase
+import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -28,7 +29,9 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
+class UpeNameRegistrationControllerSpec extends SpecBase {
+
+  val formProvider = new UpeNameRegistrationFormProvider()
 
   def controller(): UpeNameRegistrationController =
     new UpeNameRegistrationController(
@@ -37,20 +40,20 @@ class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      getUpeNameRegistrationFormProvider,
+      formProvider,
       stubMessagesControllerComponents(),
-      upeNameRegistrationView
+      viewUPENameRegistration
     )
 
-  "UpeNameRegistration Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad())
+  "UpeNameRegistration Controller" must {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad().url).withFormUrlEncodedBody(("value", "no"))
+      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
+      status(result) mustBe OK
       contentAsString(result) should include(
         "What is the name of the ultimate parent entity"
       )
@@ -59,12 +62,12 @@ class UpeNameRegistrationControllerSpec extends ControllerBaseSpec {
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "ABC Corp"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url
 
     }
   }

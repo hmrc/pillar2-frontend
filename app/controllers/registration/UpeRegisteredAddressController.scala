@@ -68,7 +68,7 @@ class UpeRegisteredAddressController @Inject() (
 
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredAddressPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
       )
   }
 }

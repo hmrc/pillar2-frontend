@@ -22,7 +22,6 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.{Mode, UPERegisteredInUKConfirmation}
-import navigation.Navigator
 import pages.UPERegisteredInUKConfirmationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UPERegisteredInUKConfirmationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -74,7 +72,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
           }
       )
   }

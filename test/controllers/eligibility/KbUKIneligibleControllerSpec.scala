@@ -16,20 +16,20 @@
 
 package controllers.eligibility
 
-import helpers.ControllerBaseSpec
-
+import base.SpecBase
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, _}
+import play.api.test.Helpers._
 
-class KbUKIneligibleControllerSpec extends ControllerBaseSpec {
+class KbUKIneligibleControllerSpec extends SpecBase {
 
   def controller(): KbUKIneligibleController =
     new KbUKIneligibleController(
       stubMessagesControllerComponents(),
-      kbUKIneligibleView
+      viewKbUKIneligible
     )
 
-  "Trading Business Confirmation Controller" should {
+  "Trading Business Confirmation Controller" when {
     "must return OK and the correct view for a GET" in {
 
       val request =
