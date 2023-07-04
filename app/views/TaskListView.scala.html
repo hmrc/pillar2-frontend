@@ -29,7 +29,7 @@
 ) {
     @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("task-list.heading")@filingInProgress </h1>
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete") @taskCompleted</h2>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
         <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections",taskCompleted)</p>
 
         <ol class="app-task-list">
@@ -53,9 +53,13 @@
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
+                        @if(taskCompleted > 0 ){
                             <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="filing-member-status">
                             @messages("taskList.task.business.filingMember")
                             </a>
+                        } else {
+                            @messages("taskList.task.business.filingMember")
+                        }
                         </span>
                         @if(filingInProgress=="yes"){
                             <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>

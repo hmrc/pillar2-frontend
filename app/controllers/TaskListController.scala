@@ -42,7 +42,8 @@ class TaskListController @Inject() (
       case None        => ""
       case Some(value) => value
     }
-    var taskCompleted = 0
+    var taskCompleted = 1 // this value setup after we will get ETMP response for no journey id
+
     val regInProgress = getRegStatus(isUPERegInUK.toString)
 
     val isFilingMember = request.userAnswers.get(NominateFilingMemberYesNoPage) match {
@@ -50,7 +51,7 @@ class TaskListController @Inject() (
       case Some(value) => value
     }
     val filingInProgress = getFilingStatus(isFilingMember.toString)
-    if (filingInProgress == "no") taskCompleted = 2
+    if (filingInProgress == "no") taskCompleted = 2 // after this journey complete will also  set task completed
     Ok(view(regInProgress, filingInProgress, taskCompleted))
   }
 
