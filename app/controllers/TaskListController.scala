@@ -37,17 +37,21 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val counter: Int = 0
+    var counter: Int = 0
     val telephonePreference = request.userAnswers.get(ContactUPEByTelephonePage).isDefined
     val upeAddress          = request.userAnswers.get(UPERegisteredInUKConfirmationPage).isDefined
     val telephoneNumber     = request.userAnswers.get(CaptureTelephoneDetailsPage).isDefined
-    (telephonePreference, upeAddress, telephoneNumber) match {
-      case (_, true, true) => Ok(view("completed", counter + 1))
-      case (true, true, _) => Ok(view("completed", counter + 1))
-      case (_, true, _)    => Ok(view("in progress", counter))
-      case _               => Ok(view("not started", counter))
+    val upeStatus = (telephonePreference, upeAddress, telephoneNumber) match {
+      case (_, true, true) =>
+        counter = counter + 1
+        "completed"
+      case (true, true, _) =>
+        counter = counter + 1
+        "completed"
+      case (_, true, _) => "in progress"
+      case _            => "not started"
     }
-
+    Ok(view(upeStatus, counter))
   }
 
 }
