@@ -89,14 +89,4 @@ class UPERegisteredInUKConfirmationController @Inject() (
       )
   }
 
-  private def createRegistrationRequest(mode: Mode): IncorporatedEntityCreateRegistrationRequest =
-    registration.IncorporatedEntityCreateRegistrationRequest(
-      continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}",
-      businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,
-      optServiceName = Some(ServiceName().en.optServiceName),
-      deskProServiceId = appConfig.appName,
-      signOutUrl = appConfig.signOutUrl,
-      accessibilityUrl = appConfig.accessibilityStatementPath,
-      labels = ServiceName()
-    )
 }

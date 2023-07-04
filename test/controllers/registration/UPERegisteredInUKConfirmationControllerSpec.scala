@@ -75,7 +75,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
+    "must redirect to UPE Name page when valid data is submitted with value NO" in {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
