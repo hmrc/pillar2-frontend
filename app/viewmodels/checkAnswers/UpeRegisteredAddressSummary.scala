@@ -17,23 +17,28 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.UpeNameRegistrationPage
+import pages.UpeRegisteredAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeNameRegistrationSummary {
+object UpeRegisteredAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UpeNameRegistrationPage).map { answer =>
+    answers.get(UpeRegisteredAddressPage).map { answer =>
+      val value =
+        HtmlFormat.escape(answer.addressLine1).toString + "<br/>" + HtmlFormat.escape(answer.addressLine2.getOrElse("")) + "<br/>" +
+          HtmlFormat.escape(answer.addressLine3).toString + "<br/>" + HtmlFormat.escape(answer.addressLine4.getOrElse("")) + "<br/>" +
+          HtmlFormat.escape(answer.postalCode.getOrElse("")) + "<br/>" + HtmlFormat.escape(answer.countryCode)
       SummaryListRowViewModel(
-        key = "upeNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        key = "upe-registered-address.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent(value)),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("upe-registered-address.change.hidden"))
         )
       )
     }

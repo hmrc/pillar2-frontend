@@ -22,15 +22,17 @@
 )
 
 
-@(regInProgress:Boolean, filingInProgress:String, taskCompleted:Int=0)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="not started", counter: Int, filingMemberStatus:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
     @formHelper(action = routes.IndexController.onSubmit) {
-        <h1 class="govuk-heading-xl">@messages("task-list.heading")@filingInProgress </h1>
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete") @taskCompleted</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections",taskCompleted)</p>
+        <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
+
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
 
         <ol class="app-task-list">
             <li>
@@ -45,24 +47,30 @@
                              @messages("taskList.task.business.ultimate")
                           </a>
                         </span>
-                        @if(regInProgress){
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
-                        } else {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                        @if(upeNoIDStatus == "completed"){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(upeNoIDStatus == "in progress") {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
+                        @if(upeNoIDStatus=="completed"){
                             <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="filing-member-status">
                             @messages("taskList.task.business.filingMember")
                             </a>
-                        </span>
-                        @if(filingInProgress=="yes"){
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
-                        } else if(filingInProgress=="no") {
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.completed") </strong>
                         } else {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
+                            @messages("taskList.task.business.filingMember")
+                        }
+                        </span>
+                        @if(filingMemberStatus == "no"){
+                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "yes") {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         }
                     </li>
                     <li class="app-task-list__item">

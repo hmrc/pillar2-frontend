@@ -18,10 +18,10 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{NominateFilingMemberYesNoPage, UPERegisteredInUKConfirmationPage}
+import models.NominateFilingMemberYesNo
+import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, NominateFilingMemberYesNoPage, Page, QuestionPage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.routing.sird.?
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TaskListView
 
@@ -38,29 +38,27 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
-      case None        => ""
-      case Some(value) => value
-    }
-    var taskCompleted = 0
-    val regInProgress = getRegStatus(isUPERegInUK.toString)
-
+    var counter: Int = 0
+    val telephonePreference = request.userAnswers.get(ContactUPEByTelephonePage).isDefined
+    val upeAddress          = request.userAnswers.get(UPERegisteredInUKConfirmationPage).isDefined
+    val telephoneNumber     = request.userAnswers.get(CaptureTelephoneDetailsPage).isDefined
     val isFilingMember = request.userAnswers.get(NominateFilingMemberYesNoPage) match {
       case None        => ""
       case Some(value) => value
     }
-    val filingInProgress = getFilingStatus(isFilingMember.toString)
-    if (filingInProgress == "no") taskCompleted = 2
-    Ok(view(regInProgress, filingInProgress, taskCompleted))
+
+    val upeStatus = (telephonePreference, upeAddress, telephoneNumber) match {
+      case (_, true, true) =>
+        counter = counter + 1
+        "completed"
+      case (true, true, _) =>
+        counter = counter + 1
+        "completed"
+      case (_, true, _) => "in progress"
+      case _            => "not started"
+    }
+    if (isFilingMember.toString == "no") counter = counter + 1 // or if journey completed then change code to increment counter as well
+    Ok(view(upeStatus, counter, isFilingMember.toString))
   }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
-  }
-
-  private def getRegStatus(isUPERegInUK: String): Boolean =
-    isUPERegInUK == "yes" || isUPERegInUK == "no"
-
-  private def getFilingStatus(isFilingMember: String): String =
-    isFilingMember
 }
