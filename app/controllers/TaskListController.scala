@@ -18,9 +18,11 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.EntityType
+import models.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.Registered
-import models.registration.IncorporatedEntityRegistrationData
-import pages.{RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
+import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -41,15 +43,33 @@ class TaskListController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
-      case None        => ""
+      case None => ""
       case Some(value) => value
     }
 
     //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
+
+    val orgType = request.userAnswers.get[EntityType](EntityTypePage) match {
+      case Some(value) => value
+      case None        => EntityType.Other
+    }
+
+
+    //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
     val regInProgress = getRegStatus(isUPERegInUK.toString)
-    val regComplete = request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage) match {
-      case Some(value) => (value.registration.registrationStatus == Registered)
-      case None        => false
+
+    val regComplete = orgType match {
+      case LimitedLiabilityPartnership =>
+        request.userAnswers.get[PartnershipEntityRegistrationData](PartnershipRegistrationWithIdResponsePage) match {
+          case Some(value) => (value.registration.registrationStatus == Registered)
+          case None        => false
+        }
+      case UkLimitedCompany =>
+        request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage) match {
+          case Some(value) => (value.registration.registrationStatus == Registered)
+          case None        => false
+        }
+      case _ => false
     }
 
     if (regComplete)

@@ -26,6 +26,7 @@ object EntityType extends Enumerable.Implicits {
 
   case object UkLimitedCompany extends WithName("ukLimitedCompany") with EntityType
   case object LimitedLiabilityPartnership extends WithName("limitedLiabilityPartnership") with EntityType
+  case object Other extends WithName("other") with EntityType
 
   val values: Seq[EntityType] = Seq(
     UkLimitedCompany,
