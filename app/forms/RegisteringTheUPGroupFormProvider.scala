@@ -20,10 +20,10 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-class GroupTerritoriesFormProvider @Inject() extends CommonFormats {
+class RegisteringTheUPGroupFormProvider @Inject() extends CommonFormats {
 
   def apply(): Form[String] =
     Form(
-      "value" -> textWithErrorOverride(key = "GroupTerritories.error.required")
+      "value" -> textWithErrorOverride(key = "registeringTheUPGroup.error.required")
     )
 }

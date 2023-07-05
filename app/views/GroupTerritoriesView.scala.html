@@ -27,22 +27,22 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("groupTerritories.title")),
+@layout(pageTitle = title(form, messages("registeringTheUPGroup.title")),
     showSignOut = false,
     timeout = false
 ) {
 
-    @formHelper(action = eligibility.routes.GroupTerritoriesController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = eligibility.routes.RegisteringTheUPGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">Check if your group is liable</span>
+        <span class="govuk-caption-l">@messages("registeringTheUPGroup.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(),
-                items  = GroupTerritories.options
+                legend = LegendViewModel(messages("registeringTheUPGroup.heading")).asPageHeading().withCssClass("govuk-label--l"),
+                items  = RegisteringTheUPGroup.options
             )
         )
 

@@ -126,11 +126,14 @@ turnOverEligibility.no = No
 turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
 turnOverEligibility.error.required = Select yes if your group had more than 750 million euros in 2 of the last 4 accounting periods
 turnOverEligibility.change.hidden = Change
-groupTerritories.title = Does your group have businesses in more than one country?
-groupTerritories.heading = Does your group have businesses in more than one country?
-groupTerritories.yes = Yes
-groupTerritories.no = No
-GroupTerritories.error.required = Select yes if your group has businesses in more than one country
+
+registeringTheUPGroup.title = Are you registering the ultimate parent of this group?
+registeringTheUPGroup.heading = Are you registering the ultimate parent of this group?
+registeringTheUPGroup.yes = Yes
+registeringTheUPGroup.no = No
+registeringTheUPGroup.error.required = Select yes if you are registering the ultimate parent of this grou
+registeringTheUPGroup.caption = Check if the group needs to register
+
 KBMnIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
 KBMnIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
 KBMnIneligible.p1=Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.

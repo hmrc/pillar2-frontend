@@ -20,7 +20,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
+import forms.{BusinessActivityUKFormProvider, RegisteringTheUPGroupFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import helpers.{AllMocks, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}

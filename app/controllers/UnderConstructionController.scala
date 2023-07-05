@@ -37,7 +37,7 @@ class UnderConstructionController @Inject() (
   }
 
   def onPageLoadClear: Action[AnyContent] = Action { implicit request =>
-    Redirect(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad).withNewSession
+    Redirect(controllers.eligibility.routes.RegisteringTheUPGroupController.onPageLoad).withNewSession
   }
 
 }

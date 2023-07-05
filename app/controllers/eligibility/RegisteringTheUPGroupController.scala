@@ -18,7 +18,7 @@ package controllers.eligibility
 
 import cache.SessionData
 import config.FrontendAppConfig
-import forms.GroupTerritoriesFormProvider
+import forms.RegisteringTheUPGroupFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,8 +28,8 @@ import views.html.GroupTerritoriesView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GroupTerritoriesController @Inject() (
-  formProvider:             GroupTerritoriesFormProvider,
+class RegisteringTheUPGroupController @Inject() (
+  formProvider:             RegisteringTheUPGroupFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
   sessionData:              SessionData

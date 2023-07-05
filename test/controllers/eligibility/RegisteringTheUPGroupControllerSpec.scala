@@ -17,18 +17,18 @@
 package controllers.eligibility
 
 import base.SpecBase
-import forms.GroupTerritoriesFormProvider
+import forms.RegisteringTheUPGroupFormProvider
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class GroupTerritoriesControllerSpec extends SpecBase {
+class RegisteringTheUPGroupControllerSpec extends SpecBase {
 
-  val formProvider = new GroupTerritoriesFormProvider()
+  val formProvider = new RegisteringTheUPGroupFormProvider()
 
-  def controller(): GroupTerritoriesController =
-    new GroupTerritoriesController(
+  def controller(): RegisteringTheUPGroupController =
+    new RegisteringTheUPGroupController(
       formProvider,
       stubMessagesControllerComponents(),
       viewGroupTerritories,
@@ -39,24 +39,24 @@ class GroupTerritoriesControllerSpec extends SpecBase {
   val mockFormNoData  = Map("confirmForm" -> "no")
 
   "Group Territories Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad)
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.RegisteringTheUPGroupController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+        FakeRequest(GET, controllers.eligibility.routes.RegisteringTheUPGroupController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
 
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Does your group have businesses in more than one country?"
+        "Are you registering the ultimate parent of this group?"
       )
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       val request =
-        FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
+        FakeRequest(POST, controllers.eligibility.routes.RegisteringTheUPGroupController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
