@@ -43,9 +43,15 @@
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                          <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
-                             @messages("taskList.task.business.ultimate")
-                          </a>
+                            @if(upeNoIDStatus == "completed"){
+                              <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.ultimate.edit")
+                              </a>
+                            } else {
+                                <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.ultimate")
+                                </a>
+                            }
                         </span>
                         @if(upeNoIDStatus == "completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
