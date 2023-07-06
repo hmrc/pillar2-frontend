@@ -43,35 +43,30 @@ class TaskListController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
-      case None => ""
+      case None        => ""
       case Some(value) => value
     }
-
-    //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
 
     val orgType = request.userAnswers.get[EntityType](EntityTypePage) match {
       case Some(value) => value
       case None        => EntityType.Other
     }
 
-
     //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
     val regInProgress = getRegStatus(isUPERegInUK.toString)
 
     val regComplete = orgType match {
       case LimitedLiabilityPartnership =>
-        request.userAnswers.get[PartnershipEntityRegistrationData](PartnershipRegistrationWithIdResponsePage) match {
-          case Some(value) => (value.registration.registrationStatus == Registered)
-          case None        => false
-        }
+        request.userAnswers
+          .get[PartnershipEntityRegistrationData](PartnershipRegistrationWithIdResponsePage)
+          .fold(false)(_.registration.registrationStatus == Registered)
       case UkLimitedCompany =>
-        request.userAnswers.get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage) match {
-          case Some(value) => (value.registration.registrationStatus == Registered)
-          case None        => false
-        }
+        request.userAnswers
+          .get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage)
+          .fold(false)(_.registration.registrationStatus == Registered)
+
       case _ => false
     }
-
     if (regComplete)
       Ok(view(RowStatus.Completed))
     else if (regInProgress)
