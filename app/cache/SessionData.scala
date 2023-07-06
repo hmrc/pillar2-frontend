@@ -32,6 +32,10 @@ class SessionData {
       (Pillar2SessionKeys.turnOverEligibilityValue -> value)
   def updateGroupTerritoriesYesNo(value: String)(implicit request: Request[AnyContent]): Session =
     request.session +
-      (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
+      (Pillar2SessionKeys.registeringUPEGroupPageYesNo -> value)
+
+  def registeringNFMGroupPageYesNo(value: String)(implicit request: Request[AnyContent]): Session =
+    request.session +
+      (Pillar2SessionKeys.registeringNFMGroupPageYesNo -> value)
 
 }

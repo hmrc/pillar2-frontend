@@ -18,20 +18,20 @@ package controllers.eligibility
 
 import cache.SessionData
 import config.FrontendAppConfig
-import forms.RegisteringTheUPGroupFormProvider
+import forms.{RegisteringNFMGroupFormProvider, RegisteringTheUPGroupFormProvider}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
-import views.html.GroupTerritoriesView
+import views.html.{GroupTerritoriesView, RegisteringNFMGroupView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteringTheUPGroupController @Inject() (
-  formProvider:             RegisteringTheUPGroupFormProvider,
+class RegisteringNFMGroupController @Inject() (
+  formProvider:             RegisteringNFMGroupFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     GroupTerritoriesView,
+  view:                     RegisteringNFMGroupView,
   sessionData:              SessionData
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -40,7 +40,7 @@ class RegisteringTheUPGroupController @Inject() (
   val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.registeringUPEGroupPageYesNo) match {
+    val preparedForm = request.session.data.get(Pillar2SessionKeys.registeringNFMGroupPageYesNo) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -58,12 +58,12 @@ class RegisteringTheUPGroupController @Inject() (
             case "yes" =>
               Future.successful(
                 Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
+                  .withSession((sessionData.registeringNFMGroupPageYesNo(value)))
               )
             case "no" =>
               Future.successful(
-                Redirect(controllers.eligibility.routes.RegisteringNFMGroupController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
+                Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
+                  .withSession((sessionData.registeringNFMGroupPageYesNo(value)))
               )
           }
       )

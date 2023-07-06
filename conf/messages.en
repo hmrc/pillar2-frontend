@@ -111,52 +111,59 @@ upe-input-business-contact.email.error.required = You need to enter the email ad
 upe-input-business-contact.email.error.length = The email address cannot be more than 200 characters
 
 under_construction.heading = Under Construction
-businessActivityUK.title = Does any entity in this group have business activity in the UK?
-businessActivityUK.heading = Does any entity in this group have business activity in the UK?
+businessActivityUK.title = Does the group have business activities in the UK?
+businessActivityUK.heading = Does the group have business activities in the UK?
 businessActivityUK.check.liable.text = Check if this group needs to register
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
 businessActivityUK.error.required = Select yes if the group has business activities in the UK
 
-turnOverEligibility.title = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
-turnOverEligibility.heading = Has your group had revenue of more than 750 million euros in 2 of the last 4 accounting periods?
-turnOverEligibility.check.liable.text = Check if your group is liable
+turnOverEligibility.title = Has the group had global revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+turnOverEligibility.heading = Has the group had global revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+turnOverEligibility.check.liable.text = Check if the group needs to register
 turnOverEligibility.yes = Yes
 turnOverEligibility.no = No
 turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
-turnOverEligibility.error.required = Select yes if your group had more than 750 million euros in 2 of the last 4 accounting periods
+turnOverEligibility.error.required = Select yes if the group had global revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 turnOverEligibility.change.hidden = Change
 
 registeringTheUPGroup.title = Are you registering the ultimate parent of this group?
 registeringTheUPGroup.heading = Are you registering the ultimate parent of this group?
 registeringTheUPGroup.yes = Yes
 registeringTheUPGroup.no = No
-registeringTheUPGroup.error.required = Select yes if you are registering the ultimate parent of this grou
+registeringTheUPGroup.error.required = Select yes if you are registering the ultimate parent of this group
 registeringTheUPGroup.caption = Check if the group needs to register
 
-KBMnIneligible.title = Based on your answers, you’re not covered by Pillar 2 top-up tax
-KBMnIneligible.heading = Based on your answers, you’re not covered by Pillar 2 top-up tax
-KBMnIneligible.p1=Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law.
-KBMnIneligible.p2=Your business should continue to pay tax as usual in the country where you operate.
-KBMnIneligible.link=More about Pillar 2 top-up tax
+registeringNFMGroup.title = Are you registering the nominated filing member for this group?
+registeringNFMGroup.heading = Are you registering the nominated filing member for this group?
+registeringNFMGroup.yes = Yes
+registeringNFMGroup.no = No
+registeringNFMGroup.error.required = Select yes if you are registering the nominated filing member for this group
+registeringNFMGroup.caption = Check if the group needs to register
+
+KBMnIneligible.title = Based on your answers, you cannot register this group for Pillar 2 top-up tax
+KBMnIneligible.heading = Based on your answers, you cannot register this group for Pillar 2 top-up tax
+KBMnIneligible.p1=Only the ultimate parent or nominated filing member for an eligible group can register for Pillar 2 top-up tax.
+KBMnIneligible.p2=This group may still need to register.
+KBMnIneligible.link=Go back to the start page for more information
 
 
-KbUKIneligible.title = Based on your answers, this group does not need to register for Global Minimum Tax
-KbUKIneligible.heading = Based on your answers, this group does not need to register for Global Minimum Tax
-KbUKIneligible.p1=Global Minimum Tax may be collected in the UK when you have business activity here.
-KbUKIneligible.p2=If your group only operates in other countries, you should check where any liability might apply.
+KbUKIneligible.title = Based on your answers, this group does not need to register for Pillar 2 top-up tax
+KbUKIneligible.heading = Based on your answers, this group does not need to register for Pillar 2 top-up tax
+KbUKIneligible.p1 = Pillar 2 top-up tax may be collected in the UK when you have business activity here
+KbUKIneligible.p2 = If your group only operates in other countries, you should check where any liability might apply.
 KbUKIneligible.link=Go back to the start page for more information
 
 
 
-Kb750Ineligible.title = Based on your answers, you do not need to pay Pillar 2 top-up tax
-Kb750Ineligible.heading = Based on your answers, you do not need to pay Pillar 2 top-up tax
-Kb750Ineligible.p1=Pillar 2 top-up tax may apply to businesses with revenue of over 750 million euros in 2 of the last 4 accounting periods.
-Kb750Ineligible.p2=You will not be covered by this law if your revenue is lower.
-Kb750Ineligible.link=More about Pillar 2 top-up tax
+Kb750Ineligible.title = Based on your answers, this group does not need to register for Pillar 2 top-up tax
+Kb750Ineligible.heading = Based on your answers, this group does not need to register for Pillar 2 top-up tax
+Kb750Ineligible.p1 = Pillar 2 top-up tax applies to groups that have global revenues of €750 million or more in at least two of the previous four accounting periods.
+Kb750Ineligible.p2=You may need to register for Pillar 2 top-up tax if the global turnover meets the €750 million threshold in future accounting periods.
+Kb750Ineligible.link=Go back to the start page for more information
 
-eligibilityconfirmation.title = You need to register this group for Global Minimum Tax
-eligibilityconfirmation.heading = You need to register this group for Global Minimum Tax
+eligibilityconfirmation.title = You need to register this group for Pillar 2 top-up tax
+eligibilityconfirmation.heading = You need to register this group for Pillar 2 top-up tax
 eligibilityconfirmation.h2 = What happens next
 eligibilityconfirmation.p1=You will now need to sign in to HMRC online services to register.
 eligibilityconfirmation.link=More about Pillar 2 top-up tax

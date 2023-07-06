@@ -33,12 +33,12 @@ class KbMnIneligibleControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)
+        FakeRequest(GET, controllers.eligibility.routes.KbMnIneligibleController.onPageLoad.url)
 
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law"
+        "Based on your answers, you cannot register this group for Pillar 2 top-up tax"
       )
 
     }

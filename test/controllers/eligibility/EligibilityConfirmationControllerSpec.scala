@@ -38,7 +38,7 @@ class EligibilityConfirmationControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "You need to register this group for Global Minimum Tax"
+        "You will now need to sign in to HMRC online services to register."
       )
 
     }
