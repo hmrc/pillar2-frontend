@@ -46,7 +46,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
           businessVerificationCheck = false,
           optServiceName = Some(serviceName.en.optServiceName),
           deskProServiceId = "pillar2-frontend",
-          signOutUrl = "http://localhost:9514//gg/sign-out?continue=$exitSurveyUrl",
+          signOutUrl = "http://localhost:9514/feedback/pillar-two",
           accessibilityUrl = "/accessibility-statement/pillar2-frontend",
           labels = serviceName
         )
