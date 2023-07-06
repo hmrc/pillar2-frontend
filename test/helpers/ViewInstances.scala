@@ -23,12 +23,16 @@ import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBann
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.NFMview.IsNFMUKBasedView
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.registrationview._
 import views.html.templates.Layout
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewIsNFMUKBased: IsNFMUKBasedView =
+    new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 

@@ -195,3 +195,9 @@ captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
+
+isNFMUKBased.title = isNFMUKBased
+isNFMUKBased.heading = isNFMUKBased
+isNFMUKBased.checkYourAnswersLabel = isNFMUKBased
+isNFMUKBased.error.required = Select yes if isNFMUKBased
+isNFMUKBased.change.hidden = IsNFMUKBased
