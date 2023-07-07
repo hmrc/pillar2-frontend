@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package generators
+package models.grs
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.libs.json.{Json, OFormat}
 
-trait ModelGenerators {
+final case class GrsCreateRegistrationResponse(
+  journeyStartUrl: String
+)
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+object GrsCreateRegistrationResponse {
+  implicit val format: OFormat[GrsCreateRegistrationResponse] =
+    Json.format[GrsCreateRegistrationResponse]
 }

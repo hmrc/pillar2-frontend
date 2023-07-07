@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package generators
+package models.registration
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.libs.json.{Json, OFormat}
 
-trait ModelGenerators {
+final case class RegistrationWithoutId(
+  userId:                        String,
+  registrationWithoutIdRequest:  RegistrationWithoutIdRequest,
+  registrationWithoutIdResponse: Option[IncorporatedEntityRegistrationData]
+)
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+object RegistrationWithoutId {
+  implicit val format: OFormat[RegistrationWithoutId] = Json.format[RegistrationWithoutId]
 }

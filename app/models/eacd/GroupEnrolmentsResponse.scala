@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package models.eacd
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.libs.json.{Json, OFormat}
 
-trait ModelGenerators {
+final case class GroupEnrolmentsResponse(
+  enrolments: Seq[Enrolment]
+)
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+object GroupEnrolmentsResponse {
+  implicit val format: OFormat[GroupEnrolmentsResponse] = Json.format[GroupEnrolmentsResponse]
 }

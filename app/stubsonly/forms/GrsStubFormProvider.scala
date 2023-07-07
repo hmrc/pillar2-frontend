@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package stubsonly.forms
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.data.Forms._
+import stubsonly.models.GrsStubFormData
 
-trait ModelGenerators {
+class GrsStubFormProvider extends Mappings {
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+  def apply(): Form[GrsStubFormData] =
+    Form(
+      mapping(
+        "grsJourneyDataJson" -> text()
+      )(GrsStubFormData.apply)(GrsStubFormData.unapply)
+    )
 }

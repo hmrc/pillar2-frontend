@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package generators
+package stubsonly.utils
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import java.util.Base64
 
-trait ModelGenerators {
+object Base64Utils {
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
+  def base64UrlEncode(valueToEncode: String): String = Base64.getEncoder
+    .encodeToString(valueToEncode.getBytes)
+    .replace("+", ".")
+    .replace("/", "_")
+    .replace("=", "-")
 
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+  def base64UrlDecode(valueToDecode: String): String = {
+    val decodedBytes = Base64.getDecoder.decode(
+      valueToDecode
+        .replace(".", "+")
+        .replace("_", "/")
+        .replace("-", "=")
+    )
+
+    new String(decodedBytes)
+  }
+
 }

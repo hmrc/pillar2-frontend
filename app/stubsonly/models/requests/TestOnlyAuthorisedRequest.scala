@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package stubsonly.models.requests
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.mvc.{Request, WrappedRequest}
 
-trait ModelGenerators {
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
-}
+case class TestOnlyAuthorisedRequest[A](
+  request:          Request[A],
+  internalId:       String,
+  groupId:          String,
+  pillar2Reference: Option[String]
+) extends WrappedRequest[A](request)

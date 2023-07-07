@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package generators
+package models.eacd
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
-
-trait ModelGenerators {
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+object Pillar2Enrolment {
+  val ServiceName:   String = "HMRC-PILLAR2-ORG"
+  val IdentifierKey: String = "pillar2Reference"
 }

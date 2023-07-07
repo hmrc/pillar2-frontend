@@ -15,18 +15,19 @@ object AppDependencies {
   )
 
   val test = Seq(
-    "org.scalatest"           %% "scalatest"               % "3.2.10",
-    "org.scalatestplus"       %% "scalacheck-1-15"         % "3.2.10.0",
-    "org.scalatestplus"       %% "mockito-3-4"             % "3.2.10.0",
-    "org.scalatestplus.play"  %% "scalatestplus-play"      % "5.1.0",
-    "org.pegdown"             %  "pegdown"                 % "1.6.0",
-    "org.jsoup"               %  "jsoup"                   % "1.14.3",
-    "com.typesafe.play"       %% "play-test"               % PlayVersion.current,
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"  % bootstrapVersion,
-    "org.mockito"             %% "mockito-scala"           % "1.16.42",
-    "org.scalacheck"          %% "scalacheck"              % "1.15.4",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28" % mongoVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.2"
+
+    "org.scalatestplus"       %% "mockito-3-4"              % "3.2.10.0",
+    "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
+    "org.jsoup"               %  "jsoup"                    % "1.14.3",
+    "com.typesafe.play"       %% "play-test"                % PlayVersion.current,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % bootstrapVersion,
+    "org.mockito"             %% "mockito-scala"            % "1.16.42",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"  % mongoVersion,
+    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.62.2",
+    "org.scalatestplus"       %% "scalatestplus-scalacheck" % "3.1.0.0-RC2",
+    "com.danielasfregola"     %% "random-data-generator"    % "2.9",
+    "io.github.wolfendale"    %% "scalacheck-gen-regexp"    % "1.1.0"
+
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test
