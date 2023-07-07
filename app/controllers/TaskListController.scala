@@ -18,10 +18,15 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.UPERegisteredInUKConfirmationPage
+import models.EntityType
+import models.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.RegistrationStatus.Registered
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
+import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -41,8 +46,33 @@ class TaskListController @Inject() (
       case None        => ""
       case Some(value) => value
     }
+
+    val orgType = request.userAnswers.get[EntityType](EntityTypePage) match {
+      case Some(value) => value
+      case None        => EntityType.Other
+    }
+
+    //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
     val regInProgress = getRegStatus(isUPERegInUK.toString)
-    Ok(view(regInProgress))
+
+    val regComplete = orgType match {
+      case LimitedLiabilityPartnership =>
+        request.userAnswers
+          .get[PartnershipEntityRegistrationData](PartnershipRegistrationWithIdResponsePage)
+          .fold(false)(_.registration.registrationStatus == Registered)
+      case UkLimitedCompany =>
+        request.userAnswers
+          .get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage)
+          .fold(false)(_.registration.registrationStatus == Registered)
+
+      case _ => false
+    }
+    if (regComplete)
+      Ok(view(RowStatus.Completed))
+    else if (regInProgress)
+      Ok(view(RowStatus.InProgress))
+    else
+      Ok(view(RowStatus.NotStarted))
   }
 
   def onSubmit: Action[AnyContent] = identify { implicit request =>

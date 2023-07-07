@@ -15,14 +15,15 @@
  *@
 
 @import config.FrontendAppConfig
+@import utils.RowStatus
+@import utils.RowStatus._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
-
-
-@(regInProgress:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(status:RowStatus)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -47,11 +48,7 @@
                              @messages("taskList.task.business.ultimate")
                           </a>
                         </span>
-                        @if(regInProgress){
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.inProgress") </strong>
-                        } else {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.notStarted") </strong>
-                        }
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @row(status) </strong>
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
@@ -101,4 +98,11 @@
 
     }
 
+}
+@row(rowStatus: RowStatus ) = @{
+    rowStatus match {
+        case NotStarted => messages("task.status.not_started")
+        case InProgress => messages("task.status.in_progress")
+        case Completed => messages("task.status.completed")
+    }
 }

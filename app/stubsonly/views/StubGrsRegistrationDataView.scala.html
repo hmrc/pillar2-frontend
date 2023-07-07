@@ -1,0 +1,93 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import stubsonly.models.GrsStubFormData
+@import config.FrontendAppConfig
+
+@this(
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukTextarea: GovukTextarea,
+        govukButton: GovukButton,
+        layout: templates.Layout
+)
+
+
+@(form: Form[GrsStubFormData], registrationSuccessBvDisabledJson: String, registrationSuccessBvEnabledJson: String, registrationFailedPartyTypeMismatchJson: String, registrationFailedGenericJson: String, registrationNotCalledIdentifierMismatchJson: String, registrationNotCalledBvFailedJson: String, continueUrl: String, orgType: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+<script>
+        function populateTextArea(journeyData) {
+            document.getElementById("grsJourneyDataJson").value = JSON.stringify(journeyData, null, 2);
+        }
+</script>
+
+    @layout(pageTitle = title(form, "Stub GRS Journey Data")) {
+
+        <h1 class="govuk-heading-xl">Stub GRS Journey Data</h1>
+
+        @formHelper(action = stubsonly.controllers.stubs.routes.StubGrsJourneyDataController.onSubmit(continueUrl, orgType)) {
+
+            @if(form.errors.nonEmpty) {
+                @govukErrorSummary(ErrorSummaryViewModel(form))
+             }
+
+        @govukTextarea(Textarea(
+            id = "grsJourneyDataJson",
+            name = "grsJourneyDataJson",
+            label = Label(
+                classes = "govuk-label--m",
+                content = Text("Configure the GRS journey data JSON to be returned")
+            ),
+            rows = 30,
+            value = Some(registrationSuccessBvDisabledJson)
+        ))
+
+        <p class="govuk-body">
+            The default JSON in this form is same as a happy path through GRS based UKLimited Company (Registration success - BV disabled).</p>
+
+        <p class="govuk-body">
+            Use the buttons below to replicate other GRS scenarios.</p>
+
+        <a id="registrationSuccessBvDisabled" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationSuccessBvDisabledJson)">
+            Registration success - BV disabled</a>
+        <br/>
+
+        <a id="registrationSuccessBvEnabled" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationSuccessBvEnabledJson)">
+            Registration success - BV enabled</a>
+        <br/>
+
+        <a id="registrationFailedPartyTypeMismatch" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationFailedPartyTypeMismatchJson)">
+            Registration failed - party type mismatch</a>
+        <br/>
+
+        <a id="registrationFailedGeneric" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationFailedGenericJson)">
+            Registration failed - generic</a>
+        <br/>
+
+        <a id="registrationNotCalledIdentifierMismatch" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationNotCalledIdentifierMismatchJson)">
+            Registration not called - identifiers do not match</a>
+        <br/>
+
+        <a id="registrationNotCalledBvFailed" class="govuk-button govuk-button--secondary" href="#grsJourneyDataJson" onclick="populateTextArea(@registrationNotCalledBvFailedJson)">
+            Registration not called - business verification failed</a>
+        <br/>
+
+        @govukButton(
+            ButtonViewModel("Save and continue")
+        )
+    }
+
+}
