@@ -54,10 +54,17 @@ task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete
 taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Business details
-taskList.task.business.ultimate = Add ultimate parent''s details
+
+taskList.task.business.ultimate.add = Add ultimate parent''s details
 taskList.task.business.ultimate.edit = Edit ultimate parent''s details
-taskList.task.business.filingMember = Enter filing member''s details
-taskList.task.business.more = Enter further business details
+
+taskList.task.business.filingMember = Filing member''s details
+taskList.task.business.filingMember.add = Add filing member''s details
+taskList.task.business.filingMember.edit = Edit filing member''s details
+
+taskList.task.business.more = Further business details
+taskList.task.business.more.add = Add further business details
+taskList.task.business.more.edit = Edit further business details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Enters contact details
 taskList.task.review.heading = Review and submit

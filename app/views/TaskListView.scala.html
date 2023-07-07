@@ -49,7 +49,7 @@
                               </a>
                             } else {
                                 <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.business.ultimate")
+                                 @messages("taskList.task.business.ultimate.add")
                                 </a>
                             }
                         </span>
@@ -63,13 +63,18 @@
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                        @if(upeNoIDStatus=="completed"){
+                        @if(upeNoIDStatus == "completed" && filingMemberStatus == "no") {
+                        <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="filing-member-status">
+                            @messages("taskList.task.business.filingMember.edit")
+                        </a>
+                        } else if (upeNoIDStatus == "completed") {
                             <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="filing-member-status">
-                            @messages("taskList.task.business.filingMember")
+                                @messages("taskList.task.business.filingMember.add")
                             </a>
                         } else {
                             @messages("taskList.task.business.filingMember")
                         }
+
                         </span>
                         @if(filingMemberStatus == "no"){
                             <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
@@ -83,7 +88,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.more")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -98,7 +103,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.contact")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -113,7 +118,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.review")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
