@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("entityType.title"))) {
 
-    @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

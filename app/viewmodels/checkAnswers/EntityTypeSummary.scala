@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.EntityTypePage
 import play.api.i18n.Messages
-import controllers.routes
+//import controllers.routes
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -40,7 +40,7 @@ object EntityTypeSummary {
         key = "entityType.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad().url)
             .withVisuallyHiddenText(messages("entityType.change.hidden"))
         )
       )
