@@ -112,6 +112,9 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewGroupTerritories: GroupTerritoriesView =
     new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
+  val viewRegisteringNFMGroup: RegisteringNFMGroupView =
+    new RegisteringNFMGroupView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewBusinessActivityUK: BusinessActivityUKView =
     new BusinessActivityUKView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 

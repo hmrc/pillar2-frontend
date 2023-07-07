@@ -61,9 +61,9 @@ POST        /eligibility/upe   controllers.eligibility.RegisteringTheUPGroupCont
 GET         /eligibility/nfm  controllers.eligibility.RegisteringNFMGroupController.onPageLoad
 POST        /eligibility/nfm   controllers.eligibility.RegisteringNFMGroupController.onSubmit
 
-GET         /eligibility/not-upe-or-nfm              controllers.eligibility.KbMnIneligibleController.onPageLoad
+GET         /eligibility/not-upe-or-nfm                               controllers.eligibility.KbMnIneligibleController.onPageLoad
 GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
-GET         /eligibility/kb-750-ineligible               controllers.eligibility.Kb750IneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/under-750-million       controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
