@@ -21,9 +21,10 @@ import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
   val host:    String = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
@@ -38,11 +39,14 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl:       String = configuration.get[String]("urls.signOut")
 
+  val accessibilityStatementServicePath: String =
+    configuration.get[String]("accessibility-statement.service-path")
+
+  val accessibilityStatementPath: String =
+    s"/accessibility-statement$accessibilityStatementServicePath"
+
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
   val exitSurveyUrl:             String = s"$exitSurveyBaseUrl/feedback/pillar2-frontend"
-
-  val languageTranslationEnabled: Boolean =
-    configuration.get[Boolean]("features.welsh-translation")
 
   def languageMap: Map[String, Lang] = Map(
     "en" -> Lang("en"),
@@ -53,4 +57,20 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+
+  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+  val incorporatedEntityIdentificationFrontendBaseUrl: String =
+    servicesConfig.baseUrl("incorporated-entity-identification-frontend")
+  val partnershipEntityIdentificationFrontendBaseUrl: String =
+    servicesConfig.baseUrl("partnership-identification-frontend")
+
+  val grsContinueUrl:              String  = configuration.get[String]("urls.grsContinue")
+  val incorporatedEntityBvEnabled: Boolean = configuration.get[Boolean]("features.incorporatedEntityBvEnabled")
+  val partnershipBvEnabled:        Boolean = configuration.get[Boolean]("features.partnershipBvEnabled")
+
+  //Enable Disable
+  val privateBetaEnabled: Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
+  val languageTranslationEnabled: Boolean =
+    configuration.get[Boolean]("features.welsh-translation")
+  val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
 }
