@@ -56,8 +56,8 @@ taskList.task.contact = Enters contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
-task.status.notStarted = Not Started
-task.status.inProgress = In Progress
+task.status.not_started = Not Started
+task.status.in_progress = In Progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot Start Yet
 
@@ -205,3 +205,12 @@ captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
+
+entityType.caption = Business details
+entityType.title = What type of company is the ultimate parent entity?
+entityType.heading = What type of company is the ultimate parent entity?
+entityType.ukLimitedCompany = UK limited company
+entityType.limitedLiabilityPartnership = Limited liability partnership
+entityType.checkYourAnswersLabel = Org Type
+entityType.error.required = Select what type of company the ultimate parent entity is
+entityType.change.hidden = change

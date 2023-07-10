@@ -17,10 +17,16 @@
 package generators
 
 import models._
+import models.grs.EntityType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
+    Arbitrary {
+      Gen.oneOf(EntityType.values.toSeq)
+    }
 
   implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
     Arbitrary {
