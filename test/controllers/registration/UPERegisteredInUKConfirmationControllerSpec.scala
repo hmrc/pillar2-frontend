@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
+import models.grs.GrsCreateRegistrationResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
@@ -36,6 +37,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
   def controller(): UPERegisteredInUKConfirmationController =
     new UPERegisteredInUKConfirmationController(
       mockUserAnswersConnectors,
+      mockIncorporatedEntityIdentificationFrontendConnector,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -59,19 +61,21 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction page when valid data is submitted with value YES" in {
+    "must redirect to Entity Type page when valid data is submitted with value YES" in {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any()))
+        .thenReturn(Future(GrsCreateRegistrationResponse("/pillar-two/under-construction")))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
 
     }
 
-    "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
+    "must redirect to UPE Name page when valid data is submitted with value NO" in {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)

@@ -39,9 +39,10 @@
         <span class="govuk-caption-l">@messages("contactUPEByTelephone.heading.caption")</span>
 
         @govukRadios(
-            RadiosViewModel.yesNo(
+            RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("contactUPEByTelephone.heading",UserName)).asPageHeading(Large),
+                items= ContactUPEByTelephone.options
             )
             .withHint(Hint(content = Text(messages("contactUPEByTelephone.hint"))))
         )

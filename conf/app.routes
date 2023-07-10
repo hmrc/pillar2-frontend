@@ -72,6 +72,8 @@ POST        /eligibility/global-gross-revenue             controllers.eligibilit
 GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
+GET         /grs-return/normalmode                                          controllers.registration.GrsReturnController.continue(mode: Mode = NormalMode, journeyId)
+
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
@@ -88,5 +90,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-
-
+GET        /business-matching/ultimate-parent/uk-based/org-type                        controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/ultimate-parent/uk-based/org-type                        controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)

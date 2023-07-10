@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
-import models.Mode
+import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
 import pages.{ContactUPEByTelephonePage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
@@ -66,12 +66,12 @@ class ContactUPEByTelephoneController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
           value match {
-            case true =>
+            case ContactUPEByTelephone.Yes =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
-            case false =>
+            case ContactUPEByTelephone.No =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

@@ -17,7 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
-import models.{CaptureTelephoneDetails, UpeRegisteredAddress}
+import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UpeRegisteredAddress}
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -44,7 +44,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     .set(UpeContactNamePage, "Paddington ltd")
     .success
     .value
-    .set(ContactUPEByTelephonePage, true)
+    .set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes)
     .success
     .value
     .set(CaptureTelephoneDetailsPage, CaptureTelephoneDetails("123444"))
@@ -64,7 +64,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     .set(UpeContactNamePage, "Paddington ltd")
     .success
     .value
-    .set(ContactUPEByTelephonePage, false)
+    .set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes)
     .success
     .value
     .set(UpeNameRegistrationPage, "Paddington")
@@ -79,7 +79,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     UpeRegisteredAddressSummary.row(user.set(UpeRegisteredAddressPage, addressExample).success.value),
     UpeContactNameSummary.row(user.set(UpeContactNamePage, "Paddington ltd").success.value),
     UpeContactEmailSummary.row(user.set(UpeContactEmailPage, "example@gmail.com").success.value),
-    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, true).success.value),
+    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes).success.value),
     UPEContactTelephoneSummary.row(user.set(CaptureTelephoneDetailsPage, CaptureTelephoneDetails("123444")).success.value)
   ).flatten
 
@@ -88,7 +88,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     UpeRegisteredAddressSummary.row(user.set(UpeRegisteredAddressPage, addressExample).success.value),
     UpeContactNameSummary.row(user.set(UpeContactNamePage, "Paddington ltd").success.value),
     UpeContactEmailSummary.row(user.set(UpeContactEmailPage, "example@gmail.com").success.value),
-    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, false).success.value)
+    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes).success.value)
   ).flatten
 
   "UPE no ID Check Your Answers Controller" must {
