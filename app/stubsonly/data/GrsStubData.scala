@@ -16,10 +16,10 @@
 
 package stubsonly.data
 
-import models.grs.OrgType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
-import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure, OrgType}
+import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure}
 import models.registration
 import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.libs.json.Json
@@ -105,7 +105,7 @@ trait GrsStubData {
   val bvPassed: Option[BusinessVerificationResult] = Some(BusinessVerificationResult(Pass))
 
   def constructGrsStubFormData(
-    orgType:              OrgType,
+    orgType:              EntityType,
     businessVerification: Option[BusinessVerificationResult] = None,
     registrationResult:   GrsRegistrationResult,
     identifiersMatch:     Boolean

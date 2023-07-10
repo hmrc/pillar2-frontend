@@ -16,7 +16,7 @@
 
 package pages
 
-import models.EntityType
+import models.grs.EntityType
 import pages.behaviours.PageBehaviours
 
 class EntityTypeSpec extends PageBehaviours {

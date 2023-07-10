@@ -25,7 +25,7 @@ import forms.UPERegisteredInUKConfirmationFormProvider
 import models.{Mode, UPERegisteredInUKConfirmation}
 import pages.UPERegisteredInUKConfirmationPage
 
-import models.grs.{OrgType, ServiceName}
+import models.grs.ServiceName
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
 import models.{Mode, UPERegisteredInUKConfirmation, registration}
 import navigation.Navigator

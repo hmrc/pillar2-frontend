@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.grs
 
+import models.{Enumerable, WithName}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
@@ -30,7 +31,8 @@ object EntityType extends Enumerable.Implicits {
 
   val values: Seq[EntityType] = Seq(
     UkLimitedCompany,
-    LimitedLiabilityPartnership
+    LimitedLiabilityPartnership,
+    Other
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>

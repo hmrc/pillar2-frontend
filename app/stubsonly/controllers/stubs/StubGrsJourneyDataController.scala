@@ -18,7 +18,7 @@ package stubsonly.controllers.stubs
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.grs.OrgType
+import models.grs.EntityType
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,21 +46,21 @@ class StubGrsJourneyDataController @Inject() (
 
   val form: Form[GrsStubFormData] = grsStubFormProvider()
 
-  private val registrationSuccessBvDisabledF: OrgType => String =
+  private val registrationSuccessBvDisabledF: EntityType => String =
     constructGrsStubFormData(_, None, registered, identifiersMatch = true)
-  private val registrationSuccessBvEnabledF: OrgType => String =
+  private val registrationSuccessBvEnabledF: EntityType => String =
     constructGrsStubFormData(_, bvPassed, registered, identifiersMatch = true)
-  private val registrationFailedPartyTypeMismatchF: OrgType => String =
+  private val registrationFailedPartyTypeMismatchF: EntityType => String =
     constructGrsStubFormData(_, None, registrationFailedPartyTypeMismatch, identifiersMatch = true)
-  private val registrationFailedGenericF: OrgType => String =
+  private val registrationFailedGenericF: EntityType => String =
     constructGrsStubFormData(_, None, registrationFailedGeneric, identifiersMatch = true)
-  private val registrationNotCalledIdentifierMismatchF: OrgType => String =
+  private val registrationNotCalledIdentifierMismatchF: EntityType => String =
     constructGrsStubFormData(_, None, registrationNotCalled, identifiersMatch = false)
-  private val registrationNotCalledBvFailedF: OrgType => String =
+  private val registrationNotCalledBvFailedF: EntityType => String =
     constructGrsStubFormData(_, bvFailed, registrationNotCalled, identifiersMatch = true)
 
   def onPageLoad(continueUrl: String, orgType: String): Action[AnyContent] = Action { implicit request =>
-    val e: OrgType = OrgType.enumerable.withName(orgType).get
+    val e: EntityType = EntityType.enumerable.withName(orgType).get
 
     Ok(
       view(
@@ -78,7 +78,7 @@ class StubGrsJourneyDataController @Inject() (
   }
 
   def onSubmit(continueUrl: String, entityType: String): Action[AnyContent] = (identity andThen getData) { implicit request =>
-    val e: OrgType = OrgType.enumerable.withName(entityType).get
+    val e: EntityType = EntityType.enumerable.withName(entityType).get
 
     form
       .bindFromRequest()

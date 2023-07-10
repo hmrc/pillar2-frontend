@@ -17,8 +17,8 @@
 package stubsonly.connectors.stubs
 
 import connectors.IncorporatedEntityIdentificationFrontendConnector
+import models.grs.EntityType.UkLimitedCompany
 import models.Mode
-import models.grs.OrgType.UkLimitedCompany
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.IncorporatedEntityRegistrationData
 import play.api.libs.json.Json
