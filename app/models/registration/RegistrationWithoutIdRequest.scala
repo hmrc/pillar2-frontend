@@ -16,10 +16,10 @@
 
 package models.registration
 
-import models.grs.OrgType
+import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
 
-final case class RegistrationWithoutIdRequest(orgType: Option[OrgType])
+final case class RegistrationWithoutIdRequest(orgType: Option[EntityType])
 
 object RegistrationWithoutIdRequest {
   implicit val format: OFormat[RegistrationWithoutIdRequest] = Json.format[RegistrationWithoutIdRequest]

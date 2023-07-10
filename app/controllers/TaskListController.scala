@@ -18,8 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.EntityType
-import models.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.EntityType
 import models.grs.RegistrationStatus.Registered
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
 import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}

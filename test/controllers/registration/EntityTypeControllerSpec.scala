@@ -18,8 +18,8 @@ package controllers.registration
 
 import base.SpecBase
 import forms.EntityTypeFormProvider
-import models.grs.GrsCreateRegistrationResponse
-import models.{EntityType, NormalMode, UserAnswers}
+import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.EntityTypePage

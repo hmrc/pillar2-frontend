@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.Mode
-import models.grs.{GrsCreateRegistrationResponse, OrgType, ServiceName}
+import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait PartnershipIdentificationFrontendConnector {
   def createPartnershipJourney(
-    partnershipType: OrgType,
+    partnershipType: EntityType,
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse]
 
@@ -46,7 +46,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
   private val apiUrl = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
 
   def createPartnershipJourney(
-    partnershipType: OrgType,
+    partnershipType: EntityType,
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
     val serviceName = ServiceName()
