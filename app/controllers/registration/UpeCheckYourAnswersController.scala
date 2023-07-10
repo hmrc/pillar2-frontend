@@ -19,6 +19,7 @@ package controllers.registration
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.ContactUPEByTelephone
 import pages.ContactUPEByTelephonePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,8 +48,8 @@ class UpeCheckYourAnswersController @Inject() (
         UpeContactEmailSummary.row(request.userAnswers),
         UpeTelephonePreferenceSummary.row(request.userAnswers),
         telephonePreference match {
-          case Some(true) => UPEContactTelephoneSummary.row(request.userAnswers)
-          case _          => None
+          case Some(ContactUPEByTelephone.Yes) => UPEContactTelephoneSummary.row(request.userAnswers)
+          case _                               => None
         }
       ).flatten
     )
