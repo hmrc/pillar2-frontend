@@ -19,9 +19,15 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, Page, QuestionPage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.EntityType
+import models.grs.RegistrationStatus.Registered
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
+import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -51,6 +57,7 @@ class TaskListController @Inject() (
       case (_, true, _) => "in progress"
       case _            => "not started"
     }
+
     Ok(view(upeStatus, counter))
   }
 
