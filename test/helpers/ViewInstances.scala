@@ -30,6 +30,9 @@ import views.html.templates.Layout
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewNFMContactName: NFMContactNameView =
+    new NFMContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
   val accessibilityConfiguration = new AccessibilityStatementConfig(configuration)
