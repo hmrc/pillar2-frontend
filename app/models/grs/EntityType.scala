@@ -31,10 +31,11 @@ object EntityType extends Enumerable.Implicits {
 
   val values: Seq[EntityType] = Seq(
     UkLimitedCompany,
-    LimitedLiabilityPartnership
+    LimitedLiabilityPartnership,
+    Other
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+  def options(implicit messages: Messages): Seq[RadioItem] = values.filterNot(_ == Other).zipWithIndex.map { case (value, index) =>
     RadioItem(
       content = Text(messages(s"entityType.${value.toString}")),
       value = Some(value.toString),
