@@ -80,8 +80,10 @@
                             <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
                         } else if(filingMemberStatus == "yes") {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
+                        } else if(upeNoIDStatus == "completed")  {
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        } else {
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
                         }
                     </li>
                     <li class="app-task-list__item">
