@@ -95,3 +95,8 @@ GET        /business-matching/ultimate-parent/uk-based/org-type                 
 POST       /business-matching/ultimate-parent/uk-based/org-type                        controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /isNFMUKBased                        controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /isNFMUKBased                        controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIsNFMUKBased                  controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIsNFMUKBased                  controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = CheckMode)
