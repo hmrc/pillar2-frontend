@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.{UpeContactNameFormProvider, UpeNameRegistrationFormProvider}
 import models.Mode
 import navigation.Navigator
-import pages.{UpeContactNamePage, UpeNameRegistrationPage}
+import pages.{RegistrationPage, UpeContactNamePage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,9 +48,9 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UpeContactNamePage) match {
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeContactName.fold(form)(contactName => form.fill(contactName)))
     }
 
     Ok(view(preparedForm, mode))
@@ -61,12 +61,19 @@ class UpeContactNameController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
+        value => {
+          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
 
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactNamePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          for {
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeContactName = Some(value)))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad)
+        }
       )
   }
 }

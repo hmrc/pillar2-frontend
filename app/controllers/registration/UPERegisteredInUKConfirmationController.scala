@@ -77,9 +77,13 @@ class UPERegisteredInUKConfirmationController @Inject() (
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
             case UPERegisteredInUKConfirmation.No =>
+              val regData = request.userAnswers.get(RegistrationPage).getOrElse(Registration(isUPERegisteredInUK = value))
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, Registration(isUPERegisteredInUK = value)))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value))
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
           }
       )
