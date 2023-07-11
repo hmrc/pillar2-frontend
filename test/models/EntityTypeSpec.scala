@@ -16,6 +16,7 @@
 
 package models
 
+import models.grs.EntityType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

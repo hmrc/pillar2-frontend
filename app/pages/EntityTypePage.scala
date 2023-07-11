@@ -16,7 +16,7 @@
 
 package pages
 
-import models.EntityType
+import models.grs.EntityType
 import play.api.libs.json.JsPath
 
 case object EntityTypePage extends QuestionPage[EntityType] {

@@ -18,11 +18,16 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, EntityTypePage, NominateFilingMemberYesNoPage, Page, PartnershipRegistrationWithIdResponsePage, QuestionPage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.EntityType
+import models.grs.RegistrationStatus.Registered
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
 import models.NominateFilingMemberYesNo
-import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, NominateFilingMemberYesNoPage, Page, QuestionPage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.TaskListView
 
 import javax.inject.Inject

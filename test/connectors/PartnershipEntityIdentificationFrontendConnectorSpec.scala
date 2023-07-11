@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import models.NormalMode
-import models.grs.OrgType.LimitedLiabilityPartnership
+import models.grs.EntityType.LimitedLiabilityPartnership
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.IncorporatedEntityCreateRegistrationRequest
 import org.mockito.ArgumentMatchers

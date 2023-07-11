@@ -25,7 +25,7 @@ import forms.UPERegisteredInUKConfirmationFormProvider
 import models.{Mode, UPERegisteredInUKConfirmation}
 import pages.UPERegisteredInUKConfirmationPage
 
-import models.grs.{OrgType, ServiceName}
+import models.grs.ServiceName
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
 import models.{Mode, UPERegisteredInUKConfirmation, registration}
 import navigation.Navigator
@@ -78,7 +78,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
-              } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad())
+              } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
             case UPERegisteredInUKConfirmation.No =>
               for {

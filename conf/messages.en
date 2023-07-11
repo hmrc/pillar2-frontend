@@ -80,12 +80,6 @@ timeout.message = For security reasons, you will be signed out of this service i
 timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
 
-entityType.title = Org-type
-entityType.caption = Business details
-entityType.heading = What type of company is the ultimate parent entity?
-entityType.ukLimitedCompany = UK limited company
-entityType.limitedLiabilityPartnership = Limited liability partnership
-
 error.browser.title.prefix = Error:
 error.boolean = Please give an answer
 error.invalid_date = Give a correct date
@@ -232,3 +226,12 @@ NominateFilingMemberYesNo.insetText =You must have permission from the UPE to no
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
+
+entityType.caption = Business details
+entityType.title = What type of company is the ultimate parent entity?
+entityType.heading = What type of company is the ultimate parent entity?
+entityType.ukLimitedCompany = UK limited company
+entityType.limitedLiabilityPartnership = Limited liability partnership
+entityType.checkYourAnswersLabel = Org Type
+entityType.error.required = Select what type of company the ultimate parent entity is
+entityType.change.hidden = change

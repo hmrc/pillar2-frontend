@@ -18,9 +18,9 @@ package controllers.registration
 
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.Mode
-import models.grs.{BusinessVerificationResult, GrsErrorCodes, GrsRegistrationResult, OrgType}
-import models.grs.OrgType.{LimitedLiabilityPartnership, UkLimitedCompany}
+import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import pages.{RegistrationWithIdPartnershipResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UpeNameRegistrationPage}
@@ -74,7 +74,7 @@ class GrsReturnController @Inject() (
     identifiersMatch: Boolean,
     bvResult:         Option[BusinessVerificationResult],
     grsResult:        GrsRegistrationResult,
-    orgType:          OrgType,
+    orgType:          EntityType,
     mode:             Mode
   )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {

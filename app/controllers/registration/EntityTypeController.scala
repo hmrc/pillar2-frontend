@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.EntityTypeFormProvider
-import models.grs.OrgType
 import models.registration.RegistrationWithoutIdRequest
-import models.{EntityType, Mode}
+import models.Mode
+import models.grs.EntityType
 import pages.{EntityTypePage, RegistrationWithIdRequestPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -73,7 +73,7 @@ class EntityTypeController @Inject() (
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 updatedRequest <-
                   Future.fromTry(
-                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.UkLimitedCompany)))
+                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(EntityType.UkLimitedCompany)))
                   )
                 _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
@@ -86,11 +86,11 @@ class EntityTypeController @Inject() (
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 updatedRequest <-
                   Future.fromTry(
-                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(OrgType.LimitedLiabilityPartnership)))
+                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(EntityType.LimitedLiabilityPartnership)))
                   )
                 _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
                 createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(OrgType.LimitedLiabilityPartnership, mode)
+                                      .createPartnershipJourney(EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )

@@ -91,7 +91,7 @@ trait Pillar2TestData {
        |{
        |        "registration.isUPERegisteredInUK" : "yes",
        |        "registrationWithIdRequest" : {
-       |            "orgType" : "UkLimitedCompany"
+       |            "orgType" : "ukLimitedCompany"
        |        },
        |        "registrationWithIdResponse" : {
        |            "companyProfile" : {
@@ -122,7 +122,7 @@ trait Pillar2TestData {
        |{
        |        "registration.isUPERegisteredInUK" : "yes",
        |        "registrationWithIdRequest" : {
-       |            "orgType" : "LimitedLiabilityPartnership"
+       |            "orgType" : "limitedLiabilityPartnership"
        |        },
        |        "registrationWithIdResponse" : {
        |            "companyProfile" : {

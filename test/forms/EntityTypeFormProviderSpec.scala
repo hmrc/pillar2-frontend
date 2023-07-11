@@ -17,7 +17,7 @@
 package forms
 
 import forms.behaviours.OptionFieldBehaviours
-import models.EntityType
+import models.grs.EntityType
 import play.api.data.FormError
 
 class EntityTypeFormProviderSpec extends OptionFieldBehaviours {

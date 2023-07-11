@@ -40,7 +40,7 @@ object EntityTypeSummary {
         key = "entityType.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad().url)
+          ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("entityType.change.hidden"))
         )
       )
