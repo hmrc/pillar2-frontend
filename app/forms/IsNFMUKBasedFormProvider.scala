@@ -16,15 +16,16 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.{IsNFMUKBased, UPERegisteredInUKConfirmation}
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class IsNFMUKBasedFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[IsNFMUKBased] =
     Form(
-      "value" -> boolean("isNFMUKBased.error.required")
+      "value" -> enumerable[IsNFMUKBased]("isNFMUKBased.error.required")
     )
 }

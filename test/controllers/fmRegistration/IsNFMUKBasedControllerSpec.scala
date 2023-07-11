@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.NFM
+package controllers.fmRegistration
 
 import base.SpecBase
 import forms.IsNFMUKBasedFormProvider
@@ -22,7 +22,7 @@ import models.{NormalMode, UserAnswers}
 import pages.IsNFMUKBasedPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.NFMview.IsNFMUKBasedView
+import views.html.fmRegistrationView.IsNFMUKBasedView
 
 class IsNFMUKBasedControllerSpec extends SpecBase {
 
@@ -46,7 +46,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.NFM.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -64,7 +64,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.NFM.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -81,7 +81,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.NFM.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

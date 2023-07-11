@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
@@ -29,16 +29,18 @@
 
 @layout(pageTitle = title(form, messages("isNFMUKBased.title"))) {
 
-    @formHelper(action = controllers.NFM.routes.IsNFMUKBasedController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.fmRegistration.routes.IsNFMUKBasedController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
     }
+        <span class="govuk-caption-l">@messages("isUPERegisteredInUK.heading.caption")</span>
 
         @govukRadios(
-            RadiosViewModel.yesNo(
+            RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("isNFMUKBased.heading"))
+                legend = LegendViewModel(messages("isNFMUKBased.heading")).asPageHeading(Large),
+                items= IsNFMUKBased.options
             )
             )
 

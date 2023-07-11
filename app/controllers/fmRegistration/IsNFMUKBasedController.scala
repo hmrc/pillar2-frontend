@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.NFM
+package controllers.fmRegistration
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.NFMview.IsNFMUKBasedView
+import views.html.fmRegistrationView.IsNFMUKBasedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

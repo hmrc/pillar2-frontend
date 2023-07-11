@@ -71,7 +71,7 @@ GET         /unauthorised                                controllers.Unauthorise
 
 
 
-GET        /isNFMUKBased                        controllers.NFM.IsNFMUKBasedController.onPageLoad(mode: Mode = NormalMode)
-POST       /isNFMUKBased                        controllers.NFM.IsNFMUKBasedController.onSubmit(mode: Mode = NormalMode)
-GET        /changeIsNFMUKBased                  controllers.NFM.IsNFMUKBasedController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeIsNFMUKBased                  controllers.NFM.IsNFMUKBasedController.onSubmit(mode: Mode = CheckMode)
+GET        /isNFMUKBased                        controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /isNFMUKBased                        controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIsNFMUKBased                  controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIsNFMUKBased                  controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = CheckMode)

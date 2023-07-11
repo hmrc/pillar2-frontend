@@ -23,10 +23,9 @@ import forms.UpeNameRegistrationFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.UpeNameRegistrationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.UpeNameRegistrationView
 

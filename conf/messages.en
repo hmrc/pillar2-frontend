@@ -197,7 +197,8 @@ captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
 
 isNFMUKBased.title = isNFMUKBased
-isNFMUKBased.heading = isNFMUKBased
+isNFMUKBased.heading = Is the nominated filing member registered in the UK?
+isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = isNFMUKBased
-isNFMUKBased.error.required = Select yes if isNFMUKBased
-isNFMUKBased.change.hidden = IsNFMUKBased
+isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
+isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not

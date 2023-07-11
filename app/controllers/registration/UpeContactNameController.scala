@@ -19,15 +19,15 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{UpeContactNameFormProvider, UpeNameRegistrationFormProvider}
+import forms.UpeContactNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{UpeContactNamePage, UpeNameRegistrationPage}
+import pages.UpeContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.{UpeContactNameView, UpeNameRegistrationView}
+import views.html.registrationview.UpeContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

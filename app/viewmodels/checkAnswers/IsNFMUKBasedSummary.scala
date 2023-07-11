@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, IsNFMUKBased, UserAnswers}
 import pages.IsNFMUKBasedPage
 import controllers.routes
 import play.api.i18n.Messages
@@ -28,12 +28,12 @@ object IsNFMUKBasedSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(IsNFMUKBasedPage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+      val value = if (answer == IsNFMUKBased.Yes) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "isNFMUKBased.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.NFM.routes.IsNFMUKBasedController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("isNFMUKBased.change.hidden"))
         )
       )
