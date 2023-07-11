@@ -21,16 +21,12 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswer
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
-
 import models.{Mode, UPERegisteredInUKConfirmation}
-import pages.UPERegisteredInUKConfirmationPage
-
+import pages.RegistrationPage
 import models.grs.ServiceName
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
+import models.registration.{IncorporatedEntityCreateRegistrationRequest, Registration, RegistrationWithoutIdRequest}
 import models.{Mode, UPERegisteredInUKConfirmation, registration}
 import navigation.Navigator
-import pages.{RegistrationWithIdRequestPage, UPERegisteredInUKConfirmationPage}
-
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -58,9 +54,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => form.fill(value.isUPERegisteredInUK)
     }
 
     Ok(view(preparedForm, mode))
@@ -75,14 +71,14 @@ class UPERegisteredInUKConfirmationController @Inject() (
           value match {
             case UPERegisteredInUKConfirmation.Yes =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, Registration(isUPERegisteredInUK = value)))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
             case UPERegisteredInUKConfirmation.No =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, Registration(isUPERegisteredInUK = value)))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
           }

@@ -21,8 +21,8 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.EntityType
 import models.grs.RegistrationStatus.Registered
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
-import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, RegistrationWithoutIdRequest}
+import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,13 +42,13 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
+    val isUPERegInUK = request.userAnswers.get(RegistrationPage) match {
       case None        => ""
-      case Some(value) => value
+      case Some(value) => value.isUPERegisteredInUK
     }
 
-    val orgType = request.userAnswers.get[EntityType](EntityTypePage) match {
-      case Some(value) => value
+    val orgType = request.userAnswers.get[Registration](RegistrationPage) match {
+      case Some(value) => value.orgType.getOrElse(EntityType.Other)
       case None        => EntityType.Other
     }
 
@@ -58,14 +58,17 @@ class TaskListController @Inject() (
     val regComplete = orgType match {
       case LimitedLiabilityPartnership =>
         request.userAnswers
-          .get[PartnershipEntityRegistrationData](PartnershipRegistrationWithIdResponsePage)
-          .fold(false)(_.registration.registrationStatus == Registered)
+          .get[Registration](RegistrationPage)
+          .fold(false)(_.withIdRegData.fold(false)(_.partnershipEntityRegistrationData.fold(false)(_.registration.registrationStatus == Registered)))
       case UkLimitedCompany =>
         request.userAnswers
-          .get[IncorporatedEntityRegistrationData](RegistrationWithIdResponsePage)
-          .fold(false)(_.registration.registrationStatus == Registered)
+          .get[Registration](RegistrationPage)
+          .fold(false)(
+            _.withIdRegData.fold(false)(_.incorporatedEntityRegistrationData.fold(false)(_.registration.registrationStatus == Registered))
+          )
 
       case _ => false
+
     }
     if (regComplete)
       Ok(view(RowStatus.Completed))

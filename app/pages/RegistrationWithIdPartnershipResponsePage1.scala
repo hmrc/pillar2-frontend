@@ -19,7 +19,7 @@ package pages
 import models.registration.PartnershipEntityRegistrationData
 import play.api.libs.json.JsPath
 
-case object RegistrationWithIdPartnershipResponsePage extends QuestionPage[PartnershipEntityRegistrationData] {
+case object RegistrationWithIdPartnershipResponsePage1 extends QuestionPage[PartnershipEntityRegistrationData] {
 
   override def path: JsPath = JsPath \ toString
 
