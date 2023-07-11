@@ -80,7 +80,7 @@ POST        /eligibility/upe   controllers.eligibility.RegisteringTheUPGroupCont
 GET         /eligibility/nfm  controllers.eligibility.RegisteringNFMGroupController.onPageLoad
 POST        /eligibility/nfm   controllers.eligibility.RegisteringNFMGroupController.onSubmit
 
-GET         /eligibility/not-upe-or-nfm                               controllers.eligibility.KbMnIneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/not-upe-or-nfm                               controllers.eligibility.KbMnIneligibleController.onPageLoad
 GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
 GET         /eligibility/service-not-suitable/under-750-million       controllers.eligibility.Kb750IneligibleController.onPageLoad
 
