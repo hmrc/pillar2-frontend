@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
 
-    @formHelper(action = controllers.registration.routes.NominateFilingMemberYesNoController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("nominateFilingMember" -> "value_0")))

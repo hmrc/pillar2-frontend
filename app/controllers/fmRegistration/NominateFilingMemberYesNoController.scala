@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fmRegistration
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
-import forms.{NominateFilingMemberYesNoFormProvider, UPERegisteredInUKConfirmationFormProvider}
-import models.{Mode, NominateFilingMemberYesNo, UPERegisteredInUKConfirmation}
-import pages.{NominateFilingMemberYesNoPage, UPERegisteredInUKConfirmationPage}
+import forms.NominateFilingMemberYesNoFormProvider
+import models.{Mode, NominateFilingMemberYesNo}
+import pages.NominateFilingMemberYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.{NominateFilingMemberYesNoView, UPERegisteredInUKConfirmationView}
+import views.html.fmRegistrationView.NominateFilingMemberYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +67,7 @@ class NominateFilingMemberYesNoController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
             case NominateFilingMemberYesNo.No =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))

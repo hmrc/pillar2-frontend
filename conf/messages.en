@@ -227,3 +227,10 @@ entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 entityType.change.hidden = change
+
+isNFMUKBased.title = isNFMUKBased
+isNFMUKBased.heading = Is the nominated filing member registered in the UK?
+isNFMUKBased.heading.caption = Business details
+isNFMUKBased.checkYourAnswersLabel = isNFMUKBased
+isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
+isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not

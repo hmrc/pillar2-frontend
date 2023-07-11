@@ -17,6 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
+import controllers.fmRegistration.NominateFilingMemberYesNoController
 import controllers.routes
 import forms.{NominateFilingMemberYesNoFormProvider, UPERegisteredInUKConfirmationFormProvider}
 import models.NormalMode

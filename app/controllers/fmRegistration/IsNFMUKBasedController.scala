@@ -14,61 +14,58 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fmRegistration
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeRegisteredAddressFormProvider
-import models.{Mode, UpeRegisteredAddress}
-import navigation.Navigator
-import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
-import play.api.data.Form
+import controllers.actions._
+import controllers.routes
+import forms.IsNFMUKBasedFormProvider
+import models.Mode
+import pages.IsNFMUKBasedPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UpeRegisteredAddressView
+import views.html.fmRegistrationView.IsNFMUKBasedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpeRegisteredAddressController @Inject() (
+class IsNFMUKBasedController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeRegisteredAddressFormProvider,
+  formProvider:              IsNFMUKBasedFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeRegisteredAddressView
+  view:                      IsNFMUKBasedView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[UpeRegisteredAddress] = formProvider()
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
 
-    val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
-      case None          => form
-      case Some(address) => form.fill(address)
+  val form = formProvider()
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(IsNFMUKBasedPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
     }
 
-    Ok(view(preparedForm, mode, userName.getOrElse("")))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsNFMUKBasedPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+          } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }
 }
