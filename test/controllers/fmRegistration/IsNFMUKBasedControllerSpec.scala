@@ -18,7 +18,7 @@ package controllers.fmRegistration
 
 import base.SpecBase
 import forms.IsNFMUKBasedFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{IsNFMUKBased, NormalMode, UserAnswers}
 import pages.IsNFMUKBasedPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -59,7 +59,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsNFMUKBasedPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsNFMUKBasedPage, IsNFMUKBased.Yes).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -71,7 +71,11 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[IsNFMUKBasedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(IsNFMUKBased.Yes), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 

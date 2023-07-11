@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package models.grs
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{Json, OFormat}
 
-class IsNFMUKBasedPageSpec extends PageBehaviours {
+final case class GrsCreateRegistrationResponse(
+  journeyStartUrl: String
+)
 
-  "IsNFMUKBasedPage" - {
-
-    beRetrievable[Boolean](IsNFMUKBasedPage)
-
-    beSettable[Boolean](IsNFMUKBasedPage)
-
-    beRemovable[Boolean](IsNFMUKBasedPage)
-  }
+object GrsCreateRegistrationResponse {
+  implicit val format: OFormat[GrsCreateRegistrationResponse] =
+    Json.format[GrsCreateRegistrationResponse]
 }
