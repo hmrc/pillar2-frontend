@@ -16,24 +16,24 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.UpeNameRegistrationPage
+import models.{CheckMode, ContactUPEByTelephone, UserAnswers}
+import pages.ContactUPEByTelephonePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeNameRegistrationSummary {
+object UpeTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UpeNameRegistrationPage).map { answer =>
+    answers.get(ContactUPEByTelephonePage).map { answer =>
+      val value = if (answer == ContactUPEByTelephone.Yes) "site.yes" else "site.no"
       SummaryListRowViewModel(
-        key = "upeNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        key = "contactUPEByTelephone.checkYourAnswersLabel",
+        value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
         )
       )
     }

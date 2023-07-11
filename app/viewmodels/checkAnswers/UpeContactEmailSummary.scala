@@ -17,23 +17,23 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.UpeNameRegistrationPage
+import pages.UpeContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeNameRegistrationSummary {
+object UpeContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UpeNameRegistrationPage).map { answer =>
+    answers.get(UpeContactEmailPage).map { answer =>
       SummaryListRowViewModel(
-        key = "upeNameRegistration.checkYourAnswersLabel",
+        key = "upe-input-business-email.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))
         )
       )
     }

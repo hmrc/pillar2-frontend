@@ -19,7 +19,6 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.ContactUPEByTelephoneFormProvider
 import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
@@ -71,12 +70,12 @@ class ContactUPEByTelephoneController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
             case ContactUPEByTelephone.No =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactUPEByTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
           }
       )
   }
