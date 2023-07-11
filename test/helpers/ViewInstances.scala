@@ -30,6 +30,9 @@ import views.html.templates.Layout
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewEntityType: EntityTypeView =
+    new EntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
   val accessibilityConfiguration = new AccessibilityStatementConfig(configuration)
@@ -151,5 +154,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
     new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 
 }
