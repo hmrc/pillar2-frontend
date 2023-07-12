@@ -60,15 +60,21 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val request =
-        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
-          .withFormUrlEncodedBody(
-            ("telephoneNumber", "123456789")
-          )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
+            .withFormUrlEncodedBody(
+              ("telephoneNumber", "123456789")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
 
     }
     "return bad request if required fields are not filled" in {

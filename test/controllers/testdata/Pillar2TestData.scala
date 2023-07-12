@@ -16,12 +16,44 @@
 
 package controllers.testdata
 
-import models.UserAnswers
+import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.GrsCreateRegistrationResponse
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
 
 trait Pillar2TestData {
+
+  val validNoIdRegistrationData =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+      withoutIdRegData = Some(
+        WithoutIdRegData(
+          upeNameRegistration = "Test Name",
+          contactUPEByTelephone = Some(ContactUPEByTelephone.No),
+          telephoneNumber = Some("1234567"),
+          upeRegisteredAddress = Some(
+            UpeRegisteredAddress(
+              addressLine1 = "Line1",
+              addressLine2 = Some("Line2"),
+              addressLine3 = "Line3",
+              addressLine4 = Some("Line4"),
+              postalCode = Some("VR11 3PA"),
+              countryCode = "GB"
+            )
+          )
+        )
+      )
+    )
+
+  val validUpeRegisteredAddressed = new UpeRegisteredAddress(
+    addressLine1 = "Line1",
+    addressLine2 = Some("Line2"),
+    addressLine3 = "Line3",
+    addressLine4 = Some("Line4"),
+    postalCode = Some("VR11 3PA"),
+    countryCode = "GB"
+  )
+
   val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]
@@ -88,30 +120,32 @@ trait Pillar2TestData {
 
   def validDataObjectForUKLimtedCompany(): String =
     s"""
-       |{
-       |        "registration.isUPERegisteredInUK" : "yes",
-       |        "registrationWithIdRequest" : {
-       |            "orgType" : "ukLimitedCompany"
-       |        },
-       |        "registrationWithIdResponse" : {
-       |            "companyProfile" : {
-       |                "companyName" : "Test Example Company Name",
-       |                "companyNumber" : "76543210",
-       |                "dateOfIncorporation" : "2010-12-12",
-       |                "unsanitisedCHROAddress" : {
-       |                    "address_line_1" : "Address Line 1",
-       |                    "address_line_2" : "Address Line 2",
-       |                    "country" : "United Kingdom",
-       |                    "locality" : "Town",
-       |                    "postal_code" : "AB12 3CD",
-       |                    "region" : "Region"
+      {
+       |        "Registration" : {
+       |            "isUPERegisteredInUK" : "yes",
+       |            "orgType" : "ukLimitedCompany",
+       |            "withIdRegData" : {
+       |                "incorporatedEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Company Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "ctutr" : "1234567890",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
        |                }
-       |            },
-       |            "ctutr" : "1234567890",
-       |            "identifiersMatch" : true,
-       |            "registration" : {
-       |                "registrationStatus" : "REGISTERED",
-       |                "registeredBusinessPartnerId" : "XB0000000000001"
        |            }
        |        }
        |    }
@@ -120,29 +154,32 @@ trait Pillar2TestData {
   def validDataObjectForLLP(): String =
     s"""
        |{
-       |        "registration.isUPERegisteredInUK" : "yes",
-       |        "registrationWithIdRequest" : {
-       |            "orgType" : "limitedLiabilityPartnership"
-       |        },
-       |        "registrationWithIdResponse" : {
-       |            "companyProfile" : {
-       |                "companyName" : "Test Example Company Name",
-       |                "companyNumber" : "76543210",
-       |                "dateOfIncorporation" : "2010-12-12",
-       |                "unsanitisedCHROAddress" : {
-       |                    "address_line_1" : "Address Line 1",
-       |                    "address_line_2" : "Address Line 2",
-       |                    "country" : "United Kingdom",
-       |                    "locality" : "Town",
-       |                    "postal_code" : "AB12 3CD",
-       |                    "region" : "Region"
+       |        "Registration" : {
+       |            "isUPERegisteredInUK" : "yes",
+       |            "orgType" : "limitedLiabilityPartnership",
+       |            "withIdRegData" : {
+       |                "partnershipEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Partnership Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "sautr" : "1234567890",
+       |                    "postcode" : "AA11AA",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
        |                }
-       |            },
-       |            "ctutr" : "1234567890",
-       |            "identifiersMatch" : true,
-       |            "registration" : {
-       |                "registrationStatus" : "REGISTERED",
-       |                "registeredBusinessPartnerId" : "XB0000000000001"
        |            }
        |        }
        |    }

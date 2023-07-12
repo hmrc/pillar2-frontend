@@ -66,7 +66,6 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
       val userAnswers = UserAnswers(userAnswersId).set(EntityTypePage, EntityType.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -79,7 +78,7 @@ class EntityTypeControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(EntityType.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
           request,
           appConfig(application),
           messages(application)

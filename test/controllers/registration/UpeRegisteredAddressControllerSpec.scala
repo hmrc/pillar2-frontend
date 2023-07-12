@@ -59,22 +59,26 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
 
-      val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit().url)
+            .withFormUrlEncodedBody(
+              ("addressLine1", "27 house"),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "NE3 2TR"),
+              ("countryCode", "GB")
+            )
 
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+      }
     }
 
     "return bad request if fields are greater than 200 in length" in {
@@ -82,7 +86,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
           "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit().url)
           .withFormUrlEncodedBody(
             ("addressLine1", testValue),
             ("addressLine2", "Drive"),
