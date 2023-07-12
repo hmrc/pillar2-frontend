@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -29,18 +30,19 @@
 
 @layout(pageTitle = title(form, messages("nFMContactName.title"))) {
 
-    @formHelper(action = routes.NFMContactNameController.onSubmit(mode)) {
+    @formHelper(action = routes.NFMContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nFMContactName.heading")).asPageHeading()
+                label = LabelViewModel(messages("nFMContactName.heading")).asPageHeading(Large)
             )
-            .withWidth(Full)
+            .withHint(Hint(content = Text(messages("nFMContactName.hint"))))
+            .withWidth(TwoThirds)
         )
 
         @govukButton(

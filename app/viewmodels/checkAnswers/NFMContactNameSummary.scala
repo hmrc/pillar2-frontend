@@ -16,14 +16,14 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.NFMContactNamePage
 import controllers.routes
+import models.UserAnswers
+import pages.NFMContactNamePage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import play.twirl.api.HtmlFormat
 
 object NFMContactNameSummary {
 
@@ -33,7 +33,7 @@ object NFMContactNameSummary {
         key = "nFMContactName.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", routes.NFMContactNameController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", routes.NFMContactNameController.onPageLoad().url)
             .withVisuallyHiddenText(messages("nFMContactName.change.hidden"))
         )
       )

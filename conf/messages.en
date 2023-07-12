@@ -196,9 +196,11 @@ captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 077
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
 
-nFMContactName.title = nFMContactName
-nFMContactName.heading = nFMContactName
+nFMContactName.heading.caption = Business details
+nFMContactName.title = What is the name of the person or team we should contact from the nominated filing member?
+nFMContactName.heading = What is the name of the person or team we should contact from the nominated filing member?
+nFMContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nFMContactName.checkYourAnswersLabel = nFMContactName
-nFMContactName.error.required = Enter nFMContactName
-nFMContactName.error.length = NFMContactName must be NFM characters or less
+nFMContactName.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
+nFMContactName.error.error.length = Name cannot be more than 200 characters
 nFMContactName.change.hidden = NFMContactName
