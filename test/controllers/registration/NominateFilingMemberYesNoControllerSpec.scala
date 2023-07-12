@@ -26,7 +26,7 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.{NominateFilingMemberYesNoView, UPERegisteredInUKConfirmationView}
+import views.html.fmRegistrationView.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
 
@@ -51,7 +51,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.NominateFilingMemberYesNoController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad().url)
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
@@ -63,7 +63,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.NominateFilingMemberYesNoController.onSubmit().url)
+        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit().url)
           .withFormUrlEncodedBody(("nominateFilingMember", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
@@ -75,7 +75,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.NominateFilingMemberYesNoController.onSubmit().url)
+        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit().url)
           .withFormUrlEncodedBody(("nominateFilingMember", "no"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
