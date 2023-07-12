@@ -38,15 +38,10 @@
         }
 
         <span class="govuk-caption-l">@messages("NominateFilingMemberYesNo.heading.caption")</span>
-        <h1 class="govuk-heading-l long-word">@messages("NominateFilingMemberYesNo.heading")</h1>
-        <p class="govuk-body">@messages("NominateFilingMemberYesNo.p1")</p>
-        @govukInsetText(InsetText(
-            content = Text(messages("NominateFilingMemberYesNo.insetText"))
-        ))
         @govukRadios(
             RadiosViewModel(
                 field  = form("nominateFilingMember"),
-                legend = LegendViewModel(messages("NominateFilingMemberYesNo.heading")).withCssClass("govuk-visually-hidden"),
+                fieldset = FieldsetViewModel(Legend(HtmlContent( headingContent))),
                 items  = NominateFilingMemberYesNo.options,
             )
         )
@@ -56,3 +51,11 @@
         )
     }
 }
+
+@headingContent = @{
+    s"""<h1 class="govuk-heading-l long-word">${messages("NominateFilingMemberYesNo.heading")}
+           |</h1> <p class="govuk-body">${messages("NominateFilingMemberYesNo.p1")}</p>
+           |${govukInsetText(InsetText(content = Text(messages("NominateFilingMemberYesNo.insetText"))))}
+           |""".stripMargin
+}
+
