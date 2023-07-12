@@ -24,7 +24,7 @@ import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsReg
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.registration.GrsResponse
-import pages.{RegistrationPage, UpeNameRegistrationPage}
+import pages.RegistrationPage
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier

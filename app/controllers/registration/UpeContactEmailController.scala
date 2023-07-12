@@ -24,7 +24,7 @@ import models.Mode
 import models.registration.WithoutIdRegData
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.{RegistrationPage, UpeContactEmailPage, UpeContactNamePage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

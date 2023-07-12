@@ -22,7 +22,7 @@ import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.EntityType
 import models.grs.RegistrationStatus.Registered
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, RegistrationWithoutIdRequest}
-import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationPage}
+import pages.{EntityTypePage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

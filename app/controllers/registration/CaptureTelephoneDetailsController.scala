@@ -23,7 +23,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.{CaptureTelephoneDetailsPage, RegistrationPage, UpeContactNamePage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -59,12 +59,12 @@ class CaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeContactNamePage)
-    val form     = formProvider(userName.getOrElse(""))
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
           val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           val regDataWithoutId =

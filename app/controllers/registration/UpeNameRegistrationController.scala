@@ -23,7 +23,7 @@ import forms.UpeNameRegistrationFormProvider
 import models.Mode
 import models.registration.{Registration, WithoutIdRegData}
 import navigation.Navigator
-import pages.{RegistrationPage, UpeNameRegistrationPage}
+import pages.RegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

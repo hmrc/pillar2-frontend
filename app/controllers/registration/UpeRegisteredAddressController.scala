@@ -21,9 +21,10 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
 import models.registration.WithoutIdRegData
+import models.requests.DataRequest
 import models.{Mode, UpeRegisteredAddress}
 import navigation.Navigator
-import pages.{RegistrationPage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import pages.RegistrationPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -48,22 +49,22 @@ class UpeRegisteredAddressController @Inject() (
     with I18nSupport {
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = getUserName(request)
 
     val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
       case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeRegisteredAddress.fold(form)(address => form.fill(address)))
     }
 
-    Ok(view(preparedForm, mode, userName.getOrElse("")))
+    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = getUserName(request)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
           val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
@@ -77,5 +78,10 @@ class UpeRegisteredAddressController @Inject() (
           } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad)
         }
       )
+  }
+
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
   }
 }

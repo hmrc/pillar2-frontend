@@ -24,7 +24,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.requests.DataRequest
 import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
-import pages.{ContactUPEByTelephonePage, RegistrationPage, UpeContactNamePage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.{UpeContactNameFormProvider, UpeNameRegistrationFormProvider}
 import models.Mode
 import navigation.Navigator
-import pages.{RegistrationPage, UpeContactNamePage, UpeNameRegistrationPage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
