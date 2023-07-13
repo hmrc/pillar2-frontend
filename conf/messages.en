@@ -144,12 +144,12 @@ registeringTheUPGroup.no = No
 registeringTheUPGroup.error.required = Select yes if you are registering the ultimate parent of this group
 registeringTheUPGroup.caption = Check if the group needs to register
 
-registeringNFMGroup.title = Are you registering the nominated filing member for this group?
-registeringNFMGroup.heading = Are you registering the nominated filing member for this group?
-registeringNFMGroup.yes = Yes
-registeringNFMGroup.no = No
-registeringNFMGroup.error.required = Select yes if you are registering the nominated filing member for this group
-registeringNFMGroup.caption = Check if the group needs to register
+registeringNfmGroup.title = Are you registering the nominated filing member for this group?
+registeringNfmGroup.heading = Are you registering the nominated filing member for this group?
+registeringNfmGroup.yes = Yes
+registeringNfmGroup.no = No
+registeringNfmGroup.error.required = Select yes if you are registering the nominated filing member for this group
+registeringNfmGroup.caption = Check if the group needs to register
 
 KBMnIneligible.title = Based on your answers, you cannot register this group for Pillar 2 top-up tax
 KBMnIneligible.heading = Based on your answers, you cannot register this group for Pillar 2 top-up tax

@@ -24,6 +24,6 @@ class RegisteringNFMGroupFormProvider @Inject() extends CommonFormats {
 
   def apply(): Form[String] =
     Form(
-      "registeringNFMGroup" -> textWithErrorOverride(key = "registeringNFMGroup.error.required")
+      "registeringNfmGroup" -> textWithErrorOverride(key = "registeringNFMGroup.error.required")
     )
 }

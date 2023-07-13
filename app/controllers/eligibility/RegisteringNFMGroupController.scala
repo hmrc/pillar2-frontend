@@ -19,6 +19,7 @@ package controllers.eligibility
 import cache.SessionData
 import config.FrontendAppConfig
 import forms.{RegisteringNFMGroupFormProvider, RegisteringTheUPGroupFormProvider}
+import models.RegisteringNFMGroup
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -55,12 +56,12 @@ class RegisteringNFMGroupController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
           value match {
-            case "yes" =>
+            case RegisteringNFMGroup.Yes.toString =>
               Future.successful(
                 Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
                   .withSession((sessionData.registeringNFMGroupPageYesNo(value)))
               )
-            case "no" =>
+            case RegisteringNFMGroup.No.toString =>
               Future.successful(
                 Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
                   .withSession((sessionData.registeringNFMGroupPageYesNo(value)))

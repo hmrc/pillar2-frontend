@@ -57,7 +57,7 @@ class RegisteringNFMGroupControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.RegisteringTheUPGroupController.onSubmit.url)
-          .withFormUrlEncodedBody(("registeringNFMGroup", "yes"))
+          .withFormUrlEncodedBody(("registeringNfmGroup", "yes"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url
@@ -68,7 +68,7 @@ class RegisteringNFMGroupControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.eligibility.routes.RegisteringTheUPGroupController.onSubmit.url)
-          .withFormUrlEncodedBody(("registeringNFMGroup", "no"))
+          .withFormUrlEncodedBody(("registeringNfmGroup", "no"))
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.eligibility.routes.KbMnIneligibleController.onPageLoad.url

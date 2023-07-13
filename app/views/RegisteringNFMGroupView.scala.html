@@ -27,7 +27,7 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("registeringNFMGroup.title")),
+@layout(pageTitle = title(form, messages("registering-nominated-filing-member-Group.title")),
     showSignOut = false,
     timeout = false
 ) {
@@ -35,13 +35,13 @@
     @formHelper(action = eligibility.routes.RegisteringNFMGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("registeringNFMGroup" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("registeringNFMGroup.caption")</span>
+        <span class="govuk-caption-l">@messages("registeringNfmGroup.caption")</span>
         @govukRadios(
             RadiosViewModel(
-                field  = form("registeringNFMGroup"),
-                legend = LegendViewModel(messages("registeringNFMGroup.heading")).asPageHeading().withCssClass("govuk-label--l"),
+                field  = form("registeringNfmGroup"),
+                legend = LegendViewModel(messages("registeringNfmGroup.heading")).asPageHeading().withCssClass("govuk-label--l"),
                 items  = RegisteringNFMGroup.options
             )
         )
