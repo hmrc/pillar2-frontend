@@ -80,7 +80,7 @@ class CaptureTelephoneDetailsController @Inject() (
                 )
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
         }
       )
   }
