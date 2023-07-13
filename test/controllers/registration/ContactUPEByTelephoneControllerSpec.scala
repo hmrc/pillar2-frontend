@@ -17,13 +17,14 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-
 import play.api.test.Helpers.{redirectLocation, status, _}
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
@@ -65,7 +66,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     }
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -82,7 +85,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
