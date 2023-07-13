@@ -23,7 +23,7 @@
     formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
-@(status:RowStatus)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(status:RowStatus, statusCount: Int)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -33,7 +33,7 @@
         <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections")</p>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", statusCount)</p>
 
         <ol class="app-task-list">
             <li>

@@ -30,6 +30,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.registrationview.ContactUPEByTelephoneView
 
 import javax.inject.Inject
@@ -77,7 +78,14 @@ class ContactUPEByTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value)))))
+                      .set(
+                        RegistrationPage,
+                        regData
+                          .copy(
+                            isRegistrationStatus = RowStatus.InProgress,
+                            withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value)))
+                          )
+                      )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad)
@@ -88,7 +96,10 @@ class ContactUPEByTelephoneController @Inject() (
                     request.userAnswers
                       .set(
                         RegistrationPage,
-                        regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value), telephoneNumber = None)))
+                        regData.copy(
+                          isRegistrationStatus = RowStatus.Completed,
+                          withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value), telephoneNumber = None))
+                        )
                       )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

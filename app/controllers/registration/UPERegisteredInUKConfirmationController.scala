@@ -33,6 +33,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
+import utils.RowStatus.InProgress
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
@@ -71,17 +73,31 @@ class UPERegisteredInUKConfirmationController @Inject() (
           value match {
             case UPERegisteredInUKConfirmation.Yes =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, Registration(isUPERegisteredInUK = value)))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(RegistrationPage, Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
             case UPERegisteredInUKConfirmation.No =>
-              val regData = request.userAnswers.get(RegistrationPage).getOrElse(Registration(isUPERegisteredInUK = value))
+              val regData =
+                request.userAnswers
+                  .get(RegistrationPage)
+                  .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData)(_ => Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value))
+                    request.userAnswers.set(
+                      RegistrationPage,
+                      checkedRegData.copy(isUPERegisteredInUK = value, orgType = None, withIdRegData = None)
+                    )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)

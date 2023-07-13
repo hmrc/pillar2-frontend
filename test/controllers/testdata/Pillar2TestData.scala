@@ -20,12 +20,14 @@ import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegister
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
+import utils.RowStatus
 
 trait Pillar2TestData {
 
   val validNoIdRegistrationData =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+      isRegistrationStatus = RowStatus.InProgress,
       withoutIdRegData = Some(
         WithoutIdRegData(
           upeNameRegistration = "Test Name",
@@ -123,6 +125,7 @@ trait Pillar2TestData {
       {
        |        "Registration" : {
        |            "isUPERegisteredInUK" : "yes",
+       |            "isRegistrationStatus" : "InProgress",
        |            "orgType" : "ukLimitedCompany",
        |            "withIdRegData" : {
        |                "incorporatedEntityRegistrationData" : {
@@ -156,6 +159,7 @@ trait Pillar2TestData {
        |{
        |        "Registration" : {
        |            "isUPERegisteredInUK" : "yes",
+       |            "isRegistrationStatus" : "InProgress",
        |            "orgType" : "limitedLiabilityPartnership",
        |            "withIdRegData" : {
        |                "partnershipEntityRegistrationData" : {

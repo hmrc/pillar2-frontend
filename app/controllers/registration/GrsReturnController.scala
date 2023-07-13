@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,10 +53,14 @@ class GrsReturnController @Inject() (
           case Some(e @ UkLimitedCompany) =>
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
+              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
                                  RegistrationPage,
-                                 registration.copy(withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData))))
+                                 registration.copy(
+                                   isRegistrationStatus = isRegistrationStatus,
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                 )
                                )
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
@@ -64,10 +69,14 @@ class GrsReturnController @Inject() (
           case Some(e @ LimitedLiabilityPartnership) =>
             for {
               entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
                                  RegistrationPage,
-                                 registration.copy(withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData))))
+                                 registration.copy(
+                                   isRegistrationStatus = isRegistrationStatus,
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                 )
                                )
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))

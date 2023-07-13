@@ -29,6 +29,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.registrationview.CaptureTelephoneDetailsView
 
 import javax.inject.Inject
@@ -72,7 +73,11 @@ class CaptureTelephoneDetailsController @Inject() (
           for {
             updatedAnswers <-
               Future.fromTry(
-                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(telephoneNumber = Some(value)))))
+                request.userAnswers.set(
+                  RegistrationPage,
+                  regData
+                    .copy(isRegistrationStatus = RowStatus.Completed, withoutIdRegData = Some(regDataWithoutId.copy(telephoneNumber = Some(value))))
+                )
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)

@@ -18,15 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
-import models.grs.EntityType
-import models.grs.RegistrationStatus.Registered
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, RegistrationWithoutIdRequest}
-import pages.{EntityTypePage, RegistrationPage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.RowStatus._
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -42,46 +39,29 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val isUPERegInUK = request.userAnswers.get(RegistrationPage) match {
-      case None        => ""
-      case Some(value) => value.isUPERegisteredInUK
+    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
+      case None        => RowStatus.NotStarted
+      case Some(value) => value.isRegistrationStatus
     }
+    val statusCount = statusCounter(isRegistrationStatus, NotStarted, NotStarted, NotStarted, NotStarted)
+    Ok(view(isRegistrationStatus, statusCount))
 
-    val orgType = request.userAnswers.get[Registration](RegistrationPage) match {
-      case Some(value) => value.orgType.getOrElse(EntityType.Other)
-      case None        => EntityType.Other
-    }
-
-    //TODO - refactor later  (This needs fixing as a part of task list work ticket.)
-    val regInProgress = getRegStatus(isUPERegInUK.toString)
-
-    val regComplete = orgType match {
-      case LimitedLiabilityPartnership =>
-        request.userAnswers
-          .get[Registration](RegistrationPage)
-          .fold(false)(_.withIdRegData.fold(false)(_.partnershipEntityRegistrationData.fold(false)(_.registration.registrationStatus == Registered)))
-      case UkLimitedCompany =>
-        request.userAnswers
-          .get[Registration](RegistrationPage)
-          .fold(false)(
-            _.withIdRegData.fold(false)(_.incorporatedEntityRegistrationData.fold(false)(_.registration.registrationStatus == Registered))
-          )
-
-      case _ => false
-
-    }
-    if (regComplete)
-      Ok(view(RowStatus.Completed))
-    else if (regInProgress)
-      Ok(view(RowStatus.InProgress))
-    else
-      Ok(view(RowStatus.NotStarted))
   }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
+  private def statusCounter(
+    registrationStatus: RowStatus,
+    filingMemberStatus: RowStatus,
+    suscriptionStatus:  RowStatus,
+    contactStatus:      RowStatus,
+    cyaStatus:          RowStatus
+  ): Int = {
+    val statusList = List(registrationStatus, filingMemberStatus, suscriptionStatus, contactStatus, cyaStatus)
+    var counter    = 0
+    for (task <- statusList)
+      if (task == Completed)
+        counter += 1
+      else
+        counter
+    counter
   }
-
-  private def getRegStatus(isUPERegInUK: String): Boolean =
-    isUPERegInUK == "yes" || isUPERegInUK == "no"
 }
