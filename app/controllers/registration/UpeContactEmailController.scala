@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -69,14 +68,13 @@ class UpeContactEmailController @Inject() (
           val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           val regDataWithoutId =
             regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration and address should be available before email"))
-
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(emailAddress = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
         }
       )
   }

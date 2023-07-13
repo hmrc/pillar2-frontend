@@ -10,13 +10,15 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
-
+site.save-and-continue= Save and continue
 date.day = Day
 date.month = Month
 date.year = Year
 
 upe-registered-address.title=Where is the registered office address of {0}?
 upe-registered-address.heading=Where is the registered office address of {0}?
+upe-registered-address.checkYourAnswersLabel = Address
+upe-registered-address.change.hidden= Change the registered office address of the ultimate parent entity
 upe-registered-address.address-line-1 = Address line 1
 upe-registered-address.address-line-2 = Address line 2 (optional)
 upe-registered-address.town-city = Town or City
@@ -30,7 +32,7 @@ upe-registered-address.region.error.length = The region cannot be more than 200 
 upe-registered-address.postcode.error.length = The Postal code cannot be more than 200 characters
 upe-registered-address.country.error.required = Enter the country
 upe-registered-address.country.error.length = The country cannot be more than 200 characters
-
+upe-registered-address.heading.caption = Business details
 upe-registered-address.messages.error.address-line-1.required=Enter the address line 1
 upe-registered-address.messages.error.address-line-1.length=The first line of address cannot be more than 200 characters
 upe-registered-address.messages.error.address-line-1.invalid=The first line of the address contains invalid characters
@@ -43,6 +45,10 @@ upe-input-business-name.heading = What is the name of the person or team we shou
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.error.length = Name cannot be more than 200 characters
+upe-input-business-name.change.hidden= Change the name of the person or team we should contact from the ultimate parent entity
+upe-input-business-name.checkYourAnswersLabel = Contact name
+
+
 task-list.title = Register for Global Minimum Tax
 task-list.heading = Register for Global Minimum Tax
 taskList.subheading.complete = Application incomplete
@@ -56,8 +62,8 @@ taskList.task.contact = Enters contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
-task.status.not_started = Not Started
-task.status.in_progress = In Progress
+task.status.notStarted = Not Started
+task.status.inProgress = In Progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot Start Yet
 
@@ -97,18 +103,22 @@ startPageRegistration.title = We need to match the details of this ultimate pare
 startPageRegistration.heading = We need to match the details of this ultimate parent entity to HMRC records
 startPageRegistration.p1=We will ask you for several pieces of identifying information about the ultimate parent of this group so that we can best match the ultimate parent to our records.
 startPageRegistration.heading.caption=Business details
-upe-registered-address.heading.caption = Business details
 upeNameRegistration.heading.caption=Business details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name cannot be more than 200 characters
+upeNameRegistration.checkYourAnswersLabel= Name
+upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
+
 upe-input-business-email.title=What is the email address for {0}?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
 upe-input-business-email.caption=Business details
 upe-input-business-contact.email.error.required = You need to enter the email address for {0}
 upe-input-business-contact.email.error.length = The email address cannot be more than 200 characters
+upe-input-business-email.change.hidden= Change the email address for the person or team we should contact at the ultimate parent entity
+upe-input-business-email.checkYourAnswersLabel = Email address
 
 under_construction.heading = Under Construction
 businessActivityUK.title = Does any entity in this group have business activity in the UK?
@@ -159,7 +169,8 @@ eligibilityconfirmation.p1=You will now need to sign in to HMRC online services 
 eligibilityconfirmation.link=More about Pillar 2 top-up tax
 
 checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.heading.caption= Business details
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -188,13 +199,17 @@ contactUPEByTelephone.hint = We will call if we have any questions about the man
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
-
+contactUPEByTelephone.checkYourAnswersLabel= Telephone contact
+contactUPEByTelephone.change.hidden = Change your response to whether we make contact by telephone or not
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
+captureTelephoneDetails.change.hidden = Change the telephone number for the person or team we should contact at the ultimate parent entity
+captureTelephoneDetails.checkYourAnswersLabel = Telephone number
+
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -204,3 +219,4 @@ entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 entityType.change.hidden = change
+

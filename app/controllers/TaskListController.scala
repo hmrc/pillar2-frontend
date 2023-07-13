@@ -44,8 +44,7 @@ class TaskListController @Inject() (
       case Some(value) => value.isRegistrationStatus
     }
     val statusCount = statusCounter(isRegistrationStatus, NotStarted, NotStarted, NotStarted, NotStarted)
-    Ok(view(isRegistrationStatus, statusCount))
-
+    Ok(view(isRegistrationStatus.toString, statusCount))
   }
 
   private def statusCounter(

@@ -16,29 +16,31 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
-import play.api.i18n.I18nSupport
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.TaskListView
+import viewmodels.govuk.summarylist._
+import views.html.CheckYourAnswersView
 
-import javax.inject.Inject
-
-class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
+class FilingMemberCheckAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
-  view:                     TaskListView
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     CheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TaskListController.onPageLoad)
-  }
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val list = SummaryListViewModel(
+      rows = Seq.empty
+    )
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
+    Ok(view(list))
   }
-
 }

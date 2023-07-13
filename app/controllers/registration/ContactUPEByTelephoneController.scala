@@ -19,7 +19,6 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.ContactUPEByTelephoneFormProvider
 import models.requests.DataRequest
 import models.{ContactUPEByTelephone, Mode}
@@ -54,7 +53,7 @@ class ContactUPEByTelephoneController @Inject() (
     val form     = formProvider(userName)
     val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.contactUPEByTelephone.fold(form)(contactTel => form.fill(contactTel)))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.contactUpeByTelephone.fold(form)(contactTel => form.fill(contactTel)))
     }
 
     Ok(view(preparedForm, mode, userName))
@@ -83,12 +82,13 @@ class ContactUPEByTelephoneController @Inject() (
                         regData
                           .copy(
                             isRegistrationStatus = RowStatus.InProgress,
-                            withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value)))
+                            withoutIdRegData = Some(regDataWithoutId.copy(contactUpeByTelephone = Some(value)))
                           )
                       )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
+
             case ContactUPEByTelephone.No =>
               for {
                 updatedAnswers <-
@@ -98,12 +98,12 @@ class ContactUPEByTelephoneController @Inject() (
                         RegistrationPage,
                         regData.copy(
                           isRegistrationStatus = RowStatus.Completed,
-                          withoutIdRegData = Some(regDataWithoutId.copy(contactUPEByTelephone = Some(value), telephoneNumber = None))
+                          withoutIdRegData = Some(regDataWithoutId.copy(contactUpeByTelephone = Some(value), telephoneNumber = None))
                         )
                       )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
           }
         }
       )

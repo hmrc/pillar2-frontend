@@ -35,7 +35,6 @@ class UpeContactEmailControllerSpec extends SpecBase {
   def controller(): UpeContactEmailController =
     new UpeContactEmailController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -50,7 +49,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -72,18 +71,18 @@ class UpeContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.UpeContactEmailController.onSubmit().url)
+          FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
       }
     }
     "Bad request when no data" in {
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit().url)
+        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST

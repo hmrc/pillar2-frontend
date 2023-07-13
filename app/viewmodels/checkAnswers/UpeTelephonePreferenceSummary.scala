@@ -16,25 +16,25 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, ContactUPEByTelephone, UserAnswers}
 import pages.RegistrationPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeNameRegistrationSummary {
+object UpeTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RegistrationPage).map { answer =>
-      val upeNameRegistration = answer.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration)
+      val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactUpeByTelephone.fold("")(tel => tel.toString))
+      val value                 = if (contactUpeByTelephone == ContactUPEByTelephone.Yes) "site.yes" else "site.no"
       SummaryListRowViewModel(
-        key = "upeNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(upeNameRegistration).toString),
+        key = "contactUPEByTelephone.checkYourAnswersLabel",
+        value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
         )
       )
     }

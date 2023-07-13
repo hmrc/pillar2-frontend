@@ -23,7 +23,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -45,11 +44,10 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     )
 
   "UpeRegisteredAddress Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeRegisteredAddressController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
@@ -64,7 +62,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),
@@ -77,7 +75,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -86,7 +84,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
           "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       val request =
-        FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit().url)
+        FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(
             ("addressLine1", testValue),
             ("addressLine2", "Drive"),
@@ -103,7 +101,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     "return bad request if required fields are not filled" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("addressLine1", "27 house"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)

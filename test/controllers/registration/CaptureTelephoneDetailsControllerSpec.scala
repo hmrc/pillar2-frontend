@@ -22,7 +22,6 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -45,11 +44,10 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     )
 
   "Capture Telephone Details Controller" should {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.CaptureTelephoneDetailsController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) mustBe OK
@@ -58,14 +56,14 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       )
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to checkYourAnswers when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
+          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("telephoneNumber", "123456789")
             )
@@ -80,7 +78,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     "return bad request if required fields are not filled" in {
 
       val request =
-        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit().url)
+        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("telephoneNumber", ""))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)

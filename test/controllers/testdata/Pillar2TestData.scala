@@ -31,7 +31,7 @@ trait Pillar2TestData {
       withoutIdRegData = Some(
         WithoutIdRegData(
           upeNameRegistration = "Test Name",
-          contactUPEByTelephone = Some(ContactUPEByTelephone.No),
+          contactUpeByTelephone = Some(ContactUPEByTelephone.No),
           telephoneNumber = Some("1234567"),
           upeRegisteredAddress = Some(
             UpeRegisteredAddress(

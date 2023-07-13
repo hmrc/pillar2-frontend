@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package models.registration
+package forms
 
-import models.{ContactUPEByTelephone, UpeRegisteredAddress}
-import play.api.libs.json.{Json, OFormat}
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  Option[UpeRegisteredAddress] = None,
-  upeContactName:        Option[String] = None,
-  emailAddress:          Option[String] = None,
-  contactUpeByTelephone: Option[ContactUPEByTelephone] = None,
-  telephoneNumber:       Option[String] = None
-)
+class IsNFMUKBasedFormProviderSpec extends BooleanFieldBehaviours {
 
-object WithoutIdRegData {
-  implicit val format: OFormat[WithoutIdRegData] = Json.format[WithoutIdRegData]
+  val requiredKey = "isNFMUKBased.error.required"
+  val invalidKey  = "error.boolean"
+
+  val form = new IsNFMUKBasedFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

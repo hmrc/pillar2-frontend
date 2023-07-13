@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package models.registration
+package forms
 
-import models.{ContactUPEByTelephone, UpeRegisteredAddress}
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import models.{NominateFilingMemberYesNo, UPERegisteredInUKConfirmation}
+import play.api.data.Form
 
-case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  Option[UpeRegisteredAddress] = None,
-  upeContactName:        Option[String] = None,
-  emailAddress:          Option[String] = None,
-  contactUpeByTelephone: Option[ContactUPEByTelephone] = None,
-  telephoneNumber:       Option[String] = None
-)
+import javax.inject.Inject
 
-object WithoutIdRegData {
-  implicit val format: OFormat[WithoutIdRegData] = Json.format[WithoutIdRegData]
+class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[NominateFilingMemberYesNo] =
+    Form(
+      "nominateFilingMember" -> enumerable[NominateFilingMemberYesNo]("NominateFilingMemberYesNo.error.required")
+    )
 }

@@ -100,7 +100,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad)
+              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
+
           }
       )
   }

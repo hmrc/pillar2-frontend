@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.{UpeNameRegistrationView, UpeRegisteredAddressView}
+import views.html.registrationview.UpeRegisteredAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,7 +75,7 @@ class UpeRegisteredAddressController @Inject() (
                   .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeRegisteredAddress = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad)
+          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
         }
       )
   }
