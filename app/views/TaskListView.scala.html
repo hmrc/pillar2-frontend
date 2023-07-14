@@ -50,7 +50,7 @@
                         </span>
                         @if(upeNoIDStatus == "Completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(upeNoIDStatus == "inProgress") {
+                        } else if(upeNoIDStatus.equals("InProgress")) {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>

@@ -82,6 +82,6 @@ class UpeRegisteredAddressController @Inject() (
 
   private def getUserName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration))
   }
 }
