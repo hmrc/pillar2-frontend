@@ -23,9 +23,10 @@ import forms.EntityTypeFormProvider
 import models.registration.RegistrationWithoutIdRequest
 import models.Mode
 import models.grs.EntityType
-import pages.{EntityTypePage, RegistrationWithIdRequestPage}
+import pages.{EntityTypePage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
+
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
@@ -52,9 +53,9 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(EntityTypePage) match {
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => value.orgType.fold(form)(data => form.fill(data))
     }
 
     Ok(view(preparedForm, mode))
@@ -68,27 +69,28 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
+              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                updatedRequest <-
+                updatedAnswers <-
                   Future.fromTry(
-                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(EntityType.UkLimitedCompany)))
+                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
                   )
-                _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
                                       .createLimitedCompanyJourney(mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
+              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                updatedRequest <-
+                updatedAnswers <-
                   Future.fromTry(
-                    updatedAnswers.set(RegistrationWithIdRequestPage, RegistrationWithoutIdRequest(Some(EntityType.LimitedLiabilityPartnership)))
+                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
                   )
-                _ <- userAnswersConnectors.save(updatedRequest.id, Json.toJson(updatedRequest.data))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+
                 createJourneyRes <- partnershipIdentificationFrontendConnector
                                       .createPartnershipJourney(EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))

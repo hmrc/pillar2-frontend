@@ -210,6 +210,7 @@ captureTelephoneDetails.messages.error.length = The telephone number cannot be m
 captureTelephoneDetails.change.hidden = Change the telephone number for the person or team we should contact at the ultimate parent entity
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
+
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
 entityType.heading = What type of company is the ultimate parent entity?
@@ -218,3 +219,4 @@ entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 entityType.change.hidden = change
+

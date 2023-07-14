@@ -18,16 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{CaptureTelephoneDetailsPage, ContactUPEByTelephonePage, Page, QuestionPage, UPERegisteredInUKConfirmationPage, UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
-import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
-import models.grs.EntityType
-import models.grs.RegistrationStatus.Registered
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, RegistrationWithoutIdRequest}
-import pages.{EntityTypePage, PartnershipRegistrationWithIdResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UPERegisteredInUKConfirmationPage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.RowStatus._
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -43,22 +39,28 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    var counter: Int = 0
-    val telephonePreference = request.userAnswers.get(ContactUPEByTelephonePage).isDefined
-    val upeAddress          = request.userAnswers.get(UPERegisteredInUKConfirmationPage).isDefined
-    val telephoneNumber     = request.userAnswers.get(CaptureTelephoneDetailsPage).isDefined
-    val upeStatus = (telephonePreference, upeAddress, telephoneNumber) match {
-      case (_, true, true) =>
-        counter = counter + 1
-        "completed"
-      case (true, true, _) =>
-        counter = counter + 1
-        "completed"
-      case (_, true, _) => "in progress"
-      case _            => "not started"
+    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
+      case None        => RowStatus.NotStarted
+      case Some(value) => value.isRegistrationStatus
     }
-
-    Ok(view(upeStatus, counter))
+    val statusCount = statusCounter(isRegistrationStatus, NotStarted, NotStarted, NotStarted, NotStarted)
+    Ok(view(isRegistrationStatus.toString, statusCount))
   }
 
+  private def statusCounter(
+    registrationStatus: RowStatus,
+    filingMemberStatus: RowStatus,
+    suscriptionStatus:  RowStatus,
+    contactStatus:      RowStatus,
+    cyaStatus:          RowStatus
+  ): Int = {
+    val statusList = List(registrationStatus, filingMemberStatus, suscriptionStatus, contactStatus, cyaStatus)
+    var counter    = 0
+    for (task <- statusList)
+      if (task == Completed)
+        counter += 1
+      else
+        counter
+    counter
+  }
 }

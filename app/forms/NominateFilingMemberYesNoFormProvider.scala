@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import models.{NominateFilingMemberYesNo, UPERegisteredInUKConfirmation}
+import play.api.data.Form
 
-case object UpeNameRegistrationPage extends QuestionPage[String] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "registration.upeNameRegistration"
+  def apply(): Form[NominateFilingMemberYesNo] =
+    Form(
+      "nominateFilingMember" -> enumerable[NominateFilingMemberYesNo]("NominateFilingMemberYesNo.error.required")
+    )
 }

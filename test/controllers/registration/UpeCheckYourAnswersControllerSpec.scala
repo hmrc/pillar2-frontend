@@ -17,10 +17,12 @@
 package controllers.registration
 
 import base.SpecBase
-import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UpeRegisteredAddress}
+import models.registration.{Registration, WithoutIdRegData}
+import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress}
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.registrationview.UpeCheckYourAnswersView
@@ -37,58 +39,83 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     )
   val user           = emptyUserAnswers
   val addressExample = UpeRegisteredAddress("1", Some("2"), "3", Some("4"), Some("5"), "GB")
+
   val completeUserAnswer = user
-    .set(UpeContactEmailPage, "example@gmail.com")
-    .success
-    .value
-    .set(UpeContactNamePage, "Paddington ltd")
-    .success
-    .value
-    .set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes)
-    .success
-    .value
-    .set(CaptureTelephoneDetailsPage, CaptureTelephoneDetails("123444"))
-    .success
-    .value
-    .set(UpeNameRegistrationPage, "Paddington")
-    .success
-    .value
-    .set(UpeRegisteredAddressPage, addressExample)
+    .set(
+      RegistrationPage,
+      new Registration(
+        isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+        isRegistrationStatus = RowStatus.InProgress,
+        withoutIdRegData = Some(
+          WithoutIdRegData(
+            upeNameRegistration = "Paddington",
+            upeContactName = Some("Paddington ltd"),
+            contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
+            telephoneNumber = Some("123444"),
+            emailAddress = Some("example@gmail.com"),
+            upeRegisteredAddress = Some(
+              UpeRegisteredAddress(
+                addressLine1 = "1",
+                addressLine2 = Some("2"),
+                addressLine3 = "3",
+                addressLine4 = Some("4"),
+                postalCode = Some("5"),
+                countryCode = "GB"
+              )
+            )
+          )
+        )
+      )
+    )
     .success
     .value
 
-  val noTelephone = user
-    .set(UpeContactEmailPage, "example@gmail.com")
+  val noTelephoneUserAnswers = user
+    .set(
+      RegistrationPage,
+      new Registration(
+        isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+        isRegistrationStatus = RowStatus.InProgress,
+        withoutIdRegData = Some(
+          WithoutIdRegData(
+            upeNameRegistration = "Paddington",
+            upeContactName = Some("Paddington ltd"),
+            contactUpeByTelephone = Some(ContactUPEByTelephone.No),
+            emailAddress = Some("example@gmail.com"),
+            upeRegisteredAddress = Some(
+              UpeRegisteredAddress(
+                addressLine1 = "1",
+                addressLine2 = Some("2"),
+                addressLine3 = "3",
+                addressLine4 = Some("4"),
+                postalCode = Some("5"),
+                countryCode = "GB"
+              )
+            )
+          )
+        )
+      )
+    )
     .success
     .value
-    .set(UpeContactNamePage, "Paddington ltd")
-    .success
-    .value
-    .set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes)
-    .success
-    .value
-    .set(UpeNameRegistrationPage, "Paddington")
-    .success
-    .value
-    .set(UpeRegisteredAddressPage, addressExample)
-    .success
-    .value
+
+  val phonenumberProvided1 = Seq()
 
   val phonenumberProvided = Seq(
-    UpeNameRegistrationSummary.row(user.set(UpeNameRegistrationPage, "Paddington").success.value),
-    UpeRegisteredAddressSummary.row(user.set(UpeRegisteredAddressPage, addressExample).success.value),
-    UpeContactNameSummary.row(user.set(UpeContactNamePage, "Paddington ltd").success.value),
-    UpeContactEmailSummary.row(user.set(UpeContactEmailPage, "example@gmail.com").success.value),
-    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes).success.value),
-    UPEContactTelephoneSummary.row(user.set(CaptureTelephoneDetailsPage, CaptureTelephoneDetails("123444")).success.value)
+    UpeNameRegistrationSummary.row(completeUserAnswer),
+    UpeRegisteredAddressSummary.row(completeUserAnswer),
+    UpeContactNameSummary.row(completeUserAnswer),
+    UpeContactEmailSummary.row(completeUserAnswer),
+    UpeTelephonePreferenceSummary.row(completeUserAnswer),
+    UPEContactTelephoneSummary.row(completeUserAnswer)
   ).flatten
 
   val noPhonenumber = Seq(
-    UpeNameRegistrationSummary.row(user.set(UpeNameRegistrationPage, "Paddington").success.value),
-    UpeRegisteredAddressSummary.row(user.set(UpeRegisteredAddressPage, addressExample).success.value),
-    UpeContactNameSummary.row(user.set(UpeContactNamePage, "Paddington ltd").success.value),
-    UpeContactEmailSummary.row(user.set(UpeContactEmailPage, "example@gmail.com").success.value),
-    UpeTelephonePreferenceSummary.row(user.set(ContactUPEByTelephonePage, ContactUPEByTelephone.Yes).success.value)
+    UpeNameRegistrationSummary.row(noTelephoneUserAnswers),
+    UpeRegisteredAddressSummary.row(noTelephoneUserAnswers),
+    UpeContactNameSummary.row(noTelephoneUserAnswers),
+    UpeContactEmailSummary.row(noTelephoneUserAnswers),
+    UpeTelephonePreferenceSummary.row(noTelephoneUserAnswers)
   ).flatten
 
   "UPE no ID Check Your Answers Controller" must {
@@ -125,7 +152,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
     }
     "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
-      val application = applicationBuilder(userAnswers = Some(noTelephone)).build()
+      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 

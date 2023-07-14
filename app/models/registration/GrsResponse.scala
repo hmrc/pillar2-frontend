@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{Json, OFormat}
 
-class UpeNameRegistrationPageSpec extends PageBehaviours {
+case class GrsResponse(
+  incorporatedEntityRegistrationData: Option[IncorporatedEntityRegistrationData] = None,
+  partnershipEntityRegistrationData:  Option[PartnershipEntityRegistrationData] = None
+)
 
-  "UpeNameRegistrationPage" - {
-
-    beRetrievable[String](UpeNameRegistrationPage)
-
-    beSettable[String](UpeNameRegistrationPage)
-
-    beRemovable[String](UpeNameRegistrationPage)
-  }
+object GrsResponse {
+  implicit val format: OFormat[GrsResponse] = Json.format[GrsResponse]
 }

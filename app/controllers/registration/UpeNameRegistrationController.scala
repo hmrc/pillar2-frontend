@@ -21,10 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
+import models.registration.{Registration, WithoutIdRegData}
 import navigation.Navigator
-import pages.UpeNameRegistrationPage
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
+import pages.RegistrationPage
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
+
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.UpeNameRegistrationView
@@ -48,9 +50,9 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UpeNameRegistrationPage) match {
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
     }
 
     Ok(view(preparedForm, mode))
@@ -61,12 +63,17 @@ class UpeNameRegistrationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        value => {
+          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
           for {
-
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeNameRegistrationPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeNameRegistration = value))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+        }
       )
   }
 }

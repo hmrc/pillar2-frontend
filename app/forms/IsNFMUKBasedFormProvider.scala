@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import models.{IsNFMUKBased, UPERegisteredInUKConfirmation}
+import play.api.data.Form
 
-case object UpeContactNamePage extends QuestionPage[String] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class IsNFMUKBasedFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "registration.UpeContactName"
+  def apply(): Form[IsNFMUKBased] =
+    Form(
+      "value" -> enumerable[IsNFMUKBased]("isNFMUKBased.error.required")
+    )
 }

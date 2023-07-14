@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@import config.FrontendAppConfig
 
-import play.api.libs.json.JsPath
+@this(
+layout: templates.Layout,
+govukSummaryList: GovukSummaryList
+)
 
-case object UpeContactEmailPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-  override def toString: String = "registration.emailAddress"
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
+<h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+
+@govukSummaryList(list)
 }

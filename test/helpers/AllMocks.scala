@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
+import models.requests.DataRequest
 import navigation.Navigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
