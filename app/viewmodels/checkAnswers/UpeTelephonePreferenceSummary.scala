@@ -28,7 +28,8 @@ object UpeTelephonePreferenceSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RegistrationPage).map { answer =>
       val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactUpeByTelephone.fold("")(tel => tel.toString))
-      val value                 = if (contactUpeByTelephone == ContactUPEByTelephone.Yes) "site.yes" else "site.no"
+      val value =
+        if (contactUpeByTelephone.equals(ContactUPEByTelephone.Yes.toString)) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "contactUPEByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
