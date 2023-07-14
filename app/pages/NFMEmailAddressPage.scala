@@ -16,16 +16,11 @@
 
 package pages
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class NFMContactNamePageSpec extends PageBehaviours {
+case object NFMEmailAddressPage extends QuestionPage[String] {
 
-  "NFMContactNamePage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[String](NFMContactNamePage)
-
-    beSettable[String](NFMContactNamePage)
-
-    beRemovable[String](NFMContactNamePage)
-  }
+  override def toString: String = "nFMEmailAddress"
 }

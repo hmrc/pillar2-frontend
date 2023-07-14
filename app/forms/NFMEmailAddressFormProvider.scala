@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class NFMContactNamePageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "NFMContactNamePage" - {
-
-    beRetrievable[String](NFMContactNamePage)
-
-    beSettable[String](NFMContactNamePage)
-
-    beRemovable[String](NFMContactNamePage)
-  }
+class NFMEmailAddressFormProvider @Inject() extends Mappings {
+  val max = 200
+  def apply(userName: String): Form[String] =
+    Form(
+      "value" -> text("nFMEmailAddress.error.required", Seq(userName))
+        .verifying(maxLength(max, "nFMEmailAddress.error.length"))
+    )
 }

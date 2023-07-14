@@ -103,6 +103,7 @@ upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name cannot be more than 200 characters
+
 upe-input-business-email.title=What is the email address for {0}?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
@@ -202,5 +203,14 @@ nFMContactName.heading = What is the name of the person or team we should contac
 nFMContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nFMContactName.checkYourAnswersLabel = nFMContactName
 nFMContactName.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
-nFMContactName.error.error.length = Name cannot be more than 200 characters
+nFMContactName.error.length = Name cannot be more than 200 characters
 nFMContactName.change.hidden = NFMContactName
+
+nFMEmailAddress.heading.caption = Business details
+nFMEmailAddress.title = What is the email address for {0}?
+nFMEmailAddress.heading = What is the email address for {0}?
+nFMEmailAddress.hint = We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
+nFMEmailAddress.checkYourAnswersLabel = nFMEmailAddress
+nFMEmailAddress.error.required = You need to enter the email address for {0}
+nFMEmailAddress.error.length = Email cannot be more than 200 characters
+nFMEmailAddress.change.hidden = nFMEmailAddress

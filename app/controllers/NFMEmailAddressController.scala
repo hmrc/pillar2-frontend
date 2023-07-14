@@ -16,55 +16,57 @@
 
 package controllers
 
-import controllers.actions._
-import forms.NFMContactNameFormProvider
-import connectors.UserAnswersConnectors
 import config.FrontendAppConfig
-import javax.inject.Inject
+import connectors.UserAnswersConnectors
+import controllers.actions._
+import forms.NFMEmailAddressFormProvider
 import models.Mode
-import pages.NFMContactNamePage
+import pages.{NFMContactNamePage, NFMEmailAddressPage}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.NFMContactNameView
+import views.html.NFMEmailAddressView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NFMContactNameController @Inject() (
+class NFMEmailAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NFMContactNameFormProvider,
+  formProvider:              NFMEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NFMContactNameView
+  view:                      NFMEmailAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NFMContactNamePage) match {
+    val userName = request.userAnswers.get(NFMContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
+    val preparedForm = request.userAnswers.get(NFMEmailAddressPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
 
-    Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode, userName.getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = request.userAnswers.get(NFMContactNamePage)
+    val form     = formProvider(userName.getOrElse(""))
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NFMContactNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NFMEmailAddressPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.NFMEmailAddressController.onPageLoad)
+          } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }
 }

@@ -70,3 +70,6 @@ GET         /unauthorised                                controllers.Unauthorise
 
 GET        /business-matching/filing-member/no-id/input-business-name controllers.NFMContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/filing-member/no-id/input-business-name controllers.NFMContactNameController.onSubmit(mode: Mode = NormalMode)
+
+GET        /business-matching/filing-member/no-id/input-email  controllers.NFMEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-email  controllers.NFMEmailAddressController.onSubmit(mode: Mode = NormalMode)
