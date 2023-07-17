@@ -17,10 +17,12 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -58,15 +60,23 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must redirect to checkYourAnswers when valid data is submitted" in {
 
-      val request =
-        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("telephoneNumber", "123456789")
-          )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("telephoneNumber", "123456789")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+      }
 
     }
     "return bad request if required fields are not filled" in {

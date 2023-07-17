@@ -17,13 +17,15 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
-import models.{ContactUPEByTelephone, NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.ContactUPEByTelephonePage
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, status, _}
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
 
@@ -47,7 +49,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
   "Can we contact UPE by Telephone Controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -57,32 +59,47 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactUPEByTelephoneView]
-
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("some name"), NormalMode)(request, appConfig(application), messages(application)).toString
 
       }
     }
 
-    " redirect to capture telephone page when valid data is submitted with value YES" in {
-      val request =
-        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "yes"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+    "redirect to capture telephone page when valid data is submitted with value YES" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "yes"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+      }
     }
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
 
-      val request =
-        FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "no"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "no"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+      }
 
     }
   }

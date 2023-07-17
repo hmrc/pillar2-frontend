@@ -23,11 +23,13 @@ import models.Mode
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
-import pages.{RegistrationWithIdPartnershipResponsePage, RegistrationWithIdRequestPage, RegistrationWithIdResponsePage, UpeNameRegistrationPage}
+import models.registration.GrsResponse
+import pages.RegistrationPage
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,21 +47,39 @@ class GrsReturnController @Inject() (
     extends FrontendBaseController {
 
   def continue(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(RegistrationWithIdRequestPage) match {
-      case Some(registrationWithIdRequest) =>
-        registrationWithIdRequest.orgType match {
+    request.userAnswers.get(RegistrationPage) match {
+      case Some(registration) =>
+        registration.orgType match {
           case Some(e @ UkLimitedCompany) =>
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithIdResponsePage, entityRegData))
-              -             <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+              userAnswers <- Future.fromTry(
+                               request.userAnswers.set(
+                                 RegistrationPage,
+                                 registration.copy(
+                                   isRegistrationStatus = isRegistrationStatus,
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                 )
+                               )
+                             )
+              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
             } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
 
           case Some(e @ LimitedLiabilityPartnership) =>
             for {
               entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-              userAnswers   <- Future.fromTry(request.userAnswers.set(RegistrationWithIdPartnershipResponsePage, entityRegData))
-              -             <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+              userAnswers <- Future.fromTry(
+                               request.userAnswers.set(
+                                 RegistrationPage,
+                                 registration.copy(
+                                   isRegistrationStatus = isRegistrationStatus,
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                 )
+                               )
+                             )
+              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
             } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
 
           case _ => throw new IllegalStateException("No valid org type found in registration data")

@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import play.api.libs.json.JsPath
+import models.UPERegisteredInUKConfirmation
+import models.grs.EntityType
+import play.api.libs.json.{Json, OFormat}
+import utils.RowStatus
 
-case object NominateFilingMemberYesNoPage extends QuestionPage[Boolean] {
+case class Registration(
+  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
+  orgType:              Option[EntityType] = None,
+  isRegistrationStatus: RowStatus,
+  withIdRegData:        Option[GrsResponse] = None,
+  withoutIdRegData:     Option[WithoutIdRegData] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registration.nominateFilingMemberYesNo"
+object Registration {
+  implicit val format: OFormat[Registration] = Json.format[Registration]
 }

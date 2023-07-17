@@ -19,24 +19,16 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
-
+import models.registration.Registration
 import models.{Mode, UPERegisteredInUKConfirmation}
-import pages.UPERegisteredInUKConfirmationPage
-
-import models.grs.ServiceName
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, RegistrationWithoutIdRequest}
-import models.{Mode, UPERegisteredInUKConfirmation, registration}
-import navigation.Navigator
-import pages.{RegistrationWithIdRequestPage, UPERegisteredInUKConfirmationPage}
-
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.http.HttpVerbs.GET
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
@@ -58,9 +50,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => form.fill(value.isUPERegisteredInUK)
     }
 
     Ok(view(preparedForm, mode))
@@ -75,16 +67,35 @@ class UPERegisteredInUKConfirmationController @Inject() (
           value match {
             case UPERegisteredInUKConfirmation.Yes =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(RegistrationPage, Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
             case UPERegisteredInUKConfirmation.No =>
+              val regData =
+                request.userAnswers
+                  .get(RegistrationPage)
+                  .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData)(_ => Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UPERegisteredInUKConfirmationPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(
+                      RegistrationPage,
+                      checkedRegData.copy(isUPERegisteredInUK = value, orgType = None, withIdRegData = None)
+                    )
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
+
           }
       )
   }

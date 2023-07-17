@@ -14,51 +14,33 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.ContactUPEByTelephone
-import pages.RegistrationPage
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.registrationview.UpeCheckYourAnswersView
+import views.html.CheckYourAnswersView
 
-class UpeCheckYourAnswersController @Inject() (
+class FilingMemberCheckAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     UpeCheckYourAnswersView
+  view:                     CheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val telephonePreference = request.userAnswers.get(RegistrationPage) match {
-      case Some(value) =>
-        value.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(tel => (tel == ContactUPEByTelephone.Yes)))
-      case _ => false
-    }
     val list = SummaryListViewModel(
-      rows = Seq(
-        UpeNameRegistrationSummary.row(request.userAnswers),
-        UpeRegisteredAddressSummary.row(request.userAnswers),
-        UpeContactNameSummary.row(request.userAnswers),
-        UpeContactEmailSummary.row(request.userAnswers),
-        UpeTelephonePreferenceSummary.row(request.userAnswers),
-        telephonePreference match {
-          case true => UPEContactTelephoneSummary.row(request.userAnswers)
-          case _    => None
-        }
-      ).flatten
+      rows = Seq.empty
     )
 
     Ok(view(list))
   }
-
 }

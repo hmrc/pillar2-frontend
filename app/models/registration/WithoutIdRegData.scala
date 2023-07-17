@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import models.registration.PartnershipEntityRegistrationData
-import play.api.libs.json.JsPath
+import models.{ContactUPEByTelephone, UpeRegisteredAddress}
+import play.api.libs.json.{Json, OFormat}
 
-case object RegistrationWithIdPartnershipResponsePage extends QuestionPage[PartnershipEntityRegistrationData] {
+case class WithoutIdRegData(
+  upeNameRegistration:   String,
+  upeRegisteredAddress:  Option[UpeRegisteredAddress] = None,
+  upeContactName:        Option[String] = None,
+  emailAddress:          Option[String] = None,
+  contactUpeByTelephone: Option[ContactUPEByTelephone] = None,
+  telephoneNumber:       Option[String] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registrationWithIdResponse"
+object WithoutIdRegData {
+  implicit val format: OFormat[WithoutIdRegData] = Json.format[WithoutIdRegData]
 }

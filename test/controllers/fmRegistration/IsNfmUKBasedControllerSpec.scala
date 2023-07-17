@@ -18,18 +18,20 @@ package controllers.fmRegistration
 
 import base.SpecBase
 import forms.IsNFMUKBasedFormProvider
+import models.nfm.FilingMember
 import models.{NormalMode, UserAnswers}
-import pages.IsNFMUKBasedPage
+import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import views.html.fmRegistrationView.IsNFMUKBasedView
 
-class IsNFMUKBasedControllerSpec extends SpecBase {
+class IsNfmUKBasedControllerSpec extends SpecBase {
 
   val formProvider = new IsNFMUKBasedFormProvider()
 
-  def controller(): IsNFMUKBasedController =
-    new IsNFMUKBasedController(
+  def controller(): IsNfmUKBasedController =
+    new IsNfmUKBasedController(
       mockUserAnswersConnectors,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
@@ -46,7 +48,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -59,12 +61,13 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsNFMUKBasedPage, true).success.value
+      val userAnswers =
+        UserAnswers(userAnswersId).set(NominatedFilingMemberPage, FilingMember(true, Some(true), isNFMnStatus = RowStatus.InProgress)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -85,7 +88,7 @@ class IsNFMUKBasedControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

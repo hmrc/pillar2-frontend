@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object UpeContactNamePage extends QuestionPage[String] {
+case class GrsResponse(
+  incorporatedEntityRegistrationData: Option[IncorporatedEntityRegistrationData] = None,
+  partnershipEntityRegistrationData:  Option[PartnershipEntityRegistrationData] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registration.UpeContactName"
+object GrsResponse {
+  implicit val format: OFormat[GrsResponse] = Json.format[GrsResponse]
 }

@@ -21,12 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
-import pages.NominateFilingMemberYesNoPage
+import models.nfm.FilingMember
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.fmRegistrationView.NominateFilingMemberYesNoView
 
 import javax.inject.Inject
@@ -47,9 +49,9 @@ class NominateFilingMemberYesNoController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NominateFilingMemberYesNoPage) match {
+    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => form.fill(value)
+      case Some(value) => form.fill(value.nfmConfirmation)
     }
 
     Ok(view(preparedForm, mode))
@@ -64,13 +66,20 @@ class NominateFilingMemberYesNoController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
             case false =>
+              val regData = request.userAnswers.get(RegistrationPage)
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.TaskListController.onPageLoad)
           }
       )

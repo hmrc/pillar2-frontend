@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package models.nfm
 
-import models.registration.{IncorporatedEntityRegistrationData, RegistrationWithoutIdRequest}
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object RegistrationWithIdResponsePage extends QuestionPage[IncorporatedEntityRegistrationData] {
+case class WithoutIdNfmData(
+  RegisteredFmName:        String,
+  RegisteredFmNameAddress: Option[NfmRegisteredAddress] = None,
+  fmContactName:           Option[String] = None,
+  fmEmailAddress:          Option[String] = None,
+  contactNfmByTelephone:   Option[ContactNFMByTelephone] = None,
+  telephoneNumber:         Option[String] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registrationWithIdResponse"
+object WithoutIdNfmData {
+  implicit val format: OFormat[WithoutIdNfmData] = Json.format[WithoutIdNfmData]
 }

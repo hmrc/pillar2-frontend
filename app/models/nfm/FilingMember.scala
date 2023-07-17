@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package pages
+package models.nfm
 
-import play.api.libs.json.JsPath
+import models.grs.EntityType
+import models.registration.GrsResponse
+import play.api.libs.json.{Json, OFormat}
+import utils.RowStatus
 
-case object IsNFMUKBasedPage extends QuestionPage[Boolean] {
+case class FilingMember(
+  nfmConfirmation:     Boolean,
+  isNfmRegisteredInUK: Option[Boolean] = None,
+  orgType:             Option[EntityType] = None,
+  isNFMnStatus:        RowStatus,
+  withIdRegData:       Option[GrsResponse] = None,
+  withoutIdRegData:    Option[WithoutIdNfmData] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "fmRegistration.isNFMUKBased"
+object FilingMember {
+  implicit val format: OFormat[FilingMember] = Json.format[FilingMember]
 }

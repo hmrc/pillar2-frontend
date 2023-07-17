@@ -30,11 +30,13 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import pages.RegistrationPage
 import play.api.{Application, Configuration}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -64,6 +66,8 @@ trait SpecBase
     with Pillar2TestData {
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+
+  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
 
   val userAnswersId: String = "id"
 

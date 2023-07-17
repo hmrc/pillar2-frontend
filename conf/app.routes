@@ -64,7 +64,6 @@ POST        /business-matching/ultimate-parent/no-id/change-input-telephone cont
 GET         /business-matching/ultimate-parent/no-id/check-answers                          controllers.registration.UpeCheckYourAnswersController.onPageLoad
 
 
-
 GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
 
@@ -97,7 +96,7 @@ POST       /business-matching/ultimate-parent/uk-based/org-type                 
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNFMUKBasedController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNFMUKBasedController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)

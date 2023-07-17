@@ -21,8 +21,10 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
+import models.registration.WithoutIdRegData
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.{UpeContactEmailPage, UpeContactNamePage}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,29 +47,40 @@ class UpeContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeContactNamePage)
-    val form     = formProvider(userName.getOrElse(""))
-    val preparedForm = request.userAnswers.get(UpeContactEmailPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
 
-    Ok(view(preparedForm, mode, userName.getOrElse("")))
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+      case None        => form
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.emailAddress.fold(form)(email => form.fill(email)))
+    }
+    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeContactNamePage)
-    val form     = formProvider(userName.getOrElse(""))
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
-        value =>
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+        value => {
+          val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val regDataWithoutId =
+            regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration and address should be available before email"))
           for {
-
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeContactEmailPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(emailAddress = Some(value)))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
+        }
       )
+  }
+
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
   }
 }

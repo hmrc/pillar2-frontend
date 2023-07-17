@@ -223,6 +223,7 @@ NominateFilingMemberYesNo.change.hidden= Change your filing member nomination pr
 
 
 
+
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
 entityType.heading = What type of company is the ultimate parent entity?
@@ -231,6 +232,7 @@ entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 entityType.change.hidden = change
+
 
 isNFMUKBased.title = isNFMUKBased
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
