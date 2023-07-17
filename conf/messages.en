@@ -15,6 +15,17 @@ date.day = Day
 date.month = Month
 date.year = Year
 
+###############################################
+#
+# Page Not Available
+#
+###############################################
+page_not_available.title=Page not available
+page_not_available.heading=Page not available
+page_not_available.message=You cannot access this page directly
+
+###############################################
+
 upe-registered-address.title=Where is the registered office address of {0}?
 upe-registered-address.heading=Where is the registered office address of {0}?
 upe-registered-address.checkYourAnswersLabel = Address
