@@ -35,6 +35,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewCheckYourAnswersUPE
     )
   val user           = emptyUserAnswers

@@ -42,6 +42,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       getUpeContactEmailFormProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUpeContactEmail
     )
 

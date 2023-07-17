@@ -43,6 +43,7 @@ class UpeContactNameControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       getUpeContactNameFormProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUpeContactName
     )
 

@@ -69,6 +69,8 @@ trait SpecBase
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
 
+  def userAnswersWithId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+
   val userAnswersId: String = "id"
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)

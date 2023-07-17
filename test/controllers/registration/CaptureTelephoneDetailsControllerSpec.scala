@@ -42,6 +42,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewCaptureTelephoneDetailsView
     )
 

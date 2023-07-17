@@ -42,6 +42,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUpeRegisteredAddress
     )
 

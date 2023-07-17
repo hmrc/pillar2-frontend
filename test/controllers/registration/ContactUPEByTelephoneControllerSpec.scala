@@ -44,6 +44,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewContactUPEByTelephoneView
     )
 

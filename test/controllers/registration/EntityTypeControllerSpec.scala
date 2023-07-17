@@ -44,6 +44,7 @@ class EntityTypeControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewEntityType
     )
 
@@ -51,7 +52,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithId)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)

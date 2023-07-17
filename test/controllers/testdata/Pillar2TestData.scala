@@ -17,8 +17,8 @@
 package controllers.testdata
 
 import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.grs.GrsCreateRegistrationResponse
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -47,6 +47,7 @@ trait Pillar2TestData {
       )
     )
 
+
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
@@ -56,6 +57,16 @@ trait Pillar2TestData {
     countryCode = "GB"
   )
 
+  val validIdRegistrationData =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(validGrsResponse)
+    )
+
+
+  val validGrsResponse = new GrsResponse (incorporatedEntityRegistrationData = validRegisterWithIdResponse)
   val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]

@@ -42,6 +42,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUPENameRegistration
     )
 
