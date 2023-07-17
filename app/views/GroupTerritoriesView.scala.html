@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import viewmodels.LegendSize.Large
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -41,7 +41,7 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading().withCssClass("govuk-label--l"),
+                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(Large),
                 items  = GroupTerritories.options
             )
         )

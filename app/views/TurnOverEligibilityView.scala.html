@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import viewmodels.LegendSize.Large
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -37,7 +38,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading().withCssClass("govuk-label--l"),
+                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large),
                 items  = TurnOverEligibility.options
             )
         )
