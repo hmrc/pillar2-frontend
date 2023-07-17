@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package models.eacd
 
-import pages.behaviours.PageBehaviours
-
-class UpeNameRegistrationPageSpec extends PageBehaviours {
-
-  "UpeNameRegistrationPage" - {
-
-    beRetrievable[String](UpeNameRegistrationPage)
-
-    beSettable[String](UpeNameRegistrationPage)
-
-    beRemovable[String](UpeNameRegistrationPage)
-  }
+object Pillar2Enrolment {
+  val ServiceName:   String = "HMRC-PILLAR2-ORG"
+  val IdentifierKey: String = "pillar2Reference"
 }

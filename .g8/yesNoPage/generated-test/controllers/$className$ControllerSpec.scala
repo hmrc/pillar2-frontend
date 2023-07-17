@@ -57,7 +57,7 @@ class $className$ControllerSpec extends SpecBase {
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
@@ -67,7 +67,7 @@ class $className$ControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 

@@ -18,10 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.UPERegisteredInUKConfirmationPage
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
+import utils.RowStatus._
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -37,18 +39,28 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val isUPERegInUK = request.userAnswers.get(UPERegisteredInUKConfirmationPage) match {
-      case None        => ""
-      case Some(value) => value
+    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
+      case None        => RowStatus.NotStarted
+      case Some(value) => value.isRegistrationStatus
     }
-    val regInProgress = getRegStatus(isUPERegInUK.toString)
-    Ok(view(regInProgress))
+    val statusCount = statusCounter(isRegistrationStatus, NotStarted, NotStarted, NotStarted, NotStarted)
+    Ok(view(isRegistrationStatus.toString, statusCount))
   }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
+  private def statusCounter(
+    registrationStatus: RowStatus,
+    filingMemberStatus: RowStatus,
+    suscriptionStatus:  RowStatus,
+    contactStatus:      RowStatus,
+    cyaStatus:          RowStatus
+  ): Int = {
+    val statusList = List(registrationStatus, filingMemberStatus, suscriptionStatus, contactStatus, cyaStatus)
+    var counter    = 0
+    for (task <- statusList)
+      if (task == Completed)
+        counter += 1
+      else
+        counter
+    counter
   }
-
-  private def getRegStatus(isUPERegInUK: String): Boolean =
-    isUPERegInUK == "yes" || isUPERegInUK == "no"
 }

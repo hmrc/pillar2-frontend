@@ -18,15 +18,17 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
+import models.requests.DataRequest
 import navigation.Navigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 //TODO: Add all mocking instants in here.
@@ -43,6 +45,10 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
   val mockTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = mock[TradingBusinessConfirmationFormProvider]
+  val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
+    mock[IncorporatedEntityIdentificationFrontendConnector]
+  val mockPartnershipIdentificationFrontendConnector: PartnershipIdentificationFrontendConnector = mock[PartnershipIdentificationFrontendConnector]
+  val mockHttpClient:                                 HttpClient                                 = mock[HttpClient]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -54,6 +60,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockIdentifierAction,
       mockDataRetrievalAction,
       mockDataRequiredAction,
-      mockTradingBusinessConfirmationFormProvider
+      mockTradingBusinessConfirmationFormProvider,
+      mockIncorporatedEntityIdentificationFrontendConnector,
+      mockPartnershipIdentificationFrontendConnector,
+      mockHttpClient
     ).foreach(Mockito.reset(_))
 }

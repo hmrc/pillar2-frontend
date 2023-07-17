@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package pages
+package stubsonly.utils
 
-import models.ContactUPEByTelephone
-import play.api.libs.json.JsPath
+import java.util.Base64
 
-case object ContactUPEByTelephonePage extends QuestionPage[ContactUPEByTelephone] {
+object Base64Utils {
 
-  override def path: JsPath = JsPath \ toString
+  def base64UrlEncode(valueToEncode: String): String = Base64.getEncoder
+    .encodeToString(valueToEncode.getBytes)
+    .replace("+", ".")
+    .replace("/", "_")
+    .replace("=", "-")
 
-  override def toString: String = "registration.contactUPEByTelephone"
+  def base64UrlDecode(valueToDecode: String): String = {
+    val decodedBytes = Base64.getDecoder.decode(
+      valueToDecode
+        .replace(".", "+")
+        .replace("_", "/")
+        .replace("-", "=")
+    )
+
+    new String(decodedBytes)
+  }
+
 }

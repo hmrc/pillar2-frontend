@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package models.grs
 
-import models.CaptureTelephoneDetails
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object CaptureTelephoneDetailsPage extends QuestionPage[CaptureTelephoneDetails] {
+final case class GrsCreateRegistrationResponse(
+  journeyStartUrl: String
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registration.captureTelephoneDetails"
+object GrsCreateRegistrationResponse {
+  implicit val format: OFormat[GrsCreateRegistrationResponse] =
+    Json.format[GrsCreateRegistrationResponse]
 }

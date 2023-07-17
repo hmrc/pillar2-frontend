@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package pages
+package models.grs
 
-import play.api.libs.json.JsPath
-
-case object UpeContactEmailPage extends QuestionPage[String] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registration.emailAddress"
+object GrsErrorCodes {
+  val PartyTypeMismatch: String = "PARTY_TYPE_MISMATCH"
 }

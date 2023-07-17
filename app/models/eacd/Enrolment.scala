@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package models.eacd
 
-import models.UPERegisteredInUKConfirmation
-import play.api.libs.json.JsPath
+import models.KeyMap
+import play.api.libs.json.{Json, OFormat}
 
-case object UPERegisteredInUKConfirmationPage extends QuestionPage[UPERegisteredInUKConfirmation] {
+final case class Enrolment(
+  service:     String,
+  identifiers: Seq[KeyMap]
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registration.isUPERegisteredInUK"
+object Enrolment {
+  implicit val format: OFormat[Enrolment] = Json.format[Enrolment]
 }

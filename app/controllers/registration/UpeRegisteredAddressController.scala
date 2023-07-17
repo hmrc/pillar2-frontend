@@ -20,15 +20,17 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
+import models.registration.WithoutIdRegData
+import models.requests.DataRequest
 import models.{Mode, UpeRegisteredAddress}
 import navigation.Navigator
-import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import pages.RegistrationPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.{UpeNameRegistrationView, UpeRegisteredAddressView}
+import views.html.registrationview.UpeRegisteredAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,28 +49,39 @@ class UpeRegisteredAddressController @Inject() (
     with I18nSupport {
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = getUserName(request)
 
-    val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
-      case None          => form
-      case Some(address) => form.fill(address)
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+      case None        => form
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeRegisteredAddress.fold(form)(address => form.fill(address)))
     }
 
-    Ok(view(preparedForm, mode, userName.getOrElse("")))
+    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(UpeNameRegistrationPage)
+    val userName = getUserName(request)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
-        value =>
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+        value => {
+          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
           for {
-
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredAddressPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad)
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeRegisteredAddress = Some(value)))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+        }
       )
+  }
+
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration))
   }
 }
