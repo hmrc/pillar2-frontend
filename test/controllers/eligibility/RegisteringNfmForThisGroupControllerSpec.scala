@@ -36,7 +36,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
       mockSessionData
     )
 
-  "RegisteringNfmForThisGroupControllerSpec Controller" must {
+  "Registering Nfm ForThis Group ControllerSpec Controller" must {
 
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
