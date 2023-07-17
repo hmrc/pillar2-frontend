@@ -37,7 +37,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading().withCssClass("govuk-label--l"),
                 items  = TurnOverEligibility.options
             )
         )

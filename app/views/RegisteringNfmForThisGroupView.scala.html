@@ -17,29 +17,32 @@
 @import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false ) {
+@layout(pageTitle = title(form, messages("registeringNfmForThisGroup.title")),
+    showSignOut = false,
+    timeout = false
+) {
 
-    @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = eligibility.routes.RegisteringNfmForThisGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("businessActivityUK.check.liable.text")</span>
+        <span class="govuk-caption-l">@messages("registeringNfmForThisGroup.caption")</span>
         @govukRadios(
             RadiosViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading().withCssClass("govuk-label--l"),
-                items  = BusinessActivityUK.options
+                field  = form("registeringNfmGroup"),
+                legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeading().withCssClass("govuk-label--l"),
+                items  = RegisteringNfmForThisGroup.options
             )
         )
 

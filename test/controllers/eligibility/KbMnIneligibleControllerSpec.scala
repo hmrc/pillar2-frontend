@@ -38,7 +38,7 @@ class KbMnIneligibleControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Pillar 2 top-up tax applies to businesses with activities in more than one country. It’s likely that you’re not covered by this law"
+        "Only the ultimate parent or nominated filing member for an eligible group can register for Pillar 2 top-up tax."
       )
 
     }

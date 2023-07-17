@@ -49,7 +49,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Does your group have businesses in more than one country?"
+        "Are you registering the ultimate parent of this group?"
       )
     }
 

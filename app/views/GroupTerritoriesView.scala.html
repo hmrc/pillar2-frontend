@@ -37,11 +37,11 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">Check if your group is liable</span>
+        <span class="govuk-caption-l">@messages("groupTerritories.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading().withCssClass("govuk-label--l"),
                 items  = GroupTerritories.options
             )
         )
