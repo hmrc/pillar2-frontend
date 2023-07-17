@@ -51,7 +51,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
@@ -63,8 +63,8 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit().url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "yes"))
+        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("nominateFilingMember", "true"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
@@ -75,8 +75,8 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
 
       val request =
-        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit().url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "no"))
+        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("nominateFilingMember", "false"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER

@@ -19,9 +19,8 @@ package controllers.fmRegistration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.NominateFilingMemberYesNoFormProvider
-import models.{Mode, NominateFilingMemberYesNo}
+import models.Mode
 import pages.NominateFilingMemberYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -63,12 +62,12 @@ class NominateFilingMemberYesNoController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case NominateFilingMemberYesNo.Yes =>
+            case true =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-            case NominateFilingMemberYesNo.No =>
+            case false =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberYesNoPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

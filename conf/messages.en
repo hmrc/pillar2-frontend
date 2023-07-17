@@ -218,6 +218,10 @@ NominateFilingMemberYesNo.insetText =You must have permission from the UPE to no
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
+NominateFilingMemberYesNo.checkYourAnswersLabel= Filing member preference
+NominateFilingMemberYesNo.change.hidden= Change your filing member nomination preference
+
+
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -231,6 +235,6 @@ entityType.change.hidden = change
 isNFMUKBased.title = isNFMUKBased
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading.caption = Business details
-isNFMUKBased.checkYourAnswersLabel = isNFMUKBased
+isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not

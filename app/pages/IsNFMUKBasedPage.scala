@@ -16,10 +16,9 @@
 
 package pages
 
-import models.IsNFMUKBased
 import play.api.libs.json.JsPath
 
-case object IsNFMUKBasedPage extends QuestionPage[IsNFMUKBased] {
+case object IsNFMUKBasedPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

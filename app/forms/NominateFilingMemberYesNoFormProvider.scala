@@ -17,15 +17,14 @@
 package forms
 
 import forms.mappings.Mappings
-import models.{NominateFilingMemberYesNo, UPERegisteredInUKConfirmation}
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[NominateFilingMemberYesNo] =
+  def apply(): Form[Boolean] =
     Form(
-      "nominateFilingMember" -> enumerable[NominateFilingMemberYesNo]("NominateFilingMemberYesNo.error.required")
+      "nominateFilingMember" -> boolean("NominateFilingMemberYesNo.error.required")
     )
 }

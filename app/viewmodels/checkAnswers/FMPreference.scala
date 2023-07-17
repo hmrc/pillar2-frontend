@@ -17,23 +17,23 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.IsNFMUKBasedPage
+import pages.NominateFilingMemberYesNoPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object IsNFMUKBasedSummary {
+object FMPreference {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(IsNFMUKBasedPage).map { answer =>
+    answers.get(NominateFilingMemberYesNoPage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
-        key = "isNFMUKBased.checkYourAnswersLabel",
+        key = "NominateFilingMemberYesNo.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fmRegistration.routes.IsNFMUKBasedController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("isNFMUKBased.change.hidden"))
+          ActionItemViewModel("site.change", controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("NominateFilingMemberYesNo.change.hidden"))
         )
       )
     }

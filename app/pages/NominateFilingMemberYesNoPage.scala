@@ -16,10 +16,9 @@
 
 package pages
 
-import models.NominateFilingMemberYesNo
 import play.api.libs.json.JsPath
 
-case object NominateFilingMemberYesNoPage extends QuestionPage[NominateFilingMemberYesNo] {
+case object NominateFilingMemberYesNoPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

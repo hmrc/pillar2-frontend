@@ -69,12 +69,12 @@ trait RadiosFluency {
 
       val items = Seq(
         RadioItem(
-          id = Some(field.id),
+          id = Some(s"${field.id}_0"),
           value = Some("true"),
           content = Text(messages("site.yes"))
         ),
         RadioItem(
-          id = Some(s"${field.id}-no"),
+          id = Some(s"${field.id}_1"),
           value = Some("false"),
           content = Text(messages("site.no"))
         )
@@ -84,7 +84,7 @@ trait RadiosFluency {
         field = field,
         fieldset = fieldset,
         items = items
-      ).inline()
+      )
     }
   }
 
