@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("upe-registered-address.title", UserName ))) {
 
-    @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit()) {
+    @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.registrationview._
-import views.html.templates.Layout
+import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -151,5 +151,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
     new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 
 }

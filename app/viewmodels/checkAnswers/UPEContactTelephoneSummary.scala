@@ -24,18 +24,24 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeNameRegistrationSummary {
+object UPEContactTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegistrationPage).map { answer =>
-      val upeNameRegistration = answer.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration)
-      SummaryListRowViewModel(
-        key = "upeNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(upeNameRegistration).toString),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))
-        )
-      )
-    }
+    answers
+      .get(RegistrationPage)
+      .flatMap { reg =>
+        reg.withoutIdRegData.map { withoutId =>
+          withoutId.telephoneNumber.map { answer =>
+            SummaryListRowViewModel(
+              key = "captureTelephoneDetails.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlFormat.escape(answer).toString),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
+              )
+            )
+          }
+        }
+      }
+      .flatten
 }

@@ -15,15 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
-@import utils.RowStatus
-@import utils.RowStatus._
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
-@(status:RowStatus)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+
+@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -33,7 +32,8 @@
         <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections")</p>
+        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
+
 
         <ol class="app-task-list">
             <li>
@@ -48,13 +48,25 @@
                              @messages("taskList.task.business.ultimate")
                           </a>
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @row(status) </strong>
+                        @if(upeNoIDStatus == "Completed"){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(upeNoIDStatus.equals("InProgress")) {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                           @messages("taskList.task.business.filingMember")
+                            @messages("taskList.task.business.filingMember")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet") </strong>
+                        @if(filingMemberStatus == "no"){
+                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "yes") {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        }
                     </li>
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
@@ -98,11 +110,4 @@
 
     }
 
-}
-@row(rowStatus: RowStatus ) = @{
-    rowStatus match {
-        case NotStarted => messages("task.status.not_started")
-        case InProgress => messages("task.status.in_progress")
-        case Completed => messages("task.status.completed")
-    }
 }

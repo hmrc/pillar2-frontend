@@ -17,13 +17,14 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -45,11 +46,10 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     )
 
   "UpeRegisteredAddress Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeRegisteredAddressController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
@@ -59,22 +59,28 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
-      val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad.url
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("addressLine1", "27 house"),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "NE3 2TR"),
+              ("countryCode", "GB")
+            )
 
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
+      }
     }
 
     "return bad request if fields are greater than 200 in length" in {
@@ -82,7 +88,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
           "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(
             ("addressLine1", testValue),
             ("addressLine2", "Drive"),
@@ -99,7 +105,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     "return bad request if required fields are not filled" in {
 
       val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit().url)
+        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("addressLine1", "27 house"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
