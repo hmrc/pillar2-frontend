@@ -71,9 +71,8 @@ class NominateFilingMemberYesNoController @Inject() (
                     request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(mode))
             case false =>
-              val regData = request.userAnswers.get(RegistrationPage)
               for {
                 updatedAnswers <-
                   Future.fromTry(
