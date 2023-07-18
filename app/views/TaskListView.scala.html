@@ -56,6 +56,24 @@
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         }
                     </li>
+                    @if(upeNoIDStatus == "Completed"){
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="nfm-status">
+                            @messages("taskList.task.business.filingMember")
+                            </a>
+                        </span>
+                        @if(filingMemberStatus == "no"){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "yes") {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else  {
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status-co">
+                            @messages("task.status.cannotStartYet")</strong>
+                        }
+                    </li>
+                    }
+                    else{
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                             @messages("taskList.task.business.filingMember")
@@ -65,9 +83,11 @@
                         } else if(filingMemberStatus == "yes") {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status-uc">
+                            @messages("task.status.cannotStartYet")</strong>
                         }
                     </li>
+                    }
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.more")

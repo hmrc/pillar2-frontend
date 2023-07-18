@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
 import models.nfm.FilingMember
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
