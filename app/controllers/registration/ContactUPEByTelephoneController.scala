@@ -64,9 +64,7 @@ class ContactUPEByTelephoneController @Inject() (
             )
           }
 
-      case false =>
-        println("AM I COMING HERE IN FLASE --------------------")
-        NotFound(notAvailable)
+      case false => NotFound(notAvailable)
     }
 
   }
