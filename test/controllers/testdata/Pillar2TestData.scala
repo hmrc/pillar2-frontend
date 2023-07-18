@@ -63,30 +63,6 @@ trait Pillar2TestData {
       )
     )
 
-  /*  val validNoIdRegistrationData =
-    new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
-      isRegistrationStatus = RowStatus.InProgress,
-      withoutIdRegData = Some(
-        WithoutIdRegData(
-          upeNameRegistration = "Test Name",
-          upeContactName = Some("TestName"),
-          contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
-          telephoneNumber = Some("1234567"),
-          emailAddress = Some("test@test.com"),
-          upeRegisteredAddress = Some(
-            UpeRegisteredAddress(
-              addressLine1 = "Line1",
-              addressLine2 = Some("Line2"),
-              addressLine3 = "Line3",
-              addressLine4 = Some("Line4"),
-              postalCode = Some("VR11 3PA"),
-              countryCode = "GB"
-            )
-          )
-        )
-      )
-    )*/
 
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
