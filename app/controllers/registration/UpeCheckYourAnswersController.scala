@@ -64,7 +64,7 @@ class UpeCheckYourAnswersController @Inject() (
     if (isPreviousPagesDefined(request))
       Ok(view(list))
     else
-      Ok(notAvailable)
+      NotFound(notAvailable)
   }
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers

@@ -47,7 +47,6 @@ trait Pillar2TestData {
       )
     )
 
-
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
@@ -62,11 +61,21 @@ trait Pillar2TestData {
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
       isRegistrationStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
-      withIdRegData = Some(validGrsResponse)
+      withIdRegData = Some(
+        GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
+      )
+    )
+  val validIdRegistrationDataWithNoOrgType =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = None,
+      withIdRegData = None
     )
 
-
-  val validGrsResponse = new GrsResponse (incorporatedEntityRegistrationData = validRegisterWithIdResponse)
+  val validGrsResponse = new GrsResponse(
+    incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+  )
   val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]

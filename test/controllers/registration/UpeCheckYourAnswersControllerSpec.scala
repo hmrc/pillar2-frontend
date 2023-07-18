@@ -121,7 +121,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   "UPE no ID Check Your Answers Controller" must {
 
-    "must return OK and the correct view with empty user answers" in {
+    "must return Not Found and the correct view with empty user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -133,8 +133,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val view = application.injector.instanceOf[UpeCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        status(result) mustEqual NOT_FOUND
       }
     }
     "must return OK and the correct view if an answer is provided to every question " in {

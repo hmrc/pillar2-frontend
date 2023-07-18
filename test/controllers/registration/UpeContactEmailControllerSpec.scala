@@ -50,7 +50,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
 
