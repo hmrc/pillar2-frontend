@@ -70,7 +70,7 @@ trait SpecBase
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-  
+
   def userAnswersWithId:      UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
   def userAnswersWithIdNoOrg: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value
   val userAnswersId:          String      = "id"

@@ -63,7 +63,6 @@ trait Pillar2TestData {
       )
     )
 
-
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
