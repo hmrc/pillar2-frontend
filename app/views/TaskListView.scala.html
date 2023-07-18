@@ -63,24 +63,23 @@
                             @messages("taskList.task.business.filingMember")
                             </a>
                         </span>
-                        @if(filingMemberStatus == "no"){
+                        @if(filingMemberStatus == "Completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "yes") {
+                        } else if(filingMemberStatus == "InProgress") {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
                         <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status-co">
                             @messages("task.status.cannotStartYet")</strong>
                         }
                     </li>
-                    }
-                    else{
+                    } else{
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                             @messages("taskList.task.business.filingMember")
                         </span>
-                        @if(filingMemberStatus == "no"){
+                        @if(filingMemberStatus == "Completed"){
                             <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "yes") {
+                        } else if(filingMemberStatus == "InProgress") {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
                         <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status-uc">
