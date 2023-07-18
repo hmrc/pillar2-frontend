@@ -60,7 +60,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpeRegisteredAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validUpeRegisteredAddressed), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(validUpeRegisteredAddressed), NormalMode, "Test Name")(
           request,
           appConfig(application),
           messages(application)

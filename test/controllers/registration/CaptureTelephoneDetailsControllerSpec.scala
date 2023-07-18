@@ -19,13 +19,15 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.CaptureTelephoneDetailsFormProvider
-import models.NormalMode
+import models.{ContactUPEByTelephone, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.CaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
@@ -49,14 +51,24 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
   "Capture Telephone Details Controller" should {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersData =
+        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(telephoneNumber = None)).success.value
 
-      val request = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+      val application = applicationBuilder(userAnswers = Some(userAnswersData)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) mustBe OK
-      contentAsString(result) must include(
-        "What is the telephone number for"
-      )
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureTelephoneDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
     }
 
     "must redirect to checkYourAnswers when valid data is submitted" in {

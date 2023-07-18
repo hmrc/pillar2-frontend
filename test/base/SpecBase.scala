@@ -23,7 +23,8 @@ import controllers.actions._
 import controllers.testdata.Pillar2TestData
 import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import helpers.{AllMocks, ViewInstances}
-import models.UserAnswers
+import models.registration.WithoutIdRegData
+import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UserAnswers}
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -42,6 +43,7 @@ import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writ
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.RowStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,7 +69,24 @@ trait SpecBase
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
+  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
+
+  def userAnswersWithNoId(
+    isUPERegisteredInUK:   UPERegisteredInUKConfirmation,
+    isRegistrationStatus:  RowStatus,
+    withoutIdRegData:      WithoutIdRegData,
+    upeNameRegistration:   String,
+    upeContactName:        String,
+    contactUpeByTelephone: ContactUPEByTelephone,
+    telephoneNumber:       String,
+    emailAddress:          String,
+    addressLine1:          String,
+    addressLine2:          String,
+    addressLine3:          String,
+    addressLine4:          String,
+    postalCode:            String,
+    countryCode:           String
+  ): UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
 
   def userAnswersWithId:      UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
   def userAnswersWithIdNoOrg: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value

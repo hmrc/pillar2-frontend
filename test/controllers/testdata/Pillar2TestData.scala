@@ -24,15 +24,56 @@ import utils.RowStatus
 
 trait Pillar2TestData {
 
-  val validNoIdRegistrationData =
+  def validNoIdRegData(
+    isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus:  RowStatus = RowStatus.InProgress,
+    upeNameRegistration:   String = "Test Name",
+    upeContactName:        Option[String] = Some("TestName"),
+    contactUpeByTelephone: Option[ContactUPEByTelephone] = Some(ContactUPEByTelephone.Yes),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    emailAddress:          Option[String] = Some("test@test.com"),
+    addressLine1:          String = "Line1",
+    addressLine2:          Option[String] = Some("Line2"),
+    addressLine3:          String = "Line3",
+    addressLine4:          Option[String] = Some("Line4"),
+    postalCode:            Option[String] = Some("VR11 3PA"),
+    countryCode:           String = "GB"
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = Some(
+        WithoutIdRegData(
+          upeNameRegistration = upeNameRegistration,
+          upeContactName = upeContactName,
+          contactUpeByTelephone = contactUpeByTelephone,
+          telephoneNumber = telephoneNumber,
+          emailAddress = emailAddress,
+          upeRegisteredAddress = Some(
+            UpeRegisteredAddress(
+              addressLine1 = addressLine1,
+              addressLine2 = addressLine2,
+              addressLine3 = addressLine3,
+              addressLine4 = addressLine4,
+              postalCode = postalCode,
+              countryCode = countryCode
+            )
+          )
+        )
+      )
+    )
+
+  /*  val validNoIdRegistrationData =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
       isRegistrationStatus = RowStatus.InProgress,
       withoutIdRegData = Some(
         WithoutIdRegData(
           upeNameRegistration = "Test Name",
-          contactUpeByTelephone = Some(ContactUPEByTelephone.No),
+          upeContactName = Some("TestName"),
+          contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
           telephoneNumber = Some("1234567"),
+          emailAddress = Some("test@test.com"),
           upeRegisteredAddress = Some(
             UpeRegisteredAddress(
               addressLine1 = "Line1",
@@ -45,7 +86,7 @@ trait Pillar2TestData {
           )
         )
       )
-    )
+    )*/
 
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",

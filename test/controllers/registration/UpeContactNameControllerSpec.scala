@@ -22,6 +22,7 @@ import forms.UpeContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
@@ -51,8 +52,10 @@ class UpeContactNameControllerSpec extends SpecBase {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersWithNoIdNoContactName =
+        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(upeContactName = None)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdNoContactName)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
 

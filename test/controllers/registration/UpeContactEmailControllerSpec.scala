@@ -22,6 +22,7 @@ import forms.UpeContactEmailFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -49,8 +50,10 @@ class UpeContactEmailControllerSpec extends SpecBase {
   "UpeContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersData =
+        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(emailAddress = None)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersData)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
 
@@ -59,7 +62,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpeContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("Test user Name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
           request,
           appConfig(application),
           messages(application)
