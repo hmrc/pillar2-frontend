@@ -58,6 +58,8 @@ class NominateFilingMemberYesNoController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
+
     form
       .bindFromRequest()
       .fold(
@@ -68,7 +70,12 @@ class NominateFilingMemberYesNoController @Inject() (
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
+                    request.userAnswers.set(
+                      NominatedFilingMemberPage,
+                      fmData.fold(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))(data =>
+                        data copy (nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress)
+                      )
+                    )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(mode))
