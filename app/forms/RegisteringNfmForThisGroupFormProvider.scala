@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Pillar2SessionKeys {
+import play.api.data.Form
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
+import javax.inject.Inject
+
+class RegisteringNfmForThisGroupFormProvider @Inject() extends CommonFormats {
+
+  def apply(): Form[String] =
+    Form(
+      "registeringNfmGroup" -> textWithErrorOverride(key = "registeringNfmForThisGroup.error.required")
+    )
 }
