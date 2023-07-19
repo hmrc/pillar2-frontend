@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.fmRegistration
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
-import models.Mode
-import models.nfm.FilingMember
+import models.{Mode, NfmRegistrationConfirmation}
+import models.fm.FilingMember
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -66,7 +66,7 @@ class NominateFilingMemberYesNoController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case true =>
+            case NfmRegistrationConfirmation.Yes =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
@@ -78,8 +78,8 @@ class NominateFilingMemberYesNoController @Inject() (
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(mode))
-            case false =>
+              } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
+            case NfmRegistrationConfirmation.No =>
               for {
                 updatedAnswers <-
                   Future.fromTry(

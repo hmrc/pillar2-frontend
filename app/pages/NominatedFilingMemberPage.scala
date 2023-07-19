@@ -16,7 +16,7 @@
 
 package pages
 
-import models.nfm.FilingMember
+import models.fm.FilingMember
 import play.api.libs.json.JsPath
 
 case object NominatedFilingMemberPage extends QuestionPage[FilingMember] {

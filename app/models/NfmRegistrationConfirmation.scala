@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package models.nfm
+package models
 
-import models.{Enumerable, WithName}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait ContactNFMByTelephone
+sealed trait NfmRegistrationConfirmation
 
-object ContactNFMByTelephone extends Enumerable.Implicits {
+object NfmRegistrationConfirmation extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with ContactNFMByTelephone
-  case object No extends WithName("no") with ContactNFMByTelephone
+  case object Yes extends WithName("yes") with NfmRegistrationConfirmation
+  case object No extends WithName("no") with NfmRegistrationConfirmation
 
-  val values: Seq[ContactNFMByTelephone] = Seq(
+  val values: Seq[NfmRegistrationConfirmation] = Seq(
     Yes,
     No
   )
@@ -41,6 +40,6 @@ object ContactNFMByTelephone extends Enumerable.Implicits {
     )
   }
 
-  implicit val enumerable: Enumerable[ContactNFMByTelephone] =
+  implicit val enumerable: Enumerable[NfmRegistrationConfirmation] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

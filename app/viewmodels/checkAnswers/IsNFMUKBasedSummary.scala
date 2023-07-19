@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NfmRegisteredInUkConfirmation, UserAnswers}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,12 +27,12 @@ object IsNfmUKBasedSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NominatedFilingMemberPage).map { answer =>
-      val value = if (answer.isNfmRegisteredInUK.get) "site.yes" else "site.no"
+      val value = if (answer.isNfmRegisteredInUK == NfmRegisteredInUkConfirmation.Yes) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "isNFMUKBased.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("isNFMUKBased.change.hidden"))
         )
       )

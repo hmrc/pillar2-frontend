@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NfmRegistrationConfirmation, UserAnswers}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,12 +27,12 @@ object FMPreference {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NominatedFilingMemberPage).map { answer =>
-      val value = if (answer.nfmConfirmation) "site.yes" else "site.no"
+      val value = if (answer.nfmConfirmation == NfmRegistrationConfirmation.Yes) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "NominateFilingMemberYesNo.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("NominateFilingMemberYesNo.change.hidden"))
         )
       )

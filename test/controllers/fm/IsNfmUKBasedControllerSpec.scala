@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.fmRegistration
+package controllers.fm
 
 import base.SpecBase
 import forms.IsNFMUKBasedFormProvider
-import models.nfm.FilingMember
-import models.{NormalMode, UserAnswers}
+import models.fm.FilingMember
+import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UserAnswers}
 import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -48,7 +48,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -62,19 +62,25 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(NominatedFilingMemberPage, FilingMember(true, Some(true), isNFMnStatus = RowStatus.InProgress)).success.value
+        UserAnswers(userAnswersId)
+          .set(
+            NominatedFilingMemberPage,
+            FilingMember(NfmRegistrationConfirmation.Yes, Some(NfmRegisteredInUkConfirmation.Yes), isNFMnStatus = RowStatus.InProgress)
+          )
+          .success
+          .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[IsNFMUKBasedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(NfmRegisteredInUkConfirmation.Yes), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -88,7 +94,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

@@ -29,7 +29,7 @@
 
 @layout(pageTitle = title(form, messages("isNFMUKBased.title"))) {
 
-    @formHelper(action = controllers.fmRegistration.routes.IsNfmUKBasedController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.fm.routes.IsNfmUKBasedController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
@@ -37,9 +37,10 @@
         <span class="govuk-caption-l">@messages("isUPERegisteredInUK.heading.caption")</span>
 
         @govukRadios(
-            RadiosViewModel.yesNo(
+            RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(messages("isNFMUKBased.heading")).asPageHeading(Large),
+                items  = NfmRegisteredInUkConfirmation.options
             )
             )
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.fmRegistration
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.IsNFMUKBasedFormProvider
-import models.Mode
-import models.nfm.FilingMember
+import models.{Mode, NfmRegistrationConfirmation}
+import models.fm.FilingMember
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -66,7 +66,11 @@ class IsNfmUKBasedController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(NominatedFilingMemberPage, FilingMember(true, Some(value), isNFMnStatus = RowStatus.InProgress)))
+              Future
+                .fromTry(
+                  request.userAnswers
+                    .set(NominatedFilingMemberPage, FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
+                )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.fmRegistration
+package controllers.fm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig

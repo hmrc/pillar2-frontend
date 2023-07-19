@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.nfm
+package models.fm
 
 /*
  * Copyright 2023 HM Revenue & Customs

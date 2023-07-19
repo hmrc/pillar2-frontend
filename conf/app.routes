@@ -46,10 +46,10 @@ POST        /business-matching/ultimate-parent/no-id/change-input-email         
 GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
-GET         /business-matching/filing-member/nominate  controllers.fmRegistration.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/nominate  controllers.fmRegistration.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/change-nominate  controllers.fmRegistration.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/change-nominate  controllers.fmRegistration.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/nominate  controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
@@ -96,7 +96,7 @@ POST       /business-matching/ultimate-parent/uk-based/org-type                 
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/registered-in-uk                        controllers.fmRegistration.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fmRegistration.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)

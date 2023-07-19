@@ -17,7 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
-import controllers.fmRegistration.NominateFilingMemberYesNoController
+import controllers.fm.NominateFilingMemberYesNoController
 import controllers.routes
 import forms.{NominateFilingMemberYesNoFormProvider, UPERegisteredInUKConfirmationFormProvider}
 import models.NormalMode
@@ -51,7 +51,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
@@ -63,20 +63,20 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     "must redirect to Under Construction page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "true"))
+        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("nominateFilingMember", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.fmRegistration.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url
+      redirectLocation(result).value mustEqual controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url
 
     }
 
     "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
 
       val request =
-        FakeRequest(POST, controllers.fmRegistration.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "false"))
+        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("nominateFilingMember", "no"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
