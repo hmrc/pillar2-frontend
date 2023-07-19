@@ -63,6 +63,16 @@ trait Pillar2TestData {
       )
     )
 
+  def validWithoutIdRegData(
+    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus: RowStatus = RowStatus.InProgress
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = None
+    )
+
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),

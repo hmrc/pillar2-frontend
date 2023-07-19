@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
-import models.Mode
+import models.{Mode, UPERegisteredInUKConfirmation}
 import models.registration.{Registration, WithoutIdRegData}
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,11 +53,16 @@ class UpeNameRegistrationController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(NotFound(notAvailable)) { reg =>
-        reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
-      }
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
+          }
+      case false =>
+        NotFound(notAvailable)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -77,4 +83,10 @@ class UpeNameRegistrationController @Inject() (
         }
       )
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
+
 }
