@@ -47,7 +47,6 @@ class TaskListController @Inject() (
       case None        => RowStatus.NotStarted
       case Some(value) => value.isNFMnStatus
     }
-    println("**************************************************" + fmStatus)
     val statusCount = statusCounter(isRegistrationStatus, fmStatus, NotStarted, NotStarted, NotStarted)
     Ok(view(isRegistrationStatus.toString, statusCount, filingMemberStatus = fmStatus.toString))
   }
