@@ -24,7 +24,7 @@ import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
-import views.html.fmRegistrationView.IsNFMUKBasedView
+import views.html.fmview.IsNFMUKBasedView
 
 class IsNfmUKBasedControllerSpec extends SpecBase {
 

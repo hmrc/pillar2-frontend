@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.fmRegistrationView.IsNFMUKBasedView
+import views.html.fmview.IsNFMUKBasedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

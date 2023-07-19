@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import base.SpecBase
-import controllers.fm.NominateFilingMemberYesNoController
-import controllers.routes
-import forms.{NominateFilingMemberYesNoFormProvider, UPERegisteredInUKConfirmationFormProvider}
+import forms.NominateFilingMemberYesNoFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmRegistrationView.NominateFilingMemberYesNoView
+import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
 
