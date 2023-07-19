@@ -72,16 +72,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         ).toString
       }
 
-      /*
-
-
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", "no"))
-
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) mustBe OK
-      contentAsString(result) should include(
-        "What is the name of the ultimate parent entity"
-      )*/
     }
 
     "must redirect to the next page when valid data is submitted" in {
