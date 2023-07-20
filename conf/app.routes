@@ -51,6 +51,9 @@ POST        /business-matching/filing-member/nominate  controllers.fm.NominateFi
 GET         /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
 
+GET         /business-matching/filing-member/no-id/input-name   controllers.fm.NfmNameRegistrationControllerController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-name controllers.fm.NfmNameRegistrationControllerController.onSubmit(mode: Mode = NormalMode)
+
 
 GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)

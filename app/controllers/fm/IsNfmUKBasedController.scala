@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.IsNFMUKBasedFormProvider
-import models.{Mode, NfmRegistrationConfirmation}
+import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import models.fm.FilingMember
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
@@ -64,15 +64,35 @@ class IsNfmUKBasedController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
-            updatedAnswers <-
-              Future
-                .fromTry(
-                  request.userAnswers
-                    .set(NominatedFilingMemberPage, FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
-                )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+          value match {
+            case NfmRegisteredInUkConfirmation.No =>
+              for {
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(
+                          NominatedFilingMemberPage,
+                          FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
+                        )
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(mode))
+            case NfmRegisteredInUkConfirmation.Yes =>
+              for {
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(
+                          NominatedFilingMemberPage,
+                          FilingMember(NfmRegistrationConfirmation.No, Some(value), isNFMnStatus = RowStatus.InProgress)
+                        )
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+
+          }
       )
   }
 }

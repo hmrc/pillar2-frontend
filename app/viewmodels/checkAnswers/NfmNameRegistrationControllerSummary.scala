@@ -18,6 +18,7 @@ package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
 import controllers.routes
+import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -26,15 +27,15 @@ import play.twirl.api.HtmlFormat
 
 object NfmNameRegistrationControllerSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NfmNameRegistrationControllerPage).map { answer =>
-      SummaryListRowViewModel(
-        key = "nfmNameRegistrationController.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
-        actions = Seq(
-          ActionItemViewModel("site.change", routes.NfmNameRegistrationControllerController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("nfmNameRegistrationController.change.hidden"))
-        )
-      )
-    }
+//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(NominatedFilingMemberPage).map { answer =>
+//      SummaryListRowViewModel(
+//        key = "nfmNameRegistrationController.checkYourAnswersLabel",
+//        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+//        actions = Seq(
+//          ActionItemViewModel("site.change", routes.NfmNameRegistrationControllerController.onPageLoad(CheckMode).url)
+//            .withVisuallyHiddenText(messages("nfmNameRegistrationController.change.hidden"))
+//        )
+//      )
+//    }
 }

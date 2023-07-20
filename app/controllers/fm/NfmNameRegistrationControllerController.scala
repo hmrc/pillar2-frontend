@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.NfmNameRegistrationControllerView
+import views.html.fmview.NfmNameRegistrationControllerView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,7 +52,7 @@ class NfmNameRegistrationControllerController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data=> form.fill(data.registeredFmName))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
     }
 
     Ok(view(preparedForm, mode))
@@ -65,8 +65,18 @@ class NfmNameRegistrationControllerController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NominatedFilingMemberPage, FilingMember(NfmRegistrationConfirmation.Yes,isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),isNFMnStatus = RowStatus.InProgress,withoutIdRegData= Some(WithoutIdNfmData(registeredFmName = value)))))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(
+                                request.userAnswers.set(
+                                  NominatedFilingMemberPage,
+                                  FilingMember(
+                                    NfmRegistrationConfirmation.Yes,
+                                    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                                    isNFMnStatus = RowStatus.InProgress,
+                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmName = value))
+                                  )
+                                )
+                              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }

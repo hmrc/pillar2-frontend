@@ -241,9 +241,9 @@ isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
 
-nfmNameRegistrationController.title = nfmNameRegistrationController
-nfmNameRegistrationController.heading = nfmNameRegistrationController
-nfmNameRegistrationController.checkYourAnswersLabel = nfmNameRegistrationController
-nfmNameRegistrationController.error.required = Enter nfmNameRegistrationController
-nfmNameRegistrationController.error.length = NfmNameRegistrationController must be 1000 characters or less
-nfmNameRegistrationController.change.hidden = NfmNameRegistrationController
+nfmNameRegistrationController.title = What is the name of the nominated filing member?
+nfmNameRegistrationController.heading = What is the name of the nominated filing member?
+nfmNameRegistrationController.checkYourAnswersLabel = What is the name of the nominated filing member?
+nfmNameRegistrationController.error.required =  You need to enter the name of the nominated filing member
+nfmNameRegistrationController.error.length = Name of the nominated filing member must be 1000 characters or less
+nfmNameRegistrationController.change.hidden = What is the name of the nominated filing member?
