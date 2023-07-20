@@ -16,30 +16,34 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false) {
+@layout(pageTitle = title(form, messages("registeringNfmForThisGroup.title")),
+    showSignOut = false,
+    timeout = false
+) {
 
-    @formHelper(action = eligibility.routes.TurnOverEligibilityController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = eligibility.routes.RegisteringNfmForThisGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("turnOverEligibility.check.liable.text")</span>
+        <span class="govuk-caption-l">@messages("registeringNfmForThisGroup.caption")</span>
         @govukRadios(
             RadiosViewModel(
-                field = form("value"),
-                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large),
-                items  = TurnOverEligibility.options
+                field  = form("registeringNfmGroup"),
+                legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeading(Large),
+                items  = RegisteringNfmForThisGroup.options
             )
         )
 
