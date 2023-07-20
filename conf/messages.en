@@ -93,13 +93,6 @@ index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
-tradingBusinessConfirmation.title = Do you have trading business address in UK?
-tradingBusinessConfirmation.heading = Do you have trading business address in UK?
-tradingBusinessConfirmation.yes = Yes
-tradingBusinessConfirmation.no = No
-tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
-
-
 startPageRegistration.title = We need to match the details of this ultimate parent entity to HMRC records
 startPageRegistration.heading = We need to match the details of this ultimate parent entity to HMRC records
 startPageRegistration.p1=We will ask you for several pieces of identifying information about the ultimate parent of this group so that we can best match the ultimate parent to our records.

@@ -109,9 +109,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StandardAlphaBanner
   )
 
-  val viewTradingBusinessConfirmation: TradingBusinessConfirmationView =
-    new TradingBusinessConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
   val viewGroupTerritories: GroupTerritoriesView =
     new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
