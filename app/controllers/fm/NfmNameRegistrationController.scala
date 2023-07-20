@@ -30,19 +30,19 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.fmview.NfmNameRegistrationControllerView
+import views.html.fmview.NfmNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmNameRegistrationControllerController @Inject() (
+class NfmNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              NfmNameRegistrationControllerFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NfmNameRegistrationControllerView
+  view:                      NfmNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

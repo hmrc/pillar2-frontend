@@ -32,7 +32,7 @@ object NfmNameRegistrationControllerSummary {
         key = "nfmNameRegistrationController.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer.withoutIdRegData.fold("")(data => data.registeredFmName)).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("nfmNameRegistrationController.change.hidden"))
         )
       )

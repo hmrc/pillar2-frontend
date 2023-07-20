@@ -77,7 +77,7 @@ class IsNfmUKBasedController @Inject() (
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(mode))
+              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
             case NfmRegisteredInUkConfirmation.Yes =>
               for {
                 updatedAnswers <-

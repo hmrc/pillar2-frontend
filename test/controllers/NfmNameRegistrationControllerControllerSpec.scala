@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.fm.NfmNameRegistrationControllerController
+import controllers.fm.NfmNameRegistrationController
 import forms.NfmNameRegistrationControllerFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
@@ -31,8 +31,8 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
   val formProvider = new NfmNameRegistrationControllerFormProvider()
 
-  def controller(): NfmNameRegistrationControllerController =
-    new NfmNameRegistrationControllerController(
+  def controller(): NfmNameRegistrationController =
+    new NfmNameRegistrationController(
       mockUserAnswersConnectors,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
