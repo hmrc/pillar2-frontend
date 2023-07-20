@@ -19,19 +19,13 @@ package controllers
 import base.SpecBase
 import controllers.fm.NfmNameRegistrationControllerController
 import forms.NfmNameRegistrationControllerFormProvider
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject.bind
-import play.api.mvc.Call
+import models.fm.{FilingMember, WithoutIdNfmData}
+import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
-import views.html.NfmNameRegistrationControllerView
-
-import scala.concurrent.Future
+import utils.RowStatus
+import views.html.fmview.NfmNameRegistrationControllerView
 
 class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
@@ -55,7 +49,7 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -68,12 +62,15 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(NfmNameRegistrationControllerPage, "answer").success.value
+      val pageAnswer =
+        FilingMember(NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.InProgress, withoutIdRegData = Some(WithoutIdNfmData("answer")))
+
+      val userAnswers = UserAnswers(userAnswersId).set(NominatedFilingMemberPage, pageAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[NfmNameRegistrationControllerView]
 
@@ -94,7 +91,7 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
