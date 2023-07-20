@@ -34,4 +34,8 @@ class SessionData {
     request.session +
       (Pillar2SessionKeys.groupTerritoriesPageYesNo -> value)
 
+  def registeringNfmForThisGroup(value: String)(implicit request: Request[AnyContent]): Session =
+    request.session +
+      (Pillar2SessionKeys.registeringNfmForThisGroup -> value)
+
 }
