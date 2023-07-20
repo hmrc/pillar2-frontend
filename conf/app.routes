@@ -78,9 +78,15 @@ GET         /grs-return/normalmode                                          cont
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
-GET         /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onPageLoad
-POST        /eligibility/group-in-multiple-territories   controllers.eligibility.GroupTerritoriesController.onSubmit
-GET         /eligibility/kb-mne-ineligible               controllers.eligibility.KbMnIneligibleController.onPageLoad
+GET         /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onPageLoad
+POST        /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onSubmit
+
+GET         /eligibility/nfm  controllers.eligibility.RegisteringNfmForThisGroupController.onPageLoad
+POST        /eligibility/nfm   controllers.eligibility.RegisteringNfmForThisGroupController.onSubmit
+
+
+GET         /eligibility/service-not-suitable/not-upe-or-nfm              controllers.eligibility.KbMnIneligibleController.onPageLoad
+
 GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
 GET         /eligibility/kb-750-ineligible               controllers.eligibility.Kb750IneligibleController.onPageLoad
 

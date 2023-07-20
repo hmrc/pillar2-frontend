@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
@@ -38,7 +39,7 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large),
                 items  = BusinessActivityUK.options
             )
         )
