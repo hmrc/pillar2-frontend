@@ -240,3 +240,10 @@ isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
+
+nfmNameRegistrationController.title = nfmNameRegistrationController
+nfmNameRegistrationController.heading = nfmNameRegistrationController
+nfmNameRegistrationController.checkYourAnswersLabel = nfmNameRegistrationController
+nfmNameRegistrationController.error.required = Enter nfmNameRegistrationController
+nfmNameRegistrationController.error.length = NfmNameRegistrationController must be 1000 characters or less
+nfmNameRegistrationController.change.hidden = NfmNameRegistrationController

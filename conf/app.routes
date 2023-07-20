@@ -100,3 +100,8 @@ GET        /business-matching/filing-member/registered-in-uk                    
 POST       /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /nfmNameRegistrationController                        controllers.fm.NfmNameRegistrationControllerController.onPageLoad(mode: Mode = NormalMode)
+POST       /nfmNameRegistrationController                        controllers.fm.NfmNameRegistrationControllerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-NfmNameRegistrationController                  controllers.fm.NfmNameRegistrationControllerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-NfmNameRegistrationController                  controllers.fm.NfmNameRegistrationControllerController.onSubmit(mode: Mode = CheckMode)

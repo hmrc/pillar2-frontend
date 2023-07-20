@@ -31,6 +31,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewNfmNameRegistrationController: NfmNameRegistrationControllerView =
+    new NfmNameRegistrationControllerView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
   val viewIsNFMUKBased: IsNFMUKBasedView =
     new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
