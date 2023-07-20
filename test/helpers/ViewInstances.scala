@@ -124,6 +124,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewBusinessActivityUK: BusinessActivityUKView =
     new BusinessActivityUKView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewRegisteringNfmForThisGroup: RegisteringNfmForThisGroupView =
+    new RegisteringNfmForThisGroupView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewTurnOverEligibility: TurnOverEligibilityView =
     new TurnOverEligibilityView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
