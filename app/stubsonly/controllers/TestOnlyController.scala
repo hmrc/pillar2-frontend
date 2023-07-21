@@ -17,12 +17,11 @@
 package stubsonly.controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,7 +48,7 @@ class TestOnlyController @Inject() (
   }
 
   def getAllRecords(): Action[AnyContent] = Action.async { implicit request =>
-    testOnlyConnector.getAllRecords().map(httpResponse => Ok(Json.toJson(httpResponse.body)))
+    testOnlyConnector.getAllRecords().map(httpResponse => Ok((httpResponse.json)))
   }
 
   def deEnrol(): Action[AnyContent] = testOnlyAuthorise.async { implicit request =>
