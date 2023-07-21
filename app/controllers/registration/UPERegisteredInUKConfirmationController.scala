@@ -19,22 +19,16 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
+import models.registration.Registration
 import models.{Mode, UPERegisteredInUKConfirmation}
 import pages.RegistrationPage
-import models.grs.ServiceName
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, Registration, RegistrationWithoutIdRequest}
-import models.{Mode, UPERegisteredInUKConfirmation, registration}
-import navigation.Navigator
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.http.HttpVerbs.GET
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import utils.RowStatus.InProgress
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
