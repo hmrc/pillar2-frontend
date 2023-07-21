@@ -20,26 +20,26 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait NominateFilingMemberYesNo
+sealed trait NfmRegisteredInUkConfirmation
 
-object NominateFilingMemberYesNo extends Enumerable.Implicits {
+object NfmRegisteredInUkConfirmation extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with NominateFilingMemberYesNo
-  case object No extends WithName("no") with NominateFilingMemberYesNo
+  case object Yes extends WithName("yes") with NfmRegisteredInUkConfirmation
+  case object No extends WithName("no") with NfmRegisteredInUkConfirmation
 
-  val values: Seq[NominateFilingMemberYesNo] = Seq(
+  val values: Seq[NfmRegisteredInUkConfirmation] = Seq(
     Yes,
     No
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
-      content = Text(messages(s"NominateFilingMemberYesNo.${value.toString}")),
+      content = Text(messages(s"isUPERegisteredInUK.${value.toString}")),
       value = Some(value.toString),
       id = Some(s"value_$index")
     )
   }
 
-  implicit val enumerable: Enumerable[NominateFilingMemberYesNo] =
+  implicit val enumerable: Enumerable[NfmRegisteredInUkConfirmation] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

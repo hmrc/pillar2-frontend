@@ -205,6 +205,19 @@ captureTelephoneDetails.messages.error.length = The telephone number cannot be m
 captureTelephoneDetails.change.hidden = Change the telephone number for the person or team we should contact at the ultimate parent entity
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
+NominateFilingMemberYesNo.title = Do you want to register a nominated filing member for this group?
+NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member for this group?
+NominateFilingMemberYesNo.heading.caption = Business details
+NominateFilingMemberYesNo.p1 = This step is optional. If you do not enter the details for a nominated filing member, the ultimate parent entity (UPE) will be used as the default.
+NominateFilingMemberYesNo.insetText =You must have permission from the UPE to nominate a company as a filing member and  be able to access the information required to file Pillar 2 top-up tax on the group's behalf.
+NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
+NominateFilingMemberYesNo.yes = Yes
+NominateFilingMemberYesNo.no= No
+NominateFilingMemberYesNo.checkYourAnswersLabel= Filing member preference
+NominateFilingMemberYesNo.change.hidden= Change your filing member nomination preference
+
+
+
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -221,3 +234,10 @@ registeringNfmForThisGroup.yes = Yes
 registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering the nominated filing member for this group
 registeringNfmForThisGroup.caption = Check if the group needs to register
+
+isNFMUKBased.title = isNFMUKBased
+isNFMUKBased.heading = Is the nominated filing member registered in the UK?
+isNFMUKBased.heading.caption = Business details
+isNFMUKBased.checkYourAnswersLabel = Filing member location
+isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
+isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
