@@ -20,14 +20,14 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait IsNFMUKBased
+sealed trait NfmRegistrationConfirmation
 
-object IsNFMUKBased extends Enumerable.Implicits {
+object NfmRegistrationConfirmation extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with IsNFMUKBased
-  case object No extends WithName("no") with IsNFMUKBased
+  case object Yes extends WithName("yes") with NfmRegistrationConfirmation
+  case object No extends WithName("no") with NfmRegistrationConfirmation
 
-  val values: Seq[IsNFMUKBased] = Seq(
+  val values: Seq[NfmRegistrationConfirmation] = Seq(
     Yes,
     No
   )
@@ -40,6 +40,6 @@ object IsNFMUKBased extends Enumerable.Implicits {
     )
   }
 
-  implicit val enumerable: Enumerable[IsNFMUKBased] =
+  implicit val enumerable: Enumerable[NfmRegistrationConfirmation] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

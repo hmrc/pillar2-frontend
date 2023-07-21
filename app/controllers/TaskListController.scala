@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,8 +43,12 @@ class TaskListController @Inject() (
       case None        => RowStatus.NotStarted
       case Some(value) => value.isRegistrationStatus
     }
-    val statusCount = statusCounter(isRegistrationStatus, NotStarted, NotStarted, NotStarted, NotStarted)
-    Ok(view(isRegistrationStatus.toString, statusCount))
+    val fmStatus = request.userAnswers.get(NominatedFilingMemberPage) match {
+      case None        => RowStatus.NotStarted
+      case Some(value) => value.isNFMnStatus
+    }
+    val statusCount = statusCounter(isRegistrationStatus, fmStatus, NotStarted, NotStarted, NotStarted)
+    Ok(view(isRegistrationStatus.toString, statusCount, filingMemberStatus = fmStatus.toString))
   }
 
   private def statusCounter(
