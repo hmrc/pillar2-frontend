@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
@@ -36,7 +36,6 @@ class NFMContactNameControllerSpec extends SpecBase {
   def controller(): NFMContactNameController =
     new NFMContactNameController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -46,13 +45,13 @@ class NFMContactNameControllerSpec extends SpecBase {
     )
 
   "NFMContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.NFMContactNameController.onPageLoad())
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.fm.routes.NFMContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.NFMContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.fm.routes.NFMContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -74,18 +73,18 @@ class NFMContactNameControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.NFMContactNameController.onSubmit().url)
+          FakeRequest(POST, controllers.fm.routes.NFMContactNameController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("nFMContactName", "Ashley Smith"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.NFMEmailAddressController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.fm.routes.NFMContactNameController.onPageLoad(NormalMode).url
       }
     }
     "Bad request when no data" in {
       val request =
-        FakeRequest(POST, routes.NFMContactNameController.onSubmit(NormalMode).url)
+        FakeRequest(POST, controllers.fm.routes.NFMContactNameController.onSubmit(NormalMode).url)
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST

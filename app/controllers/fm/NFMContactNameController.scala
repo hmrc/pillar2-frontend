@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NFMContactNameFormProvider
 import models.Mode
-import navigation.Navigator
-import pages.RegistrationPage
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NFMContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -48,9 +46,9 @@ class NFMContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.nFMContactName.fold(form)(contactName => form.fill(contactName)))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.fmContactName.fold(form)(contactName => form.fill(contactName)))
     }
 
     Ok(view(preparedForm, mode))
@@ -62,17 +60,16 @@ class NFMContactNameController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Contact for NFM not selected"))
+          val regData          = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Contact for NFM not selected"))
           val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("nFMNameRegistration should be available before address"))
-
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(nFMContactName = Some(value)))))
+                  .set(NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmContactName = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.NFMEmailAddressController.onPageLoad())
+          } yield Redirect(controllers.fm.routes.NFMEmailAddressController.onPageLoad(mode))
         }
       )
   }

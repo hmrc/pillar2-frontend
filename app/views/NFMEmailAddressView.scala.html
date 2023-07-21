@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("nFMEmailAddress.title", UserName))) {
 
-    @formHelper(action = controllers.registration.routes.NFMEmailAddressController.onSubmit()) {
+    @formHelper(action = controllers.fm.routes.NFMEmailAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NFMEmailAddressFormProvider
 import models.Mode
 import models.requests.DataRequest
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,9 +48,9 @@ class NFMEmailAddressController @Inject() (
     val userName = getUserName(request)
     val form     = formProvider(userName)
 
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.nFMEmailAddress.fold(form)(email => form.fill(email)))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.fmEmailAddress.fold(form)(emailAddress => form.fill(emailAddress)))
     }
     Ok(view(preparedForm, mode, userName))
   }
@@ -63,13 +63,14 @@ class NFMEmailAddressController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
-          val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("NFM Email Address not provided"))
+          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("NFM Email Address not provided"))
           val regDataWithoutId =
             regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration and address should be available before email"))
           for {
             updatedAnswers <-
               Future.fromTry(
-                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(emailAddress = Some(value)))))
+                request.userAnswers
+                  .set(NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmEmailAddress = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
