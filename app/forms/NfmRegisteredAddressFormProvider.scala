@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import models.UpeRegisteredAddress
+import models.fm.NfmRegisteredAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 class NfmRegisteredAddressFormProvider @Inject() extends Mappings {
   private val textLength = 200
-  def apply(): Form[UpeRegisteredAddress] = Form(
+  def apply(): Form[NfmRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
         text("upe-registered-address.messages.error.address-line-1.required")
@@ -50,6 +50,6 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings {
       "countryCode" ->
         text("upe-registered-address.country.error.required")
           .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
-    )(UpeRegisteredAddress.apply)(UpeRegisteredAddress.unapply)
+    )(NfmRegisteredAddress.apply)(NfmRegisteredAddress.unapply)
   )
 }

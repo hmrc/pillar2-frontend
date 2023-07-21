@@ -28,49 +28,49 @@
 
 @(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upe-registered-address.title", UserName ))) {
+@layout(pageTitle = title(form, messages("nfm-registered-address.title", UserName ))) {
 
-    @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
+    @formHelper(action = controllers.fm.routes.NfmRegisteredAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("upe-registered-address.heading.caption")</span>
-        <h1 class="govuk-heading-l long-word">@messages("upe-registered-address.heading", UserName)</h1>
+        <span class="govuk-caption-l">@messages("nfm-registered-address.heading.caption")</span>
+        <h1 class="govuk-heading-l long-word">@messages("nfm-registered-address.heading", UserName)</h1>
 
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine1"),
-                label = LabelViewModel(messages("upe-registered-address.address-line-1"))
+                label = LabelViewModel(messages("nfm-registered-address.address-line-1"))
             )
             .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine2"),
-                label = LabelViewModel(messages("upe-registered-address.address-line-2"))
+                label = LabelViewModel(messages("nfm-registered-address.address-line-2"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
-                label = LabelViewModel(messages("upe-registered-address.town-city"))
+                label = LabelViewModel(messages("nfm-registered-address.town-city"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine4"),
-                label = LabelViewModel(messages("upe-registered-address.region"))
+                label = LabelViewModel(messages("nfm-registered-address.region"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("postalCode"),
-                label = LabelViewModel(messages("upe-registered-address.postcode"))
+                label = LabelViewModel(messages("nfm-registered-address.postcode"))
             )
                     .withWidth(Fixed10)
         )
@@ -78,7 +78,7 @@
         @govukInput(
             InputViewModel(
                 field = form("countryCode"),
-                label = LabelViewModel(messages("upe-registered-address.country"))
+                label = LabelViewModel(messages("nfm-registered-address.country"))
             )
                     .withWidth(TwoThirds)
         )

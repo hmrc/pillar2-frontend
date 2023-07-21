@@ -112,3 +112,8 @@ GET         /business-matching/filing-member/no-id/input-name                   
 POST        /business-matching/filing-member/no-id/input-name                       controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/no-id/change-input-name                 controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-name                  controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)

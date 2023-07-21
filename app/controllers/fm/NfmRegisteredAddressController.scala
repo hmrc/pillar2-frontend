@@ -19,42 +19,44 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeRegisteredAddressFormProvider
+import forms.NfmRegisteredAddressFormProvider
+import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.requests.DataRequest
-import models.{Mode, UpeRegisteredAddress}
+import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import navigation.Navigator
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UpeRegisteredAddressView
+import utils.RowStatus
+import views.html.fmview.NfmRegisteredAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmRegisteredAddressController @Inject()(
+class NfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeRegisteredAddressFormProvider,
+  formProvider:              NfmRegisteredAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeRegisteredAddressView
+  view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[UpeRegisteredAddress] = formProvider()
+  val form: Form[NfmRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = getUserName(request)
 
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeRegisteredAddress.fold(form)(address => form.fill(address)))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmNameAddress.fold(form)(address => form.fill(address)))
     }
-
+// value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
     Ok(view(preparedForm, mode, userName))
   }
 
@@ -65,22 +67,28 @@ class NfmRegisteredAddressController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
-          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
           for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers
-                  .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeRegisteredAddress = Some(value)))))
-              )
+            updatedAnswers <- Future.fromTry(
+                                request.userAnswers.set(
+                                  NominatedFilingMemberPage,
+                                  FilingMember(
+                                    NfmRegistrationConfirmation.Yes,
+                                    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                                    isNFMnStatus = RowStatus.InProgress,
+                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmNameAddress = Some(value), registeredFmName = userName))
+                                  )
+                                )
+                              )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
         }
       )
   }
 
   private def getUserName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration))
+    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
+    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
 }
