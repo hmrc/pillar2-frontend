@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("nFMContactName.title"))) {
 
-    @formHelper(action = routes.NFMContactNameController.onSubmit()) {
+    @formHelper(action = controllers.registration.routes.NFMContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

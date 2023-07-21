@@ -24,6 +24,8 @@ case class WithoutIdRegData(
   upeRegisteredAddress:  Option[UpeRegisteredAddress] = None,
   upeContactName:        Option[String] = None,
   emailAddress:          Option[String] = None,
+  nFMContactName:        Option[String] = None,
+  nFMEmailAddress:       Option[String] = None,
   contactUpeByTelephone: Option[ContactUPEByTelephone] = None,
   telephoneNumber:       Option[String] = None
 )

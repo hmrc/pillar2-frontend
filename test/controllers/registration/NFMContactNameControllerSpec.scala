@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.NFMContactNameFormProvider
-import models.{NormalMode, UserAnswers}
-import pages.NFMContactNamePage
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NFMContactNameView
 
+import scala.concurrent.Future
+
 class NFMContactNameControllerSpec extends SpecBase {
-
   val formProvider = new NFMContactNameFormProvider()
-
   def controller(): NFMContactNameController =
     new NFMContactNameController(
       mockUserAnswersConnectors,
+      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -40,38 +46,20 @@ class NFMContactNameControllerSpec extends SpecBase {
     )
 
   "NFMContactName Controller" when {
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.NFMContactNameController.onPageLoad())
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
       running(application) {
-        val request = FakeRequest(GET, routes.NFMContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.registration.routes.NFMContactNameController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[NFMContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(NFMContactNamePage, "answer").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.NFMContactNameController.onPageLoad().url)
-
-        val view = application.injector.instanceOf[NFMContactNameView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -79,25 +67,29 @@ class NFMContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
+    "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.NFMContactNameController.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = formProvider().bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[NFMContactNameView]
+          FakeRequest(POST, routes.NFMContactNameController.onSubmit().url)
+            .withFormUrlEncodedBody(("nFMContactName", "Ashley Smith"))
 
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.NFMEmailAddressController.onPageLoad().url
       }
     }
+    "Bad request when no data" in {
+      val request =
+        FakeRequest(POST, routes.NFMContactNameController.onSubmit(NormalMode).url)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual BAD_REQUEST
 
+    }
   }
 }

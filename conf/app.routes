@@ -89,8 +89,8 @@ POST       /business-matching/ultimate-parent/uk-based/org-type                 
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-business-name controllers.NFMContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-business-name controllers.NFMContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/input-business-name  controllers.registration.NFMContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-business-name  controllers.registration.NFMContactNameController.onSubmit(mode: Mode = NormalMode)
 
-GET        /business-matching/filing-member/no-id/input-email  controllers.NFMEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-email  controllers.NFMEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/input-email  controllers.registration.NFMEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-email  controllers.registration.NFMEmailAddressController.onSubmit(mode: Mode = NormalMode)

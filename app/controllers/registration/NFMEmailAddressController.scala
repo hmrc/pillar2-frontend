@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.registration
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NFMEmailAddressFormProvider
 import models.Mode
-import pages.{NFMContactNamePage, NFMEmailAddressPage}
+import models.requests.DataRequest
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,28 +45,40 @@ class NFMEmailAddressController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = request.userAnswers.get(NFMContactNamePage)
-    val form     = formProvider(userName.getOrElse(""))
-    val preparedForm = request.userAnswers.get(NFMEmailAddressPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
 
-    Ok(view(preparedForm, mode, userName.getOrElse("")))
+    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+      case None        => form
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.nFMEmailAddress.fold(form)(email => form.fill(email)))
+    }
+    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.get(NFMContactNamePage)
-    val form     = formProvider(userName.getOrElse(""))
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName.getOrElse("")))),
-        value =>
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+        value => {
+          val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("NFM Email Address not provided"))
+          val regDataWithoutId =
+            regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration and address should be available before email"))
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NFMEmailAddressPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(emailAddress = Some(value)))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        }
       )
+  }
+
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
   }
 }

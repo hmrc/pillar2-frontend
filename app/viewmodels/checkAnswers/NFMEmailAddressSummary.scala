@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.UserAnswers
-import pages.NFMEmailAddressPage
+import pages.RegistrationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,14 +27,21 @@ import viewmodels.implicits._
 object NFMEmailAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NFMEmailAddressPage).map { answer =>
-      SummaryListRowViewModel(
-        key = "nFMEmailAddress.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
-        actions = Seq(
-          ActionItemViewModel("site.change", routes.NFMEmailAddressController.onPageLoad().url)
-            .withVisuallyHiddenText(messages("nFMEmailAddress.change.hidden"))
-        )
-      )
-    }
+    answers
+      .get(RegistrationPage)
+      .flatMap { reg =>
+        reg.withoutIdRegData.map { withoutId =>
+          withoutId.emailAddress.map { answer =>
+            SummaryListRowViewModel(
+              key = "nFMEmailAddress.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlFormat.escape(answer).toString),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.registration.routes.NFMEmailAddressController.onPageLoad().url)
+                  .withVisuallyHiddenText(messages("nFMEmailAddress.change.hidden"))
+              )
+            )
+          }
+        }
+      }
+      .flatten
 }
