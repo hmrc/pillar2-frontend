@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package models.fm
 
-import forms.mappings.Mappings
-import models.{NfmRegistrationConfirmation, UPERegisteredInUKConfirmation}
-import play.api.data.Form
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+case class WithoutIdNfmData(
+  registeredFmName:        String,
+  registeredFmNameAddress: Option[NfmRegisteredAddress] = None,
+  fmContactName:           Option[String] = None,
+  fmEmailAddress:          Option[String] = None,
+  contactNfmByTelephone:   Option[ContactNFMByTelephone] = None,
+  telephoneNumber:         Option[String] = None
+)
 
-class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[NfmRegistrationConfirmation] =
-    Form(
-      "nominateFilingMember" -> enumerable[NfmRegistrationConfirmation]("NominateFilingMemberYesNo.error.required")
-    )
+object WithoutIdNfmData {
+  implicit val format: OFormat[WithoutIdNfmData] = Json.format[WithoutIdNfmData]
 }
