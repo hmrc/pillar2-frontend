@@ -66,7 +66,6 @@ POST        /eligibility/confirmation                   controllers.eligibility.
 GET         /grs-return/normalmode                                          controllers.registration.GrsReturnController.continue(mode: Mode = NormalMode, journeyId)
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
-GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
 GET         /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onSubmit
