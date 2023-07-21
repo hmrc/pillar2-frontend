@@ -22,4 +22,5 @@ object Pillar2SessionKeys {
   val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
   val evidenceRequestedFlag       = "evidenceRequestedFlag"
   val turnOverEligibilityValue    = "turnOverEligibilityValue"
+  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
 }
