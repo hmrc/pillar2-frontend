@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.fm
 
 import base.SpecBase
-import controllers.fm.NfmNameRegistrationController
 import forms.NfmNameRegistrationControllerFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
@@ -25,7 +24,7 @@ import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
-import views.html.fmview.NfmNameRegistrationControllerView
+import views.html.fmview.NfmNameRegistrationView
 
 class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
@@ -49,11 +48,11 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmNameRegistrationControllerView]
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -70,9 +69,9 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[NfmNameRegistrationControllerView]
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
 
         val result = route(application, request).value
 
@@ -91,12 +90,12 @@ class NfmNameRegistrationControllerControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationControllerController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[NfmNameRegistrationControllerView]
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
 
         val result = route(application, request).value
 

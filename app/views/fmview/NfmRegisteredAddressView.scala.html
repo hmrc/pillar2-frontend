@@ -35,7 +35,6 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("nfm-registered-address.heading.caption")</span>
         <h1 class="govuk-heading-l long-word">@messages("nfm-registered-address.heading", UserName)</h1>
 
 
@@ -73,6 +72,7 @@
                 label = LabelViewModel(messages("nfm-registered-address.postcode"))
             )
                     .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("nfm-registered-address.postcode.hint"))))
         )
 
         @govukInput(
@@ -81,6 +81,7 @@
                 label = LabelViewModel(messages("nfm-registered-address.country"))
             )
                     .withWidth(TwoThirds)
+                    .withHint(Hint(content = Text(messages("nfm-registered-address.country.hint"))))
         )
 
         @govukButton(

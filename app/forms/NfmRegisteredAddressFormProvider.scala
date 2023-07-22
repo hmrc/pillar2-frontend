@@ -24,32 +24,34 @@ import play.api.data.Forms.{mapping, optional}
 import javax.inject.Inject
 
 class NfmRegisteredAddressFormProvider @Inject() extends Mappings {
-  private val textLength = 200
+  private val textLength       = 35
+  private val addressLength    = 35
+  private val postalCodeLength = 200
   def apply(): Form[NfmRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("upe-registered-address.messages.error.address-line-1.required")
-          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-1.length")),
+        text("nfm-registered-address.messages.error.address-line-1.required")
+          .verifying(maxLength(addressLength, "nfm-registered-address.messages.error.address-line-1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-2.length"))
+          .verifying(maxLength(addressLength, "nfm-registered-address.messages.error.address-line-2.length"))
       ),
       "addressLine3" ->
-        text("upe-registered-address.town-city.error.required")
-          .verifying(maxLength(textLength, "upe-registered-address.town-city.error.length")),
+        text("nfm-registered-address.town-city.error.required")
+          .verifying(maxLength(addressLength, "nfm-registered-address.town-city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "upe-registered-address.region.error.length"))
+            .verifying(maxLength(addressLength, "nfm-registered-address.region.error.length"))
         ),
       "postalCode" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))
+            .verifying(maxLength(postalCodeLength, "nfm-registered-address.postcode.error.length"))
         ),
       "countryCode" ->
-        text("upe-registered-address.country.error.required")
-          .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
+        text("nfm-registered-address.country.error.required")
+          .verifying(maxLength(textLength, "nfm-registered-address.country.error.length"))
     )(NfmRegisteredAddress.apply)(NfmRegisteredAddress.unapply)
   )
 }

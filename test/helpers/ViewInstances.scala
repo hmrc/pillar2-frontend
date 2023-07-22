@@ -25,14 +25,14 @@ import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
-import views.html.fmview.{IsNFMUKBasedView, NfmNameRegistrationControllerView, NominateFilingMemberYesNoView}
+import views.html.fmview.{IsNFMUKBasedView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
-  val viewNfmNameRegistrationController: NfmNameRegistrationControllerView =
-    new NfmNameRegistrationControllerView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewNfmNameRegistrationController: NfmNameRegistrationView =
+    new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val viewIsNFMUKBased: IsNFMUKBasedView =
     new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
@@ -156,6 +156,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
     new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewNfmRegisteredAddress: NfmRegisteredAddressView =
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
