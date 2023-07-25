@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package generators
+package models
 
-import models._
-import models.grs.EntityType
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.mvc.JavascriptLiteral
 
-trait ModelGenerators {
+sealed trait UserType
 
-  implicit lazy val arbitraryNfmEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
+case object Upe extends UserType
+case object Fm extends UserType
+
+object UserType {
+
+  implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
+    override def to(value: UserType): String = value match {
+      case Upe => "Upe"
+      case Fm  => "Fm"
     }
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTradingBusinessConfirmation: Arbitrary[TradingBusinessConfirmation] =
-    Arbitrary {
-      Gen.oneOf(TradingBusinessConfirmation.values.toSeq)
-    }
+  }
 }

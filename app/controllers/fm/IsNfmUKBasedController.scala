@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.IsNFMUKBasedFormProvider
-import models.{Mode, NfmRegistrationConfirmation}
+import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import models.fm.FilingMember
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
@@ -64,15 +64,49 @@ class IsNfmUKBasedController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
-            updatedAnswers <-
-              Future
-                .fromTry(
-                  request.userAnswers
-                    .set(NominatedFilingMemberPage, FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
+          value match {
+            case NfmRegisteredInUkConfirmation.Yes =>
+              val regData =
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+
+              for {
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(
+                          NominatedFilingMemberPage,
+                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value))
+                        )
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+
+              } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
+
+            case NfmRegisteredInUkConfirmation.No =>
+              val regData =
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData)(_ =>
+                  FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress)
                 )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(
+                      NominatedFilingMemberPage,
+                      checkedRegData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), orgType = None, withIdRegData = None)
+                    )
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+
+          }
       )
   }
 }
