@@ -19,9 +19,10 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
-import models.NormalMode
+import models.{ContactUPEByTelephone, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -44,14 +45,17 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewContactUPEByTelephoneView
     )
 
   "Can we contact UPE by Telephone Controller" should {
 
     "return OK and the correct view for a GET" in {
+      val userAnswersWithNoIdNoCapturePhone =
+        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(contactUpeByTelephone = None)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdNoCapturePhone)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
@@ -60,7 +64,11 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactUPEByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("some name"), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider("yes"), NormalMode, "TestName")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
 
       }
     }

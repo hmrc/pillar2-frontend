@@ -62,10 +62,13 @@ trait SpecBase
     with IntegrationPatience
     with Pillar2TestData {
 
-  val userAnswersId:    String      = "id"
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  def userAnswersWithNoId:       UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
+  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
+
+  def userAnswersWithId:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+  def userAnswersWithIdNoOrg:    UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value
+  val userAnswersId:             String      = "id"
   def userAnswersWithNoIdForNfm: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)

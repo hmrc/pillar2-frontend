@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.UpeRegisteredAddressView
 
 import scala.concurrent.Future
 
@@ -42,6 +43,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUpeRegisteredAddress
     )
 
@@ -49,13 +51,29 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpeRegisteredAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(validUpeRegisteredAddressed), NormalMode, "Test Name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+
+      /*      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
         "Where is the registered office address of"
-      )
+      )*/
     }
 
     "must redirect to the next page when valid data is submitted" in {

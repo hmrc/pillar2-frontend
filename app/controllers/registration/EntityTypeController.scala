@@ -21,17 +21,18 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.registration.RegistrationWithoutIdRequest
-import models.Mode
+import models.{Mode, UPERegisteredInUKConfirmation}
 import models.grs.EntityType
+import models.requests.DataRequest
 import pages.{EntityTypePage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EntityTypeView
+import views.html.errors.ErrorTemplate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,6 +46,7 @@ class EntityTypeController @Inject() (
   requireData:                                       DataRequiredAction,
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
+  page_not_available:                                ErrorTemplate,
   view:                                              EntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -53,12 +55,18 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.orgType.fold(form)(data => form.fill(data))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+          }
+      case false =>
+        NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -97,4 +105,9 @@ class EntityTypeController @Inject() (
           }
       )
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.Yes)
 }

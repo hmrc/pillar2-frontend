@@ -20,12 +20,14 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.ContactUPEByTelephone
+import models.requests.DataRequest
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersController @Inject() (
@@ -33,12 +35,14 @@ class UpeCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  page_not_available:       ErrorTemplate,
   view:                     UpeCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     val telephonePreference = request.userAnswers.get(RegistrationPage) match {
       case Some(value) =>
         value.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(tel => (tel == ContactUPEByTelephone.Yes)))
@@ -57,8 +61,23 @@ class UpeCheckYourAnswersController @Inject() (
         }
       ).flatten
     )
-
-    Ok(view(list))
+    if (isPreviousPagesDefined(request))
+      Ok(view(list))
+    else
+      NotFound(notAvailable)
   }
-
+  private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data =>
+        data.withoutIdRegData.fold(false)(withoutId =>
+          withoutId.upeRegisteredAddress.isDefined &&
+            withoutId.upeContactName.isDefined &&
+            withoutId.emailAddress.isDefined &&
+            withoutId.contactUpeByTelephone.fold(false)(contactTel =>
+              (contactTel == ContactUPEByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
+                (contactTel == ContactUPEByTelephone.No)
+            )
+        )
+      )
 }
