@@ -282,3 +282,5 @@ nfm-registered-address.messages.error.address-line-1.length=The first line of ad
 nfm-registered-address.messages.error.address-line-1.invalid=The first line of the address contains invalid characters
 nfm-registered-address.messages.error.address-line-2.length=The second line of address cannot be more than 200 characters
 nfm-registered-address.messages.error.address-line-2.invalid=The second line of the address contains invalid characters
+nfm-registered-address.country = Country
+nfm-registered-address.country.hint = Enter text and then choose from the list

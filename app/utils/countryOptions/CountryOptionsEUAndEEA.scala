@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package viewmodels
+package utils.countryOptions
 
-package object govuk {
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import play.api.Environment
+import utils.InputOption
 
-  object all
-      extends ImplicitConversions
-      with BackLinkFluency
-      with ButtonFluency
-      with CheckboxFluency
-      with DateFluency
-      with ErrorSummaryFluency
-      with FieldsetFluency
-      with HintFluency
-      with InputFluency
-      with LabelFluency
-      with RadiosFluency
-      with SummaryListFluency
-      with TagFluency
-      with SelectFluency
+import javax.inject.Singleton
+
+@Singleton
+class CountryOptionsEUAndEEA @Inject() (
+  environment: Environment,
+  config:      FrontendAppConfig
+) extends CountryOptions(environment, config) {
+  override def options: Seq[InputOption] = CountryOptions.getCountries(environment, config.locationCanonicalListEUAndEEA)
 }

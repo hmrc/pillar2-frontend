@@ -29,6 +29,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val host:    String = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
+  private def loadConfig(key: String): String =
+    configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "pillar2-frontend"
 
@@ -73,4 +76,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
+
+  lazy val locationCanonicalList:         String = loadConfig("location.canonical.list.all")
+  lazy val locationCanonicalListEUAndEEA: String = loadConfig("location.canonical.list.EUAndEEA")
 }

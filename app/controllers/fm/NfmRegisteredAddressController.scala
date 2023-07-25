@@ -31,6 +31,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.countryOptions.CountryOptions
+
 import views.html.fmview.NfmRegisteredAddressView
 
 import javax.inject.Inject
@@ -43,21 +45,25 @@ class NfmRegisteredAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              NfmRegisteredAddressFormProvider,
+  CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[NfmRegisteredAddress] = formProvider()
+  val countryList = CountryOptions.options
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = getUserName(request)
+
+    println("*******************************************************" + countryList);
 
     val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
       case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmNameAddress.fold(form)(address => form.fill(address)))
     }
 // value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
-    Ok(view(preparedForm, mode, userName))
+    Ok(view(preparedForm, mode, userName, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -65,10 +71,10 @@ class NfmRegisteredAddressController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value => {
-          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
+        value =>
+          //   val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          // val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
           for {
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
@@ -83,7 +89,6 @@ class NfmRegisteredAddressController @Inject() (
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-        }
       )
   }
 
