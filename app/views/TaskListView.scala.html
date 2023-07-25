@@ -44,9 +44,15 @@
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                          <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
-                             @messages("taskList.task.business.ultimate")
-                          </a>
+                          @if(upeNoIDStatus == "Completed"){
+                              <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.ultimate.edit")
+                              </a>
+                            } else {
+                                <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.ultimate.add")
+                                </a>
+                            }
                         </span>
                         @if(upeNoIDStatus == "Completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
@@ -59,9 +65,15 @@
                     @if(upeNoIDStatus == "Completed"){
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                            <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="nfm-status">
-                            @messages("taskList.task.business.filingMember")
-                            </a>
+                             @if(filingMemberStatus == "Completed"){
+                                <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="nfm-status">
+                                @messages("taskList.task.business.filingMember.edit")
+                                </a>
+                            } else {
+                                <a href="/pillar-two/business-matching/filing-member/nominate" aria-describedby="nfm-status">
+                                @messages("taskList.task.business.filingMember.add")
+                                </a>
+                            }
                         </span>
                         @if(filingMemberStatus == "Completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
@@ -82,8 +94,8 @@
                         } else if(filingMemberStatus == "InProgress") {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status-uc">
-                            @messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag" id="submit-pay-status-uc">
+                            @messages("task.status.cannotStartYet")</span>
                         }
                     </li>
                     }
@@ -91,7 +103,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.more")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;"> @messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -106,7 +118,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.contact")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
@@ -121,7 +133,7 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.review")
                         </span>
-                        <strong class="govuk-tag govuk-tag--grey app-task-list__tag" style="float: right;" id="submit-pay-status">@messages("task.status.cannotStartYet")</strong>
+                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
             </li>
