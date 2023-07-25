@@ -25,10 +25,15 @@ import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
+import views.html.errors.ErrorTemplate
+import views.html.fmview.{IsNFMUKBasedView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewIsNFMUKBased: IsNFMUKBasedView =
+    new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewEntityType: EntityTypeView =
     new EntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
@@ -109,6 +114,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StandardAlphaBanner
   )
 
+  val viewpageNotAvailable: ErrorTemplate = new ErrorTemplate(pillar2layout)
+
   val viewTradingBusinessConfirmation: TradingBusinessConfirmationView =
     new TradingBusinessConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
@@ -135,6 +142,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
+    new NominateFilingMemberYesNoView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton, govUkInsetText)
 
   val viewStartPageRegistration: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)

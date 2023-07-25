@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@this(
-    layout: templates.Layout
-)
+package pages
 
+import models.fm.FilingMember
+import play.api.libs.json.JsPath
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+case object NominatedFilingMemberPage extends QuestionPage[FilingMember] {
 
-@layout(pageTitle = titleNoForm(pageTitle)) {
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
+  override def path: JsPath = JsPath \ toString
 
-    <p class="govuk-body">@messages(message)</p>
+  override def toString: String = "FilingMember"
 }

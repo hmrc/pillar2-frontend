@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import config.FrontendAppConfig
+@this(
+    layout: templates.Layout
+)
 
-import forms.mappings.Mappings
-import models.{NfmRegistrationConfirmation, UPERegisteredInUKConfirmation}
-import play.api.data.Form
 
-import javax.inject.Inject
+@(pageTitle: String, heading: String, message: String)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
+@layout(pageTitle = titleNoForm(pageTitle), showBackLink = false) {
+    <h1 class="govuk-heading-xl">@messages(heading)</h1>
 
-  def apply(): Form[NfmRegistrationConfirmation] =
-    Form(
-      "nominateFilingMember" -> enumerable[NfmRegistrationConfirmation]("NominateFilingMemberYesNo.error.required")
-    )
+    <p class="govuk-body">@messages(message)</p>
 }

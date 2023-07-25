@@ -17,34 +17,60 @@
 package controllers.testdata
 
 import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.grs.GrsCreateRegistrationResponse
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
 trait Pillar2TestData {
 
-  val validNoIdRegistrationData =
+  def validNoIdRegData(
+    isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus:  RowStatus = RowStatus.InProgress,
+    upeNameRegistration:   String = "Test Name",
+    upeContactName:        Option[String] = Some("TestName"),
+    contactUpeByTelephone: Option[ContactUPEByTelephone] = Some(ContactUPEByTelephone.Yes),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    emailAddress:          Option[String] = Some("test@test.com"),
+    addressLine1:          String = "Line1",
+    addressLine2:          Option[String] = Some("Line2"),
+    addressLine3:          String = "Line3",
+    addressLine4:          Option[String] = Some("Line4"),
+    postalCode:            Option[String] = Some("VR11 3PA"),
+    countryCode:           String = "GB"
+  ) =
     new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
-      isRegistrationStatus = RowStatus.InProgress,
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
       withoutIdRegData = Some(
         WithoutIdRegData(
-          upeNameRegistration = "Test Name",
-          contactUpeByTelephone = Some(ContactUPEByTelephone.No),
-          telephoneNumber = Some("1234567"),
+          upeNameRegistration = upeNameRegistration,
+          upeContactName = upeContactName,
+          contactUpeByTelephone = contactUpeByTelephone,
+          telephoneNumber = telephoneNumber,
+          emailAddress = emailAddress,
           upeRegisteredAddress = Some(
             UpeRegisteredAddress(
-              addressLine1 = "Line1",
-              addressLine2 = Some("Line2"),
-              addressLine3 = "Line3",
-              addressLine4 = Some("Line4"),
-              postalCode = Some("VR11 3PA"),
-              countryCode = "GB"
+              addressLine1 = addressLine1,
+              addressLine2 = addressLine2,
+              addressLine3 = addressLine3,
+              addressLine4 = addressLine4,
+              postalCode = postalCode,
+              countryCode = countryCode
             )
           )
         )
       )
+    )
+
+  def validWithoutIdRegData(
+    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus: RowStatus = RowStatus.InProgress
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = None
     )
 
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
@@ -56,6 +82,26 @@ trait Pillar2TestData {
     countryCode = "GB"
   )
 
+  val validIdRegistrationData =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(
+        GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
+      )
+    )
+  val validIdRegistrationDataWithNoOrgType =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = None,
+      withIdRegData = None
+    )
+
+  val validGrsResponse = new GrsResponse(
+    incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+  )
   val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]
