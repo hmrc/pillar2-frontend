@@ -47,7 +47,7 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
           businessVerificationCheck = false,
           optServiceName = Some(serviceName.en.optServiceName),
           deskProServiceId = "pillar2-frontend",
-          signOutUrl = "http://localhost:9025/gg/sign-out",
+          signOutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state",
           accessibilityUrl = "/accessibility-statement/pillar2-frontend",
           labels = serviceName
         )
