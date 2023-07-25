@@ -55,9 +55,6 @@ class NfmRegisteredAddressController @Inject() (
   val countryList = CountryOptions.options
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = getUserName(request)
-
-    println("*******************************************************" + countryList);
-
     val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
       case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmNameAddress.fold(form)(address => form.fill(address)))
@@ -67,7 +64,10 @@ class NfmRegisteredAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = getUserName(request)
+    val userName    = getUserName(request)
+    val countryCode = getCountry(request);
+    println("*******************************************************" + userName + "country code" + countryCode);
+
     form
       .bindFromRequest()
       .fold(
@@ -95,5 +95,12 @@ class NfmRegisteredAddressController @Inject() (
   private def getUserName(request: DataRequest[AnyContent]): String = {
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
+  }
+
+  private def getCountry(request: DataRequest[AnyContent]): String = {
+    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
+    fmDetails.fold("")(fmData =>
+      fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmNameAddress.fold("")(address => address.countryCode))
+    )
   }
 }
