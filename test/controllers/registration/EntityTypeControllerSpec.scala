@@ -17,6 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.EntityTypeFormProvider
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.{NormalMode, UserAnswers}
@@ -27,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.EntityTypeView
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -108,41 +110,66 @@ class EntityTypeControllerSpec extends SpecBase {
 
     "must redirect to GRS for UK Limited company" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
 
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
-        .thenReturn(
-          Future(GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"))
-        )
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+          .thenReturn(
+            Future(GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"))
+          )
 
-      val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
+
+        val boundForm = formProvider()
+
+        val view = application.injector.instanceOf[EntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+      }
+
     }
 
     "must redirect to GRS for Limited Liability Partnership" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
 
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
-        .thenReturn(
-          Future(
-            GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership")
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+          .thenReturn(
+            Future(
+              GrsCreateRegistrationResponse(
+                "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+              )
+            )
           )
-        )
 
-      val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(
-        result
-      ).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
+
+        val boundForm = formProvider()
+
+        val view = application.injector.instanceOf[EntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(
+          result
+        ).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+      }
 
     }
 

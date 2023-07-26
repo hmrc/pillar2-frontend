@@ -16,9 +16,10 @@
 
 package controllers.testdata
 
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.grs.GrsCreateRegistrationResponse
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.fm.FilingMember
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -47,6 +48,24 @@ trait Pillar2TestData {
       )
     )
 
+  val validWithIdFmRegistrationDataForLimitedComp =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(new GrsResponse(incorporatedEntityRegistrationData = Some(validRegisterWithIdResponse)))
+    )
+
+  val validWithIdFmRegistrationDataForPartnership =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(new GrsResponse(partnershipEntityRegistrationData = Some(validRegisterWithIdResponseForLLP)))
+    )
+
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
@@ -59,6 +78,11 @@ trait Pillar2TestData {
   val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]
+
+  val validFmUserAnswersGrsDataForLimitedCompany = UserAnswers(
+    "testId",
+    data = validWithIdFmRegistrationDataForLimitedComp
+  )
 
   val validUserAnswersGrsDataForLimitedCompany = UserAnswers(
     "testId",

@@ -30,7 +30,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.{Application, Configuration}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
@@ -69,6 +69,12 @@ trait SpecBase
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
 
+  def fmWithIdLimtedCompanyData: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+  def fmWithIdPartnershipData: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
+
   val userAnswersId: String = "id"
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
@@ -100,6 +106,10 @@ trait SpecBase
   def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
     override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
       Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsDataForLimitedCompany)))
+  }
+  def preDataRequiredActionImplForFm: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
+    override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+      Future.successful(Right(DataRequest(request.request, request.userId, validWithIdFmRegistrationDataForLimitedComp)))
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {
