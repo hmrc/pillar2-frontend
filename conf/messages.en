@@ -15,6 +15,17 @@ date.day = Day
 date.month = Month
 date.year = Year
 
+###############################################
+#
+# Page Not Available
+#
+###############################################
+page_not_available.title=Page not available
+page_not_available.heading=Page not available
+page_not_available.message=You cannot access this page directly
+
+###############################################
+
 upe-registered-address.title=Where is the registered office address of {0}?
 upe-registered-address.heading=Where is the registered office address of {0}?
 upe-registered-address.checkYourAnswersLabel = Address
@@ -99,13 +110,6 @@ index.title = Welcome to OECD Pillar Two
 index.heading = Welcome to OECD Pillar Two
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
-
-tradingBusinessConfirmation.title = Do you have trading business address in UK?
-tradingBusinessConfirmation.heading = Do you have trading business address in UK?
-tradingBusinessConfirmation.yes = Yes
-tradingBusinessConfirmation.no = No
-tradingBusinessConfirmation.error.required= Select yes if your have trading business activities in the UK
-
 
 startPageRegistration.title = We need to match the details of this ultimate parent entity to HMRC records
 startPageRegistration.heading = We need to match the details of this ultimate parent entity to HMRC records

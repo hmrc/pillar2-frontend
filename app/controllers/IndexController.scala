@@ -37,8 +37,4 @@ class IndexController @Inject() (
     Redirect(routes.TaskListController.onPageLoad)
   }
 
-  def onSubmit: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TradingBusinessConfirmationController.onPageLoad)
-  }
-
 }

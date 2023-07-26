@@ -29,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeContactEmailView
 
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class UpeContactEmailController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      UpeContactEmailView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -50,11 +52,20 @@ class UpeContactEmailController @Inject() (
     val userName = getUserName(request)
     val form     = formProvider(userName)
 
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.emailAddress.fold(form)(email => form.fill(email)))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.emailAddress.fold(Ok(view(form, mode, userName)))(email => Ok(view(form.fill(email), mode, userName)))
+            )
+          }
+
+      case false => NotFound(notAvailable)
     }
-    Ok(view(preparedForm, mode, userName))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -83,4 +94,10 @@ class UpeContactEmailController @Inject() (
     val registration = request.userAnswers.get(RegistrationPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.upeContactName.isDefined))
+
 }
