@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object NFMEmailAddressPage extends QuestionPage[String] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class NfmContactNameFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "nFMEmailAddress"
+  def apply(): Form[String] =
+    Form(
+      "fmContactName" -> text("nFMContactName.error.required")
+        .verifying(maxLength(200, "nFMContactName.error.length"))
+    )
 }

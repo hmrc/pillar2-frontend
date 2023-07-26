@@ -21,24 +21,21 @@ import akka.stream.Materializer
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.testdata.Pillar2TestData
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import helpers.{AllMocks, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import pages.RegistrationPage
-import play.api.{Application, Configuration}
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -65,11 +62,11 @@ trait SpecBase
     with IntegrationPatience
     with Pillar2TestData {
 
+  val userAnswersId:    String      = "id"
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
-
-  val userAnswersId: String = "id"
+  def userAnswersWithNoId:       UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegistrationData).success.value
+  def userAnswersWithNoIdForNfm: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

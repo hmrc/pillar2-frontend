@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NFMEmailAddressSummary {
+object NfmEmailAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
@@ -36,7 +36,7 @@ object NFMEmailAddressSummary {
               key = "nFMEmailAddress.checkYourAnswersLabel",
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NFMEmailAddressController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", controllers.fm.routes.NfmEmailAddressController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("nFMEmailAddress.change.hidden"))
               )
             )

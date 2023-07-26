@@ -16,9 +16,10 @@
 
 package controllers.testdata
 
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.{ContactUPEByTelephone, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -46,6 +47,33 @@ trait Pillar2TestData {
         )
       )
     )
+
+  val validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    None,
+    None,
+    RowStatus.InProgress,
+    None,
+    withoutIdRegData = Some(
+      WithoutIdNfmData(
+        "Test FM",
+        registeredFmNameAddress = Some(
+          NfmRegisteredAddress(
+            "Line1",
+            Some("Line2"),
+            "Line3",
+            Some("Line4"),
+            Some("VR11 3PA"),
+            "GB"
+          )
+        ),
+        fmContactName = Some("Ashley Smith"),
+        None,
+        Some(ContactNFMByTelephone.No),
+        None
+      )
+    )
+  )
 
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
@@ -188,4 +216,5 @@ trait Pillar2TestData {
        |        }
        |    }
        """.stripMargin
+
 }

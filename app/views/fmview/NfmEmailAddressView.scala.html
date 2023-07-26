@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import viewmodels.govuk.hint
 
 @this(
     layout: templates.Layout,
@@ -26,23 +27,25 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("nFMContactName.title"))) {
+@layout(pageTitle = title(form, messages("nFMEmailAddress.title", UserName))) {
 
-    @formHelper(action = controllers.fm.routes.NFMContactNameController.onSubmit(mode)) {
+    @formHelper(action = controllers.fm.routes.NfmEmailAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
+
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nFMContactName.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("nFMEmailAddress.heading", UserName)).asPageHeading(Large)
+                .withCssClass("long-word")
             )
-            .withHint(Hint(content = Text(messages("nFMContactName.hint"))))
+            .withHint(Hint(content = Text(messages("nFMEmailAddress.hint"))))
             .withWidth(TwoThirds)
+            .withInputType("email")
         )
 
         @govukButton(
