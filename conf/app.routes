@@ -3,7 +3,6 @@
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
 GET         /                                            controllers.IndexController.onPageLoad
-POST        /submit                                      controllers.IndexController.onSubmit
 GET         /task-list/register-for-global-minimum-tax   controllers.TaskListController.onPageLoad
 
 
@@ -16,8 +15,6 @@ GET         /refresh-session                             controllers.KeepAliveCo
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
-GET         /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST        /trading-business-confirmation               controllers.TradingBusinessConfirmationController.onSubmit(mode: Mode = NormalMode)
 
 GET         /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onPageLoad
 POST        /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onSubmit
@@ -76,7 +73,6 @@ POST        /eligibility/confirmation                   controllers.eligibility.
 GET         /grs-return/normalmode                                          controllers.registration.GrsReturnController.continue(mode: Mode = NormalMode, journeyId)
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
-GET         /test-only/eligibility/clear-session         controllers.UnderConstructionController.onPageLoadClear
 
 GET         /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onSubmit
