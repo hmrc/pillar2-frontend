@@ -28,7 +28,7 @@
     pageTitle    = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
-    @formHelper(action = routes.IndexController.onSubmit) {
+
         <h1 class="govuk-heading-xl">@messages("task-list.heading")</h1>
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
@@ -127,6 +127,5 @@
             </li>
         </ol>
 
-    }
 
 }

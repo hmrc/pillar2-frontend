@@ -29,7 +29,7 @@ class UserAnswersConnectors @Inject() (
   @Named("pillar2Url") pillar2BaseUrl: String,
   httpClient:                          HttpClient
 )(implicit ec:                         ExecutionContext) {
-  private val url = s"$pillar2BaseUrl/pillar2"
+  private val url = s"$pillar2BaseUrl/pillar-two"
 
   def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =
     httpClient.POST[JsValue, HttpResponse](s"$url/user-cache/registration-subscription/$id", data).map { response =>
