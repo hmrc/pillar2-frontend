@@ -22,10 +22,12 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.RegistrationPage
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.registrationview.{UpeContactNameView, UpeNameRegistrationView}
 
 import scala.concurrent.Future
 
@@ -42,6 +44,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewUPENameRegistration
     )
 
@@ -50,13 +53,25 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", "no"))
+      val userAnswersWithoutNameReg =
+        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData()).success.value
 
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) mustBe OK
-      contentAsString(result) should include(
-        "What is the name of the ultimate parent entity"
-      )
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutNameReg)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpeNameRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+
     }
 
     "must redirect to the next page when valid data is submitted" in {

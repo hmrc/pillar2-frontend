@@ -18,6 +18,7 @@ package views
 
 import play.api.data.Form
 import play.api.i18n.Messages
+import play.twirl.api.Html
 
 object ViewUtils {
 
@@ -32,4 +33,10 @@ object ViewUtils {
 
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+
+  def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =
+    screenReaderKey.fold(
+      Html(s"<span aria-hidden='true'>$visualKey</span>")
+    )(screenReaderAlt => Html(s"<span aria-hidden='true'>$visualKey</span> <span class='govuk-visually-hidden'>$screenReaderAlt</span>"))
+
 }

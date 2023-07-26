@@ -66,13 +66,17 @@ class UPERegisteredInUKConfirmationController @Inject() (
         value =>
           value match {
             case UPERegisteredInUKConfirmation.Yes =>
+              val regData =
+                request.userAnswers
+                  .get(RegistrationPage)
+                  .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData copy (isUPERegisteredInUK = value, withoutIdRegData = None))(_ => regData)
+
               for {
                 updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers
-                        .set(RegistrationPage, Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
-                    )
+                  Future.fromTry(request.userAnswers.set(RegistrationPage, checkedRegData))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))

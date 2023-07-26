@@ -20,15 +20,16 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
-import models.Mode
+import models.{Mode, UPERegisteredInUKConfirmation}
 import models.registration.{Registration, WithoutIdRegData}
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
 import javax.inject.Inject
@@ -42,6 +43,7 @@ class UpeNameRegistrationController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -50,12 +52,17 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
+          }
+      case false =>
+        NotFound(notAvailable)
     }
-
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -76,4 +83,10 @@ class UpeNameRegistrationController @Inject() (
         }
       )
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
+
 }

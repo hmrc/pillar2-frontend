@@ -26,16 +26,16 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("startPageRegistration.title"))) {
-    @formHelper(action = routes.IndexController.onSubmit) {
+
         <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
         <h1 class="govuk-heading-l">@messages("startPageRegistration.heading")</h1>
 
-<p class="govuk-body">@messages("startPageRegistration.p1")</p>
+    <p class="govuk-body">@messages("startPageRegistration.p1")</p>
 
      @govukButton(
       ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad.url)
      )
-}
+
 
 
 }
