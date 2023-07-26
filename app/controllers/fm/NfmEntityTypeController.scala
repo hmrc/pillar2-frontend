@@ -22,7 +22,7 @@ import controllers.actions._
 import uk.gov.hmrc.http.HttpVerbs.GET
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
-import models.Mode
+import models.{Mode, UserType}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -79,7 +79,7 @@ class NfmEntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
-                                      .createLimitedCompanyJourney(mode)
+                                      .createLimitedCompanyJourney(UserType.Fm, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
@@ -94,7 +94,7 @@ class NfmEntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(EntityType.LimitedLiabilityPartnership, mode)
+                                      .createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )

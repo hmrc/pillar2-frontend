@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.actions.DataRequiredActionImpl
 import forms.UpeContactEmailFormProvider
 import models.requests.{DataRequest, OptionalDataRequest}
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers, UserType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
@@ -69,7 +69,7 @@ class GrsReturnControllerSpec extends SpecBase {
       when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
         .thenReturn(Future.successful(validRegisterWithIdResponse))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller().continue(NormalMode, "journeyId")(request)
+      val result = controller().continueUpe(NormalMode, "journeyId")(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
@@ -83,7 +83,7 @@ class GrsReturnControllerSpec extends SpecBase {
       when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
         .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controllerLLP().continue(NormalMode, "journeyId")(request)
+      val result = controllerLLP().continueUpe(NormalMode, "journeyId")(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url

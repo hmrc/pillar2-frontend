@@ -112,7 +112,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any()))
+      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
         .thenReturn(
           Future(GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"))
         )
@@ -129,7 +129,7 @@ class EntityTypeControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any())(any()))
+      when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
         .thenReturn(
           Future(
             GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership")

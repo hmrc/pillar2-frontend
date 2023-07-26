@@ -21,12 +21,11 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.registration.RegistrationWithoutIdRequest
-import models.Mode
+import models.{Mode, UserType}
 import models.grs.EntityType
 import pages.{EntityTypePage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
@@ -79,7 +78,7 @@ class EntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
-                                      .createLimitedCompanyJourney(mode)
+                                      .createLimitedCompanyJourney(UserType.Upe, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
@@ -92,7 +91,7 @@ class EntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(EntityType.LimitedLiabilityPartnership, mode)
+                                      .createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )

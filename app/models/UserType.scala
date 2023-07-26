@@ -16,19 +16,40 @@
 
 package models
 
+import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
 import play.api.mvc.JavascriptLiteral
 
-sealed trait UserType
-
-case object Upe extends UserType
-case object Fm extends UserType
+sealed trait UserType extends Product with Serializable
 
 object UserType {
+  case object Upe extends UserType {
+    val value: String = this.toString
+  }
+  case object Fm extends UserType {
+    val value: String = this.toString
+  }
+
+  implicit val format: Format[UserType] = new Format[UserType] {
+    override def reads(json: JsValue): JsResult[UserType] =
+      json.as[String] match {
+        case "Upe" => JsSuccess[UserType](Upe)
+        case "Fm"  => JsSuccess[UserType](Fm)
+        case other => JsError(s"Invalid Source System: $other")
+      }
+
+    override def writes(sourceSystem: UserType): JsValue =
+      sourceSystem match {
+        case Upe => JsString("Upe")
+        case Fm  => JsString("Fm")
+      }
+  }
 
   implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
-    override def to(value: UserType): String = value match {
-      case Upe => "Upe"
-      case Fm  => "Fm"
-    }
+    override def to(value: UserType): String =
+      value match {
+        case Upe => "Upe"
+        case Fm  => "Fm"
+      }
   }
+
 }

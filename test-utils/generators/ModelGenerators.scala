@@ -23,11 +23,6 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryNfmEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
   implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
     Arbitrary {
       Gen.oneOf(EntityType.values.toSeq)

@@ -67,7 +67,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "yes"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any())(any()))
+      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
         .thenReturn(Future(GrsCreateRegistrationResponse("/pillar-two/under-construction")))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER

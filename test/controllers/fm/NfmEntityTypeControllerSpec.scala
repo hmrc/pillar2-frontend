@@ -1,11 +1,27 @@
-package controllers
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.fm
 
 import base.SpecBase
-import controllers.fm.NfmEntityTypeController
+import controllers.routes
 import forms.NfmEntityTypeFormProvider
-import models.{NfmEntityType, NormalMode, UserAnswers}
-import pages.NfmEntityTypePage
-import play.api.mvc.Call
+import models.grs.EntityType
+import models.{NormalMode, UserAnswers}
+import pages.EntityTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NfmEntityTypeView
@@ -17,6 +33,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
   def controller(): NfmEntityTypeController =
     new NfmEntityTypeController(
       mockUserAnswersConnectors,
+      mockIncorporatedEntityIdentificationFrontendConnector,
+      mockPartnershipIdentificationFrontendConnector,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -32,7 +50,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -45,19 +63,19 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(NfmEntityTypePage, NfmEntityType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(EntityTypePage, EntityType.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(NfmEntityType.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -71,7 +89,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
