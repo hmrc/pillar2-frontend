@@ -48,8 +48,8 @@ upe-input-business-name.error.length = Name cannot be more than 200 characters
 upe-input-business-name.change.hidden= Change the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
 
-task-list.title = Register for Global Minimum Tax
-task-list.heading = Register for Global Minimum Tax
+task-list.title = Register for Pillar 2 top-up tax
+task-list.heading = Register for Pillar 2 top-up tax
 taskList.subheading.complete = Application incomplete
 taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Business details
