@@ -20,10 +20,10 @@ import forms.mappings.Mappings
 import models.fm.NfmRegisteredAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
-
+import forms.mappings.AddressMappings
 import javax.inject.Inject
 
-class NfmRegisteredAddressFormProvider @Inject() extends Mappings {
+class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength       = 35
   private val addressLength    = 35
   private val postalCodeLength = 200
@@ -45,9 +45,11 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings {
             .verifying(maxLength(addressLength, "nfm-registered-address.region.error.length"))
         ),
       "postalCode" ->
-        optional(
-          text("")
-            .verifying(maxLength(postalCodeLength, "nfm-registered-address.postcode.error.length"))
+        optionalPostcode(
+          Some("nfm-registered-address.postcode.error.invalid"),
+          "nfm-registered-address.postcode.error.invalid",
+          "nfm-registered-address.postcode.error.length",
+          "countryCode"
         ),
       "countryCode" ->
         text("nfm-registered-address.country.error.required")
