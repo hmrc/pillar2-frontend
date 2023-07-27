@@ -16,7 +16,7 @@
 
 package controllers.testdata
 
-import models.fm.FilingMember
+import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
@@ -62,6 +62,23 @@ trait Pillar2TestData {
           )
         )
       )
+    )
+
+  def validWithIdFmData(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = None,
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = None
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
     )
 
   def validWithIdRegDataForLimitedCompany =

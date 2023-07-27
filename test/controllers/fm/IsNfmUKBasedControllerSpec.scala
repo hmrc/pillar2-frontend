@@ -41,8 +41,10 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
   "IsNFMUKBased Controller" when {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
@@ -53,6 +55,21 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return NOT_FOUND if previous page not defined" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[IsNFMUKBasedView]
+
+        status(result) mustEqual NOT_FOUND
       }
     }
 

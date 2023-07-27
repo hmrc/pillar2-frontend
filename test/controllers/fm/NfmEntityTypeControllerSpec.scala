@@ -21,10 +21,10 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.routes
 import forms.NfmEntityTypeFormProvider
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NormalMode, UserAnswers}
+import models.{NfmRegisteredInUkConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.EntityTypePage
+import pages.{EntityTypePage, NominatedFilingMemberPage}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,8 +40,13 @@ class NfmEntityTypeControllerSpec extends SpecBase {
   "NfmEntityType Controller" when {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers
+          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes)))
+          .success
+          .value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -55,11 +60,32 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
+    "must return NOT_FOUND When previous page data is not avilable" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmEntityTypeView]
+
+        status(result) mustEqual NOT_FOUND
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers
+          .set(
+            NominatedFilingMemberPage,
+            validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes), orgType = Some(EntityType.UkLimitedCompany))
+          )
+          .success
+          .value
 
-      val userAnswers = UserAnswers(userAnswersId).set(EntityTypePage, EntityType.values.head).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -69,7 +95,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.UkLimitedCompany), NormalMode)(
           request,
           appConfig(application),
           messages(application)
