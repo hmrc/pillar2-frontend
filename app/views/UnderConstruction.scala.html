@@ -26,7 +26,6 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
-    @formHelper(action = routes.IndexController.onSubmit) {
         <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
 
 
@@ -34,6 +33,5 @@
         @govukButton(
             ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
         )
-    }
 
 }

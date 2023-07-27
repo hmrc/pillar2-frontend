@@ -17,12 +17,11 @@
 package stubsonly.controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,12 +39,16 @@ class TestOnlyController @Inject() (
     testOnlyConnector.clearAllData().map(httpResponse => Ok(httpResponse.body))
   }
 
-  def clearCurrentData(): Action[AnyContent] = Action.async { implicit request =>
-    testOnlyConnector.clearCurrentData().map(httpResponse => Ok(httpResponse.body))
+  def clearCurrentData(): Action[AnyContent] = identity.async { implicit request =>
+    testOnlyConnector.clearCurrentData(request.userId).map(httpResponse => Ok(httpResponse.body))
   }
 
   def getRegistrationData(): Action[AnyContent] = (identity andThen getData) { implicit request =>
     Ok(Json.toJson(request.userAnswers))
+  }
+
+  def getAllRecords(): Action[AnyContent] = Action.async { implicit request =>
+    testOnlyConnector.getAllRecords().map(httpResponse => Ok((httpResponse.json)))
   }
 
   def deEnrol(): Action[AnyContent] = testOnlyAuthorise.async { implicit request =>
@@ -57,6 +60,10 @@ class TestOnlyController @Inject() (
       case None => Future.successful(Ok("No Pillar2 enrolment found"))
     }
 
+  }
+
+  def clearSession: Action[AnyContent] = Action { implicit request =>
+    Redirect(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad).withNewSession
   }
 
 }

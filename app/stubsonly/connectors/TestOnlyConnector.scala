@@ -31,16 +31,21 @@ class TestOnlyConnector @Inject() (
 ) {
 
   private val pillar2Url: String =
-    s"${appConfig.pillar2BaseUrl}/pillar2/test-only"
+    s"${appConfig.pillar2BaseUrl}/pillar-two/test-only"
 
   def clearAllData()(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET(
       s"$pillar2Url/clear-all"
     )
 
-  def clearCurrentData()(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def clearCurrentData(id: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET(
-      s"$pillar2Url/clear-current"
+      s"$pillar2Url/clear-current/$id"
+    )
+
+  def getAllRecords()(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET(
+      s"$pillar2Url/get-all"
     )
 
   def deEnrol(groupId: String, pillar2Reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =

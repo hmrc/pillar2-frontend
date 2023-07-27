@@ -30,6 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeRegisteredAddressView
 
 import javax.inject.Inject
@@ -43,20 +44,28 @@ class UpeRegisteredAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeRegisteredAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = getUserName(request)
+    val userName     = getUserName(request)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.upeRegisteredAddress.fold(Ok(view(form, mode, userName)))(address => Ok(view(form.fill(address), mode, userName)))
+            )
+          }
 
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeRegisteredAddress.fold(form)(address => form.fill(address)))
+      case false => NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -84,4 +93,9 @@ class UpeRegisteredAddressController @Inject() (
     val registration = request.userAnswers.get(RegistrationPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration))
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => !data.isUPERegisteredInUK.toString.isEmpty)
 }

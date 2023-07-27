@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
-import models.Mode
+import models.{ContactUPEByTelephone, Mode}
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
@@ -30,6 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.CaptureTelephoneDetailsView
 
 import javax.inject.Inject
@@ -43,20 +44,29 @@ class CaptureTelephoneDetailsController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      CaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = getUserName(request)
-    val form     = formProvider(userName)
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.telephoneNumber.fold(form)(tel => form.fill(tel)))
+    val userName     = getUserName(request)
+    val form         = formProvider(userName)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.telephoneNumber.fold(Ok(view(form, mode, userName)))(tel => Ok(view(form.fill(tel), mode, userName)))
+            )
+          }
+
+      case false => NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -89,4 +99,14 @@ class CaptureTelephoneDetailsController @Inject() (
     val registration = request.userAnswers.get(RegistrationPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data =>
+        data.withoutIdRegData.fold(false)(withoutId =>
+          withoutId.contactUpeByTelephone.fold(false)(contactTel => contactTel == ContactUPEByTelephone.Yes)
+        )
+      )
+
 }

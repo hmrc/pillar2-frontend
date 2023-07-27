@@ -21,12 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeContactNameView
 
 import javax.inject.Inject
@@ -40,6 +42,7 @@ class UpeContactNameController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -48,12 +51,20 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeContactName.fold(form)(contactName => form.fill(contactName)))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(RegistrationPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.upeContactName.fold(Ok(view(form, mode)))(contactName => Ok(view(form.fill(contactName), mode)))
+            )
+          }
+
+      case false => NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -76,4 +87,10 @@ class UpeContactNameController @Inject() (
         }
       )
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.upeRegisteredAddress.isDefined))
+
 }
