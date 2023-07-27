@@ -65,7 +65,7 @@ class NfmEmailAddressController @Inject() (
         value => {
           val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("NFM Email Address not provided"))
           val regDataWithoutId =
-            regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration and address should be available before email"))
+            regData.withoutIdRegData.getOrElse(throw new Exception("NfmNameRegistration and address should be available before email"))
           for {
             updatedAnswers <-
               Future.fromTry(

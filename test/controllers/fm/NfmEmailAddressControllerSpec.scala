@@ -18,47 +18,47 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.NfmContactNameFormProvider
+import forms.NfmEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmview.NfmContactNameView
+import views.html.fmview.NfmEmailAddressView
 
 import scala.concurrent.Future
 
-class NfmContactNameControllerSpec extends SpecBase {
-  val formProvider = new NfmContactNameFormProvider()
-  def controller(): NfmContactNameController =
-    new NfmContactNameController(
+class NfmEmailAddressControllerSpec extends SpecBase {
+
+  def getNfmEmailAddressFormProvider: NfmEmailAddressFormProvider = new NfmEmailAddressFormProvider()
+  val formProvider = new NfmEmailAddressFormProvider()
+  def controller(): NfmEmailAddressController =
+    new NfmEmailAddressController(
       mockUserAnswersConnectors,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
-      formProvider,
+      getNfmEmailAddressFormProvider,
       stubMessagesControllerComponents(),
-      viewNfmContactName
+      viewNfmEmailAddress
     )
 
-  "NFMContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode))
+  "NfmContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmContactNameView]
+        val view = application.injector.instanceOf[NfmEmailAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider("Test user Name"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -67,27 +67,28 @@ class NfmContactNameControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdForNfm))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
+
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("fmContactName", "Ashley Smith"))
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("fmEmailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
-
     "must return a Bad Request when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST

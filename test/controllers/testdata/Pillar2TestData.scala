@@ -68,7 +68,7 @@ trait Pillar2TestData {
           )
         ),
         fmContactName = Some("Ashley Smith"),
-        None,
+        fmEmailAddress = Some("AshleySmith@email.com"),
         Some(ContactNFMByTelephone.No),
         None
       )
