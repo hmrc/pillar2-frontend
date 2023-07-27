@@ -19,10 +19,10 @@ package viewmodels.govuk
 import play.api.data.Field
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
 import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.{Select, SelectItem}
-
-import viewmodels.ErrorMessageAwareness
+import viewmodels.{ErrorMessageAwareness, InputWidth}
 
 object select extends SelectFluency
 
@@ -60,6 +60,7 @@ trait SelectFluency {
 
     def withAttribute(attribute: (String, String)): Select =
       select copy (attributes = select.attributes + attribute)
+
   }
 
   object SelectItemViewModel {

@@ -4,10 +4,6 @@
     "country:AD"
   ],
   [
-    "United Arab Emirates",
-    "country:AE"
-  ],
-  [
     "Afghanistan",
     "country:AF"
   ],
@@ -310,10 +306,6 @@
   [
     "Gabon",
     "country:GA"
-  ],
-  [
-    "United Kingdom",
-    "country:GB"
   ],
   [
     "Grenada",
@@ -932,12 +924,24 @@
     "country:UG"
   ],
   [
+    "United Arab Emirates",
+    "country:AE"
+  ],
+  [
+    "United Kingdom",
+    "country:GB"
+  ],
+  [
     "United States Minor Outlying Islands",
     "country:UM"
   ],
   [
     "United States of America",
     "country:US"
+  ],
+  [
+    "United States Virgin Islands",
+    "country:VI"
   ],
   [
     "Uruguay",
@@ -962,10 +966,6 @@
   [
     "British Virgin Islands",
     "country:VG"
-  ],
-  [
-    "United States Virgin Islands",
-    "country:VI"
   ],
   [
     "Vietnam",

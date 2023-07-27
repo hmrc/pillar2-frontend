@@ -158,7 +158,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
     new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
-    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

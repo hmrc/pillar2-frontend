@@ -32,6 +32,14 @@ trait Constraints {
         .map(_ => Valid)
         .getOrElse(Invalid(errorKey))
     }
+
+  protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
+    }
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev._
