@@ -19,7 +19,7 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.NFMEmailAddressFormProvider
+import forms.NfmEmailAddressFormProvider
 import models.Mode
 import models.requests.DataRequest
 import pages.{NominatedFilingMemberPage, RegistrationPage}
@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.fmview.NFMEmailAddressView
+import views.html.fmview.NfmEmailAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,9 +37,9 @@ class NfmEmailAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NFMEmailAddressFormProvider,
+  formProvider:              NfmEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NFMEmailAddressView
+  view:                      NfmEmailAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.fmview.NFMContactNameView
+import views.html.fmview.NfmContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ class NfmContactNameController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NfmContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NFMContactNameView
+  view:                      NfmContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

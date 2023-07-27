@@ -21,7 +21,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class NFMEmailAddressFormProvider @Inject() extends Mappings {
+class NfmEmailAddressFormProvider @Inject() extends Mappings {
   val max = 200
   def apply(userName: String): Form[String] =
     Form(

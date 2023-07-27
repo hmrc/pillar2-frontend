@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmview.NFMContactNameView
+import views.html.fmview.NfmContactNameView
 
 import scala.concurrent.Future
 
@@ -41,7 +41,7 @@ class NfmContactNameControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewNFMContactName
+      viewNfmContactName
     )
 
   "NFMContactName Controller" when {
@@ -55,7 +55,7 @@ class NfmContactNameControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NFMContactNameView]
+        val view = application.injector.instanceOf[NfmContactNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(

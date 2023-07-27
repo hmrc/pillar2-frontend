@@ -1,7 +1,7 @@
 package controllers
 
 import base.SpecBase
-import forms.NFMEmailAddressFormProvider
+import forms.NfmEmailAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -19,7 +19,7 @@ import scala.concurrent.Future
 class NFMEmailAddressControllerSpec extends SpecBase {
 
 
-  val formProvider = new NFMEmailAddressFormProvider()
+  val formProvider = new NfmEmailAddressFormProvider()
 
   def controller(): NFMEmailAddressController =
     new NFMEmailAddressController(

@@ -9,7 +9,7 @@ class NFMEmailAddressFormProviderSpec extends StringFieldBehaviours {
   val lengthKey = "nFMEmailAddress.error.length"
   val maxLength = 200
 
-  val form = new NFMEmailAddressFormProvider()()
+  val form = new NfmEmailAddressFormProvider()()
 
   ".value" - {
 

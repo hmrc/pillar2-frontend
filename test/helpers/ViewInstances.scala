@@ -25,7 +25,7 @@ import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
-import views.html.fmview.{IsNFMUKBasedView, NFMContactNameView, NominateFilingMemberYesNoView}
+import views.html.fmview.{IsNFMUKBasedView, NfmContactNameView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
@@ -37,8 +37,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewEntityType: EntityTypeView =
     new EntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
-  val viewNFMContactName: NFMContactNameView =
-    new NFMContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewNfmContactName: NfmContactNameView =
+    new NfmContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
