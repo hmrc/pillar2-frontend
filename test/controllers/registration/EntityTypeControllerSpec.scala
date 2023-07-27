@@ -17,7 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.EntityTypeFormProvider
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.{NormalMode, UserAnswers}
@@ -35,20 +35,6 @@ import scala.concurrent.Future
 class EntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new EntityTypeFormProvider()
-
-  def controller(): EntityTypeController =
-    new EntityTypeController(
-      mockUserAnswersConnectors,
-      mockIncorporatedEntityIdentificationFrontendConnector,
-      mockPartnershipIdentificationFrontendConnector,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewEntityType
-    )
 
   "EntityType Controller" when {
 
@@ -144,7 +130,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
 
       running(application) {

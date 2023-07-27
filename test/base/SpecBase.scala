@@ -71,11 +71,13 @@ trait SpecBase
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
 
+  def userAnswersWithIdForLimitedComp: UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+  def userAnswersWithIdForLLP:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
 
-  def fmWithIdLimtedCompanyData: UserAnswers =
+  def userAnswersWithIdForLimitedCompForFm: UserAnswers =
     emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
 
-  def fmWithIdPartnershipData: UserAnswers =
+  def userAnswersWithIdForLLPForFm: UserAnswers =
     emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
 
   val userAnswersId: String = "id"
@@ -112,10 +114,6 @@ trait SpecBase
   def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
     override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
       Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsDataForLimitedCompany)))
-  }
-  def preDataRequiredActionImplForFm: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
-    override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, validWithIdFmRegistrationDataForLimitedComp)))
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {

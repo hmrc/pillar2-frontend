@@ -17,7 +17,7 @@
 package controllers.fm
 
 import base.SpecBase
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.routes
 import forms.NfmEntityTypeFormProvider
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
@@ -36,19 +36,6 @@ import scala.concurrent.Future
 class NfmEntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new NfmEntityTypeFormProvider()
-
-  def controller(): NfmEntityTypeController =
-    new NfmEntityTypeController(
-      mockUserAnswersConnectors,
-      mockIncorporatedEntityIdentificationFrontendConnector,
-      mockPartnershipIdentificationFrontendConnector,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewNfmEntityType
-    )
 
   "NfmEntityType Controller" when {
 
@@ -111,7 +98,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     }
     "must redirect to GRS for UK Limited company" in {
 
-      val application = applicationBuilder(userAnswers = Some(fmWithIdLimtedCompanyData))
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
@@ -141,9 +128,9 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
     "must redirect to GRS for Limited Liability Partnership" in {
 
-      val application = applicationBuilder(userAnswers = Some(fmWithIdPartnershipData))
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLLPForFm))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
 
       running(application) {

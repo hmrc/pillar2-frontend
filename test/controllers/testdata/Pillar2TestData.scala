@@ -16,12 +16,8 @@
 
 package controllers.testdata
 
-<<<<<<< HEAD
 import models.fm.FilingMember
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-=======
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
->>>>>>> main
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
 import play.api.libs.json.{JsObject, Json}
@@ -68,34 +64,62 @@ trait Pillar2TestData {
       )
     )
 
-  val validWithIdFmRegistrationDataForLimitedComp =
-    new FilingMember(
-      nfmConfirmation = NfmRegistrationConfirmation.Yes,
-      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
-      isNFMnStatus = RowStatus.InProgress,
+  def validWithIdRegDataForLimitedCompany =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
-      withIdRegData = Some(new GrsResponse(incorporatedEntityRegistrationData = Some(validRegisterWithIdResponse)))
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
     )
 
-  val validWithIdFmRegistrationDataForPartnership =
+  def validWithIdRegDataForLLP =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
+    )
+
+  def validWithIdFmRegistrationDataForLimitedComp =
     new FilingMember(
       nfmConfirmation = NfmRegistrationConfirmation.Yes,
       isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
       isNFMnStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
-      withIdRegData = Some(new GrsResponse(partnershipEntityRegistrationData = Some(validRegisterWithIdResponseForLLP)))
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
+    )
 
+  def validWithIdFmRegistrationDataForPartnership =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
     )
   def validWithoutIdRegData(
-                             isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
-                             isRegistrationStatus: RowStatus = RowStatus.InProgress
-                           ) =
-    new Registration(
-      isUPERegisteredInUK = isUPERegisteredInUK,
-      isRegistrationStatus = isRegistrationStatus,
-      withoutIdRegData = None)
+    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus: RowStatus = RowStatus.InProgress
+  ) =
+    new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus, withoutIdRegData = None)
 
-  val validUpeRegisteredAddressed = new UpeRegisteredAddress(
+  def validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
     addressLine3 = "Line3",
@@ -113,7 +137,7 @@ trait Pillar2TestData {
         GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
       )
     )
-  val validIdRegistrationDataWithNoOrgType =
+  def validIdRegistrationDataWithNoOrgType =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
       isRegistrationStatus = RowStatus.InProgress,
@@ -128,11 +152,6 @@ trait Pillar2TestData {
 
   val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData]
 
-  val validFmUserAnswersGrsDataForLimitedCompany = UserAnswers(
-    "testId",
-    data = validWithIdFmRegistrationDataForLimitedComp
-  )
-
   val validUserAnswersGrsDataForLimitedCompany = UserAnswers(
     "testId",
     data = Json.parse(validDataObjectForUKLimtedCompany).as[JsObject]
@@ -141,6 +160,17 @@ trait Pillar2TestData {
     "testId",
     data = Json.parse(validDataObjectForLLP()).as[JsObject]
   )
+
+  val validFilingMemberUserAnswersGrsDataForLimitedCompany = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForUKLimtedCompany).as[JsObject]
+  )
+
+  val validFilingMemberUserAnswersGrsDataForLLP = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForLLP).as[JsObject]
+  )
+
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
 
   def validRegistrationWithIdResponse(): String =
@@ -234,6 +264,77 @@ trait Pillar2TestData {
        |            "isUPERegisteredInUK" : "yes",
        |            "isRegistrationStatus" : "InProgress",
        |            "orgType" : "limitedLiabilityPartnership",
+       |            "withIdRegData" : {
+       |                "partnershipEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Partnership Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "sautr" : "1234567890",
+       |                    "postcode" : "AA11AA",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
+  def validFilingMemberDataObjectForUKLimtedCompany(): String =
+    s"""
+      {
+       |        "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "ukLimitedCompany",
+       |            "isNFMnStatus" : "Completed",
+       |            "withIdRegData" : {
+       |                "incorporatedEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Company Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "ctutr" : "1234567890",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
+  def validFilingMemberDataObjectForLLP(): String =
+    s"""
+      {
+       |   "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "limitedLiabilityPartnership",
+       |            "isNFMnStatus" : "Completed",
        |            "withIdRegData" : {
        |                "partnershipEntityRegistrationData" : {
        |                    "companyProfile" : {
