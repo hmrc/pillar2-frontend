@@ -73,8 +73,10 @@
                 field = form("postalCode"),
                 label = LabelViewModel(messages("nfm-registered-address.postcode"))
             )
-                    .withWidth(Fixed10)
-            .withHint(Hint(content = Text(messages("nfm-registered-address.postcode.hint"))))
+            .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("nfm-registered-address.postcode.hint"))).withCssClass("govuk-input--width-20")
+
+            )
         )
         @govukSelect(
             SelectViewModel(
