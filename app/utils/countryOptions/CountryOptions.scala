@@ -28,24 +28,9 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
-
   def options: Seq[InputOption] = CountryOptions.getCountries(environment, config.locationCanonicalList)
-  def regions(countryCode: String): InternationalRegion =
-    CountryOptions.getInternationalRegion(environment, config, countryCode)
-
-  def getCountryNameFromCode(code: String): String =
-    options
-      .find(_.value == code)
-      .map(_.label)
-      .getOrElse(code)
-
-//  def getCountryNameFromCode(address: Address): String = getCountryNameFromCode(address.country)
-//
-//  def getCountryNameFromCode(address: TolerantAddress): Option[String] =
-//    address.countryOpt.map(getCountryNameFromCode)
 
 }
-
 object CountryOptions {
 
   def getCountries(environment: Environment, fileName: String): Seq[InputOption] =
@@ -62,33 +47,4 @@ object CountryOptions {
       .getOrElse {
         throw new ConfigException.BadValue(fileName, "country json does not exist")
       }
-
-  def getCountryCodes(environment: Environment, fileName: String): Seq[String] =
-    environment
-      .resourceAsStream(fileName)
-      .map { in =>
-        val locationJsValue = Json.parse(in)
-        Json
-          .fromJson[Seq[Seq[String]]](locationJsValue)
-          .asOpt
-          .map {
-            _.map { countryList =>
-              countryList(1).replaceAll("country:", "")
-            }
-          }
-          .fold[Seq[String]](List.empty)(identity)
-      }
-      .getOrElse {
-        throw new ConfigException.BadValue(fileName, "country json does not exist")
-      }
-
-  def getInternationalRegion(environment: Environment, config: FrontendAppConfig, countryCode: String): InternationalRegion = {
-    val regionEuEea = getCountryCodes(environment, config.locationCanonicalListEUAndEEA)
-    countryCode match {
-      case "GB"                               => UK
-      case code if regionEuEea.contains(code) => EuEea
-      case _                                  => RestOfTheWorld
-    }
-  }
-
 }

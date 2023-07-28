@@ -77,6 +77,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
     configuration.get[Boolean]("features.welsh-translation")
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
 
-  lazy val locationCanonicalList:         String = loadConfig("location.canonical.list.all")
-  lazy val locationCanonicalListEUAndEEA: String = loadConfig("location.canonical.list.EUAndEEA")
+  lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 }
