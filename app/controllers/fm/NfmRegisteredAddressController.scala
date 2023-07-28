@@ -59,22 +59,19 @@ class NfmRegisteredAddressController @Inject() (
       case None        => form
       case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmNameAddress.fold(form)(address => form.fill(address)))
     }
-// value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
     Ok(view(preparedForm, mode, userName, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName    = getUserName(request)
-    val countryCode = getCountry(request);
-    println("*******************************************************" + userName + "country code" + countryCode);
+    val userName = getUserName(request)
 
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
-        value =>
-          //   val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-          // val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
+        value => {
+          val regData          = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("previous page not answered"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("previous page data should be available before address"))
           for {
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
@@ -89,18 +86,12 @@ class NfmRegisteredAddressController @Inject() (
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        }
       )
   }
-
   private def getUserName(request: DataRequest[AnyContent]): String = {
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
 
-  private def getCountry(request: DataRequest[AnyContent]): String = {
-    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
-    fmDetails.fold("")(fmData =>
-      fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmNameAddress.fold("")(address => address.countryCode))
-    )
-  }
 }

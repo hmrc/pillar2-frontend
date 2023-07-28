@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.fmview.NfmNameRegistrationView
 
-class NfmNameRegistrationControllerControllerSpec extends SpecBase {
+class NfmNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new NfmNameRegistrationControllerFormProvider()
 

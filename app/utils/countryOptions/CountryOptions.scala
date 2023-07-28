@@ -18,8 +18,6 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import models.InternationalRegion.{EuEea, RestOfTheWorld, UK}
-import models.InternationalRegion
 import play.api.Environment
 import play.api.libs.json.Json
 import utils.InputOption

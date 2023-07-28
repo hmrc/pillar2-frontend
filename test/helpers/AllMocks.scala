@@ -30,6 +30,7 @@ import play.api.i18n.MessagesApi
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import utils.countryOptions.CountryOptions
 
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
@@ -40,6 +41,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockUserAnswersConnectors:                   UserAnswersConnectors                   = mock[UserAnswersConnectors]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionData:                             SessionData                             = mock[SessionData]
+  val countryOptions:                              CountryOptions                          = mock[CountryOptions]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockIdentifierAction:                        IdentifierAction                        = mock[IdentifierAction]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
