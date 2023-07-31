@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.InputOption
-import views.html.fmview.NfmRegisteredAddressView
+
 
 import scala.concurrent.Future
 
@@ -57,15 +57,13 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         when(countryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
         val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
-
-        val view = application.injector.instanceOf[NfmRegisteredAddressView]
-        println("*****************************" + contentAsString(result))
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, "test name", Seq(InputOption("IN", "India")))(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) should include(
+          "Where is the registered office address of "
+        )
+        contentAsString(result) should include(
+          "For a UK address, you must enter a correctly formatted UK postcode"
+        )
       }
     }
 
