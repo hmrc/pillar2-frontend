@@ -18,7 +18,7 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{NfmRegisteredAddressFormProvider, UpeRegisteredAddressFormProvider}
+import forms.NfmRegisteredAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.InputOption
 import views.html.fmview.NfmRegisteredAddressView
 
 import scala.concurrent.Future
@@ -37,7 +38,6 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
   def controller(): NfmRegisteredAddressController =
     new NfmRegisteredAddressController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -47,80 +47,104 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
       viewNfmRegisteredAddress
     )
 
-  "NfmRegisteredAddress Controller" must {
+  "Nfm Registered Address Controller" must {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+        when(countryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
         val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[NfmRegisteredAddressView]
-
+        println("*****************************" + contentAsString(result))
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, "test name", countryOptions.options)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, "test name", Seq(InputOption("IN", "India")))(
           request,
           appConfig(application),
           messages(application)
         ).toString
       }
     }
-//
-//    "must redirect to the next page when valid data is submitted" in {
-//      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
-//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//        .build()
-//
-//      running(application) {
-//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//        val request =
-//          FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
-//            .withFormUrlEncodedBody(
-//              ("addressLine1", "27 house"),
-//              ("addressLine2", "Drive"),
-//              ("addressLine3", "Newcastle"),
-//              ("addressLine4", "North east"),
-//              ("postalCode", "NE3 2TR"),
-//              ("countryCode", "GB")
-//            )
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        // redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-//      }
-//    }
-//
-//    "return bad request if fields are greater than 200 in length" in {
-//      val testValue =
-//        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-//          "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-//      val request =
-//        FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
-//          .withFormUrlEncodedBody(
-//            ("addressLine1", testValue),
-//            ("addressLine2", "Drive"),
-//            ("addressLine3", "Newcastle"),
-//            ("addressLine4", "North east"),
-//            ("postalCode", "NE3 2TR"),
-//            ("countryCode", "GB")
-//          )
-//      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//      val result = controller.onSubmit(NormalMode)()(request)
-//      status(result) mustEqual BAD_REQUEST
-//
-//    }
-//    "return bad request if required fields are not filled" in {
-//
-//      val request =
-//        FakeRequest(POST, routes.NfmNameRegistrationController.onSubmit(NormalMode).url)
-//          .withFormUrlEncodedBody(("addressLine1", "27 house"))
-//      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//      val result = controller.onSubmit(NormalMode)()(request)
-//      status(result) mustEqual BAD_REQUEST
-//
-//    }
+
+    "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("addressLine1", "27 house"),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "NE3 2TR"),
+              ("countryCode", "GB")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
+    "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("addressLine1", "27 house"),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "hhhhhhhhhhhh"),
+              ("countryCode", "GB")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "display error page and status should be Bad request if invalid address length is used  when country code is GB" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val longCharr =
+          "27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house"
+        val request =
+          FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              (
+                "addressLine1",
+                longCharr
+              ),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "hhhhhhhhhhhh"),
+              ("countryCode", "GB")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
   }
 }

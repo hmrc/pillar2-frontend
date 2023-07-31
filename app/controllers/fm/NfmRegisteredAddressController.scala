@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -69,9 +68,7 @@ class NfmRegisteredAddressController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
-        value => {
-          val regData          = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("previous page not answered"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("previous page data should be available before address"))
+        value =>
           for {
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
@@ -86,7 +83,6 @@ class NfmRegisteredAddressController @Inject() (
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-        }
       )
   }
   private def getUserName(request: DataRequest[AnyContent]): String = {
