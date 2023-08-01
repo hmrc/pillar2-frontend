@@ -50,7 +50,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
 
       running(application) {
         when(countryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
@@ -122,14 +122,14 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val longCharr =
+        val longChars =
           "27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house"
         val request =
           FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",
-                longCharr
+                longChars
               ),
               ("addressLine2", "Drive"),
               ("addressLine3", "Newcastle"),
