@@ -39,9 +39,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAuthConnector:                           AuthConnector                           = mock[AuthConnector]
   val mockFrontendAppConfig:                       FrontendAppConfig                       = mock[FrontendAppConfig]
   val mockUserAnswersConnectors:                   UserAnswersConnectors                   = mock[UserAnswersConnectors]
+  val mockCountryOptions:                          CountryOptions                          = mock[CountryOptions]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionData:                             SessionData                             = mock[SessionData]
-  val countryOptions:                              CountryOptions                          = mock[CountryOptions]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockIdentifierAction:                        IdentifierAction                        = mock[IdentifierAction]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
@@ -58,6 +58,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockAuthConnector,
       mockFrontendAppConfig,
       mockUserAnswersConnectors,
+      mockCountryOptions,
       mockNavigator,
       mockIdentifierAction,
       mockDataRetrievalAction,
