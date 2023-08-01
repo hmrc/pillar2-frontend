@@ -86,7 +86,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
 
       running(application) {
         val request =
