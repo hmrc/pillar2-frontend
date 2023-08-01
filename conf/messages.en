@@ -259,3 +259,21 @@ isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
+
+contactNfmByTelephone.heading.caption = Business details
+contactNfmByTelephone.title = Can we contact {0} by telephone?
+contactNfmByTelephone.heading = Can we contact {0} by telephone?
+contactNfmByTelephone.hint = We will use this to confirm your records
+contactNfmByTelephone.checkYourAnswersLabel = Telephone contact for nominated filing member
+contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
+contactNfmByTelephone.change.hidden = Change your response to whether we make contact by telephone or not for nominated filing member
+
+nfmCaptureTelephoneDetails.heading.caption = Business details
+nfmCaptureTelephoneDetails.title = What is the telephone number for {0}?
+nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
+nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+nfmCaptureTelephoneDetails.checkYourAnswersLabel = Capture telephone contact for nominated filing member
+nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
+nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
+nfmCaptureTelephoneDetails.change.hidden = Change your response to capture telephone number for nominated filing member
+

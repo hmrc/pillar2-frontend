@@ -26,11 +26,17 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
-import views.html.fmview.{IsNFMUKBasedView, NominateFilingMemberYesNoView}
+import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
+    new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewContactNfmByTelephone: ContactNfmByTelephoneView =
+    new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewIsNFMUKBased: IsNFMUKBasedView =
     new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

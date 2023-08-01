@@ -102,3 +102,13 @@ GET        /business-matching/filing-member/registered-in-uk                    
 POST       /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /business-matching/filing-member/no-id/telephone                        controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/telephone                        controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-telephone                  controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-telephone                  controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /business-matching/filing-member/no-id/input-telephone                        controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-telephone                        controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-telephone                  controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-telephone                  controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
