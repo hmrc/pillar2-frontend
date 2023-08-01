@@ -34,16 +34,6 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
   def getNfmEmailAddressFormProvider: NfmEmailAddressFormProvider = new NfmEmailAddressFormProvider()
   val formProvider = new NfmEmailAddressFormProvider()
-  def controller(): NfmEmailAddressController =
-    new NfmEmailAddressController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      getNfmEmailAddressFormProvider,
-      stubMessagesControllerComponents(),
-      viewNfmEmailAddress
-    )
 
   "NfmContactEmail Controller" when {
 
@@ -76,7 +66,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("fmEmailAddress", "AshleySmith@email.com"))
+            .withFormUrlEncodedBody(("value", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 

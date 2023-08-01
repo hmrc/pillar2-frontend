@@ -59,7 +59,7 @@ class NfmEmailAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val userName = getUserName(request)
-    val form = formProvider(userName)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
@@ -86,6 +86,6 @@ class NfmEmailAddressController @Inject() (
 
   private def getUserName(request: DataRequest[AnyContent]): String = {
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
-    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.get))
+    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
   }
 }
