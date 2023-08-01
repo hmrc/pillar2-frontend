@@ -20,12 +20,15 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmContactNameFormProvider
-import models.Mode
+import models.fm.{FilingMember, WithoutIdNfmData}
+import models.requests.DataRequest
+import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.fmview.NfmContactNameView
 
 import javax.inject.Inject
@@ -59,18 +62,27 @@ class NfmContactNameController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val regData          = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Contact for NFM not selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("nFMNameRegistration should be available before address"))
+        value =>
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmContactName = Some(value)))))
+                  .set(
+                    NominatedFilingMemberPage,
+                    FilingMember(
+                      NfmRegistrationConfirmation.Yes,
+                      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                      isNFMnStatus = RowStatus.InProgress,
+                      withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request)))
+                    )
+                  )
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))
-        }
       )
+  }
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
+    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
 }
