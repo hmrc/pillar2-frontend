@@ -17,14 +17,21 @@
 package controllers.fm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationControllerFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.NominatedFilingMemberPage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.fmview.NfmNameRegistrationView
+
+import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 
@@ -86,9 +93,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "John F"))
