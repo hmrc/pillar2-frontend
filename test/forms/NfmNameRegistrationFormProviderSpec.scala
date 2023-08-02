@@ -21,8 +21,8 @@ import play.api.data.FormError
 
 class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "nfmNameRegistrationController.error.required"
-  val lengthKey   = "nfmNameRegistrationController.error.length"
+  val requiredKey = "nfmNameRegistration.error.required"
+  val lengthKey   = "nfmNameRegistration.error.length"
   val maxLength   = 105
 
   val form = new NfmNameRegistrationFormProvider()()
