@@ -68,7 +68,7 @@ trait Pillar2TestData {
     NfmRegistrationConfirmation.Yes,
     Some(NfmRegisteredInUkConfirmation.No),
     isNFMnStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmNameAddress = Some(validNfmRegisteredAddressed)))
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddressed)))
   )
 
   def validWithoutIdRegData(

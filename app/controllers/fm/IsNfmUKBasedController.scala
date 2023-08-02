@@ -59,6 +59,7 @@ class IsNfmUKBasedController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
     form
       .bindFromRequest()
       .fold(
@@ -73,7 +74,9 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
+                          fmData.fold(FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.InProgress))(data =>
+                            data.copy(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
+                          )
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

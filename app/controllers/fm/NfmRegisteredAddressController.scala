@@ -51,12 +51,12 @@ class NfmRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[NfmRegisteredAddress] = formProvider()
-  val countryList = CountryOptions.options
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = getUserName(request)
     val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
       case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmNameAddress.fold(form)(address => form.fill(address)))
+      case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmAddress.fold(form)(address => form.fill(address)))
     }
     Ok(view(preparedForm, mode, userName, countryList))
   }
@@ -77,7 +77,7 @@ class NfmRegisteredAddressController @Inject() (
                                     NfmRegistrationConfirmation.Yes,
                                     isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
                                     isNFMnStatus = RowStatus.InProgress,
-                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmNameAddress = Some(value), registeredFmName = userName))
+                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmAddress = Some(value), registeredFmName = userName))
                                   )
                                 )
                               )

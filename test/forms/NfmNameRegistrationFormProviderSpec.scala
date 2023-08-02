@@ -19,13 +19,13 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class NfmNameRegistrationControllerFormProviderSpec extends StringFieldBehaviours {
+class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "nfmNameRegistrationController.error.required"
-  val lengthKey   = "nfmNameRegistrationController.error.length"
-  val maxLength   = 1000
+  val requiredKey = "nfmNameRegistration.error.required"
+  val lengthKey   = "nfmNameRegistration.error.length"
+  val maxLength   = 105
 
-  val form = new NfmNameRegistrationControllerFormProvider()()
+  val form = new NfmNameRegistrationFormProvider()()
 
   ".value" - {
 

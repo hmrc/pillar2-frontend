@@ -81,5 +81,14 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
 
     }
+    "Bad request if no option  is selected" in {
+
+      val request =
+        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual BAD_REQUEST
+
+    }
   }
 }

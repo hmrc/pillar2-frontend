@@ -27,18 +27,18 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("nfmNameRegistrationController.title"))) {
+@layout(pageTitle = title(form, messages("nfmNameRegistration.title"))) {
 
     @formHelper(action = controllers.fm.routes.NfmNameRegistrationController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("nfmNameRegistrationController.heading.caption")</span>
+        <span class="govuk-caption-l">@messages("nfmNameRegistration.heading.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nfmNameRegistrationController.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("nfmNameRegistration.heading")).asPageHeading(Large)
             ).withWidth(TwoThirds)
         )
 
