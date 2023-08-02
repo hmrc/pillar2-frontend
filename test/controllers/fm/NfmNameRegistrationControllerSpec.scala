@@ -81,8 +81,11 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val pageAnswer =
+        FilingMember(NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.InProgress, withoutIdRegData = Some(WithoutIdNfmData("answer")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      val userAnswers = UserAnswers(userAnswersId).set(NominatedFilingMemberPage, pageAnswer).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

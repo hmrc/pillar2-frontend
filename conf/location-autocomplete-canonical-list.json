@@ -160,7 +160,7 @@
     "country:CF"
   ],
   [
-    "Congo(Democratic Republic)",
+    "Congo (Democratic Republic)",
     "country:CD"
   ],
   [
@@ -816,10 +816,6 @@
     "country:SO"
   ],
   [
-    "Suriname",
-    "country:SR"
-  ],
-  [
     "South Sudan",
     "country:SS"
   ],
@@ -834,6 +830,10 @@
   [
     "Sint Maarten (Dutch part)",
     "country:SX"
+  ],
+  [
+    "Suriname",
+    "country:SR"
   ],
   [
     "Svalbard and Jan Mayen",
