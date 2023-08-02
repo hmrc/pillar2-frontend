@@ -66,6 +66,14 @@ class IsNfmUKBasedController @Inject() (
         value =>
           value match {
             case NfmRegisteredInUkConfirmation.No =>
+              val regData =
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData)(_ => regData copy (withIdRegData = None))
+
               for {
                 updatedAnswers <-
                   Future
@@ -73,7 +81,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
+                          checkedRegData
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

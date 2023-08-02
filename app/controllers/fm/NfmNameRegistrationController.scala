@@ -63,21 +63,21 @@ class NfmNameRegistrationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        value => {
+          val regData =
+            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing member registered in UK not been selected"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(WithoutIdNfmData(registeredFmName = value))
+
           for {
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
                                   NominatedFilingMemberPage,
-                                  FilingMember(
-                                    NfmRegistrationConfirmation.Yes,
-                                    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                                    isNFMnStatus = RowStatus.InProgress,
-                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmName = value))
-                                  )
+                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)))
                                 )
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
+        }
       )
   }
 }
