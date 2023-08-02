@@ -37,6 +37,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+        <span class="govuk-caption-l">@messages("nfm-registered-address.heading.caption")</span>
         <h1 class="govuk-heading-l long-word">@messages("nfm-registered-address.heading", UserName)</h1>
 
 

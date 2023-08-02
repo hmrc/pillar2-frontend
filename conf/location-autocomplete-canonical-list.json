@@ -184,6 +184,10 @@
     "country:CM"
   ],
   [
+    "Cambodia",
+    "country:KH"
+  ],
+  [
     "China",
     "country:CN"
   ],
@@ -274,6 +278,10 @@
   [
     "Ethiopia",
     "country:ET"
+  ],
+  [
+    "European Union",
+    "country:EU"
   ],
   [
     "Finland",
@@ -460,10 +468,6 @@
     "country:KG"
   ],
   [
-    "Cambodia",
-    "country:KH"
-  ],
-  [
     "Kiribati",
     "country:KI"
   ],
@@ -634,6 +638,10 @@
   [
     "Namibia",
     "country:NA"
+  ],
+  [
+    "NATO",
+    "country:NT"
   ],
   [
     "New Caledonia",
@@ -872,7 +880,7 @@
     "country:TJ"
   ],
   [
-    "Tokelau",
+    "Tokelau Islands",
     "country:TK"
   ],
   [
@@ -930,6 +938,10 @@
   [
     "United States Minor Outlying Islands",
     "country:UM"
+  ],
+  [
+    "United Nations",
+    "country:UN"
   ],
   [
     "United States of America",
