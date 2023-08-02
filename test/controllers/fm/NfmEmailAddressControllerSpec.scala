@@ -32,7 +32,6 @@ import scala.concurrent.Future
 
 class NfmEmailAddressControllerSpec extends SpecBase {
 
-  def getNfmEmailAddressFormProvider: NfmEmailAddressFormProvider = new NfmEmailAddressFormProvider()
   val formProvider = new NfmEmailAddressFormProvider()
 
   "NfmContactEmail Controller" when {

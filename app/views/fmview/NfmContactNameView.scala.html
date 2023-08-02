@@ -38,7 +38,7 @@
         <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
         @govukInput(
             InputViewModel(
-                field = form("fmContactName"),
+                field = form("value"),
                 label = LabelViewModel(messages("nFMContactName.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("nFMContactName.hint"))))

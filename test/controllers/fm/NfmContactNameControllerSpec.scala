@@ -33,16 +33,6 @@ import scala.concurrent.Future
 
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
-  def controller(): NfmContactNameController =
-    new NfmContactNameController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewNfmContactName
-    )
 
   "NFMContactName Controller" when {
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode))
@@ -74,7 +64,7 @@ class NfmContactNameControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("fmContactName", "Ashley Smith"))
+            .withFormUrlEncodedBody(("value", "Ashley Smith"))
 
         val result = route(application, request).value
 
