@@ -37,17 +37,6 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new NfmNameRegistrationFormProvider()
 
-  def controller(): NfmNameRegistrationController =
-    new NfmNameRegistrationController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewNfmNameRegistrationController
-    )
-
   "NfmNameRegistrationController Controller" when {
 
     "must return OK and the correct view for a GET" in {

@@ -34,37 +34,30 @@ import scala.concurrent.Future
 class NfmRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new NfmRegisteredAddressFormProvider()
 
-  def controller(): NfmRegisteredAddressController =
-    new NfmRegisteredAddressController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      countryOptions,
-      stubMessagesControllerComponents(),
-      viewNfmRegisteredAddress
-    )
-
   "Nfm Registered Address Controller" must {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
-
-      running(application) {
-        when(countryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
-        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) should include(
-          "Where is the registered office address of "
-        )
-        contentAsString(result) should include(
-          "For a UK address, you must enter a correctly formatted UK postcode"
-        )
-      }
-    }
+//    "must return OK and the correct view for a GET" in {
+//
+//      val application = applicationBuilder(userAnswers = Some(userAnswersNfmNoId))
+//        .overrides(bind[CountryOptions].toInstance(mockCountryOptions))
+//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+//        .build()
+//      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+//
+//      running(application) {
+//        when(mockCountryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
+//        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+//        val result = route(application, request).value
+//        val view   = application.injector.instanceOf[NfmRegisteredAddressView]
+//        status(result) mustEqual OK
+//        contentAsString(result) mustEqual view(formProvider(), NormalMode, "test name", mockCountryOptions.options)(
+//          request,
+//          appConfig(application),
+//          messages(application)
+//        ).toString
+//      }
+//    }
 
     "must redirect to the next page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))

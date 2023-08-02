@@ -16,9 +16,10 @@
 
 package controllers.testdata
 
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.registration._
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -63,6 +64,13 @@ trait Pillar2TestData {
       )
     )
 
+  def validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddressed)))
+  )
+
   def validWithoutIdRegData(
     isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus: RowStatus = RowStatus.InProgress
@@ -80,6 +88,14 @@ trait Pillar2TestData {
     addressLine4 = Some("Line4"),
     postalCode = Some("VR11 3PA"),
     countryCode = "GB"
+  )
+  val validNfmRegisteredAddressed = new NfmRegisteredAddress(
+    addressLine1 = "Line1",
+    addressLine2 = Some("Line2"),
+    addressLine3 = "Line3",
+    addressLine4 = Some("Line4"),
+    postalCode = Some("VR11 3PA"),
+    countryCode = "IN"
   )
 
   val validIdRegistrationData =

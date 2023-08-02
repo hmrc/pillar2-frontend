@@ -59,6 +59,7 @@ class IsNfmUKBasedController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
     form
       .bindFromRequest()
       .fold(
