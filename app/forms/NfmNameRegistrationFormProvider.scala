@@ -21,11 +21,11 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class NfmNameRegistrationControllerFormProvider @Inject() extends Mappings {
+class NfmNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("nfmNameRegistrationController.error.required")
-        .verifying(maxLength(1000, "nfmNameRegistrationController.error.length"))
+        .verifying(maxLength(105, "nfmNameRegistrationController.error.length"))
     )
 }

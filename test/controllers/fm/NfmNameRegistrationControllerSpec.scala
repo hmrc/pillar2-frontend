@@ -18,7 +18,7 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.NfmNameRegistrationControllerFormProvider
+import forms.NfmNameRegistrationFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 
-  val formProvider = new NfmNameRegistrationControllerFormProvider()
+  val formProvider = new NfmNameRegistrationFormProvider()
 
   def controller(): NfmNameRegistrationController =
     new NfmNameRegistrationController(

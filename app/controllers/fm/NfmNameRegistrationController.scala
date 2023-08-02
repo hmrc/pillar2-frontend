@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.NfmNameRegistrationControllerFormProvider
+import forms.NfmNameRegistrationFormProvider
 import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import models.fm.{FilingMember, WithoutIdNfmData}
 import pages.NominatedFilingMemberPage
@@ -40,7 +40,7 @@ class NfmNameRegistrationController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NfmNameRegistrationControllerFormProvider,
+  formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
