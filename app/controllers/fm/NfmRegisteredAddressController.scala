@@ -51,7 +51,7 @@ class NfmRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[NfmRegisteredAddress] = formProvider()
-  val countryList = CountryOptions.options
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName = getUserName(request)
     val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {

@@ -1,9 +1,5 @@
 [
   [
-    "Andorra",
-    "country:AD"
-  ],
-  [
     "Afghanistan",
     "country:AF"
   ],
@@ -12,12 +8,20 @@
     "country:AG"
   ],
   [
+    "Algeria",
+    "country:DZ"
+  ],
+  [
     "Anguilla",
     "country:AI"
   ],
   [
     "Albania",
     "country:AL"
+  ],
+  [
+    "Andorra",
+    "country:AD"
   ],
   [
     "Armenia",
@@ -62,10 +66,6 @@
   [
     "Azerbaijan",
     "country:AZ"
-  ],
-  [
-    "Bosnia and Herzegovina",
-    "country:BA"
   ],
   [
     "Barbados",
@@ -124,6 +124,10 @@
     "country:BS"
   ],
   [
+    "Belize",
+    "country:BZ"
+  ],
+  [
     "Bhutan",
     "country:BT"
   ],
@@ -140,8 +144,8 @@
     "country:BY"
   ],
   [
-    "Belize",
-    "country:BZ"
+    "British Indian Ocean Territory",
+    "country:IO"
   ],
   [
     "Canada",
@@ -152,20 +156,12 @@
     "country:CC"
   ],
   [
-    "Democratic Republic of the Congo",
-    "country:CD"
-  ],
-  [
     "Central African Republic",
     "country:CF"
   ],
   [
-    "Republic of the Congo",
-    "country:CG"
-  ],
-  [
-    "Switzerland",
-    "country:CH"
+    "Congo(Democratic Republic)",
+    "country:CD"
   ],
   [
     "Cote d'Ivoire",
@@ -196,12 +192,16 @@
     "country:CO"
   ],
   [
+    "Comoros",
+    "country:KM"
+  ],
+  [
     "Costa Rica",
     "country:CR"
   ],
   [
-    "Serbia and Montenegro",
-    "country:CS"
+    "Croatia",
+    "country:HR"
   ],
   [
     "Cuba",
@@ -228,10 +228,6 @@
     "country:CZ"
   ],
   [
-    "Germany",
-    "country:DE"
-  ],
-  [
     "Djibouti",
     "country:DJ"
   ],
@@ -246,10 +242,6 @@
   [
     "Dominican Republic",
     "country:DO"
-  ],
-  [
-    "Algeria",
-    "country:DZ"
   ],
   [
     "Ecuador",
@@ -276,8 +268,16 @@
     "country:ES"
   ],
   [
+    "El Salvador",
+    "country:SV"
+  ],
+  [
     "Ethiopia",
     "country:ET"
+  ],
+  [
+    "Equatorial Guinea",
+    "country:GQ"
   ],
   [
     "European Union",
@@ -294,10 +294,6 @@
   [
     "Falkland Islands",
     "country:FK"
-  ],
-  [
-    "Micronesia",
-    "country:FM"
   ],
   [
     "Faroe Islands",
@@ -322,6 +318,10 @@
   [
     "French Guiana",
     "country:GF"
+  ],
+  [
+    "Germany",
+    "country:DE"
   ],
   [
     "Guernsey",
@@ -352,16 +352,8 @@
     "country:GP"
   ],
   [
-    "Equatorial Guinea",
-    "country:GQ"
-  ],
-  [
     "Greece",
     "country:GR"
-  ],
-  [
-    "South Georgia and the Southern Sandwich Islands",
-    "country:GS"
   ],
   [
     "Guatemala",
@@ -392,10 +384,6 @@
     "country:HN"
   ],
   [
-    "Croatia",
-    "country:HR"
-  ],
-  [
     "Haiti",
     "country:HT"
   ],
@@ -422,10 +410,6 @@
   [
     "India",
     "country:IN"
-  ],
-  [
-    "British Indian Ocean Territory",
-    "country:IO"
   ],
   [
     "Iraq",
@@ -472,10 +456,6 @@
     "country:KI"
   ],
   [
-    "Comoros",
-    "country:KM"
-  ],
-  [
     "Saint Kitts and Nevis",
     "country:KN"
   ],
@@ -516,10 +496,6 @@
     "country:LI"
   ],
   [
-    "Sri Lanka",
-    "country:LK"
-  ],
-  [
     "Liberia",
     "country:LR"
   ],
@@ -542,6 +518,10 @@
   [
     "Libya",
     "country:LY"
+  ],
+  [
+    "Micronesia",
+    "country:FM"
   ],
   [
     "Morocco",
@@ -720,10 +700,6 @@
     "country:PL"
   ],
   [
-    "Saint Pierre and Miquelon",
-    "country:PM"
-  ],
-  [
     "Pitcairn Islands",
     "country:PN"
   ],
@@ -756,6 +732,10 @@
     "country:RE"
   ],
   [
+    "Republic of the Congo",
+    "country:CG"
+  ],
+  [
     "Romania",
     "country:RO"
   ],
@@ -772,8 +752,16 @@
     "country:RW"
   ],
   [
+    "Saint Pierre and Miquelon",
+    "country:PM"
+  ],
+  [
     "Saudi Arabia",
     "country:SA"
+  ],
+  [
+    "Serbia and Montenegro",
+    "country:CS"
   ],
   [
     "Solomon Islands",
@@ -804,8 +792,8 @@
     "country:SI"
   ],
   [
-    "Svalbard and Jan Mayen",
-    "country:SJ"
+    "Sri Lanka",
+    "country:LK"
   ],
   [
     "Slovakia",
@@ -836,16 +824,20 @@
     "country:SS"
   ],
   [
+    "South Georgia and the Southern Sandwich Islands",
+    "country:GS"
+  ],
+  [
     "Sao Tome and Principe",
     "country:ST"
   ],
   [
-    "El Salvador",
-    "country:SV"
-  ],
-  [
     "Sint Maarten (Dutch part)",
     "country:SX"
+  ],
+  [
+    "Svalbard and Jan Mayen",
+    "country:SJ"
   ],
   [
     "Syria",
@@ -854,6 +846,10 @@
   [
     "Swaziland",
     "country:SZ"
+  ],
+  [
+    "Switzerland",
+    "country:CH"
   ],
   [
     "Turks and Caicos Islands",
