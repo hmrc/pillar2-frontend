@@ -71,6 +71,9 @@ trait SpecBase
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
 
+  def userAnswersWithNoIdCompleted: UserAnswers =
+    emptyUserAnswers.set(RegistrationPage, validNoIdRegData(isRegistrationStatus = RowStatus.Completed)).success.value
+
   def userAnswersWithIdForLimitedComp: UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
   def userAnswersWithIdForLLP:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
 
