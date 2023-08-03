@@ -72,7 +72,9 @@ class IsNfmUKBasedController @Inject() (
                   .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
 
               val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ => regData copy (withIdRegData = None))
+                regData.withIdRegData.fold(regData copy (isNfmRegisteredInUK = Some(value)))(_ =>
+                  regData copy (isNfmRegisteredInUK = Some(value), withIdRegData = None)
+                )
 
               for {
                 updatedAnswers <-
