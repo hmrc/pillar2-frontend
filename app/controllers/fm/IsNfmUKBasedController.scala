@@ -59,7 +59,6 @@ class IsNfmUKBasedController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
     form
       .bindFromRequest()
       .fold(
@@ -87,6 +86,7 @@ class IsNfmUKBasedController @Inject() (
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
+
             case NfmRegisteredInUkConfirmation.Yes =>
               for {
                 updatedAnswers <-
@@ -95,13 +95,13 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          FilingMember(NfmRegistrationConfirmation.No, Some(value), isNFMnStatus = RowStatus.InProgress)
+                          FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(routes.UnderConstructionController.onPageLoad)
-
           }
       )
+
   }
 }
