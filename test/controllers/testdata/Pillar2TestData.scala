@@ -80,6 +80,23 @@ trait Pillar2TestData {
       withIdRegData = withIdRegData,
       withoutIdRegData = withoutIdRegData
     )
+
+  def validWithIdFmDataAddress(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = Some(WithoutIdNfmData(registeredFmName = "Name"))
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
   def validNoIdNfmData = new FilingMember(
     NfmRegistrationConfirmation.Yes,
     Some(NfmRegisteredInUkConfirmation.No),

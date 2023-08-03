@@ -60,10 +60,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val pageAnswer =
-        FilingMember(NfmRegistrationConfirmation.Yes,
-          isNfmRegisteredInUK=NfmRegisteredInUkConfirmation.No,
+        FilingMember(
+          NfmRegistrationConfirmation.Yes,
+          isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
           isNFMnStatus = RowStatus.InProgress,
-          withoutIdRegData = Some(WithoutIdNfmData("answer",fmContactName = Some("ContactName"))))
+          withoutIdRegData = Some(WithoutIdNfmData("answer", fmContactName = Some("ContactName")))
+        )
 
       val userAnswers = UserAnswers(userAnswersId).set(NominatedFilingMemberPage, pageAnswer).success.value
 

@@ -23,11 +23,13 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.NominatedFilingMemberPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.InputOption
+import utils.countryOptions.CountryOptions
 
 import scala.concurrent.Future
 
@@ -36,28 +38,19 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
   "Nfm Registered Address Controller" must {
 
-//    "must return OK and the correct view for a GET" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswersNfmNoId))
-//        .overrides(bind[CountryOptions].toInstance(mockCountryOptions))
-//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//        .build()
-//      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
-//
-//      running(application) {
-//        when(mockCountryOptions.options).thenReturn(Seq(InputOption("IN", "India")))
-//        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//        val result = route(application, request).value
-//        val view   = application.injector.instanceOf[NfmRegisteredAddressView]
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(formProvider(), NormalMode, "test name", mockCountryOptions.options)(
-//          request,
-//          appConfig(application),
-//          messages(application)
-//        ).toString
-//      }
-//    }
+    "must return OK and the correct view for a GET" in {
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataAddress()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) should include(
+          "For a UK address, you must enter a correctly formatted UK postcode"
+        )
+      }
+    }
 
     "must redirect to the next page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
