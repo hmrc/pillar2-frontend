@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
-import models.{NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.NominatedFilingMemberPage
@@ -40,8 +40,10 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
   "NfmNameRegistrationController Controller" when {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
@@ -58,7 +60,10 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val pageAnswer =
-        FilingMember(NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.InProgress, withoutIdRegData = Some(WithoutIdNfmData("answer")))
+        FilingMember(NfmRegistrationConfirmation.Yes,
+          isNfmRegisteredInUK=NfmRegisteredInUkConfirmation.No,
+          isNFMnStatus = RowStatus.InProgress,
+          withoutIdRegData = Some(WithoutIdNfmData("answer",fmContactName = Some("ContactName"))))
 
       val userAnswers = UserAnswers(userAnswersId).set(NominatedFilingMemberPage, pageAnswer).success.value
 
