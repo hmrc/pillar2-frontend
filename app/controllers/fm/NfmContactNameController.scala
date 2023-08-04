@@ -93,4 +93,9 @@ class NfmContactNameController @Inject() (
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.registeredFmNameAddress.isDefined))
 }

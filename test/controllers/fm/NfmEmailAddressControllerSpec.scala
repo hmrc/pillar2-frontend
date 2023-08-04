@@ -38,16 +38,18 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdForNfm))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[NfmEmailAddressView]
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("Test user Name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider("Ashley Smith"), NormalMode, "Ashley Smith")(
           request,
           appConfig(application),
           messages(application)

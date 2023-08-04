@@ -17,9 +17,9 @@
 package controllers.testdata
 
 import models.fm.{FilingMember, WithoutIdNfmData}
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -81,6 +81,12 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
+  val validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith")))
+  )
   def validWithIdRegDataForLimitedCompany =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
@@ -380,10 +386,4 @@ trait Pillar2TestData {
        |    }
        """.stripMargin
 
-  val validNoIdNfmData = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.No),
-    isNFMnStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith"), fmEmailAddress = Some("AshleySmith@email.com")))
-  )
 }
