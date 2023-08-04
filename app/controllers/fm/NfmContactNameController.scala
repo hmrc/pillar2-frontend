@@ -58,6 +58,7 @@ class NfmContactNameController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
     form
       .bindFromRequest()
       .fold(
@@ -69,11 +70,18 @@ class NfmContactNameController @Inject() (
                 request.userAnswers
                   .set(
                     NominatedFilingMemberPage,
-                    FilingMember(
-                      NfmRegistrationConfirmation.Yes,
+                    fmData.fold(
+                      FilingMember(
+                        NfmRegistrationConfirmation.Yes,
+                        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                        isNFMnStatus = RowStatus.InProgress,
+                        withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request)))
+                      )
+                    )(data =>
+                      data copy (NfmRegistrationConfirmation.Yes,
                       isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
                       isNFMnStatus = RowStatus.InProgress,
-                      withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request)))
+                      withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request))))
                     )
                   )
               )

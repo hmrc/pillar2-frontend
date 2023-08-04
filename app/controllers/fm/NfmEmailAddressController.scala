@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmEmailAddressView
 
 import javax.inject.Inject
@@ -41,23 +42,32 @@ class NfmEmailAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NfmEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      NfmEmailAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName = getUserName(request)
-    val form     = formProvider(userName)
+    val userName     = getUserName(request)
+    val form         = formProvider(userName)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
-    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.fmEmailAddress.fold(form)(emailAddress => form.fill(emailAddress)))
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(NominatedFilingMemberPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.fmEmailAddress.fold(Ok(view(form, mode, userName)))(email => Ok(view(form.fill(email), mode, userName)))
+            )
+          }
+      case false => NotFound(notAvailable)
     }
-    Ok(view(preparedForm, mode, userName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val fmData   = request.userAnswers.get(NominatedFilingMemberPage)
     val userName = getUserName(request)
     val form     = formProvider(userName)
     form
@@ -71,11 +81,18 @@ class NfmEmailAddressController @Inject() (
                 request.userAnswers
                   .set(
                     NominatedFilingMemberPage,
-                    FilingMember(
-                      NfmRegistrationConfirmation.Yes,
+                    fmData.fold(
+                      FilingMember(
+                        NfmRegistrationConfirmation.Yes,
+                        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                        isNFMnStatus = RowStatus.InProgress,
+                        withoutIdRegData = Some(WithoutIdNfmData(fmEmailAddress = Some(value), registeredFmName = getUserName(request)))
+                      )
+                    )(data =>
+                      data copy (NfmRegistrationConfirmation.Yes,
                       isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
                       isNFMnStatus = RowStatus.InProgress,
-                      withoutIdRegData = Some(WithoutIdNfmData(fmEmailAddress = Some(value), registeredFmName = userName))
+                      withoutIdRegData = Some(WithoutIdNfmData(fmEmailAddress = Some(value), registeredFmName = getUserName(request))))
                     )
                   )
               )
@@ -88,4 +105,9 @@ class NfmEmailAddressController @Inject() (
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.fmContactName.isDefined))
 }

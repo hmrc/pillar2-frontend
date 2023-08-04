@@ -16,10 +16,10 @@
 
 package controllers.testdata
 
-import models.{ContactUPEByTelephone, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.fm.{FilingMember, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
-import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
+import models.registration._
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -64,6 +64,9 @@ trait Pillar2TestData {
       )
     )
 
+
+
+
   def validWithoutIdRegData(
     isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus: RowStatus = RowStatus.InProgress
@@ -74,7 +77,29 @@ trait Pillar2TestData {
       withoutIdRegData = None
     )
 
+/*  def validNoIdfmData(
+                       nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+                       isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
+                       orgType: Option[EntityType] = Some(EntityType.UkLimitedCompany),
+                       isNFMnStatus: RowStatus = RowStatus.InProgress,
+                       withIdRegData: Option[GrsResponse] = None,
+                       withoutIdRegData: Option[WithoutIdNfmData] = new WithoutIdNfmData(
+                       "TestName",
+                         validUpeRegisteredAddressed ,
+                       fmContactName: Option[String] = None,
+                       fmEmailAddress: Option[String] = None,
+                       contactNfmByTelephone: Option[ContactNFMByTelephone] = None,
+                       telephoneNumber: Option[String] = None
+                       )
+
+                      )*/
   val validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith"),fmEmailAddress = Some("AshleySmith@email.com"))))
+
+/*   val validNoIdNfmData = new FilingMember(
     NfmRegistrationConfirmation.Yes,
     None,
     None,
@@ -99,7 +124,7 @@ trait Pillar2TestData {
         None
       )
     )
-  )
+  )*/
 
   val validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
