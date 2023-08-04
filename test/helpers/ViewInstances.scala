@@ -32,6 +32,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewNfmEntityType: NfmEntityTypeView =
+    new NfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewIsNFMUKBased: IsNFMUKBasedView =
     new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 

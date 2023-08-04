@@ -18,7 +18,7 @@ package stubsonly.connectors.stubs
 
 import connectors.IncorporatedEntityIdentificationFrontendConnector
 import models.grs.EntityType.UkLimitedCompany
-import models.Mode
+import models.{Mode, UserType}
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.IncorporatedEntityRegistrationData
 import play.api.libs.json.Json
@@ -30,11 +30,11 @@ import scala.concurrent.Future
 
 class StubIncorporatedEntityIdentificationFrontendConnector @Inject() () extends IncorporatedEntityIdentificationFrontendConnector {
 
-  override def createLimitedCompanyJourney(mode: Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
+  override def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
     Future.successful(
       GrsCreateRegistrationResponse(
         journeyStartUrl =
-          s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${UkLimitedCompany.toString}"
+          s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}&entityType=${UkLimitedCompany.toString}"
       )
     )
 

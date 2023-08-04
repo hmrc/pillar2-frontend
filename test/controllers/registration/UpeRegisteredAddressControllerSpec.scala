@@ -66,14 +66,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-
-      /*      val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-
-      val result = controller.onPageLoad(NormalMode)(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "Where is the registered office address of"
-      )*/
     }
 
     "must redirect to the next page when valid data is submitted" in {

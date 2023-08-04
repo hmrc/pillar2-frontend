@@ -22,13 +22,14 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NominateFilingMemberYesNoFormProvider
 import models.{Mode, NfmRegistrationConfirmation}
 import models.fm.FilingMember
-import pages.NominatedFilingMemberPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class NominateFilingMemberYesNoController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NominateFilingMemberYesNoFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      NominateFilingMemberYesNoView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -49,12 +51,20 @@ class NominateFilingMemberYesNoController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case None        => form
-      case Some(value) => form.fill(value.nfmConfirmation)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    val regData      = request.userAnswers.get(RegistrationPage)
+    val toDisplay    = regData.fold(false)(data => data.isRegistrationStatus == RowStatus.Completed)
+    toDisplay match {
+      case true =>
+        val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
+          case None        => form
+          case Some(value) => form.fill(value.nfmConfirmation)
+        }
+
+        Ok(view(preparedForm, mode))
+      case false => NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
