@@ -244,7 +244,7 @@ entityType.ukLimitedCompany = UK limited company
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
-entityType.change.hidden = change
+entityType.change.hidden = Change what type of company the ultimate parent entity
 
 registeringNfmForThisGroup.title = Are you registering the nominated filing member for this group?
 registeringNfmForThisGroup.heading = Are you registering the nominated filing member for this group?
@@ -259,6 +259,15 @@ isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
+
+nfmEntityType.title = What type of company is the nominated filing member?
+nfmEntityType.heading = What type of company is the nominated filing member?
+nfmEntityType.ukLimitedCompany = UK limited company
+nfmEntityType.limitedLiabilityPartnership = Limited liability partnership
+nfmEntityType.checkYourAnswersLabel = Org Type
+nfmEntityType.error.required = Select what type of company the nominated filing member is
+nfmEntityType.change.hidden = Change What type of company is the nominated filing member
+nfmEntityType.caption = Business details
 
 nFMContactName.heading.caption = Business details
 nFMContactName.title = What is the name of the person or team we should contact from the nominated filing member?

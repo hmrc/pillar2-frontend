@@ -17,9 +17,9 @@
 package controllers.testdata
 
 import models.fm.{FilingMember, WithoutIdNfmData}
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -64,69 +64,79 @@ trait Pillar2TestData {
       )
     )
 
+  def validWithIdFmData(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = None,
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = None
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
 
+  def validWithIdRegDataForLimitedCompany =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
+    )
 
+  def validWithIdRegDataForLLP =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
+    )
 
+  def validWithIdFmRegistrationDataForLimitedComp =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
+    )
+
+  def validWithIdFmRegistrationDataForPartnership =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
+    )
   def validWithoutIdRegData(
     isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus: RowStatus = RowStatus.InProgress
   ) =
-    new Registration(
-      isUPERegisteredInUK = isUPERegisteredInUK,
-      isRegistrationStatus = isRegistrationStatus,
-      withoutIdRegData = None
-    )
+    new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus, withoutIdRegData = None)
 
-/*  def validNoIdfmData(
-                       nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
-                       isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
-                       orgType: Option[EntityType] = Some(EntityType.UkLimitedCompany),
-                       isNFMnStatus: RowStatus = RowStatus.InProgress,
-                       withIdRegData: Option[GrsResponse] = None,
-                       withoutIdRegData: Option[WithoutIdNfmData] = new WithoutIdNfmData(
-                       "TestName",
-                         validUpeRegisteredAddressed ,
-                       fmContactName: Option[String] = None,
-                       fmEmailAddress: Option[String] = None,
-                       contactNfmByTelephone: Option[ContactNFMByTelephone] = None,
-                       telephoneNumber: Option[String] = None
-                       )
-
-                      )*/
-  val validNoIdNfmData = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.No),
-    isNFMnStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith"),fmEmailAddress = Some("AshleySmith@email.com"))))
-
-/*   val validNoIdNfmData = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    None,
-    None,
-    RowStatus.InProgress,
-    None,
-    withoutIdRegData = Some(
-      WithoutIdNfmData(
-        "Test FM",
-        registeredFmNameAddress = Some(
-          NfmRegisteredAddress(
-            "Line1",
-            Some("Line2"),
-            "Line3",
-            Some("Line4"),
-            Some("VR11 3PA"),
-            "GB"
-          )
-        ),
-        fmContactName = Some("Ashley Smith"),
-        fmEmailAddress = Some("AshleySmith@email.com"),
-        Some(ContactNFMByTelephone.No),
-        None
-      )
-    )
-  )*/
-
-  val validUpeRegisteredAddressed = new UpeRegisteredAddress(
+  def validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
     addressLine3 = "Line3",
@@ -144,7 +154,7 @@ trait Pillar2TestData {
         GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
       )
     )
-  val validIdRegistrationDataWithNoOrgType =
+  def validIdRegistrationDataWithNoOrgType =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
       isRegistrationStatus = RowStatus.InProgress,
@@ -167,6 +177,17 @@ trait Pillar2TestData {
     "testId",
     data = Json.parse(validDataObjectForLLP()).as[JsObject]
   )
+
+  val validFilingMemberUserAnswersGrsDataForLimitedCompany = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForUKLimtedCompany).as[JsObject]
+  )
+
+  val validFilingMemberUserAnswersGrsDataForLLP = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForLLP).as[JsObject]
+  )
+
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
 
   def validRegistrationWithIdResponse(): String =
@@ -288,4 +309,81 @@ trait Pillar2TestData {
        |    }
        """.stripMargin
 
+  def validFilingMemberDataObjectForUKLimtedCompany(): String =
+    s"""
+      {
+       |        "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "ukLimitedCompany",
+       |            "isNFMnStatus" : "Completed",
+       |            "withIdRegData" : {
+       |                "incorporatedEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Company Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "ctutr" : "1234567890",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
+  def validFilingMemberDataObjectForLLP(): String =
+    s"""
+      {
+       |   "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "limitedLiabilityPartnership",
+       |            "isNFMnStatus" : "Completed",
+       |            "withIdRegData" : {
+       |                "partnershipEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Partnership Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "sautr" : "1234567890",
+       |                    "postcode" : "AA11AA",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
+  val validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith"), fmEmailAddress = Some("AshleySmith@email.com")))
+  )
 }

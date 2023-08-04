@@ -17,80 +17,112 @@
 package controllers.registration
 
 import base.SpecBase
-import controllers.actions.DataRequiredActionImpl
-import forms.UpeContactEmailFormProvider
-import models.requests.{DataRequest, OptionalDataRequest}
-import models.{NormalMode, UserAnswers}
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
-import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.UpeContactEmailView
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
 class GrsReturnControllerSpec extends SpecBase {
 
-  def preDataRequiredActionImplForLLP: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
-    override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsDataForLLP)))
-  }
-
-  def controller(): GrsReturnController =
-    new GrsReturnController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      stubMessagesControllerComponents(),
-      mockIncorporatedEntityIdentificationFrontendConnector,
-      mockPartnershipIdentificationFrontendConnector
-    )
-
-  def controllerLLP(): GrsReturnController =
-    new GrsReturnController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImplForLLP,
-      stubMessagesControllerComponents(),
-      mockIncorporatedEntityIdentificationFrontendConnector,
-      mockPartnershipIdentificationFrontendConnector
-    )
-
   "GrsReturn Controller" when {
 
-    "must return 303 redirect to the next page for UK Limited company" in {
+    "must return 303 redirect to the next page with UK Limited company for UPE" in {
 
-      val request = FakeRequest()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedComp))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
 
-      when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
-        .thenReturn(Future.successful(validRegisterWithIdResponse))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller().continue(NormalMode, "journeyId")(request)
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponse))
 
-    }
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
 
-    "must return 303 redirect to the next page for Limited Liability Partnership" in {
+        val result = route(application, request).value
 
-      val request = FakeRequest()
-
-      when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
-        .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controllerLLP().continue(NormalMode, "journeyId")(request)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+      }
 
     }
 
-    // TODO some invalid route is not as the design has got the page. so goes underconstuction page
+    "must return 303 redirect to the next page with Limited Liability Partnership for UPE" in {
 
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLLP))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+
+      }
+
+    }
+
+    "must return 303 redirect to the next page with UK Limited company for Filing Member" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponse))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+      }
+
+    }
+
+    "must return 303 redirect to the next page with Limited Liability Partnership for Filing Member" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLLPForFm))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+
+      }
+
+    }
   }
 }

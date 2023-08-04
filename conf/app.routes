@@ -70,7 +70,9 @@ POST        /eligibility/global-gross-revenue             controllers.eligibilit
 GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
-GET         /grs-return/normalmode                                          controllers.registration.GrsReturnController.continue(mode: Mode = NormalMode, journeyId)
+GET         /grs-return/normalmode/upe                                          controllers.registration.GrsReturnController.continueUpe(mode: Mode = NormalMode, journeyId)
+GET         /grs-return/normalmode/fm                                           controllers.registration.GrsReturnController.continueFm(mode: Mode = NormalMode, journeyId)
+
 
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
 
@@ -112,3 +114,8 @@ GET        /business-matching/filing-member/no-id/input-email  controllers.fm.Nf
 POST       /business-matching/filing-member/no-id/input-email  controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/no-id/change-input-email  controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-email  controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /business-matching/filing-member/uk-based/org-type                        controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/uk-based/org-type                        controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)

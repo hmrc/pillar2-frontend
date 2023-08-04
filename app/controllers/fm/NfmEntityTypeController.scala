@@ -14,42 +14,39 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
-import forms.EntityTypeFormProvider
-import models.registration.RegistrationWithoutIdRequest
-import models.{Mode, UserType}
-import models.{Mode, UPERegisteredInUKConfirmation}
-
+import uk.gov.hmrc.http.HttpVerbs.GET
+import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
-import models.requests.DataRequest
-import pages.{EntityTypePage, RegistrationPage}
+import models.{Mode, NfmRegisteredInUkConfirmation, UserType}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.EntityTypeView
+import views.html.NfmEntityTypeView
+import models.requests.DataRequest
 import views.html.errors.ErrorTemplate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EntityTypeController @Inject() (
+class NfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   identify:                                          IdentifierAction,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
-  formProvider:                                      EntityTypeFormProvider,
+  formProvider:                                      NfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   page_not_available:                                ErrorTemplate,
-  view:                                              EntityTypeView
+  view:                                              NfmEntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -61,14 +58,13 @@ class EntityTypeController @Inject() (
     isPreviousPageDefined(request) match {
       case true =>
         request.userAnswers
-          .get(RegistrationPage)
+          .get(NominatedFilingMemberPage)
           .fold(NotFound(notAvailable)) { reg =>
             reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
           }
       case false =>
         NotFound(notAvailable)
     }
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -79,30 +75,34 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+              val regData =
+                request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is Filing Member in UK not been selected"))
 
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
+                    request.userAnswers
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
-                                      .createLimitedCompanyJourney(UserType.Upe, mode)
+                                      .createLimitedCompanyJourney(UserType.Fm, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
-              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+              val regData =
+                request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is Filing Member in UK not been selected"))
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
+                    request.userAnswers
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
+                                      .createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )
@@ -110,6 +110,6 @@ class EntityTypeController @Inject() (
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
-      .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.Yes)
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(isNfmInUK => isNfmInUK == NfmRegisteredInUkConfirmation.Yes))
 }
