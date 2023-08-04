@@ -17,14 +17,20 @@
 package controllers.fm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
-import models.fm.FilingMember
+import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.when
 import pages.NominatedFilingMemberPage
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
+
+import scala.concurrent.Future
 
 class IsNfmUKBasedControllerSpec extends SpecBase {
 
@@ -108,5 +114,30 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to Under Construction page when valid data is submitted with value No" in {
+
+      val request =
+        FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", "no"))
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url
+
+    }
+
   }
+
+  "must redirect to Under Construction page when valid data is submitted with value Yes" in {
+
+    val request =
+      FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody(("value", "yes"))
+    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    val result = controller.onSubmit(NormalMode)()(request)
+    status(result) mustEqual SEE_OTHER
+    redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+
+  }
+
 }

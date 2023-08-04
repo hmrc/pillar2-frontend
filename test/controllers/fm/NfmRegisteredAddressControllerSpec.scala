@@ -41,10 +41,13 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
         emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataAddress()).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) should include(
           "For a UK address, you must enter a correctly formatted UK postcode"
