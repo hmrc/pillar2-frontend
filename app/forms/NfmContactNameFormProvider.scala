@@ -25,7 +25,7 @@ class NfmContactNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("nFMContactName.error.required")
-        .verifying(maxLength(200, "nFMContactName.error.length"))
+      "value" -> text("nfmContactName.error.required")
+        .verifying(maxLength(105, "nfmContactName.error.length"))
     )
 }

@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("nFMEmailAddress.title", UserName))) {
+@layout(pageTitle = title(form, messages("nfmEmailAddress.title", UserName))) {
 
     @formHelper(action = controllers.fm.routes.NfmEmailAddressController.onSubmit(mode)) {
 
@@ -40,10 +40,10 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nFMEmailAddress.heading", UserName)).asPageHeading(Large)
+                label = LabelViewModel(messages("nfmEmailAddress.heading", UserName)).asPageHeading(Large)
                 .withCssClass("long-word")
             )
-            .withHint(Hint(content = Text(messages("nFMEmailAddress.hint"))))
+            .withHint(Hint(content = Text(messages("nfmEmailAddress.hint"))))
             .withWidth(TwoThirds)
             .withInputType("email")
         )

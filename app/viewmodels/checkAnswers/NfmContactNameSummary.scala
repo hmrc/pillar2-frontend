@@ -33,11 +33,11 @@ object NfmContactNameSummary {
         reg.withoutIdRegData.map { withoutId =>
           withoutId.fmContactName.map { answer =>
             SummaryListRowViewModel(
-              key = "nFMContactName.checkYourAnswersLabel",
+              key = "nfmContactName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nFMContactName.change.hidden"))
+                  .withVisuallyHiddenText(messages("nfmContactName.change.hidden"))
               )
             )
           }

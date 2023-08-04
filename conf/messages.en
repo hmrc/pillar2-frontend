@@ -234,9 +234,6 @@ NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel= Filing member preference
 NominateFilingMemberYesNo.change.hidden= Change your filing member nomination preference
 
-
-
-
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
 entityType.heading = What type of company is the ultimate parent entity?
@@ -269,21 +266,21 @@ nfmEntityType.error.required = Select what type of company the nominated filing 
 nfmEntityType.change.hidden = Change What type of company is the nominated filing member
 nfmEntityType.caption = Business details
 
-nFMContactName.heading.caption = Business details
-nFMContactName.title = What is the name of the person or team we should contact from the nominated filing member?
-nFMContactName.heading = What is the name of the person or team we should contact from the nominated filing member?
-nFMContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-nFMContactName.checkYourAnswersLabel = nFMContactName
-nFMContactName.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
-nFMContactName.error.length = Name cannot be more than 200 characters
-nFMContactName.change.hidden = NFMContactName
+nfmContactName.heading.caption = Business details
+nfmContactName.title = What is the name of the person or team we should contact from the nominated filing member?
+nfmContactName.heading = What is the name of the person or team we should contact from the nominated filing member?
+nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+nfmContactName.checkYourAnswersLabel = nfmContactName
+nfmContactName.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
+nfmContactName.error.length = Name cannot be more than 105 characters
+nfmContactName.change.hidden = NFMContactName
 
-nFMEmailAddress.heading.caption = Business details
-nFMEmailAddress.title = What is the email address for {0}?
-nFMEmailAddress.heading = What is the email address for {0}?
-nFMEmailAddress.hint = We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
-nFMEmailAddress.checkYourAnswersLabel = nFMEmailAddress
-nFMEmailAddress.error.required = You need to enter the email address for {0}
-nFMEmailAddress.error.length = Email cannot be more than 200 characters
-nFMEmailAddress.change.hidden = nFMEmailAddress
+nfmEmailAddress.heading.caption = Business details
+nfmEmailAddress.title = What is the email address for {0}?
+nfmEmailAddress.heading = What is the email address for {0}?
+nfmEmailAddress.hint = We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
+nfmEmailAddress.checkYourAnswersLabel = nfmEmailAddress
+nfmEmailAddress.error.required = You need to enter the email address for {0}
+nfmEmailAddress.error.length = Email cannot be more than 200 characters
+nfmEmailAddress.change.hidden = nfmEmailAddress
 

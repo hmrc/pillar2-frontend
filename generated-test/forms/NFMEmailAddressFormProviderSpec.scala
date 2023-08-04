@@ -5,8 +5,8 @@ import play.api.data.FormError
 
 class NFMEmailAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "nFMEmailAddress.error.required"
-  val lengthKey = "nFMEmailAddress.error.length"
+  val requiredKey = "nfmEmailAddress.error.required"
+  val lengthKey = "nfmEmailAddress.error.length"
   val maxLength = 200
 
   val form = new NfmEmailAddressFormProvider()()

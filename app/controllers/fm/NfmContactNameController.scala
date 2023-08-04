@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmContactNameView
 
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class NfmContactNameController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NfmContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      NfmContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -49,12 +51,19 @@ class NfmContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case None        => form
-      case Some(value) => value.withoutIdRegData.fold(form)(data => data.fmContactName.fold(form)(contactName => form.fill(contactName)))
-    }
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
-    Ok(view(preparedForm, mode))
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(NominatedFilingMemberPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.fmContactName.fold(Ok(view(form, mode)))(contactName => Ok(view(form.fill(contactName), mode)))
+            )
+          }
+      case false => NotFound(notAvailable)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

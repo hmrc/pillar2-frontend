@@ -28,7 +28,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("nFMContactName.title"))) {
+@layout(pageTitle = title(form, messages("nfmContactName.title"))) {
 
     @formHelper(action = controllers.fm.routes.NfmContactNameController.onSubmit(mode)) {
 
@@ -39,9 +39,9 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nFMContactName.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("nfmContactName.heading")).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("nFMContactName.hint"))))
+            .withHint(Hint(content = Text(messages("nfmContactName.hint"))))
             .withWidth(TwoThirds)
         )
 
