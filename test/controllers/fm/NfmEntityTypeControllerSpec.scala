@@ -134,7 +134,11 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
         when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
           .thenReturn(
-            Future(GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"))
+            Future(
+              GrsCreateRegistrationResponse(
+                "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+              )
+            )
           )
 
         val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
@@ -147,7 +151,9 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+        redirectLocation(
+          result
+        ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
       }
 
     }
@@ -165,7 +171,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
           .thenReturn(
             Future(
               GrsCreateRegistrationResponse(
-                "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+                "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
               )
             )
           )
@@ -182,7 +188,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(
           result
-        ).value mustEqual "/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+        ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
       }
 
     }
