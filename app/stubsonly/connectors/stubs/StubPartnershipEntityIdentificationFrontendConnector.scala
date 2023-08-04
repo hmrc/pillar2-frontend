@@ -33,7 +33,7 @@ class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends 
     Future.successful(
       GrsCreateRegistrationResponse(
         journeyStartUrl =
-          s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
+          s"/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
       )
     )
 

@@ -31,7 +31,7 @@ class TestOnlyConnector @Inject() (
 ) {
 
   private val pillar2Url: String =
-    s"${appConfig.pillar2BaseUrl}/pillar-two/test-only"
+    s"${appConfig.pillar2BaseUrl}/report-pillar2-top-up-taxes/test-only"
 
   def clearAllData()(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET(
