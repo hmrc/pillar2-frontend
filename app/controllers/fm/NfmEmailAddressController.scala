@@ -49,7 +49,7 @@ class NfmEmailAddressController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getUserName(request)
+    val userName     = getFMContactName(request)
     val form         = formProvider(userName)
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
@@ -68,7 +68,7 @@ class NfmEmailAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val fmData   = request.userAnswers.get(NominatedFilingMemberPage)
-    val userName = getUserName(request)
+    val userName = getFMContactName(request)
     val form     = formProvider(userName)
     form
       .bindFromRequest()
@@ -89,8 +89,8 @@ class NfmEmailAddressController @Inject() (
                         withoutIdRegData = Some(
                           WithoutIdNfmData(
                             fmEmailAddress = Some(value),
-                            registeredFmName = getUserName(request),
-                            fmContactName = Some(getUserName(request))
+                            registeredFmName = getRegFMName(request),
+                            fmContactName = Some(getFMContactName(request))
                           )
                         )
                       )
@@ -101,8 +101,8 @@ class NfmEmailAddressController @Inject() (
                       withoutIdRegData = Some(
                         WithoutIdNfmData(
                           fmEmailAddress = Some(value),
-                          registeredFmName = getUserName(request),
-                          fmContactName = Some(getUserName(request))
+                          registeredFmName = getRegFMName(request),
+                          fmContactName = Some(getFMContactName(request))
                         )
                       ))
                     )
@@ -113,9 +113,14 @@ class NfmEmailAddressController @Inject() (
       )
   }
 
-  private def getUserName(request: DataRequest[AnyContent]): String = {
+  private def getFMContactName(request: DataRequest[AnyContent]): String = {
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
+  }
+
+  private def getRegFMName(request: DataRequest[AnyContent]): String = {
+    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
+    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
