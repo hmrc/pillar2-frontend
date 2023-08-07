@@ -19,83 +19,77 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.NfmContactNameFormProvider
-import models.fm.{FilingMember, WithoutIdNfmData}
+import forms.NfmRegisteredAddressFormProvider
+import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.requests.DataRequest
 import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import pages.NominatedFilingMemberPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.countryOptions.CountryOptions
 import views.html.errors.ErrorTemplate
-import views.html.fmview.NfmContactNameView
+import views.html.fmview.NfmRegisteredAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmContactNameController @Inject() (
+class NfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NfmContactNameFormProvider,
+  formProvider:              NfmRegisteredAddressFormProvider,
+  CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
-  view:                      NfmContactNameView
+  view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-
-  val form = formProvider()
-
+  val form: Form[NfmRegisteredAddress] = formProvider()
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
     isPreviousPageDefined(request) match {
       case true =>
-        request.userAnswers
-          .get(NominatedFilingMemberPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.fmContactName.fold(Ok(view(form, mode)))(contactName => Ok(view(form.fill(contactName), mode)))
-            )
-          }
-      case false => NotFound(notAvailable)
+        val userName = getUserName(request)
+        val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
+          case None        => form
+          case Some(value) => value.withoutIdRegData.fold(form)(data => data.registeredFmAddress.fold(form)(address => form.fill(address)))
+        }
+        Ok(view(preparedForm, mode, userName, countryList))
+      case false =>
+        NotFound(notAvailable)
     }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
+    val userName = getUserName(request)
+
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
         value =>
           for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers
-                  .set(
-                    NominatedFilingMemberPage,
-                    fmData.fold(
-                      FilingMember(
-                        NfmRegistrationConfirmation.Yes,
-                        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                        isNFMnStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request)))
-                      )
-                    )(data =>
-                      data copy (NfmRegistrationConfirmation.Yes,
-                      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                      isNFMnStatus = RowStatus.InProgress,
-                      withoutIdRegData = Some(WithoutIdNfmData(fmContactName = Some(value), registeredFmName = getUserName(request))))
-                    )
-                  )
-              )
+            updatedAnswers <- Future.fromTry(
+                                request.userAnswers.set(
+                                  NominatedFilingMemberPage,
+                                  FilingMember(
+                                    NfmRegistrationConfirmation.Yes,
+                                    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+                                    isNFMnStatus = RowStatus.InProgress,
+                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmAddress = Some(value), registeredFmName = userName))
+                                  )
+                                )
+                              )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))
+          } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
       )
   }
   private def getUserName(request: DataRequest[AnyContent]): String = {
@@ -106,5 +100,6 @@ class NfmContactNameController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.registeredFmName.nonEmpty))
+      .fold(false)(data => data.withoutIdRegData.fold(false)(data => data.registeredFmName.nonEmpty))
+
 }

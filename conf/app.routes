@@ -49,6 +49,7 @@ GET         /business-matching/filing-member/change-nominate  controllers.fm.Nom
 POST        /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
 
 
+
 GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/ultimate-parent/no-id/change-telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
@@ -105,6 +106,17 @@ POST       /business-matching/filing-member/registered-in-uk                    
 GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
 
+GET         /business-matching/filing-member/no-id/input-name                       controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-name                       controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-name                 controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-name                  controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /business-matching/filing-member/no-id/input-business-name  controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/filing-member/no-id/input-business-name  controllers.fm.NfmContactNameController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/no-id/change-input-business-name  controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = CheckMode)
@@ -119,3 +131,5 @@ GET        /business-matching/filing-member/uk-based/org-type                   
 POST       /business-matching/filing-member/uk-based/org-type                        controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+
+
