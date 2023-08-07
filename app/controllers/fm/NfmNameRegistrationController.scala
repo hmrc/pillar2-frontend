@@ -95,6 +95,6 @@ class NfmNameRegistrationController @Inject() (
     request.userAnswers
       .get(NominatedFilingMemberPage)
       .fold(false) { data =>
-        data.isNfmRegisteredInUK.getOrElse() == NfmRegisteredInUkConfirmation.No
+        data.isNfmRegisteredInUK.get == NfmRegisteredInUkConfirmation.No
       }
 }

@@ -101,7 +101,7 @@ trait Pillar2TestData {
     NfmRegistrationConfirmation.Yes,
     Some(NfmRegisteredInUkConfirmation.No),
     isNFMnStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddressed)))
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )
 
   def validWithoutIdRegData(
@@ -122,7 +122,7 @@ trait Pillar2TestData {
     postalCode = Some("VR11 3PA"),
     countryCode = "GB"
   )
-  val validNfmRegisteredAddressed = new NfmRegisteredAddress(
+  val validNfmRegisteredAddress = new NfmRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
     addressLine3 = "Line3",
