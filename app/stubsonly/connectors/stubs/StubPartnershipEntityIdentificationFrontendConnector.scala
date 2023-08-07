@@ -17,7 +17,7 @@
 package stubsonly.connectors.stubs
 
 import connectors.PartnershipIdentificationFrontendConnector
-import models.Mode
+import models.{Mode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.libs.json.Json
@@ -29,11 +29,13 @@ import scala.concurrent.Future
 
 class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends PartnershipIdentificationFrontendConnector {
 
-  override def createPartnershipJourney(partnershipType: EntityType, mode: Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
+  override def createPartnershipJourney(userType: UserType, partnershipType: EntityType, mode: Mode)(implicit
+    hc:                                           HeaderCarrier
+  ): Future[GrsCreateRegistrationResponse] =
     Future.successful(
       GrsCreateRegistrationResponse(
-        journeyStartUrl =
-          s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
+        journeyStartUrl = s"/pillar-two/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}/${userType.toString
+          .toLowerCase()}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
       )
     )
 

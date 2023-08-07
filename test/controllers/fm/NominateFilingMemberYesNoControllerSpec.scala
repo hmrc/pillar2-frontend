@@ -24,6 +24,8 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
@@ -40,13 +42,14 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewNominateFilingMemberYesNo
     )
 
   "Is UPE Registered in UK Confirmation Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdCompleted)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
@@ -55,6 +58,18 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
         status(result) mustBe OK
+      }
+    }
+
+    "must return NOT_FOUND and the Page Not available view for a direct hit url" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[ErrorTemplate]
+        val result  = route(application, request).value
+
+        status(result) mustBe NOT_FOUND
       }
     }
 

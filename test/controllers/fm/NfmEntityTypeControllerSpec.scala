@@ -14,56 +14,83 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import forms.EntityTypeFormProvider
+import controllers.routes
+import forms.NfmEntityTypeFormProvider
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NormalMode, UserAnswers}
+import models.{NfmRegisteredInUkConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{EntityTypePage, RegistrationPage}
+import pages.{EntityTypePage, NominatedFilingMemberPage}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.EntityTypeView
+import views.html.NfmEntityTypeView
 import play.api.inject.bind
 
 import scala.concurrent.Future
 
-class EntityTypeControllerSpec extends SpecBase {
+class NfmEntityTypeControllerSpec extends SpecBase {
 
-  val formProvider = new EntityTypeFormProvider()
+  val formProvider = new NfmEntityTypeFormProvider()
 
-  "EntityType Controller" when {
+  "NfmEntityType Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdNoOrg)).build()
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers
+          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes)))
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[EntityTypeView]
+        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return NOT_FOUND When previous page data is not avilable" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmEntityTypeView]
+
+        status(result) mustEqual NOT_FOUND
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithId)).build()
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers
+          .set(
+            NominatedFilingMemberPage,
+            validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes), orgType = Some(EntityType.UkLimitedCompany))
+          )
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[EntityTypeView]
+        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 
@@ -82,12 +109,12 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[EntityTypeView]
+        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 
@@ -95,10 +122,9 @@ class EntityTypeControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-
     "must redirect to GRS for UK Limited company" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
@@ -111,12 +137,12 @@ class EntityTypeControllerSpec extends SpecBase {
             Future(GrsCreateRegistrationResponse("/pillar-two/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"))
           )
 
-        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
 
         val boundForm = formProvider()
 
-        val view = application.injector.instanceOf[EntityTypeView]
+        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 
@@ -128,7 +154,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
     "must redirect to GRS for Limited Liability Partnership" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLLPForFm))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
@@ -144,12 +170,12 @@ class EntityTypeControllerSpec extends SpecBase {
             )
           )
 
-        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
 
         val boundForm = formProvider()
 
-        val view = application.injector.instanceOf[EntityTypeView]
+        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 
@@ -160,6 +186,5 @@ class EntityTypeControllerSpec extends SpecBase {
       }
 
     }
-
   }
 }

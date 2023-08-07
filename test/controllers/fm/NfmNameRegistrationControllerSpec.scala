@@ -41,7 +41,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmData()).success.value
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataName()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 

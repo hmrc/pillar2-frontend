@@ -23,7 +23,8 @@ import controllers.routes
 import forms.IsNFMUKBasedFormProvider
 import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import models.fm.FilingMember
-import pages.NominatedFilingMemberPage
+import models.requests.DataRequest
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -31,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
-
+import views.html.errors.ErrorTemplate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,6 +43,7 @@ class IsNfmUKBasedController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              IsNFMUKBasedFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      IsNFMUKBasedView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -50,12 +52,17 @@ class IsNfmUKBasedController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case None        => form
-      case Some(value) => value.isNfmRegisteredInUK.fold(form)(regInUk => form.fill(regInUk))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(NominatedFilingMemberPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.isNfmRegisteredInUK.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+          }
+      case false =>
+        NotFound(notAvailable)
     }
-
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -65,45 +72,54 @@ class IsNfmUKBasedController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
+            case NfmRegisteredInUkConfirmation.Yes =>
+              val regData =
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+
+              for {
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers
+                        .set(
+                          NominatedFilingMemberPage,
+                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value))
+                        )
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+
+              } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
+
             case NfmRegisteredInUkConfirmation.No =>
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
 
               val checkedRegData =
-                regData.withIdRegData.fold(regData copy (isNfmRegisteredInUK = Some(value)))(_ =>
-                  regData copy (isNfmRegisteredInUK = Some(value), withIdRegData = None)
+                regData.withIdRegData.fold(regData)(_ =>
+                  FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress)
                 )
-
               for {
                 updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers
-                        .set(
-                          NominatedFilingMemberPage,
-                          checkedRegData
-                        )
+                  Future.fromTry(
+                    request.userAnswers.set(
+                      NominatedFilingMemberPage,
+                      checkedRegData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), orgType = None, withIdRegData = None)
                     )
+                  )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
 
-            case NfmRegisteredInUkConfirmation.Yes =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers
-                        .set(
-                          NominatedFilingMemberPage,
-                          FilingMember(NfmRegistrationConfirmation.Yes, Some(value), isNFMnStatus = RowStatus.InProgress)
-                        )
-                    )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
           }
       )
-
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data => data.nfmConfirmation == NfmRegistrationConfirmation.Yes)
+
 }

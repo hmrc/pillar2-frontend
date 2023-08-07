@@ -72,9 +72,22 @@ trait SpecBase
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
   def userAnswersNfmNoId:  UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
 
+  def userAnswersWithNoIdCompleted: UserAnswers =
+    emptyUserAnswers.set(RegistrationPage, validNoIdRegData(isRegistrationStatus = RowStatus.Completed)).success.value
+
+  def userAnswersWithIdForLimitedComp: UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+  def userAnswersWithIdForLLP:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+
+  def userAnswersWithIdForLimitedCompForFm: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+  def userAnswersWithIdForLLPForFm: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
+
+  val userAnswersId: String = "id"
+
   def userAnswersWithId:      UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
   def userAnswersWithIdNoOrg: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value
-  val userAnswersId:          String      = "id"
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

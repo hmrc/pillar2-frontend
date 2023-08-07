@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{Mode, registration}
+import models.{Mode, UserType, registration}
 import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import play.api.i18n.MessagesApi
@@ -28,8 +28,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IncorporatedEntityIdentificationFrontendConnector {
-  def createLimitedCompanyJourney(mode: Mode)(implicit hc:   HeaderCarrier): Future[GrsCreateRegistrationResponse]
-  def getJourneyData(journeyId:         String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData]
+  def createLimitedCompanyJourney(userType: UserType, mode:      Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
+  def getJourneyData(journeyId:             String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData]
 }
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
@@ -42,15 +42,15 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
   private val apiUrl =
     s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
 
-  def createLimitedCompanyJourney(mode: Mode)(implicit
-    hc:                                 HeaderCarrier
+  def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit
+    hc:                                     HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] = {
     val serviceName = ServiceName()
 
     httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
       s"$apiUrl/limited-company-journey",
       registration.IncorporatedEntityCreateRegistrationRequest(
-        continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}",
+        continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
         businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,
         optServiceName = Some(serviceName.en.optServiceName),
         deskProServiceId = appConfig.appName,
