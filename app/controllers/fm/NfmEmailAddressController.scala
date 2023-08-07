@@ -86,13 +86,25 @@ class NfmEmailAddressController @Inject() (
                         NfmRegistrationConfirmation.Yes,
                         isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
                         isNFMnStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(WithoutIdNfmData(fmEmailAddress = Some(value), registeredFmName = getUserName(request)))
+                        withoutIdRegData = Some(
+                          WithoutIdNfmData(
+                            fmEmailAddress = Some(value),
+                            registeredFmName = getUserName(request),
+                            fmContactName = Some(getUserName(request))
+                          )
+                        )
                       )
                     )(data =>
                       data copy (NfmRegistrationConfirmation.Yes,
                       isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
                       isNFMnStatus = RowStatus.InProgress,
-                      withoutIdRegData = Some(WithoutIdNfmData(fmEmailAddress = Some(value), registeredFmName = getUserName(request))))
+                      withoutIdRegData = Some(
+                        WithoutIdNfmData(
+                          fmEmailAddress = Some(value),
+                          registeredFmName = getUserName(request),
+                          fmContactName = Some(getUserName(request))
+                        )
+                      ))
                     )
                   )
               )
