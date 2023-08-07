@@ -111,7 +111,7 @@ class IsNfmUKBasedController @Inject() (
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
 
           }
       )

@@ -23,7 +23,8 @@ import models.Enumerable
 import scala.collection.immutable.Seq
 import scala.util.control.Exception.nonFatalCatch
 
-trait Formatters {
+trait Formatters extends Transforms with Constraints {
+  private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -54,6 +55,33 @@ trait Formatters {
 
       def unbind(key: String, value: Boolean) = Map(key -> value.toString)
     }
+
+  private[mappings] def optionalPostcodeFormatter(
+    requiredKey:      Option[String],
+    invalidKey:       String,
+    nonUkLengthKey:   String,
+    countryFieldName: String
+  ): Formatter[Option[String]] = new Formatter[Option[String]] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val postCode               = postCodeDataTransform(data.get(key))
+      val country                = countryDataTransform(data.get(countryFieldName))
+      val maxLengthNonUKPostcode = 10
+
+      (postCode, country, requiredKey) match {
+        case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp)       => Right(Some(postCodeValidTransform(zip)))
+        case (Some(_), Some("GB"), _)                                        => Left(Seq(FormError(key, invalidKey)))
+        case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode => Right(Some(zip))
+        case (Some(_), Some(_), _)                                           => Left(Seq(FormError(key, nonUkLengthKey)))
+        case (Some(zip), None, _)                                            => Right(Some(zip))
+        case (None, Some("GB"), Some(rk))                                    => Left(Seq(FormError(key, rk)))
+        case _                                                               => Right(None)
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
 
   private[mappings] def intFormatter(
     requiredKey:    String,
