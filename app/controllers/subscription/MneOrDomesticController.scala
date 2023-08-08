@@ -30,7 +30,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.MneOrDomesticView
 
 import javax.inject.Inject

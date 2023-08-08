@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import controllers.subscription.MneOrDomesticController
 import forms.MneOrDomesticFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}

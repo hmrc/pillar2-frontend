@@ -103,6 +103,14 @@
                         <span class="app-task-list__task-name">
                            @messages("taskList.task.business.more")
                         </span>
+                        @if(filingMemberStatus == "Completed"){
+                        <a href="/pillar-two/business-matching/match-hmrc-records" aria-describedby="subscription-status">
+                            @messages("task.status.inProgress")
+                        </a>
+                        } else  {
+                        <span class="hmrc-status-tag" id="subscription-journey">
+                            @messages("task.status.cannotStartYet")</span>
+                        }
                         <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet")</span>
                     </li>
                 </ul>
