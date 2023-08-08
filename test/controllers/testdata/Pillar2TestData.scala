@@ -17,8 +17,6 @@
 package controllers.testdata
 
 import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
-import models.fm.{FilingMember, WithoutIdNfmData}
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}

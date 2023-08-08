@@ -29,9 +29,13 @@ import views.html.errors.ErrorTemplate
 import views.html.fmview.{IsNFMUKBasedView, NominateFilingMemberYesNoView}
 import views.html.fmview.{IsNFMUKBasedView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
+import views.html.subscriptionview.MneOrDomesticView
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewMneOrDomestic: MneOrDomesticView =
+    new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewNfmNameRegistrationController: NfmNameRegistrationView =
     new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
