@@ -124,7 +124,7 @@ POST       /business-matching/filing-member/uk-based/change-org-type            
 
 
 
-GET        /mneOrDomestic                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
-POST       /mneOrDomestic                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
-GET        /change-MneOrDomestic                  controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-MneOrDomestic                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
+GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
+POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
+GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
