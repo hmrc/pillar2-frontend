@@ -23,5 +23,5 @@ case object SubscriptionPage extends QuestionPage[Subscription] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "FilingMember"
+  override def toString: String = "Subscription"
 }
