@@ -19,12 +19,12 @@ package models.fm
 import play.api.libs.json.{Json, OFormat}
 
 case class WithoutIdNfmData(
-  registeredFmName:        String,
-  registeredFmNameAddress: Option[NfmRegisteredAddress] = None,
-  fmContactName:           Option[String] = None,
-  fmEmailAddress:          Option[String] = None,
-  contactNfmByTelephone:   Option[ContactNFMByTelephone] = None,
-  telephoneNumber:         Option[String] = None
+  registeredFmName:      String,
+  registeredFmAddress:   Option[NfmRegisteredAddress] = None,
+  fmContactName:         Option[String] = None,
+  fmEmailAddress:        Option[String] = None,
+  contactNfmByTelephone: Option[ContactNFMByTelephone] = None,
+  telephoneNumber:       Option[String] = None
 )
 
 object WithoutIdNfmData {

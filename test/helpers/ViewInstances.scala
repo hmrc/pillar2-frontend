@@ -27,10 +27,14 @@ import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
 import views.html.fmview.{IsNFMUKBasedView, NominateFilingMemberYesNoView}
+import views.html.fmview.{IsNFMUKBasedView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewNfmNameRegistrationController: NfmNameRegistrationView =
+    new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val viewNfmEntityType: NfmEntityTypeView =
     new NfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
@@ -156,6 +160,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
     new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewNfmRegisteredAddress: NfmRegisteredAddressView =
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

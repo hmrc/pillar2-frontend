@@ -18,10 +18,15 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.GroupTerritoriesFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+
+import scala.concurrent.Future
 
 class GroupTerritoriesControllerSpec extends SpecBase {
 
@@ -61,6 +66,14 @@ class GroupTerritoriesControllerSpec extends SpecBase {
       val result = controller.onSubmit()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url
+
+    }
+    "Show error page when no option is selected - bad request " in {
+
+      val request =
+        FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
+      val result = controller.onSubmit()()(request)
+      status(result) mustEqual BAD_REQUEST
 
     }
   }

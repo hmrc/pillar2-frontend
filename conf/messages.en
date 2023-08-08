@@ -244,7 +244,7 @@ entityType.ukLimitedCompany = UK limited company
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
-entityType.change.hidden = change
+entityType.change.hidden = Change what type of company the ultimate parent entity
 
 registeringNfmForThisGroup.title = Are you registering the nominated filing member for this group?
 registeringNfmForThisGroup.heading = Are you registering the nominated filing member for this group?
@@ -259,3 +259,52 @@ isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
 isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
+
+nfmNameRegistration.title = What is the name of the nominated filing member?
+nfmNameRegistration.heading.caption = Business details
+nfmNameRegistration.heading = What is the name of the nominated filing member?
+nfmNameRegistration.checkYourAnswersLabel = What is the name of the nominated filing member?
+nfmNameRegistration.error.required =  You need to enter the name of the nominated filing member
+nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
+nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
+
+
+nfmRegisteredAddress.title=Where is the registered office address of {0}?
+nfmRegisteredAddress.heading=Where is the registered office address of {0}?
+nfmRegisteredAddress.checkYourAnswersLabel = Address
+nfmRegisteredAddress.change.hidden= Change the registered office address of the nominated filing member
+nfmRegisteredAddress.address-line-1 = Address line 1
+nfmRegisteredAddress.address-line-2 = Address line 2 (optional)
+nfmRegisteredAddress.town-city = Town or City
+nfmRegisteredAddress.region = Region (optional)
+nfmRegisteredAddress.postcode = Postal code (if applicable)
+nfmRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
+nfmRegisteredAddress.country = Country
+nfmRegisteredAddress.country.hint = Enter text and then choose from the list
+nfmRegisteredAddress.address-line-1.error.required = Enter the first line of the address
+nfmRegisteredAddress.town-city.error.required = Enter the town or city
+nfmRegisteredAddress.town-city.error.length = The town or city must be 35 characters or less
+nfmRegisteredAddress.region.error.length = The region must be 35 characters or less
+nfmRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
+nfmRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+nfmRegisteredAddress.country.error.required = Select a country
+nfmRegisteredAddress.country.error.length = The country cannot be more than 35 characters
+nfmRegisteredAddress.heading.caption = Business details
+nfmRegisteredAddress.messages.error.address-line-1.required=Enter the first line of the address
+nfmRegisteredAddress.messages.error.address-line-1.length = The first line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.address-line-1.invalid=The first line of the address contains invalid characters
+nfmRegisteredAddress.messages.error.address-line-2.length=The second line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.address-line-2.invalid=The second line of the address contains invalid characters
+nfmRegisteredAddress.country = Country
+nfmRegisteredAddress.country.hint = Choose from the list
+
+nfmEntityType.title = What type of company is the nominated filing member?
+nfmEntityType.heading = What type of company is the nominated filing member?
+nfmEntityType.ukLimitedCompany = UK limited company
+nfmEntityType.limitedLiabilityPartnership = Limited liability partnership
+nfmEntityType.checkYourAnswersLabel = Org Type
+nfmEntityType.error.required = Select what type of company the nominated filing member is
+nfmEntityType.change.hidden = Change What type of company is the nominated filing member
+nfmEntityType.caption = Business details
+
+

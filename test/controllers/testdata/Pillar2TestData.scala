@@ -16,10 +16,12 @@
 
 package controllers.testdata
 
+import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.fm.{FilingMember, WithoutIdNfmData}
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.registration._
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -80,6 +82,47 @@ trait Pillar2TestData {
       withIdRegData = withIdRegData,
       withoutIdRegData = withoutIdRegData
     )
+
+  def validWithIdFmDataName(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = None
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
+
+  def validWithIdFmDataAddress(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = Some(WithoutIdNfmData(registeredFmName = "Name"))
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
+
+  def validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
 
   def validWithIdRegDataForLimitedCompany =
     new Registration(
@@ -143,6 +186,14 @@ trait Pillar2TestData {
     addressLine4 = Some("Line4"),
     postalCode = Some("VR11 3PA"),
     countryCode = "GB"
+  )
+  val validNfmRegisteredAddress = new NfmRegisteredAddress(
+    addressLine1 = "Line1",
+    addressLine2 = Some("Line2"),
+    addressLine3 = "Line3",
+    addressLine4 = Some("Line4"),
+    postalCode = Some("VR11 3PA"),
+    countryCode = "IN"
   )
 
   val validIdRegistrationData =
