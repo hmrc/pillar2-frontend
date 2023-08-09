@@ -119,7 +119,7 @@ upeNameRegistration.heading.caption=Business details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
-upeNameRegistration.error.length = The name cannot be more than 200 characters
+upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
 
