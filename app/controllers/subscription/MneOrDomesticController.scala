@@ -23,13 +23,14 @@ import controllers.routes
 import forms.MneOrDomesticFormProvider
 import models.Mode
 import models.subscription.Subscription
-import pages.SubscriptionPage
+import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.MneOrDomesticView
 
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class MneOrDomesticController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              MneOrDomesticFormProvider,
+  page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -50,12 +52,17 @@ class MneOrDomesticController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubscriptionPage) match {
-      case None        => form
-      case Some(value) => form.fill(value.domesticOrMne)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    val nfmData= request.userAnswers.get(NominatedFilingMemberPage).fold(false)(data=> data.isNFMnStatus == RowStatus.Completed)
+      nfmData match{
+      case true => val preparedForm = request.userAnswers.get(SubscriptionPage) match {
+        case None => form
+        case Some(value) => form.fill(value.domesticOrMne)
     }
+        Ok(view(preparedForm, mode))
+      case false => NotFound(notAvailable)
 
-    Ok(view(preparedForm, mode))
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
