@@ -22,7 +22,7 @@
 )
 
 
-@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", subscriptionStatus="notStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -108,6 +108,8 @@
                         <a href="/pillar-two/further-details/group-status" aria-describedby="subscription-status">
                             @messages("taskList.task.business.more")
                         </a>
+                        <span class="hmrc-status-tag" id="subscription-journey">
+                            @messages("task.status.notStarted")</span>
                         } else  {
                         <span class="hmrc-status-tag" id="subscription-journey">
                             @messages("task.status.cannotStartYet")</span>

@@ -16,7 +16,6 @@
 
 package pages
 
-import models.UPERegisteredInUKConfirmation
 import models.registration.Registration
 import play.api.libs.json.JsPath
 

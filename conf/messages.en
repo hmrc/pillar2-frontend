@@ -72,7 +72,7 @@ taskList.task.business.filingMember = Filing member''s details
 taskList.task.business.filingMember.add = Add filing member''s details
 taskList.task.business.filingMember.edit = Edit filing member''s details
 
-taskList.task.business.more = Further business details
+taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
 taskList.task.business.more.edit = Edit further business details
 taskList.task.contact.heading = Contact details
