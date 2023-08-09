@@ -53,12 +53,13 @@ class MneOrDomesticController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val nfmData= request.userAnswers.get(NominatedFilingMemberPage).fold(false)(data=> data.isNFMnStatus == RowStatus.Completed)
-      nfmData match{
-      case true => val preparedForm = request.userAnswers.get(SubscriptionPage) match {
-        case None => form
-        case Some(value) => form.fill(value.domesticOrMne)
-    }
+    val nfmData      = request.userAnswers.get(NominatedFilingMemberPage).fold(false)(data => data.isNFMnStatus == RowStatus.Completed)
+    nfmData match {
+      case true =>
+        val preparedForm = request.userAnswers.get(SubscriptionPage) match {
+          case None        => form
+          case Some(value) => form.fill(value.domesticOrMne)
+        }
         Ok(view(preparedForm, mode))
       case false => NotFound(notAvailable)
 

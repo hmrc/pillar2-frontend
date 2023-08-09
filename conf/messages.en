@@ -75,6 +75,8 @@ taskList.task.business.filingMember.edit = Edit filing member''s details
 taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
 taskList.task.business.more.edit = Edit further business details
+taskList.task.business.sub.add = Add further group details
+taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
 taskList.task.review.heading = Review and submit
@@ -84,6 +86,7 @@ task.status.notStarted = Not started
 task.status.inProgress = In progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
+
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in

@@ -39,9 +39,9 @@ import utils.RowStatus
 case class Subscription(
   domesticOrMne:             MneOrDomestic,
   subscriptionStatus:        RowStatus,
-  accountingPeriod:          Option[String]= None,
-  primaryContactName:        Option[String]= None,
-  primaryContactEmail:       Option[String]= None,
+  accountingPeriod:          Option[String] = None,
+  primaryContactName:        Option[String] = None,
+  primaryContactEmail:       Option[String] = None,
   primaryContactTelephone:   Option[String] = None,
   secondaryContactName:      Option[String] = None,
   secondaryContactEmail:     Option[String] = None,

@@ -101,18 +101,30 @@
                     }
 
                     <li class="app-task-list__item">
-                        @if(filingMemberStatus == "Completed"){
-                        <a href="/pillar-two/further-details/group-status" aria-describedby="subscription-status">
-                            @messages("taskList.task.business.more")
-                        </a>
-                        <span class="hmrc-status-tag" id="subscription-journey">
-                            @messages("task.status.notStarted")</span>
+                        <span class="app-task-list__task-name">
+                          @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                              <a href="/pillar-two/further-details/group-status" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.sub.edit")
+                              </a>
+                            } else if (filingMemberStatus == "Completed" &&  ( subscriptionStatus=="NotStarted" ||  subscriptionStatus=="InProgress")){
+                                <a href="/pillar-two/further-details/group-status" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.sub.add")
+                                </a>
+                            } else {
+                             @messages("taskList.task.business.sub.add")
+                            }
+                        </span>
+                        @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "Completed" &&  subscriptionStatus=="InProgress" ) {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else if(filingMemberStatus == "Completed" && subscriptionStatus=="NotStarted" ) {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         } else  {
-                        <span class="hmrc-status-tag" id="subscription-journey">
-                            @messages("task.status.cannotStartYet")</span>
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
                         }
-
                     </li>
+
                 </ul>
             </li>
 
