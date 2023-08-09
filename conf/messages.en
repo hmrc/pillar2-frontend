@@ -1,4 +1,4 @@
-service.name = OECD Pillar Two
+service.name = Report Pillar 2 top-up taxes
 
 site.back = Back
 site.remove = Remove
@@ -106,8 +106,8 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = Welcome to OECD Pillar Two
-index.heading = Welcome to OECD Pillar Two
+index.title = Welcome to Report Pillar 2 top-up taxes
+index.heading = Welcome to Report Pillar 2 top-up taxes
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
