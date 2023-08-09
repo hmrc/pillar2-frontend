@@ -311,14 +311,15 @@ nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nfmContactName.checkYourAnswersLabel = nfmContactName
 nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
-nfmContactName.change.hidden = NFMContactName
+nfmContactName.change.hidden = Changing filing member contact name
 
 nfmEmailAddress.heading.caption = Business details
 nfmEmailAddress.title = What is the email address for {0}?
 nfmEmailAddress.heading = What is the email address for {0}?
-nfmEmailAddress.hint = We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
+nfmEmailAddress.hint = We will use this to confirm your records
 nfmEmailAddress.checkYourAnswersLabel = nfmEmailAddress
 nfmEmailAddress.error.required = You need to enter the email address for {0}
-nfmEmailAddress.error.length = Email cannot be more than 200 characters
-nfmEmailAddress.change.hidden = nfmEmailAddress
+nfmEmailAddress.error.length = The email address should be 132 characters or less
+nfmEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+nfmEmailAddress.change.hidden = Changing filing member contact email
 
