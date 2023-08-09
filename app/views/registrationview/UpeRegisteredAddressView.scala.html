@@ -16,72 +16,83 @@
 
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
+@import utils.InputOption
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukSelect: GovukSelect
 )
 
 
-@(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="", options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upe-registered-address.title", UserName ))) {
+@layout(pageTitle = title(form, messages("upeRegisteredAddress.title", UserName ))) {
 
     @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("upe-registered-address.heading.caption")</span>
-        <h1 class="govuk-heading-l long-word">@messages("upe-registered-address.heading", UserName)</h1>
+        <span class="govuk-caption-l">@messages("upeRegisteredAddress.heading.caption")</span>
+        <h1 class="govuk-heading-l long-word">@messages("upeRegisteredAddress.heading", UserName)</h1>
 
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine1"),
-                label = LabelViewModel(messages("upe-registered-address.address-line-1"))
+                label = LabelViewModel(messages("upeRegisteredAddress.address-line-1"))
             )
             .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine2"),
-                label = LabelViewModel(messages("upe-registered-address.address-line-2"))
+                label = LabelViewModel(messages("upeRegisteredAddress.address-line-2"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
-                label = LabelViewModel(messages("upe-registered-address.town-city"))
+                label = LabelViewModel(messages("upeRegisteredAddress.town-city"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine4"),
-                label = LabelViewModel(messages("upe-registered-address.region"))
+                label = LabelViewModel(messages("upeRegisteredAddress.region"))
             )
                     .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("postalCode"),
-                label = LabelViewModel(messages("upe-registered-address.postcode"))
+                label = LabelViewModel(messages("upeRegisteredAddress.postcode"))
             )
                     .withWidth(Fixed10)
+                    .withHint(Hint(content = Text(messages("nfmRegisteredAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
         )
 
-        @govukInput(
-            InputViewModel(
-                field = form("countryCode"),
-                label = LabelViewModel(messages("upe-registered-address.country"))
+            @govukSelect(
+            SelectViewModel(
+            field = form("countryCode"),
+            items = Seq(SelectItem(value = Some(""))) ++
+            options.map(valueOption =>
+            SelectItem(
+            value = Some(valueOption.value),
+            text = valueOption.label
             )
-                    .withWidth(TwoThirds)
-        )
+            ),
+            label = LabelViewModel(messages("nfmRegisteredAddress.country"))
+            ).withCssClass("govuk-input")
+            .withFormGroupClasses("govuk-input--width-20")
+            .withHint(Hint(content = Text(messages("nfmRegisteredAddress.country.hint"))))
+            )
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
