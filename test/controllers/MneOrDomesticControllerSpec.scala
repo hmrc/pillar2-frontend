@@ -18,9 +18,10 @@ package controllers
 
 import base.SpecBase
 import forms.MneOrDomesticFormProvider
+import models.fm.FilingMember
 import models.subscription.Subscription
-import models.{MneOrDomestic, NormalMode, UserAnswers}
-import pages.SubscriptionPage
+import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
@@ -33,8 +34,12 @@ class MneOrDomesticControllerSpec extends SpecBase {
   "MneOrDomestic Controller" when {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswer = UserAnswers(userAnswersId)
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
@@ -51,7 +56,13 @@ class MneOrDomesticControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress)).success.value
+        UserAnswers(userAnswersId)
+          .set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress))
+          .success
+          .value
+          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+          .success
+          .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
