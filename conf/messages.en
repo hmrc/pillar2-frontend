@@ -309,8 +309,8 @@ nfmContactName.title = What is the name of the person or team we should contact 
 nfmContactName.heading = What is the name of the person or team we should contact from the nominated filing member?
 nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nfmContactName.checkYourAnswersLabel = nfmContactName
-nfmContactName.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
-nfmContactName.error.length = Name cannot be more than 105 characters
+nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
+nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
 nfmContactName.change.hidden = NFMContactName
 
 nfmEmailAddress.heading.caption = Business details
