@@ -22,7 +22,7 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength = 132
+  val maxLength  = 132
   val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
 
   def apply(userName: String): Form[String] =
