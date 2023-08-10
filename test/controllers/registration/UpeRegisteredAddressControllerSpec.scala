@@ -31,6 +31,7 @@ import play.api.test.Helpers._
 import utils.InputOption
 import views.html.registrationview.UpeRegisteredAddressView
 
+import java.io.IOException
 import scala.concurrent.Future
 
 class UpeRegisteredAddressControllerSpec extends SpecBase {
@@ -71,7 +72,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswersWitNameReg =
+        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -95,7 +98,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       }
     }
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswersWitNameReg =
+        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -119,7 +124,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswersWitNameReg =
+        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
