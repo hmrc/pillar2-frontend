@@ -23,10 +23,12 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.InputOption
 import views.html.registrationview.UpeRegisteredAddressView
 
 import scala.concurrent.Future
@@ -42,6 +44,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       formProvider,
+      mockCountryOptions,
       stubMessagesControllerComponents(),
       viewpageNotAvailable,
       viewUpeRegisteredAddress
@@ -50,21 +53,20 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller" must {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswersWitNameReg =
+        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UpeRegisteredAddressView]
-
+        val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validUpeRegisteredAddressed), NormalMode, "Test Name")(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) should include(
+          "For a UK address, you must enter a correctly formatted UK postcode"
+        )
       }
     }
 
@@ -92,35 +94,56 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
       }
     }
+    "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
-    "return bad request if fields are greater than 200 in length" in {
-      val testValue =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-          "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      val request =
-        FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", testValue),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("addressLine1", "27 house"),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "hhhhhhhhhhhh"),
+              ("countryCode", "GB")
+            )
 
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
     }
-    "return bad request if required fields are not filled" in {
 
-      val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("addressLine1", "27 house"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
+    "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              (
+                "addressLine1",
+                "27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house"
+              ),
+              ("addressLine2", "Drive"),
+              ("addressLine3", "Newcastle"),
+              ("addressLine4", "North east"),
+              ("postalCode", "ne5 2th"),
+              ("countryCode", "GB")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
     }
+
   }
 }

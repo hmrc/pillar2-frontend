@@ -179,6 +179,16 @@ trait Pillar2TestData {
   ) =
     new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus, withoutIdRegData = None)
 
+  def validWithoutIdRegDataWithName(
+    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus: RowStatus = RowStatus.InProgress
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name"))
+    )
+
   def validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),

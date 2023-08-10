@@ -23,7 +23,7 @@ import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength = 200
+  private val textLength = 35
   def apply(): Form[UpeRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
@@ -43,8 +43,8 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
         ),
       "postalCode" ->
         optionalPostcode(
-          Some("nfmRegisteredAddress.postcode.error.invalid"),
-          "nfmRegisteredAddress.postcode.error.invalid",
+          Some("upeRegisteredAddress.postcode.error.invalid"),
+          "upeRegisteredAddress.postcode.error.invalid",
           "upeRegisteredAddress.postcode.error.length",
           "countryCode"
         ),
