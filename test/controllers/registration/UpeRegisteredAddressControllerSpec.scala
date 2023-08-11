@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeRegisteredAddressFormProvider
-import models.NormalMode
+import models.{NormalMode, UPERegisteredInUKConfirmation}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -54,8 +54,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersWitNameReg =
-        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -72,8 +71,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWitNameReg =
-        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -97,9 +95,37 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
       }
     }
+    "throw error if upe name is not available" in {
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        try {
+          val request =
+            FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+              .withFormUrlEncodedBody(
+                ("addressLine1", "27 house"),
+                ("addressLine2", "Drive"),
+                ("addressLine3", "Newcastle"),
+                ("addressLine4", "North east"),
+                ("postalCode", "NE3 2TR"),
+                ("countryCode", "GB")
+              )
+
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+        } catch {
+          case e: java.lang.Exception =>
+            e.getMessage mustEqual "upeNameRegistration should be available before address"
+        }
+      }
+    }
+
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg =
-        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -124,8 +150,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg =
-        emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
