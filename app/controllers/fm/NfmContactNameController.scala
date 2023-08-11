@@ -72,14 +72,15 @@ class NfmContactNameController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration should be available before address"))
+          val fmRegData =
+            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val fmRegDataWithoutId = fmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration should be available before address"))
 
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmContactName = Some(value)))))
+                  .set(NominatedFilingMemberPage, fmRegData.copy(withoutIdRegData = Some(fmRegDataWithoutId.copy(fmContactName = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))
@@ -90,5 +91,5 @@ class NfmContactNameController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.registeredFmName.nonEmpty))
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.registeredFmAddress.isDefined))
 }

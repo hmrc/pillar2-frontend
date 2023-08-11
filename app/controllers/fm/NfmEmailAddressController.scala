@@ -74,15 +74,16 @@ class NfmEmailAddressController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
-          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-          val regDataWithoutId =
-            regData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration and address should be available before email"))
+          val fmRegData =
+            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val fmRegDataWithoutId =
+            fmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration and address should be available before email"))
 
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  set (NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmEmailAddress = Some(value)))))
+                  set (NominatedFilingMemberPage, fmRegData.copy(withoutIdRegData = Some(fmRegDataWithoutId.copy(fmEmailAddress = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
