@@ -38,7 +38,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataAddress()).success.value
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -54,7 +54,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

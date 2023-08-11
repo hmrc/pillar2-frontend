@@ -75,21 +75,19 @@ class NfmRegisteredAddressController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
-        value =>
+        value => {
+          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration should be available before address"))
+
           for {
-            updatedAnswers <- Future.fromTry(
-                                request.userAnswers.set(
-                                  NominatedFilingMemberPage,
-                                  FilingMember(
-                                    NfmRegistrationConfirmation.Yes,
-                                    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                                    isNFMnStatus = RowStatus.InProgress,
-                                    withoutIdRegData = Some(WithoutIdNfmData(registeredFmAddress = Some(value), registeredFmName = userName))
-                                  )
-                                )
-                              )
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(registeredFmAddress = Some(value)))))
+              )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
+        }
       )
   }
   private def getUserName(request: DataRequest[AnyContent]): String = {

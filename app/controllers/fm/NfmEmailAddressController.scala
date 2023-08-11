@@ -67,60 +67,32 @@ class NfmEmailAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val fmData   = request.userAnswers.get(NominatedFilingMemberPage)
     val userName = getFMContactName(request)
     val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value =>
+        value => {
+          val regData = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val regDataWithoutId =
+            regData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration and address should be available before email"))
+
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(
-                    NominatedFilingMemberPage,
-                    fmData.fold(
-                      FilingMember(
-                        NfmRegistrationConfirmation.Yes,
-                        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                        isNFMnStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(
-                          WithoutIdNfmData(
-                            fmEmailAddress = Some(value),
-                            registeredFmName = getRegFMName(request),
-                            fmContactName = Some(getFMContactName(request))
-                          )
-                        )
-                      )
-                    )(data =>
-                      data copy (NfmRegistrationConfirmation.Yes,
-                      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-                      isNFMnStatus = RowStatus.InProgress,
-                      withoutIdRegData = Some(
-                        WithoutIdNfmData(
-                          fmEmailAddress = Some(value),
-                          registeredFmName = getRegFMName(request),
-                          fmContactName = Some(getFMContactName(request))
-                        )
-                      ))
-                    )
-                  )
+                  set (NominatedFilingMemberPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(fmEmailAddress = Some(value)))))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        }
       )
   }
 
   private def getFMContactName(request: DataRequest[AnyContent]): String = {
     val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
     fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
-  }
-
-  private def getRegFMName(request: DataRequest[AnyContent]): String = {
-    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
-    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmName))
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =

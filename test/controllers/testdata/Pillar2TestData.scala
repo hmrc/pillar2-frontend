@@ -120,7 +120,7 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
-  def validWithIdFmDataAddress(
+  def validWithoutIdFmDataAddress(
     nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
     isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
     isNFMnStatus:        RowStatus = RowStatus.InProgress,
