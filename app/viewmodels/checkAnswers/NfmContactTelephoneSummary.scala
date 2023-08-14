@@ -20,33 +20,24 @@ import models.{CheckMode, UserAnswers}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NfmRegisteredAddressSummary {
+object NfmContactTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(NominatedFilingMemberPage)
       .flatMap { reg =>
         reg.withoutIdRegData.map { withoutId =>
-          withoutId.registeredFmAddress.map { answer =>
-            val field1      = HtmlFormat.escape(answer.addressLine1).toString + "<br>"
-            val field2      = if (answer.addressLine2.isDefined) HtmlFormat.escape(answer.addressLine2.mkString("")) + "<br>" else ""
-            val field3      = HtmlFormat.escape(answer.addressLine3).toString + "<br>"
-            val field4      = if (answer.addressLine4.isDefined) HtmlFormat.escape(answer.addressLine4.mkString("")) + "<br>" else ""
-            val postcode    = if (answer.postalCode.isDefined) HtmlFormat.escape(answer.postalCode.mkString("")) + "<br>" else ""
-            val countryCode = HtmlFormat.escape(answer.countryCode)
-            val value       = field1 + field2 + field3 + field4 + postcode + countryCode
-
+          withoutId.telephoneNumber.map { answer =>
             SummaryListRowViewModel(
-              key = "nfmRegisteredAddress.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(value)),
+              key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmRegisteredAddress.change.hidden"))
+                ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.change.hidden"))
               )
             )
           }
