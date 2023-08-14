@@ -28,8 +28,6 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.InputOption
-import utils.countryOptions.CountryOptions
 
 import scala.concurrent.Future
 
@@ -40,7 +38,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataAddress()).success.value
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -56,7 +54,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswersWithNominatedFilingMember =
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -76,7 +76,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url
       }
     }
 

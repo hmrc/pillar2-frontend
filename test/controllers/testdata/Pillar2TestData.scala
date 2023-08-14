@@ -17,8 +17,6 @@
 package controllers.testdata
 
 import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
-import models.fm.{FilingMember, WithoutIdNfmData}
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
@@ -83,6 +81,28 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
+  def validNoIdNfmDataForContactEmail = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith")))
+  )
+
+  def validNoIdNfmDataDefForContactName = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
+
+  val validNfmRegisteredAddress = new NfmRegisteredAddress(
+    addressLine1 = "Line1",
+    addressLine2 = Some("Line2"),
+    addressLine3 = "Line3",
+    addressLine4 = Some("Line4"),
+    postalCode = Some("VR11 3PA"),
+    countryCode = "IN"
+  )
   def validWithIdFmDataName(
     nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
     isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.No),
@@ -100,7 +120,7 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
-  def validWithIdFmDataAddress(
+  def validWithoutIdFmDataAddress(
     nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
     isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
     isNFMnStatus:        RowStatus = RowStatus.InProgress,
@@ -186,14 +206,6 @@ trait Pillar2TestData {
     addressLine4 = Some("Line4"),
     postalCode = Some("VR11 3PA"),
     countryCode = "GB"
-  )
-  val validNfmRegisteredAddress = new NfmRegisteredAddress(
-    addressLine1 = "Line1",
-    addressLine2 = Some("Line2"),
-    addressLine3 = "Line3",
-    addressLine4 = Some("Line4"),
-    postalCode = Some("VR11 3PA"),
-    countryCode = "IN"
   )
 
   val validIdRegistrationData =
@@ -430,4 +442,5 @@ trait Pillar2TestData {
        |        }
        |    }
        """.stripMargin
+
 }
