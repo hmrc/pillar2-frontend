@@ -22,12 +22,16 @@ import controllers.actions._
 import controllers.routes
 import forms.ContactNfmByTelephoneFormProvider
 import models.Mode
-import pages.ContactNfmByTelephonePage
+import models.fm.ContactNFMByTelephone
+import models.requests.DataRequest
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.fmview.ContactNfmByTelephoneView
 
 import javax.inject.Inject
@@ -40,32 +44,90 @@ class ContactNfmByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              ContactNfmByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
   view:                      ContactNfmByTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(ContactNfmByTelephonePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    val userName     = getUserName(request)
+    val form         = formProvider(userName)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    isPreviousPageDefined(request) match {
+      case true =>
+        request.userAnswers
+          .get(NominatedFilingMemberPage)
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+              data.contactNfmByTelephone.fold(Ok(view(form, mode, userName)))(value => Ok(view(form.fill(value), mode, userName)))
+            )
+          }
+
+      case false => NotFound(notAvailable)
     }
 
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = getUserName(request)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNfmByTelephonePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+        value => {
+          val nfmRegData =
+            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val nfmRegDataWithoutId =
+            nfmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration, address & email should be available before email"))
+
+          value match {
+            case ContactNFMByTelephone.Yes =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers
+                      .set(
+                        NominatedFilingMemberPage,
+                        nfmRegData
+                          .copy(
+                            isNFMnStatus = RowStatus.InProgress,
+                            withoutIdRegData = Some(nfmRegDataWithoutId.copy(contactNfmByTelephone = Some(value)))
+                          )
+                      )
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(mode))
+
+            case ContactNFMByTelephone.No =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers
+                      .set(
+                        NominatedFilingMemberPage,
+                        nfmRegData.copy(
+                          isNFMnStatus = RowStatus.Completed,
+                          withoutIdRegData = Some(nfmRegDataWithoutId.copy(contactNfmByTelephone = Some(value), telephoneNumber = None))
+                        )
+                      )
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.fm.routes.FilingMemberCheckAnswersController.onPageLoad)
+          }
+        }
       )
   }
+
+  private def getUserName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
+  }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.fmEmailAddress.isDefined))
+
 }

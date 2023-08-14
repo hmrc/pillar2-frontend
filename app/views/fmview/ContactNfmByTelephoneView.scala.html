@@ -27,9 +27,9 @@
     )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactNfmByTelephone.title"))) {
+@layout(pageTitle = title(form, messages("contactNfmByTelephone.title", userName))) {
 
     @formHelper(action = controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -41,7 +41,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("contactNfmByTelephone.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("contactNfmByTelephone.heading", userName)).asPageHeading(Large)
             ).withHint(Hint(content = Text(messages("contactNfmByTelephone.hint"))))
             )
 
