@@ -57,6 +57,10 @@ class NfmCheckYourAnswersController @Inject() (
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
         telephonePreference match {
+          case true => NfmTelephonePreferenceSummary.row(request.userAnswers)
+          case _    => None
+        },
+        telephonePreference match {
           case true => NfmContactTelephoneSummary.row(request.userAnswers)
           case _    => None
         }
@@ -75,13 +79,13 @@ class NfmCheckYourAnswersController @Inject() (
           withoutId.registeredFmName.nonEmpty &&
             withoutId.registeredFmAddress.isDefined &&
             withoutId.fmContactName.isDefined &&
-            withoutId.fmEmailAddress.isDefined //&&
-        //  withoutId.contactNfmByTelephone.isDefined &&
-        // withoutId.telephoneNumber.isDefined &&
-//            withoutId.contactNfmByTelephone.fold(false)(contactTel =>
-//              (contactTel == ContactNFMByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
-//                (contactTel == ContactNFMByTelephone.No)
-//            )
+            withoutId.fmEmailAddress.isDefined &&
+            withoutId.contactNfmByTelephone.isDefined &&
+            withoutId.telephoneNumber.isDefined &&
+            withoutId.contactNfmByTelephone.fold(false)(contactTel =>
+              (contactTel == ContactNFMByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
+                (contactTel == ContactNFMByTelephone.No)
+            )
         )
       )
 }

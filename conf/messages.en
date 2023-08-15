@@ -183,8 +183,8 @@ eligibilityconfirmation.p1=You will now need to sign in to HMRC online services 
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check your answers
-checkYourAnswers.heading.caption= Business details
-
+checkYourAnswers.heading.caption = Group details
+checkYourAnswers.nfm.heading.caption= Business details
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
 journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
@@ -330,3 +330,10 @@ nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden = Change the name of the nominated filing member
 
 
+
+
+contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactNfmByTelephone.change.hidden = Change your response to whether we can make contact by telephone
+
+nfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
+nfmCaptureTelephoneDetails.change.hidden = Change the contact telephone number
