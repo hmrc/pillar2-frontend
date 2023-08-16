@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
-import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NominateFilingMemberYesNoView}
+import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
@@ -38,11 +38,23 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewContactNfmByTelephone: ContactNfmByTelephoneView =
     new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
+  val viewNfmNameRegistrationController: NfmNameRegistrationView =
+    new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewNfmEntityType: NfmEntityTypeView =
+    new NfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewIsNFMUKBased: IsNFMUKBasedView =
     new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewEntityType: EntityTypeView =
     new EntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val viewNfmContactName: NfmContactNameView =
+    new NfmContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewNfmEmailAddress: NfmEmailAddressView =
+    new NfmEmailAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
@@ -159,6 +171,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
     new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewNfmRegisteredAddress: NfmRegisteredAddressView =
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

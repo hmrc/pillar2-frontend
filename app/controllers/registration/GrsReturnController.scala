@@ -19,12 +19,12 @@ package controllers.registration
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
-import models.Mode
+import models.{Mode, NfmRegistrationConfirmation, UserType}
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.registration.GrsResponse
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,7 +46,7 @@ class GrsReturnController @Inject() (
 )(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController {
 
-  def continue(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def continueUpe(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers.get(RegistrationPage) match {
       case Some(registration) =>
         registration.orgType match {
@@ -86,6 +86,50 @@ class GrsReturnController @Inject() (
         }
 
       case _ => throw new IllegalStateException("No valid org type found in registration data")
+    }
+
+  }
+
+  def continueFm(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.userAnswers.get(NominatedFilingMemberPage) match {
+      case Some(nfmregistration) =>
+        nfmregistration.orgType match {
+          case Some(e @ UkLimitedCompany) =>
+            for {
+              entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
+              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+              userAnswers <- Future.fromTry(
+                               request.userAnswers.set(
+                                 NominatedFilingMemberPage,
+                                 nfmregistration.copy(
+                                   isNFMnStatus = isNfmStatus,
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                 )
+                               )
+                             )
+              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+
+          case Some(e @ LimitedLiabilityPartnership) =>
+            for {
+              entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+              userAnswers <- Future.fromTry(
+                               request.userAnswers.set(
+                                 NominatedFilingMemberPage,
+                                 nfmregistration.copy(
+                                   isNFMnStatus = isNfmStatus,
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                 )
+                               )
+                             )
+              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+
+          case _ => throw new IllegalStateException("No valid org type found in Filing Member Registration data")
+        }
+
+      case _ => throw new IllegalStateException("No valid org type found in Filing Member Registration data")
     }
 
   }

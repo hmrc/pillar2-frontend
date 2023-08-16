@@ -21,25 +21,21 @@ import akka.stream.Materializer
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.testdata.Pillar2TestData
-import forms.{BusinessActivityUKFormProvider, GroupTerritoriesFormProvider, TradingBusinessConfirmationFormProvider, TurnOverEligibilityFormProvider, UPERegisteredInUKConfirmationFormProvider, UpeNameRegistrationFormProvider, UpeRegisteredAddressFormProvider}
 import helpers.{AllMocks, ViewInstances}
-import models.registration.WithoutIdRegData
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UserAnswers}
+import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import pages.RegistrationPage
-import play.api.{Application, Configuration}
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -70,10 +66,24 @@ trait SpecBase
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
+  def userAnswersNfmNoId:  UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
+
+  def userAnswersWithNoIdCompleted: UserAnswers =
+    emptyUserAnswers.set(RegistrationPage, validNoIdRegData(isRegistrationStatus = RowStatus.Completed)).success.value
+
+  def userAnswersWithIdForLimitedComp: UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+  def userAnswersWithIdForLLP:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+
+  def userAnswersWithIdForLimitedCompForFm: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+  def userAnswersWithIdForLLPForFm: UserAnswers =
+    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
+
+  val userAnswersId: String = "id"
 
   def userAnswersWithId:      UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
   def userAnswersWithIdNoOrg: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value
-  val userAnswersId:          String      = "id"
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

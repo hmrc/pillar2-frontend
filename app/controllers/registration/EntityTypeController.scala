@@ -21,7 +21,9 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.registration.RegistrationWithoutIdRequest
+import models.{Mode, UserType}
 import models.{Mode, UPERegisteredInUKConfirmation}
+
 import models.grs.EntityType
 import models.requests.DataRequest
 import pages.{EntityTypePage, RegistrationPage}
@@ -87,7 +89,7 @@ class EntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
-                                      .createLimitedCompanyJourney(mode)
+                                      .createLimitedCompanyJourney(UserType.Upe, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
@@ -100,7 +102,7 @@ class EntityTypeController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
                 createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(EntityType.LimitedLiabilityPartnership, mode)
+                                      .createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )

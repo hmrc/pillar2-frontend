@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class ContactNfmByTelephonePageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "ContactNfmByTelephonePage" - {
+class NfmNameRegistrationFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Boolean](ContactNfmByTelephonePage)
-
-    beSettable[Boolean](ContactNfmByTelephonePage)
-
-    beRemovable[Boolean](ContactNfmByTelephonePage)
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("nfmNameRegistration.error.required")
+        .verifying(maxLength(105, "nfmNameRegistration.error.length"))
+    )
 }

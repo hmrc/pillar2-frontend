@@ -17,19 +17,22 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import utils.countryOptions.CountryOptions
 
 trait Constraints {
-  val regexAddressLine   = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
-  val regexPostcode      = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
-  val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
-  val regexSortCode: String = """\d{6,}""".r.toString()
-  val regexUtr         = """^([kK]{0,1}\d{10})$|^(\d{10}[kK]{0,1})$|^([kK]{0,1}\d{13})$|^(\d{13}[kK]{0,1})$"""
-  val regexName        = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
-  val regexPhoneNumber = """^[0-9 ()+--]{1,24}$"""
 
-  protected def addressLine(errorKey: String): Constraint[String] = regexp(regexAddressLine, errorKey)
+  val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+
+  protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
+  protected def country(countryOptions: CountryOptions, errorKey: String): Constraint[String] =
+    Constraint { input =>
+      countryOptions.options
+        .find(_.value == input)
+        .map(_ => Valid)
+        .getOrElse(Invalid(errorKey))
+    }
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
       constraints
@@ -37,7 +40,6 @@ trait Constraints {
         .find(_ != Valid)
         .getOrElse(Valid)
     }
-
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev._

@@ -22,10 +22,12 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmCaptureTelephoneDetails.error.required")
-        .verifying(maxLength(28, "nfmCaptureTelephoneDetails.error.length"))
-    )
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(-*#+]*$"""
+  def apply(userName: String): Form[String] = Form(
+    "value" ->
+      text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "nfmCaptureTelephoneDetails.error.length"))
+        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format"))
+  )
 }

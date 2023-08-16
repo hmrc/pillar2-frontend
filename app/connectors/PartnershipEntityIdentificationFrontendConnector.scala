@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.Mode
+import models.{Mode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.i18n.MessagesApi
@@ -29,6 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait PartnershipIdentificationFrontendConnector {
   def createPartnershipJourney(
+    userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse]
@@ -46,6 +47,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
   private val apiUrl = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
 
   def createPartnershipJourney(
+    userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
@@ -54,7 +56,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
       s"$apiUrl/limited-liability-partnership-journey",
       IncorporatedEntityCreateRegistrationRequest(
-        continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}",
+        continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
         businessVerificationCheck = appConfig.partnershipBvEnabled,
         optServiceName = Some(serviceName.en.optServiceName),
         deskProServiceId = appConfig.appName,

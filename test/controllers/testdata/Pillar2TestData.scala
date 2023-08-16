@@ -16,9 +16,10 @@
 
 package controllers.testdata
 
-import models.{ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, WithoutIdRegData}
+import models.registration._
+import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -63,17 +64,183 @@ trait Pillar2TestData {
       )
     )
 
+  def validWithIdFmData(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = None,
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = None
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
+
+  def validNoIdFmData(
+    nfmConfirmation:       NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK:   Option[NfmRegisteredInUkConfirmation] = None,
+    isNFMnStatus:          RowStatus = RowStatus.InProgress,
+    nfmNameRegistration:   String = "Test Name",
+    nfmContactName:        Option[String] = Some("TestName"),
+    contactNfmByTelephone: Option[ContactNFMByTelephone] = Some(ContactNFMByTelephone.Yes),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    fmEmailAddress:        Option[String] = Some("test@test.com"),
+    fmAddressLine1:        String = "Line1",
+    fmAddressLine2:        Option[String] = Some("Line2"),
+    fmAddressLine3:        String = "Line3",
+    fmAddressLine4:        Option[String] = Some("Line4"),
+    fmPostalCode:          Option[String] = Some("VR11 3PA"),
+    fmCountryCode:         String = "GB"
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      withoutIdRegData = Some(
+        WithoutIdNfmData(
+          registeredFmName = nfmNameRegistration,
+          fmContactName = nfmContactName,
+          fmEmailAddress = fmEmailAddress,
+          contactNfmByTelephone = contactNfmByTelephone,
+          telephoneNumber = telephoneNumber,
+          registeredFmAddress = Some(
+            NfmRegisteredAddress(
+              addressLine1 = fmAddressLine1,
+              addressLine2 = fmAddressLine2,
+              addressLine3 = fmAddressLine3,
+              addressLine4 = fmAddressLine4,
+              postalCode = fmPostalCode,
+              countryCode = fmCountryCode
+            )
+          )
+        )
+      )
+    )
+
+  def validNoIdNfmDataForContactEmail = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith")))
+  )
+
+  def validNoIdNfmDataDefForContactName = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
+
+  val validNfmRegisteredAddress = new NfmRegisteredAddress(
+    addressLine1 = "Line1",
+    addressLine2 = Some("Line2"),
+    addressLine3 = "Line3",
+    addressLine4 = Some("Line4"),
+    postalCode = Some("VR11 3PA"),
+    countryCode = "IN"
+  )
+  def validWithIdFmDataName(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = None
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
+
+  def validWithoutIdFmDataAddress(
+    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
+    isNFMnStatus:        RowStatus = RowStatus.InProgress,
+    orgType:             Option[EntityType] = None,
+    withIdRegData:       Option[GrsResponse] = None,
+    withoutIdRegData:    Option[WithoutIdNfmData] = Some(WithoutIdNfmData(registeredFmName = "Name"))
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      orgType = orgType,
+      withIdRegData = withIdRegData,
+      withoutIdRegData = withoutIdRegData
+    )
+
+  def validNoIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
+
+  def validWithIdRegDataForLimitedCompany =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
+    )
+
+  def validWithIdRegDataForLLP =
+    new Registration(
+      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isRegistrationStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
+    )
+
+  def validWithIdFmRegistrationDataForLimitedComp =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.UkLimitedCompany),
+      withIdRegData = Some(
+        new GrsResponse(
+          incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData])
+        )
+      )
+    )
+
+  def validWithIdFmRegistrationDataForPartnership =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      isNFMnStatus = RowStatus.InProgress,
+      orgType = Some(EntityType.LimitedLiabilityPartnership),
+      withIdRegData = Some(
+        new GrsResponse(
+          partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+        )
+      )
+    )
   def validWithoutIdRegData(
     isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus: RowStatus = RowStatus.InProgress
   ) =
-    new Registration(
-      isUPERegisteredInUK = isUPERegisteredInUK,
-      isRegistrationStatus = isRegistrationStatus,
-      withoutIdRegData = None
-    )
+    new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus, withoutIdRegData = None)
 
-  val validUpeRegisteredAddressed = new UpeRegisteredAddress(
+  def validUpeRegisteredAddressed = new UpeRegisteredAddress(
     addressLine1 = "Line1",
     addressLine2 = Some("Line2"),
     addressLine3 = "Line3",
@@ -91,7 +258,7 @@ trait Pillar2TestData {
         GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
       )
     )
-  val validIdRegistrationDataWithNoOrgType =
+  def validIdRegistrationDataWithNoOrgType =
     new Registration(
       isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
       isRegistrationStatus = RowStatus.InProgress,
@@ -114,6 +281,17 @@ trait Pillar2TestData {
     "testId",
     data = Json.parse(validDataObjectForLLP()).as[JsObject]
   )
+
+  val validFilingMemberUserAnswersGrsDataForLimitedCompany = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForUKLimtedCompany).as[JsObject]
+  )
+
+  val validFilingMemberUserAnswersGrsDataForLLP = UserAnswers(
+    "testId",
+    data = Json.parse(validFilingMemberDataObjectForLLP).as[JsObject]
+  )
+
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
 
   def validRegistrationWithIdResponse(): String =
@@ -234,4 +412,76 @@ trait Pillar2TestData {
        |        }
        |    }
        """.stripMargin
+
+  def validFilingMemberDataObjectForUKLimtedCompany(): String =
+    s"""
+      {
+       |        "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "ukLimitedCompany",
+       |            "isNFMnStatus" : "Completed",
+       |            "withIdRegData" : {
+       |                "incorporatedEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Company Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "ctutr" : "1234567890",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
+  def validFilingMemberDataObjectForLLP(): String =
+    s"""
+      {
+       |   "FilingMember" : {
+       |            "nfmConfirmation" : "yes",
+       |            "isNfmRegisteredInUK" : "yes",
+       |            "orgType" : "limitedLiabilityPartnership",
+       |            "isNFMnStatus" : "Completed",
+       |            "withIdRegData" : {
+       |                "partnershipEntityRegistrationData" : {
+       |                    "companyProfile" : {
+       |                        "companyName" : "Test Example Partnership Name",
+       |                        "companyNumber" : "76543210",
+       |                        "dateOfIncorporation" : "2010-12-12",
+       |                        "unsanitisedCHROAddress" : {
+       |                            "address_line_1" : "Address Line 1",
+       |                            "address_line_2" : "Address Line 2",
+       |                            "country" : "United Kingdom",
+       |                            "locality" : "Town",
+       |                            "postal_code" : "AB12 3CD",
+       |                            "region" : "Region"
+       |                        }
+       |                    },
+       |                    "sautr" : "1234567890",
+       |                    "postcode" : "AA11AA",
+       |                    "identifiersMatch" : true,
+       |                    "registration" : {
+       |                        "registrationStatus" : "REGISTERED",
+       |                        "registeredBusinessPartnerId" : "XB0000000000001"
+       |                    }
+       |                }
+       |            }
+       |        }
+       |    }
+       """.stripMargin
+
 }

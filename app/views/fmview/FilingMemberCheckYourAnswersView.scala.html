@@ -18,7 +18,8 @@
 
 @this(
 layout: templates.Layout,
-govukSummaryList: GovukSummaryList
+govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton
 )
 
 
@@ -29,4 +30,10 @@ govukSummaryList: GovukSummaryList
 <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
 @govukSummaryList(list)
+
+ <br>
+ @govukButton(
+  ButtonViewModel(messages("site.save-and-continue"))
+          .withAttribute("id","continue")
+          .asLink(controllers.routes.TaskListController.onPageLoad.url))
 }

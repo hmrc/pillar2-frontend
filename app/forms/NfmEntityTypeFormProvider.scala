@@ -16,30 +16,15 @@
 
 package forms
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.grs.EntityType
 
-class ContactNfmByTelephoneFormProviderSpec extends BooleanFieldBehaviours {
+class NfmEntityTypeFormProvider @Inject() extends Mappings {
 
-  val requiredKey = "contactNfmByTelephone.error.required"
-  val invalidKey  = "error.boolean"
-
-  val form = new ContactNfmByTelephoneFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+  def apply(): Form[EntityType] =
+    Form(
+      "value" -> enumerable[EntityType]("nfmEntityType.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }

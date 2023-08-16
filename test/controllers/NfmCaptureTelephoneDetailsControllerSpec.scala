@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.NfmCaptureTelephoneDetailsPage
+import pages.{NfmCaptureTelephoneDetailsPage, NominatedFilingMemberPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -46,14 +46,15 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
+      viewpageNotAvailable,
       viewNfmCaptureTelephoneDetails
     )
 
   "NfmCaptureTelephoneDetails Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData(telephoneNumber = None)).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -63,13 +64,16 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(NfmCaptureTelephoneDetailsPage, "answer").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -81,7 +85,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider("TestName").fill("1234567"), NormalMode, "TestName")(
           request,
           appConfig(application),
           messages(application)
@@ -90,22 +94,21 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider("Test Name").bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 

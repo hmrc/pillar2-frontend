@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import models.NormalMode
+import models.{NormalMode, UserType}
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.IncorporatedEntityCreateRegistrationRequest
 import org.mockito.ArgumentMatchers
@@ -37,12 +37,13 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
       val expectedUrl = s"$apiUrl/limited-company-journey"
       val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest = {
         val serviceName = ServiceName(
-          OptServiceName("OECD Pillar Two"),
-          OptServiceName("OECD Pillar Two")
+          OptServiceName("Report Pillar 2 top-up taxes"),
+          OptServiceName("Report Pillar 2 top-up taxes")
         )
 
         IncorporatedEntityCreateRegistrationRequest(
-          continueUrl = s"http://localhost:10050/pillar-two/grs-return/${NormalMode.toString.toLowerCase}",
+          continueUrl =
+            s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Upe.value.toLowerCase}",
           businessVerificationCheck = false,
           optServiceName = Some(serviceName.en.optServiceName),
           deskProServiceId = "pillar2-frontend",
@@ -61,7 +62,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
       )
         .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
 
-      val result = connector.createLimitedCompanyJourney(NormalMode).futureValue
+      val result = connector.createLimitedCompanyJourney(UserType.Upe, NormalMode).futureValue
       result shouldBe validGrsCreateRegistrationResponse
       verify(mockHttpClient, times(1))
         .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
