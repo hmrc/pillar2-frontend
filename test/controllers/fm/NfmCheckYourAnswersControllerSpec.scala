@@ -23,14 +23,10 @@ import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistra
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.shaded.ahc.io.netty.util.concurrent.Future
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.fmview.NfmCheckYourAnswersView
-import views.html.registrationview.UpeCheckYourAnswersView
-
-import scala.concurrent.Await
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -158,21 +154,21 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
 
     }
-//    "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
-//      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
-//      running(application) {
-//        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
-//
-//        val result = route(application, request).value
-//
-//        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
-//        val list = SummaryListViewModel(noPhonenumber)
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
-//      }
-//
-//    }
+    "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
+      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmCheckYourAnswersView]
+        val list = SummaryListViewModel(noPhonenumber)
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+      }
+
+    }
 
   }
 }
