@@ -66,6 +66,7 @@ class NfmCheckYourAnswersController @Inject() (
         }
       ).flatten
     )
+    println("*************************************************************" + isPreviousPagesDefined(request))
     if (isPreviousPagesDefined(request))
       Ok(view(list))
     else
@@ -80,8 +81,6 @@ class NfmCheckYourAnswersController @Inject() (
             withoutId.registeredFmAddress.isDefined &&
             withoutId.fmContactName.isDefined &&
             withoutId.fmEmailAddress.isDefined &&
-            withoutId.contactNfmByTelephone.isDefined &&
-            withoutId.telephoneNumber.isDefined &&
             withoutId.contactNfmByTelephone.fold(false)(contactTel =>
               (contactTel == ContactNFMByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
                 (contactTel == ContactNFMByTelephone.No)
