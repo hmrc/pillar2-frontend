@@ -42,11 +42,11 @@ object UpeRegisteredAddressSummary {
             val value       = field1 + field2 + field3 + field4 + postcode + countryCode
 
             SummaryListRowViewModel(
-              key = "upe-registered-address.checkYourAnswersLabel",
+              key = "upeRegisteredAddress.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("upe-registered-address.change.hidden"))
+                  .withVisuallyHiddenText(messages("upeRegisteredAddress.change.hidden"))
               )
             )
           }
