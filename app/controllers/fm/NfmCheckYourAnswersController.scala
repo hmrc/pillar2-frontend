@@ -29,8 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
-import views.html.fmview.NfmCheckYourAnswersView
-import views.html.registrationview.UpeCheckYourAnswersView
+import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
@@ -38,7 +37,7 @@ class NfmCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   page_not_available:       ErrorTemplate,
-  view:                     NfmCheckYourAnswersView
+  view:                     FilingMemberCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

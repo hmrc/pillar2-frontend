@@ -18,17 +18,16 @@ package controllers.fm
 
 import base.SpecBase
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
-import models.registration.{Registration, WithoutIdRegData}
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress}
+import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.fmview.NfmCheckYourAnswersView
+import views.html.fmview.FilingMemberCheckYourAnswersView
 
-class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class FilingMemberCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   def controller(): NfmCheckYourAnswersController =
     new NfmCheckYourAnswersController(
@@ -37,7 +36,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       preDataRequiredActionImpl,
       stubMessagesControllerComponents(),
       viewpageNotAvailable,
-      viewCheckYourAnswersNfm
+      viewCheckYourAnswersFilingMember
     )
   val user           = emptyUserAnswers
   val addressExample = NfmRegisteredAddress("1", Some("2"), "3", Some("4"), Some("5"), "GB")
@@ -131,7 +130,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmCheckYourAnswersView]
+        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual NOT_FOUND
@@ -146,7 +145,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmCheckYourAnswersView]
+        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
         val list = SummaryListViewModel(phonenumberProvided)
 
         status(result) mustEqual OK
@@ -161,7 +160,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmCheckYourAnswersView]
+        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
         val list = SummaryListViewModel(noPhonenumber)
 
         status(result) mustEqual OK
