@@ -27,11 +27,11 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
   def apply(): Form[UpeRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("upeRegisteredAddress.messages.error.address-line-1.required")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.address-line-1.length")),
+        text("upeRegisteredAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.address-line-2.length"))
+          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
         text("upeRegisteredAddress.town-city.error.required")
