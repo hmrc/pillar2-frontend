@@ -37,8 +37,8 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("nfmRegisteredAddress.town-city.error.required")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.town-city.error.length")),
+        text("nfmRegisteredAddress.town_city.error.required")
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")

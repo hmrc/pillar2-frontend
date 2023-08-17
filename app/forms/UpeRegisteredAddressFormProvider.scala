@@ -34,8 +34,8 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("upeRegisteredAddress.town-city.error.required")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.town-city.error.length")),
+        text("upeRegisteredAddress.town_city.error.required")
+          .verifying(maxLength(textLength, "upeRegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
