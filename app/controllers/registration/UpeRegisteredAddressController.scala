@@ -30,6 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeRegisteredAddressView
 
@@ -43,12 +44,14 @@ class UpeRegisteredAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeRegisteredAddressFormProvider,
+  CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val userName     = getUserName(request)
@@ -59,7 +62,9 @@ class UpeRegisteredAddressController @Inject() (
           .get(RegistrationPage)
           .fold(NotFound(notAvailable)) { reg =>
             reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.upeRegisteredAddress.fold(Ok(view(form, mode, userName)))(address => Ok(view(form.fill(address), mode, userName)))
+              data.upeRegisteredAddress.fold(Ok(view(form, mode, userName, countryList)))(address =>
+                Ok(view(form.fill(address), mode, userName, countryList))
+              )
             )
           }
 
@@ -73,7 +78,7 @@ class UpeRegisteredAddressController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
         value => {
           val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
