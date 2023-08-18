@@ -85,7 +85,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value))
+                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
