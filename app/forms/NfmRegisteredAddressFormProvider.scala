@@ -30,15 +30,15 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
   def apply(): Form[NfmRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("nfmRegisteredAddress.messages.error.address-line-1.required")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.address-line-1.length")),
+        text("nfmRegisteredAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.address-line-2.length"))
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("nfmRegisteredAddress.town-city.error.required")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.town-city.error.length")),
+        text("nfmRegisteredAddress.town_city.error.required")
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")

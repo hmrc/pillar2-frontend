@@ -26,29 +26,33 @@ page_not_available.message=You cannot access this page directly
 
 ###############################################
 
-upe-registered-address.title=Where is the registered office address of {0}?
-upe-registered-address.heading=Where is the registered office address of {0}?
-upe-registered-address.checkYourAnswersLabel = Address
-upe-registered-address.change.hidden= Change the registered office address of the ultimate parent entity
-upe-registered-address.address-line-1 = Address line 1
-upe-registered-address.address-line-2 = Address line 2 (optional)
-upe-registered-address.town-city = Town or City
-upe-registered-address.region = Region (optional)
-upe-registered-address.postcode = Postal code (if applicable)
-upe-registered-address.country = Country
-upe-registered-address.address-line-1.error.required = Enter the address line 1
-upe-registered-address.town-city.error.required = Enter the town or city
-upe-registered-address.town-city.error.length = The town or city name cannot be more than 200 characters
-upe-registered-address.region.error.length = The region cannot be more than 200 characters
-upe-registered-address.postcode.error.length = The Postal code cannot be more than 200 characters
-upe-registered-address.country.error.required = Enter the country
-upe-registered-address.country.error.length = The country cannot be more than 200 characters
-upe-registered-address.heading.caption = Business details
-upe-registered-address.messages.error.address-line-1.required=Enter the address line 1
-upe-registered-address.messages.error.address-line-1.length=The first line of address cannot be more than 200 characters
-upe-registered-address.messages.error.address-line-1.invalid=The first line of the address contains invalid characters
-upe-registered-address.messages.error.address-line-2.length=The second line of address cannot be more than 200 characters
-upe-registered-address.messages.error.address-line-2.invalid=The second line of the address contains invalid characters
+upeRegisteredAddress.title=Where is the registered office address of {0}?
+upeRegisteredAddress.heading=Where is the registered office address of {0}?
+upeRegisteredAddress.checkYourAnswersLabel = Address
+upeRegisteredAddress.change.hidden = Change the registered office address of the ultimate parent entity
+upeRegisteredAddress.addressLine1 = Address line 1
+upeRegisteredAddress.addressLine2 = Address line 2 (optional)
+upeRegisteredAddress.town_city = Town or City
+upeRegisteredAddress.region = Region (optional)
+upeRegisteredAddress.postcode = Postal code (if applicable)
+upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
+upeRegisteredAddress.country = Country
+upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
+upeRegisteredAddress.town_city.error.required = Enter the town or city
+upeRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
+upeRegisteredAddress.region.error.length = The region must be 35 characters or less
+upeRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
+upeRegisteredAddress.country.error.required =Select a country
+upeRegisteredAddress.country.error.length = The country cannot be more than 200 characters
+upeRegisteredAddress.heading.caption = Business details
+upeRegisteredAddress.messages.error.addressLine1.required = Enter the first line of the address
+upeRegisteredAddress.messages.error.addressLine1.length =The first line of the address must be 35 characters or less
+upeRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+upeRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+upeRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+
 
 upe-input-business-name.title=What is the name of the person or team we should contact from the ultimate parent entity?
 upe-input-business-name.caption = Business details
@@ -119,7 +123,7 @@ upeNameRegistration.heading.caption=Business details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
-upeNameRegistration.error.length = The name cannot be more than 200 characters
+upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
 
@@ -163,17 +167,17 @@ KBMnIneligible.link=Go back to the start page for more information
 
 KbUKIneligible.title = Based on your answers, this group does not need to register for Pillar 2 top-up tax
 KbUKIneligible.heading = Based on your answers, this group does not need to register for Pillar 2 top-up tax
-KbUKIneligible.p1=Pillar 2 top-up tax may be collected in the UK when you have business activity here.
-KbUKIneligible.p2=If your group only operates in other countries, you should check where any liability might apply.
-KbUKIneligible.link=Go back to the start page for more information
+KbUKIneligible.p1 = Pillar 2 top-up tax may be collected in the UK when you have business activity here.
+KbUKIneligible.p2 = If your group only operates in other countries, you should check where any liability might apply.
+KbUKIneligible.link = Go back to the start page for more information
 
 
 
 Kb750Ineligible.title = Based on your answers, this group does not need to register for Pillar 2 top-up tax
 Kb750Ineligible.heading = Based on your answers, this group does not need to register for Pillar 2 top-up tax
-Kb750Ineligible.p1=Pillar 2 top-up tax applies to groups that have global revenues of €750 million or more in at least two of the previous four accounting periods.
-Kb750Ineligible.p2=You may need to register for Pillar 2 top-up tax if the global turnover meets the €750 million threshold in future accounting periods.
-Kb750Ineligible.link=Go back to the start page for more information
+Kb750Ineligible.p1 = Pillar 2 top-up tax applies to groups that have global revenues of €750 million or more in at least two of the previous four accounting periods.
+Kb750Ineligible.p2 = You may need to register for Pillar 2 top-up tax if the global turnover meets the €750 million threshold in future accounting periods.
+Kb750Ineligible.link = Go back to the start page for more information
 
 eligibilityconfirmation.title = You need to register this group for Pillar 2 top-up tax
 eligibilityconfirmation.heading = You need to register this group for Pillar 2 top-up tax
@@ -183,8 +187,9 @@ eligibilityconfirmation.p1=You will now need to sign in to HMRC online services 
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check your answers
-checkYourAnswers.heading.caption = Group details
-checkYourAnswers.nfm.heading.caption= Business details
+checkYourAnswers.heading.caption = Business details
+
+checkYourAnswers.nfm.heading.caption= Group details
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
 journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
@@ -203,7 +208,7 @@ isUPERegisteredInUK.heading.caption = Business details
 isUPERegisteredInUK.heading = Is the ultimate parent entity registered in the UK?
 isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
-isUPERegisteredInUK.error.required= Select yes if the ultimate parent entity is registered in the UK
+isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is registered in the UK
 
 contactUPEByTelephone.heading.caption = Business details
 contactUPEByTelephone.title = Can we contact {0} by telephone?
@@ -212,7 +217,7 @@ contactUPEByTelephone.hint = We will call if we have any questions about the man
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
-contactUPEByTelephone.checkYourAnswersLabel= Telephone contact
+contactUPEByTelephone.checkYourAnswersLabel = Telephone contact
 contactUPEByTelephone.change.hidden = Change your response to whether we make contact by telephone or not
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
@@ -231,8 +236,8 @@ NominateFilingMemberYesNo.insetText =You must have permission from the UPE to no
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
-NominateFilingMemberYesNo.checkYourAnswersLabel= Filing member preference
-NominateFilingMemberYesNo.change.hidden= Change your filing member nomination preference
+NominateFilingMemberYesNo.checkYourAnswersLabel = Filing member preference
+NominateFilingMemberYesNo.change.hidden = Change your filing member nomination preference
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -266,32 +271,32 @@ nfmNameRegistration.error.length = The name of the nominated filing member must 
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 
 
-nfmRegisteredAddress.title=Where is the registered office address of {0}?
-nfmRegisteredAddress.heading=Where is the registered office address of {0}?
+nfmRegisteredAddress.title = Where is the registered office address of {0}?
+nfmRegisteredAddress.heading = Where is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
-nfmRegisteredAddress.change.hidden= Change the registered office address of the nominated filing member
-nfmRegisteredAddress.address-line-1 = Address line 1
-nfmRegisteredAddress.address-line-2 = Address line 2 (optional)
-nfmRegisteredAddress.town-city = Town or City
+nfmRegisteredAddress.change.hidden = Change the registered office address of the nominated filing member
+nfmRegisteredAddress.addressLine1 = Address line 1
+nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
+nfmRegisteredAddress.town_city = Town or City
 nfmRegisteredAddress.region = Region (optional)
 nfmRegisteredAddress.postcode = Postal code (if applicable)
 nfmRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 nfmRegisteredAddress.country = Country
 nfmRegisteredAddress.country.hint = Enter text and then choose from the list
-nfmRegisteredAddress.address-line-1.error.required = Enter the first line of the address
-nfmRegisteredAddress.town-city.error.required = Enter the town or city
-nfmRegisteredAddress.town-city.error.length = The town or city must be 35 characters or less
+nfmRegisteredAddress.addressLine1.error.required = Enter the first line of the address
+nfmRegisteredAddress.town_city.error.required = Enter the town or city
+nfmRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
 nfmRegisteredAddress.region.error.length = The region must be 35 characters or less
 nfmRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
 nfmRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 nfmRegisteredAddress.country.error.required = Select a country
 nfmRegisteredAddress.country.error.length = The country cannot be more than 35 characters
 nfmRegisteredAddress.heading.caption = Business details
-nfmRegisteredAddress.messages.error.address-line-1.required=Enter the first line of the address
-nfmRegisteredAddress.messages.error.address-line-1.length = The first line of the address must be 35 characters or less
-nfmRegisteredAddress.messages.error.address-line-1.invalid=The first line of the address contains invalid characters
-nfmRegisteredAddress.messages.error.address-line-2.length=The second line of the address must be 35 characters or less
-nfmRegisteredAddress.messages.error.address-line-2.invalid=The second line of the address contains invalid characters
+nfmRegisteredAddress.messages.error.addressLine1.required=Enter the first line of the address
+nfmRegisteredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+nfmRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 nfmRegisteredAddress.country = Country
 
 
