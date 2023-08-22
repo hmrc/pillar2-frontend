@@ -157,6 +157,7 @@ class FilingMemberCheckYourAnswersControllerSpec extends SpecBase with SummaryLi
         val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
         val list    = SummaryListViewModel(noPhonenumber)
         status(result) mustEqual OK
+        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
 
       }
 

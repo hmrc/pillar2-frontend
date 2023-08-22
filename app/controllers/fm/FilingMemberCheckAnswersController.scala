@@ -25,7 +25,7 @@ import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{ContactNfmByTelephoneSummary, NfmCaptureTelephoneDetailsSummary, NfmContactNameSummary, NfmEmailAddressSummary, NfmNameRegistrationSummary, NfmRegisteredAddressSummary, UpeTelephonePreferenceSummary}
+import viewmodels.checkAnswers.{NfmContactNameSummary, NfmEmailAddressSummary, NfmNameRegistrationSummary, NfmRegisteredAddressSummary, NfmTelephonePreferenceSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 import views.html.errors.ErrorTemplate
@@ -56,9 +56,9 @@ class FilingMemberCheckAnswersController @Inject() (
         NfmRegisteredAddressSummary.row(request.userAnswers),
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
-        ContactNfmByTelephoneSummary.row(request.userAnswers),
+        NfmTelephonePreferenceSummary.row(request.userAnswers),
         telephonePreference match {
-          case true => NfmCaptureTelephoneDetailsSummary.row(request.userAnswers)
+          case true => NfmTelephonePreferenceSummary.row(request.userAnswers)
           case _    => None
         }
       ).flatten
