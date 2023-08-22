@@ -23,7 +23,7 @@ import play.api.data.Form
 
 class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24
-  val phoneRegex                = """^[A-Z0-9 )/(-*#+]*$"""
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
   def apply(userName: String): Form[String] = Form(
     "value" ->
       text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
