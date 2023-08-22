@@ -16,7 +16,7 @@
 
 package controllers.testdata
 
-import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
+import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
@@ -79,6 +79,47 @@ trait Pillar2TestData {
       orgType = orgType,
       withIdRegData = withIdRegData,
       withoutIdRegData = withoutIdRegData
+    )
+
+  def validNoIdFmData(
+    nfmConfirmation:       NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK:   Option[NfmRegisteredInUkConfirmation] = None,
+    isNFMnStatus:          RowStatus = RowStatus.InProgress,
+    nfmNameRegistration:   String = "Test Name",
+    nfmContactName:        Option[String] = Some("TestName"),
+    contactNfmByTelephone: Option[ContactNFMByTelephone] = Some(ContactNFMByTelephone.Yes),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    fmEmailAddress:        Option[String] = Some("test@test.com"),
+    fmAddressLine1:        String = "Line1",
+    fmAddressLine2:        Option[String] = Some("Line2"),
+    fmAddressLine3:        String = "Line3",
+    fmAddressLine4:        Option[String] = Some("Line4"),
+    fmPostalCode:          Option[String] = Some("VR11 3PA"),
+    fmCountryCode:         String = "GB"
+  ) =
+    new FilingMember(
+      nfmConfirmation = nfmConfirmation,
+      isNfmRegisteredInUK = isNfmRegisteredInUK,
+      isNFMnStatus = isNFMnStatus,
+      withoutIdRegData = Some(
+        WithoutIdNfmData(
+          registeredFmName = nfmNameRegistration,
+          fmContactName = nfmContactName,
+          fmEmailAddress = fmEmailAddress,
+          contactNfmByTelephone = contactNfmByTelephone,
+          telephoneNumber = telephoneNumber,
+          registeredFmAddress = Some(
+            NfmRegisteredAddress(
+              addressLine1 = fmAddressLine1,
+              addressLine2 = fmAddressLine2,
+              addressLine3 = fmAddressLine3,
+              addressLine4 = fmAddressLine4,
+              postalCode = fmPostalCode,
+              countryCode = fmCountryCode
+            )
+          )
+        )
+      )
     )
 
   def validNoIdNfmDataForContactEmail = new FilingMember(

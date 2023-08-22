@@ -88,7 +88,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
