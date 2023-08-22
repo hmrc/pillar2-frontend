@@ -17,31 +17,28 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
+import controllers.routes
+import models.fm.ContactNFMByTelephone
 import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NfmContactNameSummary {
+object ContactNfmByTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers
-      .get(NominatedFilingMemberPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.map { withoutId =>
-          withoutId.fmContactName.map { answer =>
-            SummaryListRowViewModel(
-              key = "nfmContactName.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlFormat.escape(answer).toString),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmContactName.checkYourAnswersLabel.hidden"))
-              )
-            )
-          }
-        }
-      }
-      .flatten
+    answers.get(NominatedFilingMemberPage).map { answer =>
+      val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactNfmByTelephone.fold("")(tel => tel.toString))
+      val value =
+        if (contactUpeByTelephone.equals(ContactNFMByTelephone.Yes.toString)) "site.yes" else "site.no"
+      SummaryListRowViewModel(
+        key = "contactNfmByTelephone.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactNfmByTelephone.change.hidden"))
+        )
+      )
+    }
 }

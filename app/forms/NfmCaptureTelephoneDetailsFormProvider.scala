@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
+package forms
 
-@this(
-layout: templates.Layout,
-govukSummaryList: GovukSummaryList
-)
+import javax.inject.Inject
 
+import forms.mappings.Mappings
+import play.api.data.Form
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
-
-<h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
-
-@govukSummaryList(list)
+class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
+  def apply(userName: String): Form[String] = Form(
+    "value" ->
+      text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "nfmCaptureTelephoneDetails.error.length"))
+        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format"))
+  )
 }

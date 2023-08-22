@@ -1,137 +1,149 @@
 # microservice specific routes
 
-->          /hmrc-frontend                               hmrcfrontend.Routes
+->          /hmrc-frontend                                                              hmrcfrontend.Routes
 
-GET         /                                            controllers.IndexController.onPageLoad
-GET         /task-list/register-for-global-minimum-tax   controllers.TaskListController.onPageLoad
-
-
-GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
-
-GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
-
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive
-
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
-
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
-
-GET         /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onPageLoad
-POST        /business-matching/match-hmrc-records        controllers.registration.StartPageRegistrationController.onSubmit
-
-GET         /business-matching/ultimate-parent/no-id/input-name              controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-name              controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-name              controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-name              controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = CheckMode)
-
-GET         /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-address              controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET         /business-matching/ultimate-parent/no-id/input-business-name             controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-business-name              controllers.registration.UpeContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-business-name             controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-business-name              controllers.registration.UpeContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /                                                                           controllers.IndexController.onPageLoad
+GET         /task-list/register-for-global-minimum-tax                                  controllers.TaskListController.onPageLoad
 
 
-GET         /business-matching/ultimate-parent/no-id/input-email               controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-email               controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-email               controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-email               controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /assets/*file                                                               controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/registered-in-uk controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+GET         /language/:lang                                                             controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /business-matching/filing-member/nominate  controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/change-nominate  controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
+GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
+
+GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+
+GET         /check-your-answers                                                         controllers.CheckYourAnswersController.onPageLoad
+
+GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad
+POST        /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onSubmit
+
+GET         /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-name                  controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-name                  controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/no-id/input-address                      controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-address                      controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-address               controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-address               controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/no-id/input-business-name                controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-business-name                controllers.registration.UpeContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-business-name         controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-business-name         controllers.registration.UpeContactNameController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /business-matching/ultimate-parent/no-id/input-email                        controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-email                        controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-email                 controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-email                 controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-telephone controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-telephone controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
-GET         /business-matching/ultimate-parent/no-id/input-telephone controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-telephone controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
-GET         /business-matching/ultimate-parent/no-id/check-answers                          controllers.registration.UpeCheckYourAnswersController.onPageLoad
+GET         /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/change-nominate                            controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/change-nominate                            controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /business-matching/ultimate-parent/no-id/telephone                          controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/telephone                          controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /business-matching/filing-member/no-id/check-answers                         controllers.fm.NfmCheckYourAnswersController.onPageLoad
 
 
-GET         /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onPageLoad
-POST        /eligibility/activities-within-the-uk        controllers.eligibility.BusinessActivityUKController.onSubmit
-
-GET         /eligibility/global-gross-revenue            controllers.eligibility.TurnOverEligibilityController.onPageLoad
-POST        /eligibility/global-gross-revenue             controllers.eligibility.TurnOverEligibilityController.onSubmit
-
-GET         /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
-POST        /eligibility/confirmation                   controllers.eligibility.EligibilityConfirmationController.onSubmit
-
-GET         /grs-return/normalmode/upe                                          controllers.registration.GrsReturnController.continueUpe(mode: Mode = NormalMode, journeyId)
-GET         /grs-return/normalmode/fm                                           controllers.registration.GrsReturnController.continueFm(mode: Mode = NormalMode, journeyId)
+GET         /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-telephone             controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-telephone             controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/check-answers                      controllers.registration.UpeCheckYourAnswersController.onPageLoad
 
 
-GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
+GET         /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onPageLoad
+POST        /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onSubmit
 
-GET         /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onPageLoad
-POST        /eligibility/upe  controllers.eligibility.GroupTerritoriesController.onSubmit
+GET         /eligibility/global-gross-revenue                                           controllers.eligibility.TurnOverEligibilityController.onPageLoad
+POST        /eligibility/global-gross-revenue                                           controllers.eligibility.TurnOverEligibilityController.onSubmit
 
-GET         /eligibility/nfm  controllers.eligibility.RegisteringNfmForThisGroupController.onPageLoad
-POST        /eligibility/nfm   controllers.eligibility.RegisteringNfmForThisGroupController.onSubmit
+GET         /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
+POST        /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
 
-GET         /eligibility/service-not-suitable/not-upe-or-nfm              controllers.eligibility.KbMnIneligibleController.onPageLoad
+GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(mode: Mode = NormalMode, journeyId)
+GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(mode: Mode = NormalMode, journeyId)
 
-GET         /eligibility/service-not-suitable/not-active-in-uk        controllers.eligibility.KbUKIneligibleController.onPageLoad
-GET         /eligibility/kb-750-ineligible               controllers.eligibility.Kb750IneligibleController.onPageLoad
 
-GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
-GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
-GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
-GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
+GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
 
-GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+GET         /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onPageLoad
+POST        /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onSubmit
 
-GET        /business-matching/ultimate-parent/uk-based/org-type                        controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/ultimate-parent/uk-based/org-type                        controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /eligibility/nfm                                                            controllers.eligibility.RegisteringNfmForThisGroupController.onPageLoad
+POST        /eligibility/nfm                                                            controllers.eligibility.RegisteringNfmForThisGroupController.onSubmit
+
+
+GET         /eligibility/service-not-suitable/not-upe-or-nfm                            controllers.eligibility.KbMnIneligibleController.onPageLoad
+
+GET         /eligibility/service-not-suitable/not-active-in-uk                          controllers.eligibility.KbUKIneligibleController.onPageLoad
+GET         /eligibility/kb-750-ineligible                                              controllers.eligibility.Kb750IneligibleController.onPageLoad
+
+GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
+GET         /account/sign-out-survey                                                    controllers.auth.AuthController.signOut
+GET         /account/sign-out                                                           controllers.auth.AuthController.signOutNoSurvey
+GET         /account/signed-out                                                         controllers.auth.SignedOutController.onPageLoad
+
+GET         /unauthorised                                                               controllers.UnauthorisedController.onPageLoad
+
+GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/ultimate-parent/uk-based/change-org-type                   controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/registered-in-uk                        controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/change-registered-in-uk                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
+POST       /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/filing-member/no-id/input-name                       controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/no-id/input-name                       controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-name                 controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-name                  controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/change-registered-in-uk                     controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/change-registered-in-uk                     controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/no-id/input-address                     controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/no-id/change-input-address              controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/no-id/input-name                            controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-name                            controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-name                     controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-name                     controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /business-matching/filing-member/no-id/input-address                         controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-address                         controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-address                  controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-address                  controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /business-matching/filing-member/no-id/input-business-name  controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-business-name  controllers.fm.NfmContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-business-name  controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-business-name  controllers.fm.NfmContactNameController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/no-id/input-business-name                   controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-business-name                   controllers.fm.NfmContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-business-name            controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-business-name            controllers.fm.NfmContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-email  controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-email  controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-email  controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-email  controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/no-id/input-email                           controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-email                           controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/uk-based/org-type                        controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/uk-based/org-type                        controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/uk-based/change-org-type                  controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/uk-based/org-type                           controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/uk-based/org-type                           controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/uk-based/change-org-type                    controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/uk-based/change-org-type                    controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-telephone                      controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-telephone                      controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/no-id/check-answers                         controllers.fm.FilingMemberCheckAnswersController.onPageLoad
 

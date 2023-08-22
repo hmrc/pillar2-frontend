@@ -29,11 +29,11 @@ object NfmNameRegistrationSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NominatedFilingMemberPage).map { answer =>
       SummaryListRowViewModel(
-        key = "nfmNameRegistrationController.checkYourAnswersLabel",
+        key = "nfmNameRegistration.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer.withoutIdRegData.fold("")(data => data.registeredFmName)).toString),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("nfmNameRegistrationController.change.hidden"))
+            .withVisuallyHiddenText(messages("nfmNameRegistration.checkYourAnswersLabel.hidden"))
         )
       )
     }

@@ -46,7 +46,7 @@ object NfmRegisteredAddressSummary {
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmRegisteredAddress.change.hidden"))
+                  .withVisuallyHiddenText(messages("nfmRegisteredAddress.checkYourAnswersLabel.hidden"))
               )
             )
           }

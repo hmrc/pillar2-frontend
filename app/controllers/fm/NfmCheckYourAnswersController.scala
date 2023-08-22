@@ -55,17 +55,13 @@ class NfmCheckYourAnswersController @Inject() (
         NfmRegisteredAddressSummary.row(request.userAnswers),
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
-        telephonePreference match {
-          case true => NfmTelephonePreferenceSummary.row(request.userAnswers)
-          case _    => None
-        },
+        NfmTelephonePreferenceSummary.row(request.userAnswers),
         telephonePreference match {
           case true => NfmContactTelephoneSummary.row(request.userAnswers)
           case _    => None
         }
       ).flatten
     )
-    println("*************************************************************" + isPreviousPagesDefined(request))
     if (isPreviousPagesDefined(request))
       Ok(view(list))
     else

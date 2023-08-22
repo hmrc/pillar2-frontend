@@ -27,10 +27,17 @@ import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
 import views.html.fmview.{FilingMemberCheckYourAnswersView, IsNFMUKBasedView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
+import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.registrationview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
+    new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewContactNfmByTelephone: ContactNfmByTelephoneView =
+    new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewNfmNameRegistrationController: NfmNameRegistrationView =
     new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)

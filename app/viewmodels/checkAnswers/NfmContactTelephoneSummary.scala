@@ -36,8 +36,8 @@ object NfmContactTelephoneSummary {
               key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.change.hidden"))
+                ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden"))
               )
             )
           }

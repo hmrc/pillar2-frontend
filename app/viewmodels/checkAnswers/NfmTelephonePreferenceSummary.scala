@@ -34,8 +34,8 @@ object NfmTelephonePreferenceSummary {
         key = "contactNfmByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("contactNfmByTelephone.change.hidden"))
+          ActionItemViewModel("site.change", controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactNfmByTelephone.checkYourAnswersLabel.hidden"))
         )
       )
     }

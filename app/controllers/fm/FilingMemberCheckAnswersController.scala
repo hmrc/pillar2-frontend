@@ -19,11 +19,17 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.fm.ContactNFMByTelephone
+import models.requests.DataRequest
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.{ContactNfmByTelephoneSummary, NfmCaptureTelephoneDetailsSummary, NfmContactNameSummary, NfmEmailAddressSummary, NfmNameRegistrationSummary, NfmRegisteredAddressSummary, UpeTelephonePreferenceSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
+import views.html.errors.ErrorTemplate
+import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class FilingMemberCheckAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -31,16 +37,51 @@ class FilingMemberCheckAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     CheckYourAnswersView
+  page_not_available:       ErrorTemplate,
+  view:                     FilingMemberCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    val telephonePreference = request.userAnswers.get(NominatedFilingMemberPage) match {
+      case Some(value) =>
+        value.withoutIdRegData.fold(false)(data => data.contactNfmByTelephone.fold(false)(tel => (tel == ContactNFMByTelephone.Yes)))
+      case _ => false
+    }
     val list = SummaryListViewModel(
-      rows = Seq.empty
+      rows = Seq(
+        NfmNameRegistrationSummary.row(request.userAnswers),
+        NfmRegisteredAddressSummary.row(request.userAnswers),
+        NfmContactNameSummary.row(request.userAnswers),
+        NfmEmailAddressSummary.row(request.userAnswers),
+        ContactNfmByTelephoneSummary.row(request.userAnswers),
+        telephonePreference match {
+          case true => NfmCaptureTelephoneDetailsSummary.row(request.userAnswers)
+          case _    => None
+        }
+      ).flatten
     )
+    if (isPreviousPagesDefined(request))
+      Ok(view(list))
+    else
+      NotFound(notAvailable)
 
-    Ok(view(list))
   }
+
+  private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false)(data =>
+        data.withoutIdRegData.fold(false)(withoutId =>
+          withoutId.registeredFmAddress.isDefined &&
+            withoutId.fmContactName.isDefined &&
+            withoutId.fmEmailAddress.isDefined &&
+            withoutId.contactNfmByTelephone.fold(false)(contactTel =>
+              (contactTel == ContactNFMByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
+                (contactTel == ContactNFMByTelephone.No)
+            )
+        )
+      )
 }
