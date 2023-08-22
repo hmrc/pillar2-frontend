@@ -18,7 +18,6 @@ import scala.concurrent.Future
 
 class NFMEmailAddressControllerSpec extends SpecBase {
 
-
   val formProvider = new NfmEmailAddressFormProvider()
 
   def controller(): NFMEmailAddressController =
@@ -31,7 +30,6 @@ class NFMEmailAddressControllerSpec extends SpecBase {
       stubMessagesControllerComponents(),
       viewNFMEmailAddress
     )
-
 
   "NFMEmailAddress Controller" when {
 
@@ -65,11 +63,13 @@ class NFMEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(request, appConfig(application),messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
-
-
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -87,10 +87,9 @@ class NFMEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application),messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-
 
   }
 }

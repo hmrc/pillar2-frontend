@@ -323,3 +323,16 @@ nfmEmailAddress.error.length = The email address should be 132 characters or les
 nfmEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
+groupAccountingPeriod.heading.caption = Group details
+groupAccountingPeriod.title = What are the start and end dates of the group's consolidated accounting period?
+groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK.
+groupAccountingPeriod.startDate.heading = Enter start date
+groupAccountingPeriod.startDate.hint = For example, 27 03 2026
+groupAccountingPeriod.endDate.heading = Enter end date
+groupAccountingPeriod.endDate.hint = For example, 27 03 2027
+groupAccountingPeriod.checkYourAnswersLabel = GroupAccountingPeriod
+groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
+groupAccountingPeriod.error.required.two = The groupAccountingPeriod must include {0} and {1}
+groupAccountingPeriod.error.required = The groupAccountingPeriod must include {0}
+groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
+groupAccountingPeriod.change.hidden = GroupAccountingPeriod

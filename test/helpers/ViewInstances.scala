@@ -32,6 +32,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewGroupAccountingPeriod: GroupAccountingPeriodView =
+    new GroupAccountingPeriodView(pillar2layout, formWithCSRF, govukErrorSummary, govukDateInput, govukButton)
+
   val viewNfmNameRegistrationController: NfmNameRegistrationView =
     new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
