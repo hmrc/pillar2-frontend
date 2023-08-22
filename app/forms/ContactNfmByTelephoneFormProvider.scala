@@ -17,15 +17,14 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.fm.ContactNFMByTelephone
 import play.api.data.Form
 
-class UpeNameRegistrationFormProvider @Inject() extends Mappings {
+class ContactNfmByTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(userName: String): Form[ContactNFMByTelephone] =
     Form(
-      "value" -> text("upeNameRegistration.error.required")
-        .verifying(maxLength(105, "upeNameRegistration.error.length"))
+      "value" -> enumerable[ContactNFMByTelephone]("contactNfmByTelephone.error.required", args = Seq(userName))
     )
 }

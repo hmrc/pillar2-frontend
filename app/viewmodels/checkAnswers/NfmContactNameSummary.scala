@@ -24,17 +24,24 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NfmNameRegistrationControllerSummary {
+object NfmContactNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NominatedFilingMemberPage).map { answer =>
-      SummaryListRowViewModel(
-        key = "nfmNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer.withoutIdRegData.fold("")(data => data.registeredFmName)).toString),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("nfmNameRegistration.change.hidden"))
-        )
-      )
-    }
+    answers
+      .get(NominatedFilingMemberPage)
+      .flatMap { reg =>
+        reg.withoutIdRegData.map { withoutId =>
+          withoutId.fmContactName.map { answer =>
+            SummaryListRowViewModel(
+              key = "nfmContactName.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlFormat.escape(answer).toString),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("nfmContactName.change.hidden"))
+              )
+            )
+          }
+        }
+      }
+      .flatten
 }

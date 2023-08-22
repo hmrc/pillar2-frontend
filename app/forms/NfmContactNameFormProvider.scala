@@ -16,16 +16,16 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class UpeNameRegistrationFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class NfmContactNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("upeNameRegistration.error.required")
-        .verifying(maxLength(105, "upeNameRegistration.error.length"))
+      "value" -> text("nfmContactName.error.required")
+        .verifying(maxLength(105, "nfmContactName.error.length"))
     )
 }

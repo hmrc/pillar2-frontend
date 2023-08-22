@@ -19,18 +19,16 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.NfmNameRegistrationFormProvider
-import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
-import models.fm.{FilingMember, WithoutIdNfmData}
+import models.fm.WithoutIdNfmData
 import models.requests.DataRequest
+import models.{Mode, NfmRegisteredInUkConfirmation}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmNameRegistrationView
 

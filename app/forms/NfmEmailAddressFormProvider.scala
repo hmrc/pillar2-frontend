@@ -21,11 +21,14 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class UpeNameRegistrationFormProvider @Inject() extends Mappings {
+class NfmEmailAddressFormProvider @Inject() extends Mappings {
+  val maxLength  = 132
+  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
 
-  def apply(): Form[String] =
+  def apply(userName: String): Form[String] =
     Form(
-      "value" -> text("upeNameRegistration.error.required")
-        .verifying(maxLength(105, "upeNameRegistration.error.length"))
+      "value" -> text("nfmEmailAddress.error.required", Seq(userName))
+        .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
+        .verifying(regexp(emailRegex, "nfmEmailAddress.error.format"))
     )
 }

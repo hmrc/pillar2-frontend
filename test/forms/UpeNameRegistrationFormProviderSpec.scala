@@ -23,7 +23,7 @@ class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "upeNameRegistration.error.required"
   val lengthKey   = "upeNameRegistration.error.length"
-  val maxLength   = 200
+  val maxLength   = 105
 
   val form = new UpeNameRegistrationFormProvider()()
 
