@@ -20,12 +20,14 @@ import base.SpecBase
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
-class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+import javax.inject.Inject
 
+class NfmCheckYourAnswersControllerSpec @Inject() (countryOptions: CountryOptions) extends SpecBase with SummaryListFluency {
   val completeUserAnswer = emptyUserAnswers
     .set(
       NominatedFilingMemberPage,
@@ -44,7 +46,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   val phonenumberProvided = Seq(
     NfmNameRegistrationSummary.row(completeUserAnswer),
-    NfmRegisteredAddressSummary.row(completeUserAnswer),
+    NfmRegisteredAddressSummary.row(completeUserAnswer, countryOptions),
     NfmContactNameSummary.row(completeUserAnswer),
     NfmEmailAddressSummary.row(completeUserAnswer),
     NfmTelephonePreferenceSummary.row(completeUserAnswer),
@@ -53,7 +55,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   val noPhonenumber = Seq(
     NfmNameRegistrationSummary.row(noTelephoneUserAnswers),
-    NfmRegisteredAddressSummary.row(noTelephoneUserAnswers),
+    NfmRegisteredAddressSummary.row(noTelephoneUserAnswers, countryOptions),
     NfmContactNameSummary.row(noTelephoneUserAnswers),
     NfmEmailAddressSummary.row(noTelephoneUserAnswers),
     NfmTelephonePreferenceSummary.row(noTelephoneUserAnswers)

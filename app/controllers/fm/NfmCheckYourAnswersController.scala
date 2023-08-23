@@ -26,6 +26,7 @@ import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
@@ -37,7 +38,8 @@ class NfmCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   page_not_available:       ErrorTemplate,
-  view:                     FilingMemberCheckYourAnswersView
+  view:                     FilingMemberCheckYourAnswersView,
+  countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -52,7 +54,7 @@ class NfmCheckYourAnswersController @Inject() (
     val list = SummaryListViewModel(
       rows = Seq(
         NfmNameRegistrationSummary.row(request.userAnswers),
-        NfmRegisteredAddressSummary.row(request.userAnswers),
+        NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
         NfmTelephonePreferenceSummary.row(request.userAnswers),
