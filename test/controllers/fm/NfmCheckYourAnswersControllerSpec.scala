@@ -15,96 +15,31 @@
  */
 
 package controllers.fm
-
 import base.SpecBase
-import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
-import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
-import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
+
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  val completeUserAnswer = emptyUserAnswers
-    .set(
-      NominatedFilingMemberPage,
-      new FilingMember(
-        nfmConfirmation = NfmRegistrationConfirmation.Yes,
-        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-        isNFMnStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdNfmData(
-            registeredFmName = "Nfm name ",
-            fmContactName = Some("Ashley Smith"),
-            fmEmailAddress = Some("test@test.com"),
-            contactNfmByTelephone = Some(ContactNFMByTelephone.Yes),
-            telephoneNumber = Some("122223444"),
-            registeredFmAddress = Some(
-              NfmRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("5"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
-    )
-    .success
-    .value
-
-  val noTelephoneUserAnswers = emptyUserAnswers
-    .set(
-      NominatedFilingMemberPage,
-      new FilingMember(
-        nfmConfirmation = NfmRegistrationConfirmation.Yes,
-        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-        isNFMnStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdNfmData(
-            registeredFmName = "Fm Name Ashley",
-            fmContactName = Some("Ashley Smith"),
-            fmEmailAddress = Some("test@test.com"),
-            contactNfmByTelephone = Some(ContactNFMByTelephone.No),
-            registeredFmAddress = Some(
-              NfmRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("ne5 2dh"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
-    )
-    .success
-    .value
-
   val phonenumberProvided = Seq(
-    NfmNameRegistrationSummary.row(completeUserAnswer),
-    NfmRegisteredAddressSummary.row(completeUserAnswer),
-    NfmContactNameSummary.row(completeUserAnswer),
-    NfmEmailAddressSummary.row(completeUserAnswer),
-    NfmTelephonePreferenceSummary.row(completeUserAnswer),
-    NfmContactTelephoneSummary.row(completeUserAnswer)
+    NfmNameRegistrationSummary.row(completeUserAnswerNfm),
+    NfmRegisteredAddressSummary.row(completeUserAnswerNfm),
+    NfmContactNameSummary.row(completeUserAnswerNfm),
+    NfmEmailAddressSummary.row(completeUserAnswerNfm),
+    NfmTelephonePreferenceSummary.row(completeUserAnswerNfm),
+    NfmContactTelephoneSummary.row(completeUserAnswerNfm)
   ).flatten
 
   val noPhonenumber = Seq(
-    NfmNameRegistrationSummary.row(noTelephoneUserAnswers),
-    NfmRegisteredAddressSummary.row(noTelephoneUserAnswers),
-    NfmContactNameSummary.row(noTelephoneUserAnswers),
-    NfmEmailAddressSummary.row(noTelephoneUserAnswers),
-    NfmTelephonePreferenceSummary.row(noTelephoneUserAnswers)
+    NfmNameRegistrationSummary.row(noTelephoneUserAnswersNfm),
+    NfmRegisteredAddressSummary.row(noTelephoneUserAnswersNfm),
+    NfmContactNameSummary.row(noTelephoneUserAnswersNfm),
+    NfmEmailAddressSummary.row(noTelephoneUserAnswersNfm),
+    NfmTelephonePreferenceSummary.row(noTelephoneUserAnswersNfm)
   ).flatten
 
   "Nfm no ID Check Your Answers Controller" must {
@@ -125,7 +60,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
     }
     "must return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(completeUserAnswerNfm)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
@@ -137,7 +72,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
     }
     "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
-      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswersNfm)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
