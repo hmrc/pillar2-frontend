@@ -19,7 +19,6 @@ package controllers.fm
 import base.SpecBase
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
-import org.scalatest.matchers.must.Matchers.include
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,19 +29,7 @@ import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  def controller(): NfmCheckYourAnswersController =
-    new NfmCheckYourAnswersController(
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewCheckYourAnswersFilingMember
-    )
-  val user           = emptyUserAnswers
-  val addressExample = NfmRegisteredAddress("1", Some("2"), "3", Some("4"), Some("5"), "GB")
-
-  val completeUserAnswer = user
+  val completeUserAnswer = emptyUserAnswers
     .set(
       NominatedFilingMemberPage,
       new FilingMember(
@@ -73,7 +60,7 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     .success
     .value
 
-  val noTelephoneUserAnswers = user
+  val noTelephoneUserAnswers = emptyUserAnswers
     .set(
       NominatedFilingMemberPage,
       new FilingMember(
