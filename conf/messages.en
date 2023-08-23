@@ -351,6 +351,7 @@ nfmCaptureTelephoneDetails.change.hidden = Change your response to capture telep
 
 
 mneOrDomestic.title = Where does the group operate?
+mneOrDomestic.heading.caption = Business details
 mneOrDomestic.heading = Where does the group operate?
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
