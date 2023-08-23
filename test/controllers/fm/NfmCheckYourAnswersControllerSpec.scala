@@ -28,7 +28,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
-class FilingMemberCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   def controller(): NfmCheckYourAnswersController =
     new NfmCheckYourAnswersController(
