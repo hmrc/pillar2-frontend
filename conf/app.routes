@@ -145,5 +145,4 @@ GET        /business-matching/filing-member/no-id/input-telephone               
 POST       /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
-GET        /business-matching/filing-member/no-id/check-answers                         controllers.fm.FilingMemberCheckAnswersController.onPageLoad
 
