@@ -16,8 +16,9 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, ContactUPEByTelephone, UserAnswers}
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import models.fm.ContactNFMByTelephone
+import models.{CheckMode, UserAnswers}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -29,7 +30,7 @@ object NfmTelephonePreferenceSummary {
     answers.get(NominatedFilingMemberPage).map { answer =>
       val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactNfmByTelephone.fold("")(tel => tel.toString))
       val value =
-        if (contactUpeByTelephone.equals(ContactUPEByTelephone.Yes.toString)) "site.yes" else "site.no"
+        if (contactUpeByTelephone.equals(ContactNFMByTelephone.Yes.toString)) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "contactNfmByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
