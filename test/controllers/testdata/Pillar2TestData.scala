@@ -25,6 +25,55 @@ import utils.RowStatus
 
 trait Pillar2TestData {
 
+  def nfmCheckAnswerData() =
+    new FilingMember(
+      nfmConfirmation = NfmRegistrationConfirmation.Yes,
+      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+      isNFMnStatus = RowStatus.InProgress,
+      withoutIdRegData = Some(
+        WithoutIdNfmData(
+          registeredFmName = "Nfm name ",
+          fmContactName = Some("Ashley Smith"),
+          fmEmailAddress = Some("test@test.com"),
+          contactNfmByTelephone = Some(ContactNFMByTelephone.Yes),
+          telephoneNumber = Some("122223444"),
+          registeredFmAddress = Some(
+            NfmRegisteredAddress(
+              addressLine1 = "1",
+              addressLine2 = Some("2"),
+              addressLine3 = "3",
+              addressLine4 = Some("4"),
+              postalCode = Some("5"),
+              countryCode = "GB"
+            )
+          )
+        )
+      )
+    )
+  def nfmCheckAnswerDataWithoutPhone() = new FilingMember(
+    nfmConfirmation = NfmRegistrationConfirmation.Yes,
+    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(
+      WithoutIdNfmData(
+        registeredFmName = "Fm Name Ashley",
+        fmContactName = Some("Ashley Smith"),
+        fmEmailAddress = Some("test@test.com"),
+        contactNfmByTelephone = Some(ContactNFMByTelephone.No),
+        registeredFmAddress = Some(
+          NfmRegisteredAddress(
+            addressLine1 = "1",
+            addressLine2 = Some("2"),
+            addressLine3 = "3",
+            addressLine4 = Some("4"),
+            postalCode = Some("ne5 2dh"),
+            countryCode = "GB"
+          )
+        )
+      )
+    )
+  )
+
   def validNoIdRegData(
     isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus:  RowStatus = RowStatus.InProgress,

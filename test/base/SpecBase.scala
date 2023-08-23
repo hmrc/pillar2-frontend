@@ -66,67 +66,6 @@ trait SpecBase
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  val completeUserAnswerNfm = emptyUserAnswers
-    .set(
-      NominatedFilingMemberPage,
-      new FilingMember(
-        nfmConfirmation = NfmRegistrationConfirmation.Yes,
-        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-        isNFMnStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdNfmData(
-            registeredFmName = "Nfm name ",
-            fmContactName = Some("Ashley Smith"),
-            fmEmailAddress = Some("test@test.com"),
-            contactNfmByTelephone = Some(ContactNFMByTelephone.Yes),
-            telephoneNumber = Some("122223444"),
-            registeredFmAddress = Some(
-              NfmRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("5"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
-    )
-    .success
-    .value
-
-  val noTelephoneUserAnswersNfm = emptyUserAnswers
-    .set(
-      NominatedFilingMemberPage,
-      new FilingMember(
-        nfmConfirmation = NfmRegistrationConfirmation.Yes,
-        isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
-        isNFMnStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdNfmData(
-            registeredFmName = "Fm Name Ashley",
-            fmContactName = Some("Ashley Smith"),
-            fmEmailAddress = Some("test@test.com"),
-            contactNfmByTelephone = Some(ContactNFMByTelephone.No),
-            registeredFmAddress = Some(
-              NfmRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("ne5 2dh"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
-    )
-    .success
-    .value
-
   def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
   def userAnswersNfmNoId:  UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
 
