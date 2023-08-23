@@ -53,6 +53,16 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
+    "must return NOT_FOUND when page fetched directly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual NOT_FOUND
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
