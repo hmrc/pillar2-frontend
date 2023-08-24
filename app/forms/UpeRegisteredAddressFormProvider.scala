@@ -16,40 +16,41 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.{AddressMappings, Mappings}
 import models.UpeRegisteredAddress
-
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
-class UpeRegisteredAddressFormProvider @Inject() extends Mappings {
-  private val textLength = 200
+class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
+  private val textLength = 35
   def apply(): Form[UpeRegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("upe-registered-address.messages.error.address-line-1.required")
-          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-1.length")),
+        text("upeRegisteredAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "upe-registered-address.messages.error.address-line-2.length"))
+          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("upe-registered-address.town-city.error.required")
-          .verifying(maxLength(textLength, "upe-registered-address.town-city.error.length")),
+        text("upeRegisteredAddress.town_city.error.required")
+          .verifying(maxLength(textLength, "upeRegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "upe-registered-address.region.error.length"))
+            .verifying(maxLength(textLength, "upeRegisteredAddress.region.error.length"))
         ),
       "postalCode" ->
-        optional(
-          text("")
-            .verifying(maxLength(textLength, "upe-registered-address.postcode.error.length"))
+        optionalPostcode(
+          Some("upeRegisteredAddress.postcode.error.invalid"),
+          "upeRegisteredAddress.postcode.error.invalid",
+          "upeRegisteredAddress.postcode.error.length",
+          "countryCode"
         ),
       "countryCode" ->
-        text("upe-registered-address.country.error.required")
-          .verifying(maxLength(textLength, "upe-registered-address.country.error.length"))
+        text("upeRegisteredAddress.country.error.required")
+          .verifying(maxLength(textLength, "upeRegisteredAddress.country.error.length"))
     )(UpeRegisteredAddress.apply)(UpeRegisteredAddress.unapply)
   )
 }

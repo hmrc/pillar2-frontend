@@ -17,23 +17,30 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
+import controllers.routes
+import pages.SubscriptionPage
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NfmNameRegistrationControllerSummary {
+object MneOrDomesticSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NominatedFilingMemberPage).map { answer =>
+    answers.get(SubscriptionPage).map { answer =>
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(answer.domesticOrMne.toString)
+        )
+      )
       SummaryListRowViewModel(
-        key = "nfmNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer.withoutIdRegData.fold("")(data => data.registeredFmName)).toString),
+        key = "mneOrDomestic.checkYourAnswersLabel",
+        value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("nfmNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
         )
       )
     }

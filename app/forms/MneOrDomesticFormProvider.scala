@@ -16,23 +16,16 @@
 
 package forms
 
-import java.time.{LocalDate, ZoneOffset}
+import javax.inject.Inject
 
-import forms.behaviours.DateBehaviours
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.MneOrDomestic
 
-class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
+class MneOrDomesticFormProvider @Inject() extends Mappings {
 
-  val form = new GroupAccountingPeriodFormProvider()()
-
-  ".value" - {
-
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
+  def apply(): Form[MneOrDomestic] =
+    Form(
+      "value" -> enumerable[MneOrDomestic]("mneOrDomestic.error.required")
     )
-
-    behave like dateField(form, "value", validData)
-
-    behave like mandatoryDateField(form, "value", "groupAccountingPeriod.error.required.all")
-  }
 }

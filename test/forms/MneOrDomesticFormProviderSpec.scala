@@ -16,23 +16,30 @@
 
 package forms
 
-import java.time.{LocalDate, ZoneOffset}
+import forms.behaviours.OptionFieldBehaviours
+import models.MneOrDomestic
+import play.api.data.FormError
 
-import forms.behaviours.DateBehaviours
+class MneOrDomesticFormProviderSpec extends OptionFieldBehaviours {
 
-class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
-
-  val form = new GroupAccountingPeriodFormProvider()()
+  val form = new MneOrDomesticFormProvider()()
 
   ".value" - {
 
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
+    val fieldName   = "value"
+    val requiredKey = "mneOrDomestic.error.required"
+
+    behave like optionsField[MneOrDomestic](
+      form,
+      fieldName,
+      validValues = MneOrDomestic.values,
+      invalidError = FormError(fieldName, "error.invalid")
     )
 
-    behave like dateField(form, "value", validData)
-
-    behave like mandatoryDateField(form, "value", "groupAccountingPeriod.error.required.all")
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

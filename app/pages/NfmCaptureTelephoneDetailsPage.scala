@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import java.time.{LocalDate, ZoneOffset}
+import play.api.libs.json.JsPath
 
-import forms.behaviours.DateBehaviours
+case object NfmCaptureTelephoneDetailsPage extends QuestionPage[String] {
 
-class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  val form = new GroupAccountingPeriodFormProvider()()
-
-  ".value" - {
-
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
-    )
-
-    behave like dateField(form, "value", validData)
-
-    behave like mandatoryDateField(form, "value", "groupAccountingPeriod.error.required.all")
-  }
+  override def toString: String = "nfmCaptureTelephoneDetails"
 }

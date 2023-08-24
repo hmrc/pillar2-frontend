@@ -16,23 +16,15 @@
 
 package forms
 
-import java.time.{LocalDate, ZoneOffset}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import models.fm.ContactNFMByTelephone
+import play.api.data.Form
 
-import forms.behaviours.DateBehaviours
+class ContactNfmByTelephoneFormProvider @Inject() extends Mappings {
 
-class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
-
-  val form = new GroupAccountingPeriodFormProvider()()
-
-  ".value" - {
-
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
+  def apply(userName: String): Form[ContactNFMByTelephone] =
+    Form(
+      "value" -> enumerable[ContactNFMByTelephone]("contactNfmByTelephone.error.required", args = Seq(userName))
     )
-
-    behave like dateField(form, "value", validData)
-
-    behave like mandatoryDateField(form, "value", "groupAccountingPeriod.error.required.all")
-  }
 }

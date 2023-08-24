@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import config.FrontendAppConfig
 
-import java.time.{LocalDate, ZoneOffset}
+@this(
+layout: templates.Layout,
+govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton
+)
 
-import forms.behaviours.DateBehaviours
 
-class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
+@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-  val form = new GroupAccountingPeriodFormProvider()()
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-  ".value" - {
+<h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
-    )
+@govukSummaryList(list)
 
-    behave like dateField(form, "value", validData)
-
-    behave like mandatoryDateField(form, "value", "groupAccountingPeriod.error.required.all")
-  }
+ <br>
+ @govukButton(
+  ButtonViewModel(messages("site.save-and-continue"))
+          .withAttribute("id","continue")
+          .asLink(controllers.routes.TaskListController.onPageLoad.url))
 }

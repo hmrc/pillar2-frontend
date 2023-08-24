@@ -32,23 +32,16 @@ package models.subscription
  * limitations under the License.
  */
 
-import models.MneOrDomestic
 import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
 
-case class Subscription(
-  domesticOrMne:             MneOrDomestic,
-  subscriptionStatus:        RowStatus,
-  accountingPeriod:          Option[String] = None,
-  primaryContactName:        Option[String] = None,
-  primaryContactEmail:       Option[String] = None,
-  primaryContactTelephone:   Option[String] = None,
-  secondaryContactName:      Option[String] = None,
-  secondaryContactEmail:     Option[String] = None,
-  secondaryContactTelephone: Option[String] = None,
-  correspondenceAddress:     Option[SubscriptionAddress] = None
+case class SubscriptionAddress(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: String,
+  addressLine4: Option[String],
+  postalCode:   Option[String],
+  countryCode:  String
 )
-
-object Subscription {
-  implicit val format: OFormat[Subscription] = Json.format[Subscription]
+object SubscriptionAddress {
+  implicit val format: OFormat[SubscriptionAddress] = Json.format[SubscriptionAddress]
 }

@@ -26,11 +26,21 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
-import views.html.fmview.{IsNFMUKBasedView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
+import views.html.fmview._
 import views.html.registrationview._
+import views.html.subscriptionview.{GroupAccountingPeriodView, MneOrDomesticView}
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewMneOrDomestic: MneOrDomesticView =
+    new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
+    new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewContactNfmByTelephone: ContactNfmByTelephoneView =
+    new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewGroupAccountingPeriod: GroupAccountingPeriodView =
     new GroupAccountingPeriodView(pillar2layout, formWithCSRF, govukErrorSummary, govukDateInput, govukButton)
@@ -167,7 +177,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewUpeContactEmail: UpeContactEmailView =
     new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
-    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
     new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
 

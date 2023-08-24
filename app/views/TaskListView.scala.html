@@ -22,7 +22,7 @@
 )
 
 
-@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", subscriptionStatus:String="notStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -99,12 +99,32 @@
                         }
                     </li>
                     }
+
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                           @messages("taskList.task.business.more")
+                          @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                              <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.sub.edit")
+                              </a>
+                            } else if (filingMemberStatus == "Completed" &&  ( subscriptionStatus=="NotStarted" ||  subscriptionStatus=="InProgress")){
+                                <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.business.sub.add")
+                                </a>
+                            } else {
+                             @messages("taskList.task.business.more")
+                            }
                         </span>
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet")</span>
+                        @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "Completed" &&  subscriptionStatus=="InProgress" ) {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else if(filingMemberStatus == "Completed" && subscriptionStatus=="NotStarted" ) {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
+                        }
                     </li>
+
                 </ul>
             </li>
 
