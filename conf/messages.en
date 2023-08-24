@@ -76,9 +76,11 @@ taskList.task.business.filingMember = Filing member''s details
 taskList.task.business.filingMember.add = Add filing member''s details
 taskList.task.business.filingMember.edit = Edit filing member''s details
 
-taskList.task.business.more = Further business details
+taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
 taskList.task.business.more.edit = Edit further business details
+taskList.task.business.sub.add = Add further group details
+taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
 taskList.task.review.heading = Review and submit
@@ -88,6 +90,7 @@ task.status.notStarted = Not started
 task.status.inProgress = In progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
+
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -369,3 +372,13 @@ nfmNameRegistration.checkYourAnswersLabel.hidden = Change the name of the nomina
 
 
 
+
+mneOrDomestic.title = Where does the group operate?
+mneOrDomestic.heading.caption = Business details
+mneOrDomestic.heading = Where does the group operate?
+mneOrDomestic.everywhere = In the UK and other countries
+mneOrDomestic.uk = Only in the UK
+mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
+mneOrDomestic.error.required = Select where the group operates
+mneOrDomestic.change.hidden = Change your answer to where your group operates
+mneOrDomestic.ukAndOther = In the UK and other countries

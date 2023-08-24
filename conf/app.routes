@@ -146,3 +146,8 @@ POST       /business-matching/filing-member/no-id/input-telephone               
 GET        /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
+
+GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
+POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
+GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
