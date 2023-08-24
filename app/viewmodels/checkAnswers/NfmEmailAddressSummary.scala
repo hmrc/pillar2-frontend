@@ -37,7 +37,7 @@ object NfmEmailAddressSummary {
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmEmailAddressController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmEmailAddress.change.hidden"))
+                  .withVisuallyHiddenText(messages("nfmEmailAddress.checkYourAnswersLabel.hidden"))
               )
             )
           }

@@ -43,7 +43,7 @@ class NfmRegisteredAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              NfmRegisteredAddressFormProvider,
-  CountryOptions:            CountryOptions,
+  countryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
   view:                      NfmRegisteredAddressView
@@ -51,7 +51,7 @@ class NfmRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[NfmRegisteredAddress] = formProvider()
-  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
+  val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {

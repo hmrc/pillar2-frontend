@@ -25,6 +25,7 @@ import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
@@ -36,7 +37,8 @@ class UpeCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   page_not_available:       ErrorTemplate,
-  view:                     UpeCheckYourAnswersView
+  view:                     UpeCheckYourAnswersView,
+  countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -51,7 +53,7 @@ class UpeCheckYourAnswersController @Inject() (
     val list = SummaryListViewModel(
       rows = Seq(
         UpeNameRegistrationSummary.row(request.userAnswers),
-        UpeRegisteredAddressSummary.row(request.userAnswers),
+        UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         UpeContactNameSummary.row(request.userAnswers),
         UpeContactEmailSummary.row(request.userAnswers),
         UpeTelephonePreferenceSummary.row(request.userAnswers),

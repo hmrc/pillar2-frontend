@@ -54,6 +54,8 @@ POST        /business-matching/ultimate-parent/no-id/telephone                  
 GET         /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
+GET         /business-matching/filing-member/no-id/check-answers                         controllers.fm.NfmCheckYourAnswersController.onPageLoad
+
 
 GET         /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
@@ -143,7 +145,6 @@ GET        /business-matching/filing-member/no-id/input-telephone               
 POST       /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
-GET        /business-matching/filing-member/no-id/check-answers                         controllers.fm.FilingMemberCheckAnswersController.onPageLoad
 
 
 GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)

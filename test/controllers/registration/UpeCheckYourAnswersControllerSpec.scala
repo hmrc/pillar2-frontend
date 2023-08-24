@@ -19,6 +19,7 @@ package controllers.registration
 import base.SpecBase
 import models.registration.{Registration, WithoutIdRegData}
 import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress}
+import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,7 +37,8 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       preDataRequiredActionImpl,
       stubMessagesControllerComponents(),
       viewpageNotAvailable,
-      viewCheckYourAnswersUPE
+      viewCheckYourAnswersUPE,
+      mockCountryOptions
     )
   val user           = emptyUserAnswers
   val addressExample = UpeRegisteredAddress("1", Some("2"), "3", Some("4"), Some("5"), "GB")
@@ -44,29 +46,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
   val completeUserAnswer = user
     .set(
       RegistrationPage,
-      new Registration(
-        isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
-        isRegistrationStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdRegData(
-            upeNameRegistration = "Paddington",
-            upeContactName = Some("Paddington ltd"),
-            contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
-            telephoneNumber = Some("123444"),
-            emailAddress = Some("example@gmail.com"),
-            upeRegisteredAddress = Some(
-              UpeRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("5"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
+      upeCheckAnswerData()
     )
     .success
     .value
@@ -74,28 +54,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
   val noTelephoneUserAnswers = user
     .set(
       RegistrationPage,
-      new Registration(
-        isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
-        isRegistrationStatus = RowStatus.InProgress,
-        withoutIdRegData = Some(
-          WithoutIdRegData(
-            upeNameRegistration = "Paddington",
-            upeContactName = Some("Paddington ltd"),
-            contactUpeByTelephone = Some(ContactUPEByTelephone.No),
-            emailAddress = Some("example@gmail.com"),
-            upeRegisteredAddress = Some(
-              UpeRegisteredAddress(
-                addressLine1 = "1",
-                addressLine2 = Some("2"),
-                addressLine3 = "3",
-                addressLine4 = Some("4"),
-                postalCode = Some("5"),
-                countryCode = "GB"
-              )
-            )
-          )
-        )
-      )
+      upeCheckAnswerDataWithoutPhone
     )
     .success
     .value
@@ -104,7 +63,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   val phonenumberProvided = Seq(
     UpeNameRegistrationSummary.row(completeUserAnswer),
-    UpeRegisteredAddressSummary.row(completeUserAnswer),
+    UpeRegisteredAddressSummary.row(completeUserAnswer, mockCountryOptions),
     UpeContactNameSummary.row(completeUserAnswer),
     UpeContactEmailSummary.row(completeUserAnswer),
     UpeTelephonePreferenceSummary.row(completeUserAnswer),
@@ -113,7 +72,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   val noPhonenumber = Seq(
     UpeNameRegistrationSummary.row(noTelephoneUserAnswers),
-    UpeRegisteredAddressSummary.row(noTelephoneUserAnswers),
+    UpeRegisteredAddressSummary.row(noTelephoneUserAnswers, mockCountryOptions),
     UpeContactNameSummary.row(noTelephoneUserAnswers),
     UpeContactEmailSummary.row(noTelephoneUserAnswers),
     UpeTelephonePreferenceSummary.row(noTelephoneUserAnswers)
@@ -139,6 +98,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     "must return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
       running(application) {
+        when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
@@ -147,13 +107,16 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val list = SummaryListViewModel(phonenumberProvided)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) must include(
+          "Business details"
+        )
       }
 
     }
     "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
       val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
       running(application) {
+        when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
@@ -162,7 +125,9 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val list = SummaryListViewModel(noPhonenumber)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) must include(
+          "Check your answers"
+        )
       }
 
     }

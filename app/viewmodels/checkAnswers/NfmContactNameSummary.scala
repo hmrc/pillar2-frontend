@@ -37,7 +37,7 @@ object NfmContactNameSummary {
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmContactName.change.hidden"))
+                  .withVisuallyHiddenText(messages("nfmContactName.checkYourAnswersLabel.hidden"))
               )
             )
           }

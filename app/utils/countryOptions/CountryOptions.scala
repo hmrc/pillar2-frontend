@@ -28,6 +28,11 @@ import javax.inject.{Inject, Singleton}
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
   def options: Seq[InputOption] = CountryOptions.getCountries(environment, config.locationCanonicalList)
 
+  def getCountryNameFromCode(code: String): String =
+    options
+      .find(_.value == code)
+      .map(_.label)
+      .getOrElse(code)
 }
 object CountryOptions {
 
@@ -45,4 +50,5 @@ object CountryOptions {
       .getOrElse {
         throw new ConfigException.BadValue(fileName, "country json does not exist")
       }
+
 }

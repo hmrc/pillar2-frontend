@@ -90,7 +90,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
                 )
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.FilingMemberCheckAnswersController.onPageLoad)
+          } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
         }
       )
   }
