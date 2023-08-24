@@ -25,6 +25,51 @@ import utils.RowStatus
 
 trait Pillar2TestData {
 
+  def upeCheckAnswerData() = new Registration(
+    isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(
+      WithoutIdRegData(
+        upeNameRegistration = "Paddington",
+        upeContactName = Some("Paddington ltd"),
+        contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
+        telephoneNumber = Some("123444"),
+        emailAddress = Some("example@gmail.com"),
+        upeRegisteredAddress = Some(
+          UpeRegisteredAddress(
+            addressLine1 = "1",
+            addressLine2 = Some("2"),
+            addressLine3 = "3",
+            addressLine4 = Some("4"),
+            postalCode = Some("5"),
+            countryCode = "GB"
+          )
+        )
+      )
+    )
+  )
+  def upeCheckAnswerDataWithoutPhone() = new Registration(
+    isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(
+      WithoutIdRegData(
+        upeNameRegistration = "Paddington",
+        upeContactName = Some("Paddington ltd"),
+        contactUpeByTelephone = Some(ContactUPEByTelephone.No),
+        emailAddress = Some("example@gmail.com"),
+        upeRegisteredAddress = Some(
+          UpeRegisteredAddress(
+            addressLine1 = "1",
+            addressLine2 = Some("2"),
+            addressLine3 = "3",
+            addressLine4 = Some("4"),
+            postalCode = Some("5"),
+            countryCode = "GB"
+          )
+        )
+      )
+    )
+  )
   def nfmCheckAnswerData() =
     new FilingMember(
       nfmConfirmation = NfmRegistrationConfirmation.Yes,
