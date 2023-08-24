@@ -52,6 +52,15 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         )
       }
     }
+    "must return NOT_FOUND when page fetched directly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual NOT_FOUND
+      }
+    }
 
     "must redirect to the next page when valid data is submitted" in {
       val userAnswersWithNominatedFilingMember =

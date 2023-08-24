@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.registration.Registration
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object RegistrationPage extends QuestionPage[Registration] {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.MneOrDomestic
 
-  override def path: JsPath = JsPath \ toString
+class MneOrDomesticFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "Registration"
+  def apply(): Form[MneOrDomestic] =
+    Form(
+      "value" -> enumerable[MneOrDomestic]("mneOrDomestic.error.required")
+    )
 }
