@@ -42,7 +42,7 @@
 
         @govukDateInput(
             DateViewModel(
-                field  = form("start-date"),
+                field  = form("startDate"),
                 legend = LegendViewModel(messages("groupAccountingPeriod.startDate.heading")).asPageHeading(Small)
             )
             .withHint(HintViewModel(messages("groupAccountingPeriod.startDate.hint")))
@@ -50,7 +50,7 @@
 
         @govukDateInput(
             DateViewModel(
-                field  = form("end-date"),
+                field  = form("endDate"),
                 legend = LegendViewModel(messages("groupAccountingPeriod.endDate.heading")).asPageHeading(Small)
             )
             .withHint(HintViewModel(messages("groupAccountingPeriod.endDate.hint")))

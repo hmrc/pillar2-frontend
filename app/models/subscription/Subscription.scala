@@ -39,7 +39,7 @@ import utils.RowStatus
 case class Subscription(
   domesticOrMne:             MneOrDomestic,
   subscriptionStatus:        RowStatus,
-  accountingPeriod:          Option[String] = None,
+  accountingPeriod:          Option[AccountingPeriod] = None,
   primaryContactName:        Option[String] = None,
   primaryContactEmail:       Option[String] = None,
   primaryContactTelephone:   Option[String] = None,

@@ -62,6 +62,8 @@ class GroupAccountingPeriodController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
           val accountingData = request.userAnswers.get(GroupAccountingPeriodPage).getOrElse(throw new Exception("Is accounting period not mentioned"))
+          println("********* startDateDay " + accountingData.startDate)
+          println("********* startDateMonth " + accountingData.endDate)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(GroupAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

@@ -19,21 +19,17 @@ package forms
 import forms.mappings.Mappings
 import models.subscription.AccountingPeriod
 import play.api.data.Form
-import play.api.data.Forms.{mapping, number}
+import play.api.data.Forms.mapping
 
 import javax.inject.Inject
 
 class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
-// Will there be different validations for date, month and year here separately for start date and end date.
+  // Will there be different validations for date, month and year here separately for start date and end date.
   def apply(): Form[AccountingPeriod] =
     Form(
       mapping(
-        "startDateDay"   -> number,
-        "startDateMonth" -> number,
-        "startDateYear"  -> number,
-        "endDateDay"     -> number,
-        "endDateMonth"   -> number,
-        "endDateYear"    -> number
+        "startDate" -> text("groupAccountingPeriod.error.invalid"),
+        "endDate"   -> text("groupAccountingPeriod.error.invalid")
       )(AccountingPeriod.apply)(AccountingPeriod.unapply)
     )
 }

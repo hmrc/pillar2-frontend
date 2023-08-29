@@ -35,13 +35,10 @@ package models.subscription
 import play.api.libs.json.{Json, OFormat}
 
 case class AccountingPeriod(
-  startDateDay:   Int,
-  startDateMonth: Int,
-  startDateYear:  Int,
-  endDateDay:     Int,
-  endDateMonth:   Int,
-  endDateYear:    Int
+  startDate: String,
+  endDate:   String
 )
+
 object AccountingPeriod {
   implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }
