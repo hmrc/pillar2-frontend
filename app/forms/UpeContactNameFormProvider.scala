@@ -23,9 +23,11 @@ import javax.inject.Inject
 
 class UpeContactNameFormProvider @Inject() extends Mappings {
 
+  val max = 200
+
   def apply(): Form[String] =
     Form(
       "upeContactName" -> text("upe-input-business-name.error.required")
-        .verifying(maxLength(200, "upe-input-business-name.error.length"))
+        .verifying(maxLength(max,"upe-input-business-name.error.length"))
     )
 }
