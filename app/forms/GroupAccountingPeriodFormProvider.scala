@@ -16,11 +16,12 @@
 
 package forms
 
-import forms.mappings.{DateTupleCustomError, Mappings}
+import forms.mappings.Mappings
 import models.subscription.AccountingPeriod
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
+import java.time.LocalDate
 import javax.inject.Inject
 
 class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
@@ -28,8 +29,8 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
   def apply(): Form[AccountingPeriod] =
     Form(
       mapping(
-        "startDate" -> DateTupleCustomError("Invalid start date").dateTupleOptional(),
-        "endDate"   -> DateTupleCustomError("Invalid end date").dateTupleOptional()
+        "startDate" -> localDate("", "", "", "").verifying(minDate(LocalDate.of(2023, 12, 31), "Invalid start date")),
+        "endDate"   -> localDate("", "", "", "").verifying(minDate(LocalDate.of(2023, 12, 31), "Invalid start date"))
       )(AccountingPeriod.apply)(AccountingPeriod.unapply)
     )
 }

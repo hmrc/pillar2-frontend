@@ -19,7 +19,6 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.MneOrDomesticFormProvider
 import models.Mode
 import models.subscription.Subscription
@@ -77,7 +76,7 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubscriptionPage, Subscription(domesticOrMne = value, subscriptionStatus = RowStatus.InProgress)))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
       )
   }
 

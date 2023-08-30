@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.routes
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
-import pages.GroupAccountingPeriodPage
+import pages.{GroupAccountingPeriodPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -61,9 +61,10 @@ class GroupAccountingPeriodController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val accountingData = request.userAnswers.get(GroupAccountingPeriodPage).getOrElse(throw new Exception("Is accounting period not mentioned"))
-          println("********* startDateDay " + accountingData.startDate)
-          println("********* startDateMonth " + accountingData.endDate)
+          println("######## request.userAnswers " + request.userAnswers);
+          val accountingData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is accounting period not mentioned"))
+          println("********* startDateDay " + accountingData.accountingPeriod)
+//          println("********* startDateMonth " + accountingData.endDate)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(GroupAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
