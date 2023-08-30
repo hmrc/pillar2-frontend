@@ -163,6 +163,12 @@ GET         /contact-details/change-use-contact                controllers.subsc
 POST       /contact-details/change-use-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
+
+
 
 
 

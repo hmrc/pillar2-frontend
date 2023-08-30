@@ -28,8 +28,8 @@ object UseContactPrimary extends Enumerable.Implicits {
   case object NO extends WithName("no") with UseContactPrimary
 
   val values: Seq[UseContactPrimary] = Seq(
-    UkAndOther,
-    Uk
+    YES,
+    NO
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>

@@ -20,11 +20,11 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.{MneOrDomesticFormProvider, UseContactPrimaryFormProvider}
-import models.{Mode, NormalMode, UseContactPrimary}
+import forms.{ContactNameComplianceFormProvider, UseContactPrimaryFormProvider}
 import models.requests.DataRequest
 import models.subscription.Subscription
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import models.{Mode, NormalMode, UseContactPrimary}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -32,24 +32,25 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.UseContactPrimaryView
+import views.html.subscriptionview.{ContactNameComplianceView, UseContactPrimaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UseContactPrimaryController @Inject() (
+class ContactNameComplianceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UseContactPrimaryFormProvider,
+  formProvider:              ContactNameComplianceFormProvider,
   page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UseContactPrimaryView
+  view:                      ContactNameComplianceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form = formProvider()
+
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
@@ -69,42 +70,23 @@ class UseContactPrimaryController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          value match {
-            case UseContactPrimary.YES =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers.set(
-                        SubscriptionPage,
-                        Subscription(
-                          domesticOrMne = regData.domesticOrMne,
-                          useContactPrimary = Some(value),
-                          subscriptionStatus = RowStatus.InProgress,
-                          contactDetailsStatus = RowStatus.InProgress
-                        )
-                      )
+          for {
+            updatedAnswers <-
+              Future
+                .fromTry(
+                  request.userAnswers.set(
+                    SubscriptionPage,
+                    Subscription(
+                      domesticOrMne = regData.domesticOrMne,
+                      useContactPrimary = regData.useContactPrimary,
+                      primaryContactName = Some(value),
+                      subscriptionStatus = RowStatus.InProgress,
+                      contactDetailsStatus = RowStatus.InProgress
                     )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
-            case UseContactPrimary.NO =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers.set(
-                        SubscriptionPage,
-                        Subscription(
-                          domesticOrMne = regData.domesticOrMne,
-                          useContactPrimary = Some(value),
-                          subscriptionStatus = RowStatus.InProgress,
-                          contactDetailsStatus = RowStatus.InProgress
-                        )
-                      )
-                    )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
-          }
+                  )
+                )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }
 
