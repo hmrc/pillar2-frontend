@@ -75,7 +75,12 @@ class MneOrDomesticController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubscriptionPage, Subscription(domesticOrMne = value, subscriptionStatus = RowStatus.InProgress)))
+                .fromTry(
+                  request.userAnswers.set(
+                    SubscriptionPage,
+                    Subscription(domesticOrMne = value, subscriptionStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted)
+                  )
+                )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )

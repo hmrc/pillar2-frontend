@@ -67,7 +67,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress))
+          .set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress, RowStatus.NotStarted))
           .success
           .value
           .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))

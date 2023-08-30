@@ -37,9 +37,11 @@ import play.api.libs.json.{Json, OFormat}
 import utils.RowStatus
 
 case class Subscription(
-  domesticOrMne:             MneOrDomestic,
-  subscriptionStatus:        RowStatus,
-  accountingPeriod:          Option[String] = None,
+  domesticOrMne:        MneOrDomestic,
+  subscriptionStatus:   RowStatus,
+  contactDetailsStatus: RowStatus,
+  accountingPeriod:     Option[String] = None,
+  // useContactPrimary:         Option[String] = None,
   primaryContactName:        Option[String] = None,
   primaryContactEmail:       Option[String] = None,
   primaryContactTelephone:   Option[String] = None,
