@@ -390,3 +390,11 @@ content.title = We need contact details for the filing member
 content.heading = We need contact details for the filing member
 content.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your compliance with Pillar 2 top-up taxes.
 content.p2 = These may be different to any contact details you have already provided during registration, which were used to match your business with our records.
+
+useContactPrimary.no = No
+useContactPrimary.yes = Yes
+
+useContactPrimary.title = Do you want to use this as your primary contact?
+useContactPrimary.heading = Do you want to use this as your primary contact?
+
+useContactPrimary.heading.caption = Contact details

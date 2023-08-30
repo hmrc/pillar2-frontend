@@ -157,6 +157,13 @@ GET         /contact-details/content                             controllers.sub
 POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit
 
 
+GET         /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-use-contact                controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-use-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
+
+
+
 
 
 

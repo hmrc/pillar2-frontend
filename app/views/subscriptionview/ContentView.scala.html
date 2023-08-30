@@ -15,6 +15,8 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.{Mode, NormalMode}
+
 @this(
 layout: templates.Layout,
 formHelper: FormWithCSRF,
@@ -32,6 +34,6 @@ pageTitle    = titleNoForm(messages("content.title"))) {
 <p class="govuk-body">@messages("content.p1")</p>
 <p class="govuk-body">@messages("content.p2")</p>
 @govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad.url)
+ButtonViewModel(messages("site.continue")).asLink(controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
 )
 }

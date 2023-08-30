@@ -32,16 +32,16 @@ package models.subscription
  * limitations under the License.
  */
 
-import models.MneOrDomestic
+import models.{MneOrDomestic, UseContactPrimary}
 import play.api.libs.json.{Json, OFormat}
 import utils.RowStatus
 
 case class Subscription(
-  domesticOrMne:        MneOrDomestic,
-  subscriptionStatus:   RowStatus,
-  contactDetailsStatus: RowStatus,
-  accountingPeriod:     Option[String] = None,
-  // useContactPrimary:         Option[String] = None,
+  domesticOrMne:             MneOrDomestic,
+  subscriptionStatus:        RowStatus,
+  contactDetailsStatus:      RowStatus,
+  accountingPeriod:          Option[String] = None,
+  useContactPrimary:         Option[UseContactPrimary] = None,
   primaryContactName:        Option[String] = None,
   primaryContactEmail:       Option[String] = None,
   primaryContactTelephone:   Option[String] = None,
