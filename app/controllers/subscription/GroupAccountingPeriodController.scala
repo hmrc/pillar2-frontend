@@ -62,12 +62,22 @@ class GroupAccountingPeriodController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
           println("######## request.userAnswers " + request.userAnswers);
-          val accountingData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is accounting period not mentioned"))
-          println("********* startDateDay " + accountingData.accountingPeriod)
+          val subscriptionData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is it not subscribed"))
+          var accountingData   = subscriptionData.accountingPeriod.getOrElse(throw new Exception("Is accounting period not mentioned"))
+          println("********* startDateDay " + subscriptionData.accountingPeriod)
 //          println("********* startDateMonth " + accountingData.endDate)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(GroupAccountingPeriodPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(
+                                request.userAnswers.set(
+                                  SubscriptionPage,
+                                  subscriptionData.copy(
+                                    domesticOrMne = subscriptionData.domesticOrMne,
+                                    subscriptionStatus = subscriptionData.subscriptionStatus,
+                                    Some(accountingData.copy(startDate = value.startDate, endDate = value.endDate))
+                                  )
+                                )
+                              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
         }
       )

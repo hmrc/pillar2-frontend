@@ -23,5 +23,5 @@ case object GroupAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "groupAccountingPeriod"
+  override def toString: String = "accountingPeriod"
 }
