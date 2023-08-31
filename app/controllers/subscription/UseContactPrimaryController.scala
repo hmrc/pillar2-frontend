@@ -89,22 +89,50 @@ class UseContactPrimaryController @Inject() (
         value =>
           value match {
             case UseContactPrimary.YES =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers.set(
-                        SubscriptionPage,
-                        Subscription(
-                          domesticOrMne = regData.domesticOrMne,
-                          useContactPrimary = Some(value),
-                          subscriptionStatus = regData.subscriptionStatus,
-                          contactDetailsStatus = RowStatus.InProgress
+              isNfmRegisteredUK(request) match {
+                case true =>
+                  val nfmRegData =
+                    request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is MNE or Domestic not selected"))
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            Subscription(
+                              domesticOrMne = regData.domesticOrMne,
+                              useContactPrimary = Some(value),
+                              primaryContactName = Some(getName(request)),
+                              primaryContactEmail = Some(getEmail(request)),
+                              primaryContactTelephone = Some(getPhoneNumber(request)),
+                              subscriptionStatus = regData.subscriptionStatus,
+                              contactDetailsStatus = RowStatus.InProgress
+                            )
+                          )
                         )
-                      )
-                    )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                case false =>
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            Subscription(
+                              domesticOrMne = regData.domesticOrMne,
+                              useContactPrimary = Some(value),
+                              primaryContactName = Some(getUpeName(request)),
+                              primaryContactEmail = Some(getUpeEmail(request)),
+                              primaryContactTelephone = Some(getUpePhoneNumber(request)),
+                              subscriptionStatus = regData.subscriptionStatus,
+                              contactDetailsStatus = RowStatus.InProgress
+                            )
+                          )
+                        )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              }
             case UseContactPrimary.NO =>
               for {
                 updatedAnswers <-
@@ -115,6 +143,9 @@ class UseContactPrimaryController @Inject() (
                         Subscription(
                           domesticOrMne = regData.domesticOrMne,
                           useContactPrimary = Some(value),
+                          primaryContactName = None,
+                          primaryContactEmail = None,
+                          primaryContactTelephone = None,
                           subscriptionStatus = regData.subscriptionStatus,
                           contactDetailsStatus = RowStatus.InProgress
                         )

@@ -82,7 +82,7 @@ class ContactNameComplianceController @Inject() (
                       domesticOrMne = regData.domesticOrMne,
                       useContactPrimary = regData.useContactPrimary,
                       primaryContactName = Some(value),
-                      subscriptionStatus = RowStatus.InProgress,
+                      subscriptionStatus = regData.subscriptionStatus,
                       contactDetailsStatus = RowStatus.InProgress
                     )
                   )
