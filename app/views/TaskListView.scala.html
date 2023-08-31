@@ -137,11 +137,11 @@
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                           @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" && contactDetailsStatus=="Completed"){
-                              <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                              <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
                                  @messages("taskList.task.contact.edit")
                               </a>
                             } else if (filingMemberStatus == "Completed" && subscriptionStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
-                                <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                                <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
                                  @messages("taskList.task.contact.add")
                                 </a>
                             } else {

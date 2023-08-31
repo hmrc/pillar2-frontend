@@ -406,7 +406,7 @@ contactNameCompliance.heading = What is the name of the person or team we should
 contactNameCompliance.hint =  For example, ‘Tax team’ or ‘Ashley Smith’.
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.required = Enter name of the person of team we should contact
-contactNameCompliance.error.length = Ask Alex for length message
+contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
 
 
 

@@ -57,7 +57,9 @@ class ContactNameComplianceController @Inject() (
       case true =>
         request.userAnswers
           .get(SubscriptionPage)
-          .fold(NotFound(notAvailable))(reg => (Ok(view(form, mode))))
+          .fold(NotFound(notAvailable)) { reg =>
+            reg.primaryContactName.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+          }
 
       case false => NotFound(notAvailable)
     }
@@ -93,6 +95,6 @@ class ContactNameComplianceController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => !data.useContactPrimary.toString.isEmpty)
+      .fold(false)(data => data.useContactPrimary.toString.nonEmpty)
 
 }

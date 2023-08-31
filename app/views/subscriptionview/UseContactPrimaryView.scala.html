@@ -22,10 +22,11 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukInsetText : GovukInsetText
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode, name:String="" ,email:String="", tel:String="")(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
@@ -35,16 +36,61 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
         <span class="govuk-caption-l">@messages("useContactPrimary.heading.caption")</span>
-        @govukRadios(
-            RadiosViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("useContactPrimary.heading")).asPageHeading(Large),
-                items  = UseContactPrimary.options
-            )
-        )
 
+        @if(tel!=""){
+                @govukRadios(
+                    RadiosViewModel(
+                        field  = form("value"),
+                        fieldset = FieldsetViewModel(Legend(HtmlContent(headingContent))),
+                        items  = UseContactPrimary.options
+                    )
+                )
+        } else {
+                @govukRadios(
+                RadiosViewModel(
+                field  = form("value"),
+                fieldset = FieldsetViewModel(Legend(HtmlContent(headingContentWithoutPhone))),
+                items  = UseContactPrimary.options
+                )
+                )
+        }
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
     }
+}
+
+@headingContent = @{
+s"""<h1 class="govuk-heading-l long-word">${messages("useContactPrimary.heading")}
+|</h1>
+|<div class="govuk-inset-text">
+|    <ul class="govuk-list">
+|        <li>
+|            $name
+|        </li>
+|        <li>
+|            $email
+|        </li>
+|        <li>
+|           $tel
+|        </li>
+|    </ul>
+|</div>
+|""".stripMargin
+}
+
+@headingContentWithoutPhone = @{
+s"""<h1 class="govuk-heading-l long-word">${messages("useContactPrimary.heading")}
+    |</h1>
+|<div class="govuk-inset-text">
+    |    <ul class="govuk-list">
+    |        <li>
+    |            $name
+    |        </li>
+    |        <li>
+    |            $email
+    |        </li>
+    |    </ul>
+    |</div>
+|""".stripMargin
 }

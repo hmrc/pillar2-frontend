@@ -24,7 +24,7 @@ import forms.{MneOrDomesticFormProvider, UseContactPrimaryFormProvider}
 import models.{Mode, NormalMode, UseContactPrimary}
 import models.requests.DataRequest
 import models.subscription.Subscription
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -54,10 +54,28 @@ class UseContactPrimaryController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable))(reg => (Ok(view(form, mode))))
-
+        isNfmRegisteredUK(request) match { // check if no grs flow then get name email tel else get upe details
+          case true =>
+            request.userAnswers
+              .get(SubscriptionPage)
+              .fold(NotFound(notAvailable)) { reg =>
+                reg.useContactPrimary.fold(Ok(view(form, mode, getName(request), getEmail(request), getPhoneNumber(request))))(data =>
+                  Ok(view(form.fill(data), mode, getName(request), getEmail(request), getPhoneNumber(request)))
+                )
+              }
+          case false =>
+            isUpeRegisteredUK(request) match {
+              case true =>
+                request.userAnswers
+                  .get(SubscriptionPage)
+                  .fold(NotFound(notAvailable)) { reg =>
+                    reg.useContactPrimary.fold(Ok(view(form, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))(data =>
+                      Ok(view(form.fill(data), mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
+                    )
+                  }
+              case false => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
+            }
+        }
       case false => NotFound(notAvailable)
     }
   }
@@ -80,7 +98,7 @@ class UseContactPrimaryController @Inject() (
                         Subscription(
                           domesticOrMne = regData.domesticOrMne,
                           useContactPrimary = Some(value),
-                          subscriptionStatus = RowStatus.InProgress,
+                          subscriptionStatus = regData.subscriptionStatus,
                           contactDetailsStatus = RowStatus.InProgress
                         )
                       )
@@ -97,7 +115,7 @@ class UseContactPrimaryController @Inject() (
                         Subscription(
                           domesticOrMne = regData.domesticOrMne,
                           useContactPrimary = Some(value),
-                          subscriptionStatus = RowStatus.InProgress,
+                          subscriptionStatus = regData.subscriptionStatus,
                           contactDetailsStatus = RowStatus.InProgress
                         )
                       )
@@ -111,6 +129,52 @@ class UseContactPrimaryController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => !data.useContactPrimary.toString.isEmpty)
+      .fold(false) { data =>
+        data.subscriptionStatus.toString == "Completed"
+      }
+
+  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false) { data =>
+        data.isNfmRegisteredInUK.getOrElse("").toString == "no"
+      }
+
+  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold(false) { data =>
+        data.isUPERegisteredInUK.toString == "no"
+      }
+
+  private def getName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
+  }
+
+  private def getEmail(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmEmailAddress.fold("")(email => email)))
+  }
+
+  private def getPhoneNumber(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
+  }
+
+  private def getUpeName(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
+  }
+
+  private def getUpeEmail(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.emailAddress.fold("")(email => email)))
+  }
+
+  private def getUpePhoneNumber(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
+  }
 
 }
