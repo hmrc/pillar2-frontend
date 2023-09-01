@@ -79,7 +79,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         UserAnswers(userAnswersId)
           .set(
             NominatedFilingMemberPage,
-            FilingMember(NfmRegistrationConfirmation.Yes, Some(NfmRegisteredInUkConfirmation.Yes), isNFMnStatus = RowStatus.InProgress)
+            FilingMember(true, Some(true), isNFMnStatus = RowStatus.InProgress)
           )
           .success
           .value
@@ -94,7 +94,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[IsNFMUKBasedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(NfmRegisteredInUkConfirmation.Yes), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
           request,
           appConfig(application),
           messages(application)

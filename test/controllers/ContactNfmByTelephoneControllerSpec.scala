@@ -87,7 +87,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactNfmByTelephoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("yes").fill(ContactNFMByTelephone.Yes), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("yes").fill(true), NormalMode, "TestName")(
           request,
           appConfig(application),
           messages(application)

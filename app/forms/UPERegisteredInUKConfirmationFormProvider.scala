@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 class UPERegisteredInUKConfirmationFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[UPERegisteredInUKConfirmation] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[UPERegisteredInUKConfirmation]("isUPERegisteredInUK.error.required")
+      "value" -> boolean("isUPERegisteredInUK.error.required")
     )
 }

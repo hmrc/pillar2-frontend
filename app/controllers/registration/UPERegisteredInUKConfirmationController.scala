@@ -17,11 +17,11 @@
 package controllers.registration
 
 import config.FrontendAppConfig
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, UserAnswersConnectors}
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
+import models.Mode
 import models.registration.Registration
-import models.{Mode, UPERegisteredInUKConfirmation}
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -35,15 +35,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UPERegisteredInUKConfirmationController @Inject() (
-  val userAnswersConnectors:                         UserAnswersConnectors,
-  incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
-  identify:                                          IdentifierAction,
-  getData:                                           DataRetrievalAction,
-  requireData:                                       DataRequiredAction,
-  formProvider:                                      UPERegisteredInUKConfirmationFormProvider,
-  val controllerComponents:                          MessagesControllerComponents,
-  view:                                              UPERegisteredInUKConfirmationView
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors: UserAnswersConnectors,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  formProvider:              UPERegisteredInUKConfirmationFormProvider,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      UPERegisteredInUKConfirmationView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -65,7 +64,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case UPERegisteredInUKConfirmation.Yes =>
+            case true =>
               val regData =
                 request.userAnswers
                   .get(RegistrationPage)
@@ -81,7 +80,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
-            case UPERegisteredInUKConfirmation.No =>
+            case false =>
               val regData =
                 request.userAnswers
                   .get(RegistrationPage)

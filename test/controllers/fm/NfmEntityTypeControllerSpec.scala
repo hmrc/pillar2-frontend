@@ -42,7 +42,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
         emptyUserAnswers
-          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes)))
+          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(true)))
           .success
           .value
 
@@ -80,7 +80,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         emptyUserAnswers
           .set(
             NominatedFilingMemberPage,
-            validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes), orgType = Some(EntityType.UkLimitedCompany))
+            validWithIdFmData(isNfmRegisteredInUK = Some(true), orgType = Some(EntityType.UkLimitedCompany))
           )
           .success
           .value

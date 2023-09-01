@@ -23,8 +23,8 @@ import play.api.data.Form
 
 class ContactNfmByTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(userName: String): Form[ContactNFMByTelephone] =
+  def apply(userName: String): Form[Boolean] =
     Form(
-      "value" -> enumerable[ContactNFMByTelephone]("contactNfmByTelephone.error.required", args = Seq(userName))
+      "value" -> boolean("contactNfmByTelephone.error.required", args = Seq(userName))
     )
 }

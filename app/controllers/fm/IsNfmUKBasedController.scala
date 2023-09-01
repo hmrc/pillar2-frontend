@@ -72,11 +72,11 @@ class IsNfmUKBasedController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case NfmRegisteredInUkConfirmation.Yes =>
+            case true =>
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(true, isNfmRegisteredInUK = Some(true), isNFMnStatus = RowStatus.InProgress))
 
               for {
                 updatedAnswers <-
@@ -85,29 +85,27 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
+                          regData.copy(true, isNfmRegisteredInUK = Some(true), withoutIdRegData = None)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
 
-            case NfmRegisteredInUkConfirmation.No =>
+            case false =>
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(true, isNfmRegisteredInUK = Some(false), isNFMnStatus = RowStatus.InProgress))
 
               val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ =>
-                  FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress)
-                )
+                regData.withIdRegData.fold(regData)(_ => FilingMember(true, isNfmRegisteredInUK = Some(false), isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      checkedRegData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), orgType = None, withIdRegData = None)
+                      checkedRegData.copy()
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

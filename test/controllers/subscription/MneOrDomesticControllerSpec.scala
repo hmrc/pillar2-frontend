@@ -35,7 +35,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
         .success
         .value
 
@@ -70,7 +70,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
           .set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress))
           .success
           .value
-          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
           .success
           .value
 

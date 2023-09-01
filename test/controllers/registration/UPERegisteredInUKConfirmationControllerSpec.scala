@@ -37,7 +37,6 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
   def controller(): UPERegisteredInUKConfirmationController =
     new UPERegisteredInUKConfirmationController(
       mockUserAnswersConnectors,
-      mockIncorporatedEntityIdentificationFrontendConnector,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,

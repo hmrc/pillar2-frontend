@@ -35,7 +35,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
         .success
         .value
         .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress))
@@ -61,7 +61,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress, useContactPrimary = Some(SecondaryContactPreference.Yes)))
         .success
         .value
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
         .success
         .value
 

@@ -76,7 +76,7 @@ class NominateFilingMemberYesNoController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case NfmRegistrationConfirmation.Yes =>
+            case true =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
@@ -89,7 +89,7 @@ class NominateFilingMemberYesNoController @Inject() (
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
-            case NfmRegistrationConfirmation.No =>
+            case false =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
