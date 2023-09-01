@@ -14,77 +14,68 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.subscription
 
 import base.SpecBase
-import forms.MneOrDomesticFormProvider
+import forms.AddSecondaryContactFormProvider
 import models.fm.FilingMember
-import models.subscription.Subscription
+import models.subscription.{SecondaryContactPreference, Subscription}
 import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
-import views.html.subscriptionview.MneOrDomesticView
+import views.html.subscriptionview.AddSecondaryContactView
 
-class MneOrDomesticControllerSpec extends SpecBase {
+class AddSecondaryContactControllerSpec extends SpecBase {
 
-  val formProvider = new MneOrDomesticFormProvider()
+  val formProvider = new AddSecondaryContactFormProvider()
 
-  "MneOrDomestic Controller" when {
+  "AddSecondaryContact Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswer = UserAnswers(userAnswersId)
+      val userAnswers = UserAnswers(userAnswersId)
         .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
         .success
         .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress))
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[MneOrDomesticView]
+        val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(SubscriptionPage, Subscription(domesticOrMne = MneOrDomestic.Uk, RowStatus.InProgress))
-          .success
-          .value
-          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
-          .success
-          .value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress, useContactPrimary = Some(SecondaryContactPreference.Yes)))
+        .success
+        .value
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-
-        val view = application.injector.instanceOf[MneOrDomesticView]
+        val request = FakeRequest(GET, controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
+        val view = application.injector.instanceOf[AddSecondaryContactView]
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(SecondaryContactPreference.Yes), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -98,12 +89,12 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[MneOrDomesticView]
+        val view = application.injector.instanceOf[AddSecondaryContactView]
 
         val result = route(application, request).value
 

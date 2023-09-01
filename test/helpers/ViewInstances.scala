@@ -26,11 +26,9 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
-import views.html.fmview.{FilingMemberCheckYourAnswersView, IsNFMUKBasedView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
-import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.fmview._
 import views.html.registrationview._
-import views.html.subscriptionview.MneOrDomesticView
+import views.html.subscriptionview.{AddSecondaryContactView, MneOrDomesticView}
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
