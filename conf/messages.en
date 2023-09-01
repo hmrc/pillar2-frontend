@@ -382,3 +382,9 @@ mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden = Change your answer to where your group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
+
+addSecondaryContact.title = addSecondaryContact
+addSecondaryContact.heading = addSecondaryContact
+addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
+addSecondaryContact.error.required = Select yes if addSecondaryContact
+addSecondaryContact.change.hidden = AddSecondaryContact

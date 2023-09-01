@@ -43,6 +43,7 @@ case class Subscription(
   primaryContactName:        Option[String] = None,
   primaryContactEmail:       Option[String] = None,
   primaryContactTelephone:   Option[String] = None,
+  useContactPrimary:         Option[SecondaryContactPreference] = None,
   secondaryContactName:      Option[String] = None,
   secondaryContactEmail:     Option[String] = None,
   secondaryContactTelephone: Option[String] = None,
