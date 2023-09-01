@@ -19,7 +19,8 @@ package controllers.testdata
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.subscription.Subscription
+import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -175,6 +176,13 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
+  def validSubscriptionData(
+  ) =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      subscriptionStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.InProgress
+    )
   def validNoIdFmData(
     nfmConfirmation:       NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
     isNfmRegisteredInUK:   Option[NfmRegisteredInUkConfirmation] = None,

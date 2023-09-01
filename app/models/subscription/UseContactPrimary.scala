@@ -24,12 +24,12 @@ sealed trait UseContactPrimary
 
 object UseContactPrimary extends Enumerable.Implicits {
 
-  case object YES extends WithName("yes") with UseContactPrimary
-  case object NO extends WithName("no") with UseContactPrimary
+  case object Yes extends WithName("yes") with UseContactPrimary
+  case object No extends WithName("no") with UseContactPrimary
 
   val values: Seq[UseContactPrimary] = Seq(
-    YES,
-    NO
+    Yes,
+    No
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>

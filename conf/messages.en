@@ -397,7 +397,7 @@ useContactPrimary.yes = Yes
 useContactPrimary.title = Do you want to use this as your primary contact?
 useContactPrimary.heading = Do you want to use this as your primary contact?
 useContactPrimary.heading.caption = Contact details
-
+useContactPrimary.error.required = Select yes if you want to use this as your primary contact
 
 contactNameCompliance.heading.caption = Group details
 

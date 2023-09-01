@@ -88,11 +88,9 @@ class UseContactPrimaryController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case UseContactPrimary.YES =>
+            case UseContactPrimary.Yes =>
               isNfmRegisteredUK(request) match {
                 case true =>
-                  val nfmRegData =
-                    request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is MNE or Domestic not selected"))
                   for {
                     updatedAnswers <-
                       Future
@@ -133,7 +131,7 @@ class UseContactPrimaryController @Inject() (
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(routes.UnderConstructionController.onPageLoad)
               }
-            case UseContactPrimary.NO =>
+            case UseContactPrimary.No =>
               for {
                 updatedAnswers <-
                   Future

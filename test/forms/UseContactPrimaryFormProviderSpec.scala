@@ -16,17 +16,24 @@
 
 package forms
 
-import forms.mappings.Mappings
-import models.UseContactPrimary
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import play.api.data.Form
+class UseContactPrimaryFormProviderSpec extends BooleanFieldBehaviours {
 
-import javax.inject.Inject
+  val requiredKey = "useContactPrimary.error.required"
+  val invalidKey  = "error.boolean"
 
-class UseContactPrimaryFormProvider @Inject() extends Mappings {
+  val form = new UseContactPrimaryFormProvider()()
 
-  def apply(): Form[UseContactPrimary] =
-    Form(
-      "value" -> enumerable[UseContactPrimary]("useContactPrimary.error.required")
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
+  }
 }
