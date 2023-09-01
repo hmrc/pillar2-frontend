@@ -19,7 +19,6 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.ContactNfmByTelephoneFormProvider
 import models.Mode
 import models.fm.ContactNFMByTelephone
@@ -114,7 +113,7 @@ class ContactNfmByTelephoneController @Inject() (
                       )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.FilingMemberCheckAnswersController.onPageLoad)
+              } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
           }
         }
       )

@@ -17,9 +17,9 @@
 @import config.FrontendAppConfig
 
 @this(
-layout: templates.Layout,
-govukSummaryList: GovukSummaryList,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton
 )
 
 
@@ -27,13 +27,19 @@ govukSummaryList: GovukSummaryList,
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-<h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    <span class="govuk-caption-l">@messages("checkYourAnswers.nfm.heading.caption")</span>
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-@govukSummaryList(list)
+    @govukSummaryList(list)
 
- <br>
- @govukButton(
-  ButtonViewModel(messages("site.save-and-continue"))
-          .withAttribute("id","continue")
-          .asLink(controllers.routes.TaskListController.onPageLoad.url))
+
+    <br>
+    @govukButton(
+    ButtonViewModel(messages("site.save-and-continue"))
+    .withAttribute("id","continue")
+    .asLink(controllers.routes.TaskListController.onPageLoad.url)
+)
+
+
 }
+

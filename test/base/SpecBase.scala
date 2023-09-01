@@ -22,7 +22,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.testdata.Pillar2TestData
 import helpers.{AllMocks, ViewInstances}
-import models.UserAnswers
+import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
+import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UserAnswers}
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
