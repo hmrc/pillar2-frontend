@@ -85,7 +85,13 @@ class UseContactPrimaryController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors =>
+          isNfmRegisteredUK(request) match {
+            case true =>
+              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+            case false =>
+              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+          },
         value =>
           value match {
             case UseContactPrimary.Yes =>
