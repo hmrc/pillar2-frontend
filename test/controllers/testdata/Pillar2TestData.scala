@@ -20,7 +20,7 @@ import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, Wit
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 import models.subscription.Subscription
-import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UseContactPrimary, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
@@ -181,6 +181,15 @@ trait Pillar2TestData {
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
       subscriptionStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.InProgress
+    )
+
+  def validSubscriptionDataWithUsePrimaryName(
+  ) =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      subscriptionStatus = RowStatus.Completed,
+      useContactPrimary = Some(UseContactPrimary.No),
       contactDetailsStatus = RowStatus.InProgress
     )
   def validNoIdFmData(
