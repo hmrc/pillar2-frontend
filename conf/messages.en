@@ -399,7 +399,7 @@ useContactPrimary.heading = Do you want to use this as your primary contact?
 useContactPrimary.heading.caption = Contact details
 useContactPrimary.error.required = Select yes if you want to use this as your primary contact
 
-contactNameCompliance.heading.caption = Group details
+contactNameCompliance.heading.caption = Contact details
 
 contactNameCompliance.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
 contactNameCompliance.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?

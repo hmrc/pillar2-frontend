@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.{MneOrDomesticFormProvider, UseContactPrimaryFormProvider}
-import models.{Mode, NormalMode, UseContactPrimary}
+import models.{Mode, NfmRegisteredInUkConfirmation, NormalMode, UPERegisteredInUKConfirmation, UseContactPrimary}
 import models.requests.DataRequest
 import models.subscription.Subscription
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
@@ -54,6 +54,7 @@ class UseContactPrimaryController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
+        println("************************************************88" + isNfmRegisteredUK(request))
         isNfmRegisteredUK(request) match { // check if no grs flow then get name email tel else get upe details
           case true =>
             request.userAnswers
@@ -172,15 +173,13 @@ class UseContactPrimaryController @Inject() (
     request.userAnswers
       .get(NominatedFilingMemberPage)
       .fold(false) { data =>
-        data.isNfmRegisteredInUK.getOrElse("").toString == "no"
+        data.isNfmRegisteredInUK.fold(false)(regInUk => regInUk == NfmRegisteredInUkConfirmation.No)
       }
 
   private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false) { data =>
-        data.isUPERegisteredInUK.toString == "no"
-      }
+      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
