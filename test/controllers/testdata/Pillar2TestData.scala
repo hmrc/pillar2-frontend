@@ -120,6 +120,44 @@ trait Pillar2TestData {
     )
   )
 
+  def validNoIdRegDataforSub(
+    isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isRegistrationStatus:  RowStatus = RowStatus.Completed,
+    upeNameRegistration:   String = "Test Name",
+    upeContactName:        Option[String] = Some("TestName"),
+    contactUpeByTelephone: Option[ContactUPEByTelephone] = Some(ContactUPEByTelephone.Yes),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    emailAddress:          Option[String] = Some("test@test.com"),
+    addressLine1:          String = "Line1",
+    addressLine2:          Option[String] = Some("Line2"),
+    addressLine3:          String = "Line3",
+    addressLine4:          Option[String] = Some("Line4"),
+    postalCode:            Option[String] = Some("VR11 3PA"),
+    countryCode:           String = "GB"
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = Some(
+        WithoutIdRegData(
+          upeNameRegistration = upeNameRegistration,
+          upeContactName = upeContactName,
+          contactUpeByTelephone = contactUpeByTelephone,
+          telephoneNumber = telephoneNumber,
+          emailAddress = emailAddress,
+          upeRegisteredAddress = Some(
+            UpeRegisteredAddress(
+              addressLine1 = addressLine1,
+              addressLine2 = addressLine2,
+              addressLine3 = addressLine3,
+              addressLine4 = addressLine4,
+              postalCode = postalCode,
+              countryCode = countryCode
+            )
+          )
+        )
+      )
+    )
   def validNoIdRegData(
     isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
     isRegistrationStatus:  RowStatus = RowStatus.InProgress,
@@ -292,6 +330,13 @@ trait Pillar2TestData {
   def validNoIdNfmData = new FilingMember(
     NfmRegistrationConfirmation.Yes,
     Some(NfmRegisteredInUkConfirmation.No),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
+
+  def validYesIdNfmData = new FilingMember(
+    NfmRegistrationConfirmation.Yes,
+    Some(NfmRegisteredInUkConfirmation.Yes),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )

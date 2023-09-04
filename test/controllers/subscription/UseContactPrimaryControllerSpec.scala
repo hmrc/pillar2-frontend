@@ -58,6 +58,24 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to ask primary contact name  if nfm and  upe contact not available" in {
+      val userAnswersWithNominatedFilingMemberWithSub =
+        userAnswersNfmYesId.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
+      }
+    }
+
     "must return NOT_FOUND if previous page not defined" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
