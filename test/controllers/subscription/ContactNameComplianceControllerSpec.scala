@@ -17,11 +17,13 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.{ContactNameComplianceFormProvider, UseContactPrimaryFormProvider}
 import models.{NormalMode, UseContactPrimary}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubscriptionPage
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -33,7 +35,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
   val formProvider = new ContactNameComplianceFormProvider()
 
-  "IsNFMUKBased Controller" when {
+  "Contact Name Compliance controller" when {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMemberWithSub =
@@ -96,7 +98,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionDataWithUsePrimaryName()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))

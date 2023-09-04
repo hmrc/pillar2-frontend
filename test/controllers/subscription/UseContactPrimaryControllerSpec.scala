@@ -38,7 +38,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
   val formProvider = new UseContactPrimaryFormProvider()
 
-  "IsNFMUKBased Controller" when {
+  "UseContact Primary Controller" when {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMemberWithSub =
@@ -78,9 +78,12 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -96,12 +99,14 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to NfmEntityType to choose companyType when Yes is submited" in {
+    "must redirect to next page when Yes is selected" in {
 
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -126,7 +131,9 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))

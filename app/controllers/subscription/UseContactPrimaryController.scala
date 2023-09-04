@@ -54,7 +54,6 @@ class UseContactPrimaryController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        println("************************************************88" + isNfmRegisteredUK(request))
         isNfmRegisteredUK(request) match { // check if no grs flow then get name email tel else get upe details
           case true =>
             request.userAnswers
