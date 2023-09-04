@@ -18,18 +18,17 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.routes
 import forms.NfmEntityTypeFormProvider
+import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NfmRegisteredInUkConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{EntityTypePage, NominatedFilingMemberPage}
+import pages.NominatedFilingMemberPage
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NfmEntityTypeView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -68,8 +67,6 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         status(result) mustEqual NOT_FOUND
       }

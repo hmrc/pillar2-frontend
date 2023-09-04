@@ -103,9 +103,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
-        val boundForm = formProvider("TestName").bind(Map("value" -> ""))
-        val view      = application.injector.instanceOf[ContactNfmByTelephoneView]
-        val result    = route(application, request).value
+        val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
     }
@@ -121,7 +119,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -141,7 +139,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

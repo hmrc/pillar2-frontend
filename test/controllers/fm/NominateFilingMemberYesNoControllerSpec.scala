@@ -77,7 +77,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "yes"))
+          .withFormUrlEncodedBody(("nominateFilingMember", "true"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
@@ -89,7 +89,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "no"))
+          .withFormUrlEncodedBody(("nominateFilingMember", "false"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER

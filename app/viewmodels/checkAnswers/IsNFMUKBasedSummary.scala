@@ -27,7 +27,7 @@ object IsNfmUKBasedSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NominatedFilingMemberPage).map { answer =>
-      val value = if (answer.isNfmRegisteredInUK == NfmRegisteredInUkConfirmation.Yes) "site.yes" else "site.no"
+      val value = if (answer.isNfmRegisteredInUK.contains(true)) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "isNFMUKBased.checkYourAnswersLabel",
         value = ValueViewModel(value),

@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
+import models.Mode
 import models.fm.WithoutIdNfmData
 import models.requests.DataRequest
-import models.{Mode, NfmRegisteredInUkConfirmation}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -53,13 +53,13 @@ class NfmNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case true =>
+      case Some(true) =>
         val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
           case None        => form
           case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
         }
         Ok(view(preparedForm, mode))
-      case false =>
+      case Some(false) =>
         NotFound(notAvailable)
 
     }
@@ -89,8 +89,11 @@ class NfmNameRegistrationController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(regInUk => regInUk == NfmRegisteredInUkConfirmation.No))
+      .map { reg =>
+        reg.isNfmRegisteredInUK.isDefined
+      }
+
 }

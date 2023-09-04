@@ -19,17 +19,10 @@ package controllers.registration
 import base.SpecBase
 import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.RegistrationPage
-import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.{UpeContactNameView, UpeNameRegistrationView}
-
-import scala.concurrent.Future
+import views.html.registrationview.UpeNameRegistrationView
 
 class UpeNameRegistrationControllerSpec extends SpecBase {
 
@@ -38,7 +31,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
   def controller(): UpeNameRegistrationController =
     new UpeNameRegistrationController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -49,7 +41,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     )
 
   "UpeNameRegistration Controller" must {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeNameRegistrationController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
@@ -75,15 +66,15 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      running(application) {
+        val request = FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
+        val result  = controller().onSubmit(NormalMode)()(request)
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url
 
-      val request =
-        FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "ABC Corp"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url
-
+      }
     }
   }
 }

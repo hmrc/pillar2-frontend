@@ -19,10 +19,9 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.ContactUPEByTelephone
 import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -79,8 +78,8 @@ class NfmCheckYourAnswersController @Inject() (
             withoutId.fmContactName.isDefined &&
             withoutId.fmEmailAddress.isDefined &&
             withoutId.contactNfmByTelephone.fold(false)(contactTel =>
-              (contactTel == ContactNFMByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
-                (contactTel == ContactNFMByTelephone.No)
+              contactTel && withoutId.telephoneNumber.isDefined ||
+                !contactTel
             )
         )
       )

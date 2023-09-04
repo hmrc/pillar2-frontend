@@ -20,17 +20,16 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
 import models.fm.FilingMember
-import models.grs.EntityType
-import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UserAnswers}
-import pages.NominatedFilingMemberPage
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import org.mockito.Mockito.when
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import utils.RowStatus
-import views.html.fmview.IsNFMUKBasedView
+import org.mockito.Mockito.when
+import pages.NominatedFilingMemberPage
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.RowStatus
+import views.html.fmview.IsNFMUKBasedView
 
 import scala.concurrent.Future
 
@@ -132,11 +131,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", NfmRegisteredInUkConfirmation.Yes.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> NfmRegisteredInUkConfirmation.Yes.toString))
-
-        val view = application.injector.instanceOf[IsNFMUKBasedView]
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -156,11 +151,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", NfmRegisteredInUkConfirmation.No.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> NfmRegisteredInUkConfirmation.No.toString))
-
-        val view = application.injector.instanceOf[IsNFMUKBasedView]
+          .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

@@ -103,9 +103,5 @@ class NfmCaptureTelephoneDetailsController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data =>
-        data.withoutIdRegData.fold(false)(withoutId =>
-          withoutId.contactNfmByTelephone.fold(false)(contactTel => contactTel == ContactNFMByTelephone.Yes)
-        )
-      )
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.contactNfmByTelephone.fold(false)(contactTel => contactTel)))
 }

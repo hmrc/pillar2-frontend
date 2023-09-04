@@ -111,5 +111,5 @@ class EntityTypeController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.Yes)
+      .fold(false)(data => data.isUPERegisteredInUK)
 }

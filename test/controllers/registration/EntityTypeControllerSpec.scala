@@ -19,16 +19,15 @@ package controllers.registration
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.EntityTypeFormProvider
+import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{EntityTypePage, RegistrationPage}
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.EntityTypeView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 

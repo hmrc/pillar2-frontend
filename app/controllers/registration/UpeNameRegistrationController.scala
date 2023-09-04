@@ -20,15 +20,16 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
-import models.{Mode, UPERegisteredInUKConfirmation}
+import models.Mode
 import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
@@ -37,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -54,13 +54,13 @@ class UpeNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case true =>
+      case false =>
         request.userAnswers
           .get(RegistrationPage)
           .fold(NotFound(notAvailable)) { reg =>
             reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
           }
-      case false =>
+      case true =>
         NotFound(notAvailable)
     }
   }
@@ -84,9 +84,7 @@ class UpeNameRegistrationController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
+    request.userAnswers.get(RegistrationPage).isEmpty
 
 }

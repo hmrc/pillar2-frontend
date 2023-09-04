@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationFormProvider
 import models.fm.{FilingMember, WithoutIdNfmData}
-import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.NominatedFilingMemberPage
@@ -41,7 +41,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmDataName()).success.value
+        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataName).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
 
@@ -61,7 +61,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
       val pageAnswer =
         FilingMember(
-          true,
+          nfmConfirmation = true,
           isNfmRegisteredInUK = Some(false),
           isNFMnStatus = RowStatus.InProgress,
           withoutIdRegData = Some(WithoutIdNfmData("answer", fmContactName = Some("ContactName")))
@@ -89,7 +89,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
       val pageAnswer =
-        FilingMember(true, isNFMnStatus = RowStatus.InProgress, withoutIdRegData = Some(WithoutIdNfmData("answer")))
+        FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.InProgress, withoutIdRegData = Some(WithoutIdNfmData("answer")))
 
       val userAnswers = UserAnswers(userAnswersId).set(NominatedFilingMemberPage, pageAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))

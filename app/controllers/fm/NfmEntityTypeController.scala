@@ -111,5 +111,5 @@ class NfmEntityTypeController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(isNfmInUK => isNfmInUK == NfmRegisteredInUkConfirmation.Yes))
+      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(isNfmInUK => isNfmInUK))
 }

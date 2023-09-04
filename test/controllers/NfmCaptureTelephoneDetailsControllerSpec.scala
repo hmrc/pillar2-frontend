@@ -38,18 +38,6 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new NfmCaptureTelephoneDetailsFormProvider()
 
-  def controller(): NfmCaptureTelephoneDetailsController =
-    new NfmCaptureTelephoneDetailsController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewNfmCaptureTelephoneDetails
-    )
-
   "NfmCaptureTelephoneDetails Controller" when {
 
     "must return OK and the correct view for a GET" in {
