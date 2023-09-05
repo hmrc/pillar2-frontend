@@ -354,6 +354,8 @@ groupAccountingPeriod.startDate.hint = For example, 27 03 2026
 groupAccountingPeriod.endDate.heading = Enter end date
 groupAccountingPeriod.endDate.hint = For example, 27 03 2027
 groupAccountingPeriod.checkYourAnswersLabel = GroupAccountingPeriod
+groupAccountingPeriod.startDate.minimum.error = You need to enter a start date on or after 31/12/2023
+groupAccountingPeriod.startDate.format.error = You need to enter a valid start date of the group's consolidated accounting period
 groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
 groupAccountingPeriod.error.required.two = The groupAccountingPeriod must include {0} and {1}
 groupAccountingPeriod.error.required = The groupAccountingPeriod must include {0}
@@ -384,10 +386,6 @@ nfmEmailAddress.checkYourAnswersLabel.hidden = Change the contact email address
 nfmContactName.checkYourAnswersLabel.hidden = Change the name of the person or team we should contact at the nominated filing member
 nfmRegisteredAddress.checkYourAnswersLabel.hidden = Change the registered office address of the nominated filing member
 nfmNameRegistration.checkYourAnswersLabel.hidden = Change the name of the nominated filing member
-
-
-
-
 
 mneOrDomestic.title = Where does the group operate?
 mneOrDomestic.heading.caption = Business details

@@ -29,8 +29,10 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
   def apply(): Form[AccountingPeriod] =
     Form(
       mapping(
-        "startDate" -> localDate("", "", "", "").verifying(minDate(LocalDate.of(2023, 12, 31), "Invalid start date")),
-        "endDate"   -> localDate("", "", "", "").verifying(minDate(LocalDate.of(2023, 12, 31), "Invalid start date"))
+        "startDate" -> localDate("groupAccountingPeriod.startDate.format.error", "", "", "").verifying(
+          minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.startDate.minimum.error")
+        ),
+        "endDate" -> localDate("", "", "", "").verifying(minDate(LocalDate.of(2023, 12, 31), "Invalid end date"))
       )(AccountingPeriod.apply)(AccountingPeriod.unapply)
     )
 }
