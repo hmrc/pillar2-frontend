@@ -58,6 +58,26 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for a GET with upe" in {
+      val userAnswersWithUpeWithSub =
+        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithUpeWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[UseContactPrimaryView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, "TestName", "test@test.com", "1234567")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+
+      }
+    }
     "redirect to ask primary contact name  if nfm and  upe contact not available" in {
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmYesId.set(SubscriptionPage, validSubscriptionData()).success.value
@@ -144,12 +164,66 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to UnderConstruction When No is submited" in {
+    "must redirect to next page when Yes is selected with UPE default contact details" in {
+
+      val userAnswersWithUpeMemberWithSub =
+        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithUpeMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", UseContactPrimary.Yes.toString))
+
+        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.Yes.toString))
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+
+    }
+
+    "must redirect to UnderConstruction When No is submitted" in {
 
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", UseContactPrimary.No.toString))
+
+        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.No.toString))
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
+      }
+
+    }
+
+    "must redirect to UnderConstruction When No is submitted with upe contact details" in {
+
+      val userAnswersWithUpeContactWithSub =
+        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithUpeContactWithSub))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

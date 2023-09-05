@@ -178,7 +178,9 @@ class UseContactPrimaryController @Inject() (
   private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
+      .fold(false) { data =>
+        data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No
+      }
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
