@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers
 
-import models.subscription.SecondaryContactPreference
 import models.{CheckMode, UserAnswers}
 import pages.SubscriptionPage
 import play.api.i18n.Messages
@@ -28,7 +27,7 @@ object AddSecondaryContactSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = if (answer.useContactPrimary.contains(SecondaryContactPreference.Yes)) "site.yes" else "site.no"
+      val value = if (answer.useContactPrimary.contains(true)) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "addSecondaryContact.checkYourAnswersLabel",
         value = ValueViewModel(value),

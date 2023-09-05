@@ -19,20 +19,20 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.IsNFMUKBasedFormProvider
-import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
+import models.Mode
 import models.fm.FilingMember
 import models.requests.DataRequest
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.fmview.IsNFMUKBasedView
 import views.html.errors.ErrorTemplate
+import views.html.fmview.IsNFMUKBasedView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

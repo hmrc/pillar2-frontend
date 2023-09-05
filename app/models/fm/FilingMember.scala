@@ -16,7 +16,6 @@
 
 package models.fm
 
-import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import models.grs.EntityType
 import models.registration.GrsResponse
 import play.api.libs.json.{Json, OFormat}

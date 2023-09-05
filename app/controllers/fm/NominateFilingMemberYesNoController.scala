@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
-import models.{Mode, NfmRegistrationConfirmation}
+import models.Mode
 import models.fm.FilingMember
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport

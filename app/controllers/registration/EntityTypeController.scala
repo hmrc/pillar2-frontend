@@ -20,13 +20,10 @@ import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.EntityTypeFormProvider
-import models.registration.RegistrationWithoutIdRequest
-import models.{Mode, UserType}
-import models.{Mode, UPERegisteredInUKConfirmation}
-
 import models.grs.EntityType
 import models.requests.DataRequest
-import pages.{EntityTypePage, RegistrationPage}
+import models.{Mode, UserType}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

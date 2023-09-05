@@ -19,18 +19,18 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
-import uk.gov.hmrc.http.HttpVerbs.GET
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
-import models.{Mode, NfmRegisteredInUkConfirmation, UserType}
+import models.requests.DataRequest
+import models.{Mode, UserType}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.NfmEntityTypeView
-import models.requests.DataRequest
 import views.html.errors.ErrorTemplate
 
 import javax.inject.Inject

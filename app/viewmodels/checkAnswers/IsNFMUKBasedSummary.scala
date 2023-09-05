@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, NfmRegisteredInUkConfirmation, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

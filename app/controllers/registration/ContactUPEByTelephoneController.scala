@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport

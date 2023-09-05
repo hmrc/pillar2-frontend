@@ -16,10 +16,10 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
-import models.fm.ContactNFMByTelephone
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class ContactNfmByTelephoneFormProvider @Inject() extends Mappings {
 

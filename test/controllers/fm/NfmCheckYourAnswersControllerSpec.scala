@@ -17,19 +17,13 @@
 package controllers.fm
 
 import base.SpecBase
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.fmview.FilingMemberCheckYourAnswersView
-
-import javax.inject.Inject
-import scala.concurrent.Future
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): NfmCheckYourAnswersController =

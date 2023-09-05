@@ -17,8 +17,8 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.NfmCaptureTelephoneDetailsPage
 import controllers.routes
+import pages.NominatedFilingMemberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -28,14 +28,18 @@ import play.twirl.api.HtmlFormat
 object NfmCaptureTelephoneDetailsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NfmCaptureTelephoneDetailsPage).map { answer =>
+    answers.get(NominatedFilingMemberPage).map { answer =>
+      val phonenumber = answer.withoutIdRegData.map(
+        phone => phone.telephoneNumber
+      )
       SummaryListRowViewModel(
         key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        value = ValueViewModel(HtmlFormat.escape(phone).toString),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.change.hidden"))
         )
       )
+
     }
 }
