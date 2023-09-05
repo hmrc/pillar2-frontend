@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import models.Mode
-import models.subscription.{SecondaryContactPreference, Subscription}
+import models.subscription.Subscription
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -75,7 +75,7 @@ class AddSecondaryContactController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case SecondaryContactPreference.Yes =>
+            case true =>
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { sub =>
@@ -93,7 +93,7 @@ class AddSecondaryContactController @Inject() (
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
-            case SecondaryContactPreference.No =>
+            case false =>
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { sub =>

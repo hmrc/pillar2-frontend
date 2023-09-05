@@ -58,7 +58,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress, useContactPrimary = Some(SecondaryContactPreference.Yes)))
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress, useContactPrimary = Some(true)))
         .success
         .value
         .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
@@ -75,7 +75,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(SecondaryContactPreference.Yes), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
           request,
           appConfig(application),
           messages(application)

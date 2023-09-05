@@ -16,16 +16,15 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
-import models.NfmRegisteredInUkConfirmation
-import models.subscription.SecondaryContactPreference
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class AddSecondaryContactFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[SecondaryContactPreference] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[SecondaryContactPreference]("addSecondaryContact.error.required")
+      "value" -> boolean("addSecondaryContact.error.required")
     )
 }

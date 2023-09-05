@@ -317,11 +317,10 @@ trait Pillar2TestData {
         )
       )
     )
-  def validWithoutIdRegData(
-    isUPERegisteredInUK:  Boolean = false,
-    isRegistrationStatus: RowStatus = RowStatus.InProgress
-  ) =
-    new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus)
+  val validWithoutIdRegData = Registration(
+    isUPERegisteredInUK = false,
+    isRegistrationStatus = RowStatus.InProgress
+  )
 
   val validWithoutIdRegDataWithName = Registration(
     isUPERegisteredInUK = false,
