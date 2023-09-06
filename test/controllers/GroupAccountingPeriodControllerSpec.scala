@@ -17,28 +17,20 @@
 package controllers
 
 import base.SpecBase
-import controllers.subscription.GroupAccountingPeriodController
 import forms.GroupAccountingPeriodFormProvider
-import models.{NormalMode, UserAnswers}
+import models.fm.FilingMember
+import models.subscription.Subscription
+import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import views.html.subscriptionview.GroupAccountingPeriodView
 
 import java.time.{LocalDate, ZoneOffset}
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {
-
-  def controller(): GroupAccountingPeriodController =
-    new GroupAccountingPeriodController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewGroupAccountingPeriod
-    )
 
   val formProvider = new GroupAccountingPeriodFormProvider()
 
@@ -63,9 +55,20 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswer = UserAnswers(userAnswersId)
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .success
+        .value
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, subscriptionStatus = RowStatus.InProgress))
+        .success
+        .value
+
+      println(userAnswer)
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
 
       running(application) {
+
+//        val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
         val result = route(application, getRequest).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
