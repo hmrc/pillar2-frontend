@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package models.registration
+package models
 
-import models.UPERegisteredInUKConfirmation
-import models.grs.EntityType
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+import play.api.libs.json.{JsString, Reads, Writes, __}
 
-case class Registration(
-  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
-  orgType:              Option[EntityType] = None,
-  isRegistrationStatus: RowStatus,
-  withIdRegData:        Option[GrsResponse] = None,
-  withoutIdRegData:     Option[WithoutIdRegData] = None,
-  safeId:               Option[String] = None
-)
+case class SafeId(value: String)
 
-object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
+object SafeId {
+
+  implicit val reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
+
+  implicit val writes: Writes[SafeId] = Writes(safeId => JsString(safeId.value))
 }

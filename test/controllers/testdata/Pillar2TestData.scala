@@ -23,7 +23,11 @@ import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistra
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
+import java.time.Instant
+
 trait Pillar2TestData {
+
+  def userAnswersData(id: String, jsonObj: JsObject): UserAnswers = UserAnswers(id, jsonObj, Instant.ofEpochSecond(1))
 
   def upeCheckAnswerData() = new Registration(
     isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
@@ -596,5 +600,38 @@ trait Pillar2TestData {
        |        }
        |    }
        """.stripMargin
+
+  val businessWithoutIdJsonResponse: String =
+    """
+      |{
+      |"registerWithoutIDResponse": {
+      |    "responseCommon": {
+      |"status": "OK",
+      |"processingDate": "2010-12-19T09:30:47Z",
+      |"returnParameters": [
+      |{
+      | "paramName": "SAP_NUMBER", "paramValue": "9876543210"
+      |} ]
+      |},
+      |"responseDetail": {
+      |"SAFEID": "XE1111123456789",
+      |"ARN": "ZARN7654321"
+      |}}}""".stripMargin
+
+  val businessWithoutIdMissingSafeIdJson: String =
+    """
+      |{
+      |"registerWithoutIDResponse": {
+      |    "responseCommon": {
+      |"status": "OK",
+      |"processingDate": "2010-12-19T09:30:47Z",
+      |"returnParameters": [
+      |{
+      | "paramName": "SAP_NUMBER", "paramValue": "0123456789"
+      |} ]
+      |},
+      |"responseDetail": {
+      |"ARN": "ZARN1234567"
+      |}}}""".stripMargin
 
 }

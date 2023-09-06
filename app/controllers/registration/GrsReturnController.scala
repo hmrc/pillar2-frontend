@@ -59,7 +59,8 @@ class GrsReturnController @Inject() (
                                  RegistrationPage,
                                  registration.copy(
                                    isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )
@@ -75,7 +76,8 @@ class GrsReturnController @Inject() (
                                  RegistrationPage,
                                  registration.copy(
                                    isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )

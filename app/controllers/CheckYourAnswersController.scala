@@ -19,22 +19,33 @@ package controllers
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{MandatoryInformationMissingError, UPERegisteredInUKConfirmation, UserAnswers}
+import pages.RegistrationPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.RegisterWithoutIdService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+
 import viewmodels.govuk.summarylist._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import views.html.CheckYourAnswersView
+
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  registerWithoutIdService: RegisterWithoutIdService,
   val controllerComponents: MessagesControllerComponents,
   view:                     CheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val list = SummaryListViewModel(
@@ -43,4 +54,25 @@ class CheckYourAnswersController @Inject() (
 
     Ok(view(list))
   }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    val regdata = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is registered in UK is not set in database"))
+
+    regdata.safeId match {
+      case Some(safeId) => Future.successful(Redirect(routes.IndexController.onPageLoad))
+      //createSubscription(safeId)
+      case None if regdata.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No =>
+        registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
+          case Right(safeId) => Future.successful(Redirect(routes.IndexController.onPageLoad)) //createSubscription(safeId)
+          case Left(value) =>
+            logger.warn(s"Error $value")
+            value match {
+              case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+              case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+            }
+        }
+      case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+    }
+  }
+
 }

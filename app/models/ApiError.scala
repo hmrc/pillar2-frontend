@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package models.registration
+package models
 
-import models.UPERegisteredInUKConfirmation
-import models.grs.EntityType
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+sealed trait ApiError
 
-case class Registration(
-  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
-  orgType:              Option[EntityType] = None,
-  isRegistrationStatus: RowStatus,
-  withIdRegData:        Option[GrsResponse] = None,
-  withoutIdRegData:     Option[WithoutIdRegData] = None,
-  safeId:               Option[String] = None
-)
-
-object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
-}
+case object NotFoundError extends ApiError
+case object InternalServerError extends ApiError
+case class MandatoryInformationMissingError(value: String = "") extends ApiError
+case class SubscriptionCreateInformationMissingError(value: String = "") extends ApiError
+case class RegistrationWithoutIdInformationMissingError(value: String = "") extends ApiError
+case object SubscriptionCreateError extends ApiError
+case object EnrolmentExistsError extends ApiError
+case object EnrolmentCreationError extends ApiError

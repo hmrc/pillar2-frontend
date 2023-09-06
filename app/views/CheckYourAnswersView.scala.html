@@ -18,15 +18,22 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
+
 )
 
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+ @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
+  <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
-
-    @govukSummaryList(list)
+  @govukSummaryList(list)
+  @govukButton(
+   ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+  )
+ }
 }

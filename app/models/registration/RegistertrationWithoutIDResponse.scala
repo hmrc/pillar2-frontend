@@ -16,20 +16,16 @@
 
 package models.registration
 
-import models.UPERegisteredInUKConfirmation
-import models.grs.EntityType
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+import models.SafeId
+import play.api.libs.json.{Reads, __}
 
-case class Registration(
-  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
-  orgType:              Option[EntityType] = None,
-  isRegistrationStatus: RowStatus,
-  withIdRegData:        Option[GrsResponse] = None,
-  withoutIdRegData:     Option[WithoutIdRegData] = None,
-  safeId:               Option[String] = None
-)
+case class RegisterationWithoutIDResponse(safeId: SafeId)
 
-object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
+object RegisterationWithoutIDResponse {
+
+  implicit val reads: Reads[RegisterationWithoutIDResponse] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "registerWithoutIDResponse" \ "responseDetail" \ "SAFEID").read[String] fmap (id => RegisterationWithoutIDResponse(SafeId(id)))
+  }
+
 }
