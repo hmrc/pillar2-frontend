@@ -63,12 +63,10 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         .success
         .value
 
-      println(userAnswer)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
 
       running(application) {
 
-//        val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
         val result = route(application, getRequest).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
