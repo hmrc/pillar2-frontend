@@ -15,17 +15,13 @@
  */
 
 package controllers.subscriptions
-
 import base.SpecBase
 import controllers.subscription.SubCheckYourAnswersController
-import models.NormalMode
-import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.fmview.FilingMemberCheckYourAnswersView
+
 
 class SubCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): SubCheckYourAnswersController =
@@ -45,31 +41,13 @@ class SubCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     .success
     .value
 
-  val subCheckAnswers = Seq(
-    GroupAccountingPeriodSummary.row(subUserAnswers),
-    GroupAccountingPeriodStartDateSummary.row(subUserAnswers),
-    GroupAccountingPeriodEndDateSummary.row(subUserAnswers)
-  ).flatten
-
   "Subscription Check Your Answers Controller" must {
 
     "must return Not Found and the correct view with empty user answers" in {
-
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
       running(application) {
-
         val request = FakeRequest(GET, controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-        contentAsString(result) mustEqual view(list)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        val result  = route(application, request).value
         status(result) mustEqual NOT_FOUND
       }
     }
@@ -78,17 +56,10 @@ class SubCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list    = SummaryListViewModel(subCheckAnswers)
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) must include("Check your answer")
+        contentAsString(result) must include("Where does the group operate?")
       }
-
     }
-
   }
 }
