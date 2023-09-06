@@ -16,30 +16,25 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.{GroupAccountingPeriodPage, SubscriptionPage}
+import models.UserAnswers
+import pages.SubscriptionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object GroupAccountingPeriodSummary {
-
+object GroupAccountingPeriodEndDateSummary {
+  val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.startDate.toString))
-      val endDate   = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.endDate.toString))
-      val value     = startDate + "<br>" + endDate
+      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => dateHelper.formatDateGDS(data.endDate)))
       SummaryListRowViewModel(
-        key = "groupAccountingPeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent("")),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
-        )
-      ).withCssClass("no-border-bottom")
+        key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent(startDate))
+      )
 
     }
 
