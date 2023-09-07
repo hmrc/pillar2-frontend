@@ -22,7 +22,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 
-
 class SubCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): SubCheckYourAnswersController =
     new SubCheckYourAnswersController(
