@@ -60,5 +60,23 @@ class SubCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         contentAsString(result) must include("Where does the group operate?")
       }
     }
+
+    "must return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
+      val subUserAnswers = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          subCheckAnswerDataUkAndOther()
+        )
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(subUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("Check your answer")
+        contentAsString(result) must include("Where does the group operate?")
+      }
+    }
   }
 }

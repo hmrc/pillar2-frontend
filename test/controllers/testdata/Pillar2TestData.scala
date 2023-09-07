@@ -100,7 +100,14 @@ trait Pillar2TestData {
   def subCheckAnswerData() =
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
-      subscriptionStatus = RowStatus.InProgress,
+      groupDetailStatus = RowStatus.InProgress,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
+    )
+
+  def subCheckAnswerDataUkAndOther() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.UkAndOther,
+      groupDetailStatus = RowStatus.InProgress,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(

@@ -32,7 +32,7 @@ object MneOrDomesticSummary {
     answers.get(SubscriptionPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer.domesticOrMne.toString)
+          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.domesticOrMne.toString}"))
         )
       )
       SummaryListRowViewModel(
