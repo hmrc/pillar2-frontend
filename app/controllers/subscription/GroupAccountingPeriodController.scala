@@ -23,7 +23,7 @@ import controllers.routes
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import models.requests.DataRequest
-import pages.{GroupAccountingPeriodPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -55,13 +55,12 @@ class GroupAccountingPeriodController @Inject() (
 
     isPreviousPageDefined(request) match {
       case true =>
-        val preparedForm = request.userAnswers.get(GroupAccountingPeriodPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, mode))
+        request.userAnswers
+          .get(SubscriptionPage)
+          .fold(NotFound(notAvailable)) { subscription =>
+            subscription.accountingPeriod.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+          }
       case false => NotFound(notAvailable)
-
     }
   }
 

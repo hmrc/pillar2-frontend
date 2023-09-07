@@ -25,7 +25,6 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
-  // Will there be different validations for date, month and year here separately for start date and end date.
   def apply(): Form[AccountingPeriod] =
     Form(
       mapping(
