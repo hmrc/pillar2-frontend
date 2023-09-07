@@ -70,13 +70,32 @@ class MneOrDomesticController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        value => {
+          val subscriptionData =
+            request.userAnswers.get(SubscriptionPage).getOrElse(Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress))
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubscriptionPage, Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress)))
+                .fromTry(
+                  request.userAnswers.set(
+                    SubscriptionPage,
+                    Subscription(
+                      domesticOrMne = value,
+                      groupDetailStatus = RowStatus.InProgress,
+                      accountingPeriod = subscriptionData.accountingPeriod,
+                      primaryContactName = subscriptionData.primaryContactName,
+                      primaryContactEmail = subscriptionData.primaryContactEmail,
+                      primaryContactTelephone = subscriptionData.primaryContactTelephone,
+                      secondaryContactName = subscriptionData.secondaryContactName,
+                      secondaryContactEmail = subscriptionData.secondaryContactEmail,
+                      secondaryContactTelephone = subscriptionData.secondaryContactTelephone,
+                      correspondenceAddress = subscriptionData.correspondenceAddress
+                    )
+                  )
+                )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
+        }
       )
   }
 
