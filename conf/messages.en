@@ -337,9 +337,6 @@ nfmRegisteredAddress.change.hidden = Change the registered office address of the
 nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden = Change the name of the nominated filing member
 
-
-
-
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.change.hidden = Change your response to whether we can make contact by telephone
 
@@ -347,7 +344,7 @@ nfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 nfmCaptureTelephoneDetails.change.hidden = Change the contact telephone number
 
 groupAccountingPeriod.heading.caption = Group details
-groupAccountingPeriod.title = What are the start and end dates of the group's consolidated accounting period?
+groupAccountingPeriod.title = What are the start and end dates of the group''s consolidated accounting period?
 groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK.
 groupAccountingPeriod.startDate.heading = Enter start date
 groupAccountingPeriod.startDate.hint = For example, 27 03 2026
@@ -356,10 +353,10 @@ groupAccountingPeriod.endDate.hint = For example, 27 03 2027
 groupAccountingPeriod.checkYourAnswersLabel = GroupAccountingPeriod
 groupAccountingPeriod.error.startDate.minimum = You need to enter a start date on or after 31/12/2023
 groupAccountingPeriod.error.endDate.before.startDate = You need to enter an end date that is after start date
-groupAccountingPeriod.error.startDate.format = You need to enter a valid start date of the group's consolidated accounting period
-groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group's consolidated accounting period
-groupAccountingPeriod.error.endDate.format = You need to enter a valid end date of the group's consolidated accounting period
-groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group's consolidated accounting period
+groupAccountingPeriod.error.startDate.format = You need to enter a valid start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.format = You need to enter a valid end date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group''s consolidated accounting period
 groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
 groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
 groupAccountingPeriod.change.hidden = GroupAccountingPeriod
