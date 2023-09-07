@@ -59,7 +59,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
         .success
         .value
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, subscriptionStatus = RowStatus.InProgress))
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress))
         .success
         .value
 

@@ -77,7 +77,7 @@ class GroupAccountingPeriodController @Inject() (
                                   SubscriptionPage,
                                   subscriptionData.copy(
                                     domesticOrMne = subscriptionData.domesticOrMne,
-                                    subscriptionStatus = subscriptionData.subscriptionStatus,
+                                    groupDetailStatus = subscriptionData.groupDetailStatus,
                                     accountingPeriod = Some(value)
                                   )
                                 )
