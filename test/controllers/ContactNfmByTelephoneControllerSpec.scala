@@ -17,17 +17,16 @@
 package controllers
 
 import base.SpecBase
-import play.api.inject.bind
 import connectors.UserAnswersConnectors
 import controllers.fm.ContactNfmByTelephoneController
 import forms.ContactNfmByTelephoneFormProvider
-import models.fm.ContactNFMByTelephone
 import models.{NormalMode, UserAnswers}
-import pages.NominatedFilingMemberPage
-import play.api.test.FakeRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.NominatedFilingMemberPage
+import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.ContactNfmByTelephoneView
 

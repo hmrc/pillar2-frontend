@@ -81,9 +81,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
         status(result) mustEqual NOT_FOUND
       }
     }
@@ -93,8 +90,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list    = SummaryListViewModel(phonenumberProvided)
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Group details"
@@ -107,8 +102,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list    = SummaryListViewModel(noPhonenumber)
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Check your answers"

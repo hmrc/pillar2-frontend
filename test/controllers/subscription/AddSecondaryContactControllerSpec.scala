@@ -19,8 +19,8 @@ package controllers.subscription
 import base.SpecBase
 import forms.AddSecondaryContactFormProvider
 import models.fm.FilingMember
-import models.subscription.{SecondaryContactPreference, Subscription}
-import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import models.subscription.Subscription
+import models.{MneOrDomestic, NormalMode, UserAnswers}
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

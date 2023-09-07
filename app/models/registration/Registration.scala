@@ -16,7 +16,6 @@
 
 package models.registration
 
-import models.UPERegisteredInUKConfirmation
 import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
 import utils.RowStatus

@@ -19,7 +19,6 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
@@ -47,7 +46,7 @@ class NfmCheckYourAnswersController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     val telephonePreference = request.userAnswers.get(NominatedFilingMemberPage) match {
       case Some(value) =>
-        value.withoutIdRegData.fold(false)(data => data.contactNfmByTelephone.fold(false)(tel => (tel == ContactNFMByTelephone.Yes)))
+        value.withoutIdRegData.fold(false)(data => data.contactNfmByTelephone.fold(false)(tel => tel))
       case _ => false
     }
     val list = SummaryListViewModel(
