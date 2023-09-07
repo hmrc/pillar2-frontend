@@ -70,13 +70,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
                   .get(RegistrationPage)
                   .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
 
-              val checkedRegData =
-                regData.withIdRegData.fold(regData copy (isUPERegisteredInUK = value, withoutIdRegData = None))(_ => regData)
-
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(RegistrationPage, checkedRegData))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, regData))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
@@ -86,17 +82,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
                   .get(RegistrationPage)
                   .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
 
-              val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ => Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      checkedRegData.copy(isUPERegisteredInUK = value, orgType = None, withIdRegData = None)
-                    )
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, regData))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
           }
