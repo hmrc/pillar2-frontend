@@ -29,6 +29,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.GroupAccountingPeriodView
 
@@ -77,7 +78,7 @@ class GroupAccountingPeriodController @Inject() (
                                   SubscriptionPage,
                                   subscriptionData.copy(
                                     domesticOrMne = subscriptionData.domesticOrMne,
-                                    groupDetailStatus = subscriptionData.groupDetailStatus,
+                                    groupDetailStatus = RowStatus.Completed,
                                     accountingPeriod = Some(value)
                                   )
                                 )
