@@ -24,6 +24,7 @@ import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import models.requests.DataRequest
 import pages.SubscriptionPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -55,19 +56,21 @@ class GroupAccountingPeriodController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
     isPreviousPageDefined(request) match {
-      case true =>
+      case _ =>
         request.userAnswers
           .get(SubscriptionPage)
           .fold(NotFound(notAvailable)) { subscription =>
             subscription.accountingPeriod.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
           }
-      case false => NotFound(notAvailable)
+      case "other" => NotFound(notAvailable)
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
+    remapFormErrors(
+      form
+        .bindFromRequest()
+    )
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
@@ -89,8 +92,15 @@ class GroupAccountingPeriodController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.domesticOrMne != None)
+      .fold("other")(data => data.domesticOrMne.toString )
+
+  private def remapFormErrors[A](form: Form[A]): Form[A] =
+    form.copy(errors = form.errors.map {
+      case e if e.key == "" => e.copy(key = "endDate")
+      case e                => e
+    })
+
 }

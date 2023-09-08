@@ -33,8 +33,10 @@
     @formHelper(action = controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day", "endDate" -> "endDate.day")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))
+
         }
+        @form.errors
 
         <span class="govuk-caption-l">@messages("groupAccountingPeriod.heading.caption")</span>
         <h1 class="govuk-heading-l">@messages("groupAccountingPeriod.title")</h1>
