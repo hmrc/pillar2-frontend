@@ -105,7 +105,8 @@ class GrsReturnController @Inject() (
                                  NominatedFilingMemberPage,
                                  nfmregistration.copy(
                                    isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )
@@ -121,7 +122,8 @@ class GrsReturnController @Inject() (
                                  NominatedFilingMemberPage,
                                  nfmregistration.copy(
                                    isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )

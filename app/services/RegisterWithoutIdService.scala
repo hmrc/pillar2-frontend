@@ -34,10 +34,32 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
       .upeRegisterationWithoutID(id, userAnswers) map {
       case Right(Some(safeId)) => Right(safeId)
       case Right(None) =>
-        logger.warn("Registration WithoutId Information MissingError SafeId missing")
+        logger.warn("Upe Registration WithoutId Information MissingError SafeId missing")
         Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))
       case Left(error) =>
-        logger.warn(s"Registration WithoutId Information $error")
+        logger.warn(s"Upe Registration WithoutId Information $error")
         Left(error)
     }
+
+  def sendFmRegistrationWithoutId(id: String, userAnswers: Option[UserAnswers])(implicit
+    hc:                               HeaderCarrier,
+    ec:                               ExecutionContext
+  ): Future[Either[ApiError, SafeId]] =
+    userAnswers match {
+      case Some(answer) =>
+        registrationConnector
+          .fmRegisterationWithoutID(id, answer) map {
+          case Right(Some(safeId)) => Right(safeId)
+          case Right(None) =>
+            logger.warn("Filing Member Registration WithoutId Information MissingError SafeId missing")
+            Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))
+          case Left(error) =>
+            logger.warn(s"Filing Member Registration WithoutId Information $error")
+            Left(error)
+        }
+      case None =>
+        logger.warn("[sendFmRegistrationWithoutId]- User answers is missing")
+        Future(Left(MandatoryInformationMissingError("User Answer is blank")))
+    }
+
 }

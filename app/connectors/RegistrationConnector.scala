@@ -19,38 +19,67 @@ package connectors
 import config.FrontendAppConfig
 import models.registration.RegisterationWithoutIDResponse
 import models.{ApiError, InternalServerError, SafeId, UserAnswers}
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
-  val registrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/registration"
+  val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
+  val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"
 
   def upeRegisterationWithoutID(id: String, userAnswers: UserAnswers)(implicit
     hc:                             HeaderCarrier,
     ec:                             ExecutionContext
   ): Future[Either[ApiError, Option[SafeId]]] =
-    http.POSTEmpty(s"$registrationUrl/$id") map {
+    http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
         val safeId  = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Registration Data not available"))
+        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
         val safeIdValue = safeId match {
           case Some(value) => Some(value.value)
           case _           => None
         }
-        Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue))).map { updatedAnswers =>
+        println(s" IN UPE ------------------SafeIdValue -----------$safeIdValue")
+        for {
+          updatedAnswersUpe <- Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue)))
+          savedAnswer       <- userAnswersConnectors.save(updatedAnswersUpe.id, Json.toJson(updatedAnswersUpe.data))
+        } yield savedAnswer
+        /*        Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue))).map { updatedAnswers =>
           userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        }
+        }*/
         Right(safeId)
       case errorResponse =>
-        logger.warn(s"RegisterWithoutID call failed with Status ${errorResponse.status}")
+        logger.warn(s"Upe RegisterWithoutID call failed with Status ${errorResponse.status}")
         Left(InternalServerError)
     }
 
+  def fmRegisterationWithoutID(id: String, userAnswers: UserAnswers)(implicit
+    hc:                            HeaderCarrier,
+    ec:                            ExecutionContext
+  ): Future[Either[ApiError, Option[SafeId]]] =
+    http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
+      case response if is2xx(response.status) =>
+        val fmsafeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
+        val nfmData  = userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Fm Registration Data not available"))
+        val safeIdValue = fmsafeId match {
+          case Some(value) => Some(value.value)
+          case _           => None
+        }
+        println(s" IN FM ------------------SafeIdValue -----------$safeIdValue")
+        for {
+          updatedAnswers <- Future.fromTry(userAnswers.set(NominatedFilingMemberPage, nfmData.copy(safeId = safeIdValue)))
+          _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        } yield ()
+        Right(fmsafeId)
+      case errorResponse =>
+        logger.warn(s"Filing Member RegisterWithoutID call failed with Status ${errorResponse.status}")
+        Left(InternalServerError)
+    }
 }
