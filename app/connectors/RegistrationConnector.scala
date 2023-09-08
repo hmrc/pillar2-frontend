@@ -21,7 +21,7 @@ import models.registration.RegisterationWithoutIDResponse
 import models.{ApiError, InternalServerError, SafeId, UserAnswers}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -47,14 +47,15 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           case _           => None
         }
         println(s" IN UPE ------------------SafeIdValue -----------$safeIdValue")
-        for {
+        /*        val v = for {
           updatedAnswersUpe <- Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue)))
           savedAnswer       <- userAnswersConnectors.save(updatedAnswersUpe.id, Json.toJson(updatedAnswersUpe.data))
-        } yield savedAnswer
+        } yield (UserAnswers(id = id, data = savedAnswer.as[JsObject]))*/
         /*        Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue))).map { updatedAnswers =>
           userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
         }*/
         Right(safeId)
+
       case errorResponse =>
         logger.warn(s"Upe RegisterWithoutID call failed with Status ${errorResponse.status}")
         Left(InternalServerError)
@@ -73,10 +74,10 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           case _           => None
         }
         println(s" IN FM ------------------SafeIdValue -----------$safeIdValue")
-        for {
+        /*        for {
           updatedAnswers <- Future.fromTry(userAnswers.set(NominatedFilingMemberPage, nfmData.copy(safeId = safeIdValue)))
           _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        } yield ()
+        } yield ()*/
         Right(fmsafeId)
       case errorResponse =>
         logger.warn(s"Filing Member RegisterWithoutID call failed with Status ${errorResponse.status}")

@@ -19,7 +19,7 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.SafeId
+import models.{NfmRegisteredInUkConfirmation, SafeId}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,28 +37,57 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
 
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
 
-  val apiUrl = "/report-pillar2-top-up-taxes/registration"
+  val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   "RegistrationConnector" when {
-    "must return safeId when Upe Registerwithout Id is successful" in {
+    "return safeId for Upe Registerwithout Id is successful" in {
 
-      stubResponse(s"$apiUrl/id", OK, businessWithoutIdJsonResponse)
+      stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
       val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
       result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
     }
 
-    "must return InternalServerError when Upe Registerwithout Id is successful" in {
+    "return InternalServerError for Upe Register without Id is successful" in {
 
-      stubResponse(s"$apiUrl/id", OK, businessWithoutIdMissingSafeIdJson)
+      stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdMissingSafeIdJson)
       val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
       result.futureValue mustBe Right(None)
     }
-    "must return InternalServerError when EIS returns Error status" in {
+    "return InternalServerError for EIS returns Error status" in {
       val errorStatus: Int = errorCodes.sample.value
-      stubResponse(s"$apiUrl/id", errorStatus, businessWithoutIdJsonResponse)
+      stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+      result.futureValue mustBe Left(models.InternalServerError)
+    }
+    "return safeId for FM Registerwithout Id is successful" in {
+
+      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
+      val result = connector.fmRegisterationWithoutID(
+        "id",
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+      )
+      result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
+    }
+
+    "return InternalServerError for FM Register without Id is successful" in {
+
+      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdMissingSafeIdJson)
+      val result = connector.fmRegisterationWithoutID(
+        "id",
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+      )
+      result.futureValue mustBe Right(None)
+    }
+    "return InternalServerError for EIS returns Error status for FM register withoutId" in {
+      val errorStatus: Int = errorCodes.sample.value
+      stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
+
+      val result = connector.fmRegisterationWithoutID(
+        "id",
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+      )
       result.futureValue mustBe Left(models.InternalServerError)
     }
   }
