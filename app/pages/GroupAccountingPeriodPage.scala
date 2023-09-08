@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import javax.inject.Inject
+import models.subscription.AccountingPeriod
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case object GroupAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
 
-class NfmEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
+  override def path: JsPath = JsPath \ toString
 
-  def apply(userName: String): Form[String] =
-    Form(
-      "value" -> text("nfmEmailAddress.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
-        .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
-    )
+  override def toString: String = "accountingPeriod"
 }

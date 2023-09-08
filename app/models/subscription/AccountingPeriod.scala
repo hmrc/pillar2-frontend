@@ -32,25 +32,17 @@ package models.subscription
  * limitations under the License.
  */
 
-import models.{MneOrDomestic, UseContactPrimary}
+import play.api.libs.json.JodaReads._
+import play.api.libs.json.JodaWrites._
 import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
 
-case class Subscription(
-  domesticOrMne:             MneOrDomestic,
-  groupDetailStatus:         RowStatus,
-  accountingPeriod:          Option[AccountingPeriod] = None,
-  contactDetailsStatus:      RowStatus,
-  useContactPrimary:         Option[UseContactPrimary] = None,
-  primaryContactName:        Option[String] = None,
-  primaryContactEmail:       Option[String] = None,
-  primaryContactTelephone:   Option[String] = None,
-  secondaryContactName:      Option[String] = None,
-  secondaryContactEmail:     Option[String] = None,
-  secondaryContactTelephone: Option[String] = None,
-  correspondenceAddress:     Option[SubscriptionAddress] = None
+import java.time.LocalDate
+
+case class AccountingPeriod(
+  startDate: LocalDate,
+  endDate:   LocalDate
 )
 
-object Subscription {
-  implicit val format: OFormat[Subscription] = Json.format[Subscription]
+object AccountingPeriod {
+  implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }

@@ -47,22 +47,22 @@ class TaskListController @Inject() (
       case None        => RowStatus.NotStarted
       case Some(value) => value.isNFMnStatus
     }
-    val subscriptionStatus = request.userAnswers.get(SubscriptionPage) match {
+    val groupDetailStatus = request.userAnswers.get(SubscriptionPage) match {
       case None        => RowStatus.NotStarted
-      case Some(value) => value.subscriptionStatus
+      case Some(value) => value.groupDetailStatus
     }
     val contactDetailsStatus = request.userAnswers.get(SubscriptionPage) match {
       case None        => RowStatus.NotStarted
       case Some(value) => value.contactDetailsStatus
     }
 
-    val statusCount = statusCounter(isRegistrationStatus, fmStatus, subscriptionStatus, contactDetailsStatus, NotStarted)
+    val statusCount = statusCounter(isRegistrationStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
     Ok(
       view(
         isRegistrationStatus.toString,
         statusCount,
         filingMemberStatus = fmStatus.toString,
-        subscriptionStatus = subscriptionStatus.toString,
+        groupDetailStatus = groupDetailStatus.toString,
         contactDetailsStatus = contactDetailsStatus.toString
       )
     )

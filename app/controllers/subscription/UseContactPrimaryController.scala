@@ -109,7 +109,7 @@ class UseContactPrimaryController @Inject() (
                               primaryContactName = Some(getName(request)),
                               primaryContactEmail = Some(getEmail(request)),
                               primaryContactTelephone = Some(getPhoneNumber(request)),
-                              subscriptionStatus = regData.subscriptionStatus,
+                              groupDetailStatus = regData.groupDetailStatus,
                               contactDetailsStatus = RowStatus.InProgress
                             )
                           )
@@ -129,7 +129,7 @@ class UseContactPrimaryController @Inject() (
                               primaryContactName = Some(getUpeName(request)),
                               primaryContactEmail = Some(getUpeEmail(request)),
                               primaryContactTelephone = Some(getUpePhoneNumber(request)),
-                              subscriptionStatus = regData.subscriptionStatus,
+                              groupDetailStatus = regData.groupDetailStatus,
                               contactDetailsStatus = RowStatus.InProgress
                             )
                           )
@@ -150,7 +150,7 @@ class UseContactPrimaryController @Inject() (
                           primaryContactName = None,
                           primaryContactEmail = None,
                           primaryContactTelephone = None,
-                          subscriptionStatus = regData.subscriptionStatus,
+                          groupDetailStatus = regData.groupDetailStatus,
                           contactDetailsStatus = RowStatus.InProgress
                         )
                       )
@@ -165,7 +165,7 @@ class UseContactPrimaryController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.subscriptionStatus.toString == "Completed"
+        data.groupDetailStatus.toString == "Completed"
       }
 
   private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =

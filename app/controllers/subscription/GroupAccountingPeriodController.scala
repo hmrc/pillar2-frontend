@@ -20,10 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.{ContactNameComplianceFormProvider, UseContactPrimaryFormProvider}
+import forms.GroupAccountingPeriodFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.subscription.Subscription
-import models.{Mode, NormalMode, UseContactPrimary}
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -32,69 +31,66 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.{ContactNameComplianceView, UseContactPrimaryView}
+import views.html.subscriptionview.GroupAccountingPeriodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNameComplianceController @Inject() (
+class GroupAccountingPeriodController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactNameComplianceFormProvider,
-  page_not_available:        ErrorTemplate,
+  formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactNameComplianceView
+  view:                      GroupAccountingPeriodView,
+  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def form = formProvider()
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+
     isPreviousPageDefined(request) match {
       case true =>
         request.userAnswers
           .get(SubscriptionPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.primaryContactName.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+          .fold(NotFound(notAvailable)) { subscription =>
+            subscription.accountingPeriod.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
           }
-
       case false => NotFound(notAvailable)
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is MNE or Domestic not selected"))
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        value => {
+          val subscriptionData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is it not subscribed"))
           for {
-            updatedAnswers <-
-              Future
-                .fromTry(
-                  request.userAnswers.set(
-                    SubscriptionPage,
-                    Subscription(
-                      domesticOrMne = regData.domesticOrMne,
-                      useContactPrimary = regData.useContactPrimary,
-                      primaryContactName = Some(value),
-                      groupDetailStatus = regData.groupDetailStatus,
-                      contactDetailsStatus = RowStatus.InProgress
-                    )
-                  )
-                )
+            updatedAnswers <- Future.fromTry(
+                                request.userAnswers.set(
+                                  SubscriptionPage,
+                                  subscriptionData.copy(
+                                    domesticOrMne = subscriptionData.domesticOrMne,
+                                    groupDetailStatus = RowStatus.Completed,
+                                    accountingPeriod = Some(value)
+                                  )
+                                )
+                              )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad)
+        }
       )
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.useContactPrimary.toString.nonEmpty)
-
+      .fold(false)(data => data.domesticOrMne != None)
 }

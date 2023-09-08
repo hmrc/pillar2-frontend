@@ -22,7 +22,7 @@
 )
 
 
-@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", subscriptionStatus:String="notStarted",contactDetailsStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -102,11 +102,11 @@
 
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                          @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                          @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
                               <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
                                  @messages("taskList.task.business.sub.edit")
                               </a>
-                            } else if (filingMemberStatus == "Completed" &&  ( subscriptionStatus=="NotStarted" ||  subscriptionStatus=="InProgress")){
+                            } else if (filingMemberStatus == "Completed" &&  ( groupDetailStatus=="NotStarted" ||  groupDetailStatus=="InProgress")){
                                 <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
                                  @messages("taskList.task.business.sub.add")
                                 </a>
@@ -114,11 +114,11 @@
                              @messages("taskList.task.business.more")
                             }
                         </span>
-                        @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" ){
+                        @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "Completed" &&  subscriptionStatus=="InProgress" ) {
+                        } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="InProgress" ) {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else if(filingMemberStatus == "Completed" && subscriptionStatus=="NotStarted" ) {
+                        } else if(filingMemberStatus == "Completed" && groupDetailStatus=="NotStarted" ) {
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         } else  {
                         <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
@@ -136,11 +136,11 @@
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                          @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" && contactDetailsStatus=="Completed"){
+                          @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
                               <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
                                  @messages("taskList.task.contact.edit")
                               </a>
-                            } else if (filingMemberStatus == "Completed" && subscriptionStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
+                            } else if (filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
                                 <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
                                  @messages("taskList.task.contact.add")
                                 </a>
@@ -148,11 +148,11 @@
                              @messages("taskList.task.contact")
                             }
                         </span>
-                        @if(filingMemberStatus == "Completed" && subscriptionStatus=="Completed" && contactDetailsStatus=="Completed" ){
+                        @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" ){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "Completed" &&  subscriptionStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
+                        } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else if(filingMemberStatus == "Completed" && subscriptionStatus == "Completed" && contactDetailsStatus == "NotStarted") {
+                        } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         } else  {
                         <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
