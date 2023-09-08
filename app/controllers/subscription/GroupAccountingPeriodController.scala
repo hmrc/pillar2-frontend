@@ -95,7 +95,7 @@ class GroupAccountingPeriodController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold("other")(data => data.domesticOrMne.toString )
+      .fold("other")(data => data.domesticOrMne.toString)
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =
     form.copy(errors = form.errors.map {
