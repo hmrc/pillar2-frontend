@@ -37,9 +37,10 @@
         }
         <span class="govuk-caption-l">@messages("businessActivityUK.check.liable.text")</span>
         @govukRadios(
-            RadiosViewModel.yesNo(
+            RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large),
+                items = BusinessActivityUK.options
             )
         )
 
