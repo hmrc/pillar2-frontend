@@ -23,6 +23,7 @@ import controllers.routes
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.subscription.Subscription
 import pages.SubscriptionPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -73,22 +74,26 @@ class GroupAccountingPeriodController @Inject() (
     )
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val subscriptionData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is it not subscribed"))
-          for {
-            updatedAnswers <- Future.fromTry(
-                                request.userAnswers.set(
-                                  SubscriptionPage,
-                                  subscriptionData.copy(
-                                    domesticOrMne = subscriptionData.domesticOrMne,
-                                    groupDetailStatus = RowStatus.Completed,
-                                    accountingPeriod = Some(value)
+        value =>
+          request.userAnswers
+            .get(SubscriptionPage)
+            .map { subs =>
+              val mneOrDomestic = subs.domesticOrMne
+              for {
+                updatedAnswers <- Future.fromTry(
+                                    request.userAnswers.set(
+                                      SubscriptionPage,
+                                      Subscription(
+                                        domesticOrMne = mneOrDomestic,
+                                        groupDetailStatus = RowStatus.Completed,
+                                        accountingPeriod = Some(value)
+                                      )
+                                    )
                                   )
-                                )
-                              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
-        }
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            }
+            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )
   }
 
