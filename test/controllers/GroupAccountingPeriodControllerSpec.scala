@@ -27,19 +27,20 @@ import org.mockito.Mockito.when
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.subscriptionview.GroupAccountingPeriodView
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import scala.concurrent.Future
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
 
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  val startDate = LocalDate.of(2023, 12, 31)
+  val endDate = LocalDate.of(2024, 2, 10)
 
   lazy val groupAccountingPeriodRoute = controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url
 
@@ -47,14 +48,6 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
-
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
-      .withFormUrlEncodedBody(
-        "startDay.day"   -> validAnswer.getDayOfMonth.toString,
-        "startDay.month" -> validAnswer.getMonthValue.toString,
-        "startDay.year"  -> validAnswer.getYear.toString
-      )
 
   "GroupAccountingPeriod Controller" when {
 
@@ -67,6 +60,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress))
         .success
         .value
+
 
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
 
@@ -88,13 +82,13 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
             SubscriptionPage,
             Subscription(
               domesticOrMne = MneOrDomestic.Uk,
-              RowStatus.InProgress,
-              accountingPeriod = Some(AccountingPeriod(LocalDate.now(ZoneOffset.UTC), LocalDate.now(ZoneOffset.UTC)))
+              RowStatus.Completed,
+              accountingPeriod = Some(AccountingPeriod(startDate, endDate))
             )
           )
           .success
           .value
-          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.No, isNFMnStatus = RowStatus.Completed))
           .success
           .value
 
@@ -106,11 +100,9 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            "startDate" -> validAnswer.toString
-          )
-
         val result = route(application, request).value
+
+
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
