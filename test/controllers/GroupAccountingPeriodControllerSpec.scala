@@ -19,12 +19,11 @@ package controllers
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.GroupAccountingPeriodFormProvider
-import models.fm.FilingMember
 import models.subscription.{AccountingPeriod, Subscription}
-import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import models.{MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
@@ -100,7 +99,6 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           )
 
         val result = route(application, request).value
-        println(route(application, request))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
