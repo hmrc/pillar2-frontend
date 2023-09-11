@@ -19,7 +19,6 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.MneOrDomesticFormProvider
 import models.Mode
 import models.subscription.Subscription
@@ -71,13 +70,16 @@ class MneOrDomesticController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        value => {
+          val subscriptionData =
+            request.userAnswers.get(SubscriptionPage).getOrElse(Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress))
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubscriptionPage, Subscription(domesticOrMne = value, subscriptionStatus = RowStatus.InProgress)))
+                .fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy()))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
+        }
       )
   }
 
