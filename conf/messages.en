@@ -425,4 +425,18 @@ contactNameCompliance.error.length = The name of the contact person or team shou
 
 
 
+contactEmailAddress.heading.caption = Contact details
+contactEmailAddress.title = What is the email address for {0}?
+contactEmailAddress.heading = What is the email address for {0}?
+contactEmailAddress.hint = We will use this to contact you about Pillar 2 top-up tax
+contactEmailAddress.checkYourAnswersLabel = Email address
+contactEmailAddress.error.required = You need to enter the email address for {0}
+contactEmailAddress.error.length = The email address should be 132 characters or less
+contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+contactEmailAddress.change.hidden = Changing contact email
 
+contactByTelephone.heading.caption = Contact details
+contactByTelephone.title = Can we contact {0} by telephone?
+contactByTelephone.heading = Can we contact {0} by telephone?
+contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactByTelephone.error.required = Select yes if we can contact {0} by telephone

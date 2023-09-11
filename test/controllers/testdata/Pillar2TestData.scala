@@ -25,7 +25,8 @@ import models.subscription.Subscription
 import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UseContactPrimary, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
-import java.time.LocalDate
+
+import java.time.{LocalDate, ZoneOffset}
 trait Pillar2TestData {
 
   def upeCheckAnswerData() = new Registration(
@@ -114,6 +115,64 @@ trait Pillar2TestData {
       contactDetailsStatus = RowStatus.NotStarted,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
+
+  def validSubEmailData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    primaryContactName:   String = "Ashley Smith"
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName)
+    )
+
+  def validSubData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    primaryContactName:   String = "Test Name",
+    primaryContactEmail:  String = "testEmail@email.com"
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      primaryContactEmail = Some(primaryContactEmail)
+    )
+
+  def validSubPhoneData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    primaryContactName:   String = "Test Name",
+    primaryContactEmail:  String = "testEmail@email.com",
+    contactByTelephone:   Boolean = false
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      primaryContactEmail = Some(primaryContactEmail),
+      contactByTelephone = Some(contactByTelephone)
+    )
+
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(
     nfmConfirmation = NfmRegistrationConfirmation.Yes,
     isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),

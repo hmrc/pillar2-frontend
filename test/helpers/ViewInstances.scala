@@ -30,7 +30,7 @@ import views.html.fmview.{FilingMemberCheckYourAnswersView, IsNFMUKBasedView, Nf
 import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.fmview._
 import views.html.registrationview._
-import views.html.subscriptionview.{GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
+import views.html.subscriptionview.{ContactByTelephoneView, GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
@@ -185,6 +185,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewContactByTelephoneView: ContactByTelephoneView =
+    new ContactByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
     new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)

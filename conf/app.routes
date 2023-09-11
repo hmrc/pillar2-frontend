@@ -174,9 +174,14 @@ GET         /contact-details/change-input-name                controllers.subscr
 POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
 
-
-
-
-
-
 GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
+
+GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
