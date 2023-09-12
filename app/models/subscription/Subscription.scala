@@ -48,6 +48,7 @@ case class Subscription(
   secondaryContactName:      Option[String] = None,
   secondaryContactEmail:     Option[String] = None,
   contactByTelephone:        Option[Boolean] = None,
+  telephoneNumber:           Option[String] = None,
   secondaryContactTelephone: Option[String] = None,
   correspondenceAddress:     Option[SubscriptionAddress] = None
 )

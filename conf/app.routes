@@ -185,3 +185,8 @@ GET        /contact-details/telephone                            controllers.sub
 POST       /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)

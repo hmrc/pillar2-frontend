@@ -19,8 +19,8 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{ContactByTelephoneFormProvider, ContactNfmByTelephoneFormProvider}
-import models.{Mode, NormalMode}
+import forms.NfmCaptureTelephoneDetailsFormProvider
+import models.Mode
 import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
@@ -31,21 +31,20 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.errors.ErrorTemplate
-import views.html.fmview.ContactNfmByTelephoneView
-import views.html.subscriptionview.ContactByTelephoneView
+import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactByTelephoneController @Inject() (
+class ContactCaptureTelephoneDetailsController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactByTelephoneFormProvider,
+  formProvider:              NfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
-  view:                      ContactByTelephoneView
+  view:                      ContactCaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -59,12 +58,11 @@ class ContactByTelephoneController @Inject() (
         request.userAnswers
           .get(SubscriptionPage)
           .fold(NotFound(notAvailable)) { reg =>
-            reg.contactByTelephone.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
+            reg.telephoneNumber.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
           }
 
       case false => NotFound(notAvailable)
     }
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -74,31 +72,20 @@ class ContactByTelephoneController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value =>
-          value match {
-            case true =>
-              val subRegData =
-                request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value)))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-            case false =>
-              val subRegData =
-                request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value)))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-          }
+        value => {
+          val subRegData =
+            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+          val regDataWithoutId =
+            subRegData.contactByTelephone.getOrElse(throw new Exception("fmName, address & email should be available before email"))
+          for {
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  set (SubscriptionPage, subRegData.copy(telephoneNumber = Some(value)))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
+        }
       )
   }
 
@@ -110,6 +97,5 @@ class ContactByTelephoneController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.primaryContactEmail.isDefined)
-
+      .fold(false)(data => data.contactByTelephone.fold(false)(contactTel => contactTel == true))
 }
