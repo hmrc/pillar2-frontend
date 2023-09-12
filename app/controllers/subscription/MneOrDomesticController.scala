@@ -76,7 +76,7 @@ class MneOrDomesticController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy()))
+                .fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(domesticOrMne = value)))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
         }
