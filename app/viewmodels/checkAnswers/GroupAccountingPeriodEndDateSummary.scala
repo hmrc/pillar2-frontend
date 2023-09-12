@@ -16,31 +16,26 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.SubscriptionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object MneOrDomesticSummary {
-
+object GroupAccountingPeriodEndDateSummary {
+  val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.domesticOrMne.toString}"))
-        )
-      )
+      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => dateHelper.formatDateGDS(data.endDate)))
       SummaryListRowViewModel(
-        key = "mneOrDomestic.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
-        )
+        key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent(startDate))
       )
+
     }
+
 }

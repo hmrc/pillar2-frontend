@@ -88,7 +88,7 @@ class AddSecondaryContactController @Inject() (
                       Future.fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(domesticOrMne = domesticOrMne, subscriptionStatus = RowStatus.InProgress, useContactPrimary = Some(value))
+                          Subscription(domesticOrMne = domesticOrMne, groupDetailStatus = RowStatus.InProgress, useContactPrimary = Some(value))
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -106,7 +106,7 @@ class AddSecondaryContactController @Inject() (
                       Future.fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(domesticOrMne = domesticOrMne, subscriptionStatus = RowStatus.InProgress, useContactPrimary = Some(value))
+                          Subscription(domesticOrMne = domesticOrMne, groupDetailStatus = RowStatus.InProgress, useContactPrimary = Some(value))
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

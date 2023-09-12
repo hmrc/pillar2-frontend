@@ -147,6 +147,11 @@ GET        /business-matching/filing-member/no-id/change-input-telephone        
 POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET         /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+
 GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
 POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
 GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
@@ -156,3 +161,5 @@ GET        /contact-details/second-contact                        controllers.su
 POST       /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-contact                 controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+
+GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad

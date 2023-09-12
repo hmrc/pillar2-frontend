@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.{GroupAccountingPeriodPage, SubscriptionPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,22 +25,22 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object MneOrDomesticSummary {
+object GroupAccountingPeriodSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.domesticOrMne.toString}"))
-        )
-      )
+      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.startDate.toString))
+      val endDate   = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.endDate.toString))
+      val value     = startDate + "<br>" + endDate
       SummaryListRowViewModel(
-        key = "mneOrDomestic.checkYourAnswersLabel",
-        value = value,
+        key = "groupAccountingPeriod.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent("")),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )
-      )
+      ).withCssClass("no-border-bottom")
+
     }
+
 }
