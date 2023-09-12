@@ -29,11 +29,11 @@ object ContactCaptureTelephoneDetailsSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NfmCaptureTelephoneDetailsPage).map { answer =>
       SummaryListRowViewModel(
-        key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
+        key = "contactCaptureTelephoneDetails.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
         )
       )
     }

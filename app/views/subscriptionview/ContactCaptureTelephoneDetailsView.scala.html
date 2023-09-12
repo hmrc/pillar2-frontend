@@ -36,15 +36,15 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("nfmCaptureTelephoneDetails.heading.caption")</span>
+        <span class="govuk-caption-l">@messages("contactCaptureTelephoneDetails.heading.caption")</span>
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nfmCaptureTelephoneDetails.heading", userName)).asPageHeading(Large)
+                label = LabelViewModel(messages("contactCaptureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
                     .withWidth(TwoThirds)
-                    .withHint(Hint(content = Text(messages("nfmCaptureTelephoneDetails.hint"))))
+                    .withHint(Hint(content = Text(messages("contactCaptureTelephoneDetails.hint"))))
         )
 
         @govukButton(

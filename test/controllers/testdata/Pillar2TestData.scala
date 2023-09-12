@@ -132,6 +132,25 @@ trait Pillar2TestData {
       primaryContactName = Some(primaryContactName)
     )
 
+  def validSubPhoneCaptureData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    primaryContactName:   String = "TestName",
+    contactByTelephone:   ContactByTelephone = ContactByTelephone.No
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      contactByTelephone = Some(contactByTelephone)
+    )
+
   def validSubData(
     domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
     groupDetailStatus:    RowStatus = RowStatus.Completed,

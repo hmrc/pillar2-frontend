@@ -439,3 +439,12 @@ contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
+
+contactCaptureTelephoneDetails.heading.caption = Contact details
+contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
+contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
+contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
+contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number

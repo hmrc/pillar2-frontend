@@ -19,7 +19,7 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.NfmCaptureTelephoneDetailsFormProvider
+import forms.{ContactCaptureTelephoneDetailsFormProvider, NfmCaptureTelephoneDetailsFormProvider}
 import models.Mode
 import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
@@ -41,7 +41,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NfmCaptureTelephoneDetailsFormProvider,
+  formProvider:              ContactCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
   view:                      ContactCaptureTelephoneDetailsView
@@ -74,9 +74,9 @@ class ContactCaptureTelephoneDetailsController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
           val subRegData =
-            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data not exist"))
           val regDataWithoutId =
-            subRegData.contactByTelephone.getOrElse(throw new Exception("fmName, address & email should be available before email"))
+            subRegData.contactByTelephone.getOrElse(throw new Exception("Contact By Telephone  should be available before telephone"))
           for {
             updatedAnswers <-
               Future.fromTry(
@@ -84,7 +84,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
                   set (SubscriptionPage, subRegData.copy(telephoneNumber = Some(value)))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
         }
       )
   }
