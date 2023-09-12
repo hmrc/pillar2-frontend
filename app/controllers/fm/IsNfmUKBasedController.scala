@@ -76,7 +76,7 @@ class IsNfmUKBasedController @Inject() (
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(true), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
 
               for {
                 updatedAnswers <-
@@ -85,7 +85,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(nfmConfirmation = true, isNfmRegisteredInUK = Some(true), withoutIdRegData = None)
+                          regData.copy()
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -96,18 +96,13 @@ class IsNfmUKBasedController @Inject() (
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(false), isNFMnStatus = RowStatus.InProgress))
-
-              val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ =>
-                  FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(false), isNFMnStatus = RowStatus.InProgress)
-                )
+                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      checkedRegData.copy()
+                      regData.copy()
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -118,8 +113,6 @@ class IsNfmUKBasedController @Inject() (
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.nfmConfirmation)
+    request.userAnswers.get(NominatedFilingMemberPage).nonEmpty
 
 }

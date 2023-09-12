@@ -22,6 +22,7 @@ import controllers.actions._
 import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.subscription.Subscription
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
@@ -54,6 +55,7 @@ class AddSecondaryContactController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     val nfmData      = request.userAnswers.get(NominatedFilingMemberPage).fold(false)(data => data.isNFMnStatus == RowStatus.Completed)
+    val contactName  = getContactName(request)
     nfmData match {
 
       case true =>
@@ -61,7 +63,7 @@ class AddSecondaryContactController @Inject() (
           .get(SubscriptionPage)
           .fold(NotFound(notAvailable))(subs =>
             subs.useContactPrimary
-              .fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+              .fold(Ok(view(form, contactName, mode)))(data => Ok(view(form.fill(data), contactName, mode)))
           )
       case false => NotFound(notAvailable)
     }
@@ -69,10 +71,11 @@ class AddSecondaryContactController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val contactName = getContactName(request)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
         value =>
           value match {
             case true =>
@@ -114,4 +117,14 @@ class AddSecondaryContactController @Inject() (
           }
       )
   }
+
+  private def getContactName(request: DataRequest[AnyContent]): String =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .flatMap { nfm =>
+        nfm.withoutIdRegData.flatMap { noId =>
+          noId.fmContactName
+        }
+      }
+      .getOrElse("")
 }

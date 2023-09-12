@@ -384,7 +384,8 @@ mneOrDomestic.change.hidden = Change your answer to where your group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
 
 addSecondaryContact.title = addSecondaryContact
-addSecondaryContact.heading = addSecondaryContact
+addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group's management of Pillar 2 top-up tax
 addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
 addSecondaryContact.error.required = Select yes if addSecondaryContact
 addSecondaryContact.change.hidden = AddSecondaryContact

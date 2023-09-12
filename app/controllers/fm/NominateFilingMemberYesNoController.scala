@@ -68,8 +68,6 @@ class NominateFilingMemberYesNoController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
-
     form
       .bindFromRequest()
       .fold(
@@ -77,23 +75,27 @@ class NominateFilingMemberYesNoController @Inject() (
         value =>
           value match {
             case true =>
+              val fmData = request.userAnswers
+                .get(NominatedFilingMemberPage)
+                .getOrElse(FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      fmData.fold(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))(data =>
-                        data copy (nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress)
-                      )
+                      fmData.copy()
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
             case false =>
+              val fmData = request.userAnswers
+                .get(NominatedFilingMemberPage)
+                .getOrElse(FilingMember(nfmConfirmation = false, isNFMnStatus = RowStatus.Completed))
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
+                    request.userAnswers.set(NominatedFilingMemberPage, fmData.copy())
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.TaskListController.onPageLoad)
