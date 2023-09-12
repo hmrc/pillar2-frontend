@@ -53,13 +53,13 @@ class NfmNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case Some(true) =>
+      case true =>
         val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
           case None        => form
           case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
         }
         Ok(view(preparedForm, mode))
-      case Some(false) =>
+      case false =>
         NotFound(notAvailable)
 
     }
@@ -93,7 +93,8 @@ class NfmNameRegistrationController @Inject() (
     request.userAnswers
       .get(NominatedFilingMemberPage)
       .map { reg =>
-        reg.isNfmRegisteredInUK.isDefined
+        reg.isNfmRegisteredInUK
       }
+      .isDefined
 
 }

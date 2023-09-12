@@ -85,7 +85,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy()
+                          regData.copy(isNfmRegisteredInUK = Some(value))
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -102,7 +102,7 @@ class IsNfmUKBasedController @Inject() (
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      regData.copy()
+                      regData.copy(isNfmRegisteredInUK = Some(value))
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -113,6 +113,6 @@ class IsNfmUKBasedController @Inject() (
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.get(NominatedFilingMemberPage).nonEmpty
+    request.userAnswers.get(NominatedFilingMemberPage).map(nfm => nfm.nfmConfirmation).isDefined
 
 }
