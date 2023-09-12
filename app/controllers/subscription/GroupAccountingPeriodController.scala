@@ -91,7 +91,7 @@ class GroupAccountingPeriodController @Inject() (
                                     )
                                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad)
             }
             .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )

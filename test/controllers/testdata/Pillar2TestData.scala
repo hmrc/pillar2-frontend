@@ -19,10 +19,11 @@ package controllers.testdata
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.{ContactUPEByTelephone, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
+import models.subscription.{AccountingPeriod, Subscription}
+import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
-
+import java.time.LocalDate
 trait Pillar2TestData {
 
   def upeCheckAnswerData() = new Registration(
@@ -94,6 +95,20 @@ trait Pillar2TestData {
           )
         )
       )
+    )
+
+  def subCheckAnswerData() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.InProgress,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
+    )
+
+  def subCheckAnswerDataUkAndOther() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.UkAndOther,
+      groupDetailStatus = RowStatus.InProgress,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(
     nfmConfirmation = NfmRegistrationConfirmation.Yes,
