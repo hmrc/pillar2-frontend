@@ -149,8 +149,8 @@ POST       /business-matching/filing-member/no-id/change-input-telephone        
 
 GET         /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST        /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET         /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
-POST        /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
 GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
 POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
