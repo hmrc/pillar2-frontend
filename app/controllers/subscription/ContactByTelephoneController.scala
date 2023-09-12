@@ -23,6 +23,7 @@ import forms.{ContactByTelephoneFormProvider, ContactNfmByTelephoneFormProvider}
 import models.{Mode, NormalMode}
 import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
+import models.subscription.ContactByTelephone
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -76,7 +77,7 @@ class ContactByTelephoneController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value =>
           value match {
-            case true =>
+            case ContactByTelephone.Yes =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
               for {
@@ -87,7 +88,7 @@ class ContactByTelephoneController @Inject() (
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-            case false =>
+            case ContactByTelephone.No =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
               for {

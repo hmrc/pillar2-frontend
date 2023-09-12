@@ -19,6 +19,7 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.{ContactByTelephoneFormProvider, ContactUPEByTelephoneFormProvider}
+import models.subscription.ContactByTelephone
 import models.{NormalMode, UseContactPrimary}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -74,7 +75,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
       val userAnswersSubCaptureNoPhone =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneData(contactByTelephone = true)).success.value
+        emptyUserAnswers.set(SubscriptionPage, validSubPhoneData(contactByTelephone = ContactByTelephone.Yes)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -84,7 +85,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "yes"))
 
         val result = route(application, request).value
 
@@ -105,7 +106,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "false"))
+            .withFormUrlEncodedBody(("value", "no"))
 
         val result = route(application, request).value
 

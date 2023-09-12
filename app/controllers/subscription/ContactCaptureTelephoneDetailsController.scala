@@ -97,5 +97,5 @@ class ContactCaptureTelephoneDetailsController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.contactByTelephone.fold(false)(contactTel => contactTel == true))
+      .fold(false)(data => data.contactByTelephone.fold(false)(contactTel => contactTel.toString == "yes"))
 }

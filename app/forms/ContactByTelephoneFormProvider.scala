@@ -16,16 +16,16 @@
 
 package forms
 
+import javax.inject.Inject
 import forms.mappings.Mappings
 import models.fm.ContactNFMByTelephone
+import models.subscription.ContactByTelephone
 import play.api.data.Form
-
-import javax.inject.Inject
 
 class ContactByTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(userName: String): Form[Boolean] =
+  def apply(userName: String): Form[ContactByTelephone] =
     Form(
-      "value" -> boolean("contactNfmByTelephone.error.required", args = Seq(userName))
+      "value" -> enumerable[ContactByTelephone]("contactByTelephone.error.required", args = Seq(userName))
     )
 }

@@ -19,9 +19,8 @@ package controllers.testdata
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.subscription.{AccountingPeriod, Subscription}
+import models.subscription.{AccountingPeriod, ContactByTelephone, Subscription}
 import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.subscription.Subscription
 import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UseContactPrimary, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
@@ -160,7 +159,7 @@ trait Pillar2TestData {
     useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
     primaryContactName:   String = "Test Name",
     primaryContactEmail:  String = "testEmail@email.com",
-    contactByTelephone:   Boolean = false
+    contactByTelephone:   ContactByTelephone = ContactByTelephone.No
   ) =
     new Subscription(
       domesticOrMne = domesticOrMne,
