@@ -28,10 +28,14 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
   def apply(): Form[AccountingPeriod] =
     Form(
       mapping(
-        "startDate" -> localDate("groupAccountingPeriod.error.startDate.format", "groupAccountingPeriod.error.startDate.required", "", "").verifying(
-          minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.minimum")
-        ),
-        "endDate" -> localDate("groupAccountingPeriod.error.endDate.format", "groupAccountingPeriod.error.endDate.required", "", "")
+        "startDate" -> localDate("groupAccountingPeriod.error.startDate.format", "groupAccountingPeriod.error.startDate.required", "", "")
+          .verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.minimum")),
+        "endDate" -> localDate(
+          "groupAccountingPeriod.error.endDate.format",
+          "groupAccountingPeriod.error.endDate.required",
+          "",
+          ""
+        )
       )(AccountingPeriod.apply)(AccountingPeriod.unapply)
         .verifying("groupAccountingPeriod.error.endDate.before.startDate", a => a.endDate isAfter a.startDate)
     )
