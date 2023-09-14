@@ -80,6 +80,9 @@ class ContactNameComplianceController @Inject() (
                     Subscription(
                       domesticOrMne = regData.domesticOrMne,
                       useContactPrimary = regData.useContactPrimary,
+                      primaryContactEmail = regData.primaryContactEmail,
+                      contactByTelephone = regData.contactByTelephone,
+                      primaryContactTelephone = regData.primaryContactTelephone,
                       primaryContactName = Some(value),
                       groupDetailStatus = regData.groupDetailStatus,
                       contactDetailsStatus = RowStatus.InProgress

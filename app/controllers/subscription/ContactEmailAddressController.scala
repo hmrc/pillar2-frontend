@@ -76,7 +76,16 @@ class ContactEmailAddressController @Inject() (
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  set (SubscriptionPage, subRegData.copy(primaryContactEmail = Some(value)))
+                  set (SubscriptionPage, subRegData.copy(
+                    primaryContactEmail = Some(value),
+                    domesticOrMne = subRegData.domesticOrMne,
+                    useContactPrimary = subRegData.useContactPrimary,
+                    contactByTelephone = subRegData.contactByTelephone,
+                    primaryContactTelephone = subRegData.primaryContactTelephone,
+                    primaryContactName = subRegData.primaryContactName,
+                    groupDetailStatus = subRegData.groupDetailStatus,
+                    contactDetailsStatus = subRegData.contactDetailsStatus
+                  ))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
@@ -89,10 +98,6 @@ class ContactEmailAddressController @Inject() (
     subDetails.fold("")(subData => subData.primaryContactName.fold("")(primaryContactName => primaryContactName))
   }
 
-  private def getFMContactName(request: DataRequest[AnyContent]): String = {
-    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
-    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
-  }
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)

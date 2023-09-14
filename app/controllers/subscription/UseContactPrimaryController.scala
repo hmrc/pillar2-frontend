@@ -138,25 +138,44 @@ class UseContactPrimaryController @Inject() (
                   } yield Redirect(routes.UnderConstructionController.onPageLoad)
               }
             case UseContactPrimary.No =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers.set(
-                        SubscriptionPage,
-                        Subscription(
-                          domesticOrMne = regData.domesticOrMne,
-                          useContactPrimary = Some(value),
-                          primaryContactName = None,
-                          primaryContactEmail = None,
-                          primaryContactTelephone = None,
-                          groupDetailStatus = regData.groupDetailStatus,
-                          contactDetailsStatus = RowStatus.InProgress
+              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
+                for {
+                  updatedAnswers <-
+                    Future
+                      .fromTry(
+                        request.userAnswers.set(
+                          SubscriptionPage,
+                          Subscription(
+                            domesticOrMne = regData.domesticOrMne,
+                            useContactPrimary = Some(value),
+                            groupDetailStatus = regData.groupDetailStatus,
+                            contactDetailsStatus = RowStatus.InProgress
+                          )
                         )
                       )
-                    )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
+              } else {
+                for {
+                  updatedAnswers <-
+                    Future
+                      .fromTry(
+                        request.userAnswers.set(
+                          SubscriptionPage,
+                          Subscription(
+                            domesticOrMne = regData.domesticOrMne,
+                            useContactPrimary = Some(value),
+                            primaryContactName = regData.primaryContactName,
+                            primaryContactEmail = regData.primaryContactEmail,
+                            primaryContactTelephone = regData.primaryContactTelephone,
+                            groupDetailStatus = regData.groupDetailStatus,
+                            contactDetailsStatus = RowStatus.InProgress
+                          )
+                        )
+                      )
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
+              }
           }
       )
   }
