@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeNameRegistrationFormProvider
+import controllers.actions._
+import controllers.routes
+import forms.SecondaryContactNameFormProvider
 import models.Mode
-import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
-import pages.RegistrationPage
+import models.subscription.Subscription
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.SecondaryContactNameView
 import views.html.errors.ErrorTemplate
-import views.html.registrationview.UpeNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpeNameRegistrationController @Inject() (
+class SecondaryContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeNameRegistrationFormProvider,
+  formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
-  view:                      UpeNameRegistrationView
+  view:                      SecondaryContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -53,15 +55,14 @@ class UpeNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case false =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
-          }
       case true =>
-        NotFound(notAvailable)
+        request.userAnswers
+          .get(SubscriptionPage)
+          .fold(NotFound(notAvailable))(subs => subs.secondaryContactName.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode))))
+
+      case false => NotFound(notAvailable)
     }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -71,29 +72,33 @@ class UpeNameRegistrationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           request.userAnswers
-            .get(RegistrationPage)
-            .map { reg =>
-              val ukOrAbroad = reg.isUPERegisteredInUK
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      Registration(
-                        isUPERegisteredInUK = ukOrAbroad,
-                        isRegistrationStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = value))
-                      )
-                    )
+            .get(SubscriptionPage)
+            .map { subs =>
+              val domesticOrMne = subs.domesticOrMne
+              val subsData = request.userAnswers
+                .get(SubscriptionPage)
+                .getOrElse(
+                  Subscription(
+                    domesticOrMne = domesticOrMne,
+                    groupDetailStatus = RowStatus.Completed,
+                    contactDetailsStatus = RowStatus.InProgress,
+                    secondaryContactName = Some(value)
                   )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+                )
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy()))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
             }
-            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
-    request.userAnswers.get(RegistrationPage).isEmpty
-
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .map { sub =>
+        sub.useContactPrimary
+      }
+      .isDefined
 }

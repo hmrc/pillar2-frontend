@@ -20,27 +20,22 @@ import models.{CheckMode, UserAnswers}
 import pages.SubscriptionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object GroupAccountingPeriodSummary {
+object SecondaryContactNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.startDate.toString))
-      val endDate   = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => data.endDate.toString))
-      val value     = startDate + "<br>" + endDate
+      val value = answer.secondaryContactName.getOrElse("")
       SummaryListRowViewModel(
-        key = "groupAccountingPeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent("")),
+        key = "secondaryContactName.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlFormat.escape(value).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryContactNameController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )
-      ).withCssClass("no-border-bottom")
-
+      )
     }
-
 }

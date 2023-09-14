@@ -48,7 +48,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val userAnswer = UserAnswers(userAnswersId)
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress))
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted))
         .success
         .value
 
@@ -74,7 +74,8 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
             SubscriptionPage,
             Subscription(
               domesticOrMne = MneOrDomestic.Uk,
-              RowStatus.Completed,
+              groupDetailStatus = RowStatus.Completed,
+              contactDetailsStatus = RowStatus.NotStarted,
               accountingPeriod = Some(AccountingPeriod(startDate, endDate))
             )
           )

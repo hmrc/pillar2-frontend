@@ -38,7 +38,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
         .success
         .value
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress))
+        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, contactDetailsStatus = RowStatus.InProgress, groupDetailStatus = RowStatus.Completed))
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -51,14 +51,22 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), "asd", NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, RowStatus.InProgress, useContactPrimary = Some(true)))
+        .set(
+          SubscriptionPage,
+          Subscription(
+            MneOrDomestic.Uk,
+            contactDetailsStatus = RowStatus.InProgress,
+            groupDetailStatus = RowStatus.Completed,
+            useContactPrimary = Some(true)
+          )
+        )
         .success
         .value
         .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
@@ -75,7 +83,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), "asd", NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -99,7 +107,64 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "asd", NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to secondary contact name if they answer yes " in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(
+          SubscriptionPage,
+          Subscription(
+            MneOrDomestic.Uk,
+            contactDetailsStatus = RowStatus.InProgress,
+            groupDetailStatus = RowStatus.Completed
+          )
+        )
+        .success
+        .value
+
+      val application = applicationBuilder(Some(userAnswers)).build()
+      val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "true")
+
+      running(application) {
+        val result =
+          route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url
+
+      }
+    }
+
+    "must redirect to Not Found page for a GET if no previous existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request     = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
+
+      running(application) {
+        val result =
+          route(application, request).value
+
+        status(result) mustEqual NOT_FOUND
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody(
+          "value" -> "true"
+        )
+
+      running(application) {
+        val result =
+          route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

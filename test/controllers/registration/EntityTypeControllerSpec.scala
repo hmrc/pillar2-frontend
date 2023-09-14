@@ -117,10 +117,6 @@ class EntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
 
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[EntityTypeView]
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -151,10 +147,6 @@ class EntityTypeControllerSpec extends SpecBase {
 
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
-
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
 

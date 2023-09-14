@@ -19,7 +19,6 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.EntityTypePage
 import play.api.i18n.Messages
-import controllers.routes
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

@@ -86,6 +86,7 @@ class GroupAccountingPeriodController @Inject() (
                                       Subscription(
                                         domesticOrMne = mneOrDomestic,
                                         groupDetailStatus = RowStatus.Completed,
+                                        contactDetailsStatus = RowStatus.NotStarted,
                                         accountingPeriod = Some(value)
                                       )
                                     )

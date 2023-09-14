@@ -23,7 +23,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): NfmCheckYourAnswersController =

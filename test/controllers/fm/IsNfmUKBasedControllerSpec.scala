@@ -66,8 +66,6 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IsNFMUKBasedView]
-
         status(result) mustEqual NOT_FOUND
       }
     }

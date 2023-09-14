@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.subscriptions
+package controllers.subscription
+
 import base.SpecBase
-import controllers.subscription.SubCheckYourAnswersController
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

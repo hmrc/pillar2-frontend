@@ -34,6 +34,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewSecondaryContactName: SecondaryContactNameView =
+    new SecondaryContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
   val viewAddSecondaryContact: AddSecondaryContactView =
     new AddSecondaryContactView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 

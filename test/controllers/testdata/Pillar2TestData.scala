@@ -20,10 +20,10 @@ import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 import models.subscription.{AccountingPeriod, Subscription}
-import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.{UpeRegisteredAddress, UserAnswers}
+import models.{MneOrDomestic, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
+
 import java.time.LocalDate
 trait Pillar2TestData {
 
@@ -102,6 +102,7 @@ trait Pillar2TestData {
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
       groupDetailStatus = RowStatus.InProgress,
+      contactDetailsStatus = RowStatus.NotStarted,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
 
@@ -109,6 +110,7 @@ trait Pillar2TestData {
     new Subscription(
       domesticOrMne = MneOrDomestic.UkAndOther,
       groupDetailStatus = RowStatus.InProgress,
+      contactDetailsStatus = RowStatus.NotStarted,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(

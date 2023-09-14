@@ -402,3 +402,11 @@ addSecondaryContact.hint = This can be a team mailbox or another contact who is 
 addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
 addSecondaryContact.error.required = Select yes if addSecondaryContact
 addSecondaryContact.change.hidden = AddSecondaryContact
+
+secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
+secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
+secondaryContactName.checkYourAnswersLabel = secondaryContactName
+secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+secondaryContactName.error.required = Enter name of the person of team we should contact
+secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.change.hidden = SecondaryContactName

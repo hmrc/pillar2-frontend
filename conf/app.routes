@@ -163,3 +163,8 @@ GET        /contact-details/change-second-contact                 controllers.su
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
+
+GET        /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)

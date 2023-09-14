@@ -88,11 +88,16 @@ class AddSecondaryContactController @Inject() (
                       Future.fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(domesticOrMne = domesticOrMne, groupDetailStatus = RowStatus.InProgress, useContactPrimary = Some(value))
+                          Subscription(
+                            domesticOrMne = domesticOrMne,
+                            groupDetailStatus = RowStatus.Completed,
+                            useContactPrimary = Some(value),
+                            contactDetailsStatus = RowStatus.InProgress
+                          )
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.SecondaryContactNameController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
@@ -106,7 +111,12 @@ class AddSecondaryContactController @Inject() (
                       Future.fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(domesticOrMne = domesticOrMne, groupDetailStatus = RowStatus.InProgress, useContactPrimary = Some(value))
+                          Subscription(
+                            domesticOrMne = domesticOrMne,
+                            groupDetailStatus = RowStatus.Completed,
+                            useContactPrimary = Some(value),
+                            contactDetailsStatus = RowStatus.InProgress
+                          )
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

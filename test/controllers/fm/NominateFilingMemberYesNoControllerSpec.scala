@@ -24,7 +24,6 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
@@ -66,7 +65,6 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[ErrorTemplate]
         val result  = route(application, request).value
 
         status(result) mustBe NOT_FOUND
