@@ -86,7 +86,7 @@ class NfmEntityTypeController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(NominatedFilingMemberPage, regData.copy())
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value)))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
@@ -105,7 +105,7 @@ class NfmEntityTypeController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(NominatedFilingMemberPage, regData.copy())
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value)))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
