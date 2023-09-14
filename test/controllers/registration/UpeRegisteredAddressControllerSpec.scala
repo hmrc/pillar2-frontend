@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeRegisteredAddressFormProvider
-import models.{NormalMode, UPERegisteredInUKConfirmation}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -28,10 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.InputOption
-import views.html.registrationview.UpeRegisteredAddressView
 
-import java.io.IOException
 import scala.concurrent.Future
 
 class UpeRegisteredAddressControllerSpec extends SpecBase {

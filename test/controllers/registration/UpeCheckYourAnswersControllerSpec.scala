@@ -17,13 +17,11 @@
 package controllers.registration
 
 import base.SpecBase
-import models.registration.{Registration, WithoutIdRegData}
-import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress}
+import models.UpeRegisteredAddress
 import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.registrationview.UpeCheckYourAnswersView

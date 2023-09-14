@@ -19,11 +19,10 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
-import forms.{ContactNameComplianceFormProvider, UseContactPrimaryFormProvider}
+import forms.ContactNameComplianceFormProvider
 import models.requests.DataRequest
 import models.subscription.Subscription
-import models.{Mode, NormalMode, UseContactPrimary}
+import models.{Mode, NormalMode}
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -32,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.{ContactNameComplianceView, UseContactPrimaryView}
+import views.html.subscriptionview.ContactNameComplianceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

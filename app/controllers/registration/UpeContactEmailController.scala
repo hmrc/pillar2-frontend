@@ -21,9 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
-import models.registration.WithoutIdRegData
 import models.requests.DataRequest
-import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
