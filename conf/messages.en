@@ -29,7 +29,7 @@ page_not_available.message=You cannot access this page directly
 upeRegisteredAddress.title=Where is the registered office address of {0}?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
-upeRegisteredAddress.change.hidden = Change the registered office address of the ultimate parent entity
+upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
 upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or City
@@ -60,7 +60,7 @@ upe-input-business-name.heading = What is the name of the person or team we shou
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.error.length = Name cannot be more than 200 characters
-upe-input-business-name.change.hidden= Change the name of the person or team we should contact from the ultimate parent entity
+upe-input-business-name.change.hidden= the name of the person or team we should contact at the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
 
 task-list.title = Register for Pillar 2 top-up tax
@@ -128,15 +128,15 @@ upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required= You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
 upeNameRegistration.checkYourAnswersLabel= Name
-upeNameRegistration.change.hidden= Change the name of the ultimate parent entity
+upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
 upe-input-business-email.title=What is the email address for {0}?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to contact the person or team who manages Pillar 2 top-up tax for this business
 upe-input-business-email.caption=Business details
 upe-input-business-contact.email.error.required = You need to enter the email address for {0}
-upe-input-business-contact.email.error.length = The email address cannot be more than 200 characters
-upe-input-business-email.change.hidden= Change the email address for the person or team we should contact at the ultimate parent entity
+upe-input-business-contact.email.error.length = The email address should be 132 characters or less
+upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
 
 under_construction.heading = Under Construction
@@ -221,14 +221,15 @@ contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
 contactUPEByTelephone.checkYourAnswersLabel = Telephone contact
-contactUPEByTelephone.change.hidden = Change your response to whether we make contact by telephone or not
+contactUPEByTelephone.change.hidden =  your response to whether we make contact by telephone
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
-captureTelephoneDetails.messages.error.length = The telephone number cannot be more than 24 characters
-captureTelephoneDetails.change.hidden = Change the telephone number for the person or team we should contact at the ultimate parent entity
+captureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
+captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
+captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 NominateFilingMemberYesNo.title = Do you want to register a nominated filing member for this group?
@@ -240,7 +241,7 @@ NominateFilingMemberYesNo.error.required = Select yes if there is a nominated fi
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Filing member preference
-NominateFilingMemberYesNo.change.hidden = Change your filing member nomination preference
+NominateFilingMemberYesNo.change.hidden =  your filing member nomination preference
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -249,7 +250,7 @@ entityType.ukLimitedCompany = UK limited company
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
-entityType.change.hidden = Change what type of company the ultimate parent entity
+
 
 registeringNfmForThisGroup.title = Are you registering the nominated filing member for this group?
 registeringNfmForThisGroup.heading = Are you registering the nominated filing member for this group?
@@ -263,7 +264,7 @@ isNFMUKBased.heading = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
 isNFMUKBased.error.required = Select yes if the nominated filing member is registered in the UK
-isNFMUKBased.change.hidden = Change your response to whether if the filing member is registered in the UK or not
+isNFMUKBased.change.hidden =  your response to whether if the filing member is registered in the UK or not
 
 nfmNameRegistration.title = What is the name of the nominated filing member?
 nfmNameRegistration.heading.caption = Business details
@@ -277,7 +278,6 @@ nfmNameRegistration.change.hidden = What is the name of the nominated filing mem
 nfmRegisteredAddress.title = Where is the registered office address of {0}?
 nfmRegisteredAddress.heading = Where is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
-nfmRegisteredAddress.change.hidden = Change the registered office address of the nominated filing member
 nfmRegisteredAddress.addressLine1 = Address line 1
 nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
 nfmRegisteredAddress.town_city = Town or City
@@ -309,7 +309,7 @@ nfmEntityType.ukLimitedCompany = UK limited company
 nfmEntityType.limitedLiabilityPartnership = Limited liability partnership
 nfmEntityType.checkYourAnswersLabel = Org Type
 nfmEntityType.error.required = Select what type of company the nominated filing member is
-nfmEntityType.change.hidden = Change What type of company is the nominated filing member
+nfmEntityType.change.hidden =  What type of company is the nominated filing member
 nfmEntityType.caption = Business details
 
 nfmContactName.heading.caption = Business details
@@ -319,7 +319,7 @@ nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nfmContactName.checkYourAnswersLabel = Contact name
 nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
-nfmContactName.change.hidden = Changing filing member contact name
+nfmContactName.change.hidden =  filing member contact name
 
 nfmEmailAddress.heading.caption = Business details
 nfmEmailAddress.title = What is the email address for {0}?
@@ -328,30 +328,45 @@ nfmEmailAddress.hint = We will use this to confirm your records
 nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = You need to enter the email address for {0}
 nfmEmailAddress.error.length = The email address should be 132 characters or less
-nfmEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
 nfmRegisteredAddress.country.hint = Choose from the list
 nfmRegisteredAddress.checkYourAnswersLabel = Address
-nfmRegisteredAddress.change.hidden = Change the registered office address of the nominated filing member
+nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
 nfmNameRegistrationController.checkYourAnswersLabel = Name
-nfmNameRegistrationController.change.hidden = Change the name of the nominated filing member
-
-
-
+nfmNameRegistrationController.change.hidden =  the name of the nominated filing member
 
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-contactNfmByTelephone.change.hidden = Change your response to whether we can make contact by telephone
+contactNfmByTelephone.change.hidden =  your response to whether we can make contact by telephone
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-nfmCaptureTelephoneDetails.change.hidden = Change the contact telephone number
+nfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
+
+groupAccountingPeriod.heading.caption = Group details
+groupAccountingPeriod.title = What are the start and end dates of the group''s consolidated accounting period?
+groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK.
+groupAccountingPeriod.startDate.heading = Enter start date
+groupAccountingPeriod.startDate.hint = For example, 27 3 2026
+groupAccountingPeriod.endDate.heading = Enter end date
+groupAccountingPeriod.endDate.hint = For example, 28 3 2027
+groupAccountingPeriod.checkYourAnswersLabel = Group''s consolidated accounting period
+groupAccountingPeriod.error.startDate.minimum = You need to enter a start date on or after 31/12/2023
+groupAccountingPeriod.error.endDate.before.startDate = You need to enter an end date that is after the start date
+groupAccountingPeriod.error.startDate.format = Enter a date in the correct format
+groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
+groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group''s consolidated accounting period
+groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
+groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
+groupAccountingPeriod.change.hidden = Change the dates of the group''s consolidated accounting period
+
 contactNfmByTelephone.heading.caption = Business details
 contactNfmByTelephone.title = Can we contact {0} by telephone?
 contactNfmByTelephone.heading = Can we contact {0} by telephone?
 contactNfmByTelephone.hint = We will use this to confirm your records
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactNfmByTelephone.change.hidden = Change your response to whether we make contact by telephone or not for nominated filing member
 
 nfmCaptureTelephoneDetails.heading.caption = Business details
 nfmCaptureTelephoneDetails.title = What is the telephone number for {0}?
@@ -360,18 +375,14 @@ nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 
 nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
-nfmCaptureTelephoneDetails.change.hidden = Change your response to capture telephone number for nominated filing member
-
-nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden = Change the contact telephone number
-contactNfmByTelephone.checkYourAnswersLabel.hidden = Change your response to whether we can make contact by telephone
-nfmEmailAddress.checkYourAnswersLabel.hidden = Change the contact email address
-nfmContactName.checkYourAnswersLabel.hidden = Change the name of the person or team we should contact at the nominated filing member
-nfmRegisteredAddress.checkYourAnswersLabel.hidden = Change the registered office address of the nominated filing member
-nfmNameRegistration.checkYourAnswersLabel.hidden = Change the name of the nominated filing member
 
 
-
-
+nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
+contactNfmByTelephone.checkYourAnswersLabel.hidden =  your response to whether we can make contact by telephone
+nfmEmailAddress.checkYourAnswersLabel.hidden =  the contact email address
+nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we should contact at the nominated filing member
+nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office address of the nominated filing member
+nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
 mneOrDomestic.title = Where does the group operate?
 mneOrDomestic.heading.caption = Business details
@@ -380,5 +391,7 @@ mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
 mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
 mneOrDomestic.error.required = Select where the group operates
-mneOrDomestic.change.hidden = Change your answer to where your group operates
+mneOrDomestic.change.hidden = Change your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
+groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
+groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
