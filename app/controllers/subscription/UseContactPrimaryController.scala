@@ -147,7 +147,7 @@ class UseContactPrimaryController @Inject() (
                         Subscription(
                           domesticOrMne = regData.domesticOrMne,
                           useContactPrimary = Some(value),
-                          primaryContactName = regData.primaryContactName,
+                          primaryContactName = None,
                           primaryContactEmail = None,
                           primaryContactTelephone = None,
                           groupDetailStatus = regData.groupDetailStatus,
