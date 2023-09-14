@@ -79,7 +79,7 @@ class ContactNfmByTelephoneController @Inject() (
           val nfmRegData =
             request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
           val nfmRegDataWithoutId =
-            nfmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration, address & email should be available before email"))
+            nfmRegData.withoutIdRegData.getOrElse(throw new Exception("Subscription data should be available"))
 
           value match {
             case ContactNFMByTelephone.Yes =>

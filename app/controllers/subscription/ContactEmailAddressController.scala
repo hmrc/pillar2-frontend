@@ -71,7 +71,7 @@ class ContactEmailAddressController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
           val subRegData =
-            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
+            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
           for {
             updatedAnswers <-
               Future.fromTry(

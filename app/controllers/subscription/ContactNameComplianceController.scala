@@ -65,7 +65,7 @@ class ContactNameComplianceController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is MNE or Domestic not selected"))
+    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
     form
       .bindFromRequest()
       .fold(
