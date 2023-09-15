@@ -35,6 +35,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewCaptureContactAddress: CaptureContactAddressView =
+    new CaptureContactAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewMneOrDomestic: MneOrDomesticView =
     new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
