@@ -41,21 +41,21 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ContactEmailAddressSummary {
+object ContactByTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer.primaryContactEmail.toString)
+          HtmlFormat.escape(answer.contactByTelephone.toString)
         )
       )
       SummaryListRowViewModel(
-        key = "contactEmailAddress.checkYourAnswersLabel",
+        key = "contactByTelephone.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.ContactEmailAddressController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("contactEmailAddress.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.ContactByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
         )
       )
     }
