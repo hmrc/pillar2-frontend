@@ -157,61 +157,10 @@ POST        /further-details/group-status                        controllers.sub
 GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
+GET        /further-details/check-answers                        controllers.subscription.SubCheckYourAnswersController.onPageLoad
 
-GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad
-POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit
+GET        /contact-details/address/use-address                  controllers.CaptureContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/address/use-address                  controllers.CaptureContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onSubmit(mode: Mode = CheckMode)
 
-
-GET         /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-use-contact                controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-use-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
-
-
-GET         /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
-
-
-GET        /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-contact                 controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
-
-GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
-
-GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/second-input-email                        controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-email                       controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-email                  controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-email                 controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-telephone                  controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST      /contact-details/change-second-telephone                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)

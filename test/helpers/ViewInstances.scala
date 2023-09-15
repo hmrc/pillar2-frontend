@@ -33,20 +33,8 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
-  val viewSecondaryTelephone: SecondaryTelephoneView =
-    new SecondaryTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewSecondaryTelephonePreference: SecondaryTelephonePreferenceView =
-    new SecondaryTelephonePreferenceView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewSecondaryContactEmail: SecondaryContactEmailView =
-    new SecondaryContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewSecondaryContactName: SecondaryContactNameView =
-    new SecondaryContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewAddSecondaryContact: AddSecondaryContactView =
-    new AddSecondaryContactView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewCaptureContactAddress: CaptureContactAddressView =
+    new CaptureContactAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewMneOrDomestic: MneOrDomesticView =
     new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
