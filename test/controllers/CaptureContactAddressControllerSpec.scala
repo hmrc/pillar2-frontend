@@ -16,14 +16,23 @@
 
 package controllers
 
-import base.SpecBase
-import controllers.subscription.CaptureContactAddressController
+
 import forms.CaptureContactAddressFormProvider
 import models.{NormalMode, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.CaptureContactAddressPage
+import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.subscriptionview.CaptureContactAddressView
+import repositories.SessionRepository
+import views.html.CaptureContactAddressView
+
+import scala.concurrent.Future
+
 
 class CaptureContactAddressControllerSpec extends SpecBase {
 
@@ -47,7 +56,11 @@ class CaptureContactAddressControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+<<<<<<< HEAD
         val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+=======
+        val request = FakeRequest(GET, routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>> 33d0d74 (PIL-416:add intial files)
 
         val result = route(application, request).value
 
@@ -65,7 +78,11 @@ class CaptureContactAddressControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+<<<<<<< HEAD
         val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+=======
+        val request = FakeRequest(GET, routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>> 33d0d74 (PIL-416:add intial files)
 
         val result = route(application, request).value
 
@@ -82,7 +99,11 @@ class CaptureContactAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request =
+<<<<<<< HEAD
           FakeRequest(POST, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+=======
+          FakeRequest(POST, routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>> 33d0d74 (PIL-416:add intial files)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
