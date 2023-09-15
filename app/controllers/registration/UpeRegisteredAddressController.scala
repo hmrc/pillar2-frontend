@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -102,5 +101,5 @@ class UpeRegisteredAddressController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => !data.isUPERegisteredInUK.toString.isEmpty)
+      .fold(false)(data => data.isUPERegisteredInUK.toString.nonEmpty)
 }

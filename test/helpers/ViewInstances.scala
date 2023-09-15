@@ -28,11 +28,13 @@ import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
 import views.html.fmview._
 import views.html.registrationview._
-import views.html.subscriptionview.{AddSecondaryContactView, MneOrDomesticView}
-import views.html.subscriptionview.{GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
+import views.html.subscriptionview._
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
+
+  val viewSecondaryContactEmail: SecondaryContactEmailView =
+    new SecondaryContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val viewSecondaryContactName: SecondaryContactNameView =
     new SecondaryContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)

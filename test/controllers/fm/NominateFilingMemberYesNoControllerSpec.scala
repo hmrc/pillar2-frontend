@@ -24,7 +24,6 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future

@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import viewmodels.govuk.hint
 
 @this(
     layout: templates.Layout,
@@ -26,24 +27,26 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, secondaryContactName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactName.title"))) {
+@layout(pageTitle = title(form, messages("secondaryContactEmail.title", secondaryContactName))) {
 
-    @formHelper(action = controllers.subscription.routes.SecondaryContactNameController.onPageLoad(CheckMode)) {
+    @formHelper(action = controllers.subscription.routes.SecondaryContactEmailController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("taskList.task.contact.heading")</span>
+        <span class="govuk-caption-l">@messages("contactEmailAddress.heading.caption")</span>
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondaryContactName.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
+                .withCssClass("long-word")
             )
-            .withHint(Hint(content = Text(messages("secondaryContactName.hint"))))
+            .withHint(Hint(content = Text(messages("contactEmailAddress.hint"))))
             .withWidth(TwoThirds)
+            .withInputType("email")
         )
 
         @govukButton(

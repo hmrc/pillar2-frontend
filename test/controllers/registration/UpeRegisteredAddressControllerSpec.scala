@@ -37,7 +37,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   def controller(): UpeRegisteredAddressController =
     new UpeRegisteredAddressController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,

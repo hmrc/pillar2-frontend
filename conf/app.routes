@@ -168,3 +168,8 @@ GET        /contact-details/second-input-name                        controllers
 POST       /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /contact-details/second-input-email                        controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/second-input-email                       controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-second-input-email                  controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-second-input-email                 controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)

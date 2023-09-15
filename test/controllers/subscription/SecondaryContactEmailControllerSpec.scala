@@ -17,22 +17,24 @@
 package controllers.subscription
 
 import base.SpecBase
-import forms.SecondaryContactNameFormProvider
+import forms.SecondaryContactEmailFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
 import pages.SubscriptionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
-import views.html.subscriptionview.SecondaryContactNameView
+import views.html.subscriptionview.SecondaryContactEmailView
 
-class SecondaryContactNameControllerSpec extends SpecBase {
+class SecondaryContactEmailControllerSpec extends SpecBase {
 
-  val formProvider = new SecondaryContactNameFormProvider()
+  val form         = new SecondaryContactEmailFormProvider()
+  val formProvider = form("someName")
 
-  "SecondaryContactName Controller" when {
+  "SecondaryContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
+
       val subscription =
         Subscription(
           domesticOrMne = MneOrDomestic.Uk,
@@ -41,44 +43,40 @@ class SecondaryContactNameControllerSpec extends SpecBase {
           useContactPrimary = Some(false)
         )
       val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SecondaryContactNameView]
+        val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+
       val subscription =
         Subscription(
           domesticOrMne = MneOrDomestic.Uk,
           groupDetailStatus = RowStatus.Completed,
           contactDetailsStatus = RowStatus.InProgress,
-          secondaryContactName = Some("answer"),
-          useContactPrimary = Some(false)
+          secondaryContactEmail = Some("hello@gmail.com")
         )
-
       val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[SecondaryContactNameView]
+        val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider.fill("hello@gmail.com"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -87,17 +85,17 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
+      val longString  = "12321312" * 100
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+          FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", longString))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider.bind(Map("value" -> longString))
 
-        val view = application.injector.instanceOf[SecondaryContactNameView]
+        val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         val result = route(application, request).value
 
@@ -109,7 +107,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     "must redirect to Not Found page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
+      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
 
       running(application) {
         val result =
@@ -122,42 +120,14 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "name")
+      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "name@gmail.com")
 
       running(application) {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to secondary contact email when the user enters a valid answer " in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed,
-            secondaryContactName = Some("someName")
-          )
-        )
-        .success
-        .value
-
-      val application = applicationBuilder(Some(userAnswers)).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "someName")
-
-      running(application) {
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url
-
       }
     }
 
