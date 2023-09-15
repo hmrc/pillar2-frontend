@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.{ContactEmailAddressFormProvider, NfmEmailAddressFormProvider}
-import models.Mode
+import models.{MneOrDomestic, Mode}
 import models.requests.DataRequest
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
@@ -79,6 +79,7 @@ class ContactEmailAddressController @Inject() (
                   set (SubscriptionPage, subRegData.copy(
                     primaryContactEmail = Some(value),
                     domesticOrMne = subRegData.domesticOrMne,
+                    accountingPeriod = subRegData.accountingPeriod,
                     useContactPrimary = subRegData.useContactPrimary,
                     contactByTelephone = subRegData.contactByTelephone,
                     primaryContactTelephone = subRegData.primaryContactTelephone,
@@ -102,6 +103,8 @@ class ContactEmailAddressController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.useContactPrimary.isDefined
+        data.useContactPrimary.isDefined ||
+        (data.useContactPrimary.isEmpty && (data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther) &&
+          data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty))
       }
 }

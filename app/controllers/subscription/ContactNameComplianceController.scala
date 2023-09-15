@@ -79,6 +79,7 @@ class ContactNameComplianceController @Inject() (
                     SubscriptionPage,
                     Subscription(
                       domesticOrMne = regData.domesticOrMne,
+                      accountingPeriod = regData.accountingPeriod,
                       useContactPrimary = regData.useContactPrimary,
                       primaryContactEmail = regData.primaryContactEmail,
                       contactByTelephone = regData.contactByTelephone,

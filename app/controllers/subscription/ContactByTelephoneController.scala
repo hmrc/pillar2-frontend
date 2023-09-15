@@ -95,7 +95,7 @@ class ContactByTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value)))
+                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value), telephoneNumber = None))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
