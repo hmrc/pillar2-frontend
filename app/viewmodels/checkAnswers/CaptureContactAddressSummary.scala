@@ -33,7 +33,7 @@ object CaptureContactAddressSummary {
         key = "captureContactAddress.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.CaptureContactAddressController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", routes.CaptureContactAddressController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("captureContactAddress.change.hidden"))
         )
       )
