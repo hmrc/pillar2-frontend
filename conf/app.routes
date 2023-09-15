@@ -157,4 +157,9 @@ POST        /further-details/group-status                        controllers.sub
 GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
-GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
+GET        /further-details/check-answers                        controllers.subscription.SubCheckYourAnswersController.onPageLoad
+
+GET        /contact-details/address/use-address                  controllers.CaptureContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/address/use-address                  controllers.CaptureContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onSubmit(mode: Mode = CheckMode)

@@ -395,3 +395,10 @@ mneOrDomestic.change.hidden = Change your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
+
+captureContactAddress.heading.caption = Contact details
+captureContactAddress.title = Do you want to use this registered address as the contact address?
+captureContactAddress.heading = Do you want to use this registered address as the contact address?
+captureContactAddress.checkYourAnswersLabel = captureContactAddress
+captureContactAddress.error.required = Select yes if captureContactAddress
+captureContactAddress.change.hidden = CaptureContactAddress
