@@ -84,7 +84,17 @@ class ContactByTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value)))
+                      set (SubscriptionPage, subRegData.copy(
+                        contactByTelephone = Some(value),
+                        primaryContactEmail = subRegData.primaryContactEmail,
+                        domesticOrMne = subRegData.domesticOrMne,
+                        accountingPeriod = subRegData.accountingPeriod,
+                        useContactPrimary = subRegData.useContactPrimary,
+                        primaryContactTelephone = subRegData.primaryContactTelephone,
+                        primaryContactName = subRegData.primaryContactName,
+                        groupDetailStatus = subRegData.groupDetailStatus,
+                        contactDetailsStatus = subRegData.contactDetailsStatus
+                      ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
@@ -95,7 +105,19 @@ class ContactByTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(contactByTelephone = Some(value), telephoneNumber = None))
+                      set (SubscriptionPage,
+                      subRegData.copy(
+                        contactByTelephone = Some(value),
+                        telephoneNumber = None,
+                        primaryContactEmail = subRegData.primaryContactEmail,
+                        domesticOrMne = subRegData.domesticOrMne,
+                        accountingPeriod = subRegData.accountingPeriod,
+                        useContactPrimary = subRegData.useContactPrimary,
+                        primaryContactTelephone = subRegData.primaryContactTelephone,
+                        primaryContactName = subRegData.primaryContactName,
+                        groupDetailStatus = subRegData.groupDetailStatus,
+                        contactDetailsStatus = subRegData.contactDetailsStatus
+                      ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)

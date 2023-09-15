@@ -164,12 +164,14 @@ class UseContactPrimaryController @Inject() (
                           SubscriptionPage,
                           Subscription(
                             domesticOrMne = regData.domesticOrMne,
-                            useContactPrimary = Some(value),
-                            primaryContactName = regData.primaryContactName,
+                            accountingPeriod = regData.accountingPeriod,
                             primaryContactEmail = regData.primaryContactEmail,
+                            contactByTelephone = regData.contactByTelephone,
                             primaryContactTelephone = regData.primaryContactTelephone,
+                            primaryContactName = regData.primaryContactName,
                             groupDetailStatus = regData.groupDetailStatus,
-                            contactDetailsStatus = RowStatus.InProgress
+                            contactDetailsStatus = RowStatus.InProgress,
+                            useContactPrimary = Some(value)
                           )
                         )
                       )
