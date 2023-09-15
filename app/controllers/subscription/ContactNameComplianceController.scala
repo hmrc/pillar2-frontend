@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.requests.DataRequest
 import models.subscription.Subscription
-import models.{Mode, NormalMode}
+import models.{MneOrDomestic, Mode, NormalMode}
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -98,6 +98,10 @@ class ContactNameComplianceController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.useContactPrimary.toString.nonEmpty)
+      .fold(false) { data =>
+        data.useContactPrimary.isDefined ||
+        (data.useContactPrimary.isDefined && ((data.domesticOrMne == MneOrDomestic.UkAndOther || data.domesticOrMne == MneOrDomestic.Uk) &&
+          data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)))
+      }
 
 }

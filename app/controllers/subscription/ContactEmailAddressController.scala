@@ -103,8 +103,6 @@ class ContactEmailAddressController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.useContactPrimary.isDefined ||
-        (data.useContactPrimary.isEmpty && (data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther) &&
-          data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty))
+        data.primaryContactName.isDefined
       }
 }
