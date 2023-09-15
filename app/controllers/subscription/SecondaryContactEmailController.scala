@@ -72,7 +72,7 @@ class SecondaryContactEmailController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, secondaryContactName))),
         value =>
           request.userAnswers
             .get(SubscriptionPage)
@@ -92,7 +92,7 @@ class SecondaryContactEmailController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(secondaryContactEmail = Some(value))))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
             }
             .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )

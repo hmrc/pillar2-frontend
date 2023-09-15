@@ -16,32 +16,24 @@
 
 package forms
 
-import forms.behaviours.StringFieldBehaviours
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
+class SecondaryTelephonePreferenceFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "secondaryContactName.error.required"
-  val lengthKey   = "secondaryContactName.error.length"
-  val maxLength   = 160
+  val requiredKey = "secondaryTelephonePreference.error.required"
+  val invalidKey  = "error.boolean"
 
-  val form = new SecondaryContactNameFormProvider()()
+  val formProvider = new SecondaryTelephonePreferenceFormProvider()
+  val form         = formProvider("test")
 
   ".value" - {
 
     val fieldName = "value"
-
-    behave like fieldThatBindsValidData(
+    behave like booleanField(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

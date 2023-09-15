@@ -36,7 +36,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("contactEmailAddress.heading.caption")</span>
+        <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
 
         @govukInput(
             InputViewModel(
@@ -44,7 +44,7 @@
                 label = LabelViewModel(messages("secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
                 .withCssClass("long-word")
             )
-            .withHint(Hint(content = Text(messages("contactEmailAddress.hint"))))
+            .withHint(Hint(content = Text(messages("secondaryContactEmail.hint"))))
             .withWidth(TwoThirds)
             .withInputType("email")
         )
