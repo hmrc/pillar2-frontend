@@ -426,3 +426,12 @@ secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 secondaryTelephonePreference.change.hidden = SecondaryTelephonePreference
+
+secondaryTelephone.title = What is the telephone number for {0}?
+secondaryTelephone.heading = What is the telephone number for {0}?
+secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+secondaryTelephone.checkYourAnswersLabel = the second contact telephone number
+secondaryTelephone.error.required = You need to enter the telephone for {0}
+secondaryTelephone.error.length = The telephone number should be 24 characters or less
+secondaryTelephone.error.format = Enter a telephone number in the correct format
+secondaryTelephone.change.hidden = SecondaryTelephone

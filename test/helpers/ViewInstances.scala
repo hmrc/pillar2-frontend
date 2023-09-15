@@ -33,6 +33,9 @@ import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
+  val viewSecondaryTelephone: SecondaryTelephoneView =
+    new SecondaryTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
   val viewSecondaryTelephonePreference: SecondaryTelephonePreferenceView =
     new SecondaryTelephonePreferenceView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 

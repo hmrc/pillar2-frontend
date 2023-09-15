@@ -83,13 +83,13 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
+      val badAnswer   = "asdqwd" * 100
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", badAnswer))
 
-        val boundForm = formProvider.bind(Map("value" -> ""))
+        val boundForm = formProvider.bind(Map("value" -> badAnswer))
 
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
@@ -97,6 +97,33 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to telephone contact page if they answer yes " in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(
+          SubscriptionPage,
+          Subscription(
+            MneOrDomestic.Uk,
+            contactDetailsStatus = RowStatus.InProgress,
+            groupDetailStatus = RowStatus.Completed
+          )
+        )
+        .success
+        .value
+
+      val application = applicationBuilder(Some(userAnswers)).build()
+      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "true")
+
+      running(application) {
+        val result =
+          route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url
+
       }
     }
     "must redirect to Not Found page for a GET if no previous existing data is found" in {

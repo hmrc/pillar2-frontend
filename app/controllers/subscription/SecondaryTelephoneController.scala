@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.SecondaryTelephonePreferenceFormProvider
+import forms.SecondaryTelephoneFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.subscription.Subscription
@@ -31,43 +31,44 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.SecondaryTelephonePreferenceView
+import views.html.subscriptionview.SecondaryTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecondaryTelephonePreferenceController @Inject() (
+class SecondaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              SecondaryTelephonePreferenceFormProvider,
+  formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
-  view:                      SecondaryTelephonePreferenceView
+  view:                      SecondaryTelephoneView,
+  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getUserName(request)
-    val form         = formProvider(userName)
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    getUserName(request) match {
+    val notAvailable         = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    val secondaryContactName = getSecondaryContactName(request)
+    val form                 = formProvider(secondaryContactName)
+    getSecondaryContactName(request) match {
+      case "" => NotFound(notAvailable)
       case _ =>
         request.userAnswers
           .get(SubscriptionPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.secondaryTelephonePreference.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
-          }
-      case "" => NotFound(notAvailable)
+          .fold(NotFound(notAvailable))(subs =>
+            subs.secondaryContactTelephone.fold(Ok(view(form, mode, secondaryContactName)))(data =>
+              Ok(view(form.fill(data), mode, secondaryContactName))
+            )
+          )
     }
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = getUserName(request)
-    val form     = formProvider(userName)
+    val secondaryContactName = getSecondaryContactName(request)
+    val form                 = formProvider(secondaryContactName)
     form
       .bindFromRequest()
       .fold(
@@ -75,34 +76,39 @@ class SecondaryTelephonePreferenceController @Inject() (
         value =>
           request.userAnswers
             .get(SubscriptionPage)
-            .map { subs =>
-              val subsData = Subscription(
-                domesticOrMne = subs.domesticOrMne,
-                groupDetailStatus = subs.groupDetailStatus,
-                contactDetailsStatus = subs.contactDetailsStatus,
-                accountingPeriod = subs.accountingPeriod,
-                primaryContactName = subs.primaryContactName,
-                primaryContactEmail = subs.primaryContactEmail,
-                primaryContactTelephone = subs.primaryContactTelephone,
-                useContactPrimary = subs.useContactPrimary,
-                secondaryContactName = subs.secondaryContactName,
-                secondaryContactEmail = subs.secondaryContactEmail,
-                secondaryTelephonePreference = Some(value),
-                secondaryContactTelephone = subs.secondaryContactTelephone
-              )
+            .map { sub =>
+              val subscriptionData = request.userAnswers
+                .get(SubscriptionPage)
+                .getOrElse(
+                  Subscription(
+                    domesticOrMne = sub.domesticOrMne,
+                    groupDetailStatus = sub.groupDetailStatus,
+                    contactDetailsStatus = sub.contactDetailsStatus,
+                    accountingPeriod = sub.accountingPeriod,
+                    primaryContactName = sub.primaryContactName,
+                    primaryContactEmail = sub.primaryContactEmail,
+                    primaryContactTelephone = sub.primaryContactTelephone,
+                    useContactPrimary = sub.useContactPrimary,
+                    secondaryContactName = Some(secondaryContactName),
+                    secondaryContactEmail = sub.secondaryContactEmail,
+                    secondaryTelephonePreference = Some(true),
+                    secondaryContactTelephone = Some(value)
+                  )
+                )
+
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryContactTelephone = subs.secondaryContactTelephone)))
+                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(secondaryContactTelephone = Some(value))))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
+              } yield Redirect(routes.UnderConstructionController.onPageLoad)
             }
             .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )
   }
 
-  private def getUserName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(SubscriptionPage)
-    registration.fold("")(regData => regData.secondaryContactName.fold("")(secondaryName => secondaryName))
-  }
+  def getSecondaryContactName(request: DataRequest[AnyContent]): String =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold("")(regData => regData.secondaryContactName.fold("")(name => name))
 
 }

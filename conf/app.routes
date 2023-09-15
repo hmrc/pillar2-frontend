@@ -178,3 +178,8 @@ GET        /contact-details/second-telephone                        controllers.
 POST       /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-telephone                  controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
 POST      /contact-details/change-second-telephone                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)

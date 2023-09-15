@@ -15,36 +15,39 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
+@import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton
-    )
+)
 
-@(form: Form[_], mode: Mode, userName: String= "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName:String= "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title", userName))) {
+@layout(pageTitle = title(form, messages("secondaryTelephone.title"))) {
 
-    @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.routes.SecondaryTelephoneController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-    }
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
         <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
-        @govukRadios(
-            RadiosViewModel.yesNo(
+
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("secondaryTelephonePreference.heading", userName)).asPageHeading(Large)
+                label = LabelViewModel(messages("secondaryTelephone.heading", userName)).asPageHeading(Large)
             )
-            )
+                    .withWidth(TwoThirds)
+                    .withHint(Hint(content = Text(messages("secondaryTelephone.hint"))))
+        )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.continue"))
         )
     }
 }
-

@@ -17,21 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
-import forms.SecondaryContactEmailFormProvider
+import forms.SecondaryTelephoneFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
 import pages.SubscriptionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
-import views.html.subscriptionview.SecondaryContactEmailView
+import views.html.subscriptionview.SecondaryTelephoneView
 
-class SecondaryContactEmailControllerSpec extends SpecBase {
+class SecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form         = new SecondaryContactEmailFormProvider()
-  val formProvider = form("someName")
+  val form         = new SecondaryTelephoneFormProvider()
+  val formProvider = form("test")
 
-  "SecondaryContactEmail Controller" when {
+  "SecondaryTelephone Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -40,19 +40,21 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
           domesticOrMne = MneOrDomestic.Uk,
           groupDetailStatus = RowStatus.Completed,
           contactDetailsStatus = RowStatus.InProgress,
-          useContactPrimary = Some(false)
+          secondaryContactName = Some("someName")
         )
       val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
+        val view = application.injector.instanceOf[SecondaryTelephoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "someName")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -63,20 +65,22 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
           domesticOrMne = MneOrDomestic.Uk,
           groupDetailStatus = RowStatus.Completed,
           contactDetailsStatus = RowStatus.InProgress,
-          secondaryContactEmail = Some("hello@gmail.com")
+          secondaryContactName = Some("someName"),
+          secondaryContactTelephone = Some("1234567")
         )
       val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
+        val view = application.injector.instanceOf[SecondaryTelephoneView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("hello@gmail.com"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider.fill("1234567"), NormalMode, "someName")(
           request,
           appConfig(application),
           messages(application)
@@ -85,17 +89,17 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val longString  = "12321312" * 100
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val bigString   = "asdqwdwq" * 100
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", longString))
+          FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", bigString))
 
-        val boundForm = formProvider.bind(Map("value" -> longString))
+        val boundForm = formProvider.bind(Map("value" -> bigString))
 
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
+        val view = application.injector.instanceOf[SecondaryTelephoneView]
 
         val result = route(application, request).value
 
@@ -103,38 +107,10 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-
-    "must redirect to telephone preference for second contact once they answered with a valid response" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed
-          )
-        )
-        .success
-        .value
-
-      val application = applicationBuilder(Some(userAnswers)).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "something@gmail.com")
-
-      running(application) {
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
-
-      }
-    }
-
     "must redirect to Not Found page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
+      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
 
       running(application) {
         val result =
@@ -147,8 +123,8 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "name@gmail.com")
+      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "12233444")
 
       running(application) {
         val result = route(application, request).value

@@ -21,10 +21,13 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class SecondaryTelephonePreferenceFormProvider @Inject() extends Mappings {
-
-  def apply(userName: String): Form[Boolean] =
+class SecondaryTelephoneFormProvider @Inject() extends Mappings {
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
+  def apply(userName: String): Form[String] =
     Form(
-      "value" -> boolean("secondaryTelephonePreference.error.required", args = Seq(userName))
+      "value" -> text("secondaryTelephone.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "secondaryTelephone.error.length"))
+        .verifying(regexp(phoneRegex, "secondaryTelephone.error.format"))
     )
 }
