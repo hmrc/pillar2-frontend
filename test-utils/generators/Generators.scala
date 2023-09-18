@@ -16,11 +16,12 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, ZoneOffset}
-
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import wolfendale.scalacheck.regexp.RegexpGen
+
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
@@ -85,6 +86,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       chars  <- listOfN(length, arbitrary[Char])
     } yield chars.mkString
 
+  def regexWithMaxLength(maxLength: Int, regex: String): Gen[String] =
+    for {
+      length      <- choose(1, maxLength)
+      regexString <- Gen.listOfN(length, RegexpGen.from(regex))
+    } yield regexString.mkString
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)
     length    <- Gen.chooseNum(minLength + 1, maxLength)

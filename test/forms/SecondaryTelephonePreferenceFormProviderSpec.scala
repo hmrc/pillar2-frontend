@@ -33,13 +33,13 @@ class SecondaryTelephonePreferenceFormProviderSpec extends BooleanFieldBehaviour
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq("test"))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq("test"))
     )
   }
 }

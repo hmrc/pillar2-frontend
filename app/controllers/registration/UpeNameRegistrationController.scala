@@ -53,14 +53,13 @@ class UpeNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case false =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
-          }
       case true =>
-        NotFound(notAvailable)
+        val preparedForm = request.userAnswers.get(RegistrationPage) match {
+          case None        => form
+          case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
+        }
+        Ok(view(preparedForm, mode))
+      case false => NotFound(notAvailable)
     }
   }
 
@@ -73,16 +72,16 @@ class UpeNameRegistrationController @Inject() (
           request.userAnswers
             .get(RegistrationPage)
             .map { reg =>
-              val ukOrAbroad = reg.isUPERegisteredInUK
+              val withoutID = reg.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration should be available before address"))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       RegistrationPage,
                       Registration(
-                        isUPERegisteredInUK = ukOrAbroad,
+                        isUPERegisteredInUK = false,
                         isRegistrationStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = value))
+                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value))
                       )
                     )
                   )
@@ -94,6 +93,11 @@ class UpeNameRegistrationController @Inject() (
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
-    request.userAnswers.get(RegistrationPage).isEmpty
+    request.userAnswers
+      .get(RegistrationPage)
+      .map { reg =>
+        reg.isUPERegisteredInUK
+      }
+      .isDefined
 
 }

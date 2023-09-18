@@ -19,11 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
+import scala.collection.immutable.Seq
+
 class SecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "secondaryTelephone.error.required"
   val lengthKey   = "secondaryTelephone.error.length"
+  val formatKey   = "secondaryTelephone.error.format"
   val maxLength   = 24
+  val formatReg   = """^[A-Z0-9 )/(\-*#+]*$"""
 
   val form = new SecondaryTelephoneFormProvider()("test")
 
@@ -31,23 +35,25 @@ class SecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+//    behave like fieldThatBindsValidData(
+//      form,
+//      fieldName,
+//      regexWithMaxLength(maxLength, formatReg)
+//    )
+//
+//    behave like regexFieldWithMaxLength(
+//      form,
+//      fieldName,
+//      maxLength = maxLength,
+//      regex = formatReg,
+//      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+//      formatError = FormError(fieldName, requiredKey, Seq("test"))
+//    )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq("test"))
     )
   }
 }

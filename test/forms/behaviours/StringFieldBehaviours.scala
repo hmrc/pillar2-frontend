@@ -28,4 +28,12 @@ trait StringFieldBehaviours extends FieldBehaviours {
         result.errors must contain only lengthError
       }
     }
+  def regexFieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, regex: String, lengthError: FormError, formatError: FormError): Unit =
+    s"not bind strings longer than $maxLength characters" in {
+
+      forAll(regexWithMaxLength(maxLength, regex) -> "longString") { string =>
+        val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+        result.errors must contain atLeastOneOf (lengthError, formatError)
+      }
+    }
 }
