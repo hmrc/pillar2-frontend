@@ -100,7 +100,7 @@ class ContactNameComplianceController @Inject() (
       .get(SubscriptionPage)
       .fold(false) { data =>
         data.useContactPrimary.isDefined ||
-        (data.useContactPrimary.isDefined && ((data.domesticOrMne == MneOrDomestic.UkAndOther || data.domesticOrMne == MneOrDomestic.Uk) &&
+        (data.useContactPrimary.isEmpty && ((data.domesticOrMne == MneOrDomestic.UkAndOther || data.domesticOrMne == MneOrDomestic.Uk) &&
           data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)))
       }
 
