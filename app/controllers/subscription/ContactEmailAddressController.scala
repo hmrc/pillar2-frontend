@@ -14,80 +14,95 @@
  * limitations under the License.
  */
 
-package controllers.fm
+package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.NfmContactNameFormProvider
-import models.Mode
+import forms.{ContactEmailAddressFormProvider, NfmEmailAddressFormProvider}
+import models.{MneOrDomestic, Mode}
 import models.requests.DataRequest
-import pages.NominatedFilingMemberPage
+import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.ErrorTemplate
-import views.html.fmview.NfmContactNameView
+import views.html.subscriptionview.ContactEmailAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmContactNameController @Inject() (
+class ContactEmailAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NfmContactNameFormProvider,
+  formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   page_not_available:        ErrorTemplate,
-  view:                      NfmContactNameView
+  view:                      ContactEmailAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val userName     = getContactName(request)
+    val form         = formProvider(userName)
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
     isPreviousPageDefined(request) match {
       case true =>
         request.userAnswers
-          .get(NominatedFilingMemberPage)
+          .get(SubscriptionPage)
           .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.fmContactName.fold(Ok(view(form, mode)))(contactName => Ok(view(form.fill(contactName), mode)))
-            )
+            reg.primaryContactEmail.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
           }
+
       case false => NotFound(notAvailable)
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userName = getContactName(request)
+    val form     = formProvider(userName)
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value => {
-          val fmRegData =
-            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-          val fmRegDataWithoutId = fmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration should be available before address"))
-
+          val subRegData =
+            request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(NominatedFilingMemberPage, fmRegData.copy(withoutIdRegData = Some(fmRegDataWithoutId.copy(fmContactName = Some(value)))))
+                  set (SubscriptionPage, subRegData.copy(
+                    primaryContactEmail = Some(value),
+                    domesticOrMne = subRegData.domesticOrMne,
+                    accountingPeriod = subRegData.accountingPeriod,
+                    useContactPrimary = subRegData.useContactPrimary,
+                    contactByTelephone = subRegData.contactByTelephone,
+                    primaryContactTelephone = subRegData.primaryContactTelephone,
+                    primaryContactName = subRegData.primaryContactName,
+                    groupDetailStatus = subRegData.groupDetailStatus,
+                    contactDetailsStatus = subRegData.contactDetailsStatus
+                  ))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))
+          } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
         }
       )
   }
 
+  private def getContactName(request: DataRequest[AnyContent]): String = {
+    val subDetails = request.userAnswers.get(SubscriptionPage)
+    subDetails.fold("")(subData => subData.primaryContactName.fold("")(primaryContactName => primaryContactName))
+  }
+
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.registeredFmAddress.isDefined))
+      .get(SubscriptionPage)
+      .fold(false) { data =>
+        data.primaryContactName.isDefined
+      }
 }
