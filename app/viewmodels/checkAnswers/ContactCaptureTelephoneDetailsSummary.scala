@@ -47,7 +47,7 @@ object ContactCaptureTelephoneDetailsSummary {
     answers.get(SubscriptionPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer.telephoneNumber.toString)
+          HtmlFormat.escape(answer.telephoneNumber.fold("")(phone => phone))
         )
       )
       SummaryListRowViewModel(

@@ -432,13 +432,14 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = You need to enter the email address for {0}
 contactEmailAddress.error.length = The email address should be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = Changing contact email
+contactEmailAddress.change.hidden = Change the first contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
+contactByTelephone.change.hidden = Change the first contact name
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
@@ -448,3 +449,9 @@ contactCaptureTelephoneDetails.error.required = You need to enter the telephone 
 contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
+
+
+contactNameCompliance.checkYourAnswersLabel = Contact name
+contactNameCompliance.change.hidden = Change the first contact name
+contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
+ contactCaptureTelephoneDetails.change.hidden = Change the telephone number for the first contact
