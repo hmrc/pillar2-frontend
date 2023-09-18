@@ -65,7 +65,7 @@ class ContactNameComplianceController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
+    val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
     form
       .bindFromRequest()
       .fold(
@@ -77,15 +77,15 @@ class ContactNameComplianceController @Inject() (
                 .fromTry(
                   request.userAnswers.set(
                     SubscriptionPage,
-                    Subscription(
-                      domesticOrMne = regData.domesticOrMne,
-                      accountingPeriod = regData.accountingPeriod,
-                      useContactPrimary = regData.useContactPrimary,
-                      primaryContactEmail = regData.primaryContactEmail,
-                      contactByTelephone = regData.contactByTelephone,
-                      primaryContactTelephone = regData.primaryContactTelephone,
+                    subRegData.copy(
+                      domesticOrMne = subRegData.domesticOrMne,
+                      accountingPeriod = subRegData.accountingPeriod,
+                      useContactPrimary = subRegData.useContactPrimary,
+                      primaryContactEmail = subRegData.primaryContactEmail,
+                      contactByTelephone = subRegData.contactByTelephone,
+                      primaryContactTelephone = subRegData.primaryContactTelephone,
                       primaryContactName = Some(value),
-                      groupDetailStatus = regData.groupDetailStatus,
+                      groupDetailStatus = subRegData.groupDetailStatus,
                       contactDetailsStatus = RowStatus.InProgress
                     )
                   )
