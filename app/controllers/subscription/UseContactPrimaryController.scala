@@ -81,7 +81,7 @@ class UseContactPrimaryController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is MNE or Domestic not selected"))
+    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
     form
       .bindFromRequest()
       .fold(
@@ -145,7 +145,7 @@ class UseContactPrimaryController @Inject() (
                       .fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(
+                          regData.copy(
                             domesticOrMne = regData.domesticOrMne,
                             useContactPrimary = Some(value),
                             groupDetailStatus = regData.groupDetailStatus,
@@ -162,7 +162,7 @@ class UseContactPrimaryController @Inject() (
                       .fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          Subscription(
+                          regData.copy(
                             domesticOrMne = regData.domesticOrMne,
                             accountingPeriod = regData.accountingPeriod,
                             primaryContactEmail = regData.primaryContactEmail,
