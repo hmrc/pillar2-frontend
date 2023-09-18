@@ -149,7 +149,11 @@ class UseContactPrimaryController @Inject() (
                             domesticOrMne = regData.domesticOrMne,
                             useContactPrimary = Some(value),
                             groupDetailStatus = regData.groupDetailStatus,
-                            contactDetailsStatus = RowStatus.InProgress
+                            contactDetailsStatus = RowStatus.InProgress,
+                            primaryContactName = None,
+                            primaryContactEmail = None,
+                            contactByTelephone = None,
+                            primaryContactTelephone = None
                           )
                         )
                       )
