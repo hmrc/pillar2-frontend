@@ -72,7 +72,7 @@ class UpeNameRegistrationController @Inject() (
           request.userAnswers
             .get(RegistrationPage)
             .map { reg =>
-              val withoutID = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("something bad happened"))
+              val withoutID = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
               for {
                 updatedAnswers <-
                   Future.fromTry(
