@@ -17,6 +17,8 @@
 package stubsonly.connectors
 
 import config.FrontendAppConfig
+import play.api.Logger
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -29,6 +31,8 @@ class TestOnlyConnector @Inject() (
 )(implicit
   val ec: ExecutionContext
 ) {
+
+  private val logger = Logger(getClass)
 
   private val pillar2Url: String =
     s"${appConfig.pillar2BaseUrl}/report-pillar2-top-up-taxes/test-only"
@@ -47,6 +51,26 @@ class TestOnlyConnector @Inject() (
     httpClient.GET(
       s"$pillar2Url/get-all"
     )
+
+  def upsertRecord(id: String, data: JsValue)(implicit hc: HeaderCarrier): Future[Unit] =
+    httpClient
+      .POST[JsValue, HttpResponse](s"$pillar2Url/upsertRecord/$id", data)
+      .map { response =>
+        response.status match {
+          case 200 => // OK
+            ()
+          case 201 => // Created
+            ()
+          case status @ (400 | 404) =>
+            val errorMessage = s"Error status: $status, body: ${response.body}"
+            logger.error(errorMessage)
+            throw new RuntimeException(errorMessage)
+          case otherStatus =>
+            val errorMessage = s"Unexpected response status: $otherStatus, body: ${response.body}"
+            logger.error(errorMessage)
+            throw new RuntimeException(errorMessage)
+        }
+      }
 
   def deEnrol(groupId: String, pillar2Reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET(

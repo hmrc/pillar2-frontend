@@ -6,6 +6,7 @@ GET         /clear-all                                                          
 GET         /clear-current                                                           stubsonly.controllers.TestOnlyController.clearCurrentData()
 GET         /registration-data                                                       stubsonly.controllers.TestOnlyController.getRegistrationData()
 GET         /eligibility/clear-session                                               stubsonly.controllers.TestOnlyController.clearSession
+POST        /upsertRecord/:id                                                        stubsonly.controllers.TestOnlyController.upsertRecord(id: String)
 
 GET         /de-enrol                                                                stubsonly.controllers.TestOnlyController.deEnrol()
 
