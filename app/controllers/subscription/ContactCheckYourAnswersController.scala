@@ -84,10 +84,4 @@ class ContactCheckYourAnswersController @Inject() (
         data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)
       }
 
-  private def isSecondaryContactDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false) { data =>
-        data.addSecondaryContact.isDefined
-      }
 }

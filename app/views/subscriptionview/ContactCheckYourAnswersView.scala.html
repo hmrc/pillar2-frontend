@@ -32,10 +32,15 @@
 
     @govukSummaryList(list)
 
-    <h2 class="govuk-heading-m">Second contact</h2>
-    @govukSummaryList(listSecondary)
-    <h2 class="govuk-heading-m">Contact address</h2>
-    @govukSummaryList(address)
+    @if(listSecondary.rows.length!=0){
+        <h2 class="govuk-heading-m">Second contact</h2>
+        @govukSummaryList(listSecondary)
+      }
+    @if(address.rows.length!=0){
+        <h2 class="govuk-heading-m">Contact address</h2>
+        @govukSummaryList(address)
+    }
+
     <br>
     @govukButton(
     ButtonViewModel(messages("site.save-and-continue"))

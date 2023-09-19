@@ -432,14 +432,14 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = You need to enter the email address for {0}
 contactEmailAddress.error.length = The email address should be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = Change the first contact email address
+contactEmailAddress.change.hidden = the first contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = Change the first contact name
+contactByTelephone.change.hidden = the first contact name
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
@@ -452,11 +452,23 @@ contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telep
 
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
-contactNameCompliance.change.hidden = Change the first contact name
+contactNameCompliance.change.hidden =  the first contact name
 contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-contactCaptureTelephoneDetails.change.hidden = Change the telephone number for the first contact
+contactCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+
+addSecondaryContact.change.hidden = your response to whether you want to provide a second contact
+secondaryContactName.change.hidden = the second contact name
+secondaryContactEmail.change.hidden = the second contact email address
+secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact provided by telephone
+secondaryTelephone.change.hidden = the telephone number for the second contact
+contactCorrespondenceAddress.change.hidden = the contact address
+
+
+
+
+

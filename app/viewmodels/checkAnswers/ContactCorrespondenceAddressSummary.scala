@@ -42,11 +42,11 @@ object ContactCorrespondenceAddressSummary {
           val value       = field1 + field2 + field3 + field4 + postcode + countryOptions.getCountryNameFromCode(countryCode.toString())
 
           SummaryListRowViewModel(
-            key = "upeRegisteredAddress.checkYourAnswersLabel",
+            key = "contactCorrespondenceAddress.checkYourAnswersLabel",
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
-              ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("upeRegisteredAddress.change.hidden"))
+              ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("contactCorrespondenceAddress.change.hidden"))
             )
           )
         }
