@@ -35,7 +35,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
     }
         <span class="govuk-caption-l">@messages("taskList.task.contact.heading", contactName)</span>
-        <h1 class="govuk-heading-l">@messages("addSecondaryContact.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("addSecondaryContact.heading", contactName)</h1>
 
         @govukRadios(
             RadiosViewModel.yesNo(

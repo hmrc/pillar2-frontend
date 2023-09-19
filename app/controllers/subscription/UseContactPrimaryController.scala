@@ -115,7 +115,7 @@ class UseContactPrimaryController @Inject() (
                           )
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>
                   for {
                     updatedAnswers <-
@@ -135,7 +135,7 @@ class UseContactPrimaryController @Inject() (
                           )
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }
             case false =>
               if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
@@ -192,28 +192,26 @@ class UseContactPrimaryController @Inject() (
       .fold(false) { data =>
         data.groupDetailStatus.toString == "Completed"
       }
-//should return true if they are not registered in the uk otherwise false
+
   private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
       .flatMap { nfm =>
         nfm.isNfmRegisteredInUK
-      } match{
+      } match {
       case Some(false) => true
-      case _ => false
+      case _           => false
     }
 
-//should return true if they are not registered in the uk otherwise false
   private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
       .map { upe =>
         upe.isUPERegisteredInUK
-      } match{
+      } match {
       case Some(false) => true
-      case _  => false
+      case _           => false
     }
-
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
