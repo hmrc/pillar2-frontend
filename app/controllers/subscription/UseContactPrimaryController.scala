@@ -55,7 +55,7 @@ class UseContactPrimaryController @Inject() (
     isPreviousPageDefined(request) match {
       case true =>
         isNfmRegisteredUK(request) match {
-          case Some(false) =>
+          case true =>
             request.userAnswers
               .get(SubscriptionPage)
               .fold(NotFound(notAvailable)) { reg =>
@@ -63,9 +63,9 @@ class UseContactPrimaryController @Inject() (
                   Ok(view(form.fill(data), mode, getName(request), getEmail(request), getPhoneNumber(request)))
                 )
               }
-          case Some(true) =>
+          case false =>
             isUpeRegisteredUK(request) match {
-              case Some(false) =>
+              case true =>
                 request.userAnswers
                   .get(SubscriptionPage)
                   .fold(NotFound(notAvailable)) { reg =>
@@ -73,8 +73,7 @@ class UseContactPrimaryController @Inject() (
                       Ok(view(form.fill(data), mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
                     )
                   }
-              case Some(true) =>
-                Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
+              case false => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
             }
         }
       case false => NotFound(notAvailable)
@@ -82,22 +81,22 @@ class UseContactPrimaryController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is not available"))
+    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
     form
       .bindFromRequest()
       .fold(
         formWithErrors =>
           isNfmRegisteredUK(request) match {
-            case Some(true) =>
+            case true =>
               Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
-            case Some(false) =>
+            case false =>
               Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
           },
         value =>
           value match {
             case true =>
               isNfmRegisteredUK(request) match {
-                case Some(false) =>
+                case true =>
                   for {
                     updatedAnswers <-
                       Future
@@ -117,7 +116,7 @@ class UseContactPrimaryController @Inject() (
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(routes.UnderConstructionController.onPageLoad)
-                case Some(true) =>
+                case false =>
                   for {
                     updatedAnswers <-
                       Future
@@ -193,20 +192,28 @@ class UseContactPrimaryController @Inject() (
       .fold(false) { data =>
         data.groupDetailStatus.toString == "Completed"
       }
-
-  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Option[Boolean] =
+//should return true if they are not registered in the uk otherwise false
+  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
       .flatMap { nfm =>
         nfm.isNfmRegisteredInUK
-      }
+      } match{
+      case Some(false) => true
+      case _ => false
+    }
 
-  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Option[Boolean] =
+//should return true if they are not registered in the uk otherwise false
+  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
       .map { upe =>
         upe.isUPERegisteredInUK
-      }
+      } match{
+      case Some(false) => true
+      case _  => false
+    }
+
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
