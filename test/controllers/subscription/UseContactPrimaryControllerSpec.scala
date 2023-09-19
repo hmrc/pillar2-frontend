@@ -75,11 +75,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       }
     }
-    "redirect to ask primary contact name  if nfm and  upe contact not available" in {
-      val userAnswersWithNominatedFilingMemberWithSub =
+    "redirect to ask primary contact name  if no contact info available in NFM and and no Upe info given" in {
+      val userAnswersWithNFMNoContactINfoWithSub =
         userAnswersNfmYesId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNFMNoContactINfoWithSub)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
