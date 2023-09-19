@@ -313,6 +313,7 @@ trait Pillar2TestData {
   ) =
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
       groupDetailStatus = RowStatus.Completed,
       contactDetailsStatus = RowStatus.InProgress
     )

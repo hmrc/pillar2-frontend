@@ -37,20 +37,22 @@ import play.api.libs.json.{Json, OFormat}
 import utils.RowStatus
 
 case class Subscription(
-  domesticOrMne:             MneOrDomestic,
-  groupDetailStatus:         RowStatus,
-  accountingPeriod:          Option[AccountingPeriod] = None,
-  contactDetailsStatus:      RowStatus,
-  useContactPrimary:         Option[UseContactPrimary] = None,
-  primaryContactName:        Option[String] = None,
-  primaryContactEmail:       Option[String] = None,
-  primaryContactTelephone:   Option[String] = None,
-  secondaryContactName:      Option[String] = None,
-  secondaryContactEmail:     Option[String] = None,
-  contactByTelephone:        Option[ContactByTelephone] = None,
-  telephoneNumber:           Option[String] = None,
-  secondaryContactTelephone: Option[String] = None,
-  correspondenceAddress:     Option[SubscriptionAddress] = None
+  domesticOrMne:                MneOrDomestic,
+  groupDetailStatus:            RowStatus,
+  accountingPeriod:             Option[AccountingPeriod] = None,
+  contactDetailsStatus:         RowStatus,
+  useContactPrimary:            Option[UseContactPrimary] = None,
+  primaryContactName:           Option[String] = None,
+  primaryContactEmail:          Option[String] = None,
+  primaryContactTelephone:      Option[String] = None,
+  secondaryContactName:         Option[String] = None,
+  secondaryContactEmail:        Option[String] = None,
+  contactByTelephone:           Option[ContactByTelephone] = None,
+  telephoneNumber:              Option[String] = None,
+  addSecondaryContact:          Option[Boolean] = None,
+  secondaryTelephonePreference: Option[Boolean] = None,
+  secondaryContactTelephone:    Option[String] = None,
+  correspondenceAddress:        Option[SubscriptionAddress] = None
 )
 
 object Subscription {
