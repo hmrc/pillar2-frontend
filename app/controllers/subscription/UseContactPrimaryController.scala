@@ -55,7 +55,7 @@ class UseContactPrimaryController @Inject() (
     isPreviousPageDefined(request) match {
       case true =>
         isNfmRegisteredUK(request) match {
-          case true =>
+          case Some(false) =>
             request.userAnswers
               .get(SubscriptionPage)
               .fold(NotFound(notAvailable)) { reg =>
@@ -63,9 +63,9 @@ class UseContactPrimaryController @Inject() (
                   Ok(view(form.fill(data), mode, getName(request), getEmail(request), getPhoneNumber(request)))
                 )
               }
-          case false =>
+          case Some(true) =>
             isUpeRegisteredUK(request) match {
-              case true =>
+              case Some(false) =>
                 request.userAnswers
                   .get(SubscriptionPage)
                   .fold(NotFound(notAvailable)) { reg =>
@@ -73,7 +73,8 @@ class UseContactPrimaryController @Inject() (
                       Ok(view(form.fill(data), mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
                     )
                   }
-              case false => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
+              case Some(true) =>
+                Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
             }
         }
       case false => NotFound(notAvailable)
@@ -81,22 +82,22 @@ class UseContactPrimaryController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
+    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is not available"))
     form
       .bindFromRequest()
       .fold(
         formWithErrors =>
           isNfmRegisteredUK(request) match {
-            case true =>
+            case Some(true) =>
               Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
-            case false =>
+            case Some(false) =>
               Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
           },
         value =>
           value match {
             case true =>
               isNfmRegisteredUK(request) match {
-                case true =>
+                case Some(false) =>
                   for {
                     updatedAnswers <-
                       Future
@@ -116,7 +117,7 @@ class UseContactPrimaryController @Inject() (
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(routes.UnderConstructionController.onPageLoad)
-                case false =>
+                case Some(true) =>
                   for {
                     updatedAnswers <-
                       Future
@@ -193,21 +194,19 @@ class UseContactPrimaryController @Inject() (
         data.groupDetailStatus.toString == "Completed"
       }
 
-  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Option[Boolean] =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .map { nfm =>
+      .flatMap { nfm =>
         nfm.isNfmRegisteredInUK
       }
-      .isDefined
 
-  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Option[Boolean] =
     request.userAnswers
       .get(RegistrationPage)
       .map { upe =>
         upe.isUPERegisteredInUK
       }
-      .isDefined
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
