@@ -25,6 +25,7 @@ import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
@@ -36,7 +37,8 @@ class ContactCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   page_not_available:       ErrorTemplate,
-  view:                     ContactCheckYourAnswersView
+  view:                     ContactCheckYourAnswersView,
+  countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -63,8 +65,14 @@ class ContactCheckYourAnswersController @Inject() (
       ).flatten
     )
 
+    val address = SummaryListViewModel(
+      rows = Seq(
+        ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)
+      ).flatten
+    )
+
     if (isPreviousPagesDefined(request))
-      Ok(view(list, listSecondary))
+      Ok(view(list, listSecondary, address))
     else
       NotFound(notAvailable)
   }
