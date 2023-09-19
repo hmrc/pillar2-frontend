@@ -54,6 +54,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
     new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
+  val viewContactCaptureTelephoneDetails: ContactCaptureTelephoneDetailsView =
+    new ContactCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewContactNfmByTelephone: ContactNfmByTelephoneView =
     new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
@@ -198,6 +200,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewContactByTelephoneView: ContactByTelephoneView =
+    new ContactByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
     new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)

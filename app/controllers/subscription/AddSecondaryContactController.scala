@@ -54,7 +54,7 @@ class AddSecondaryContactController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val nfmData      = request.userAnswers.get(NominatedFilingMemberPage).fold(false)(data => data.isNFMnStatus == RowStatus.Completed)
+    val nfmData      = request.userAnswers.get(SubscriptionPage).fold(false)(data => data.groupDetailStatus == RowStatus.Completed)
     val contactName  = getContactName(request)
     nfmData match {
 
@@ -62,7 +62,7 @@ class AddSecondaryContactController @Inject() (
         request.userAnswers
           .get(SubscriptionPage)
           .fold(NotFound(notAvailable))(subs =>
-            subs.useContactPrimary
+            subs.addSecondaryContact
               .fold(Ok(view(form, contactName, mode)))(data => Ok(view(form.fill(data), contactName, mode)))
           )
       case false => NotFound(notAvailable)
@@ -130,11 +130,10 @@ class AddSecondaryContactController @Inject() (
 
   private def getContactName(request: DataRequest[AnyContent]): String =
     request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .flatMap { nfm =>
-        nfm.withoutIdRegData.flatMap { noId =>
-          noId.fmContactName
-        }
+      .get(SubscriptionPage)
+      .flatMap { subs =>
+        subs.primaryContactName
       }
       .getOrElse("")
+
 }

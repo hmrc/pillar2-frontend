@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package models.subscription
-
 /*
  * Copyright 2023 HM Revenue & Customs
  *
@@ -32,29 +30,33 @@ package models.subscription
  * limitations under the License.
  */
 
-import models.MneOrDomestic
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+package viewmodels.checkAnswers
 
-case class Subscription(
-  domesticOrMne:                MneOrDomestic,
-  groupDetailStatus:            RowStatus,
-  accountingPeriod:             Option[AccountingPeriod] = None,
-  contactDetailsStatus:         RowStatus,
-  useContactPrimary:            Option[Boolean] = None,
-  addSecondaryContact:          Option[Boolean] = None,
-  secondaryTelephonePreference: Option[Boolean] = None,
-  primaryContactName:           Option[String] = None,
-  primaryContactEmail:          Option[String] = None,
-  primaryContactTelephone:      Option[String] = None,
-  secondaryContactName:         Option[String] = None,
-  secondaryContactEmail:        Option[String] = None,
-  contactByTelephone:           Option[Boolean] = None,
-  telephoneNumber:              Option[String] = None,
-  secondaryContactTelephone:    Option[String] = None,
-  correspondenceAddress:        Option[SubscriptionAddress] = None
-)
+import models.{CheckMode, UserAnswers}
+import pages.SubscriptionPage
+import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
 
-object Subscription {
-  implicit val format: OFormat[Subscription] = Json.format[Subscription]
+object ContactByTelephoneSummary {
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(SubscriptionPage).map { answer =>
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(answer.contactByTelephone.toString)
+        )
+      )
+      SummaryListRowViewModel(
+        key = "contactByTelephone.checkYourAnswersLabel",
+        value = value,
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.subscription.routes.ContactByTelephoneController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
+        )
+      )
+    }
 }

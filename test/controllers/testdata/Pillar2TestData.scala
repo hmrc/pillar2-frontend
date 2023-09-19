@@ -113,6 +113,83 @@ trait Pillar2TestData {
       contactDetailsStatus = RowStatus.NotStarted,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
+
+  def validSubEmailData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    Boolean = false,
+    primaryContactName:   String = "Ashley Smith"
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName)
+    )
+
+  def validSubPhoneCaptureData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    Boolean = false,
+    primaryContactName:   String = "TestName",
+    contactByTelephone:   Boolean = false
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      contactByTelephone = Some(contactByTelephone)
+    )
+
+  def validSubData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    Boolean = false,
+    primaryContactName:   String = "Test Name",
+    primaryContactEmail:  String = "testEmail@email.com"
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      primaryContactEmail = Some(primaryContactEmail)
+    )
+
+  def validSubPhoneData(
+    domesticOrMne:        MneOrDomestic = MneOrDomestic.Uk,
+    groupDetailStatus:    RowStatus = RowStatus.Completed,
+    accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
+    contactDetailsStatus: RowStatus = RowStatus.InProgress,
+    useContactPrimary:    Boolean = false,
+    primaryContactName:   String = "Test Name",
+    primaryContactEmail:  String = "testEmail@email.com",
+    contactByTelephone:   Boolean = false
+  ) =
+    new Subscription(
+      domesticOrMne = domesticOrMne,
+      groupDetailStatus = groupDetailStatus,
+      accountingPeriod = Some(accountingPeriod),
+      contactDetailsStatus = contactDetailsStatus,
+      useContactPrimary = Some(useContactPrimary),
+      primaryContactName = Some(primaryContactName),
+      primaryContactEmail = Some(primaryContactEmail),
+      contactByTelephone = Some(contactByTelephone)
+    )
+
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(
     nfmConfirmation = true,
     isNfmRegisteredInUK = Some(false),
@@ -137,6 +214,44 @@ trait Pillar2TestData {
     )
   )
 
+  def validNoIdRegDataforSub(
+    isUPERegisteredInUK:   Boolean = false,
+    isRegistrationStatus:  RowStatus = RowStatus.Completed,
+    upeNameRegistration:   String = "Test Name",
+    upeContactName:        Option[String] = Some("TestName"),
+    contactUpeByTelephone: Option[Boolean] = Some(true),
+    telephoneNumber:       Option[String] = Some("1234567"),
+    emailAddress:          Option[String] = Some("test@test.com"),
+    addressLine1:          String = "Line1",
+    addressLine2:          Option[String] = Some("Line2"),
+    addressLine3:          String = "Line3",
+    addressLine4:          Option[String] = Some("Line4"),
+    postalCode:            Option[String] = Some("VR11 3PA"),
+    countryCode:           String = "GB"
+  ) =
+    new Registration(
+      isUPERegisteredInUK = isUPERegisteredInUK,
+      isRegistrationStatus = isRegistrationStatus,
+      withoutIdRegData = Some(
+        WithoutIdRegData(
+          upeNameRegistration = upeNameRegistration,
+          upeContactName = upeContactName,
+          contactUpeByTelephone = contactUpeByTelephone,
+          telephoneNumber = telephoneNumber,
+          emailAddress = emailAddress,
+          upeRegisteredAddress = Some(
+            UpeRegisteredAddress(
+              addressLine1 = addressLine1,
+              addressLine2 = addressLine2,
+              addressLine3 = addressLine3,
+              addressLine4 = addressLine4,
+              postalCode = postalCode,
+              countryCode = countryCode
+            )
+          )
+        )
+      )
+    )
   def validNoIdRegData(
     isUPERegisteredInUK:   Boolean = false,
     isRegistrationStatus:  RowStatus = RowStatus.InProgress,
@@ -193,6 +308,22 @@ trait Pillar2TestData {
       withoutIdRegData = withoutIdRegData
     )
 
+  def validSubscriptionData(
+  ) =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.InProgress
+    )
+
+  def validSubscriptionDataWithUsePrimaryName(
+  ) =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.Completed,
+      useContactPrimary = Some(false),
+      contactDetailsStatus = RowStatus.InProgress
+    )
   def validNoIdFmData(
     nfmConfirmation:       Boolean = true,
     isNfmRegisteredInUK:   Option[Boolean] = None,
@@ -282,6 +413,13 @@ trait Pillar2TestData {
   def validNoIdNfmData = new FilingMember(
     true,
     Some(false),
+    isNFMnStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
+  )
+
+  def validYesIdNfmData = new FilingMember(
+    true,
+    Some(true),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )

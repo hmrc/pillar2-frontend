@@ -35,18 +35,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new UpeNameRegistrationFormProvider()
 
-  def controller(): UpeNameRegistrationController =
-    new UpeNameRegistrationController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewUPENameRegistration
-    )
-
   "UpeNameRegistration Controller" must {
 
     "must return OK and the correct view for a GET" in {
@@ -74,7 +62,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val userAnswer = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData).success.value
+      val userAnswer = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

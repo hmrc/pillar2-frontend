@@ -83,7 +83,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "asd", NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), "asd", NormalMode)(
           request,
           appConfig(application),
           messages(application)
