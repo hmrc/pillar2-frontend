@@ -23,7 +23,7 @@
 )
 
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList,listSecondary: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -31,7 +31,7 @@
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
-
+    @govukSummaryList(listSecondary)
 
     <br>
     @govukButton(

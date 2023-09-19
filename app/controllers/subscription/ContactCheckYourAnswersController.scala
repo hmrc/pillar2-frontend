@@ -53,12 +53,8 @@ class ContactCheckYourAnswersController @Inject() (
       ).flatten
     )
 
-    val listWithSecondaryContact = SummaryListViewModel(
+    val listSecondary = SummaryListViewModel(
       rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers),
         AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
@@ -68,7 +64,7 @@ class ContactCheckYourAnswersController @Inject() (
     )
 
     if (isPreviousPagesDefined(request))
-      Ok(view(listWithSecondaryContact))
+      Ok(view(list, listSecondary))
     else
       NotFound(notAvailable)
   }
