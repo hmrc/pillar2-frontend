@@ -117,7 +117,7 @@ class ContactByTelephoneController @Inject() (
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
           }
       )
   }

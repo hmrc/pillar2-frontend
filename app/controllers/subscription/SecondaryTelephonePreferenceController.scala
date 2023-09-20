@@ -73,30 +73,38 @@ class SecondaryTelephonePreferenceController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          request.userAnswers
-            .get(SubscriptionPage)
-            .map { subs =>
-              val subsData = Subscription(
-                domesticOrMne = subs.domesticOrMne,
-                groupDetailStatus = subs.groupDetailStatus,
-                contactDetailsStatus = subs.contactDetailsStatus,
-                accountingPeriod = subs.accountingPeriod,
-                primaryContactName = subs.primaryContactName,
-                primaryContactEmail = subs.primaryContactEmail,
-                primaryContactTelephone = subs.primaryContactTelephone,
-                useContactPrimary = subs.useContactPrimary,
-                secondaryContactName = subs.secondaryContactName,
-                secondaryContactEmail = subs.secondaryContactEmail,
-                secondaryTelephonePreference = Some(value),
-                secondaryContactTelephone = subs.secondaryContactTelephone
-              )
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryContactTelephone = subs.secondaryContactTelephone)))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
-            }
-            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+          value match {
+            case true =>
+              request.userAnswers
+                .get(SubscriptionPage)
+                .map { subs =>
+                  val subsData = request.userAnswers
+                    .get(SubscriptionPage)
+                    .getOrElse(throw new Exception("no subcription data found for secondary or primary contact"))
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryTelephonePreference = Some(value))))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
+                }
+                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+            case false =>
+              request.userAnswers
+                .get(SubscriptionPage)
+                .map { subs =>
+                  val subsData = request.userAnswers
+                    .get(SubscriptionPage)
+                    .getOrElse(throw new Exception("no subcription data found for secondary or primary contact"))
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryTelephonePreference = Some(value))))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                }
+                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+          }
       )
   }
 

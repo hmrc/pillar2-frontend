@@ -77,17 +77,9 @@ class SecondaryContactNameController @Inject() (
           request.userAnswers
             .get(SubscriptionPage)
             .map { subs =>
-              val domesticOrMne = subs.domesticOrMne
               val subsData = request.userAnswers
                 .get(SubscriptionPage)
-                .getOrElse(
-                  Subscription(
-                    domesticOrMne = domesticOrMne,
-                    groupDetailStatus = RowStatus.Completed,
-                    contactDetailsStatus = RowStatus.InProgress,
-                    secondaryContactName = Some(value)
-                  )
-                )
+                .getOrElse(throw new Exception("no subscription data found for primary contact"))
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryContactName = Some(value))))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

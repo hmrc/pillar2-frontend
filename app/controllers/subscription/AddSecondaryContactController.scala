@@ -82,21 +82,11 @@ class AddSecondaryContactController @Inject() (
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { sub =>
-                  val domesticOrMne = sub.domesticOrMne
+                  val subsData =
+                    request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Primary details not available"))
                   for {
-                    updatedAnswers <-
-                      Future.fromTry(
-                        request.userAnswers.set(
-                          SubscriptionPage,
-                          Subscription(
-                            domesticOrMne = domesticOrMne,
-                            groupDetailStatus = RowStatus.Completed,
-                            useContactPrimary = Some(value),
-                            contactDetailsStatus = RowStatus.InProgress
-                          )
-                        )
-                      )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.SecondaryContactNameController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
@@ -105,25 +95,15 @@ class AddSecondaryContactController @Inject() (
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { sub =>
-                  val domesticOrMne = sub.domesticOrMne
+                  val subsData =
+                    request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Primary details not available"))
                   for {
                     updatedAnswers <-
-                      Future.fromTry(
-                        request.userAnswers.set(
-                          SubscriptionPage,
-                          Subscription(
-                            domesticOrMne = domesticOrMne,
-                            groupDetailStatus = RowStatus.Completed,
-                            useContactPrimary = Some(value),
-                            contactDetailsStatus = RowStatus.InProgress
-                          )
-                        )
-                      )
+                      Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(routes.UnderConstructionController.onPageLoad)
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-
           }
       )
   }

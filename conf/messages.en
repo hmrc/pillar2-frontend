@@ -448,28 +448,28 @@ contactCaptureTelephoneDetails.error.required = You need to enter the telephone 
 contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
-addSecondaryContact.title = addSecondaryContact
+addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group's management of Pillar 2 top-up tax
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
 addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
-addSecondaryContact.error.required = Select yes if addSecondaryContact
+addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.change.hidden = AddSecondaryContact
 
-secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
-secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
+secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 secondaryContactName.checkYourAnswersLabel = Secondary Contact
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
-secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.error.length = The name of the contact person or team should be 105 characters or less
 secondaryContactName.change.hidden = SecondaryContactName
 
 secondaryContactEmail.title =What is the email address for {0}?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Email Address
-secondaryContactEmail.hint = We will use this to confirm your records
+secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes
 secondaryContactEmail.error.required = You need to enter the email address for {0}
-secondaryContactEmail.error.length = The email address should be 132 characters or less
+secondaryContactEmail.error.length = The email address should be 160 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 secondaryContactEmail.change.hidden = SecondaryContactEmail
 
