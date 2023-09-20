@@ -80,7 +80,8 @@ class NfmNameRegistrationController @Inject() (
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
                                   NominatedFilingMemberPage,
-                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)))
+                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)),
+                                  orgType = None, withIdRegData = None)
                                 )
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
