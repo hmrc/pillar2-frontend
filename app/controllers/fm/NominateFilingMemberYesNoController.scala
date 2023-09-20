@@ -89,13 +89,10 @@ class NominateFilingMemberYesNoController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
             case false =>
-              val fmData = request.userAnswers
-                .get(NominatedFilingMemberPage)
-                .getOrElse(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(NominatedFilingMemberPage, fmData.copy(nfmConfirmation = value))
+                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.TaskListController.onPageLoad)
