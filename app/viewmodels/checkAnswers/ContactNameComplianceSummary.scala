@@ -16,26 +16,31 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import pages.SubscriptionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object GroupAccountingPeriodStartDateSummary {
-  val dateHelper = new ViewHelpers()
+object ContactNameComplianceSummary {
+
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => dateHelper.formatDateGDS(data.startDate)))
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(answer.primaryContactName.toString)
+        )
+      )
       SummaryListRowViewModel(
-        key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate))
-      ).withCssClass("no-border-bottom")
-
+        key = "contactNameCompliance.checkYourAnswersLabel",
+        value = value,
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.subscription.routes.ContactNameComplianceController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
+        )
+      )
     }
-
 }
