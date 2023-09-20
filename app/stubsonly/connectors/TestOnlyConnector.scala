@@ -52,7 +52,7 @@ class TestOnlyConnector @Inject() (
       s"$pillar2Url/get-all"
     )
 
-  def upsertRecord(id: String, data: JsValue)(implicit hc: HeaderCarrier): Future[Unit] =
+  def upsertRecord(id: String, data: JsValue)(implicit hc: HeaderCarrier): Future[Unit] = {
     httpClient
       .POST[JsValue, HttpResponse](s"$pillar2Url/upsertRecord/$id", data)
       .map { response =>
@@ -71,6 +71,7 @@ class TestOnlyConnector @Inject() (
             throw new RuntimeException(errorMessage)
         }
       }
+  }
 
   def deEnrol(groupId: String, pillar2Reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET(
