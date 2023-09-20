@@ -77,13 +77,13 @@ class NominateFilingMemberYesNoController @Inject() (
             case true =>
               val fmData = request.userAnswers
                 .get(NominatedFilingMemberPage)
-                .getOrElse(FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.InProgress))
+                .getOrElse(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      fmData.copy()
+                      fmData.copy(nfmConfirmation = value)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -91,11 +91,11 @@ class NominateFilingMemberYesNoController @Inject() (
             case false =>
               val fmData = request.userAnswers
                 .get(NominatedFilingMemberPage)
-                .getOrElse(FilingMember(nfmConfirmation = false, isNFMnStatus = RowStatus.Completed))
+                .getOrElse(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(NominatedFilingMemberPage, fmData.copy())
+                    request.userAnswers.set(NominatedFilingMemberPage, fmData.copy(nfmConfirmation = value))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.TaskListController.onPageLoad)
