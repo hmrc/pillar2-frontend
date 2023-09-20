@@ -81,7 +81,9 @@ class UpeNameRegistrationController @Inject() (
                       Registration(
                         isUPERegisteredInUK = false,
                         isRegistrationStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value))
+                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value)),
+                        withIdRegData = None,
+                        orgType = None
                       )
                     )
                   )

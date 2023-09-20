@@ -71,8 +71,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
                   .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
 
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value)))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value, withoutIdRegData = None)))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
 
@@ -83,8 +84,11 @@ class UPERegisteredInUKConfirmationController @Inject() (
                   .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
 
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value)))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(RegistrationPage, regData.copy(isUPERegisteredInUK = value, withIdRegData = None, orgType = None))
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
           }

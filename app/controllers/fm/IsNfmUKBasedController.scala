@@ -85,7 +85,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(isNfmRegisteredInUK = Some(value))
+                          regData.copy(isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -102,7 +102,7 @@ class IsNfmUKBasedController @Inject() (
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      regData.copy(isNfmRegisteredInUK = Some(value))
+                      regData.copy(isNfmRegisteredInUK = Some(value), withIdRegData = None, orgType = None)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
