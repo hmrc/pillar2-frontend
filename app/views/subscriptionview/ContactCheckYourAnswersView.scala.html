@@ -25,19 +25,19 @@
 
 @(list: SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 
-    <span class="govuk-caption-l">@messages("checkYourAnswers.nfm.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+    <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
+    <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
-
+@listSecondary.rows.length
     @if(listSecondary.rows.length!=0){
-        <h2 class="govuk-heading-m">Second contact</h2>
+        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
         @govukSummaryList(listSecondary)
       }
     @if(address.rows.length!=0){
-        <h2 class="govuk-heading-m">Contact address</h2>
+        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)
     }
 

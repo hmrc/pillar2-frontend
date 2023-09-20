@@ -30,7 +30,7 @@ import views.html.fmview.{FilingMemberCheckYourAnswersView, IsNFMUKBasedView, Nf
 import views.html.fmview.{ContactNfmByTelephoneView, IsNFMUKBasedView, NfmCaptureTelephoneDetailsView, NfmContactNameView, NfmEmailAddressView, NfmNameRegistrationView, NfmRegisteredAddressView, NominateFilingMemberYesNoView}
 import views.html.fmview._
 import views.html.registrationview._
-import views.html.subscriptionview.{ContactByTelephoneView, ContactCaptureTelephoneDetailsView, GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
+import views.html.subscriptionview.{ContactByTelephoneView, ContactCaptureTelephoneDetailsView, ContactCheckYourAnswersView, GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
@@ -195,6 +195,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
     new FilingMemberCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+  val viewContactCheckYourAnswers: ContactCheckYourAnswersView =
+    new ContactCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 

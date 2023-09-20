@@ -466,7 +466,13 @@ secondaryContactName.change.hidden = the second contact name
 secondaryContactEmail.change.hidden = the second contact email address
 secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact provided by telephone
 secondaryTelephone.change.hidden = the telephone number for the second contact
+contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
+contactCheckYourAnswers.heading = Check your answers
+contactCheckYourAnswers.title = Check your answers
+contactCheckYourAnswers.heading.caption = Contact details
+contactCheckYourAnswers.second = Second contact
+contactCheckYourAnswers.address = Contact address
 
 
 

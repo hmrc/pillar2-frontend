@@ -19,7 +19,7 @@ package controllers.testdata
 import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.subscription.{AccountingPeriod, ContactByTelephone, Subscription}
+import models.subscription.{AccountingPeriod, ContactByTelephone, Subscription, SubscriptionAddress}
 import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
 import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UseContactPrimary, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
@@ -107,6 +107,56 @@ trait Pillar2TestData {
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")))
     )
 
+  def ContactCheckAnswerWithSecondaryContactData() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.InProgress,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
+      useContactPrimary = Some(UseContactPrimary.Yes),
+      primaryContactName = Some("Test Contact Name"),
+      primaryContactEmail = Some("Test@test.com"),
+      contactByTelephone = Some(ContactByTelephone.Yes),
+      telephoneNumber = Some("1234567789"),
+      addSecondaryContact = Some(true),
+      secondaryContactName = Some("second Test name"),
+      secondaryContactEmail = Some("secondemail@test.com"),
+      secondaryTelephonePreference = Some(true),
+      secondaryContactTelephone = Some("1234554221"),
+      correspondenceAddress = Some(
+        new SubscriptionAddress(
+          addressLine1 = "ad1",
+          addressLine2 = Some("ad2"),
+          addressLine3 = "newcastle",
+          addressLine4 = Some("northeast"),
+          postalCode = Some("NE5 2DH"),
+          countryCode = "BB"
+        )
+      )
+    )
+
+  def primaryContactCheckAnswerData() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.InProgress,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
+      useContactPrimary = Some(UseContactPrimary.Yes),
+      primaryContactName = Some("Test Contact Name"),
+      primaryContactEmail = Some("Test@test.com"),
+      contactByTelephone = Some(ContactByTelephone.Yes),
+      telephoneNumber = Some("1234567789"),
+      correspondenceAddress = Some(
+        new SubscriptionAddress(
+          addressLine1 = "ad1",
+          addressLine2 = Some("ad2"),
+          addressLine3 = "newcastle",
+          addressLine4 = Some("northeast"),
+          postalCode = Some("NE5 2DH"),
+          countryCode = "BB"
+        )
+      )
+    )
   def subCheckAnswerDataUkAndOther() =
     new Subscription(
       domesticOrMne = MneOrDomestic.UkAndOther,

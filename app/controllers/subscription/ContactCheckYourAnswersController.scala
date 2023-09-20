@@ -55,15 +55,20 @@ class ContactCheckYourAnswersController @Inject() (
       ).flatten
     )
 
-    val listSecondary = SummaryListViewModel(
-      rows = Seq(
-        AddSecondaryContactSummary.row(request.userAnswers),
-        SecondaryContactNameSummary.row(request.userAnswers),
-        SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    )
+    val listSecondary = isSecondContactDefined(request) match {
+      case true =>
+        SummaryListViewModel(
+          rows = Seq(
+            AddSecondaryContactSummary.row(request.userAnswers),
+            SecondaryContactNameSummary.row(request.userAnswers),
+            SecondaryContactEmailSummary.row(request.userAnswers),
+            SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+            SecondaryTelephoneSummary.row(request.userAnswers)
+          ).flatten
+        )
+      case false =>
+        SummaryListViewModel(rows = Seq())
+    }
 
     val address = SummaryListViewModel(
       rows = Seq(
@@ -80,8 +85,12 @@ class ContactCheckYourAnswersController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        (data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther) &&
+        ((data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther)) &&
         data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)
       }
 
+  private def isSecondContactDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold(false)((data => data.addSecondaryContact.fold(false)(contact => contact)))
 }
