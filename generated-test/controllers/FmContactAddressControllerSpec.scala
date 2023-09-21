@@ -3,6 +3,7 @@ package controllers
 import base.SpecBase
 import forms.FmContactAddressFormProvider
 import models.{NormalMode, UserAnswers}
+<<<<<<<< HEAD:generated-test/controllers/FmContactAddressControllerSpec.scala
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -16,6 +17,12 @@ import repositories.SessionRepository
 import views.html.FmContactAddressView
 
 import scala.concurrent.Future
+========
+import pages.CaptureContactAddressPage
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import views.html.subscriptionview.CaptureContactAddressView
+>>>>>>>> c9f044c (PIL-416: add code for contact address page):test/controllers/CaptureContactAddressControllerSpec.scala
 
 class FmContactAddressControllerSpec extends SpecBase {
 
@@ -41,7 +48,11 @@ class FmContactAddressControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+<<<<<<<< HEAD:generated-test/controllers/FmContactAddressControllerSpec.scala
         val request = FakeRequest(GET, routes.FmContactAddressController.onPageLoad(NormalMode).url)
+========
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>>> c9f044c (PIL-416: add code for contact address page):test/controllers/CaptureContactAddressControllerSpec.scala
 
         val result = route(application, request).value
 
@@ -59,9 +70,13 @@ class FmContactAddressControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+<<<<<<<< HEAD:generated-test/controllers/FmContactAddressControllerSpec.scala
         val request = FakeRequest(GET, routes.FmContactAddressController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[FmContactAddressView]
+========
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>>> c9f044c (PIL-416: add code for contact address page):test/controllers/CaptureContactAddressControllerSpec.scala
 
         val result = route(application, request).value
 
@@ -78,7 +93,11 @@ class FmContactAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request =
+<<<<<<<< HEAD:generated-test/controllers/FmContactAddressControllerSpec.scala
           FakeRequest(POST, routes.FmContactAddressController.onPageLoad(NormalMode).url)
+========
+          FakeRequest(POST, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+>>>>>>>> c9f044c (PIL-416: add code for contact address page):test/controllers/CaptureContactAddressControllerSpec.scala
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
