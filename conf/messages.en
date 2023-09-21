@@ -453,3 +453,10 @@ captureContactAddress.inset.text = 72 Guild Street Berlin SE23 6FH Germany?
 captureContactAddress.checkYourAnswersLabel = captureContactAddress
 captureContactAddress.error.required = Select yes if captureContactAddress
 captureContactAddress.change.hidden = CaptureContactAddress
+
+fmContactAddress.heading.caption = Contact details
+fmContactAddress.title = What address do you want to use as the filing member's contact address?
+fmContactAddress.heading = What address do you want to use as the filing member's contact address?
+fmContactAddress.checkYourAnswersLabel = fmContactAddress
+fmContactAddress.error.required = Select yes if fmContactAddress
+fmContactAddress.change.hidden = FmContactAddress
