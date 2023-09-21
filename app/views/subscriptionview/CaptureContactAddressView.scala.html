@@ -30,18 +30,22 @@
 
 @layout(pageTitle = title(form, messages("captureContactAddress.title"))) {
 
-    @formHelper(action = routes.CaptureContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.routes.CaptureContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
         <span class="govuk-caption-l">@messages("captureContactAddress.heading.caption")</span>
+        <h1 class="govuk-heading-l">@messages("captureContactAddress.heading")</h1>
+        <div class="govuk-inset-text">
+            <p class="govuk-body">@messages("captureContactAddress.inset.text")</p>
+        </div>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("captureContactAddress.heading")).asPageHeading(Large)
             )
-            )
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
