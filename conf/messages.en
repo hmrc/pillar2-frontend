@@ -421,9 +421,6 @@ contactNameCompliance.error.required = Enter name of the person of team we shoul
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
 
-
-
-
 contactEmailAddress.heading.caption = Contact details
 contactEmailAddress.title = What is the email address for {0}?
 contactEmailAddress.heading = What is the email address for {0}?
@@ -452,6 +449,7 @@ contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telep
 captureContactAddress.heading.caption = Contact details
 captureContactAddress.title = Do you want to use this registered address as the contact address?
 captureContactAddress.heading = Do you want to use this registered address as the contact address?
+captureContactAddress.inset.text = 72 Guild Street Berlin SE23 6FH Germany?
 captureContactAddress.checkYourAnswersLabel = captureContactAddress
 captureContactAddress.error.required = Select yes if captureContactAddress
 captureContactAddress.change.hidden = CaptureContactAddress

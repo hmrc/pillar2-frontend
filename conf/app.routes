@@ -174,12 +174,12 @@ GET         /contact-details/change-input-name                controllers.subscr
 POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /further-details/check-answers                        controllers.subscription.SubCheckYourAnswersController.onPageLoad
+GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
 
-GET        /contact-details/address/use-address                  controllers.CaptureContactAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/address/use-address                  controllers.CaptureContactAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-contact-details/address/use-address           controllers.CaptureContactAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /contact-details/address/use-address                  controllers.subscription.CaptureContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/address/use-address                  controllers.subscription.CaptureContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-contact-details/address/use-address           controllers.subscription.CaptureContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-contact-details/address/use-address           controllers.subscription.CaptureContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
