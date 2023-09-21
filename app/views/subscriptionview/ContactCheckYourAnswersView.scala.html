@@ -31,7 +31,6 @@
     <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
-@listSecondary.rows.length
     @if(listSecondary.rows.length!=0){
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
         @govukSummaryList(listSecondary)

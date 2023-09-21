@@ -439,7 +439,7 @@ contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = the first contact name
+contactByTelephone.change.hidden = your response to whether we can contact the first contact provided by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
