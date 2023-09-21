@@ -474,6 +474,11 @@ contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
+GrsReturn.Upe.CompanyName.checkYourAnswersLabel = Company
+GrsReturn.Upe.CompanyReg.checkYourAnswersLabel = Company Registration Number
+GrsReturn.Upe.CompanyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+checkYourAnswers.heading.caption = Review and submit
+CheckYourAnswers.upe = Ultimate parent
 
 
 
