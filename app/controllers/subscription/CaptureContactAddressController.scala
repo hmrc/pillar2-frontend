@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.CaptureContactAddressFormProvider
+
 import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
 import models.subscription.common.UpeCorrespAddressDetails
@@ -40,6 +41,7 @@ import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.CaptureContactAddressView
 import play.api.libs.json._
 
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,10 +51,12 @@ class CaptureContactAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              CaptureContactAddressFormProvider,
+
   page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CaptureContactAddressView,
   subscriptionService:       SubscriptionService
+
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -169,6 +173,7 @@ class CaptureContactAddressController @Inject() (
       postCode,
       countryCode
     )
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -297,4 +302,5 @@ class CaptureContactAddressController @Inject() (
     val registration = request.userAnswers.get(RegistrationPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
   }
+
 }
