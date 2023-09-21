@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import controllers.subscription.CaptureContactAddressController
 import forms.CaptureContactAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

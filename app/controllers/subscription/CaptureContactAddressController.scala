@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.subscription
 
-import controllers.actions._
-import forms.CaptureContactAddressFormProvider
-import connectors.UserAnswersConnectors
 import config.FrontendAppConfig
-import javax.inject.Inject
+import connectors.UserAnswersConnectors
+import controllers.actions._
+import controllers.routes
+import forms.CaptureContactAddressFormProvider
 import models.Mode
 import pages.CaptureContactAddressPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.CaptureContactAddressView
+import views.html.subscriptionview.CaptureContactAddressView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureContactAddressController @Inject() (
