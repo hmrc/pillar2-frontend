@@ -34,7 +34,7 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionAddress(
+case class FmContactAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
@@ -42,6 +42,6 @@ case class SubscriptionAddress(
   postalCode:   Option[String],
   countryCode:  String
 )
-object SubscriptionAddress {
-  implicit val format: OFormat[SubscriptionAddress] = Json.format[SubscriptionAddress]
+object FmContactAddress {
+  implicit val format: OFormat[FmContactAddress] = Json.format[FmContactAddress]
 }

@@ -14,18 +14,20 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import viewmodels.InputWidth._
+@import config.FrontendAppConfig
+@import utils.InputOption
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukSelect: GovukSelect
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("fmContactAddress.title"))) {
 
@@ -35,12 +37,63 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        <span class="govuk-caption-l">@messages("fmContactAddress.heading.caption")</span>
+        <h1 class="govuk-heading-l long-word">@messages("fmContactAddress.heading")</h1>
+
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("fmContactAddress.heading")).asPageHeading()
+                field = form("addressLine1"),
+                label = LabelViewModel(messages("fmContactAddress.addressLine1"))
             )
-            .withWidth(Full)
+            .withWidth(TwoThirds)
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine2"),
+                label = LabelViewModel(messages("fmContactAddress.addressLine2"))
+            )
+            .withWidth(TwoThirds)
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine3"),
+                label = LabelViewModel(messages("fmContactAddress.town_city"))
+            )
+            .withWidth(TwoThirds)
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine4"),
+                label = LabelViewModel(messages("fmContactAddress.region"))
+            )
+            .withWidth(TwoThirds)
+        )
+        @govukInput(
+            InputViewModel(
+                field = form("postalCode"),
+                label = LabelViewModel(messages("fmContactAddress.postcode"))
+            )
+            .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("fmContactAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
+        )
+
+        @govukSelect(
+            SelectViewModel(
+                field = form("countryCode"),
+                items = Seq(SelectItem(value = Some(""))) ++
+                options.map(valueOption =>
+                    SelectItem(
+                    value = Some(valueOption.value),
+                    text = valueOption.label
+                    )
+                ),
+                label = LabelViewModel(messages("nfmRegisteredAddress.country"))
+            ).withCssClass("govuk-input")
+            .withFormGroupClasses("govuk-input--width-20")
+            .withHint(Hint(content = Text(messages("nfmRegisteredAddress.country.hint"))))
         )
 
         @govukButton(
