@@ -16,16 +16,40 @@
 
 package forms
 
+import forms.mappings.Mappings
+import models.subscription.FmContactAddress
+import play.api.data.Form
+import play.api.data.Forms.{mapping, optional}
+
 import javax.inject.Inject
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
 class FmContactAddressFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("fmContactAddress.error.required")
-        .verifying(maxLength(200, "fmContactAddress.error.length"))
-    )
+  private val textLength = 35
+  def apply(): Form[FmContactAddress] = Form(
+    mapping(
+      "addressLine1" ->
+        text("fmContactAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(textLength, "fmContactAddress.messages.error.addressLine1.length")),
+      "addressLine2" -> optional(
+        text("")
+          .verifying(maxLength(textLength, "fmContactAddress.messages.error.addressLine2.length"))
+      ),
+      "addressLine3" ->
+        text("fmContactAddress.town_city.error.required")
+          .verifying(maxLength(textLength, "fmContactAddress.town_city.error.length")),
+      "addressLine4" ->
+        optional(
+          text("")
+            .verifying(maxLength(textLength, "fmContactAddress.region.error.length"))
+        ),
+      "postalCode" ->
+        optional(
+          text("")
+            .verifying(maxLength(textLength, "fmContactAddress.region.error.length"))
+        ),
+      "countryCode" ->
+        text("fmContactAddress.country.error.required")
+          .verifying(maxLength(textLength, "fmContactAddress.country.error.length"))
+    )(FmContactAddress.apply)(FmContactAddress.unapply)
+  )
 }

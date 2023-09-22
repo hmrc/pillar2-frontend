@@ -22,12 +22,16 @@ import controllers.actions._
 import controllers.routes
 import forms.FmContactAddressFormProvider
 import models.Mode
-import pages.FmContactAddressPage
+import models.subscription.FmContactAddress
+import pages.SubscriptionPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
+import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.FmContactAddressView
 
 import javax.inject.Inject
@@ -39,33 +43,42 @@ class FmContactAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              FmContactAddressFormProvider,
+  CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      FmContactAddressView
+  view:                      FmContactAddressView,
+  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
+  val form: Form[FmContactAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(FmContactAddressPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
-    Ok(view(preparedForm, mode))
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold(NotFound(notAvailable)) { reg =>
+        reg.fmContactAddress.fold(NotFound(notAvailable))((address => Ok(view(form.fill(address), mode, countryList))))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
+        value => {
+          val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(FmContactAddressPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(SubscriptionPage, regData.copy(fmContactAddress = Some(value)))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
+        }
       )
   }
 }
