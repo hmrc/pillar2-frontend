@@ -16,8 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import models.UserAnswers
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,11 +25,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object GrsReturnIncorporatedEntityCompanyUtrUprSummary {
+object EntityTypeIncorporatedCompanyUtrNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(RegistrationPage)
+      .get(NominatedFilingMemberPage)
       .flatMap { reg =>
         reg.withIdRegData.map { withoutId =>
           withoutId.incorporatedEntityRegistrationData.map { answer =>

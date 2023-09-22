@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.MneOrDomestic
 import models.requests.DataRequest
-import pages.{RegistrationPage, SubscriptionPage}
+import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,22 +47,21 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
-    println("*******************************************" + isUpeWithIdDefined(request))
     val listUpe = (isUpeWithIdDefined(request), isIncorporatedEntityDefined(request)) match {
       case (true, true) =>
         SummaryListViewModel(
           rows = Seq(
-            GrsReturnIncorporatedEntityCompanyNameUprSummary.row(request.userAnswers),
-            GrsReturnIncorporatedEntityCompanyRegUprSummary.row(request.userAnswers),
-            GrsReturnIncorporatedEntityCompanyUtrUprSummary.row(request.userAnswers)
+            EntityTypeIncorporatedCompanyNameUprSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyRegUprSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyUtrUprSummary.row(request.userAnswers)
           ).flatten
         )
       case (true, false) =>
         SummaryListViewModel(
           rows = Seq(
-            GrsReturnPartnershipEntityCompanyNameUprSummary.row(request.userAnswers),
-            GrsReturnPartnershipEntityCompanyRegUprSummary.row(request.userAnswers),
-            GrsReturnPartnershipEntityCompanyUtrUprSummary.row(request.userAnswers)
+            EntityTypePartnershipCompanyNameUprSummary.row(request.userAnswers),
+            EntityTypePartnershipCompanyRegUprSummary.row(request.userAnswers),
+            EntityTypePartnershipCompanyUtrUprSummary.row(request.userAnswers)
           ).flatten
         )
       case (_, _) =>
@@ -77,14 +76,34 @@ class CheckYourAnswersController @Inject() (
         )
     }
 
-    val listNfm = SummaryListViewModel(
-      rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-      ).flatten
-    )
+    val listNfm = (isNfmWithIdDefined(request), isIncorporatedEntityNfmDefined(request)) match {
+      case (true, true) =>
+        SummaryListViewModel(
+          rows = Seq(
+            EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers)
+          ).flatten
+        )
+      case (true, false) =>
+        SummaryListViewModel(
+          rows = Seq(
+            EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
+            EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
+            EntityTypePartnershipCompanyUtrNfmSummary.row(request.userAnswers)
+          ).flatten
+        )
+      case (_, _) =>
+        SummaryListViewModel(rows =
+          Seq(
+            NfmNameRegistrationSummary.row(request.userAnswers),
+            NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
+            NfmContactNameSummary.row(request.userAnswers),
+            NfmEmailAddressSummary.row(request.userAnswers),
+            NfmTelephonePreferenceSummary.row(request.userAnswers)
+          ).flatten
+        )
+    }
 
     val listPrimary = SummaryListViewModel(
       rows = Seq(
@@ -116,7 +135,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     )
 
-    if (!isPreviousPagesDefined(request))
+    if (isPreviousPagesDefined(request))
       Ok(view(listUpe, listNfm, listPrimary, listSecondary, address))
     else
       NotFound(notAvailable)
@@ -148,4 +167,19 @@ class CheckYourAnswersController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false)((data => data.addSecondaryContact.fold(false)(contact => contact)))
+
+  private def isNfmWithIdDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false) { data =>
+        data.withIdRegData.isDefined && data.isNfmRegisteredInUK.fold(false)(name => name.toString == "yes")
+      }
+
+  private def isIncorporatedEntityNfmDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .fold(false) { data =>
+        data.withIdRegData.fold(false)(data => data.incorporatedEntityRegistrationData.isDefined)
+      }
+
 }

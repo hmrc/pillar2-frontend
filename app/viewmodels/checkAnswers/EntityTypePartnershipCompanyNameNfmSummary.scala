@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,11 +25,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object GrsReturnPartnershipEntityCompanyNameUprSummary {
+object EntityTypePartnershipCompanyNameNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(RegistrationPage)
+      .get(NominatedFilingMemberPage)
       .flatMap { reg =>
         reg.withIdRegData.map { withoutId =>
           withoutId.partnershipEntityRegistrationData.map { answer =>
@@ -38,7 +38,7 @@ object GrsReturnPartnershipEntityCompanyNameUprSummary {
               key = "GrsReturn.Upe.CompanyName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("GrsReturn.Upe.change.hidden"))
               )
             )

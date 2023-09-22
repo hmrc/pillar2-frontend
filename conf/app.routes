@@ -102,7 +102,6 @@ GET         /unauthorised                                                       
 GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
-
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
