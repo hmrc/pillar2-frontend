@@ -58,8 +58,8 @@ class FmContactAddressController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(NotFound(notAvailable)) { reg =>
-        reg.fmContactAddress.fold(NotFound(notAvailable))((address => Ok(view(form.fill(address), mode, countryList))))
+      .fold(NotFound(notAvailable)) { sub =>
+        sub.fmContactAddress.fold(Ok(view(form, mode, countryList)))((address => Ok(view(form.fill(address), mode, countryList))))
       }
   }
 
@@ -69,12 +69,12 @@ class FmContactAddressController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
         value => {
-          val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
+          val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is FM not subscribed in UK"))
           for {
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(SubscriptionPage, regData.copy(fmContactAddress = Some(value)))
+                  .set(SubscriptionPage, subData.copy(fmContactAddress = Some(value)))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
