@@ -20,8 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.fm.FilingMember
-import models.{MandatoryInformationMissingError, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UserAnswers}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,11 +27,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{RegisterWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi:              MessagesApi,

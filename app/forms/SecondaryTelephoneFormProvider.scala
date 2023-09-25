@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.TradingBusinessConfirmation
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class TradingBusinessConfirmationSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "TradingBusinessConfirmationPage" - {
-
-    beRetrievable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
-
-    beSettable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
-
-    beRemovable[TradingBusinessConfirmation](TradingBusinessConfirmationPage)
-  }
+class SecondaryTelephoneFormProvider @Inject() extends Mappings {
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
+  def apply(userName: String): Form[String] =
+    Form(
+      "value" -> text("secondaryTelephone.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "secondaryTelephone.error.length"))
+        .verifying(regexp(phoneRegex, "secondaryTelephone.error.format"))
+    )
 }

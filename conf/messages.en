@@ -94,6 +94,8 @@ taskList.task.business.sub.add = Add further group details
 taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
+taskList.task.contact.add = Add Contact details
+taskList.task.contact.edit = Edit Contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
@@ -370,7 +372,7 @@ groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
 groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group''s consolidated accounting period
 groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
 groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
-groupAccountingPeriod.change.hidden = Change the dates of the group''s consolidated accounting period
+groupAccountingPeriod.change.hidden =  the dates of the group''s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Business details
 contactNfmByTelephone.title = Can we contact {0} by telephone?
@@ -402,7 +404,97 @@ mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
 mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
 mneOrDomestic.error.required = Select where the group operates
-mneOrDomestic.change.hidden = Change your response to where the group operates
+mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
+
+content.heading.caption = Contact details
+content.title = We need contact details for the filing member
+content.heading = We need contact details for the filing member
+content.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your compliance with Pillar 2 top-up taxes.
+content.p2 = These may be different to any contact details you have already provided during registration, which were used to match your business with our records.
+
+useContactPrimary.no = No
+useContactPrimary.yes = Yes
+
+useContactPrimary.title = Do you want to use this as your primary contact?
+useContactPrimary.heading = Do you want to use this as your primary contact?
+useContactPrimary.heading.caption = Contact details
+useContactPrimary.error.required = Select yes if you want to use this as your primary contact
+
+contactNameCompliance.heading.caption = Contact details
+
+contactNameCompliance.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
+contactNameCompliance.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up tax?
+contactNameCompliance.hint =  For example, ‘Tax team’ or ‘Ashley Smith’.
+contactNameCompliance.error.required = Enter name of the person of team we should contact
+contactNameCompliance.error.required = Enter name of the person of team we should contact
+contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
+
+
+
+
+contactEmailAddress.heading.caption = Contact details
+contactEmailAddress.title = What is the email address for {0}?
+contactEmailAddress.heading = What is the email address for {0}?
+contactEmailAddress.hint = We will only use this to contact you about Pillar 2 top-up taxes
+contactEmailAddress.checkYourAnswersLabel = Email address
+contactEmailAddress.error.required = You need to enter the email address for {0}
+contactEmailAddress.error.length = The email address should be 132 characters or less
+contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+contactEmailAddress.change.hidden = Changing contact email
+
+contactByTelephone.heading.caption = Contact details
+contactByTelephone.title = Can we contact {0} by telephone?
+contactByTelephone.heading = Can we contact {0} by telephone?
+contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactByTelephone.error.required = Select yes if we can contact {0} by telephone
+
+contactCaptureTelephoneDetails.heading.caption = Contact details
+contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
+contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
+contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
+contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
+addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
+addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
+addSecondaryContact.error.required = Select yes if there is someone else we can contact
+addSecondaryContact.change.hidden = AddSecondaryContact
+
+secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+secondaryContactName.checkYourAnswersLabel = Secondary Contact
+secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+secondaryContactName.error.required = Enter name of the person of team we should contact
+secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.change.hidden = SecondaryContactName
+
+secondaryContactEmail.title =What is the email address for {0}?
+secondaryContactEmail.heading = What is the email address for {0}?
+secondaryContactEmail.heading.caption= Contact details
+secondaryContactEmail.checkYourAnswersLabel = Email Address
+secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes
+secondaryContactEmail.error.required = You need to enter the email address for {0}
+secondaryContactEmail.error.length = The email address should be 160 characters or less
+secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
+secondaryContactEmail.change.hidden = SecondaryContactEmail
+
+secondaryTelephonePreference.title = Can we contact {0} by telephone?
+secondaryTelephonePreference.heading = Can we contact {0} by telephone?
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
+secondaryTelephonePreference.change.hidden = SecondaryTelephonePreference
+
+secondaryTelephone.title = What is the telephone number for {0}?
+secondaryTelephone.heading = What is the telephone number for {0}?
+secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+secondaryTelephone.checkYourAnswersLabel = the second contact telephone number
+secondaryTelephone.error.required = You need to enter the telephone for {0}
+secondaryTelephone.error.length = The telephone number should be 24 characters or less
+secondaryTelephone.error.format = Enter a telephone number in the correct format
+secondaryTelephone.change.hidden = SecondaryTelephone

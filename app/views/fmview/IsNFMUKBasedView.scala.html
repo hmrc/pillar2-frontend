@@ -37,10 +37,9 @@
         <span class="govuk-caption-l">@messages("isUPERegisteredInUK.heading.caption")</span>
 
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("isNFMUKBased.heading")).asPageHeading(Large),
-                items  = NfmRegisteredInUkConfirmation.options
+                legend = LegendViewModel(messages("isNFMUKBased.heading")).asPageHeading(Large)
             )
             )
 

@@ -19,16 +19,15 @@ package controllers.registration
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.EntityTypeFormProvider
+import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{EntityTypePage, RegistrationPage}
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.EntityTypeView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -118,10 +117,6 @@ class EntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
 
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[EntityTypeView]
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -152,10 +147,6 @@ class EntityTypeControllerSpec extends SpecBase {
 
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
-
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
 

@@ -17,19 +17,12 @@
 package controllers.fm
 
 import base.SpecBase
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.fmview.FilingMemberCheckYourAnswersView
-
-import javax.inject.Inject
-import scala.concurrent.Future
 
 class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): NfmCheckYourAnswersController =
@@ -87,9 +80,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
         status(result) mustEqual NOT_FOUND
       }
     }
@@ -99,8 +89,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list    = SummaryListViewModel(phonenumberProvided)
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Group details"
@@ -113,8 +101,6 @@ class NfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[FilingMemberCheckYourAnswersView]
-        val list    = SummaryListViewModel(noPhonenumber)
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Check your answers"

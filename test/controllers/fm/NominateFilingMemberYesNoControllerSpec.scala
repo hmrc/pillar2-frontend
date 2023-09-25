@@ -24,8 +24,6 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
@@ -66,7 +64,6 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[ErrorTemplate]
         val result  = route(application, request).value
 
         status(result) mustBe NOT_FOUND
@@ -77,7 +74,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "yes"))
+          .withFormUrlEncodedBody(("nominateFilingMember", "true"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER
@@ -89,7 +86,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "no"))
+          .withFormUrlEncodedBody(("nominateFilingMember", "false"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER

@@ -17,36 +17,20 @@
 package controllers.registration
 
 import base.SpecBase
-import models.registration.{Registration, WithoutIdRegData}
-import models.{CaptureTelephoneDetails, ContactUPEByTelephone, UPERegisteredInUKConfirmation, UpeRegisteredAddress}
 import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
-import viewmodels.checkAnswers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  def controller(): UpeCheckYourAnswersController =
-    new UpeCheckYourAnswersController(
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewCheckYourAnswersUPE,
-      mockCountryOptions
-    )
-  val user           = emptyUserAnswers
-  val addressExample = UpeRegisteredAddress("1", Some("2"), "3", Some("4"), Some("5"), "GB")
+  val user = emptyUserAnswers
 
   val completeUserAnswer = user
     .set(
       RegistrationPage,
-      upeCheckAnswerData()
+      upeCheckAnswerData
     )
     .success
     .value
@@ -59,25 +43,6 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     .success
     .value
 
-  val phonenumberProvided1 = Seq()
-
-  val phonenumberProvided = Seq(
-    UpeNameRegistrationSummary.row(completeUserAnswer),
-    UpeRegisteredAddressSummary.row(completeUserAnswer, mockCountryOptions),
-    UpeContactNameSummary.row(completeUserAnswer),
-    UpeContactEmailSummary.row(completeUserAnswer),
-    UpeTelephonePreferenceSummary.row(completeUserAnswer),
-    UPEContactTelephoneSummary.row(completeUserAnswer)
-  ).flatten
-
-  val noPhonenumber = Seq(
-    UpeNameRegistrationSummary.row(noTelephoneUserAnswers),
-    UpeRegisteredAddressSummary.row(noTelephoneUserAnswers, mockCountryOptions),
-    UpeContactNameSummary.row(noTelephoneUserAnswers),
-    UpeContactEmailSummary.row(noTelephoneUserAnswers),
-    UpeTelephonePreferenceSummary.row(noTelephoneUserAnswers)
-  ).flatten
-
   "UPE no ID Check Your Answers Controller" must {
 
     "must return Not Found and the correct view with empty user answers" in {
@@ -89,9 +54,6 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
         status(result) mustEqual NOT_FOUND
       }
     }
@@ -102,9 +64,6 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
-        val list = SummaryListViewModel(phonenumberProvided)
 
         status(result) mustEqual OK
         contentAsString(result) must include(
@@ -120,9 +79,6 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UpeCheckYourAnswersView]
-        val list = SummaryListViewModel(noPhonenumber)
 
         status(result) mustEqual OK
         contentAsString(result) must include(

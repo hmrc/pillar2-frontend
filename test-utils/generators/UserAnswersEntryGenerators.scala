@@ -16,7 +16,6 @@
 
 package generators
 
-import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -32,11 +31,4 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryTradingBusinessConfirmationUserAnswersEntry: Arbitrary[(TradingBusinessConfirmationPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[TradingBusinessConfirmationPage.type]
-        value <- arbitrary[TradingBusinessConfirmation].map(Json.toJson(_))
-      } yield (page, value)
-    }
 }

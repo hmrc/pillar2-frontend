@@ -20,7 +20,7 @@ import connectors.UserAnswersConnectors
 import models.fm.FilingMember
 import models.registration.Registration
 import models.requests.DataRequest
-import models.{MandatoryInformationMissingError, NfmRegistrationConfirmation}
+import models.MandatoryInformationMissingError
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
@@ -47,7 +47,7 @@ trait RegisterAndSubscribe extends Logging {
 
       case (Some(safeId), None) =>
         println(" Yes I have(Some(safeId), None) id -----------------------------")
-        if (filingMemeber.nfmConfirmation == NfmRegistrationConfirmation.Yes) {
+        if (filingMemeber.nfmConfirmation) {
           registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
             case Right(fmSafeId) =>
               createSubscription(safeId, Some(fmSafeId.value))
@@ -81,7 +81,7 @@ trait RegisterAndSubscribe extends Logging {
         println(" Yes I have(None, None)id -----------------------------")
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
           case Right(upeSafeId) =>
-            if (filingMemeber.nfmConfirmation == NfmRegistrationConfirmation.Yes) {
+            if (filingMemeber.nfmConfirmation) {
               registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
                 case Right(fmSafeId) =>
                   createSubscription(upeSafeId.value, Some(fmSafeId.value))

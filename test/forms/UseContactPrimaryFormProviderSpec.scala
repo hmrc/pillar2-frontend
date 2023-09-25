@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case object NfmCaptureTelephoneDetailsPage extends QuestionPage[String] {
+class UseContactPrimaryFormProviderSpec extends BooleanFieldBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  val requiredKey = "useContactPrimary.error.required"
+  val invalidKey  = "error.boolean"
 
-  override def toString: String = "nfmCaptureTelephoneDetails"
+  val form = new UseContactPrimaryFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

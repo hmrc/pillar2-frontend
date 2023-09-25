@@ -72,7 +72,9 @@ class MneOrDomesticController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
           val subscriptionData =
-            request.userAnswers.get(SubscriptionPage).getOrElse(Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress))
+            request.userAnswers
+              .get(SubscriptionPage)
+              .getOrElse(Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted))
           for {
             updatedAnswers <-
               Future

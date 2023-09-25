@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.CaptureTelephoneDetailsFormProvider
-import models.{ContactUPEByTelephone, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RegistrationPage

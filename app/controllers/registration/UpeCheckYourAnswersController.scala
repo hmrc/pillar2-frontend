@@ -19,7 +19,6 @@ package controllers.registration
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.ContactUPEByTelephone
 import models.requests.DataRequest
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
@@ -47,7 +46,7 @@ class UpeCheckYourAnswersController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     val telephonePreference = request.userAnswers.get(RegistrationPage) match {
       case Some(value) =>
-        value.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(tel => (tel == ContactUPEByTelephone.Yes)))
+        value.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(tel => tel))
       case _ => false
     }
     val list = SummaryListViewModel(
@@ -77,8 +76,8 @@ class UpeCheckYourAnswersController @Inject() (
             withoutId.upeContactName.isDefined &&
             withoutId.emailAddress.isDefined &&
             withoutId.contactUpeByTelephone.fold(false)(contactTel =>
-              (contactTel == ContactUPEByTelephone.Yes && withoutId.telephoneNumber.isDefined) ||
-                (contactTel == ContactUPEByTelephone.No)
+              contactTel && withoutId.telephoneNumber.isDefined ||
+                !contactTel
             )
         )
       )

@@ -17,7 +17,6 @@
 package controllers.registration
 
 import base.SpecBase
-import controllers.routes
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import models.grs.GrsCreateRegistrationResponse
@@ -37,7 +36,6 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
   def controller(): UPERegisteredInUKConfirmationController =
     new UPERegisteredInUKConfirmationController(
       mockUserAnswersConnectors,
-      mockIncorporatedEntityIdentificationFrontendConnector,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -65,7 +63,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "yes"))
+          .withFormUrlEncodedBody(("value", "true"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
         .thenReturn(Future(GrsCreateRegistrationResponse("/report-pillar2-top-up-taxes/under-construction")))
@@ -79,7 +77,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       val request =
         FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "no"))
+          .withFormUrlEncodedBody(("value", "false"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual SEE_OTHER

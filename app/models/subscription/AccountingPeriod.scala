@@ -32,8 +32,6 @@ package models.subscription
  * limitations under the License.
  */
 
-import play.api.libs.json.JodaReads._
-import play.api.libs.json.JodaWrites._
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate

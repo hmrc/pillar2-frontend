@@ -16,7 +16,7 @@
 
 package models.registration
 
-import models.{ContactUPEByTelephone, UpeRegisteredAddress}
+import models.UpeRegisteredAddress
 import play.api.libs.json.{Json, OFormat}
 
 case class WithoutIdRegData(
@@ -24,7 +24,7 @@ case class WithoutIdRegData(
   upeRegisteredAddress:  Option[UpeRegisteredAddress] = None,
   upeContactName:        Option[String] = None,
   emailAddress:          Option[String] = None,
-  contactUpeByTelephone: Option[ContactUPEByTelephone] = None,
+  contactUpeByTelephone: Option[Boolean] = None,
   telephoneNumber:       Option[String] = None
 )
 

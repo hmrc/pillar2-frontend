@@ -18,11 +18,11 @@ package controllers.registration
 
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.Mode
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
-import models.{Mode, NfmRegistrationConfirmation, UserType}
-import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
+import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.registration.GrsResponse
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.libs.json.Json
