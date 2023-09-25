@@ -18,17 +18,15 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{ContactByTelephoneFormProvider, ContactUPEByTelephoneFormProvider}
-import models.subscription.ContactByTelephone
-import models.{NormalMode, UseContactPrimary}
+import forms.ContactByTelephoneFormProvider
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RegistrationPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.ContactUPEByTelephoneView
 import views.html.subscriptionview.ContactByTelephoneView
 
 import scala.concurrent.Future
@@ -75,7 +73,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
       val userAnswersSubCaptureNoPhone =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneData(contactByTelephone = ContactByTelephone.Yes)).success.value
+        emptyUserAnswers.set(SubscriptionPage, validSubPhoneData(contactByTelephone = true)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -85,7 +83,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -94,7 +92,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value No" in {
+    "redirect to Add secondary contact page when valid data is submitted with value No" in {
       val userAnswersSubCaptureNoPhone =
         emptyUserAnswers.set(SubscriptionPage, validSubPhoneData()).success.value
 
@@ -106,12 +104,12 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
     }
   }

@@ -17,13 +17,11 @@
 package controllers.eligibility
 
 import base.SpecBase
-import forms.{BusinessActivityUKFormProvider, RegisteringNfmForThisGroupFormProvider}
-import models.NormalMode
+import forms.RegisteringNfmForThisGroupFormProvider
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.RegisteringNfmForThisGroupView
-import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
   val formProvider = new RegisteringNfmForThisGroupFormProvider()

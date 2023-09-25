@@ -32,9 +32,9 @@ object AddSecondaryContactSummary {
         key = "addSecondaryContact.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.subscription.routes.AddSecondaryContactController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
         )
-      )
+      ).withCssClass("contact-margin-bottom")
     }
 }

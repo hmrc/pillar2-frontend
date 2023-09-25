@@ -46,27 +46,51 @@ class ContactCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
-    val list = SummaryListViewModel(
-      rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-      ).flatten
-    )
-
-    val listSecondary = isSecondContactDefined(request) match {
+    val list = isPrimaryPhoneDefined(request) match {
       case true =>
         SummaryListViewModel(
           rows = Seq(
-            AddSecondaryContactSummary.row(request.userAnswers),
+            ContactNameComplianceSummary.row(request.userAnswers),
+            ContactEmailAddressSummary.row(request.userAnswers),
+            ContactByTelephoneSummary.row(request.userAnswers),
+            ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+          ).flatten
+        )
+      case false =>
+        SummaryListViewModel(
+          rows = Seq(
+            ContactNameComplianceSummary.row(request.userAnswers),
+            ContactEmailAddressSummary.row(request.userAnswers),
+            ContactByTelephoneSummary.row(request.userAnswers)
+          ).flatten
+        )
+    }
+
+    val addSecondaryContactList = SummaryListViewModel(
+      rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers)
+      ).flatten
+    )
+    println("**********************************8888" + isSecondaryPhoneDefined(request))
+    val listSecondary = (isSecondContactDefined(request), isSecondaryPhoneDefined(request)) match {
+      case (true, true) =>
+        SummaryListViewModel(
+          rows = Seq(
             SecondaryContactNameSummary.row(request.userAnswers),
             SecondaryContactEmailSummary.row(request.userAnswers),
             SecondaryTelephonePreferenceSummary.row(request.userAnswers),
             SecondaryTelephoneSummary.row(request.userAnswers)
           ).flatten
         )
-      case false =>
+      case (true, false) =>
+        SummaryListViewModel(
+          rows = Seq(
+            SecondaryContactNameSummary.row(request.userAnswers),
+            SecondaryContactEmailSummary.row(request.userAnswers),
+            SecondaryTelephonePreferenceSummary.row(request.userAnswers)
+          ).flatten
+        )
+      case _ =>
         SummaryListViewModel(rows = Seq())
     }
 
@@ -77,7 +101,7 @@ class ContactCheckYourAnswersController @Inject() (
     )
 
     if (isPreviousPagesDefined(request))
-      Ok(view(list, listSecondary, address))
+      Ok(view(list, addSecondaryContactList, listSecondary, address))
     else
       NotFound(notAvailable)
   }
@@ -93,4 +117,19 @@ class ContactCheckYourAnswersController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false)((data => data.addSecondaryContact.fold(false)(contact => contact)))
+
+  private def isPrimaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold(false)((data => data.contactByTelephone.fold(false)(contact => contact)))
+
+  private def isSecondaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold(false)(data =>
+        data.secondaryTelephonePreference.fold(false) { contact =>
+          println(".................................." + contact)
+          contact
+        }
+      )
 }

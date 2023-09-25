@@ -28,7 +28,6 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(TurnOverEligibilityPage.type, JsValue)] ::
-      arbitrary[(TradingBusinessConfirmationPage.type, JsValue)] ::
       Nil
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {

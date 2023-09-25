@@ -19,20 +19,20 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
+import controllers.routes
 import forms.EntityTypeFormProvider
-import models.registration.RegistrationWithoutIdRequest
-import models.{Mode, UserType}
-import models.{Mode, UPERegisteredInUKConfirmation}
-
 import models.grs.EntityType
+import models.registration.Registration
 import models.requests.DataRequest
-import pages.{EntityTypePage, RegistrationPage}
+import models.{Mode, UserType}
+import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.EntityTypeView
 import views.html.errors.ErrorTemplate
 
@@ -79,31 +79,43 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-
-                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector
-                                      .createLimitedCompanyJourney(UserType.Upe, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+              request.userAnswers
+                .get(RegistrationPage)
+                .map { reg =>
+                  val domesticOrMne = reg.isUPERegisteredInUK
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(
+                        request.userAnswers.set(
+                          RegistrationPage,
+                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
+                        )
+                      )
+                    _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
+                  } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+                }
+                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
             case EntityType.LimitedLiabilityPartnership =>
-              val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(RegistrationPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-
-                createJourneyRes <- partnershipIdentificationFrontendConnector
-                                      .createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+              request.userAnswers
+                .get(RegistrationPage)
+                .map { reg =>
+                  val domesticOrMne = reg.isUPERegisteredInUK
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(
+                        request.userAnswers.set(
+                          RegistrationPage,
+                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
+                        )
+                      )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    createJourneyRes <-
+                      partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
+                  } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+                }
+                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
           }
       )
   }
@@ -111,5 +123,6 @@ class EntityTypeController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.Yes)
+      .map(reg => reg.isUPERegisteredInUK)
+      .isDefined
 }

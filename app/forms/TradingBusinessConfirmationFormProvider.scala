@@ -16,16 +16,15 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.TradingBusinessConfirmation
+
+import javax.inject.Inject
 
 class TradingBusinessConfirmationFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[TradingBusinessConfirmation] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[TradingBusinessConfirmation]("tradingBusinessConfirmation.error.required")
+      "value" -> boolean("tradingBusinessConfirmation.error.required")
     )
 }

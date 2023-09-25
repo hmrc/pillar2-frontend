@@ -91,7 +91,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
           "Contact details"
         )
         contentAsString(result) must not include
-          "Second contact"
+          "Secondary Contact"
         contentAsString(result) must include(
           "Contact address"
         )

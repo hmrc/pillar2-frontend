@@ -19,20 +19,20 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.IsNFMUKBasedFormProvider
-import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
+import models.Mode
 import models.fm.FilingMember
 import models.requests.DataRequest
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.fmview.IsNFMUKBasedView
 import views.html.errors.ErrorTemplate
+import views.html.fmview.IsNFMUKBasedView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -72,11 +72,11 @@ class IsNfmUKBasedController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case NfmRegisteredInUkConfirmation.Yes =>
+            case true =>
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
 
               for {
                 updatedAnswers <-
@@ -85,29 +85,24 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
+                          regData.copy(isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
               } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
 
-            case NfmRegisteredInUkConfirmation.No =>
+            case false =>
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
-
-              val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ =>
-                  FilingMember(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress)
-                )
+                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      checkedRegData.copy(NfmRegistrationConfirmation.Yes, isNfmRegisteredInUK = Some(value), orgType = None, withIdRegData = None)
+                      regData.copy(isNfmRegisteredInUK = Some(value), withIdRegData = None, orgType = None)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -118,8 +113,6 @@ class IsNfmUKBasedController @Inject() (
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.nfmConfirmation == NfmRegistrationConfirmation.Yes)
+    request.userAnswers.get(NominatedFilingMemberPage).map(nfm => nfm.nfmConfirmation).isDefined
 
 }

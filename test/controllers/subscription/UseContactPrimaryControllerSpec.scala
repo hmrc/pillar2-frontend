@@ -18,18 +18,15 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{IsNFMUKBasedFormProvider, UseContactPrimaryFormProvider}
-import models.fm.FilingMember
-import models.{NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, NormalMode, UseContactPrimary, UserAnswers}
+import forms.UseContactPrimaryFormProvider
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
-import views.html.fmview.IsNFMUKBasedView
 import views.html.subscriptionview.UseContactPrimaryView
 
 import scala.concurrent.Future
@@ -78,18 +75,16 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       }
     }
-    "redirect to ask primary contact name  if nfm and  upe contact not available" in {
-      val userAnswersWithNominatedFilingMemberWithSub =
+    "redirect to ask primary contact name  if no contact info available in NFM and and no Upe info given" in {
+      val userAnswersWithNFMNoContactINfoWithSub =
         userAnswersNfmYesId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNFMNoContactINfoWithSub)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
@@ -104,8 +99,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual NOT_FOUND
       }
@@ -150,21 +143,17 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", UseContactPrimary.Yes.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.Yes.toString))
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
 
     }
 
-    "must redirect to next page when Yes is selected with UPE default contact details" in {
+    "must redirect to Add secondary contact page when Yes is selected with UPE default contact details" in {
 
       val userAnswersWithUpeMemberWithSub =
         userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
@@ -177,16 +166,12 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", UseContactPrimary.Yes.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.Yes.toString))
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
 
     }
@@ -204,11 +189,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", UseContactPrimary.No.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.No.toString))
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
+          .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -231,11 +212,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", UseContactPrimary.No.toString))
-
-        val boundForm = formProvider().bind(Map("value" -> UseContactPrimary.No.toString))
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
+          .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

@@ -23,7 +23,7 @@ case class WithoutIdNfmData(
   registeredFmAddress:   Option[NfmRegisteredAddress] = None,
   fmContactName:         Option[String] = None,
   fmEmailAddress:        Option[String] = None,
-  contactNfmByTelephone: Option[ContactNFMByTelephone] = None,
+  contactNfmByTelephone: Option[Boolean] = None,
   telephoneNumber:       Option[String] = None
 )
 

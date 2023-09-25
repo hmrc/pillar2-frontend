@@ -18,18 +18,17 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.routes
 import forms.NfmEntityTypeFormProvider
+import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.{NfmRegisteredInUkConfirmation, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{EntityTypePage, NominatedFilingMemberPage}
+import pages.NominatedFilingMemberPage
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NfmEntityTypeView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -42,7 +41,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNominatedFilingMember =
         emptyUserAnswers
-          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes)))
+          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(true)))
           .success
           .value
 
@@ -69,8 +68,6 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmEntityTypeView]
-
         status(result) mustEqual NOT_FOUND
       }
     }
@@ -80,7 +77,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         emptyUserAnswers
           .set(
             NominatedFilingMemberPage,
-            validWithIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes), orgType = Some(EntityType.UkLimitedCompany))
+            validWithIdFmData(isNfmRegisteredInUK = Some(true), orgType = Some(EntityType.UkLimitedCompany))
           )
           .success
           .value
@@ -144,10 +141,6 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
 
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[NfmEntityTypeView]
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -178,10 +171,6 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
         val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
-
-        val boundForm = formProvider()
-
-        val view = application.injector.instanceOf[NfmEntityTypeView]
 
         val result = route(application, request).value
 

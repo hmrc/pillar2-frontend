@@ -39,7 +39,6 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
   val mockFormNoData  = Map("confirmForm" -> "false")
 
   "Turn Over Eligibility Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
 
     "must return OK and the correct view for a GET" in {
 
