@@ -17,14 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.SecondaryContactNameFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.SubscriptionPage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.subscriptionview.SecondaryContactNameView
+
+import scala.concurrent.Future
 
 class SecondaryContactNameControllerSpec extends SpecBase {
 
@@ -147,11 +154,14 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "someName")
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result =
           route(application, request).value
 

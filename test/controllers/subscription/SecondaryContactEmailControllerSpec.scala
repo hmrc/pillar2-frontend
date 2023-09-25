@@ -17,14 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.SecondaryContactEmailFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.SubscriptionPage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.subscriptionview.SecondaryContactEmailView
+
+import scala.concurrent.Future
 
 class SecondaryContactEmailControllerSpec extends SpecBase {
 
@@ -103,7 +110,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-
+    //this
     "must redirect to telephone preference for second contact once they answered with a valid response" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(
@@ -117,11 +124,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "something@gmail.com")
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result =
           route(application, request).value
 

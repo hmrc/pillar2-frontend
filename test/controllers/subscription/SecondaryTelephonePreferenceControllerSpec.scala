@@ -17,14 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.SubscriptionPage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.subscriptionview.SecondaryTelephonePreferenceView
+
+import scala.concurrent.Future
 
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
@@ -99,25 +106,29 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-
+    //this
     "must redirect to telephone contact page if they answer yes " in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(
           SubscriptionPage,
           Subscription(
-            MneOrDomestic.Uk,
+            MneOrDomestic.UkAndOther,
             contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed
+            groupDetailStatus = RowStatus.Completed,
+            secondaryContactName = Some("name")
           )
         )
         .success
         .value
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "true")
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result =
           route(application, request).value
 

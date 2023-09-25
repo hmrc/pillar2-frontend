@@ -148,12 +148,12 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
 
     }
 
-    "must redirect to next page when Yes is selected with UPE default contact details" in {
+    "must redirect to Add secondary contact page when Yes is selected with UPE default contact details" in {
 
       val userAnswersWithUpeMemberWithSub =
         userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
@@ -168,14 +168,10 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "true"))
 
-        val boundForm = formProvider().bind(Map("value" -> "true"))
-
-        val view = application.injector.instanceOf[UseContactPrimaryView]
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
 
     }

@@ -71,7 +71,7 @@ class SecondaryTelephonePreferenceController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value =>
           value match {
             case true =>
@@ -80,7 +80,7 @@ class SecondaryTelephonePreferenceController @Inject() (
                 .map { subs =>
                   val subsData = request.userAnswers
                     .get(SubscriptionPage)
-                    .getOrElse(throw new Exception("no subcription data found for secondary or primary contact"))
+                    .getOrElse(throw new Exception("no subscription data found for secondary or primary contact"))
                   for {
                     updatedAnswers <-
                       Future
@@ -95,7 +95,7 @@ class SecondaryTelephonePreferenceController @Inject() (
                 .map { subs =>
                   val subsData = request.userAnswers
                     .get(SubscriptionPage)
-                    .getOrElse(throw new Exception("no subcription data found for secondary or primary contact"))
+                    .getOrElse(throw new Exception("no subscription data found for secondary or primary contact"))
                   for {
                     updatedAnswers <-
                       Future

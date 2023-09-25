@@ -92,7 +92,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value No" in {
+    "redirect to Add secondary contact page when valid data is submitted with value No" in {
       val userAnswersSubCaptureNoPhone =
         emptyUserAnswers.set(SubscriptionPage, validSubPhoneData()).success.value
 
@@ -109,7 +109,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
     }
   }
