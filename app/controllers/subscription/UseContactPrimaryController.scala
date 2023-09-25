@@ -20,10 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.{MneOrDomesticFormProvider, UseContactPrimaryFormProvider}
-import models.{Mode, NfmRegisteredInUkConfirmation, NormalMode, UPERegisteredInUKConfirmation, UseContactPrimary}
+import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
 import models.subscription.Subscription
+import models.{Mode, NormalMode}
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -54,7 +54,7 @@ class UseContactPrimaryController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        isNfmRegisteredUK(request) match { // check if no grs flow then get name email tel else get upe details
+        isNfmRegisteredUK(request) match {
           case true =>
             request.userAnswers
               .get(SubscriptionPage)
@@ -94,7 +94,7 @@ class UseContactPrimaryController @Inject() (
           },
         value =>
           value match {
-            case UseContactPrimary.Yes =>
+            case true =>
               isNfmRegisteredUK(request) match {
                 case true =>
                   for {
@@ -115,7 +115,7 @@ class UseContactPrimaryController @Inject() (
                           )
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>
                   for {
                     updatedAnswers <-
@@ -135,9 +135,9 @@ class UseContactPrimaryController @Inject() (
                           )
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }
-            case UseContactPrimary.No =>
+            case false =>
               if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
                 for {
                   updatedAnswers <-
@@ -196,16 +196,22 @@ class UseContactPrimaryController @Inject() (
   private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false) { data =>
-        data.isNfmRegisteredInUK.fold(false)(regInUk => regInUk == NfmRegisteredInUkConfirmation.No)
-      }
+      .flatMap { nfm =>
+        nfm.isNfmRegisteredInUK
+      } match {
+      case Some(false) => true
+      case _           => false
+    }
 
   private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false) { data =>
-        data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No
-      }
+      .map { upe =>
+        upe.isUPERegisteredInUK
+      } match {
+      case Some(false) => true
+      case _           => false
+    }
 
   private def getName(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)

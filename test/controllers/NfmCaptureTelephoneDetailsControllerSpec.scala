@@ -17,38 +17,16 @@
 package controllers
 
 import base.SpecBase
-import controllers.fm.NfmCaptureTelephoneDetailsController
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import pages.{NfmCaptureTelephoneDetailsPage, NominatedFilingMemberPage}
-import play.api.inject.bind
-import play.api.mvc.Call
+import pages.NominatedFilingMemberPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.fmview.NfmCaptureTelephoneDetailsView
-
-import scala.concurrent.Future
 
 class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new NfmCaptureTelephoneDetailsFormProvider()
-
-  def controller(): NfmCaptureTelephoneDetailsController =
-    new NfmCaptureTelephoneDetailsController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewNfmCaptureTelephoneDetails
-    )
 
   "NfmCaptureTelephoneDetails Controller" when {
 

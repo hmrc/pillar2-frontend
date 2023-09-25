@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
+import models.Mode
 import models.fm.WithoutIdNfmData
 import models.requests.DataRequest
-import models.{Mode, NfmRegisteredInUkConfirmation}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -80,7 +80,8 @@ class NfmNameRegistrationController @Inject() (
             updatedAnswers <- Future.fromTry(
                                 request.userAnswers.set(
                                   NominatedFilingMemberPage,
-                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)))
+                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)),
+                                  orgType = None, withIdRegData = None)
                                 )
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -89,8 +90,12 @@ class NfmNameRegistrationController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(regInUk => regInUk == NfmRegisteredInUkConfirmation.No))
+      .map { reg =>
+        reg.isNfmRegisteredInUK
+      }
+      .isDefined
+
 }

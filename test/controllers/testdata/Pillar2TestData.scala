@@ -16,26 +16,25 @@
 
 package controllers.testdata
 
-import models.fm.{ContactNFMByTelephone, FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
+import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.subscription.{AccountingPeriod, ContactByTelephone, Subscription}
-import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UserAnswers}
-import models.{ContactUPEByTelephone, MneOrDomestic, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation, UPERegisteredInUKConfirmation, UpeRegisteredAddress, UseContactPrimary, UserAnswers}
+import models.subscription.{AccountingPeriod, Subscription}
+import models.{MneOrDomestic, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 trait Pillar2TestData {
 
-  def upeCheckAnswerData() = new Registration(
-    isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
-    isRegistrationStatus = RowStatus.InProgress,
+  val upeCheckAnswerData = Registration(
+    isUPERegisteredInUK = false,
+    isRegistrationStatus = RowStatus.Completed,
     withoutIdRegData = Some(
       WithoutIdRegData(
         upeNameRegistration = "Paddington",
         upeContactName = Some("Paddington ltd"),
-        contactUpeByTelephone = Some(ContactUPEByTelephone.Yes),
+        contactUpeByTelephone = Some(true),
         telephoneNumber = Some("123444"),
         emailAddress = Some("example@gmail.com"),
         upeRegisteredAddress = Some(
@@ -51,14 +50,14 @@ trait Pillar2TestData {
       )
     )
   )
-  def upeCheckAnswerDataWithoutPhone() = new Registration(
-    isUPERegisteredInUK = UPERegisteredInUKConfirmation.No,
+  val upeCheckAnswerDataWithoutPhone = Registration(
+    isUPERegisteredInUK = false,
     isRegistrationStatus = RowStatus.InProgress,
     withoutIdRegData = Some(
       WithoutIdRegData(
         upeNameRegistration = "Paddington",
         upeContactName = Some("Paddington ltd"),
-        contactUpeByTelephone = Some(ContactUPEByTelephone.No),
+        contactUpeByTelephone = Some(false),
         emailAddress = Some("example@gmail.com"),
         upeRegisteredAddress = Some(
           UpeRegisteredAddress(
@@ -75,15 +74,15 @@ trait Pillar2TestData {
   )
   def nfmCheckAnswerData() =
     new FilingMember(
-      nfmConfirmation = NfmRegistrationConfirmation.Yes,
-      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+      nfmConfirmation = true,
+      isNfmRegisteredInUK = Some(false),
       isNFMnStatus = RowStatus.InProgress,
       withoutIdRegData = Some(
         WithoutIdNfmData(
           registeredFmName = "Nfm name ",
           fmContactName = Some("Ashley Smith"),
           fmEmailAddress = Some("test@test.com"),
-          contactNfmByTelephone = Some(ContactNFMByTelephone.Yes),
+          contactNfmByTelephone = Some(true),
           telephoneNumber = Some("122223444"),
           registeredFmAddress = Some(
             NfmRegisteredAddress(
@@ -120,7 +119,7 @@ trait Pillar2TestData {
     groupDetailStatus:    RowStatus = RowStatus.Completed,
     accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
     contactDetailsStatus: RowStatus = RowStatus.InProgress,
-    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    useContactPrimary:    Boolean = false,
     primaryContactName:   String = "Ashley Smith"
   ) =
     new Subscription(
@@ -137,9 +136,9 @@ trait Pillar2TestData {
     groupDetailStatus:    RowStatus = RowStatus.Completed,
     accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
     contactDetailsStatus: RowStatus = RowStatus.InProgress,
-    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    useContactPrimary:    Boolean = false,
     primaryContactName:   String = "TestName",
-    contactByTelephone:   ContactByTelephone = ContactByTelephone.No
+    contactByTelephone:   Boolean = false
   ) =
     new Subscription(
       domesticOrMne = domesticOrMne,
@@ -156,7 +155,7 @@ trait Pillar2TestData {
     groupDetailStatus:    RowStatus = RowStatus.Completed,
     accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
     contactDetailsStatus: RowStatus = RowStatus.InProgress,
-    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    useContactPrimary:    Boolean = false,
     primaryContactName:   String = "Test Name",
     primaryContactEmail:  String = "testEmail@email.com"
   ) =
@@ -175,10 +174,10 @@ trait Pillar2TestData {
     groupDetailStatus:    RowStatus = RowStatus.Completed,
     accountingPeriod:     AccountingPeriod = AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01")),
     contactDetailsStatus: RowStatus = RowStatus.InProgress,
-    useContactPrimary:    UseContactPrimary = UseContactPrimary.No,
+    useContactPrimary:    Boolean = false,
     primaryContactName:   String = "Test Name",
     primaryContactEmail:  String = "testEmail@email.com",
-    contactByTelephone:   ContactByTelephone = ContactByTelephone.No
+    contactByTelephone:   Boolean = false
   ) =
     new Subscription(
       domesticOrMne = domesticOrMne,
@@ -192,15 +191,15 @@ trait Pillar2TestData {
     )
 
   def nfmCheckAnswerDataWithoutPhone() = new FilingMember(
-    nfmConfirmation = NfmRegistrationConfirmation.Yes,
-    isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No),
+    nfmConfirmation = true,
+    isNfmRegisteredInUK = Some(false),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(
       WithoutIdNfmData(
         registeredFmName = "Fm Name Ashley",
         fmContactName = Some("Ashley Smith"),
         fmEmailAddress = Some("test@test.com"),
-        contactNfmByTelephone = Some(ContactNFMByTelephone.No),
+        contactNfmByTelephone = Some(false),
         registeredFmAddress = Some(
           NfmRegisteredAddress(
             addressLine1 = "1",
@@ -216,11 +215,11 @@ trait Pillar2TestData {
   )
 
   def validNoIdRegDataforSub(
-    isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isUPERegisteredInUK:   Boolean = false,
     isRegistrationStatus:  RowStatus = RowStatus.Completed,
     upeNameRegistration:   String = "Test Name",
     upeContactName:        Option[String] = Some("TestName"),
-    contactUpeByTelephone: Option[ContactUPEByTelephone] = Some(ContactUPEByTelephone.Yes),
+    contactUpeByTelephone: Option[Boolean] = Some(true),
     telephoneNumber:       Option[String] = Some("1234567"),
     emailAddress:          Option[String] = Some("test@test.com"),
     addressLine1:          String = "Line1",
@@ -254,11 +253,11 @@ trait Pillar2TestData {
       )
     )
   def validNoIdRegData(
-    isUPERegisteredInUK:   UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isUPERegisteredInUK:   Boolean = false,
     isRegistrationStatus:  RowStatus = RowStatus.InProgress,
     upeNameRegistration:   String = "Test Name",
     upeContactName:        Option[String] = Some("TestName"),
-    contactUpeByTelephone: Option[ContactUPEByTelephone] = Some(ContactUPEByTelephone.Yes),
+    contactUpeByTelephone: Option[Boolean] = Some(true),
     telephoneNumber:       Option[String] = Some("1234567"),
     emailAddress:          Option[String] = Some("test@test.com"),
     addressLine1:          String = "Line1",
@@ -293,8 +292,8 @@ trait Pillar2TestData {
     )
 
   def validWithIdFmData(
-    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
-    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = None,
+    nfmConfirmation:     Boolean = true,
+    isNfmRegisteredInUK: Option[Boolean] = None,
     isNFMnStatus:        RowStatus = RowStatus.InProgress,
     orgType:             Option[EntityType] = None,
     withIdRegData:       Option[GrsResponse] = None,
@@ -313,6 +312,7 @@ trait Pillar2TestData {
   ) =
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
       groupDetailStatus = RowStatus.Completed,
       contactDetailsStatus = RowStatus.InProgress
     )
@@ -322,16 +322,16 @@ trait Pillar2TestData {
     new Subscription(
       domesticOrMne = MneOrDomestic.Uk,
       groupDetailStatus = RowStatus.Completed,
-      useContactPrimary = Some(UseContactPrimary.No),
+      useContactPrimary = Some(false),
       contactDetailsStatus = RowStatus.InProgress
     )
   def validNoIdFmData(
-    nfmConfirmation:       NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
-    isNfmRegisteredInUK:   Option[NfmRegisteredInUkConfirmation] = None,
+    nfmConfirmation:       Boolean = true,
+    isNfmRegisteredInUK:   Option[Boolean] = None,
     isNFMnStatus:          RowStatus = RowStatus.InProgress,
     nfmNameRegistration:   String = "Test Name",
     nfmContactName:        Option[String] = Some("TestName"),
-    contactNfmByTelephone: Option[ContactNFMByTelephone] = Some(ContactNFMByTelephone.Yes),
+    contactNfmByTelephone: Option[Boolean] = Some(true),
     telephoneNumber:       Option[String] = Some("1234567"),
     fmEmailAddress:        Option[String] = Some("test@test.com"),
     fmAddressLine1:        String = "Line1",
@@ -367,15 +367,15 @@ trait Pillar2TestData {
     )
 
   def validNoIdNfmDataForContactEmail = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.No),
+    true,
+    Some(false),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", fmContactName = Some("Ashley Smith")))
   )
 
   def validNoIdNfmDataDefForContactName = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.No),
+    true,
+    Some(false),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )
@@ -388,26 +388,15 @@ trait Pillar2TestData {
     postalCode = Some("VR11 3PA"),
     countryCode = "IN"
   )
-  def validWithIdFmDataName(
-    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
-    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.No),
-    isNFMnStatus:        RowStatus = RowStatus.InProgress,
-    orgType:             Option[EntityType] = None,
-    withIdRegData:       Option[GrsResponse] = None,
-    withoutIdRegData:    Option[WithoutIdNfmData] = None
-  ) =
-    new FilingMember(
-      nfmConfirmation = nfmConfirmation,
-      isNfmRegisteredInUK = isNfmRegisteredInUK,
-      isNFMnStatus = isNFMnStatus,
-      orgType = orgType,
-      withIdRegData = withIdRegData,
-      withoutIdRegData = withoutIdRegData
-    )
+  val validWithoutIdFmDataName = FilingMember(
+    nfmConfirmation = true,
+    isNfmRegisteredInUK = Some(false),
+    isNFMnStatus = RowStatus.InProgress
+  )
 
   def validWithoutIdFmDataAddress(
-    nfmConfirmation:     NfmRegistrationConfirmation = NfmRegistrationConfirmation.Yes,
-    isNfmRegisteredInUK: Option[NfmRegisteredInUkConfirmation] = Some(NfmRegisteredInUkConfirmation.Yes),
+    nfmConfirmation:     Boolean = true,
+    isNfmRegisteredInUK: Option[Boolean] = Some(true),
     isNFMnStatus:        RowStatus = RowStatus.InProgress,
     orgType:             Option[EntityType] = None,
     withIdRegData:       Option[GrsResponse] = None,
@@ -423,22 +412,22 @@ trait Pillar2TestData {
     )
 
   def validNoIdNfmData = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.No),
+    true,
+    Some(false),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )
 
   def validYesIdNfmData = new FilingMember(
-    NfmRegistrationConfirmation.Yes,
-    Some(NfmRegisteredInUkConfirmation.Yes),
+    true,
+    Some(true),
     isNFMnStatus = RowStatus.InProgress,
     withoutIdRegData = Some(WithoutIdNfmData("test name", registeredFmAddress = Some(validNfmRegisteredAddress)))
   )
 
   def validWithIdRegDataForLimitedCompany =
     new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isUPERegisteredInUK = true,
       isRegistrationStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
       withIdRegData = Some(
@@ -450,7 +439,7 @@ trait Pillar2TestData {
 
   def validWithIdRegDataForLLP =
     new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+      isUPERegisteredInUK = true,
       isRegistrationStatus = RowStatus.InProgress,
       orgType = Some(EntityType.LimitedLiabilityPartnership),
       withIdRegData = Some(
@@ -462,8 +451,8 @@ trait Pillar2TestData {
 
   def validWithIdFmRegistrationDataForLimitedComp =
     new FilingMember(
-      nfmConfirmation = NfmRegistrationConfirmation.Yes,
-      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      nfmConfirmation = true,
+      isNfmRegisteredInUK = Some(true),
       isNFMnStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
       withIdRegData = Some(
@@ -475,8 +464,8 @@ trait Pillar2TestData {
 
   def validWithIdFmRegistrationDataForPartnership =
     new FilingMember(
-      nfmConfirmation = NfmRegistrationConfirmation.Yes,
-      isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.Yes),
+      nfmConfirmation = true,
+      isNfmRegisteredInUK = Some(true),
       isNFMnStatus = RowStatus.InProgress,
       orgType = Some(EntityType.LimitedLiabilityPartnership),
       withIdRegData = Some(
@@ -485,24 +474,19 @@ trait Pillar2TestData {
         )
       )
     )
-  def validWithoutIdRegData(
-    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
-    isRegistrationStatus: RowStatus = RowStatus.InProgress
-  ) =
-    new Registration(isUPERegisteredInUK = isUPERegisteredInUK, isRegistrationStatus = isRegistrationStatus, withoutIdRegData = None)
+  val validWithoutIdRegData = Registration(
+    isUPERegisteredInUK = false,
+    isRegistrationStatus = RowStatus.InProgress
+  )
 
-  def validWithoutIdRegDataWithName(
-    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
-    isRegistrationStatus: RowStatus = RowStatus.InProgress
-  ) =
-    new Registration(
-      isUPERegisteredInUK = isUPERegisteredInUK,
-      isRegistrationStatus = isRegistrationStatus,
-      withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name"))
-    )
+  val validWithoutIdRegDataWithName = Registration(
+    isUPERegisteredInUK = false,
+    isRegistrationStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name"))
+  )
 
   def validWithoutIdRegDataWithoutName(
-    isUPERegisteredInUK:  UPERegisteredInUKConfirmation = UPERegisteredInUKConfirmation.No,
+    isUPERegisteredInUK:  Boolean = false,
     isRegistrationStatus: RowStatus = RowStatus.InProgress
   ) =
     new Registration(
@@ -520,17 +504,17 @@ trait Pillar2TestData {
   )
 
   val validIdRegistrationData =
-    new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+    Registration(
+      isUPERegisteredInUK = true,
       isRegistrationStatus = RowStatus.InProgress,
       orgType = Some(EntityType.UkLimitedCompany),
       withIdRegData = Some(
         GrsResponse(incorporatedEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponse()).as[IncorporatedEntityRegistrationData]))
       )
     )
-  def validIdRegistrationDataWithNoOrgType =
-    new Registration(
-      isUPERegisteredInUK = UPERegisteredInUKConfirmation.Yes,
+  val validIdRegistrationDataWithNoOrgType =
+    Registration(
+      isUPERegisteredInUK = true,
       isRegistrationStatus = RowStatus.InProgress,
       orgType = None,
       withIdRegData = None

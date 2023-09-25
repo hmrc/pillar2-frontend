@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.subscription
 
 import base.SpecBase
 import forms.MneOrDomesticFormProvider
 import models.fm.FilingMember
 import models.subscription.Subscription
-import models.{MneOrDomestic, NfmRegistrationConfirmation, NormalMode, UserAnswers}
+import models.{MneOrDomestic, NormalMode, UserAnswers}
 import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
         .success
         .value
 
@@ -73,7 +73,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
           )
           .success
           .value
-          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = NfmRegistrationConfirmation.Yes, isNFMnStatus = RowStatus.Completed))
+          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
           .success
           .value
 

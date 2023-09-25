@@ -37,7 +37,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   def controller(): UpeRegisteredAddressController =
     new UpeRegisteredAddressController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -51,7 +50,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -68,7 +67,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -122,7 +121,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -147,7 +146,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName()).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

@@ -16,13 +16,12 @@
 
 package models.registration
 
-import models.UPERegisteredInUKConfirmation
 import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
 import utils.RowStatus
 
 case class Registration(
-  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
+  isUPERegisteredInUK:  Boolean,
   orgType:              Option[EntityType] = None,
   isRegistrationStatus: RowStatus,
   withIdRegData:        Option[GrsResponse] = None,

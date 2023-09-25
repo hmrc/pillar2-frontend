@@ -90,7 +90,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
                   ))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
         }
       )
   }
@@ -103,5 +103,8 @@ class ContactCaptureTelephoneDetailsController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.contactByTelephone.fold(false)(contactTel => contactTel.toString == "yes"))
+      .map { subs =>
+        subs.contactByTelephone
+      }
+      .isDefined
 }

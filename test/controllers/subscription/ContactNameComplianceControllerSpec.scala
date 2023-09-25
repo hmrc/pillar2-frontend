@@ -18,8 +18,8 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{ContactNameComplianceFormProvider, UseContactPrimaryFormProvider}
-import models.{NormalMode, UseContactPrimary}
+import forms.ContactNameComplianceFormProvider
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubscriptionPage
@@ -27,7 +27,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.subscriptionview.{ContactNameComplianceView, UseContactPrimaryView}
+import views.html.subscriptionview.ContactNameComplianceView
 
 import scala.concurrent.Future
 

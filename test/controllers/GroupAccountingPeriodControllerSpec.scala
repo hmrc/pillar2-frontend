@@ -74,7 +74,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
             SubscriptionPage,
             Subscription(
               domesticOrMne = MneOrDomestic.Uk,
-              RowStatus.Completed,
+              groupDetailStatus = RowStatus.Completed,
               contactDetailsStatus = RowStatus.NotStarted,
               accountingPeriod = Some(AccountingPeriod(startDate, endDate))
             )

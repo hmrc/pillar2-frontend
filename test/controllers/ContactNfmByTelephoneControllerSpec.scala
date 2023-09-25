@@ -17,17 +17,16 @@
 package controllers
 
 import base.SpecBase
-import play.api.inject.bind
 import connectors.UserAnswersConnectors
 import controllers.fm.ContactNfmByTelephoneController
 import forms.ContactNfmByTelephoneFormProvider
-import models.fm.ContactNFMByTelephone
 import models.{NormalMode, UserAnswers}
-import pages.NominatedFilingMemberPage
-import play.api.test.FakeRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.NominatedFilingMemberPage
+import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.ContactNfmByTelephoneView
 
@@ -87,7 +86,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactNfmByTelephoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("yes").fill(ContactNFMByTelephone.Yes), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("yes").fill(true), NormalMode, "TestName")(
           request,
           appConfig(application),
           messages(application)
@@ -103,9 +102,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
-        val boundForm = formProvider("TestName").bind(Map("value" -> ""))
-        val view      = application.injector.instanceOf[ContactNfmByTelephoneView]
-        val result    = route(application, request).value
+        val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
     }
@@ -121,7 +118,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -141,7 +138,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

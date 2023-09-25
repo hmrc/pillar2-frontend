@@ -20,16 +20,15 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
-import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
+import models.Mode
+import models.fm.NfmRegisteredAddress
 import models.requests.DataRequest
-import models.{Mode, NfmRegisteredInUkConfirmation, NfmRegistrationConfirmation}
 import pages.NominatedFilingMemberPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmRegisteredAddressView
