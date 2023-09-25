@@ -16,14 +16,14 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.{AddressMappings, Mappings}
 import models.subscription.FmContactAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
-class FmContactAddressFormProvider @Inject() extends Mappings {
+class FmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength = 35
   def apply(): Form[FmContactAddress] = Form(
     mapping(
@@ -43,9 +43,11 @@ class FmContactAddressFormProvider @Inject() extends Mappings {
             .verifying(maxLength(textLength, "fmContactAddress.region.error.length"))
         ),
       "postalCode" ->
-        optional(
-          text("")
-            .verifying(maxLength(textLength, "fmContactAddress.region.error.length"))
+        optionalPostcode(
+          Some("fmContactAddress.postcode.error.invalid"),
+          "fmContactAddress.postcode.error.invalid",
+          "fmContactAddress.postcode.error.length",
+          "countryCode"
         ),
       "countryCode" ->
         text("fmContactAddress.country.error.required")
