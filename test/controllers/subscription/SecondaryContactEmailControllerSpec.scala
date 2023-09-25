@@ -110,7 +110,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-    //this
+
     "must redirect to telephone preference for second contact once they answered with a valid response" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(

@@ -59,13 +59,13 @@ class EntityTypeController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case true =>
+      case _ =>
         request.userAnswers
           .get(RegistrationPage)
           .fold(NotFound(notAvailable)) { reg =>
             reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
           }
-      case false =>
+      case "noData" =>
         NotFound(notAvailable)
     }
 
@@ -82,13 +82,19 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val domesticOrMne = reg.isUPERegisteredInUK
+                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
+                          regData.copy(
+                            isUPERegisteredInUK = true,
+                            orgType = Some(value),
+                            isRegistrationStatus = RowStatus.InProgress,
+                            withoutIdRegData = None,
+                            withIdRegData = None
+                          )
                         )
                       )
                     _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -101,13 +107,19 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val domesticOrMne = reg.isUPERegisteredInUK
+                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
+                          regData.copy(
+                            isUPERegisteredInUK = true,
+                            orgType = Some(value),
+                            isRegistrationStatus = RowStatus.InProgress,
+                            withoutIdRegData = None,
+                            withIdRegData = None
+                          )
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -120,9 +132,8 @@ class EntityTypeController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
     request.userAnswers
       .get(RegistrationPage)
-      .map(reg => reg.isUPERegisteredInUK)
-      .isDefined
+      .fold("noData")(data => data.isUPERegisteredInUK.toString)
 }

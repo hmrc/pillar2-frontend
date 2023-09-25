@@ -103,7 +103,7 @@ class UseContactPrimaryController @Inject() (
                         .fromTry(
                           request.userAnswers.set(
                             SubscriptionPage,
-                            Subscription(
+                            regData.copy(
                               domesticOrMne = regData.domesticOrMne,
                               useContactPrimary = Some(value),
                               primaryContactName = Some(getName(request)),
@@ -123,7 +123,7 @@ class UseContactPrimaryController @Inject() (
                         .fromTry(
                           request.userAnswers.set(
                             SubscriptionPage,
-                            Subscription(
+                            regData.copy(
                               domesticOrMne = regData.domesticOrMne,
                               useContactPrimary = Some(value),
                               primaryContactName = Some(getUpeName(request)),
@@ -138,7 +138,7 @@ class UseContactPrimaryController @Inject() (
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }
             case false =>
-              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
+              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary)) {
                 for {
                   updatedAnswers <-
                     Future
