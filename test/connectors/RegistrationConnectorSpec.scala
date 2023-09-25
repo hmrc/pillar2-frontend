@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 
 import scala.collection.Seq
 
-class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
+class RegistrationConnectorSpec extends SpecBase {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -91,15 +91,5 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
       result.futureValue mustBe Left(models.InternalServerError)
     }
   }
-
-  private def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
-    server.stubFor(
-      post(urlEqualTo(s"$expectedEndpoint"))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
-        )
-    )
 
 }

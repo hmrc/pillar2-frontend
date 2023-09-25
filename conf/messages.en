@@ -26,6 +26,17 @@ page_not_available.message=You cannot access this page directly
 
 ###############################################
 
+###############################################
+#
+# Error View
+#
+###############################################
+error.title=There is problem with the page.
+error.heading=There is technical difficulties
+error.message=You cannot access this page directly
+
+###############################################
+
 upeRegisteredAddress.title=Where is the registered office address of {0}?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address

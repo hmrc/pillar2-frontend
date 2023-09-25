@@ -26,7 +26,7 @@ import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.RegisterWithoutIdService
+import services.{RegisterWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
 
@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject() (
   getData:                               DataRetrievalAction,
   requireData:                           DataRequiredAction,
   override val registerWithoutIdService: RegisterWithoutIdService,
+  override val subscriptionService:      SubscriptionService,
   override val userAnswersConnectors:    UserAnswersConnectors,
   val controllerComponents:              MessagesControllerComponents,
   view:                                  CheckYourAnswersView

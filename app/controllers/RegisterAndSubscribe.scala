@@ -17,20 +17,21 @@
 package controllers
 
 import connectors.UserAnswersConnectors
-import models.{MandatoryInformationMissingError, NfmRegistrationConfirmation}
 import models.fm.FilingMember
 import models.registration.Registration
 import models.requests.DataRequest
+import models.{MandatoryInformationMissingError, NfmRegistrationConfirmation}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
-import services.RegisterWithoutIdService
+import services.{RegisterWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait RegisterAndSubscribe extends Logging {
   val registerWithoutIdService: RegisterWithoutIdService
+  val subscriptionService:      SubscriptionService
   val userAnswersConnectors:    UserAnswersConnectors
 
   def createRegistrationAndSubscription(registration: Registration, filingMemeber: FilingMember)(implicit
@@ -41,31 +42,33 @@ trait RegisterAndSubscribe extends Logging {
     (registration.safeId, filingMemeber.safeId) match {
       case (Some(safeId), Some(fmSafeId)) =>
         println(" Yes I have both safe id -----------------------------")
-        Future.successful(Redirect(routes.IndexController.onPageLoad))
-      //createSubscription(safeId, fmSafeId)
+        createSubscription(safeId, Some(fmSafeId))
+      // do the enrolement with PIllar2 id.
 
       case (Some(safeId), None) =>
         println(" Yes I have(Some(safeId), None) id -----------------------------")
-        Future.successful(Redirect(routes.IndexController.onPageLoad))
         if (filingMemeber.nfmConfirmation == NfmRegistrationConfirmation.Yes) {
           registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
-            case Right(fmsafeId) => Future.successful(Redirect(routes.IndexController.onPageLoad)) //createSubscription(safeId, fmSafeid)
+            case Right(fmSafeId) =>
+              createSubscription(safeId, Some(fmSafeId.value))
             case Left(value) =>
               logger.warn(s"Error $value")
               value match {
-                case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
-                case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+                case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.ErrorController.onPageLoad))
+                case _                                   => Future.successful(Redirect(routes.ErrorController.onPageLoad))
               }
           }
         } else {
           println(" Came in else part. -----------------------------")
-          Future.successful(Redirect(routes.IndexController.onPageLoad))
+          createSubscription(safeId)
         }
 
       case (None, Some(fmSafeId)) =>
         println(" Yes I have(None, Some(fmSafeId))id -----------------------------")
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
-          case Right(safeId) => Future.successful(Redirect(routes.IndexController.onPageLoad)) //createSubscription(safeId, fmSafeid)
+          case Right(upeSafeId) =>
+            //createSubscription(safeId, fmSafeid)
+            createSubscription(upeSafeId.value, Some(fmSafeId))
           case Left(value) =>
             logger.warn(s"Error $value")
             value match {
@@ -77,10 +80,11 @@ trait RegisterAndSubscribe extends Logging {
       case (None, None) =>
         println(" Yes I have(None, None)id -----------------------------")
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
-          case Right(safeId) =>
+          case Right(upeSafeId) =>
             if (filingMemeber.nfmConfirmation == NfmRegistrationConfirmation.Yes) {
               registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
-                case Right(fmsafeId) => Future.successful(Redirect(routes.IndexController.onPageLoad)) //createSubscription(safeId, fmSafeid)
+                case Right(fmSafeId) =>
+                  createSubscription(upeSafeId.value, Some(fmSafeId.value))
                 case Left(value) =>
                   logger.warn(s"Error $value")
                   value match {
@@ -90,8 +94,7 @@ trait RegisterAndSubscribe extends Logging {
               }
             } else {
               println(" Came in else part. -----------------------------")
-              //createSubscription(safeId)
-              Future.successful(Redirect(routes.IndexController.onPageLoad))
+              createSubscription(upeSafeId.value)
             }
 
           case Left(value) =>
@@ -100,8 +103,17 @@ trait RegisterAndSubscribe extends Logging {
               case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
               case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
             }
-
         }
       case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+    }
+
+  private def createSubscription(upeSafeId: String, fmSafeId: Option[String] = None)(implicit
+    hc:                                     HeaderCarrier,
+    ec:                                     ExecutionContext,
+    request:                                DataRequest[AnyContent]
+  ): Future[Result] =
+    subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).map {
+      case Right(successReponse) => Redirect(routes.IndexController.onPageLoad)
+      case Left(value)           => Redirect(routes.ErrorController.onPageLoad)
     }
 }
