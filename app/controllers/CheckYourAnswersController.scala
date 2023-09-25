@@ -32,7 +32,6 @@ import views.html.CheckYourAnswersView
 import views.html.errors.ErrorTemplate
 
 class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
@@ -144,11 +143,7 @@ class CheckYourAnswersController @Inject() (
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false) { data =>
-        ((data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther)) &&
-        data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)
-
-      }
+      .fold(false)(data => data.contactDetailsStatus.toString == "Completed")
 
   private def isUpeWithIdDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers

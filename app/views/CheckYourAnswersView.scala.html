@@ -18,9 +18,9 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton
 )
-
 
 @(listUpe: SummaryList,listNfm: SummaryList,listPrimary: SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
@@ -29,12 +29,26 @@
     <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-<h2 class="govuk-heading-m">@messages("CheckYourAnswers.nfm")</h2>
+<h2 class="govuk-heading-m">@messages("CheckYourAnswers.upe")</h2>
     @govukSummaryList(listUpe)
 
-    <h2 class="govuk-heading-m">@messages("CheckYourAnswers.upe")</h2>
+    <h2 class="govuk-heading-m">@messages("CheckYourAnswers.nfm")</h2>
    @govukSummaryList(listNfm)
 
+    @if(listSecondary.rows.length!=0){
+    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+    @govukSummaryList(listSecondary)
+    }
+    @if(address.rows.length!=0){
+    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
+    @govukSummaryList(address)
+    }
 
+        <br>
+        @govukButton(
+        ButtonViewModel(messages("site.save-and-continue"))
+        .withAttribute("id","continue")
+        .asLink(controllers.routes.TaskListController.onPageLoad.url)
+        )
 
 }

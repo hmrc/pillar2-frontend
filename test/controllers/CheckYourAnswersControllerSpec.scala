@@ -17,29 +17,81 @@
 package controllers
 
 import base.SpecBase
+import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.CheckYourAnswersView
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+  def controller(): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      preAuthenticatedActionBuilders,
+      preDataRetrievalActionImpl,
+      preDataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      viewCheckYourAnswers,
+      viewpageNotAvailable,
+      mockCountryOptions
+    )
+  val completeUserAnswer = emptyUserAnswers
+    .set(
+      SubscriptionPage,
+      ContactCheckAnswerWithSecondaryContactData()
+    )
+    .success
+    .value
+
+  val noSecondContactUserAnswers = emptyUserAnswers
+    .set(
+      SubscriptionPage,
+      primaryContactCheckAnswerData()
+    )
+    .success
+    .value
 
   "Check Your Answers Controller" must {
 
-    "must return OK and the correct view for a GET" in {
+    "must return Not Found and the correct view with empty user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual NOT_FOUND
+      }
+    }
+    "must return OK and the correct view if an answer is provided to every question " in {
+      val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) must include(
+          "Contact details"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+        contentAsString(result) must include(
+          "Contact address"
+        )
+      }
+    }
+    "must return OK and the correct view if only primary Contact and address answer is provided to  question " in {
+      val application = applicationBuilder(userAnswers = Some(noSecondContactUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Contact details"
+        )
+        contentAsString(result) must not include
+          "Second contact"
+        contentAsString(result) must include(
+          "Contact address"
+        )
       }
     }
 

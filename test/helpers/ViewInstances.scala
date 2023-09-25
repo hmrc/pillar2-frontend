@@ -197,6 +197,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new FilingMemberCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewContactCheckYourAnswers: ContactCheckYourAnswersView =
     new ContactCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+  val viewCheckYourAnswers: CheckYourAnswersView =
+    new CheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 
