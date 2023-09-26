@@ -37,9 +37,12 @@
     @if(listSecondary.rows.length!=0){
         @govukSummaryList(listSecondary)
       }
-    @if(address.rows.length!=0){
+    @if(address.rows.length!=0 && listSecondary.rows.length!=0){
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)
+    } else if(address.rows.length!=0) {
+    <h2 class="govuk-heading-m govuk-!-margin-top-5">@messages("contactCheckYourAnswers.address")</h2>
+    @govukSummaryList(address)
     }
 
     <br>
