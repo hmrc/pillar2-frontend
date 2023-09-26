@@ -29,7 +29,7 @@ object NfmTelephonePreferenceSummary {
     answers.get(NominatedFilingMemberPage).map { answer =>
       val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactNfmByTelephone.fold("")(tel => tel.toString))
       val value =
-        if (contactUpeByTelephone.contains(true)) "site.yes" else "site.no"
+        if (contactUpeByTelephone == "true") "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "contactNfmByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
