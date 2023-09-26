@@ -20,8 +20,14 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class SubscriptionSuccessResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDate)
+case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDate)
 
-object SubscriptionSuccessResponse {
-  implicit val format: OFormat[SubscriptionSuccessResponse] = Json.format[SubscriptionSuccessResponse]
+object SubscriptionResponse {
+  implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
+}
+
+case class SuccessResponse(success: SubscriptionResponse)
+
+object SuccessResponse {
+  implicit val format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
 }

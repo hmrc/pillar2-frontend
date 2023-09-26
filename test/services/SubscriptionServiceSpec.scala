@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.SubscriptionConnector
 import models.SubscriptionCreateError
-import models.subscription.SubscriptionSuccessResponse
+import models.subscription.SubscriptionResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
@@ -41,7 +41,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
   "SubscriptionService" when {
     "must return Pillar2Id if all success" in {
-      val response = SubscriptionSuccessResponse(
+      val response = SubscriptionResponse(
         plrReference = "XE1111123456789",
         formBundleNumber = "12345678",
         processingDate = LocalDate.now()

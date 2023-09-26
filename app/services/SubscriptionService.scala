@@ -17,7 +17,7 @@
 package services
 
 import connectors.SubscriptionConnector
-import models.subscription.{SubscriptionRequestParameters, SubscriptionSuccessResponse}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import models.{ApiError, SubscriptionCreateError}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,10 +29,15 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
   def checkAndCreateSubscription(id: String, regSafeId: String, fmSafeId: Option[String])(implicit
     hc:                              HeaderCarrier,
     ec:                              ExecutionContext
-  ): Future[Either[ApiError, SubscriptionSuccessResponse]] =
+  ): Future[Either[ApiError, SubscriptionResponse]] =
     //We may need to check Read Subscription here.
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
-      case Some(subscriptionSuccessResponse) => Right(subscriptionSuccessResponse)
-      case None                              => Left(SubscriptionCreateError)
+      case Some(subscriptionSuccessResponse) =>
+        println(s" AM I coming to service ----------------------$subscriptionSuccessResponse")
+        Right(subscriptionSuccessResponse)
+      case None =>
+        println(s" AM I coming to NONE ----------------------")
+
+        Left(SubscriptionCreateError)
     }
 }

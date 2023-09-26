@@ -17,8 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.subscription.{SubscriptionRequestParameters, SubscriptionSuccessResponse}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import play.api.Logging
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -32,19 +33,23 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   def crateSubscription(subscriptionParameter: SubscriptionRequestParameters)(implicit
     hc:                                        HeaderCarrier,
     ec:                                        ExecutionContext
-  ): Future[Option[SubscriptionSuccessResponse]] =
+  ): Future[Option[SubscriptionResponse]] =
     http
       .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
-          response.json.asOpt[SubscriptionSuccessResponse].map(success => success)
+          println(s" what is error response ---2XX-------------------${response.json}")
+          println(s" what is error response ---2XX-------------------${Json.toJson(response.json.asOpt[SuccessResponse])}")
+          Some(response.json.as[SuccessResponse].success)
 
         case errorResponse =>
+          println(s" what is error response ----------------------${errorResponse.json}")
           logger.warn(s"Create Subscription failed with Status ${errorResponse.status}")
           None
       }
       .recover { case e: Exception =>
-        logger.warn(s"Error message ${e.getMessage} has been thrown when create subscription was called")
+        println(s" what is error response -------------Exception---------")
+        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when create subscription was called")
         None
       }
 

@@ -498,3 +498,11 @@ secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
 secondaryTelephone.change.hidden = SecondaryTelephone
+
+registrationConfirmation.title = Registration complete
+registrationConfirmation.registrationComplete = Registration complete
+registrationConfirmation.topup = Pillar 2 top-up tax ID
+registrationConfirmation.whatHappensNext = What happens next
+registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
+registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
+

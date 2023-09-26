@@ -20,7 +20,7 @@ import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
 
-import models.subscription.{AccountingPeriod, Subscription, SubscriptionRequestParameters, SubscriptionSuccessResponse}
+import models.subscription.{AccountingPeriod, Subscription, SubscriptionRequestParameters, SubscriptionResponse}
 import models.{MneOrDomestic, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
@@ -556,7 +556,7 @@ trait Pillar2TestData {
 
   val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
   val validSubscriptionSuccessResponse =
-    SubscriptionSuccessResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
+    SubscriptionResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
 
   def validRegistrationWithIdResponse(): String =
     s"""{

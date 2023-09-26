@@ -113,7 +113,11 @@ trait RegisterAndSubscribe extends Logging {
     request:                                DataRequest[AnyContent]
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).map {
-      case Right(successReponse) => Redirect(routes.IndexController.onPageLoad)
-      case Left(value)           => Redirect(routes.ErrorController.onPageLoad)
+      case Right(successReponse) =>
+        println("AM id coming to success response------------------?")
+        Redirect(routes.RegistrationConfirmationController.onPageLoad(successReponse.plrReference))
+      case Left(value) =>
+        println("AM id coming to LEFT VALUE------------------?")
+        Redirect(routes.ErrorController.onPageLoad)
     }
 }
