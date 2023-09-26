@@ -76,8 +76,7 @@ class IsNfmUKBasedController @Inject() (
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
-
+                  .getOrElse(FilingMember(true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future
@@ -85,7 +84,7 @@ class IsNfmUKBasedController @Inject() (
                       request.userAnswers
                         .set(
                           NominatedFilingMemberPage,
-                          regData.copy(isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
+                          regData.copy(true, isNfmRegisteredInUK = Some(value), withoutIdRegData = None)
                         )
                     )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -96,13 +95,16 @@ class IsNfmUKBasedController @Inject() (
               val regData =
                 request.userAnswers
                   .get(NominatedFilingMemberPage)
-                  .getOrElse(FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+                  .getOrElse(FilingMember(true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
+
+              val checkedRegData =
+                regData.withIdRegData.fold(regData)(_ => FilingMember(true, isNfmRegisteredInUK = Some(value), isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      regData.copy(isNfmRegisteredInUK = Some(value), withIdRegData = None, orgType = None)
+                      checkedRegData.copy(true, isNfmRegisteredInUK = Some(value), orgType = None, withIdRegData = None)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
