@@ -468,6 +468,7 @@ secondaryTelephonePreference.change.hidden = your response to whether we can con
 secondaryTelephone.change.hidden = the telephone number for the second contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
+contactCheckYourAnswers.first = First contact
 contactCheckYourAnswers.heading = Check your answers
 contactCheckYourAnswers.title = Check your answers
 contactCheckYourAnswers.heading.caption = Contact details
@@ -487,7 +488,7 @@ addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
-secondaryContactName.checkYourAnswersLabel = Secondary Contact name
+secondaryContactName.checkYourAnswersLabel = Secondary contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
