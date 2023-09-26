@@ -117,7 +117,7 @@ trait Pillar2TestData {
       primaryContactName = Some("Test Contact Name"),
       primaryContactEmail = Some("Test@test.com"),
       contactByTelephone = Some(true),
-      telephoneNumber = Some("1234567789"),
+      primaryContactTelephone = Some("1234567789"),
       addSecondaryContact = Some(true),
       secondaryContactName = Some("second Test name"),
       secondaryContactEmail = Some("secondemail@test.com"),
@@ -145,7 +145,7 @@ trait Pillar2TestData {
       primaryContactName = Some("Test Contact Name"),
       primaryContactEmail = Some("Test@test.com"),
       contactByTelephone = Some(true),
-      telephoneNumber = Some("1234567789"),
+      primaryContactTelephone = Some("1234567789"),
       correspondenceAddress = Some(
         new SubscriptionAddress(
           addressLine1 = "ad1",

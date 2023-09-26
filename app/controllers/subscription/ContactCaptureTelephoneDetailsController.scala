@@ -57,7 +57,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
         request.userAnswers
           .get(SubscriptionPage)
           .fold(NotFound(notAvailable)) { reg =>
-            reg.telephoneNumber.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
+            reg.primaryContactTelephone.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
           }
 
       case false => NotFound(notAvailable)
