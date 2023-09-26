@@ -30,6 +30,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SecondaryTelephonePreferenceView
 
@@ -101,7 +102,14 @@ class SecondaryTelephonePreferenceController @Inject() (
                       Future
                         .fromTry(
                           request.userAnswers
-                            .set(SubscriptionPage, subsData.copy(secondaryTelephonePreference = Some(value), secondaryContactTelephone = None))
+                            .set(
+                              SubscriptionPage,
+                              subsData.copy(
+                                secondaryTelephonePreference = Some(value),
+                                secondaryContactTelephone = None,
+                                contactDetailsStatus = RowStatus.Completed
+                              )
+                            )
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad)

@@ -82,7 +82,6 @@ class ContactByTelephoneController @Inject() (
                     request.userAnswers
                       set (SubscriptionPage, subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = subRegData.telephoneNumber,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
@@ -105,7 +104,6 @@ class ContactByTelephoneController @Inject() (
                       set (SubscriptionPage,
                       subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = None,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,

@@ -45,7 +45,6 @@ class ContactCheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
     val list = isPrimaryPhoneDefined(request) match {
       case true =>
         SummaryListViewModel(
@@ -71,7 +70,6 @@ class ContactCheckYourAnswersController @Inject() (
         AddSecondaryContactSummary.row(request.userAnswers)
       ).flatten
     )
-    println("**********************************8888" + isSecondaryPhoneDefined(request))
     val listSecondary = (isSecondContactDefined(request), isSecondaryPhoneDefined(request)) match {
       case (true, true) =>
         SummaryListViewModel(
@@ -109,8 +107,7 @@ class ContactCheckYourAnswersController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        ((data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther)) &&
-        data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)
+        data.groupDetailStatus.toString == "Completed"
       }
 
   private def isSecondContactDefined(request: DataRequest[AnyContent]): Boolean =
@@ -128,7 +125,6 @@ class ContactCheckYourAnswersController @Inject() (
       .get(SubscriptionPage)
       .fold(false)(data =>
         data.secondaryTelephonePreference.fold(false) { contact =>
-          println(".................................." + contact)
           contact
         }
       )

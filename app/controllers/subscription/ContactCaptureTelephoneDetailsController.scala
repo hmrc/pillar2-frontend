@@ -28,6 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
@@ -78,15 +79,14 @@ class ContactCaptureTelephoneDetailsController @Inject() (
               Future.fromTry(
                 request.userAnswers
                   set (SubscriptionPage, subRegData.copy(
-                    telephoneNumber = Some(value),
+                    primaryContactTelephone = Some(value),
                     primaryContactEmail = subRegData.primaryContactEmail,
                     domesticOrMne = subRegData.domesticOrMne,
                     accountingPeriod = subRegData.accountingPeriod,
                     useContactPrimary = subRegData.useContactPrimary,
-                    primaryContactTelephone = subRegData.primaryContactTelephone,
                     primaryContactName = subRegData.primaryContactName,
                     groupDetailStatus = subRegData.groupDetailStatus,
-                    contactDetailsStatus = subRegData.contactDetailsStatus
+                    contactDetailsStatus = RowStatus.Completed
                   ))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

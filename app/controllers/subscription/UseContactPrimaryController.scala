@@ -106,6 +106,7 @@ class UseContactPrimaryController @Inject() (
                             Subscription(
                               domesticOrMne = regData.domesticOrMne,
                               useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByNfmPhoneNumber(request)),
                               primaryContactName = Some(getName(request)),
                               primaryContactEmail = Some(getEmail(request)),
                               primaryContactTelephone = Some(getPhoneNumber(request)),
@@ -126,6 +127,7 @@ class UseContactPrimaryController @Inject() (
                             Subscription(
                               domesticOrMne = regData.domesticOrMne,
                               useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByUpePhoneNumber(request)),
                               primaryContactName = Some(getUpeName(request)),
                               primaryContactEmail = Some(getUpeEmail(request)),
                               primaryContactTelephone = Some(getUpePhoneNumber(request)),
@@ -138,7 +140,7 @@ class UseContactPrimaryController @Inject() (
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }
             case false =>
-              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
+              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary)) {
                 for {
                   updatedAnswers <-
                     Future
@@ -223,6 +225,15 @@ class UseContactPrimaryController @Inject() (
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmEmailAddress.fold("")(email => email)))
   }
 
+  private def ContactByNfmPhoneNumber(request: DataRequest[AnyContent]): Boolean = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.telephoneNumber.fold(false)(tel => tel.nonEmpty)))
+  }
+
+  private def ContactByUpePhoneNumber(request: DataRequest[AnyContent]): Boolean = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.nonEmpty))
+  }
   private def getPhoneNumber(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
