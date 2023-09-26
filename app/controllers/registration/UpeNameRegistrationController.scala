@@ -20,15 +20,15 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
-import models.{Mode, UPERegisteredInUKConfirmation}
+import models.Mode
 import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
-import navigation.Navigator
 import pages.RegistrationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
@@ -37,7 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -55,13 +54,12 @@ class UpeNameRegistrationController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data.upeNameRegistration), mode)))
-          }
-      case false =>
-        NotFound(notAvailable)
+        val preparedForm = request.userAnswers.get(RegistrationPage) match {
+          case None        => form
+          case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
+        }
+        Ok(view(preparedForm, mode))
+      case false => NotFound(notAvailable)
     }
   }
 
@@ -70,23 +68,38 @@ class UpeNameRegistrationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers.set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeNameRegistration = value))))
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
-        }
+        value =>
+          request.userAnswers
+            .get(RegistrationPage)
+            .map { reg =>
+              val withoutID = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(
+                      RegistrationPage,
+                      Registration(
+                        isUPERegisteredInUK = false,
+                        isRegistrationStatus = RowStatus.InProgress,
+                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value)),
+                        withIdRegData = None,
+                        orgType = None
+                      )
+                    )
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No)
+      .map { reg =>
+        reg.isUPERegisteredInUK
+      }
+      .isDefined
 
 }

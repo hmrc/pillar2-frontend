@@ -33,7 +33,7 @@ object SecondaryContactNameSummary {
         key = "secondaryContactName.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(value).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryContactNameController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )
       )

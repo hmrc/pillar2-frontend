@@ -488,3 +488,43 @@ CheckYourAnswers.nfm = Nominated filing member
 
 
 
+
+addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
+addSecondaryContact.error.required = Select yes if there is someone else we can contact
+addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+
+secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+secondaryContactName.checkYourAnswersLabel = Secondary Contact
+secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+secondaryContactName.error.required = Enter name of the person of team we should contact
+secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.change.hidden = SecondaryContactName
+
+secondaryContactEmail.title =What is the email address for {0}?
+secondaryContactEmail.heading = What is the email address for {0}?
+secondaryContactEmail.heading.caption= Contact details
+secondaryContactEmail.checkYourAnswersLabel = Email Address
+secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes
+secondaryContactEmail.error.required = You need to enter the email address for {0}
+secondaryContactEmail.error.length = The email address should be 160 characters or less
+secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
+secondaryContactEmail.change.hidden = SecondaryContactEmail
+
+secondaryTelephonePreference.title = Can we contact {0} by telephone?
+secondaryTelephonePreference.heading = Can we contact {0} by telephone?
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
+secondaryTelephonePreference.change.hidden = SecondaryTelephonePreference
+
+secondaryTelephone.title = What is the telephone number for {0}?
+secondaryTelephone.heading = What is the telephone number for {0}?
+secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+secondaryTelephone.error.required = You need to enter the telephone for {0}
+secondaryTelephone.error.length = The telephone number should be 24 characters or less
+secondaryTelephone.error.format = Enter a telephone number in the correct format
+secondaryTelephone.change.hidden = SecondaryTelephone
+

@@ -19,20 +19,16 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{ContactByTelephoneFormProvider, ContactNfmByTelephoneFormProvider}
-import models.{Mode, NormalMode}
-import models.fm.ContactNFMByTelephone
+import forms.ContactByTelephoneFormProvider
 import models.requests.DataRequest
-import models.subscription.ContactByTelephone
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import models.{Mode, NormalMode}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.errors.ErrorTemplate
-import views.html.fmview.ContactNfmByTelephoneView
 import views.html.subscriptionview.ContactByTelephoneView
 
 import javax.inject.Inject
@@ -77,7 +73,7 @@ class ContactByTelephoneController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
         value =>
           value match {
-            case ContactByTelephone.Yes =>
+            case true =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
               for {
@@ -86,7 +82,6 @@ class ContactByTelephoneController @Inject() (
                     request.userAnswers
                       set (SubscriptionPage, subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = subRegData.telephoneNumber,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
@@ -99,7 +94,7 @@ class ContactByTelephoneController @Inject() (
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-            case ContactByTelephone.No =>
+            case false =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
               for {
@@ -109,7 +104,6 @@ class ContactByTelephoneController @Inject() (
                       set (SubscriptionPage,
                       subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = None,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
@@ -121,7 +115,7 @@ class ContactByTelephoneController @Inject() (
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
           }
       )
   }

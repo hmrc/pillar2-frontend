@@ -21,7 +21,6 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNfmByTelephoneFormProvider
 import models.Mode
-import models.fm.ContactNFMByTelephone
 import models.requests.DataRequest
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
@@ -82,7 +81,7 @@ class ContactNfmByTelephoneController @Inject() (
             nfmRegData.withoutIdRegData.getOrElse(throw new Exception("Subscription data should be available"))
 
           value match {
-            case ContactNFMByTelephone.Yes =>
+            case true =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
@@ -92,14 +91,14 @@ class ContactNfmByTelephoneController @Inject() (
                         nfmRegData
                           .copy(
                             isNFMnStatus = RowStatus.InProgress,
-                            withoutIdRegData = Some(nfmRegDataWithoutId.copy(contactNfmByTelephone = Some(value)))
+                            withoutIdRegData = Some(nfmRegDataWithoutId.copy(contactNfmByTelephone = Some(true)))
                           )
                       )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(mode))
 
-            case ContactNFMByTelephone.No =>
+            case false =>
               for {
                 updatedAnswers <-
                   Future.fromTry(

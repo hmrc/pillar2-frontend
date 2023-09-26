@@ -11,3 +11,6 @@
 .no-border-bottom{
 border-bottom:none;
 }
+.govuk-grid-column-two-thirds > dl:nth-child(5n){
+margin-bottom:0;
+}

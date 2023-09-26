@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{ContactUPEByTelephone, Mode}
 import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
@@ -82,7 +82,7 @@ class ContactUPEByTelephoneController @Inject() (
             regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration, address & email should be available before email"))
 
           value match {
-            case ContactUPEByTelephone.Yes =>
+            case true =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
@@ -99,7 +99,7 @@ class ContactUPEByTelephoneController @Inject() (
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
 
-            case ContactUPEByTelephone.No =>
+            case false =>
               for {
                 updatedAnswers <-
                   Future.fromTry(

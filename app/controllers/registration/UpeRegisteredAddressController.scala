@@ -20,10 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-import models.registration.WithoutIdRegData
 import models.requests.DataRequest
 import models.{Mode, UpeRegisteredAddress}
-import navigation.Navigator
 import pages.RegistrationPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -39,7 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -54,20 +51,15 @@ class UpeRegisteredAddressController @Inject() (
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getUserName(request)
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.upeRegisteredAddress.fold(Ok(view(form, mode, userName, countryList)))(address =>
-                Ok(view(form.fill(address), mode, userName, countryList))
-              )
-            )
-          }
-
+        val userName = getUserName(request)
+        val preparedForm = request.userAnswers.get(RegistrationPage) match {
+          case Some(value) => value.withoutIdRegData.fold(form)(data => data.upeRegisteredAddress.fold(form)(address => form.fill(address)))
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, userName, countryList))
       case false => NotFound(notAvailable)
     }
 
@@ -94,13 +86,16 @@ class UpeRegisteredAddressController @Inject() (
       )
   }
 
-  private def getUserName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration))
-  }
+  private def getUserName(request: DataRequest[AnyContent]): String =
+    request.userAnswers
+      .get(RegistrationPage)
+      .fold("")(regData =>
+        regData.withoutIdRegData
+          .fold("")(withoutId => withoutId.upeNameRegistration)
+      )
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data => !data.isUPERegisteredInUK.toString.isEmpty)
+      .fold(false)(data => data.withoutIdRegData.fold(false)(name => name.upeNameRegistration.nonEmpty))
 }

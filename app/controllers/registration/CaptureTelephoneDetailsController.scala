@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
-import models.{ContactUPEByTelephone, Mode}
+import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.RegistrationPage
@@ -103,10 +103,6 @@ class CaptureTelephoneDetailsController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(data =>
-        data.withoutIdRegData.fold(false)(withoutId =>
-          withoutId.contactUpeByTelephone.fold(false)(contactTel => contactTel == ContactUPEByTelephone.Yes)
-        )
-      )
+      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.fold(false)(contactTel => contactTel)))
 
 }

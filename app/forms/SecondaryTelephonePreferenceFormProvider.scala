@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object NfmCaptureTelephoneDetailsPage extends QuestionPage[String] {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  override def path: JsPath = JsPath \ toString
+class SecondaryTelephonePreferenceFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "nfmCaptureTelephoneDetails"
+  def apply(userName: String): Form[Boolean] =
+    Form(
+      "value" -> boolean("secondaryTelephonePreference.error.required", args = Seq(userName))
+    )
 }

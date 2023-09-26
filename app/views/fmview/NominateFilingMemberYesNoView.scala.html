@@ -39,10 +39,9 @@
 
         <span class="govuk-caption-l">@messages("NominateFilingMemberYesNo.heading.caption")</span>
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field  = form("nominateFilingMember"),
-                fieldset = FieldsetViewModel(Legend(HtmlContent( headingContent))),
-                items  =  NfmRegistrationConfirmation.options
+                fieldset = FieldsetViewModel(Legend(HtmlContent( headingContent)))
             )
         )
 

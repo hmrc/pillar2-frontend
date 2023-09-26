@@ -32,7 +32,7 @@ object SecondaryTelephonePreferenceSummary {
         key = "secondaryTelephonePreference.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.ContactByTelephoneController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("secondaryTelephonePreference.change.hidden"))
         )
       )

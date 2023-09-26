@@ -23,7 +23,7 @@
 )
 
 
-@(list: SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 
@@ -31,8 +31,10 @@
     <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
+    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+        @govukSummaryList(addSecondaryContactList)
+
     @if(listSecondary.rows.length!=0){
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
         @govukSummaryList(listSecondary)
       }
     @if(address.rows.length!=0){

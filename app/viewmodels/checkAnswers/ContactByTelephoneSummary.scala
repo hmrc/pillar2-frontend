@@ -42,14 +42,9 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object ContactByTelephoneSummary {
-
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(answer.contactByTelephone.fold("")(contact => contact.toString))
-        )
-      )
+      val value = ValueViewModel(answer.contactByTelephone.fold("")(contact => if (contact) "site.yes" else "site.no"))
       SummaryListRowViewModel(
         key = "contactByTelephone.checkYourAnswersLabel",
         value = value,

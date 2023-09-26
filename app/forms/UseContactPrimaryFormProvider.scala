@@ -17,16 +17,14 @@
 package forms
 
 import forms.mappings.Mappings
-import models.UseContactPrimary
-
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class UseContactPrimaryFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[UseContactPrimary] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[UseContactPrimary]("useContactPrimary.error.required")
+      "value" -> boolean("useContactPrimary.error.required")
     )
 }
