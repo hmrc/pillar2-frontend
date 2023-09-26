@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, ContactUPEByTelephone, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.RegistrationPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,9 +27,9 @@ object UpeTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RegistrationPage).map { answer =>
-      val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactUpeByTelephone.fold("")(tel => tel.toString))
+      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.fold(false)(tel => tel))
       val value =
-        if (contactUpeByTelephone.equals(ContactUPEByTelephone.Yes.toString)) "site.yes" else "site.no"
+        if (contactUpeByTelephone) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "contactUPEByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),

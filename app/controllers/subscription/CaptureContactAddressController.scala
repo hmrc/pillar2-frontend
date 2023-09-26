@@ -21,9 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.CaptureContactAddressFormProvider
-import models.{Mode, NfmRegisteredInUkConfirmation, UPERegisteredInUKConfirmation}
-import models.requests.DataRequest
-import pages.{CaptureContactAddressPage, NominatedFilingMemberPage, RegistrationPage}
+import models.Mode
+import pages.CaptureContactAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -69,18 +68,4 @@ class CaptureContactAddressController @Inject() (
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }
-
-  private def isNfmNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false) { data =>
-        data.isNfmRegisteredInUK.fold(false)(regInUk => regInUk == NfmRegisteredInUkConfirmation.No)
-      }
-
-  private def isUpeNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(false) { data =>
-        data.isUPERegisteredInUK == UPERegisteredInUKConfirmation.No
-      }
 }

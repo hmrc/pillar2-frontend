@@ -70,12 +70,12 @@ trait RadiosFluency {
       val items = Seq(
         RadioItem(
           id = Some(s"${field.id}_0"),
-          value = Some("yes"),
+          value = Some("true"),
           content = Text(messages("site.yes"))
         ),
         RadioItem(
           id = Some(s"${field.id}_1"),
-          value = Some("no"),
+          value = Some("false"),
           content = Text(messages("site.no"))
         )
       )

@@ -17,7 +17,8 @@ object AppDependencies {
   val test = Seq(
 
     "org.scalatestplus"       %% "mockito-3-4"              % "3.2.10.0",
-    "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
+    "io.github.wolfendale"    %% "scalacheck-gen-regexp"    %  "0.1.3",
+      "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
     "org.jsoup"               %  "jsoup"                    % "1.14.3",
     "com.typesafe.play"       %% "play-test"                % PlayVersion.current,
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % bootstrapVersion,

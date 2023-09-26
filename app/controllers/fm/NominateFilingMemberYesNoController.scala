@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
-import models.{Mode, NfmRegistrationConfirmation}
+import models.Mode
 import models.fm.FilingMember
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.I18nSupport
@@ -68,28 +68,27 @@ class NominateFilingMemberYesNoController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val fmData = request.userAnswers.get(NominatedFilingMemberPage)
-
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case NfmRegistrationConfirmation.Yes =>
+            case true =>
+              val fmData = request.userAnswers
+                .get(NominatedFilingMemberPage)
+                .getOrElse(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       NominatedFilingMemberPage,
-                      fmData.fold(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))(data =>
-                        data copy (nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress)
-                      )
+                      fmData.copy(nfmConfirmation = value)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
-            case NfmRegistrationConfirmation.No =>
+            case false =>
               for {
                 updatedAnswers <-
                   Future.fromTry(

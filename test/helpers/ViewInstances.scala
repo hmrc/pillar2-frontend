@@ -23,18 +23,33 @@ import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBann
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
 import views.html.fmview._
 import views.html.registrationview._
 import views.html.subscriptionview._
 import views.html.templates._
+import views.html._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewCaptureContactAddress: CaptureContactAddressView =
     new CaptureContactAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val viewSecondaryTelephone: SecondaryTelephoneView =
+    new SecondaryTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewSecondaryTelephonePreference: SecondaryTelephonePreferenceView =
+    new SecondaryTelephonePreferenceView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val viewSecondaryContactEmail: SecondaryContactEmailView =
+    new SecondaryContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewSecondaryContactName: SecondaryContactNameView =
+    new SecondaryContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+
+  val viewAddSecondaryContact: AddSecondaryContactView =
+    new AddSecondaryContactView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewMneOrDomestic: MneOrDomesticView =
     new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)

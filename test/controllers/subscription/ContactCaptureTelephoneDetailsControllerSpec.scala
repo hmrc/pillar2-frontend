@@ -18,9 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-
 import forms.ContactCaptureTelephoneDetailsFormProvider
-import models.subscription.ContactByTelephone
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,7 +27,6 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-
 import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
 import scala.concurrent.Future
@@ -38,23 +35,11 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
 
-  def controller(): ContactCaptureTelephoneDetailsController =
-    new ContactCaptureTelephoneDetailsController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewContactCaptureTelephoneDetails
-    )
-
   "ContactCaptureTelephoneDetails Controller" when {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData(contactByTelephone = ContactByTelephone.Yes)).success.value
+        emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData(contactByTelephone = true)).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -90,7 +75,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
     }
 
@@ -120,10 +105,6 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = formProvider("Test Name").bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         val result = route(application, request).value
 

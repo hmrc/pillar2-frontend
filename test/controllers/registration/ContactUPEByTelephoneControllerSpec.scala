@@ -19,14 +19,13 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
-import models.{ContactUPEByTelephone, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, status, _}
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
 
@@ -35,19 +34,6 @@ import scala.concurrent.Future
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
   val formProvider = new ContactUPEByTelephoneFormProvider()
-
-  def controller(): ContactUPEByTelephoneController =
-    new ContactUPEByTelephoneController(
-      mockUserAnswersConnectors,
-      mockNavigator,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewContactUPEByTelephoneView
-    )
 
   "Can we contact UPE by Telephone Controller" should {
 
@@ -64,7 +50,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactUPEByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("yes"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("true"), NormalMode, "TestName")(
           request,
           appConfig(application),
           messages(application)
@@ -82,7 +68,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -101,7 +87,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

@@ -19,10 +19,10 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{ContactEmailAddressFormProvider, NfmEmailAddressFormProvider}
-import models.{MneOrDomestic, Mode}
+import forms.ContactEmailAddressFormProvider
+import models.Mode
 import models.requests.DataRequest
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

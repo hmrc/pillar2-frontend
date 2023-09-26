@@ -19,18 +19,20 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
-import uk.gov.hmrc.http.HttpVerbs.GET
 import forms.NfmEntityTypeFormProvider
+import models.fm.FilingMember
 import models.grs.EntityType
-import models.{Mode, NfmRegisteredInUkConfirmation, UserType}
+import models.requests.DataRequest
+import models.{Mode, UserType}
 import pages.NominatedFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.NfmEntityTypeView
-import models.requests.DataRequest
 import views.html.errors.ErrorTemplate
 
 import javax.inject.Inject
@@ -57,11 +59,9 @@ class NfmEntityTypeController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
       case true =>
-        request.userAnswers
-          .get(NominatedFilingMemberPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          }
+        request.userAnswers.get(NominatedFilingMemberPage).fold(NotFound(notAvailable)) { reg =>
+          reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
+        }
       case false =>
         NotFound(notAvailable)
     }
@@ -76,13 +76,17 @@ class NfmEntityTypeController @Inject() (
           value match {
             case EntityType.UkLimitedCompany =>
               val regData =
-                request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is Filing Member in UK not been selected"))
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(
+                    FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(true), orgType = Some(value), isNFMnStatus = RowStatus.InProgress)
+                  )
 
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value)))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
@@ -92,12 +96,16 @@ class NfmEntityTypeController @Inject() (
 
             case EntityType.LimitedLiabilityPartnership =>
               val regData =
-                request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is Filing Member in UK not been selected"))
+                request.userAnswers
+                  .get(NominatedFilingMemberPage)
+                  .getOrElse(
+                    FilingMember(nfmConfirmation = true, isNfmRegisteredInUK = Some(true), orgType = Some(value), isNFMnStatus = RowStatus.InProgress)
+                  )
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value), withIdRegData = None, withoutIdRegData = None))
+                      .set(NominatedFilingMemberPage, regData.copy(orgType = Some(value)))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
 
@@ -109,7 +117,5 @@ class NfmEntityTypeController @Inject() (
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.isNfmRegisteredInUK.fold(false)(isNfmInUK => isNfmInUK == NfmRegisteredInUkConfirmation.Yes))
+    request.userAnswers.get(NominatedFilingMemberPage).map(nfm => nfm.isNfmRegisteredInUK).isDefined
 }

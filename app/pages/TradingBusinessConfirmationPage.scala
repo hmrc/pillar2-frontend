@@ -16,10 +16,9 @@
 
 package pages
 
-import models.TradingBusinessConfirmation
 import play.api.libs.json.JsPath
 
-case object TradingBusinessConfirmationPage extends QuestionPage[TradingBusinessConfirmation] {
+case object TradingBusinessConfirmationPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

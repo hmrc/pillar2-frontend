@@ -39,18 +39,16 @@
 
         @if(tel!=""){
                 @govukRadios(
-                    RadiosViewModel(
+                    RadiosViewModel.yesNo(
                         field  = form("value"),
-                        fieldset = FieldsetViewModel(Legend(HtmlContent(headingContent))),
-                        items  = UseContactPrimary.options
+                        fieldset = FieldsetViewModel(Legend(HtmlContent(headingContent)))
                     )
                 )
         } else {
                 @govukRadios(
-                RadiosViewModel(
+                RadiosViewModel.yesNo(
                 field  = form("value"),
-                fieldset = FieldsetViewModel(Legend(HtmlContent(headingContentWithoutPhone))),
-                items  = UseContactPrimary.options
+                fieldset = FieldsetViewModel(Legend(HtmlContent(headingContentWithoutPhone)))
                 )
                 )
         }
