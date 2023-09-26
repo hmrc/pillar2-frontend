@@ -38,17 +38,13 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
       .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
-          println(s" what is error response ---2XX-------------------${response.json}")
-          println(s" what is error response ---2XX-------------------${Json.toJson(response.json.asOpt[SuccessResponse])}")
           Some(response.json.as[SuccessResponse].success)
 
         case errorResponse =>
-          println(s" what is error response ----------------------${errorResponse.json}")
           logger.warn(s"Create Subscription failed with Status ${errorResponse.status}")
           None
       }
       .recover { case e: Exception =>
-        println(s" what is error response -------------Exception---------")
         logger.warn(s"Error message ${e.printStackTrace()} has been thrown when create subscription was called")
         None
       }

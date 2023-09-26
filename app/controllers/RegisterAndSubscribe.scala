@@ -41,12 +41,10 @@ trait RegisterAndSubscribe extends Logging {
   ): Future[Result] =
     (registration.safeId, filingMemeber.safeId) match {
       case (Some(safeId), Some(fmSafeId)) =>
-        println(" Yes I have both safe id -----------------------------")
         createSubscription(safeId, Some(fmSafeId))
       // do the enrolement with PIllar2 id.
 
       case (Some(safeId), None) =>
-        println(" Yes I have(Some(safeId), None) id -----------------------------")
         if (filingMemeber.nfmConfirmation) {
           registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
             case Right(fmSafeId) =>
@@ -59,12 +57,10 @@ trait RegisterAndSubscribe extends Logging {
               }
           }
         } else {
-          println(" Came in else part. -----------------------------")
           createSubscription(safeId)
         }
 
       case (None, Some(fmSafeId)) =>
-        println(" Yes I have(None, Some(fmSafeId))id -----------------------------")
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
           case Right(upeSafeId) =>
             //createSubscription(safeId, fmSafeid)
@@ -78,7 +74,6 @@ trait RegisterAndSubscribe extends Logging {
         }
 
       case (None, None) =>
-        println(" Yes I have(None, None)id -----------------------------")
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
           case Right(upeSafeId) =>
             if (filingMemeber.nfmConfirmation) {
@@ -93,7 +88,6 @@ trait RegisterAndSubscribe extends Logging {
                   }
               }
             } else {
-              println(" Came in else part. -----------------------------")
               createSubscription(upeSafeId.value)
             }
 
@@ -114,10 +108,8 @@ trait RegisterAndSubscribe extends Logging {
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).map {
       case Right(successReponse) =>
-        println("AM id coming to success response------------------?")
         Redirect(routes.RegistrationConfirmationController.onPageLoad(successReponse.plrReference))
       case Left(value) =>
-        println("AM id coming to LEFT VALUE------------------?")
         Redirect(routes.ErrorController.onPageLoad)
     }
 }

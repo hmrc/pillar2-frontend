@@ -16,10 +16,8 @@
 
 package connectors
 
-import base.{SpecBase, WireMockServerHandler}
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{NfmRegisteredInUkConfirmation, SafeId}
+import base.SpecBase
+import models.SafeId
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -66,7 +64,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
       )
       result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
     }
@@ -76,7 +74,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdMissingSafeIdJson)
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
       )
       result.futureValue mustBe Right(None)
     }
@@ -86,7 +84,7 @@ class RegistrationConnectorSpec extends SpecBase {
 
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(NfmRegisteredInUkConfirmation.No))))
+        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
       )
       result.futureValue mustBe Left(models.InternalServerError)
     }

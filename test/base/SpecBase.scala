@@ -18,7 +18,7 @@ package base
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
@@ -145,6 +145,26 @@ trait SpecBase
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       post(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubDelete(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      delete(urlEqualTo(s"$expectedEndpoint"))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)

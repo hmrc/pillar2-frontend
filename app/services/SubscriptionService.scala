@@ -33,11 +33,8 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     //We may need to check Read Subscription here.
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
       case Some(subscriptionSuccessResponse) =>
-        println(s" AM I coming to service ----------------------$subscriptionSuccessResponse")
         Right(subscriptionSuccessResponse)
       case None =>
-        println(s" AM I coming to NONE ----------------------")
-
         Left(SubscriptionCreateError)
     }
 }

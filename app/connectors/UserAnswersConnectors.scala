@@ -32,8 +32,7 @@ class UserAnswersConnectors @Inject() (
 )(implicit ec:                         ExecutionContext) {
   private val url = s"$pillar2BaseUrl/report-pillar2-top-up-taxes"
 
-  def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
-    println(s" Am i coming to save..............................$data")
+  def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =
     httpClient.POST[JsValue, HttpResponse](s"$url/user-cache/registration-subscription/$id", data).map { response =>
       response.status match {
         case OK => data
@@ -41,7 +40,6 @@ class UserAnswersConnectors @Inject() (
       }
 
     }
-  }
 
   def get(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
     httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
@@ -54,7 +52,6 @@ class UserAnswersConnectors @Inject() (
 
   def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
     httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
-      println(s"What is reponse.json---------------------------${response.json}")
       response.status match {
         case OK        => Some(UserAnswers(id = id, data = response.json.as[JsObject]))
         case NOT_FOUND => None
@@ -64,9 +61,5 @@ class UserAnswersConnectors @Inject() (
 
   def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[String] =
     httpClient.DELETE[String](s"$url/registration-subscription/$id")
-
-  //TODO
-  def lastUpdated(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
-    ???
 
 }

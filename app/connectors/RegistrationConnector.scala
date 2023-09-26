@@ -40,13 +40,12 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        val safeId  = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
+        val safeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
+        /*        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
         val safeIdValue = safeId match {
           case Some(value) => Some(value.value)
           case _           => None
-        }
-        println(s" IN UPE ------------------SafeIdValue -----------$safeIdValue")
+        }*/
         /*        val v = for {
           updatedAnswersUpe <- Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue)))
           savedAnswer       <- userAnswersConnectors.save(updatedAnswersUpe.id, Json.toJson(updatedAnswersUpe.data))
@@ -73,7 +72,6 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           case Some(value) => Some(value.value)
           case _           => None
         }
-        println(s" IN FM ------------------SafeIdValue -----------$safeIdValue")
         /*        for {
           updatedAnswers <- Future.fromTry(userAnswers.set(NominatedFilingMemberPage, nfmData.copy(safeId = safeIdValue)))
           _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

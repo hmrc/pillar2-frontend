@@ -19,14 +19,12 @@ package controllers.testdata
 import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-
-import models.subscription.{AccountingPeriod, Subscription, SubscriptionRequestParameters, SubscriptionResponse}
+import models.subscription.{AccountingPeriod, Subscription, SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import models.{MneOrDomestic, UpeRegisteredAddress, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
 import java.time.Instant
-
 import java.time.LocalDate
 
 trait Pillar2TestData {
@@ -784,9 +782,11 @@ trait Pillar2TestData {
   val businessSubscriptionSuccessJson: String =
     """
       |{
+      |"success" : {
       |"plrReference":"XMPLR0012345678",
       |"formBundleNumber":"119000004320",
       |"processingDate":"2023-09-22"
+      |}
       |}""".stripMargin
 
   val businessSubscriptionMissingPlrRefJson: String =
