@@ -26,7 +26,7 @@
     govukButton: GovukButton
     )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, addressLine1:String="72 Guild Street" ,addressLine2:String="", town_city:String="Berlin", region:String="", postcode:String="SE23 6FH", country:String="Germany")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("captureContactAddress.title"))) {
 
@@ -36,14 +36,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
         <span class="govuk-caption-l">@messages("captureContactAddress.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("captureContactAddress.heading")</h1>
-        <div class="govuk-inset-text">
-            <p class="govuk-body">@messages("captureContactAddress.inset.text")</p>
-        </div>
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("captureContactAddress.heading")).asPageHeading(Large)
+                fieldset = FieldsetViewModel(Legend(HtmlContent(regAddress)))
             )
         )
 
@@ -53,3 +50,30 @@
     }
 }
 
+@regAddress = @{
+s"""<h1 class="govuk-heading-l long-word">${messages("captureContactAddress.heading")}
+    |</h1>
+|<div class="govuk-inset-text">
+    |    <ul class="govuk-list">
+    |        <li>
+    |            $addressLine1
+    |        </li>
+    |        <li>
+    |            $addressLine2
+    |        </li>
+    |        <li>
+    |           $town_city
+    |        </li>
+    |        <li>
+    |           $region
+    |        </li>
+    |        <li>
+    |           $postcode
+    |        </li>
+    |        <li>
+    |           $country
+    |        </li>
+    |    </ul>
+    |</div>
+|""".stripMargin
+}
