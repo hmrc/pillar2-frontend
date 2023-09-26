@@ -181,7 +181,7 @@ POST       /contact-details/change-second-contact                  controllers.s
 
 GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
 
-GET        /contact-details/second/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 
 
 
