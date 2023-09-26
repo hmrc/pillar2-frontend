@@ -487,21 +487,21 @@ addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
-secondaryContactName.checkYourAnswersLabel = Secondary Contact
+secondaryContactName.checkYourAnswersLabel = Secondary Contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
-secondaryContactName.change.hidden = SecondaryContactName
+
 
 secondaryContactEmail.title =What is the email address for {0}?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
-secondaryContactEmail.checkYourAnswersLabel = Email Address
+secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes
 secondaryContactEmail.error.required = You need to enter the email address for {0}
 secondaryContactEmail.error.length = The email address should be 160 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
-secondaryContactEmail.change.hidden = SecondaryContactEmail
+
 
 secondaryTelephonePreference.title = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
@@ -516,5 +516,5 @@ secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
-secondaryTelephone.change.hidden = SecondaryTelephone
+
 
