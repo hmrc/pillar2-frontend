@@ -80,7 +80,7 @@ class UseContactPrimaryController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
+    val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
     form
       .bindFromRequest()
       .fold(
@@ -102,13 +102,13 @@ class UseContactPrimaryController @Inject() (
                         .fromTry(
                           request.userAnswers.set(
                             SubscriptionPage,
-                            Subscription(
-                              domesticOrMne = regData.domesticOrMne,
+                            subData.copy(
+                              domesticOrMne = subData.domesticOrMne,
                               useContactPrimary = Some(value),
                               primaryContactName = Some(getName(request)),
                               primaryContactEmail = Some(getEmail(request)),
                               primaryContactTelephone = Some(getPhoneNumber(request)),
-                              groupDetailStatus = regData.groupDetailStatus,
+                              groupDetailStatus = subData.groupDetailStatus,
                               contactDetailsStatus = RowStatus.InProgress
                             )
                           )
@@ -122,13 +122,13 @@ class UseContactPrimaryController @Inject() (
                         .fromTry(
                           request.userAnswers.set(
                             SubscriptionPage,
-                            Subscription(
-                              domesticOrMne = regData.domesticOrMne,
+                            subData.copy(
+                              domesticOrMne = subData.domesticOrMne,
                               useContactPrimary = Some(value),
                               primaryContactName = Some(getUpeName(request)),
                               primaryContactEmail = Some(getUpeEmail(request)),
                               primaryContactTelephone = Some(getUpePhoneNumber(request)),
-                              groupDetailStatus = regData.groupDetailStatus,
+                              groupDetailStatus = subData.groupDetailStatus,
                               contactDetailsStatus = RowStatus.InProgress
                             )
                           )
@@ -137,17 +137,17 @@ class UseContactPrimaryController @Inject() (
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }
             case false =>
-              if (regData.useContactPrimary.fold(false)(usePrimary => usePrimary.toString == "yes")) {
+              if (subData.useContactPrimary.fold(false)(usePrimary => usePrimary)) {
                 for {
                   updatedAnswers <-
                     Future
                       .fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          regData.copy(
-                            domesticOrMne = regData.domesticOrMne,
+                          subData.copy(
+                            domesticOrMne = subData.domesticOrMne,
                             useContactPrimary = Some(value),
-                            groupDetailStatus = regData.groupDetailStatus,
+                            groupDetailStatus = subData.groupDetailStatus,
                             contactDetailsStatus = RowStatus.InProgress,
                             primaryContactName = None,
                             primaryContactEmail = None,
@@ -165,14 +165,14 @@ class UseContactPrimaryController @Inject() (
                       .fromTry(
                         request.userAnswers.set(
                           SubscriptionPage,
-                          regData.copy(
-                            domesticOrMne = regData.domesticOrMne,
-                            accountingPeriod = regData.accountingPeriod,
-                            primaryContactEmail = regData.primaryContactEmail,
-                            contactByTelephone = regData.contactByTelephone,
-                            primaryContactTelephone = regData.primaryContactTelephone,
-                            primaryContactName = regData.primaryContactName,
-                            groupDetailStatus = regData.groupDetailStatus,
+                          subData.copy(
+                            domesticOrMne = subData.domesticOrMne,
+                            accountingPeriod = subData.accountingPeriod,
+                            primaryContactEmail = subData.primaryContactEmail,
+                            contactByTelephone = subData.contactByTelephone,
+                            primaryContactTelephone = subData.primaryContactTelephone,
+                            primaryContactName = subData.primaryContactName,
+                            groupDetailStatus = subData.groupDetailStatus,
                             contactDetailsStatus = RowStatus.InProgress,
                             useContactPrimary = Some(value)
                           )

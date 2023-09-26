@@ -106,7 +106,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-    //this
+
     "must redirect to telephone contact page if they answer yes " in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(
