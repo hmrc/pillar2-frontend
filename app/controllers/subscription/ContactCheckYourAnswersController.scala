@@ -19,7 +19,6 @@ package controllers.subscription
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.MneOrDomestic
 import models.requests.DataRequest
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
@@ -29,7 +28,7 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.{ContactCheckYourAnswersView, SubCheckYourAnswersView}
+import views.html.subscriptionview.ContactCheckYourAnswersView
 
 class ContactCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
