@@ -59,13 +59,13 @@ class EntityTypeController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case _ =>
+      case true =>
         request.userAnswers
           .get(RegistrationPage)
           .fold(NotFound(notAvailable)) { reg =>
             reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
           }
-      case "noData" =>
+      case false =>
         NotFound(notAvailable)
     }
 
