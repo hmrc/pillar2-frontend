@@ -51,16 +51,14 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        val preparedForm = request.userAnswers.get(RegistrationPage) match {
-          case None        => form
-          case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
-        }
-        Ok(view(preparedForm, mode))
-      case false => NotFound(notAvailable)
-    }
+
+    (for {
+      reg <- request.userAnswers.get(RegistrationPage)
+    } yield {
+      val form = formProvider()
+      val preparedForm = reg.withoutIdRegData.fold(form)(data=> form fill data.upeNameRegistration)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
