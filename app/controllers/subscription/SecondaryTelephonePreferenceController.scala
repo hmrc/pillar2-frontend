@@ -23,7 +23,6 @@ import controllers.routes
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.subscription.Subscription
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat

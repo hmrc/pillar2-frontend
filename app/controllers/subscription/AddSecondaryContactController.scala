@@ -23,8 +23,7 @@ import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.subscription.Subscription
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

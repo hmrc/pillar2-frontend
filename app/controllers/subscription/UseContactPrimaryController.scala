@@ -19,10 +19,8 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
-import models.subscription.Subscription
 import models.{Mode, NormalMode}
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
