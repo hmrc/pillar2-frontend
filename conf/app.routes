@@ -15,6 +15,7 @@ GET         /refresh-session                                                    
 GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
+POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
 
 GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad
 POST        /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onSubmit

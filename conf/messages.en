@@ -533,5 +533,8 @@ secondaryTelephone.error.length = The telephone number should be 24 characters o
 secondaryTelephone.error.format = Enter a telephone number in the correct format
 
 checkYourAnswers.furtherRegistrationDetail = Further registration details
+checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
+checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+site.confirm.send = Confirm and send
 
 

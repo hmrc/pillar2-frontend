@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.MneOrDomestic
+import models.{MneOrDomestic, Mode}
 import models.requests.DataRequest
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,6 +30,9 @@ import viewmodels.checkAnswers.{UpeTelephonePreferenceSummary, _}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 import views.html.errors.ErrorTemplate
+import views.html.helper.form
+
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
@@ -166,6 +169,13 @@ class CheckYourAnswersController @Inject() (
       Ok(view(listUpe, listNfm, furtherRegistrationDetailsList, listPrimary, listSecondary, address))
     else
       NotFound(notAvailable)
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    val regdata = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Registration is not available"))
+    val fmData  = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing is not available"))
+    Future.successful(Redirect(controllers.routes.TaskListController.onPageLoad))
+  // createRegistrationAndSubscription(regdata, fmData)
   }
 
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
