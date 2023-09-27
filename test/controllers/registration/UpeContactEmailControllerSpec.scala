@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.registration
 
 import base.SpecBase
@@ -43,7 +59,6 @@ class UpeContactEmailControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       getUpeContactEmailFormProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewUpeContactEmail
     )
 
@@ -88,13 +103,39 @@ class UpeContactEmailControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
       }
     }
-    "Bad request when no data" in {
+    "Bad request when no data in POST" in {
       val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
+        FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url)
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST
 
+    }
+
+    "Journey Recovery when no data in GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(GET, routes.UpeContactEmailController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
+        "emailAddress" -> "al@gmail.com"
+      )
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "Journey Recovery when no data in POST" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+        "emailAddress" -> "al@gmail.com"
+      )
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
   }
 }

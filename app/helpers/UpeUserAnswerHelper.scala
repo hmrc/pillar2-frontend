@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package pages
+package helpers
 
-import models.subscription.AccountingPeriod
-import play.api.libs.json.JsPath
+import models.UserAnswers
+import pages.RegistrationPage
 
-case object GroupAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
+trait UpeUserAnswerHelper {
 
-  override def path: JsPath = JsPath \ toString
+  self: UserAnswers =>
 
-  override def toString: String = "accountingPeriod"
+  def upeUserName: String = {
+    get(RegistrationPage)
+      .flatMap { reg =>
+        reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
+      }
+      .getOrElse("")
+  }
+
+
+  def upeNoIdData ={
+    get(RegistrationPage).map{ reg=>
+      reg.
+    }
+  }
+
 }

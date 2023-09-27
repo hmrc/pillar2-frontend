@@ -51,26 +51,29 @@ class CaptureTelephoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getUserName(request)
+    val userName     = request.userAnswers.upeUserName
     val form         = formProvider(userName)
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.telephoneNumber.fold(Ok(view(form, mode, userName)))(tel => Ok(view(form.fill(tel), mode, userName)))
-            )
-          }
+    val pre
 
-      case false => NotFound(notAvailable)
-    }
+
+//    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+//    isPreviousPageDefined(request) match {
+//      case true =>
+//        request.userAnswers
+//          .get(RegistrationPage)
+//          .fold(NotFound(notAvailable)) { reg =>
+//            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
+//              data.telephoneNumber.fold(Ok(view(form, mode, userName)))(tel => Ok(view(form.fill(tel), mode, userName)))
+//            )
+//          }
+//
+//      case false => NotFound(notAvailable)
+//    }
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = getUserName(request)
+    val userName = request.userAnswers.upeUserName
     val form     = formProvider(userName)
     form
       .bindFromRequest()
@@ -95,14 +98,5 @@ class CaptureTelephoneDetailsController @Inject() (
       )
   }
 
-  private def getUserName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
-  }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.fold(false)(contactTel => contactTel)))
 
 }
