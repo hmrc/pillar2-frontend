@@ -80,6 +80,7 @@ trait RegisterAndSubscribe extends Logging {
               registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
                 case Right(fmSafeId) =>
                   createSubscription(upeSafeId.value, Some(fmSafeId.value))
+                //do the enrolement.
                 case Left(value) =>
                   logger.warn(s"Error $value")
                   value match {
