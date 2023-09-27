@@ -26,7 +26,7 @@
 @(list: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
-
+<div class="contact-details">
     <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
 <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
@@ -52,6 +52,6 @@
     .asLink(controllers.routes.TaskListController.onPageLoad.url)
 )
 
-
+</div>
 }
 
