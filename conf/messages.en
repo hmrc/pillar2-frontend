@@ -84,7 +84,7 @@ taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
 taskList.task.contact.add = Add Contact details
-taskList.task.contact.edit = Edit Contact details
+taskList.task.contact.edit = Edit contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
@@ -482,9 +482,13 @@ contactCheckYourAnswers.address = Contact address
 GrsReturn.Upe.CompanyName.checkYourAnswersLabel = Company
 GrsReturn.Upe.CompanyReg.checkYourAnswersLabel = Company Registration Number
 GrsReturn.Upe.CompanyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+
+checkYourAnswers.first = First contact
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers
 checkYourAnswers.heading.caption = Review and submit
-CheckYourAnswers.upe = Ultimate parent
-CheckYourAnswers.nfm = Nominated filing member
+checkYourAnswers.upe = Ultimate parent
+checkYourAnswers.nfm = Nominated filing member
 
 
 
@@ -527,5 +531,7 @@ secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
+
+checkYourAnswers.furtherRegistrationDetail = Further registration details
 
 

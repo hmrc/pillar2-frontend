@@ -22,18 +22,24 @@
     govukButton: GovukButton
 )
 
-@(listUpe: SummaryList,listNfm: SummaryList,listPrimary: SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listUpe: SummaryList,listNfm: SummaryList, furtherRegistrationDetailsList:SummaryList, listPrimary: SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-<h2 class="govuk-heading-m">@messages("CheckYourAnswers.upe")</h2>
+<h2 class="govuk-heading-m">@messages("checkYourAnswers.upe")</h2>
     @govukSummaryList(listUpe)
 
-    <h2 class="govuk-heading-m">@messages("CheckYourAnswers.nfm")</h2>
+    <h2 class="govuk-heading-m">@messages("checkYourAnswers.nfm")</h2>
    @govukSummaryList(listNfm)
+
+<h2 class="govuk-heading-m">@messages("checkYourAnswers.furtherRegistrationDetail")</h2>
+@govukSummaryList(furtherRegistrationDetailsList)
+
+    <h2 class="govuk-heading-m">@messages("checkYourAnswers.first")</h2>
+    @govukSummaryList(listPrimary)
 
     @if(listSecondary.rows.length!=0){
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
