@@ -132,8 +132,8 @@ class EntityTypeController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold("noData")(data => data.isUPERegisteredInUK.toString)
+      .fold(false)(data => data.isUPERegisteredInUK)
 }
