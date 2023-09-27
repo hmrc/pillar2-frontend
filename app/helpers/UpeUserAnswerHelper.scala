@@ -17,25 +17,18 @@
 package helpers
 
 import models.UserAnswers
+import models.registration.WithoutIdRegData
 import pages.RegistrationPage
 
 trait UpeUserAnswerHelper {
 
   self: UserAnswers =>
 
-  def upeUserName: String = {
+  def upeUserName: String =
     get(RegistrationPage)
       .flatMap { reg =>
         reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
       }
-      .getOrElse("")
-  }
-
-
-  def upeNoIdData ={
-    get(RegistrationPage).map{ reg=>
-      reg.
-    }
-  }
+      .getOrElse(throw new RuntimeException("Upe Contact name not entered"))
 
 }

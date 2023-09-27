@@ -48,7 +48,6 @@ class EntityTypeController @Inject() (
   requireData:                                       DataRequiredAction,
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
-  page_not_available:                                ErrorTemplate,
   view:                                              EntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -57,20 +56,15 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case _ =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          }
-      case "noData" =>
-        NotFound(notAvailable)
-    }
-
+    (for {
+      reg <- request.userAnswers.get(RegistrationPage)
+    } yield {
+      val form = formProvider()
+      val preparedForm = reg.orgType.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-
+// noinspection ScalaStyle
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
@@ -82,21 +76,16 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          regData.copy(
-                            isUPERegisteredInUK = true,
+                          reg.copy(isUPERegisteredInUK = true,
                             orgType = Some(value),
                             isRegistrationStatus = RowStatus.InProgress,
                             withoutIdRegData = None,
-                            withIdRegData = None
-                          )
-                        )
-                      )
+                            withIdRegData = None)))
                     _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                     createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
                   } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
@@ -107,13 +96,12 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          regData.copy(
+                          reg.copy(
                             isUPERegisteredInUK = true,
                             orgType = Some(value),
                             isRegistrationStatus = RowStatus.InProgress,
@@ -132,8 +120,4 @@ class EntityTypeController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold("noData")(data => data.isUPERegisteredInUK.toString)
 }

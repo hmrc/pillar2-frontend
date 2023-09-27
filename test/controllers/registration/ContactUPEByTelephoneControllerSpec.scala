@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
+import models.registration.{Registration, WithoutIdRegData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RegistrationPage
@@ -27,6 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import views.html.registrationview.ContactUPEByTelephoneView
 
 import scala.concurrent.Future
@@ -95,6 +97,16 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
       }
 
+    }
+
+    "redirect to journey recovery for no data in GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
   }
 }

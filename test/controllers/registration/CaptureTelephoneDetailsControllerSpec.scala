@@ -38,13 +38,11 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
   def controller(): CaptureTelephoneDetailsController =
     new CaptureTelephoneDetailsController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewCaptureTelephoneDetailsView
     )
 
@@ -102,5 +100,28 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       status(result) mustEqual BAD_REQUEST
 
     }
+
+    "Journey recovery when no data for GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      val request     = FakeRequest(GET, routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+
+      running(application) {
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "Journey recovery when no data for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+        "telephoneNumber" -> "12321321"
+      )
+      running(application) {
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
   }
 }

@@ -26,6 +26,11 @@ class UpeUserAnswerHelperSpec extends SpecBase {
       val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
       userAnswer.upeUserName mustEqual "TestName"
     }
+
+    "must return an empty string if no contact name is found" in {
+      val userAnswer = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      userAnswer.upeUserName mustEqual ""
+    }
   }
 
 }
