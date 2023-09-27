@@ -53,13 +53,13 @@ class UpeNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     isPreviousPageDefined(request) match {
-      case true =>
+      case false =>
         val preparedForm = request.userAnswers.get(RegistrationPage) match {
           case None        => form
           case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
         }
         Ok(view(preparedForm, mode))
-      case false => NotFound(notAvailable)
+      case true => NotFound(notAvailable)
     }
   }
 
@@ -96,10 +96,6 @@ class UpeNameRegistrationController @Inject() (
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
-      .get(RegistrationPage)
-      .map { reg =>
-        reg.isUPERegisteredInUK
-      }
-      .isDefined
+      .get(RegistrationPage).fold(true)(reg=> reg.isUPERegisteredInUK)
 
 }
