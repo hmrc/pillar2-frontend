@@ -19,15 +19,17 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.CaptureContactAddressFormProvider
-import models.Mode
-import pages.CaptureContactAddressPage
+import models.requests.DataRequest
+import models.subscription.FmContactAddress
+import models.{Mode, NormalMode}
+import pages.{CaptureContactAddressPage, NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.subscriptionview.CaptureContactAddressView
 
 import javax.inject.Inject
@@ -57,15 +59,243 @@ class CaptureContactAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is not available"))
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors =>
+          isNfmNotRegisteredUK(request) match {
+            case true =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    getNfmAddressLine1(request),
+                    getNfmAddressLine2(request),
+                    getNfmAddressLine3(request),
+                    getNfmAddressLine4(request),
+                    getNfmPostalCode(request),
+                    getNfmCountryCode(request)
+                  )
+                )
+              )
+            case false =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    getUpeAddressLine1(request),
+                    getUpeAddressLine2(request),
+                    getUpeAddressLine3(request),
+                    getUpeAddressLine4(request),
+                    getUpePostalCode(request),
+                    getUpeCountryCode(request)
+                  )
+                )
+              )
+          },
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CaptureContactAddressPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+          value match {
+            case true =>
+              isNfmNotRegisteredUK(request) match {
+                case true =>
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              fmContactAddress = Some(
+                                FmContactAddress(
+                                  getNfmAddressLine1(request),
+                                  Some(getNfmAddressLine2(request)),
+                                  getNfmAddressLine3(request),
+                                  Some(getNfmAddressLine4(request)),
+                                  Some(getNfmPostalCode(request)),
+                                  getNfmCountryCode(request)
+                                )
+                              ),
+                              contactDetailsStatus = RowStatus.Completed
+                            )
+                          )
+                        )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                case false =>
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              fmContactAddress = Some(
+                                FmContactAddress(
+                                  getUpeAddressLine1(request),
+                                  Some(getUpeAddressLine2(request)),
+                                  getUpeAddressLine3(request),
+                                  Some(getUpeAddressLine4(request)),
+                                  Some(getUpePostalCode(request)),
+                                  getUpeCountryCode(request)
+                                )
+                              ),
+                              contactDetailsStatus = RowStatus.Completed
+                            )
+                          )
+                        )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              }
+            case false =>
+              for {
+                updatedAnswers <-
+                  Future
+                    .fromTry(
+                      request.userAnswers.set(
+                        SubscriptionPage,
+                        subData.copy()
+                      )
+                    )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.subscription.routes.FmContactAddressController.onPageLoad(NormalMode))
+          }
       )
   }
+
+  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(SubscriptionPage)
+      .fold(false) { data =>
+        data.groupDetailStatus.toString == "Completed"
+      }
+
+  private def isNfmNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(NominatedFilingMemberPage)
+      .flatMap { nfm =>
+        nfm.isNfmRegisteredInUK
+      } match {
+      case Some(false) => true
+      case _           => false
+    }
+
+  private def isUpeNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers
+      .get(RegistrationPage)
+      .map { upe =>
+        upe.isUPERegisteredInUK
+      } match {
+      case Some(false) => true
+      case _           => false
+    }
+
+  private def getNfmAddressLine1(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.addressLine1)
+      )
+    )
+  }
+
+  private def getNfmAddressLine2(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.addressLine2.getOrElse(""))
+      )
+    )
+  }
+
+  private def getNfmAddressLine3(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.addressLine3)
+      )
+    )
+  }
+
+  private def getNfmAddressLine4(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.addressLine4.getOrElse(""))
+      )
+    )
+  }
+
+  private def getNfmPostalCode(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.postalCode.getOrElse(""))
+      )
+    )
+  }
+
+  private def getNfmCountryCode(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId => withoutId.registeredFmAddress.fold("")(nfmRegisteredAddress => nfmRegisteredAddress.countryCode))
+    )
+  }
+
+  private def getUpeAddressLine1(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.addressLine1)
+      )
+    )
+  }
+
+  private def getUpeAddressLine2(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.addressLine2.getOrElse(""))
+      )
+    )
+  }
+
+  private def getUpeAddressLine3(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.addressLine3)
+      )
+    )
+  }
+
+  private def getUpeAddressLine4(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.addressLine4.getOrElse(""))
+      )
+    )
+  }
+
+  private def getUpePostalCode(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.postalCode.getOrElse(""))
+      )
+    )
+  }
+
+  private def getUpeCountryCode(request: DataRequest[AnyContent]): String = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold("")(regData =>
+      regData.withoutIdRegData.fold("")(withoutId =>
+        withoutId.upeRegisteredAddress.fold("")(upeRegisteredAddress => upeRegisteredAddress.countryCode)
+      )
+    )
+  }
+
 }
