@@ -38,6 +38,7 @@ import service.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.CaptureContactAddressView
+import play.api.libs.json._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -111,7 +112,7 @@ class CaptureContactAddressController @Inject() (
           Ok(populateViewWithDetails(form.fill(true), mode, Some(addressDetails), emptyString, emptyString, emptyString))
         case Left(error) =>
           // Logging the error
-          logger.error("Error : ", error)
+//          logger.error("Error : ", error)
           NotFound(s"Error: $error")
       }
     } else if (isUpeRegisteredUK(request)) {
