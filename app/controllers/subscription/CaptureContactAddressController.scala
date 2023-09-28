@@ -169,7 +169,7 @@ class CaptureContactAddressController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.groupDetailStatus.toString == "Completed"
+        data.addSecondaryContact == false
       }
 
   private def isNfmNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =
