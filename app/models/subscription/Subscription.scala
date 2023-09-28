@@ -52,7 +52,15 @@ case class Subscription(
   secondaryContactTelephone: Option[String] = None,
   fmContactAddress:          Option[FmContactAddress] = None
 )
-
+/*
+case class Registration(
+  isUPERegisteredInUK:  UPERegisteredInUKConfirmation,
+  orgType:              Option[EntityType] = None,
+  isRegistrationStatus: RowStatus,
+  withIdRegData:        Option[GrsResponse] = None,
+  withoutIdRegData:     Option[WithoutIdRegData] = None
+)
+ */
 object Subscription {
   implicit val format: OFormat[Subscription] = Json.format[Subscription]
 }

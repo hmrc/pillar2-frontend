@@ -26,7 +26,8 @@
     govukButton: GovukButton
     )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@(form: Form[_], mode: Mode, name: String, email: String, phoneNumber: String, upeName: String, upeEmail: String, upePhoneNumber: String, addressLine1: String, addressLine2: String, addressLine3: String, addressLine4: String, postCode: String, countryCode: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("captureContactAddress.title"))) {
 
