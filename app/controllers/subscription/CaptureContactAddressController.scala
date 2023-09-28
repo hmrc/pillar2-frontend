@@ -93,10 +93,9 @@ class CaptureContactAddressController @Inject() (
   //  //  }
   //  }
 
-
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val emptyString = ""
+    val emptyString  = ""
 
     // Get Upe Address Details or a specific error message.
     val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
@@ -223,19 +222,19 @@ class CaptureContactAddressController @Inject() (
       )
   }
 
-  private def extractDataFromUserAnswers[T](
-                                             request:            DataRequest[AnyContent],
-                                             page:               Gettable[Registration],
-                                             extractionFunction: WithoutIdRegData => String
-                                           )(implicit reads:     Reads[Registration]): String = {
-    val registrationOption = request.userAnswers.get(page)
-
-    registrationOption.fold("") { registration =>
-      registration.withoutIdRegData.fold("") { withoutId =>
-        extractionFunction(withoutId)
-      }
-    }
-  }
+  //  private def extractDataFromUserAnswers[T](
+  //    request:            DataRequest[AnyContent],
+  //    page:               Gettable[Registration],
+  //    extractionFunction: WithoutIdRegData => String
+  //  )(implicit reads:     Reads[Registration]): String = {
+  //    val registrationOption = request.userAnswers.get(page)
+  //
+  //    registrationOption.fold("") { registration =>
+  //      registration.withoutIdRegData.fold("") { withoutId =>
+  //        extractionFunction(withoutId)
+  //      }
+  //    }
+  //  }
 
   private def extractAddressDetails(form: Form[Boolean]): (String, String, String, String, String, String) = {
     val addressLine1 = form.data.getOrElse("addressLine1", "")
