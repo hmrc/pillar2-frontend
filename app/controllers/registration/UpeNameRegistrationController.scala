@@ -51,12 +51,10 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-
     (for {
       reg <- request.userAnswers.get(RegistrationPage)
     } yield {
-      val form = formProvider()
-      val preparedForm = reg.withoutIdRegData.fold(form)(data=> form fill data.upeNameRegistration)
+      val preparedForm = reg.withoutIdRegData.fold(form)(data => form fill data.upeNameRegistration)
       Ok(view(preparedForm, mode))
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
@@ -91,13 +89,5 @@ class UpeNameRegistrationController @Inject() (
             .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
-    request.userAnswers
-      .get(RegistrationPage)
-      .map { reg =>
-        reg.isUPERegisteredInUK
-      }
-      .isDefined
 
 }

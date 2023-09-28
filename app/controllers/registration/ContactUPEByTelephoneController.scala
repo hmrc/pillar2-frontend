@@ -77,11 +77,14 @@ class ContactUPEByTelephoneController @Inject() (
                     for {
                       updatedAnswers <-
                         Future.fromTry(
-                          request.userAnswers.set(RegistrationPage,
-                              reg.copy(
-                                isRegistrationStatus = RowStatus.InProgress,
-                                withoutIdRegData = Some(withoutId.copy(contactUpeByTelephone = Some(value)))
-                              )))
+                          request.userAnswers.set(
+                            RegistrationPage,
+                            reg.copy(
+                              isRegistrationStatus = RowStatus.InProgress,
+                              withoutIdRegData = Some(withoutId.copy(contactUpeByTelephone = Some(value)))
+                            )
+                          )
+                        )
                       _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                     } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
 
@@ -90,10 +93,14 @@ class ContactUPEByTelephoneController @Inject() (
                       updatedAnswers <-
                         Future.fromTry(
                           request.userAnswers
-                            .set(RegistrationPage, reg.copy(
+                            .set(
+                              RegistrationPage,
+                              reg.copy(
                                 isRegistrationStatus = RowStatus.Completed,
                                 withoutIdRegData = Some(withoutId.copy(contactUpeByTelephone = Some(value), telephoneNumber = None))
-                              )))
+                              )
+                            )
+                        )
                       _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                     } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
                 }

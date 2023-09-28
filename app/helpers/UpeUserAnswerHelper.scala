@@ -29,6 +29,6 @@ trait UpeUserAnswerHelper {
       .flatMap { reg =>
         reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
       }
-      .getOrElse(throw new RuntimeException("Upe Contact name not entered"))
+      .getOrElse("")
 
 }

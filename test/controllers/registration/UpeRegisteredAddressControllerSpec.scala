@@ -34,19 +34,6 @@ import scala.concurrent.Future
 class UpeRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
 
-  def controller(): UpeRegisteredAddressController =
-    new UpeRegisteredAddressController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      mockCountryOptions,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewUpeRegisteredAddress
-    )
-
   "UpeRegisteredAddress Controller" must {
 
     "must return OK and the correct view for a GET" in {
@@ -57,6 +44,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -170,6 +158,34 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "redirected to journey recovery if no data found with GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirected to journey recovery if no data found with POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

@@ -38,18 +38,15 @@ class UpeContactNameControllerSpec extends SpecBase {
   def controller(): UpeContactNameController =
     new UpeContactNameController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       getUpeContactNameFormProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewUpeContactName
     )
 
   "UpeContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(routes.UpeContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWithNoIdNoContactName =
@@ -95,6 +92,29 @@ class UpeContactNameControllerSpec extends SpecBase {
       val result = controller.onSubmit(NormalMode)()(request)
       status(result) mustEqual BAD_REQUEST
 
+    }
+
+    "redirected to journey recovery if no data found with GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirected to journey recovery if no data found with POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            "upeContactName" -> "Ashley Craig"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
   }
 }

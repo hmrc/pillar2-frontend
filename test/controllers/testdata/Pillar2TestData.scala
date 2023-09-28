@@ -482,7 +482,7 @@ trait Pillar2TestData {
   val validWithoutIdRegDataWithName = Registration(
     isUPERegisteredInUK = false,
     isRegistrationStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name"))
+    withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name", upeContactName = Some("testName")))
   )
 
   def validWithoutIdRegDataWithoutName(
