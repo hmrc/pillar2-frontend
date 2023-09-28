@@ -20,16 +20,21 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.CaptureContactAddressFormProvider
+import models.fm.{FilingMember, NfmRegisteredAddress}
 import models.requests.DataRequest
 import models.subscription.SubscriptionAddress
+import models.subscription.common.UpeCorrespAddressDetails
 import models.{Mode, NormalMode}
-import pages.{CaptureContactAddressPage, NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
+import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.Gettable
+import service.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.CaptureContactAddressView
 
 import javax.inject.Inject
@@ -41,8 +46,10 @@ class CaptureContactAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              CaptureContactAddressFormProvider,
+  page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      CaptureContactAddressView
+  view:                      CaptureContactAddressView,
+  subscriptionService:       SubscriptionService
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,12 +57,176 @@ class CaptureContactAddressController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(CaptureContactAddressPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+
+    // Get Upe Address Details or a specific error message.
+    val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
+      case Some(registration) =>
+        subscriptionService.getUpeAddressDetails(registration).map(Right(_)).getOrElse(Left("Error obtaining Upe Address Details"))
+      case None =>
+        Left("No registration data found")
     }
 
-    Ok(view(preparedForm, mode))
+    val nfmAddressDetails: Either[String, NfmRegisteredAddress] = request.userAnswers.get(NominatedFilingMemberPage) match {
+      case Some(filing) =>
+        subscriptionService.getNfmRegisteredAddress(filing).map(Right(_)).getOrElse(Left("Error obtaining Nfm Address Details"))
+      case None =>
+        Left("No registration data found")
+    }
+
+//    val preparedForm = request.userAnswers.get(CaptureContactAddressPage) match {
+//      case None        => form
+//      case Some(value) => form.fill(value)
+//    }
+
+    val nfmConfirmationValue: Option[Boolean] =
+      request.userAnswers.get(FilingMemberPath).map(_.nfmConfirmation)
+
+    nfmConfirmationValue match {
+      case Some(true) =>
+        isNfmNotRegisteredUK(request) match {
+          case true =>
+            request.userAnswers
+              .get(SubscriptionPage)
+              .fold(NotFound(notAvailable)) { reg =>
+                reg.subscriptionAddress.fold(
+                  Ok(
+                    view(
+                      form, // Form is not filled with SubscriptionAddress. It expects a Boolean.
+                      mode,
+                      getNfmAddressLine1(request),
+                      getNfmAddressLine2(request),
+                      getNfmAddressLine3(request),
+                      getNfmAddressLine4(request),
+                      getNfmPostalCode(request),
+                      getNfmCountryCode(request)
+                    )
+                  )
+                )(data =>
+                  Ok(
+                    view(
+                      form.fill(true), // Fill the form with a Boolean value.
+                      mode,
+                      getNfmAddressLine1(request),
+                      getNfmAddressLine2(request),
+                      getNfmAddressLine3(request),
+                      getNfmAddressLine4(request),
+                      getNfmPostalCode(request),
+                      getNfmCountryCode(request)
+                    )
+                  )
+                )
+              }
+
+          case false =>
+            isUpeNotRegisteredUK(request) match {
+              case true =>
+                request.userAnswers
+                  .get(SubscriptionPage)
+                  .fold(NotFound(notAvailable)) { reg =>
+                    reg.subscriptionAddress.fold(
+                      Ok(
+                        view(
+                          form, // Form is not filled with SubscriptionAddress. It expects a Boolean.
+                          mode,
+                          getUpeAddressLine1(request),
+                          getUpeAddressLine2(request),
+                          getUpeAddressLine3(request),
+                          getUpeAddressLine4(request),
+                          getUpePostalCode(request),
+                          getUpeCountryCode(request)
+                        )
+                      )
+                    )(data =>
+                      Ok(
+                        view(
+                          form.fill(true), // Fill the form with a Boolean value.
+                          mode,
+                          getUpeAddressLine1(request),
+                          getUpeAddressLine2(request),
+                          getUpeAddressLine3(request),
+                          getUpeAddressLine4(request),
+                          getUpePostalCode(request),
+                          getUpeCountryCode(request)
+                        )
+                      )
+                    )
+                  }
+            }
+        }
+
+//    isNfmNotRegisteredUK(request) match {
+//      case true =>
+//        request.userAnswers
+//          .get(SubscriptionPage)
+//          .fold(NotFound(notAvailable)) { reg =>
+//            reg.subscriptionAddress.fold(
+//              Ok(
+//                view(
+//                  form,
+//                  mode,
+//                  getNfmAddressLine1(request),
+//                  getNfmAddressLine2(request),
+//                  getNfmAddressLine3(request),
+//                  getNfmAddressLine4(request),
+//                  getNfmPostalCode(request),
+//                  getNfmCountryCode(request)
+//                )
+//              )
+//            )(data =>
+//              Ok(
+//                view(
+//                  form.fill(data),
+//                  mode,
+//                  getNfmAddressLine1(request),
+//                  getNfmAddressLine2(request),
+//                  getNfmAddressLine3(request),
+//                  getNfmAddressLine4(request),
+//                  getNfmPostalCode(request),
+//                  getNfmCountryCode(request)
+//                )
+//              )
+//            )
+//          }
+//      case false =>
+//        isUpeNotRegisteredUK(request) match {
+//          case true =>
+//            request.userAnswers
+//              .get(SubscriptionPage)
+//              .fold(NotFound(notAvailable)) { reg =>
+//                reg.subscriptionAddress.fold(
+//                  Ok(
+//                    view(
+//                      form,
+//                      mode,
+//                      getUpeAddressLine1(request),
+//                      getUpeAddressLine2(request),
+//                      getUpeAddressLine3(request),
+//                      getUpeAddressLine4(request),
+//                      getUpePostalCode(request),
+//                      getUpeCountryCode(request)
+//                    )
+//                  )
+//                )(data =>
+//                  Ok(
+//                    view(
+//                      form.fill(data),
+//                      mode,
+//                      getUpeAddressLine1(request),
+//                      getUpeAddressLine2(request),
+//                      getUpeAddressLine3(request),
+//                      getUpeAddressLine4(request),
+//                      getUpePostalCode(request),
+//                      getUpeCountryCode(request)
+//                    )
+//                  )
+//                )
+//              }
+//          case false => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
+//        }
+    }
+
+//    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -298,4 +469,7 @@ class CaptureContactAddressController @Inject() (
     )
   }
 
+  object FilingMemberPath extends Gettable[FilingMember] {
+    override def path: JsPath = JsPath \ "data" \ "FilingMember"
+  }
 }
