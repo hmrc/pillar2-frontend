@@ -112,7 +112,7 @@ class CaptureContactAddressController @Inject() (
           Ok(populateViewWithDetails(form.fill(true), mode, Some(addressDetails), emptyString, emptyString, emptyString))
         case Left(error) =>
           // Logging the error
-//          logger.error("Error : ", error)
+          logger.error("Error : " + error)
           NotFound(s"Error: $error")
       }
     } else if (isUpeRegisteredUK(request)) {
