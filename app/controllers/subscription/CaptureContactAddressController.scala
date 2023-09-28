@@ -21,7 +21,6 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.CaptureContactAddressFormProvider
-
 import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
 import models.subscription.common.UpeCorrespAddressDetails
@@ -39,26 +38,22 @@ import service.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.CaptureContactAddressView
-import play.api.libs.json._
-
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureContactAddressController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              CaptureContactAddressFormProvider,
-
-  page_not_available:        ErrorTemplate,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      CaptureContactAddressView,
-  subscriptionService:       SubscriptionService
-
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+                                                  val userAnswersConnectors: UserAnswersConnectors,
+                                                  identify:                  IdentifierAction,
+                                                  getData:                   DataRetrievalAction,
+                                                  requireData:               DataRequiredAction,
+                                                  formProvider:              CaptureContactAddressFormProvider,
+                                                  page_not_available:        ErrorTemplate,
+                                                  val controllerComponents:  MessagesControllerComponents,
+                                                  view:                      CaptureContactAddressView,
+                                                  subscriptionService:       SubscriptionService
+                                                )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
     with I18nSupport {
 
   val logger: Logger = Logger(this.getClass)
@@ -97,9 +92,10 @@ class CaptureContactAddressController @Inject() (
   //  //  }
   //  }
 
+
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val emptyString  = ""
+    val emptyString = ""
 
     // Get Upe Address Details or a specific error message.
     val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
@@ -115,7 +111,7 @@ class CaptureContactAddressController @Inject() (
           Ok(populateViewWithDetails(form.fill(true), mode, Some(addressDetails), emptyString, emptyString, emptyString))
         case Left(error) =>
           // Logging the error
-          logger.error("Error : " + error)
+          logger.error("Error : ", error)
           NotFound(s"Error: $error")
       }
     } else if (isUpeRegisteredUK(request)) {
@@ -136,13 +132,13 @@ class CaptureContactAddressController @Inject() (
     }
 
   private def populateViewWithDetails(
-    form:              Form[Boolean],
-    mode:              Mode,
-    addressDetailsOpt: Option[UpeCorrespAddressDetails],
-    name:              String,
-    email:             String,
-    phoneNumber:       String
-  )(implicit request:  Request[_]): HtmlFormat.Appendable = {
+                                       form:              Form[Boolean],
+                                       mode:              Mode,
+                                       addressDetailsOpt: Option[UpeCorrespAddressDetails],
+                                       name:              String,
+                                       email:             String,
+                                       phoneNumber:       String
+                                     )(implicit request:  Request[_]): HtmlFormat.Appendable = {
 
     val (addressLine1, addressLine2, addressLine3, addressLine4, postCode, countryCode) = addressDetailsOpt match {
       case Some(addressDetails) =>
@@ -173,7 +169,6 @@ class CaptureContactAddressController @Inject() (
       postCode,
       countryCode
     )
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -188,7 +183,7 @@ class CaptureContactAddressController @Inject() (
             addressLine4,
             postCode,
             countryCode
-          ) = extractAddressDetails(formWithErrors)
+            ) = extractAddressDetails(formWithErrors)
 
           Future.successful(
             BadRequest(
@@ -227,19 +222,19 @@ class CaptureContactAddressController @Inject() (
       )
   }
 
-//  private def extractDataFromUserAnswers[T](
-//    request:            DataRequest[AnyContent],
-//    page:               Gettable[Registration],
-//    extractionFunction: WithoutIdRegData => String
-//  )(implicit reads:     Reads[Registration]): String = {
-//    val registrationOption = request.userAnswers.get(page)
-//
-//    registrationOption.fold("") { registration =>
-//      registration.withoutIdRegData.fold("") { withoutId =>
-//        extractionFunction(withoutId)
-//      }
-//    }
-//  }
+  private def extractDataFromUserAnswers[T](
+                                             request:            DataRequest[AnyContent],
+                                             page:               Gettable[Registration],
+                                             extractionFunction: WithoutIdRegData => String
+                                           )(implicit reads:     Reads[Registration]): String = {
+    val registrationOption = request.userAnswers.get(page)
+
+    registrationOption.fold("") { registration =>
+      registration.withoutIdRegData.fold("") { withoutId =>
+        extractionFunction(withoutId)
+      }
+    }
+  }
 
   private def extractAddressDetails(form: Form[Boolean]): (String, String, String, String, String, String) = {
     val addressLine1 = form.data.getOrElse("addressLine1", "")
@@ -302,5 +297,4 @@ class CaptureContactAddressController @Inject() (
     val registration = request.userAnswers.get(RegistrationPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
   }
-
 }
