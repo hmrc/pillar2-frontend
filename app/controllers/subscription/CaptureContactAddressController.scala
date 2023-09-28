@@ -61,42 +61,41 @@ class CaptureContactAddressController @Inject() (
 
   val form = formProvider()
 
-//  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-//    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-//    val emptyString  = ""
-//
-//    //  isPreviousPageDefined(request) match {
-//    //    case true =>
-//    if (isNfmNotRegisteredUK(request) || !isUpeRegisteredUK(request)) {
-//
-//      val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
-//        case Some(registration) =>
-//          subscriptionService.getUpeAddressDetails(registration).map(Right(_)).getOrElse(Left("Error obtaining Upe Address Details"))
-//        case None =>
-//          throw new NoSuchElementException("No registration data found")
-//      }
-//
-//      upeAddressDetails match {
-//        case Right(addressDetails) =>
-//          Ok(populateViewWithDetails(form.fill(true), mode, Some(addressDetails), emptyString, emptyString, emptyString))
-//        case Left(_) =>
-//          val filledForm = getFilledFormFromSubscriptionPage(request)
-//          Ok(populateViewWithDetails(filledForm, mode, None, getName(request), getEmail(request), getPhoneNumber(request)))
-//      }
-//    } else if (isUpeRegisteredUK(request)) {
-//      val filledForm = getFilledFormFromSubscriptionPage(request)
-//      Ok(populateViewWithDetails(filledForm, mode, None, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
-//    } else {
-//      Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
-//    }
-//  //    case false => NotFound(notAvailable)
-//  //  }
-//  }
-
+  //  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  //    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+  //    val emptyString  = ""
+  //
+  //    //  isPreviousPageDefined(request) match {
+  //    //    case true =>
+  //    if (isNfmNotRegisteredUK(request) || !isUpeRegisteredUK(request)) {
+  //
+  //      val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
+  //        case Some(registration) =>
+  //          subscriptionService.getUpeAddressDetails(registration).map(Right(_)).getOrElse(Left("Error obtaining Upe Address Details"))
+  //        case None =>
+  //          throw new NoSuchElementException("No registration data found")
+  //      }
+  //
+  //      upeAddressDetails match {
+  //        case Right(addressDetails) =>
+  //          Ok(populateViewWithDetails(form.fill(true), mode, Some(addressDetails), emptyString, emptyString, emptyString))
+  //        case Left(_) =>
+  //          val filledForm = getFilledFormFromSubscriptionPage(request)
+  //          Ok(populateViewWithDetails(filledForm, mode, None, getName(request), getEmail(request), getPhoneNumber(request)))
+  //      }
+  //    } else if (isUpeRegisteredUK(request)) {
+  //      val filledForm = getFilledFormFromSubscriptionPage(request)
+  //      Ok(populateViewWithDetails(filledForm, mode, None, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
+  //    } else {
+  //      Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
+  //    }
+  //  //    case false => NotFound(notAvailable)
+  //  //  }
+  //  }
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val emptyString = ""
+    val emptyString  = ""
 
     // Get Upe Address Details or a specific error message.
     val upeAddressDetails: Either[String, UpeCorrespAddressDetails] = request.userAnswers.get(RegistrationPage) match {
@@ -223,19 +222,19 @@ class CaptureContactAddressController @Inject() (
       )
   }
 
-  private def extractDataFromUserAnswers[T](
-    request:            DataRequest[AnyContent],
-    page:               Gettable[Registration],
-    extractionFunction: WithoutIdRegData => String
-  )(implicit reads:     Reads[Registration]): String = {
-    val registrationOption = request.userAnswers.get(page)
-
-    registrationOption.fold("") { registration =>
-      registration.withoutIdRegData.fold("") { withoutId =>
-        extractionFunction(withoutId)
-      }
-    }
-  }
+//  private def extractDataFromUserAnswers[T](
+//    request:            DataRequest[AnyContent],
+//    page:               Gettable[Registration],
+//    extractionFunction: WithoutIdRegData => String
+//  )(implicit reads:     Reads[Registration]): String = {
+//    val registrationOption = request.userAnswers.get(page)
+//
+//    registrationOption.fold("") { registration =>
+//      registration.withoutIdRegData.fold("") { withoutId =>
+//        extractionFunction(withoutId)
+//      }
+//    }
+//  }
 
   private def extractAddressDetails(form: Form[Boolean]): (String, String, String, String, String, String) = {
     val addressLine1 = form.data.getOrElse("addressLine1", "")
