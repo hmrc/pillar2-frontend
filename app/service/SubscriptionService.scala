@@ -80,7 +80,7 @@ class SubscriptionService @Inject() (
                      for {
                        partnershipData <- withIdData.partnershipEntityRegistrationData.toRight("Malformed partnershipEntityRegistrationData data")
                        companyProfile  <- partnershipData.companyProfile.toRight("Malformed Company profile data in LLP")
-                       nfmAddress = extractIncorporatedEntityAddress(companyProfile)
+                       nfmAddress = extractNfmIncorporatedEntityAddress(companyProfile)
                      } yield
                        if (nfmAddress.isInstanceOf[NfmRegisteredAddress])
                          Right(nfmAddress.asInstanceOf[NfmRegisteredAddress])
