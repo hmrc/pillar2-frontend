@@ -421,9 +421,6 @@ contactNameCompliance.error.required = Enter name of the person of team we shoul
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
 
-
-
-
 contactEmailAddress.heading.caption = Contact details
 contactEmailAddress.title = What is the email address for {0}?
 contactEmailAddress.heading = What is the email address for {0}?
@@ -448,3 +445,39 @@ contactCaptureTelephoneDetails.error.required = You need to enter the telephone 
 contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
+
+captureContactAddress.heading.caption = Contact details
+captureContactAddress.title = Do you want to use this registered address as the contact address?
+captureContactAddress.heading = Do you want to use this registered address as the contact address?
+captureContactAddress.inset.text = 72 Guild Street Berlin SE23 6FH Germany?
+captureContactAddress.checkYourAnswersLabel = captureContactAddress
+captureContactAddress.error.required = Select yes if captureContactAddress
+captureContactAddress.change.hidden = CaptureContactAddress
+
+fmContactAddress.heading.caption = Contact details
+fmContactAddress.title = What address do you want to use as the filing member's contact address?
+fmContactAddress.heading = What address do you want to use as the filing member's contact address?
+fmContactAddress.checkYourAnswersLabel = fmContactAddress
+fmContactAddress.error.required = Select yes if fmContactAddress
+fmContactAddress.change.hidden = FmContactAddress
+fmContactAddress.addressLine1 = Address line 1
+fmContactAddress.addressLine2 = Address line 2 (optional)
+fmContactAddress.town_city = Town or City
+fmContactAddress.region = Region (optional)
+fmContactAddress.postcode = Postal code (if applicable)
+fmContactAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
+fmContactAddress.country = Country
+fmContactAddress.addressLine1.error.required = Enter the first line of the address
+fmContactAddress.town_city.error.required = Enter the town or city
+fmContactAddress.town_city.error.length = The town or city must be 35 characters or less
+fmContactAddress.region.error.length = The region must be 35 characters or less
+fmContactAddress.postcode.error.length = The postal code must be 10 characters or less
+fmContactAddress.country.error.required =Select a country
+fmContactAddress.country.error.length = The country cannot be more than 200 characters
+fmContactAddress.messages.error.addressLine1.required = Enter the first line of the address
+fmContactAddress.messages.error.addressLine1.length =The first line of the address must be 35 characters or less
+fmContactAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+fmContactAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+fmContactAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+fmContactAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+fmContactAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
