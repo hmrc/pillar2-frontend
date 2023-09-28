@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.{AddressMappings, Mappings}
-import models.subscription.FmContactAddress
+import models.subscription.SubscriptionAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 class FmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength = 35
-  def apply(): Form[FmContactAddress] = Form(
+  def apply(): Form[SubscriptionAddress] = Form(
     mapping(
       "addressLine1" ->
         text("fmContactAddress.messages.error.addressLine1.required")
@@ -52,6 +52,6 @@ class FmContactAddressFormProvider @Inject() extends Mappings with AddressMappin
       "countryCode" ->
         text("fmContactAddress.country.error.required")
           .verifying(maxLength(textLength, "fmContactAddress.country.error.length"))
-    )(FmContactAddress.apply)(FmContactAddress.unapply)
+    )(SubscriptionAddress.apply)(SubscriptionAddress.unapply)
   )
 }

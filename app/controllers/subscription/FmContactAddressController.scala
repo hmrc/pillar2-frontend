@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.routes
 import forms.FmContactAddressFormProvider
 import models.Mode
-import models.subscription.FmContactAddress
+import models.subscription.SubscriptionAddress
 import pages.SubscriptionPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -52,14 +52,14 @@ class FmContactAddressController @Inject() (
     with I18nSupport {
 
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form: Form[FmContactAddress] = formProvider()
+  val form: Form[SubscriptionAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     request.userAnswers
       .get(SubscriptionPage)
       .fold(NotFound(notAvailable)) { sub =>
-        sub.fmContactAddress.fold(Ok(view(form, mode, countryList)))((address => Ok(view(form.fill(address), mode, countryList))))
+        sub.subscriptionAddress.fold(Ok(view(form, mode, countryList)))((address => Ok(view(form.fill(address), mode, countryList))))
       }
   }
 
@@ -74,7 +74,7 @@ class FmContactAddressController @Inject() (
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(SubscriptionPage, subData.copy(fmContactAddress = Some(value)))
+                  .set(SubscriptionPage, subData.copy(subscriptionAddress = Some(value)))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(routes.UnderConstructionController.onPageLoad)

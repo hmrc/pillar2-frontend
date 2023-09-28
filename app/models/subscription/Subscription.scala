@@ -52,7 +52,7 @@ case class Subscription(
   contactByTelephone:           Option[Boolean] = None,
   telephoneNumber:              Option[String] = None,
   secondaryContactTelephone:    Option[String] = None,
-  fmContactAddress:             Option[FmContactAddress] = None
+  subscriptionAddress:          Option[SubscriptionAddress] = None
 )
 
 object Subscription {

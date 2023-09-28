@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.CaptureContactAddressFormProvider
 import models.requests.DataRequest
-import models.subscription.FmContactAddress
+import models.subscription.SubscriptionAddress
 import models.{Mode, NormalMode}
 import pages.{CaptureContactAddressPage, NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
@@ -108,8 +108,8 @@ class CaptureContactAddressController @Inject() (
                           request.userAnswers.set(
                             SubscriptionPage,
                             subData.copy(
-                              fmContactAddress = Some(
-                                FmContactAddress(
+                              subscriptionAddress = Some(
+                                SubscriptionAddress(
                                   getNfmAddressLine1(request),
                                   Some(getNfmAddressLine2(request)),
                                   getNfmAddressLine3(request),
@@ -132,8 +132,8 @@ class CaptureContactAddressController @Inject() (
                           request.userAnswers.set(
                             SubscriptionPage,
                             subData.copy(
-                              fmContactAddress = Some(
-                                FmContactAddress(
+                              subscriptionAddress = Some(
+                                SubscriptionAddress(
                                   getUpeAddressLine1(request),
                                   Some(getUpeAddressLine2(request)),
                                   getUpeAddressLine3(request),
