@@ -23,35 +23,35 @@ import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
-class FmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
+class SubscriptionAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength = 35
   def apply(): Form[SubscriptionAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("fmContactAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(textLength, "fmContactAddress.messages.error.addressLine1.length")),
+        text("SubscriptionAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(textLength, "SubscriptionAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "fmContactAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(textLength, "SubscriptionAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("fmContactAddress.town_city.error.required")
-          .verifying(maxLength(textLength, "fmContactAddress.town_city.error.length")),
+        text("SubscriptionAddress.town_city.error.required")
+          .verifying(maxLength(textLength, "SubscriptionAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "fmContactAddress.region.error.length"))
+            .verifying(maxLength(textLength, "SubscriptionAddress.region.error.length"))
         ),
       "postalCode" ->
         optionalPostcode(
-          Some("fmContactAddress.postcode.error.invalid"),
-          "fmContactAddress.postcode.error.invalid",
-          "fmContactAddress.postcode.error.length",
+          Some("SubscriptionAddress.postcode.error.invalid"),
+          "SubscriptionAddress.postcode.error.invalid",
+          "SubscriptionAddress.postcode.error.length",
           "countryCode"
         ),
       "countryCode" ->
-        text("fmContactAddress.country.error.required")
-          .verifying(maxLength(textLength, "fmContactAddress.country.error.length"))
+        text("SubscriptionAddress.country.error.required")
+          .verifying(maxLength(textLength, "SubscriptionAddress.country.error.length"))
     )(SubscriptionAddress.apply)(SubscriptionAddress.unapply)
   )
 }

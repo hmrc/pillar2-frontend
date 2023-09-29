@@ -17,23 +17,23 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.FmContactAddressPage
+import pages.SubscriptionAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object FmContactAddressSummary {
+object SubscriptionAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(FmContactAddressPage).map { answer =>
+    answers.get(SubscriptionAddressPage).map { answer =>
       SummaryListRowViewModel(
-        key = "fmContactAddress.checkYourAnswersLabel",
+        key = "SubscriptionAddress.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.FmContactAddressController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("fmContactAddress.change.hidden"))
+          ActionItemViewModel("site.change", controllers.subscription.routes.SubscriptionAddressController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("SubscriptionAddress.change.hidden"))
         )
       )
     }

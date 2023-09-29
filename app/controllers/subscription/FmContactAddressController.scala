@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
-import forms.FmContactAddressFormProvider
+import forms.SubscriptionAddressFormProvider
 import models.Mode
 import models.subscription.SubscriptionAddress
 import pages.SubscriptionPage
@@ -32,20 +32,20 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.errors.ErrorTemplate
-import views.html.subscriptionview.FmContactAddressView
+import views.html.subscriptionview.SubscriptionAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FmContactAddressController @Inject() (
+class SubscriptionAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              FmContactAddressFormProvider,
+  formProvider:              SubscriptionAddressFormProvider,
   CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      FmContactAddressView,
+  view:                      SubscriptionAddressView,
   page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController

@@ -29,21 +29,21 @@
 
 @(form: Form[_], mode: Mode, options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("fmContactAddress.title"))) {
+@layout(pageTitle = title(form, messages("SubscriptionAddress.title"))) {
 
-    @formHelper(action = controllers.subscription.routes.FmContactAddressController.onSubmit(mode)) {
+    @formHelper(action = controllers.subscription.routes.SubscriptionAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">@messages("fmContactAddress.heading.caption")</span>
-        <h1 class="govuk-heading-l long-word">@messages("fmContactAddress.heading")</h1>
+        <span class="govuk-caption-l">@messages("SubscriptionAddress.heading.caption")</span>
+        <h1 class="govuk-heading-l long-word">@messages("SubscriptionAddress.heading")</h1>
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine1"),
-                label = LabelViewModel(messages("fmContactAddress.addressLine1"))
+                label = LabelViewModel(messages("SubscriptionAddress.addressLine1"))
             )
             .withWidth(TwoThirds)
         )
@@ -51,7 +51,7 @@
         @govukInput(
             InputViewModel(
                 field = form("addressLine2"),
-                label = LabelViewModel(messages("fmContactAddress.addressLine2"))
+                label = LabelViewModel(messages("SubscriptionAddress.addressLine2"))
             )
             .withWidth(TwoThirds)
         )
@@ -59,7 +59,7 @@
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
-                label = LabelViewModel(messages("fmContactAddress.town_city"))
+                label = LabelViewModel(messages("SubscriptionAddress.town_city"))
             )
             .withWidth(TwoThirds)
         )
@@ -67,17 +67,17 @@
         @govukInput(
             InputViewModel(
                 field = form("addressLine4"),
-                label = LabelViewModel(messages("fmContactAddress.region"))
+                label = LabelViewModel(messages("SubscriptionAddress.region"))
             )
             .withWidth(TwoThirds)
         )
         @govukInput(
             InputViewModel(
                 field = form("postalCode"),
-                label = LabelViewModel(messages("fmContactAddress.postcode"))
+                label = LabelViewModel(messages("SubscriptionAddress.postcode"))
             )
             .withWidth(Fixed10)
-            .withHint(Hint(content = Text(messages("fmContactAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
+            .withHint(Hint(content = Text(messages("SubscriptionAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
         )
 
         @govukSelect(

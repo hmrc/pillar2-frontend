@@ -17,7 +17,7 @@
 package controllers.subscription
 
 import base.SpecBase
-import forms.FmContactAddressFormProvider
+import forms.SubscriptionAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,18 +28,18 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class FmContactAddressControllerSpec extends SpecBase {
+class SubscriptionAddressControllerSpec extends SpecBase {
 
-  val formProvider = new FmContactAddressFormProvider()
+  val formProvider = new SubscriptionAddressFormProvider()
 
-  "FmContactAddress Controller" when {
+  "SubscriptionAddress Controller" when {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersSubCaptureNoPhone = emptyUserAnswers.set(SubscriptionPage, validSubData()).success.value
       val application                  = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.FmContactAddressController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual OK
       }
@@ -52,7 +52,7 @@ class FmContactAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.FmContactAddressController.onSubmit(NormalMode).url)
+          FakeRequest(POST, routes.SubscriptionAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),

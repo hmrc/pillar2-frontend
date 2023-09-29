@@ -341,7 +341,7 @@ class CaptureContactAddressController @Inject() (
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.FmContactAddressController.onPageLoad(NormalMode))
+                  } yield Redirect(controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode))
               }
           )
       }

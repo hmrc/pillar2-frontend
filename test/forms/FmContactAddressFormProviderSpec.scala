@@ -3,13 +3,13 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class FmContactAddressFormProviderSpec extends StringFieldBehaviours {
+class SubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "fmContactAddress.error.required"
-  val lengthKey = "fmContactAddress.error.length"
-  val maxLength = 200
+  val requiredKey = "SubscriptionAddress.error.required"
+  val lengthKey   = "SubscriptionAddress.error.length"
+  val maxLength   = 200
 
-  val form = new FmContactAddressFormProvider()()
+  val form = new SubscriptionAddressFormProvider()()
 
   ".value" - {
 
