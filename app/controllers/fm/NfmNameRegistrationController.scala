@@ -92,6 +92,7 @@ class NfmNameRegistrationController @Inject() (
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
-      .get(NominatedFilingMemberPage).fold(true)(data => data.isNfmRegisteredInUK.getOrElse(true))
+      .get(NominatedFilingMemberPage)
+      .fold(true)(data => data.isNfmRegisteredInUK.getOrElse(true))
 
 }

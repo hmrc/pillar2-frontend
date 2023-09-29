@@ -96,6 +96,7 @@ class UpeNameRegistrationController @Inject() (
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
-      .get(RegistrationPage).fold(true)(reg=> reg.isUPERegisteredInUK)
+      .get(RegistrationPage)
+      .fold(true)(reg => reg.isUPERegisteredInUK)
 
 }
