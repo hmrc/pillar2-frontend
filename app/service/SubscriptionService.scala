@@ -89,7 +89,7 @@ class SubscriptionService @Inject() (
 
   def getNfmAddressDetails(filingMember: FilingMember): Either[RegistrationError, NfmRegisteredAddress] =
     filingMember.isNfmRegisteredInUK match {
-      case true =>
+      case Some(true) =>
         filingMember.orgType match {
           case Some(EntityType.UkLimitedCompany) =>
             for {
@@ -131,7 +131,7 @@ class SubscriptionService @Inject() (
             Left(InvalidOrgTypeError())
         }
 
-      case false =>
+      case Some(false) =>
         for {
           withoutIdData <- filingMember.withoutIdRegData.toRight(MalformedDataError("Malformed withoutIdReg data"))
           address       <- withoutIdData.registeredFmAddress.toRight(MalformedDataError("Malformed address data"))
