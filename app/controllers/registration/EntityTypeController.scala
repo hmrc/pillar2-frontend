@@ -58,7 +58,7 @@ class EntityTypeController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
+    isUpeRegisteredInUK(request) match {
       case true =>
         request.userAnswers
           .get(RegistrationPage)
@@ -82,13 +82,12 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          regData.copy(
+                          reg.copy(
                             isUPERegisteredInUK = true,
                             orgType = Some(value),
                             isRegistrationStatus = RowStatus.InProgress,
@@ -107,13 +106,12 @@ class EntityTypeController @Inject() (
               request.userAnswers
                 .get(RegistrationPage)
                 .map { reg =>
-                  val regData = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("no registration data found"))
                   for {
                     updatedAnswers <-
                       Future.fromTry(
                         request.userAnswers.set(
                           RegistrationPage,
-                          regData.copy(
+                          reg.copy(
                             isUPERegisteredInUK = true,
                             orgType = Some(value),
                             isRegistrationStatus = RowStatus.InProgress,
@@ -132,7 +130,7 @@ class EntityTypeController @Inject() (
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def isUpeRegisteredInUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
       .fold(false)(data => data.isUPERegisteredInUK)
