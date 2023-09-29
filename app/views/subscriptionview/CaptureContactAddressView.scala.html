@@ -1,79 +1,52 @@
-@*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
 
-
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
-    )
+layout: templates.Layout,
+formHelper: FormWithCSRF,
+govukErrorSummary: GovukErrorSummary,
+govukRadios: GovukRadios,
+govukButton: GovukButton
+)
 
-@(form: Form[_], mode: Mode, addressLine1:String="72 Guild Street" ,addressLine2:String="", town_city:String="Berlin", region:String="", postcode:String="SE23 6FH", country:String="Germany")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, addressLine1: String = "72 Guild Street", addressLine2: String = "", town_city: String = "Berlin", region: String = "", postcode: String = "SE23 6FH", country: String = "Germany")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("captureContactAddress.title"))) {
-
-    @formHelper(action = controllers.subscription.routes.CaptureContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
-
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-        }
-        <span class="govuk-caption-l">@messages("captureContactAddress.heading.caption")</span>
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                fieldset = FieldsetViewModel(Legend(HtmlContent(regAddress)))
-            )
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
-        )
-    }
+@addressItem(item: String) = {
+@if(item.nonEmpty) {
+<li>@item</li>
+}
 }
 
-@regAddress = @{
-s"""<h1 class="govuk-heading-l long-word">${messages("captureContactAddress.heading")}
-    |</h1>
-|<div class="govuk-inset-text">
-    |    <ul class="govuk-list">
-    |        <li>
-    |            $addressLine1
-    |        </li>
-    |        <li>
-    |            $addressLine2
-    |        </li>
-    |        <li>
-    |           $town_city
-    |        </li>
-    |        <li>
-    |           $region
-    |        </li>
-    |        <li>
-    |           $postcode
-    |        </li>
-    |        <li>
-    |           $country
-    |        </li>
-    |    </ul>
-    |</div>
-|""".stripMargin
+@layout(pageTitle = title(form, messages("captureContactAddress.title"))) {
+@formHelper(action = controllers.subscription.routes.CaptureContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
+@if(form.errors.nonEmpty) {
+@govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+}
+<span class="govuk-caption-l">@messages("captureContactAddress.heading.caption")</span>
+
+@govukRadios(
+RadiosViewModel.yesNo(
+field = form("value"),
+fieldset = FieldsetViewModel(Legend(HtmlContent(regAddress)))
+)
+)
+
+@govukButton(
+ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+)
+}
+}
+
+@regAddress = {
+<h1 class="govuk-heading-l long-word">@messages("captureContactAddress.heading")</h1>
+<div class="govuk-inset-text">
+    <ul class="govuk-list">
+        @addressItem(addressLine1)
+        @addressItem(addressLine2)
+        @addressItem(town_city)
+        @addressItem(region)
+        @addressItem(postcode)
+        @addressItem(country)
+    </ul>
+</div>
 }
