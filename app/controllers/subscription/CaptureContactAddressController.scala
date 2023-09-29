@@ -97,8 +97,8 @@ class CaptureContactAddressController @Inject() (
                 )
               }
           case false =>
-            val maybeFilingMember: Option[FilingMember] = request.userAnswers.get(NominatedFilingMemberPage)
-            maybeFilingMember match {
+            val filingMember: Option[FilingMember] = request.userAnswers.get(NominatedFilingMemberPage)
+            filingMember match {
               case Some(filingMember) =>
                 val nfmAddressResult = subscriptionService.getNfmAddressDetails(filingMember)
                 nfmAddressResult match {
