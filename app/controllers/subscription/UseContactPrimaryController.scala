@@ -79,7 +79,7 @@ class UseContactPrimaryController @Inject() (
       case false => NotFound(notAvailable)
     }
   }
-
+  // noinspection ScalaStyle
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
     form
