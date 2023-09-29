@@ -42,7 +42,6 @@ class UpeNameRegistrationController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -67,24 +66,25 @@ class UpeNameRegistrationController @Inject() (
         value =>
           request.userAnswers
             .get(RegistrationPage)
-            .map { reg =>
-              val withoutID = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      Registration(
-                        isUPERegisteredInUK = false,
-                        isRegistrationStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value)),
-                        withIdRegData = None,
-                        orgType = None
+            .flatMap { reg =>
+              reg.withoutIdRegData map { withoutId =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(
+                      request.userAnswers.set(
+                        RegistrationPage,
+                        Registration(
+                          isUPERegisteredInUK = false,
+                          isRegistrationStatus = RowStatus.InProgress,
+                          withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
+                          withIdRegData = None,
+                          orgType = None
+                        )
                       )
                     )
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+              }
             }
             .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )

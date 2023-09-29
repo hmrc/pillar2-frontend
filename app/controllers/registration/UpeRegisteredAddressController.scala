@@ -53,7 +53,7 @@ class UpeRegisteredAddressController @Inject() (
     (for {
       reg      <- request.userAnswers.get(RegistrationPage)
       noIDData <- reg.withoutIdRegData
-      userName <- noIDData.upeContactName
+      userName <- Some(noIDData.upeNameRegistration)
     } yield {
       val preparedForm = noIDData.upeRegisteredAddress.fold(form)(data => form fill data)
       Ok(view(preparedForm, mode, userName, countryList))

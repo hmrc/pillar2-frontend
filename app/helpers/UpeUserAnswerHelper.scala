@@ -28,5 +28,6 @@ trait UpeUserAnswerHelper {
     get(RegistrationPage)
       .flatMap { reg =>
         reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
-      }.getOrElse("")
+      }
+      .getOrElse("")
 }
