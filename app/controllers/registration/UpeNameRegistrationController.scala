@@ -21,15 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
-import models.registration.{Registration, WithoutIdRegData}
-import models.requests.DataRequest
+import models.registration.WithoutIdRegData
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
 import javax.inject.Inject
@@ -66,23 +63,22 @@ class UpeNameRegistrationController @Inject() (
         value =>
           request.userAnswers
             .get(RegistrationPage)
-            .flatMap { reg =>
-              reg.withoutIdRegData.map { withoutId =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(
-                      request.userAnswers.set(
-                        RegistrationPage,
-                        reg.copy(
-                          withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
-                          withIdRegData = None,
-                          orgType = None
-                        )
+            .map { reg =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(
+                      RegistrationPage,
+                      reg.copy(
+                        withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = value)),
+                        withIdRegData = None,
+                        orgType = None
                       )
                     )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
-              }
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+
             }
             .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )

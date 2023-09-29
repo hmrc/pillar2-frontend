@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-import models.requests.DataRequest
 import models.{Mode, UpeRegisteredAddress}
 import pages.RegistrationPage
 import play.api.data.Form
@@ -29,7 +28,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeRegisteredAddressView
 
 import javax.inject.Inject
