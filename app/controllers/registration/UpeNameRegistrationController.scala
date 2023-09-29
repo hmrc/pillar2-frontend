@@ -73,9 +73,7 @@ class UpeNameRegistrationController @Inject() (
                     Future.fromTry(
                       request.userAnswers.set(
                         RegistrationPage,
-                        Registration(
-                          isUPERegisteredInUK = false,
-                          isRegistrationStatus = RowStatus.InProgress,
+                        reg.copy(
                           withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
                           withIdRegData = None,
                           orgType = None
