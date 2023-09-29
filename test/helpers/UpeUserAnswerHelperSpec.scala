@@ -24,7 +24,7 @@ class UpeUserAnswerHelperSpec extends SpecBase {
   "UserAnswerConnector" when {
     "must return the correct UPE contact name" in {
       val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-      userAnswer.upeUserName mustEqual "TestName"
+      userAnswer.upeContactName mustEqual "TestName"
     }
 
   }

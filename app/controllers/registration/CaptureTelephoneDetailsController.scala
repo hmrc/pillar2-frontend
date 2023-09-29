@@ -58,7 +58,7 @@ class CaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.upeUserName
+    val userName = request.userAnswers.upeContactName
     val form     = formProvider(userName)
     form
       .bindFromRequest()

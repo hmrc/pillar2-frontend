@@ -24,11 +24,9 @@ trait UpeUserAnswerHelper {
 
   self: UserAnswers =>
 
-  def upeUserName: String =
+  def upeContactName: String =
     get(RegistrationPage)
       .flatMap { reg =>
         reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
-      }
-      .getOrElse("")
-
+      }.getOrElse("")
 }
