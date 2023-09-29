@@ -38,7 +38,7 @@ import views.html.subscriptionview.CaptureContactAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
+import models.errors._
 class CaptureContactAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
@@ -222,110 +222,129 @@ class CaptureContactAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is not available"))
-    form
-      .bindFromRequest()
+    //handle both the case where data is available and when it's not.
+    request.userAnswers
+      .get(SubscriptionPage)
       .fold(
-        formWithErrors =>
-          isNfmNotRegisteredUK(request) match {
-            case true =>
-              Future.successful(
-                BadRequest(
-                  view(
-                    formWithErrors,
-                    mode,
-                    getNfmAddressLine1(request),
-                    getNfmAddressLine2(request),
-                    getNfmAddressLine3(request),
-                    getNfmAddressLine4(request),
-                    getNfmPostalCode(request),
-                    getNfmCountryCode(request)
-                  )
-                )
-              )
-            case false =>
-              Future.successful(
-                BadRequest(
-                  view(
-                    formWithErrors,
-                    mode,
-                    getUpeAddressLine1(request),
-                    getUpeAddressLine2(request),
-                    getUpeAddressLine3(request),
-                    getUpeAddressLine4(request),
-                    getUpePostalCode(request),
-                    getUpeCountryCode(request)
-                  )
-                )
-              )
-          },
-        value =>
-          value match {
-            case true =>
+        // Case when SubscriptionPage data is not available
+        Future.successful(
+          BadRequest(
+            view(
+              form.withError("subscription", "Subscription data is not available."),
+              mode,
+              // default values
+              getNfmAddressLine1(request),
+              getNfmAddressLine2(request),
+              getNfmAddressLine3(request),
+              getNfmAddressLine4(request),
+              getNfmPostalCode(request),
+              getNfmCountryCode(request)
+            )
+          )
+        )
+      ) { subData => // Case when SubscriptionPage data is available
+
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
               isNfmNotRegisteredUK(request) match {
                 case true =>
-                  for {
-                    updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              subscriptionAddress = Some(
-                                SubscriptionAddress(
-                                  getNfmAddressLine1(request),
-                                  Some(getNfmAddressLine2(request)),
-                                  getNfmAddressLine3(request),
-                                  Some(getNfmAddressLine4(request)),
-                                  Some(getNfmPostalCode(request)),
-                                  getNfmCountryCode(request)
-                                )
-                              ),
-                              contactDetailsStatus = RowStatus.Completed
+                  Future.successful(
+                    BadRequest(
+                      view(
+                        formWithErrors,
+                        mode,
+                        getNfmAddressLine1(request),
+                        getNfmAddressLine2(request),
+                        getNfmAddressLine3(request),
+                        getNfmAddressLine4(request),
+                        getNfmPostalCode(request),
+                        getNfmCountryCode(request)
+                      )
+                    )
+                  )
+                case false =>
+                  Future.successful(
+                    BadRequest(
+                      view(
+                        formWithErrors,
+                        mode,
+                        getUpeAddressLine1(request),
+                        getUpeAddressLine2(request),
+                        getUpeAddressLine3(request),
+                        getUpeAddressLine4(request),
+                        getUpePostalCode(request),
+                        getUpeCountryCode(request)
+                      )
+                    )
+                  )
+              },
+            value =>
+              value match {
+                case true =>
+                  isNfmNotRegisteredUK(request) match {
+                    case true =>
+                      for {
+                        updatedAnswers <-
+                          Future.fromTry(
+                            request.userAnswers.set(
+                              SubscriptionPage,
+                              subData.copy(
+                                subscriptionAddress = Some(
+                                  SubscriptionAddress(
+                                    getNfmAddressLine1(request),
+                                    Some(getNfmAddressLine2(request)),
+                                    getNfmAddressLine3(request),
+                                    Some(getNfmAddressLine4(request)),
+                                    Some(getNfmPostalCode(request)),
+                                    getNfmCountryCode(request)
+                                  )
+                                ),
+                                contactDetailsStatus = RowStatus.Completed
+                              )
                             )
                           )
-                        )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                      } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                    case false =>
+                      for {
+                        updatedAnswers <-
+                          Future.fromTry(
+                            request.userAnswers.set(
+                              SubscriptionPage,
+                              subData.copy(
+                                subscriptionAddress = Some(
+                                  SubscriptionAddress(
+                                    getUpeAddressLine1(request),
+                                    Some(getUpeAddressLine2(request)),
+                                    getUpeAddressLine3(request),
+                                    Some(getUpeAddressLine4(request)),
+                                    Some(getUpePostalCode(request)),
+                                    getUpeCountryCode(request)
+                                  )
+                                ),
+                                contactDetailsStatus = RowStatus.Completed
+                              )
+                            )
+                          )
+                        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                      } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                  }
                 case false =>
                   for {
                     updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              subscriptionAddress = Some(
-                                SubscriptionAddress(
-                                  getUpeAddressLine1(request),
-                                  Some(getUpeAddressLine2(request)),
-                                  getUpeAddressLine3(request),
-                                  Some(getUpeAddressLine4(request)),
-                                  Some(getUpePostalCode(request)),
-                                  getUpeCountryCode(request)
-                                )
-                              ),
-                              contactDetailsStatus = RowStatus.Completed
-                            )
-                          )
+                      Future.fromTry(
+                        request.userAnswers.set(
+                          SubscriptionPage,
+                          subData.copy()
                         )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-              }
-            case false =>
-              for {
-                updatedAnswers <-
-                  Future
-                    .fromTry(
-                      request.userAnswers.set(
-                        SubscriptionPage,
-                        subData.copy()
                       )
-                    )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.FmContactAddressController.onPageLoad(NormalMode))
-          }
-      )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.FmContactAddressController.onPageLoad(NormalMode))
+              }
+          )
+      }
   }
 
   private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
