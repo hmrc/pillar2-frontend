@@ -67,7 +67,7 @@ class UpeNameRegistrationController @Inject() (
           request.userAnswers
             .get(RegistrationPage)
             .flatMap { reg =>
-              reg.withoutIdRegData map { withoutId =>
+              reg.withoutIdRegData.map { withoutId =>
                 for {
                   updatedAnswers <-
                     Future.fromTry(
