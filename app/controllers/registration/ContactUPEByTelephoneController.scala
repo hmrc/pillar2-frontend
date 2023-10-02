@@ -79,7 +79,6 @@ class ContactUPEByTelephoneController @Inject() (
                     request.userAnswers.set(
                       RegistrationPage,
                       reg.copy(
-                        isRegistrationStatus = RowStatus.InProgress,
                         withoutIdRegData = Some(withoutId.copy(contactUpeByTelephone = Some(value)))
                       )
                     )
