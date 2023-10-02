@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import controllers.subscription.CaptureContactAddressController
 import forms.CaptureContactAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import pages.CaptureContactAddressPage
@@ -28,17 +27,6 @@ import views.html.subscriptionview.CaptureContactAddressView
 class CaptureContactAddressControllerSpec extends SpecBase {
 
   val formProvider = new CaptureContactAddressFormProvider()
-
-  def controller(): CaptureContactAddressController =
-    new CaptureContactAddressController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewCaptureContactAddress
-    )
 
   "CaptureContactAddress Controller" when {
 
