@@ -176,8 +176,11 @@ class CaptureContactAddressController @Inject() (
             // to get the UpeRegisteredAddress details.
             request.userAnswers.get(RegistrationPage) match {
               case Some(registration) =>
+                logger.info(s"Found registration: $registration")
                 registration.withoutIdRegData.flatMap(_.upeRegisteredAddress) match {
+
                   case Some(address) =>
+                    logger.info(s"Found UPE registered address: $address")
                     val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
                     upeAddressResult match {
                       case Right(upeAddress) =>
@@ -209,10 +212,13 @@ class CaptureContactAddressController @Inject() (
                         )
                     }
                   case None =>
+                    logger.warn("UPE registered address not found!")
+
                     // Handle the case where there's no address available
                     BadRequest("Address not available")
                 }
               case None =>
+                logger.warn("Registration not found!")
                 // Handle the case where the registration details aren't available
                 BadRequest("Registration details not available")
             }
@@ -222,7 +228,14 @@ class CaptureContactAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    //handle both the case where data is available and when it's not.
+    // Extract the address fields from the request
+    val addressLine1 = request.body.asFormUrlEncoded.get("addressLine1").headOption.getOrElse("")
+    val addressLine2 = request.body.asFormUrlEncoded.get("addressLine2").headOption.getOrElse("")
+    val town_city    = request.body.asFormUrlEncoded.get("town_city").headOption.getOrElse("")
+    val region       = request.body.asFormUrlEncoded.get("region").headOption.getOrElse("")
+    val postcode     = request.body.asFormUrlEncoded.get("postcode").headOption.getOrElse("")
+    val country      = request.body.asFormUrlEncoded.get("country").headOption.getOrElse("")
+
     request.userAnswers
       .get(SubscriptionPage)
       .fold(
@@ -232,13 +245,12 @@ class CaptureContactAddressController @Inject() (
             view(
               form.withError("subscription", "Subscription data is not available."),
               mode,
-              // default values
-              getNfmAddressLine1(request),
-              getNfmAddressLine2(request),
-              getNfmAddressLine3(request),
-              getNfmAddressLine4(request),
-              getNfmPostalCode(request),
-              getNfmCountryCode(request)
+              addressLine1,
+              addressLine2,
+              town_city,
+              region,
+              postcode,
+              country
             )
           )
         )
@@ -255,12 +267,12 @@ class CaptureContactAddressController @Inject() (
                       view(
                         formWithErrors,
                         mode,
-                        getNfmAddressLine1(request),
-                        getNfmAddressLine2(request),
-                        getNfmAddressLine3(request),
-                        getNfmAddressLine4(request),
-                        getNfmPostalCode(request),
-                        getNfmCountryCode(request)
+                        addressLine1,
+                        addressLine2,
+                        town_city,
+                        region,
+                        postcode,
+                        country
                       )
                     )
                   )
@@ -270,78 +282,68 @@ class CaptureContactAddressController @Inject() (
                       view(
                         formWithErrors,
                         mode,
-                        getUpeAddressLine1(request),
-                        getUpeAddressLine2(request),
-                        getUpeAddressLine3(request),
-                        getUpeAddressLine4(request),
-                        getUpePostalCode(request),
-                        getUpeCountryCode(request)
+                        addressLine1,
+                        addressLine2,
+                        town_city,
+                        region,
+                        postcode,
+                        country
                       )
                     )
                   )
               },
             value =>
-              value match {
-                case true =>
-                  isNfmNotRegisteredUK(request) match {
-                    case true =>
-                      for {
-                        updatedAnswers <-
-                          Future.fromTry(
-                            request.userAnswers.set(
-                              SubscriptionPage,
-                              subData.copy(
-                                subscriptionAddress = Some(
-                                  SubscriptionAddress(
-                                    getNfmAddressLine1(request),
-                                    Some(getNfmAddressLine2(request)),
-                                    getNfmAddressLine3(request),
-                                    Some(getNfmAddressLine4(request)),
-                                    Some(getNfmPostalCode(request)),
-                                    getNfmCountryCode(request)
-                                  )
-                                ),
-                                contactDetailsStatus = RowStatus.Completed
-                              )
+              if (value) {
+                val subscriptionAddress = SubscriptionAddress(
+                  addressLine1,
+                  if (addressLine2.nonEmpty) Some(addressLine2) else None,
+                  town_city,
+                  if (region.nonEmpty) Some(region) else None,
+                  if (postcode.nonEmpty) Some(postcode) else None,
+                  country
+                )
+
+                isNfmNotRegisteredUK(request) match {
+                  case true =>
+                    for {
+                      updatedAnswers <-
+                        Future.fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              subscriptionAddress = Some(subscriptionAddress),
+                              contactDetailsStatus = RowStatus.Completed
                             )
                           )
-                        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                      } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                    case false =>
-                      for {
-                        updatedAnswers <-
-                          Future.fromTry(
-                            request.userAnswers.set(
-                              SubscriptionPage,
-                              subData.copy(
-                                subscriptionAddress = Some(
-                                  SubscriptionAddress(
-                                    getUpeAddressLine1(request),
-                                    Some(getUpeAddressLine2(request)),
-                                    getUpeAddressLine3(request),
-                                    Some(getUpeAddressLine4(request)),
-                                    Some(getUpePostalCode(request)),
-                                    getUpeCountryCode(request)
-                                  )
-                                ),
-                                contactDetailsStatus = RowStatus.Completed
-                              )
-                            )
-                          )
-                        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                      } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                  }
-                case false =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(
-                        request.userAnswers.set(
-                          SubscriptionPage,
-                          subData.copy()
                         )
+                      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                  case false =>
+                    for {
+                      updatedAnswers <-
+                        Future.fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              subscriptionAddress = Some(subscriptionAddress),
+                              contactDetailsStatus = RowStatus.Completed
+                            )
+                          )
+                        )
+                      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                }
+              } else {
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(
+                      request.userAnswers.set(
+                        SubscriptionPage,
+                        subData.copy()
                       )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode))
+                    )
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode))
               }
           )
       }

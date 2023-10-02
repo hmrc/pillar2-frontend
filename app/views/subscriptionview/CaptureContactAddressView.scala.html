@@ -47,6 +47,14 @@ govukButton: GovukButton
       )
     )
 
+    <!-- Hidden Fields for Address Details -->
+    <input type="hidden" name="addressLine1" value="@addressLine1">
+    <input type="hidden" name="addressLine2" value="@addressLine2">
+    <input type="hidden" name="town_city" value="@town_city">
+    <input type="hidden" name="region" value="@region">
+    <input type="hidden" name="postcode" value="@postcode">
+    <input type="hidden" name="country" value="@country">
+
     @govukButton(
       ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
     )

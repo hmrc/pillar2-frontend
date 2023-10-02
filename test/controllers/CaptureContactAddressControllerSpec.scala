@@ -36,8 +36,10 @@ class CaptureContactAddressControllerSpec extends SpecBase {
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       formProvider,
+      mockErrorTemplate,
       stubMessagesControllerComponents(),
-      viewCaptureContactAddress
+      viewCaptureContactAddress,
+      mockSubscriptionService
     )
 
   "CaptureContactAddress Controller" when {

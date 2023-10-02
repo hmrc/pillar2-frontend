@@ -20,7 +20,7 @@ To run the unit tests:
     Run 'sbt test' from within the project
 
 To check code coverage:
-
+sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
     sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport
 
 
@@ -39,7 +39,7 @@ if all question asked in this journey answered with 'yes' then this mean you nee
 
 To use testonly route locally .
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+   
 
 
 ### License

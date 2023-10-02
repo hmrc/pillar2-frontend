@@ -26,10 +26,12 @@ import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
+import service.SubscriptionService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import utils.countryOptions.CountryOptions
+import views.html.errors.ErrorTemplate
 
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
@@ -41,6 +43,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockCountryOptions:                          CountryOptions                          = mock[CountryOptions]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionData:                             SessionData                             = mock[SessionData]
+  val mockErrorTemplate:                           ErrorTemplate                           = mock[ErrorTemplate]
+  val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockIdentifierAction:                        IdentifierAction                        = mock[IdentifierAction]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
