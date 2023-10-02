@@ -25,7 +25,7 @@ govukRadios: GovukRadios,
 govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, addressLine1: String = "72 Guild Street", addressLine2: String = "", town_city: String = "Berlin", region: String = "", postcode: String = "SE23 6FH", country: String = "Germany")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, addressLine1: String = "", addressLine2: String = "", town_city: String = "", region: String = "", postcode: String = "", country: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @addressItem(item: String) = {
   @if(!item.isEmpty) {
