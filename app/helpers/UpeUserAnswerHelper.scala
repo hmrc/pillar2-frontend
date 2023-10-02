@@ -36,7 +36,7 @@ trait UpeUserAnswerHelper {
 
   def upeGRSBookmarkLogic: Option[Boolean] =
     get(RegistrationPage).flatMap { reg =>
-      if (reg.isUPERegisteredInUK & reg.withoutIdRegData.isEmpty & reg.isRegistrationStatus == RowStatus.InProgress) {
+      if (reg.isUPERegisteredInUK & reg.withoutIdRegData.isEmpty) {
         Some(true)
       } else {
         None

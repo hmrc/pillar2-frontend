@@ -72,7 +72,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
 
               val checkedRegData =
                 regData.withIdRegData.fold(
-                  regData copy (isUPERegisteredInUK = value, withoutIdRegData = None, isRegistrationStatus = RowStatus.InProgress)
+                  regData copy (isUPERegisteredInUK = value,
+                  isRegistrationStatus = RowStatus.InProgress, withoutIdRegData = None)
                 )(_ => regData)
 
               for {
