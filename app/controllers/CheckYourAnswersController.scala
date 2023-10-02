@@ -48,8 +48,6 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
-    println("************************************" + isUpeWithIdDefined(request) + isIncorporatedEntityDefined(request))
     val listUpe = (isUpeWithIdDefined(request), isIncorporatedEntityDefined(request), isUpeCanContactByPhone(request)) match {
       case (true, true, _) =>
         SummaryListViewModel(

@@ -23,7 +23,7 @@ import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBann
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{BusinessActivityUKView, EntityTypeView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, NfmEntityTypeView, RegisteringNfmForThisGroupView, TurnOverEligibilityView}
+import views.html.{BusinessActivityUKView, CheckYourAnswersView, EntityTypeView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, NfmEntityTypeView, RegisteringNfmForThisGroupView, TurnOverEligibilityView}
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.errors.ErrorTemplate
 import views.html.fmview._
@@ -212,7 +212,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewContactCheckYourAnswers: ContactCheckYourAnswersView =
     new ContactCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewCheckYourAnswers: CheckYourAnswersView =
-    new CheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+    new CheckYourAnswersView(pillar2layout, govukSummaryList, govukButton, formWithCSRF)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 
