@@ -54,6 +54,9 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewMneOrDomestic: MneOrDomesticView =
     new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
+  val viewSubscriptionAddress: SubscriptionAddressView =
+    new SubscriptionAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+
   val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
     new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
