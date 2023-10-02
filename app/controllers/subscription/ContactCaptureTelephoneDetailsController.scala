@@ -86,7 +86,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
                     useContactPrimary = subRegData.useContactPrimary,
                     primaryContactName = subRegData.primaryContactName,
                     groupDetailStatus = subRegData.groupDetailStatus,
-                    contactDetailsStatus = RowStatus.Completed
+                    contactDetailsStatus = RowStatus.InProgress
                   ))
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
