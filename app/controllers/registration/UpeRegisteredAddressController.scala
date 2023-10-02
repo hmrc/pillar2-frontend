@@ -60,27 +60,23 @@ class UpeRegisteredAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.upeNameRegistration
-    form
+    (for {
+      name      <- request.userAnswers.upeNameRegistration
+      reg       <- request.userAnswers.get(RegistrationPage)
+      withoutId <- reg.withoutIdRegData
+    } yield form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName, countryList))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
         value =>
-          request.userAnswers
-            .get(RegistrationPage)
-            .flatMap { reg =>
-              reg.withoutIdRegData.map { withoutId =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(
-                      request.userAnswers
-                        .set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(upeRegisteredAddress = Some(value)))))
-                    )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
-              }
-            }
-            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      )
+          for {
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(upeRegisteredAddress = Some(value)))))
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+      )).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

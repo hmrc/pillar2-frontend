@@ -36,7 +36,6 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeContactEmailFormProvider
 import models.NormalMode
-import models.registration.{Registration, WithoutIdRegData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RegistrationPage
@@ -44,7 +43,6 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.registrationview.UpeContactEmailView
 
 import scala.concurrent.Future
@@ -105,13 +103,19 @@ class UpeContactEmailControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
       }
     }
-    "Bad request when no data in POST" in {
-      val request =
-        FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
-
+    "Bad request when invalid data submitted in POST" in {
+      val userAnswer = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val application = applicationBuilder(Some(userAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+          "emailAddress" -> "hey"
+        )
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
     }
 
     "Journey Recovery when no data in GET" in {

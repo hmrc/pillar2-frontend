@@ -91,14 +91,16 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     }
     "return bad request if required fields are not filled" in {
-
-      val request =
-        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("telephoneNumber", ""))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
-
+      val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val application = applicationBuilder(Some(userAnswer)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("telephoneNumber", ""))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
     }
 
     "redirect to journey recovery for GET " when {

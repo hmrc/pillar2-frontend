@@ -25,11 +25,11 @@ class UpeUserAnswerHelperSpec extends SpecBase {
     "upeContactName" should {
       "return the correct UPE contact name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-        userAnswer.upeContactName mustEqual "TestName"
+        userAnswer.upeContactName mustEqual Some("TestName")
       }
       "return an empty string if it there is no contact name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
-        userAnswer.upeContactName mustEqual null
+        userAnswer.upeContactName mustBe None
       }
     }
     "upeGRSBookmarkLogic" should {
@@ -53,11 +53,11 @@ class UpeUserAnswerHelperSpec extends SpecBase {
     "upeNameRegistration" should {
       "return the correct UPE name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-        userAnswer.upeNameRegistration mustEqual "Test Name"
+        userAnswer.upeNameRegistration mustEqual Some("Test Name")
       }
       "return an empty string if it there is no name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
-        userAnswer.upeNameRegistration mustEqual null
+        userAnswer.upeNameRegistration mustBe None
       }
     }
 
