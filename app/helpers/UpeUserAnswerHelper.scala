@@ -25,18 +25,14 @@ trait UpeUserAnswerHelper {
   self: UserAnswers =>
 
   def upeContactName: String =
-    get(RegistrationPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
-      }
-      .getOrElse("")
+    get(RegistrationPage).flatMap { reg =>
+      reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
+    }.orNull
 
   def upeNameRegistration: String =
-    get(RegistrationPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.map(withoutID => withoutID.upeNameRegistration)
-      }
-      .getOrElse("")
+    get(RegistrationPage).flatMap { reg =>
+      reg.withoutIdRegData.map(withoutID => withoutID.upeNameRegistration)
+    }.orNull
 
   def upeGRSBookmarkLogic: Option[Boolean] =
     get(RegistrationPage).flatMap { reg =>
