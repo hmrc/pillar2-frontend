@@ -21,15 +21,14 @@ import play.api.data.FormError
 
 class SubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "SubscriptionAddress.error.required"
-  val lengthKey   = "SubscriptionAddress.error.length"
-  val maxLength   = 200
-
   val form = new SubscriptionAddressFormProvider()()
 
-  ".value" - {
+  ".addressLine1" - {
 
-    val fieldName = "value"
+    val fieldName   = "addressLine1"
+    val requiredKey = "SubscriptionAddress.messages.error.addressLine1.required"
+    val lengthKey   = "SubscriptionAddress.messages.error.addressLine1.length"
+    val maxLength   = 35 // This should match the textLength from the form configuration
 
     behave like fieldThatBindsValidData(
       form,
