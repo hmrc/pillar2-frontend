@@ -133,5 +133,5 @@ class EntityTypeController @Inject() (
   private def isUpeRegisteredInUK(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(RegistrationPage)
-      .fold(false)(reg => reg.isUPERegisteredInUK)
+      .fold(false)(data => data.isUPERegisteredInUK)
 }

@@ -77,12 +77,9 @@ class SecondaryContactEmailController @Inject() (
           request.userAnswers
             .get(SubscriptionPage)
             .map { subs =>
-              val subscriptionData = request.userAnswers
-                .get(SubscriptionPage)
-                .getOrElse(throw new Exception("no subscription data found for primary contact"))
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(secondaryContactEmail = Some(value))))
+                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryContactEmail = Some(value))))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
             }
