@@ -45,7 +45,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         status(result) mustEqual NOT_FOUND
       }
     }
-    "must return OK and the correct view if an answer is provided to every question " in {
+    "must return OK and the correct view if an answer is provided to every question  with Secondary contact detail" in {
 
       val contactAnswer = emptyUserAnswers
         .set(
@@ -79,7 +79,108 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must return OK and the correct view if an answer is provided with limited company " in {
+    "must return OK and the correct view if an answer is provided to every question  with no nominate filing member" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerDataNoNominateNfm()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question  without Secondary contact detail" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithoutSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must not include
+          "Second contact"
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question and phone number also provided" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with limited company upe" in {
 
       val contactAnswer = emptyUserAnswers
         .set(
@@ -112,7 +213,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must return OK and the correct view if an answer is provided with LLP " in {
+    "must return OK and the correct view if an answer is provided with fm registration partnership" in {
 
       val contactAnswer = emptyUserAnswers
         .set(
@@ -122,7 +223,40 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .success
         .value
 
-      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with LLP upe" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLLP).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
@@ -142,6 +276,60 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         contentAsString(result) must include(
           "Further registration details"
         )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with limited company nfm" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must redirect to other page if confirm and send" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
       }
     }
 

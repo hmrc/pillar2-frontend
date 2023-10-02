@@ -73,6 +73,30 @@ trait Pillar2TestData {
       )
     )
   )
+
+  val upeCheckAnswerDataWithPhone = Registration(
+    isUPERegisteredInUK = false,
+    isRegistrationStatus = RowStatus.InProgress,
+    withoutIdRegData = Some(
+      WithoutIdRegData(
+        upeNameRegistration = "Paddington",
+        upeContactName = Some("Paddington ltd"),
+        contactUpeByTelephone = Some(true),
+        telephoneNumber = Some("123456"),
+        emailAddress = Some("example@gmail.com"),
+        upeRegisteredAddress = Some(
+          UpeRegisteredAddress(
+            addressLine1 = "1",
+            addressLine2 = Some("2"),
+            addressLine3 = "3",
+            addressLine4 = Some("4"),
+            postalCode = Some("5"),
+            countryCode = "GB"
+          )
+        )
+      )
+    )
+  )
   def nfmCheckAnswerData() =
     new FilingMember(
       nfmConfirmation = true,
@@ -97,6 +121,12 @@ trait Pillar2TestData {
           )
         )
       )
+    )
+
+  def nfmCheckAnswerDataNoNominateNfm() =
+    new FilingMember(
+      nfmConfirmation = false,
+      isNFMnStatus = RowStatus.InProgress
     )
 
   def subCheckAnswerData() =
@@ -151,6 +181,30 @@ trait Pillar2TestData {
       secondaryContactEmail = Some("secondemail@test.com"),
       secondaryTelephonePreference = Some(true),
       secondaryContactTelephone = Some("1234554221"),
+      correspondenceAddress = Some(
+        new SubscriptionAddress(
+          addressLine1 = "ad1",
+          addressLine2 = Some("ad2"),
+          addressLine3 = "newcastle",
+          addressLine4 = Some("northeast"),
+          postalCode = Some("NE5 2DH"),
+          countryCode = "BB"
+        )
+      )
+    )
+
+  def CheckAnswerwithoutSecondaryContactDetail() =
+    new Subscription(
+      domesticOrMne = MneOrDomestic.Uk,
+      groupDetailStatus = RowStatus.Completed,
+      contactDetailsStatus = RowStatus.Completed,
+      accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
+      useContactPrimary = Some(true),
+      primaryContactName = Some("Test Contact Name"),
+      primaryContactEmail = Some("Test@test.com"),
+      contactByTelephone = Some(true),
+      primaryContactTelephone = Some("1234567789"),
+      addSecondaryContact = Some(false),
       correspondenceAddress = Some(
         new SubscriptionAddress(
           addressLine1 = "ad1",
