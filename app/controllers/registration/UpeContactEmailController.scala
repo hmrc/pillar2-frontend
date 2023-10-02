@@ -47,7 +47,7 @@ class UpeContactEmailController @Inject() (
     (for {
       reg                <- request.userAnswers.get(RegistrationPage)
       withoutId          <- reg.withoutIdRegData
-      userName           <- withoutId.upeContactName
+      userName           <- Some(request.userAnswers.upeContactName)
       bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val form         = formProvider(userName)

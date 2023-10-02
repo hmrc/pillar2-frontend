@@ -49,7 +49,7 @@ class CaptureTelephoneDetailsController @Inject() (
     (for {
       reg                <- request.userAnswers.get(RegistrationPage)
       noIDData           <- reg.withoutIdRegData
-      userName           <- noIDData.upeContactName
+      userName           <- Some(request.userAnswers.upeContactName)
       bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val form         = formProvider(userName)

@@ -29,7 +29,7 @@ class UpeUserAnswerHelperSpec extends SpecBase {
       }
       "return an empty string if it there is no contact name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
-        userAnswer.upeContactName mustEqual ""
+        userAnswer.upeContactName mustEqual null
       }
     }
     "upeGRSBookmarkLogic" should {
@@ -57,7 +57,7 @@ class UpeUserAnswerHelperSpec extends SpecBase {
       }
       "return an empty string if it there is no name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
-        userAnswer.upeNameRegistration mustEqual ""
+        userAnswer.upeNameRegistration mustEqual null
       }
     }
 
