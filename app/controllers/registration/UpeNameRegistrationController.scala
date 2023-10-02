@@ -48,7 +48,8 @@ class UpeNameRegistrationController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg <- request.userAnswers.get(RegistrationPage)
+      reg                <- request.userAnswers.get(RegistrationPage)
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val preparedForm = reg.withoutIdRegData.fold(form)(data => form fill data.upeNameRegistration)
       Ok(view(preparedForm, mode))
@@ -64,13 +65,14 @@ class UpeNameRegistrationController @Inject() (
           request.userAnswers
             .get(RegistrationPage)
             .map { reg =>
+              val withoutId = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       RegistrationPage,
                       reg.copy(
-                        withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = value)),
+                        withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
                         withIdRegData = None,
                         orgType = None
                       )

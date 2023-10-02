@@ -47,8 +47,10 @@ class UpeContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg       <- request.userAnswers.get(RegistrationPage)
-      withoutId <- reg.withoutIdRegData
+      reg                <- request.userAnswers.get(RegistrationPage)
+      withoutId          <- reg.withoutIdRegData
+      address            <- withoutId.upeRegisteredAddress
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val preparedForm = withoutId.upeContactName.map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))

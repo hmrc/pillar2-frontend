@@ -34,7 +34,40 @@ import scala.concurrent.Future
 class UpeRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
 
-  "UpeRegisteredAddress Controller" must {
+  "UpeRegisteredAddress Controller" when {
+
+    "if no data found with GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "if any data found from the GRS journey" in {
+      val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+    }
+
+    "if no withoutID data or name registration is found" in {
+      val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
       val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
@@ -141,12 +174,13 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val badHouse = "27 house" * 120
         val request =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",
-                "27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house27 house"
+                badHouse
               ),
               ("addressLine2", "Drive"),
               ("addressLine3", "Newcastle"),
@@ -158,16 +192,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-      }
-    }
-
-    "redirected to journey recovery if no data found with GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

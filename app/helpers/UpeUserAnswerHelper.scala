@@ -17,8 +17,8 @@
 package helpers
 
 import models.UserAnswers
-import models.registration.WithoutIdRegData
 import pages.RegistrationPage
+import utils.RowStatus
 
 trait UpeUserAnswerHelper {
 
@@ -30,4 +30,30 @@ trait UpeUserAnswerHelper {
         reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
       }
       .getOrElse("")
+
+  def upeNameRegistration: String =
+    get(RegistrationPage)
+      .flatMap { reg =>
+        reg.withoutIdRegData.map(withoutID => withoutID.upeNameRegistration)
+      }
+      .getOrElse("")
+
+  def upeGRSBookmarkLogic: Option[Boolean] =
+    get(RegistrationPage).flatMap { reg =>
+      if (reg.isUPERegisteredInUK & reg.withoutIdRegData.isEmpty & reg.isRegistrationStatus == RowStatus.InProgress) {
+        Some(true)
+      } else {
+        None
+      }
+    }
+
+  def upeNoIDBookmarkLogic: Option[Boolean] =
+    get(RegistrationPage).flatMap { reg =>
+      if (!reg.isUPERegisteredInUK & reg.withIdRegData.isEmpty & reg.orgType.isEmpty) {
+        Some(true)
+      } else {
+        None
+      }
+    }
+
 }

@@ -50,9 +50,10 @@ class ContactUPEByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg      <- request.userAnswers.get(RegistrationPage)
-      noIDData <- reg.withoutIdRegData
-      userName <- noIDData.upeContactName
+      reg                <- request.userAnswers.get(RegistrationPage)
+      noIDData           <- reg.withoutIdRegData
+      userName           <- noIDData.upeContactName
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val form         = formProvider(userName)
       val preparedForm = noIDData.contactUpeByTelephone.map(form.fill).getOrElse(form)

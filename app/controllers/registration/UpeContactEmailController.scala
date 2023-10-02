@@ -21,14 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
-import models.registration.WithoutIdRegData
-import models.requests.DataRequest
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeContactEmailView
 
 import javax.inject.Inject
@@ -48,9 +45,10 @@ class UpeContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg       <- request.userAnswers.get(RegistrationPage)
-      withoutId <- reg.withoutIdRegData
-      userName  <- withoutId.upeContactName
+      reg                <- request.userAnswers.get(RegistrationPage)
+      withoutId          <- reg.withoutIdRegData
+      userName           <- withoutId.upeContactName
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val form         = formProvider(userName)
       val preparedForm = withoutId.emailAddress.map(form.fill).getOrElse(form)

@@ -449,6 +449,11 @@ trait Pillar2TestData {
       )
     )
 
+  val validWithIdNoGRSRegData = Registration(
+    isUPERegisteredInUK = true,
+    isRegistrationStatus = RowStatus.InProgress
+  )
+
   def validWithIdFmRegistrationDataForLimitedComp =
     new FilingMember(
       nfmConfirmation = true,

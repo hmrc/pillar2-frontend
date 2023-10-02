@@ -21,12 +21,56 @@ import pages.RegistrationPage
 
 class UpeUserAnswerHelperSpec extends SpecBase {
 
-  "UserAnswerConnector" when {
-    "must return the correct UPE contact name" in {
-      val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-      userAnswer.upeContactName mustEqual "TestName"
+  "UpeUserAnswerConnector" when {
+    "upeContactName" should {
+      "return the correct UPE contact name" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
+        userAnswer.upeContactName mustEqual "TestName"
+      }
+      "return an empty string if it there is no contact name" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+        userAnswer.upeContactName mustEqual ""
+      }
+    }
+    "upeGRSBookmarkLogic" should {
+
+      "return Some true if the UPE is registered in the UK , status is in progress" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+        userAnswer.upeGRSBookmarkLogic mustBe Some(true)
+      }
+
+      "return None if the UPE is not registered in the UK" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegDataforSub()).success.value
+        userAnswer.upeGRSBookmarkLogic mustBe None
+      }
+
+      "return None if any upe data from the no ID journey exists in the database" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegDataforSub()).success.value
+        userAnswer.upeGRSBookmarkLogic mustBe None
+      }
+    }
+
+    "upeNameRegistration" should {
+      "return the correct UPE name" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
+        userAnswer.upeNameRegistration mustEqual "Test Name"
+      }
+      "return an empty string if it there is no name" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+        userAnswer.upeNameRegistration mustEqual ""
+      }
+    }
+
+    "upeNoIDBookmark" should {
+      "return None if upe has gone through any steps of the GRS journey" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
+        userAnswer.upeNoIDBookmarkLogic mustBe None
+      }
+      "return true if upe is at any point during their NO ID flow" in {
+        val userAnswer = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
+        userAnswer.upeNoIDBookmarkLogic mustBe Some(true)
+      }
     }
 
   }
-
 }

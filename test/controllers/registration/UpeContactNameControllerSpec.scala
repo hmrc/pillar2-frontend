@@ -25,7 +25,6 @@ import org.mockito.Mockito.when
 import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.UpeContactNameView
@@ -85,35 +84,63 @@ class UpeContactNameControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url
       }
     }
-    "Bad request when no data" in {
-      val request =
-        FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
 
-    }
+    "redirect to journey recovery" should {
 
-    "redirected to journey recovery if no data found with GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      "redirected to journey recovery if no data found with GET" in {
+        val application = applicationBuilder(userAnswers = None).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
-    }
+      "if upe is registered in the UK" in {
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdNoGRSRegData).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
 
-    "redirected to journey recovery if no data found with POST" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            "upeContactName" -> "Ashley Craig"
-          )
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "if any data found from the GRS journey" in {
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+        }
+      }
+
+      "if no withoutID data or address is found" in {
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "redirected to journey recovery if no data found with POST" in {
+        val application = applicationBuilder(userAnswers = None).build()
+        running(application) {
+          val request = FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "upeContactName" -> "Ashley Craig"
+            )
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
   }

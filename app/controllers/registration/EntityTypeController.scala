@@ -57,7 +57,8 @@ class EntityTypeController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg <- request.userAnswers.get(RegistrationPage)
+      reg      <- request.userAnswers.get(RegistrationPage)
+      ukEntity <- request.userAnswers.upeGRSBookmarkLogic
     } yield {
       val form         = formProvider()
       val preparedForm = reg.orgType.map(form.fill).getOrElse(form)

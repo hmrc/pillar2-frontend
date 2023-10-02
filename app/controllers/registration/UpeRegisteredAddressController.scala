@@ -49,9 +49,10 @@ class UpeRegisteredAddressController @Inject() (
   val form: Form[UpeRegisteredAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      reg      <- request.userAnswers.get(RegistrationPage)
-      noIDData <- reg.withoutIdRegData
-      userName <- Some(noIDData.upeNameRegistration)
+      reg                <- request.userAnswers.get(RegistrationPage)
+      noIDData           <- reg.withoutIdRegData
+      userName           <- Some(noIDData.upeNameRegistration)
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
     } yield {
       val preparedForm = noIDData.upeRegisteredAddress.fold(form)(data => form fill data)
       Ok(view(preparedForm, mode, userName, countryList))
@@ -59,7 +60,7 @@ class UpeRegisteredAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = request.userAnswers.upeContactName
+    val userName = request.userAnswers.upeNameRegistration
     form
       .bindFromRequest()
       .fold(
