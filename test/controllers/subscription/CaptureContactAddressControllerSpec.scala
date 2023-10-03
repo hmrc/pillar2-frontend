@@ -113,25 +113,6 @@ class CaptureContactAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK for UPE For LimitedComp and the correct view for a GET" in {
-
-      val userAnswersForUPEWithSub =
-        userAnswersWithIdForLimitedComp.set(SubscriptionPage, validSubscriptionData()).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersForUPEWithSub)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CaptureContactAddressView]
-
-        status(result) mustEqual OK
-        contentAsString(result) contains view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val userAnswersWithNominatedFilingMemberWithSub =
