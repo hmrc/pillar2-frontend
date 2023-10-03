@@ -60,159 +60,162 @@ class CaptureContactAddressController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
     val nfmConfirmationValue: Boolean = request.userAnswers.get(NominatedFilingMemberPage).map(_.nfmConfirmation).getOrElse(false)
-    nfmConfirmationValue match {
+    isPreviousPageDefined(request) match {
       case true =>
-        isNfmNotRegisteredUK(request) match {
+        nfmConfirmationValue match {
           case true =>
-            request.userAnswers
-              .get(SubscriptionPage)
-              .fold(NotFound(notAvailable)) { reg =>
-                reg.subscriptionAddress.fold(
-                  Ok(
-                    view(
-                      form, // Form is not filled with SubscriptionAddress. It expects a Boolean.
-                      mode,
-                      getNfmAddressLine1(request),
-                      getNfmAddressLine2(request),
-                      getNfmAddressLine3(request),
-                      getNfmAddressLine4(request),
-                      getNfmPostalCode(request),
-                      getNfmCountryCode(request)
-                    )
-                  )
-                )(data =>
-                  Ok(
-                    view(
-                      form.fill(true), // Fill the form with a Boolean value.
-                      mode,
-                      getNfmAddressLine1(request),
-                      getNfmAddressLine2(request),
-                      getNfmAddressLine3(request),
-                      getNfmAddressLine4(request),
-                      getNfmPostalCode(request),
-                      getNfmCountryCode(request)
-                    )
-                  )
-                )
-              }
-          case false =>
-            val filingMember: Option[FilingMember] = request.userAnswers.get(NominatedFilingMemberPage)
-            filingMember match {
-              case Some(filingMember) =>
-                val nfmAddressResult = subscriptionService.getNfmAddressDetails(filingMember)
-                nfmAddressResult match {
-                  case Right(nfmAddress) =>
-                    Ok(
-                      view(
-                        form,
-                        mode,
-                        nfmAddress.addressLine1,
-                        nfmAddress.addressLine2.getOrElse(""),
-                        nfmAddress.addressLine3,
-                        nfmAddress.addressLine4.getOrElse(""),
-                        nfmAddress.postalCode.getOrElse(""),
-                        nfmAddress.countryCode
+            isNfmNotRegisteredUK(request) match {
+              case true =>
+                request.userAnswers
+                  .get(SubscriptionPage)
+                  .fold(NotFound(notAvailable)) { reg =>
+                    reg.subscriptionAddress.fold(
+                      Ok(
+                        view(
+                          form, // Form is not filled with SubscriptionAddress. It expects a Boolean.
+                          mode,
+                          getNfmAddressLine1(request),
+                          getNfmAddressLine2(request),
+                          getNfmAddressLine3(request),
+                          getNfmAddressLine4(request),
+                          getNfmPostalCode(request),
+                          getNfmCountryCode(request)
+                        )
+                      )
+                    )(data =>
+                      Ok(
+                        view(
+                          form.fill(true), // Fill the form with a Boolean value.
+                          mode,
+                          getNfmAddressLine1(request),
+                          getNfmAddressLine2(request),
+                          getNfmAddressLine3(request),
+                          getNfmAddressLine4(request),
+                          getNfmPostalCode(request),
+                          getNfmCountryCode(request)
+                        )
                       )
                     )
-                  case Left(error) =>
-                    // Log the error
-                    logger.error(s"Error retrieving Nfm address details: $error")
-                    BadRequest(
-                      view(
-                        form.withError("address", "There was an error retrieving the address details."),
-                        mode,
-                        // Provide defaults
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        ""
-                      )
-                    )
+                  }
+              case false =>
+                val filingMember: Option[FilingMember] = request.userAnswers.get(NominatedFilingMemberPage)
+                filingMember match {
+                  case Some(filingMember) =>
+                    val nfmAddressResult = subscriptionService.getNfmAddressDetails(filingMember)
+                    nfmAddressResult match {
+                      case Right(nfmAddress) =>
+                        Ok(
+                          view(
+                            form,
+                            mode,
+                            nfmAddress.addressLine1,
+                            nfmAddress.addressLine2.getOrElse(""),
+                            nfmAddress.addressLine3,
+                            nfmAddress.addressLine4.getOrElse(""),
+                            nfmAddress.postalCode.getOrElse(""),
+                            nfmAddress.countryCode
+                          )
+                        )
+                      case Left(error) =>
+                        // Log the error
+                        logger.error(s"Error retrieving Nfm address details: $error")
+                        BadRequest(
+                          view(
+                            form.withError("address", "There was an error retrieving the address details."),
+                            mode,
+                            // Provide defaults
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ""
+                          )
+                        )
+                    }
+                  case None =>
+                    logger.warn("Tried to fetch FilingMember details but none found.")
+                    BadRequest("Please provide FilingMember details first.")
                 }
-              case None =>
-                logger.warn("Tried to fetch FilingMember details but none found.")
-                BadRequest("Please provide FilingMember details first.")
+            }
+          case _ =>
+            isUpeNotRegisteredUK(request) match {
+              case true =>
+                request.userAnswers
+                  .get(SubscriptionPage)
+                  .fold(NotFound(notAvailable)) { reg =>
+                    reg.subscriptionAddress.fold(
+                      Ok(
+                        view(
+                          form,
+                          mode,
+                          getUpeAddressLine1(request),
+                          getUpeAddressLine2(request),
+                          getUpeAddressLine3(request),
+                          getUpeAddressLine4(request),
+                          getUpePostalCode(request),
+                          getUpeCountryCode(request)
+                        )
+                      )
+                    )(data =>
+                      Ok(
+                        view(
+                          form.fill(true),
+                          mode,
+                          getUpeAddressLine1(request),
+                          getUpeAddressLine2(request),
+                          getUpeAddressLine3(request),
+                          getUpeAddressLine4(request),
+                          getUpePostalCode(request),
+                          getUpeCountryCode(request)
+                        )
+                      )
+                    )
+                  }
+              case false =>
+                // Call the method getUpeAddressDetails in the SubscriptionService
+                // to get the UpeRegisteredAddress details.
+                request.userAnswers.get(RegistrationPage) match {
+                  case Some(registration) =>
+                    logger.info(s"Found registration: $registration")
+                    val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
+                    upeAddressResult match {
+                      case Right(upeAddress) =>
+                        Ok(
+                          view(
+                            form,
+                            mode,
+                            upeAddress.addressLine1,
+                            upeAddress.addressLine2.getOrElse(""),
+                            upeAddress.addressLine3,
+                            upeAddress.addressLine4.getOrElse(""),
+                            upeAddress.postalCode.getOrElse(""),
+                            upeAddress.countryCode
+                          )
+                        )
+                      case Left(error) =>
+                        logger.error(s"Error retrieving Upe address details: $error")
+                        BadRequest(
+                          view(
+                            form.withError("address", "There was an error retrieving the UPE address details."),
+                            mode,
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ""
+                          )
+                        )
+                    }
+                  case None =>
+                    logger.warn("Registration not found!")
+                    // Handle the case where the registration details aren't available
+                    BadRequest("Registration details not available")
+                }
             }
         }
-      case _ =>
-        isUpeNotRegisteredUK(request) match {
-          case true =>
-            request.userAnswers
-              .get(SubscriptionPage)
-              .fold(NotFound(notAvailable)) { reg =>
-                reg.subscriptionAddress.fold(
-                  Ok(
-                    view(
-                      form,
-                      mode,
-                      getUpeAddressLine1(request),
-                      getUpeAddressLine2(request),
-                      getUpeAddressLine3(request),
-                      getUpeAddressLine4(request),
-                      getUpePostalCode(request),
-                      getUpeCountryCode(request)
-                    )
-                  )
-                )(data =>
-                  Ok(
-                    view(
-                      form.fill(true),
-                      mode,
-                      getUpeAddressLine1(request),
-                      getUpeAddressLine2(request),
-                      getUpeAddressLine3(request),
-                      getUpeAddressLine4(request),
-                      getUpePostalCode(request),
-                      getUpeCountryCode(request)
-                    )
-                  )
-                )
-              }
-          case false =>
-            // Call the method getUpeAddressDetails in the SubscriptionService
-            // to get the UpeRegisteredAddress details.
-            request.userAnswers.get(RegistrationPage) match {
-              case Some(registration) =>
-                logger.info(s"Found registration: $registration")
-                val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
-                upeAddressResult match {
-                  case Right(upeAddress) =>
-                    Ok(
-                      view(
-                        form,
-                        mode,
-                        upeAddress.addressLine1,
-                        upeAddress.addressLine2.getOrElse(""),
-                        upeAddress.addressLine3,
-                        upeAddress.addressLine4.getOrElse(""),
-                        upeAddress.postalCode.getOrElse(""),
-                        upeAddress.countryCode
-                      )
-                    )
-                  case Left(error) =>
-                    logger.error(s"Error retrieving Upe address details: $error")
-                    BadRequest(
-                      view(
-                        form.withError("address", "There was an error retrieving the UPE address details."),
-                        mode,
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        ""
-                      )
-                    )
-                }
-              case None =>
-                logger.warn("Registration not found!")
-                // Handle the case where the registration details aren't available
-                BadRequest("Registration details not available")
-            }
-        }
-
+      case false => NotFound(notAvailable)
     }
   }
 
@@ -342,7 +345,7 @@ class CaptureContactAddressController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.addSecondaryContact == false
+        data.addSecondaryContact.fold(false)(data => data.booleanValue() == false)
       }
 
   private def isNfmNotRegisteredUK(request: DataRequest[AnyContent]): Boolean =

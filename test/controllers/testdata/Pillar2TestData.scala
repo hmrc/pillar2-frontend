@@ -314,7 +314,8 @@ trait Pillar2TestData {
       domesticOrMne = MneOrDomestic.Uk,
       accountingPeriod = Some(AccountingPeriod(LocalDate.parse("2023-12-31"), LocalDate.parse("2024-05-01"))),
       groupDetailStatus = RowStatus.Completed,
-      contactDetailsStatus = RowStatus.InProgress
+      contactDetailsStatus = RowStatus.InProgress,
+      addSecondaryContact = Some(false)
     )
 
   def validSubscriptionDataWithUsePrimaryName(
