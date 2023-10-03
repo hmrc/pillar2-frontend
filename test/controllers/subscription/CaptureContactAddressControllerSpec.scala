@@ -23,11 +23,11 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubscriptionPage
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.CaptureContactAddressView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -56,12 +56,69 @@ class CaptureContactAddressControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK for NFM with ID For LimitedComp and the correct view for a GET" in {
+
+      val userAnswersWithNominatedFilingMemberForLimitedCompWithSub =
+        userAnswersWithIdForLimitedCompForFm.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberForLimitedCompWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureContactAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) contains view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK for NFM with ID For LLP and the correct view for a GET" in {
+
+      val userAnswersWithNominatedFilingMemberForLLPWithSub =
+        userAnswersWithIdForLLPForFm.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberForLLPWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureContactAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) contains view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
     "must return OK for UPE and the correct view for a GET" in {
 
-      val userAnswersWithNominatedFilingMemberWithSub =
+      val userAnswersForUPEWithSub =
         userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersForUPEWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureContactAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) contains view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK for UPE For LimitedComp and the correct view for a GET" in {
+
+      val userAnswersForUPEWithSub =
+        userAnswersWithIdForLimitedComp.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersForUPEWithSub)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
