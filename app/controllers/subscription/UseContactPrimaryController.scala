@@ -86,9 +86,9 @@ class UseContactPrimaryController @Inject() (
         formWithErrors =>
           isNfmRegisteredUK(request) match {
             case true =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
             case false =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
           },
         value =>
           value match {
