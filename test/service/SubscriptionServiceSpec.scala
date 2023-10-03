@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package service
 
 import base.SpecBase
@@ -28,24 +44,27 @@ class SubscriptionServiceSpec extends SpecBase {
         isRegistrationStatus = RowStatus.Completed,
         withIdRegData = Some(
           GrsResponse(
-            incorporatedEntityRegistrationData = Some(
-              IncorporatedEntityRegistrationData(
-                companyProfile = CompanyProfile(
-                  companyName = "LLP Test Company",
-                  companyNumber = "12345678",
-                  dateOfIncorporation = LocalDate.now().minusYears(1),
-                  unsanitisedCHROAddress = IncorporatedEntityAddress(
-                    address_line_1 = Some("123 Test St"),
-                    address_line_2 = Some("Testville"),
-                    country = Some("UK"),
-                    locality = Some("Test County"),
-                    postal_code = Some("TE1 1ST"),
-                    po_box = None,
-                    premises = None,
-                    region = None
+            partnershipEntityRegistrationData = Some(
+              PartnershipEntityRegistrationData(
+                companyProfile = Some(
+                  CompanyProfile(
+                    companyName = "LLP Test Company",
+                    companyNumber = "12345678",
+                    dateOfIncorporation = LocalDate.now().minusYears(1),
+                    unsanitisedCHROAddress = IncorporatedEntityAddress(
+                      address_line_1 = Some("123 Test St"),
+                      address_line_2 = Some("Testville"),
+                      country = Some("UK"),
+                      locality = Some("Test County"),
+                      postal_code = Some("TE1 1ST"),
+                      po_box = None,
+                      premises = None,
+                      region = None
+                    )
                   )
                 ),
-                ctutr = "1234567890",
+                sautr = Some("1234567890"),
+                postcode = Some("TE1 1ST"),
                 identifiersMatch = true,
                 businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
                 registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
@@ -77,6 +96,40 @@ class SubscriptionServiceSpec extends SpecBase {
       )
       val data = subscriptionService.getUpeAddressDetails(registrationWithoutIncorporatedEntityData)
       data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return InvalidOrgTypeError when orgType is Other" in {
+      val registrationWithOtherOrgType = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.Other),
+        isRegistrationStatus = RowStatus.Completed
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationWithOtherOrgType)
+      data shouldBe Left(InvalidOrgTypeError())
+    }
+
+    "return UpeRegisteredAddress when isUPERegisteredInUK is false" in {
+      val registrationNotInUK = Registration(
+        isUPERegisteredInUK = false,
+        isRegistrationStatus = RowStatus.Completed, // Assuming Completed status as an example
+        withoutIdRegData = Some(
+          WithoutIdRegData(
+            upeNameRegistration = "Test UPE Name", // Mock value added
+            upeRegisteredAddress = Some(
+              UpeRegisteredAddress(
+                addressLine1 = "123 Test St",
+                addressLine2 = Some("Testville"),
+                addressLine3 = "Test County",
+                addressLine4 = None,
+                postalCode = Some("TE1 1ST"),
+                countryCode = "UK"
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationNotInUK)
+      data shouldBe a[Right[_, UpeRegisteredAddress]]
     }
 
   }
@@ -177,6 +230,28 @@ class SubscriptionServiceSpec extends SpecBase {
       )
       val data = subscriptionService.getNfmAddressDetails(filingMemberWithoutWithIdData)
       data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return InvalidOrgTypeError when orgType is Other" in {
+      val filingMemberWithInvalidOrgType = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.Other)
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberWithInvalidOrgType)
+      data shouldBe Left(InvalidOrgTypeError())
+    }
+
+    "return MalformedDataError when isNfmRegisteredInUK is false and withoutIdRegData is missing" in {
+      val filingMemberNotInUK = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(false),
+        orgType = Some(EntityType.UkLimitedCompany)
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberNotInUK)
+      data shouldBe Left(MalformedDataError("Malformed withoutIdReg data"))
     }
 
   }
