@@ -21,15 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
-import models.registration.{Registration, WithoutIdRegData}
-import models.requests.DataRequest
+import models.registration.WithoutIdRegData
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
 import javax.inject.Inject
@@ -42,7 +39,6 @@ class UpeNameRegistrationController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -51,16 +47,13 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        val preparedForm = request.userAnswers.get(RegistrationPage) match {
-          case None        => form
-          case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.upeNameRegistration))
-        }
-        Ok(view(preparedForm, mode))
-      case false => NotFound(notAvailable)
-    }
+    (for {
+      reg                <- request.userAnswers.get(RegistrationPage)
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
+    } yield {
+      val preparedForm = reg.withoutIdRegData.fold(form)(data => form fill data.upeNameRegistration)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,16 +65,14 @@ class UpeNameRegistrationController @Inject() (
           request.userAnswers
             .get(RegistrationPage)
             .map { reg =>
-              val withoutID = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
+              val withoutId = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
               for {
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers.set(
                       RegistrationPage,
-                      Registration(
-                        isUPERegisteredInUK = false,
-                        isRegistrationStatus = RowStatus.InProgress,
-                        withoutIdRegData = Some(withoutID.copy(upeNameRegistration = value)),
+                      reg.copy(
+                        withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
                         withIdRegData = None,
                         orgType = None
                       )
@@ -89,17 +80,10 @@ class UpeNameRegistrationController @Inject() (
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+
             }
             .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
-    request.userAnswers
-      .get(RegistrationPage)
-      .map { reg =>
-        reg.isUPERegisteredInUK
-      }
-      .isDefined
 
 }
