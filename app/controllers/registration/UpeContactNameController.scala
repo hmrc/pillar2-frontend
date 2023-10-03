@@ -21,14 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
-import models.requests.DataRequest
-import navigation.Navigator
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeContactNameView
 
 import javax.inject.Inject
@@ -36,13 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpeContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  navigator:                 Navigator,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -51,20 +46,15 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.upeContactName.fold(Ok(view(form, mode)))(contactName => Ok(view(form.fill(contactName), mode)))
-            )
-          }
-
-      case false => NotFound(notAvailable)
-    }
-
+    (for {
+      reg                <- request.userAnswers.get(RegistrationPage)
+      withoutId          <- reg.withoutIdRegData
+      address            <- withoutId.upeRegisteredAddress
+      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
+    } yield {
+      val preparedForm = withoutId.upeContactName.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,25 +62,23 @@ class UpeContactNameController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val regData          = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Is UPE registered in UK not been selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(throw new Exception("upeNameRegistration should be available before address"))
-
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers
-                  .set(RegistrationPage, regData.copy(withoutIdRegData = Some(regDataWithoutId.copy(upeContactName = Some(value)))))
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
-        }
+        value =>
+          request.userAnswers
+            .get(RegistrationPage)
+            .flatMap { reg =>
+              reg.withoutIdRegData.map { withoutId =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(
+                      request.userAnswers
+                        .set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(upeContactName = Some(value)))))
+                    )
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
+              }
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.upeRegisteredAddress.isDefined))
 
 }

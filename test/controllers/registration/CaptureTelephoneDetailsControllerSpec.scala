@@ -38,17 +38,15 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
   def controller(): CaptureTelephoneDetailsController =
     new CaptureTelephoneDetailsController(
       mockUserAnswersConnectors,
-      mockNavigator,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewCaptureTelephoneDetailsView
     )
 
-  "Capture Telephone Details Controller" should {
+  "Capture Telephone Details Controller" when {
 
     "must return OK and the correct view for a GET" in {
       val userAnswersData =
@@ -93,14 +91,71 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     }
     "return bad request if required fields are not filled" in {
-
-      val request =
-        FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("telephoneNumber", ""))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
-
+      val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val application = applicationBuilder(Some(userAnswer)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("telephoneNumber", ""))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
     }
+
+    "redirect to journey recovery for GET " when {
+      "no data is found" in {
+        val application = applicationBuilder(userAnswers = None).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "upe is registered in the uk" in {
+        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdNoGRSRegData).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "GRS data is found in the database" in {
+        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+        val application = applicationBuilder(Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "no contact name is found" in {
+        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
+        val application = applicationBuilder(Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+    }
+    "Journey recovery when no data for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+        "telephoneNumber" -> "12321321"
+      )
+      running(application) {
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
   }
 }
