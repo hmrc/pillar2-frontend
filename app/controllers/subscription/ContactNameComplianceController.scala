@@ -90,7 +90,7 @@ class ContactNameComplianceController @Inject() (
                   )
                 )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode))
+          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(mode))
       )
   }
 

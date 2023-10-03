@@ -93,7 +93,7 @@ class ContactByTelephoneController @Inject() (
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(mode))
             case false =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
