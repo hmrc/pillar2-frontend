@@ -37,10 +37,29 @@ class CaptureContactAddressControllerSpec extends SpecBase {
 
   "CaptureContactAddress Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK for NFM and the correct view for a GET" in {
 
       val userAnswersWithNominatedFilingMemberWithSub =
         userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.CaptureContactAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureContactAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) contains view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK for UPE and the correct view for a GET" in {
+
+      val userAnswersWithNominatedFilingMemberWithSub =
+        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
 
