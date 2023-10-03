@@ -132,6 +132,163 @@ class SubscriptionServiceSpec extends SpecBase {
       data shouldBe a[Right[_, UpeRegisteredAddress]]
     }
 
+    "return UpeRegisteredAddress when companyProfile is missing for UkLimitedCompany" in {
+      val registrationMissingCompanyProfile = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.UkLimitedCompany),
+        isRegistrationStatus = RowStatus.Completed,
+        withIdRegData = Some(
+          GrsResponse(
+            incorporatedEntityRegistrationData = Some(
+              IncorporatedEntityRegistrationData(
+                companyProfile = CompanyProfile(
+                  companyName = "Test Company",
+                  companyNumber = "12345678",
+                  dateOfIncorporation = LocalDate.now(),
+                  unsanitisedCHROAddress = IncorporatedEntityAddress(
+                    address_line_1 = Some("123 Test St"),
+                    address_line_2 = Some("Testville"),
+                    country = Some("UK"),
+                    locality = Some("Test County"),
+                    po_box = None,
+                    postal_code = Some("TE1 1ST"),
+                    premises = None,
+                    region = None
+                  )
+                ),
+                ctutr = "1234567890",
+                identifiersMatch = true,
+                businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
+                registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingCompanyProfile)
+      data shouldBe a[Right[_, UpeRegisteredAddress]]
+    }
+
+    "return UpeRegisteredAddress when companyProfile is missing for LimitedLiabilityPartnership" in {
+      val registrationMissingCompanyProfileLLP = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        isRegistrationStatus = RowStatus.Completed,
+        withIdRegData = Some(
+          GrsResponse(
+            partnershipEntityRegistrationData = Some(
+              PartnershipEntityRegistrationData(
+                companyProfile = Some(
+                  CompanyProfile(
+                    companyName = "LLP Test Company",
+                    companyNumber = "12345678",
+                    dateOfIncorporation = LocalDate.now().minusYears(1),
+                    unsanitisedCHROAddress = IncorporatedEntityAddress(
+                      address_line_1 = Some("123 Test St"),
+                      address_line_2 = Some("Testville"),
+                      country = Some("UK"),
+                      locality = Some("Test County"),
+                      postal_code = Some("TE1 1ST"),
+                      po_box = None,
+                      premises = None,
+                      region = None
+                    )
+                  )
+                ),
+                sautr = Some("1234567890"),
+                postcode = Some("TE1 1ST"),
+                identifiersMatch = true,
+                businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
+                registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingCompanyProfileLLP)
+      data shouldBe a[Right[_, UpeRegisteredAddress]]
+    }
+
+    "return MalformedDataError when withIdRegData is missing for LimitedLiabilityPartnership" in {
+      val registrationMissingWithIdRegDataLLP = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        isRegistrationStatus = RowStatus.Completed
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingWithIdRegDataLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when partnershipEntityRegistrationData is missing for LimitedLiabilityPartnership" in {
+      val registrationMissingPartnershipEntityDataLLP = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        isRegistrationStatus = RowStatus.Completed,
+        withIdRegData = Some(GrsResponse()) // Missing partnershipEntityRegistrationData
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingPartnershipEntityDataLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when companyProfile is missing for LimitedLiabilityPartnership" in {
+      val registrationMissingCompanyProfileLLP = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        isRegistrationStatus = RowStatus.Completed,
+        withIdRegData = Some(
+          GrsResponse(
+            partnershipEntityRegistrationData = Some(
+              PartnershipEntityRegistrationData(
+                companyProfile = None, // Missing companyProfile
+                sautr = Some("1234567890"),
+                postcode = Some("TE1 1ST"),
+                identifiersMatch = true,
+                businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
+                registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingCompanyProfileLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when withIdRegData is missing for LimitedLiabilityPartnership  (second case)" in {
+      val registrationMissingWithIdRegDataLLP = Registration(
+        isUPERegisteredInUK = true,
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        isRegistrationStatus = RowStatus.Completed
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationMissingWithIdRegDataLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when upeRegisteredAddress is missing and isUPERegisteredInUK is false" in {
+      val registrationNotInUKMissingUpeRegisteredAddress = Registration(
+        isUPERegisteredInUK = false,
+        isRegistrationStatus = RowStatus.Completed,
+        withoutIdRegData = Some(
+          WithoutIdRegData(
+            upeNameRegistration = "Paddington",
+            upeRegisteredAddress = None
+          )
+        )
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationNotInUKMissingUpeRegisteredAddress)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when withoutIdRegData is malformed or missing and isUPERegisteredInUK is false" in {
+      val registrationWithMalformedWithoutIdRegData = Registration(
+        isUPERegisteredInUK = false,
+        isRegistrationStatus = RowStatus.Completed,
+        withoutIdRegData = None // Missing withoutIdRegData
+      )
+      val data = subscriptionService.getUpeAddressDetails(registrationWithMalformedWithoutIdRegData)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
   }
 
   "getNfmAddressDetails" should {
@@ -222,8 +379,8 @@ class SubscriptionServiceSpec extends SpecBase {
 
     "return MalformedDataError when withIdRegData is missing for UK Limited Company" in {
       val filingMemberWithoutWithIdData = FilingMember(
-        nfmConfirmation = true, // <-- Specify the value for nfmConfirmation
-        isNFMnStatus = RowStatus.Completed, // <-- Specify the value for isNFMnStatus (assuming Completed status as an example)
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
         isNfmRegisteredInUK = Some(true),
         orgType = Some(EntityType.UkLimitedCompany)
         // Missing withIdRegData
@@ -254,5 +411,171 @@ class SubscriptionServiceSpec extends SpecBase {
       data shouldBe Left(MalformedDataError("Malformed withoutIdReg data"))
     }
 
+    "return NfmRegisteredAddress when companyProfile is missing for UkLimitedCompany in NFM" in {
+      val filingMemberMissingCompanyProfile = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.UkLimitedCompany),
+        withIdRegData = Some(
+          GrsResponse(incorporatedEntityRegistrationData =
+            Some(
+              IncorporatedEntityRegistrationData(
+                companyProfile = CompanyProfile(
+                  companyName = "Test Company",
+                  companyNumber = "12345678",
+                  dateOfIncorporation = LocalDate.now(),
+                  unsanitisedCHROAddress = IncorporatedEntityAddress(
+                    address_line_1 = Some("123 Test St"),
+                    address_line_2 = Some("Testville"),
+                    country = Some("UK"),
+                    locality = Some("Test County"),
+                    po_box = None,
+                    postal_code = Some("TE1 1ST"),
+                    premises = None,
+                    region = None
+                  )
+                ),
+                ctutr = "1234567890",
+                identifiersMatch = true,
+                businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
+                registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
+              )
+            )
+          )
+        )
+      )
+
+      val data = subscriptionService.getNfmAddressDetails(filingMemberMissingCompanyProfile)
+      data shouldBe a[Right[_, NfmRegisteredAddress]]
+    }
+
+    "return MalformedDataError when companyProfile is missing for LimitedLiabilityPartnership in NFM" in {
+      val filingMemberMissingCompanyProfileLLP = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        withIdRegData = Some(
+          GrsResponse(partnershipEntityRegistrationData =
+            Some(
+              PartnershipEntityRegistrationData(
+                companyProfile = None,
+                sautr = None,
+                postcode = None,
+                identifiersMatch = true,
+                businessVerification = Some(BusinessVerificationResult(VerificationStatus.Pass)),
+                registration = GrsRegistrationResult(RegistrationStatus.Registered, Some("BusinessPartnerId"), None)
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberMissingCompanyProfileLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when incorporatedEntityRegistrationData is missing for UkLimitedCompany in NFM" in {
+      val filingMemberMissingIncorporatedEntityData = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.UkLimitedCompany),
+        withIdRegData = Some(GrsResponse()) // Missing incorporatedEntityRegistrationData
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberMissingIncorporatedEntityData)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when partnershipEntityRegistrationData is missing for LimitedLiabilityPartnership in NFM" in {
+      val filingMemberMissingPartnershipEntityDataLLP = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.LimitedLiabilityPartnership),
+        withIdRegData = Some(GrsResponse()) // Missing partnershipEntityRegistrationData
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberMissingPartnershipEntityDataLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when withoutIdRegData is missing and isNfmRegisteredInUK is false" in {
+      val filingMemberNotInUKMissingWithoutIdRegData = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(false),
+        orgType = Some(EntityType.UkLimitedCompany)
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberNotInUKMissingWithoutIdRegData)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when withIdRegData is missing for LimitedLiabilityPartnership in NFM" in {
+      val filingMemberMissingWithIdRegDataLLP = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(true),
+        orgType = Some(EntityType.LimitedLiabilityPartnership)
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberMissingWithIdRegDataLLP)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return MalformedDataError when registeredFmAddress is missing and isNfmRegisteredInUK is false" in {
+      val filingMemberNotInUKMissingRegisteredFmAddress = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(false),
+        orgType = Some(EntityType.UkLimitedCompany),
+        withoutIdRegData = Some(
+          WithoutIdNfmData(
+            registeredFmName = "Name",
+            registeredFmAddress = None
+          )
+        )
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberNotInUKMissingRegisteredFmAddress)
+      data shouldBe a[Left[MalformedDataError, _]]
+    }
+
+    "return NfmRegisteredAddress when isNfmRegisteredInUK is false and withoutIdRegData is present" in {
+      val filingMemberNotInUKWithWithoutIdRegData = FilingMember(
+        nfmConfirmation = true,
+        isNFMnStatus = RowStatus.Completed,
+        isNfmRegisteredInUK = Some(false),
+        orgType = Some(EntityType.UkLimitedCompany),
+        withoutIdRegData = Some(
+          WithoutIdNfmData(
+            registeredFmName = "Name",
+            registeredFmAddress = Some(
+              NfmRegisteredAddress(
+                addressLine1 = "123 Test St",
+                addressLine2 = Some("Testville"),
+                addressLine3 = "Test County",
+                addressLine4 = None,
+                postalCode = Some("TE1 1ST"),
+                countryCode = "UK"
+              )
+            )
+          )
+        )
+      )
+      val data = subscriptionService.getNfmAddressDetails(filingMemberNotInUKWithWithoutIdRegData)
+      data shouldBe a[Right[_, NfmRegisteredAddress]]
+    }
+
+  }
+
+  "Country options integration" should {
+    "correctly integrate country options and retrieve country names from country codes" in {
+      val countryCode         = "UK"
+      val expectedCountryName = "CountryName"
+
+      when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(expectedCountryName)
+
+      val countryName = mockCountryOptions.getCountryNameFromCode(countryCode)
+
+      countryName shouldBe expectedCountryName
+    }
   }
 }
