@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.CaptureContactAddressFormProvider
+import models.errors._
 import models.fm.FilingMember
 import models.requests.DataRequest
 import models.subscription.SubscriptionAddress
@@ -38,7 +39,6 @@ import views.html.subscriptionview.CaptureContactAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.errors._
 class CaptureContactAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
@@ -60,7 +60,6 @@ class CaptureContactAddressController @Inject() (
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
 
     val nfmConfirmationValue: Boolean = request.userAnswers.get(NominatedFilingMemberPage).map(_.nfmConfirmation).getOrElse(false)
-
     nfmConfirmationValue match {
       case true =>
         isNfmNotRegisteredUK(request) match {
@@ -177,45 +176,35 @@ class CaptureContactAddressController @Inject() (
             request.userAnswers.get(RegistrationPage) match {
               case Some(registration) =>
                 logger.info(s"Found registration: $registration")
-                registration.withoutIdRegData.flatMap(_.upeRegisteredAddress) match {
-
-                  case Some(address) =>
-                    logger.info(s"Found UPE registered address: $address")
-                    val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
-                    upeAddressResult match {
-                      case Right(upeAddress) =>
-                        Ok(
-                          view(
-                            form,
-                            mode,
-                            upeAddress.addressLine1,
-                            upeAddress.addressLine2.getOrElse(""),
-                            upeAddress.addressLine3,
-                            upeAddress.addressLine4.getOrElse(""),
-                            upeAddress.postalCode.getOrElse(""),
-                            upeAddress.countryCode
-                          )
-                        )
-                      case Left(error) =>
-                        logger.error(s"Error retrieving Upe address details: $error")
-                        BadRequest(
-                          view(
-                            form.withError("address", "There was an error retrieving the UPE address details."),
-                            mode,
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            ""
-                          )
-                        )
-                    }
-                  case None =>
-                    logger.warn("UPE registered address not found!")
-
-                    // Handle the case where there's no address available
-                    BadRequest("Address not available")
+                val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
+                upeAddressResult match {
+                  case Right(upeAddress) =>
+                    Ok(
+                      view(
+                        form,
+                        mode,
+                        upeAddress.addressLine1,
+                        upeAddress.addressLine2.getOrElse(""),
+                        upeAddress.addressLine3,
+                        upeAddress.addressLine4.getOrElse(""),
+                        upeAddress.postalCode.getOrElse(""),
+                        upeAddress.countryCode
+                      )
+                    )
+                  case Left(error) =>
+                    logger.error(s"Error retrieving Upe address details: $error")
+                    BadRequest(
+                      view(
+                        form.withError("address", "There was an error retrieving the UPE address details."),
+                        mode,
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                      )
+                    )
                 }
               case None =>
                 logger.warn("Registration not found!")
