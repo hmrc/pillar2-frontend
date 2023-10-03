@@ -35,7 +35,7 @@ object EntityTypePartnershipCompanyUtrNfmSummary {
           withoutId.partnershipEntityRegistrationData.map { answer =>
             val value = HtmlFormat.escape(answer.sautr.fold("")(utr => utr))
             SummaryListRowViewModel(
-              key = "GrsReturn.Upe.CompanyUtr.checkYourAnswersLabel",
+              key = "entityType.companyUtr.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value))
             )
           }

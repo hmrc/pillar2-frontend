@@ -25,18 +25,22 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object EntityTypeIncorporatedCompanyUtrUprSummary {
+object EntityTypePartnershipCompanyNameUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(RegistrationPage)
       .flatMap { reg =>
         reg.withIdRegData.map { withoutId =>
-          withoutId.incorporatedEntityRegistrationData.map { answer =>
-            val value = HtmlFormat.escape(answer.ctutr).toString
+          withoutId.partnershipEntityRegistrationData.map { answer =>
+            val value = HtmlFormat.escape(answer.companyProfile.fold("")(name => name.companyName)).toString
             SummaryListRowViewModel(
-              key = "GrsReturn.Upe.CompanyUtr.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(value))
+              key = "entityType.companyName.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent(value)),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("entityType.Upe.change.hidden"))
+              )
             )
           }
         }

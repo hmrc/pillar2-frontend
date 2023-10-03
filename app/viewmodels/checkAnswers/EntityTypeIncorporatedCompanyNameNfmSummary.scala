@@ -35,11 +35,11 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
           withoutId.incorporatedEntityRegistrationData.map { answer =>
             val value = HtmlFormat.escape(answer.companyProfile.companyName).toString
             SummaryListRowViewModel(
-              key = "GrsReturn.Upe.CompanyName.checkYourAnswersLabel",
+              key = "entityType.companyName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("GrsReturn.Upe.change.hidden"))
+                  .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
               )
             )
           }

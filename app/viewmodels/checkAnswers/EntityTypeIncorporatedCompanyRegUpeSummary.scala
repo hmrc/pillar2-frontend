@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object EntityTypeIncorporatedCompanyRegUprSummary {
+object EntityTypeIncorporatedCompanyRegUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
@@ -35,7 +35,7 @@ object EntityTypeIncorporatedCompanyRegUprSummary {
           withoutId.incorporatedEntityRegistrationData.map { answer =>
             val value = HtmlFormat.escape(answer.companyProfile.companyNumber).toString
             SummaryListRowViewModel(
-              key = "GrsReturn.Upe.CompanyReg.checkYourAnswersLabel",
+              key = "entityType.companyReg.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value))
             )
           }

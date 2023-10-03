@@ -479,9 +479,12 @@ contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
-GrsReturn.Upe.CompanyName.checkYourAnswersLabel = Company
-GrsReturn.Upe.CompanyReg.checkYourAnswersLabel = Company Registration Number
-GrsReturn.Upe.CompanyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+entityType.companyName.checkYourAnswersLabel = Company
+entityType.companyReg.checkYourAnswersLabel = Company Registration Number
+entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+entityType.Upe.change.hidden = Change the ultimate parent entity
+
+entityType.Nfm.change.hidden = Change the filing member entity
 
 checkYourAnswers.first = First contact
 checkYourAnswers.heading = Check your answers

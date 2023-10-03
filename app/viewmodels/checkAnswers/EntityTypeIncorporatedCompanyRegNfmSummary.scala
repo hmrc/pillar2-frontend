@@ -35,7 +35,7 @@ object EntityTypeIncorporatedCompanyRegNfmSummary {
           withoutId.incorporatedEntityRegistrationData.map { answer =>
             val value = HtmlFormat.escape(answer.companyProfile.companyNumber).toString
             SummaryListRowViewModel(
-              key = "GrsReturn.Upe.CompanyReg.checkYourAnswersLabel",
+              key = "entityType.companyReg.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value))
             )
           }

@@ -52,15 +52,15 @@ class CheckYourAnswersController @Inject() (
       case (true, true, _) =>
         SummaryListViewModel(
           rows = Seq(
-            EntityTypeIncorporatedCompanyNameUprSummary.row(request.userAnswers),
-            EntityTypeIncorporatedCompanyRegUprSummary.row(request.userAnswers),
-            EntityTypeIncorporatedCompanyUtrUprSummary.row(request.userAnswers)
+            EntityTypeIncorporatedCompanyNameUpeSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyRegUpeSummary.row(request.userAnswers),
+            EntityTypeIncorporatedCompanyUtrUpeSummary.row(request.userAnswers)
           ).flatten
         )
       case (true, false, _) =>
         SummaryListViewModel(
           rows = Seq(
-            EntityTypePartnershipCompanyNameUprSummary.row(request.userAnswers),
+            EntityTypePartnershipCompanyNameUpeSummary.row(request.userAnswers),
             EntityTypePartnershipCompanyRegUprSummary.row(request.userAnswers),
             EntityTypePartnershipCompanyUtrUprSummary.row(request.userAnswers)
           ).flatten
