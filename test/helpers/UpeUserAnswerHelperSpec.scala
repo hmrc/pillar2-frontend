@@ -25,7 +25,7 @@ class UpeUserAnswerHelperSpec extends SpecBase {
     "upeContactName" should {
       "return the correct UPE contact name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-        userAnswer.upeContactName mustEqual Some("TestName")
+        userAnswer.upeContactName mustBe Some("TestName")
       }
       "return an empty string if it there is no contact name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
@@ -53,7 +53,7 @@ class UpeUserAnswerHelperSpec extends SpecBase {
     "upeNameRegistration" should {
       "return the correct UPE name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validNoIdRegData()).success.value
-        userAnswer.upeNameRegistration mustEqual Some("Test Name")
+        userAnswer.upeNameRegistration mustBe Some("Test Name")
       }
       "return an empty string if it there is no name" in {
         val userAnswer = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value

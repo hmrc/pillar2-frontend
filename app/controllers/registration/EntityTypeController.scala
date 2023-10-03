@@ -93,7 +93,6 @@ class EntityTypeController @Inject() (
                 reg.copy(
                   isUPERegisteredInUK = true,
                   orgType = Some(EntityType.UkLimitedCompany),
-                  isRegistrationStatus = RowStatus.InProgress,
                   withoutIdRegData = None,
                   withIdRegData = None
                 )
@@ -117,7 +116,6 @@ class EntityTypeController @Inject() (
                 reg.copy(
                   isUPERegisteredInUK = true,
                   orgType = Some(EntityType.LimitedLiabilityPartnership),
-                  isRegistrationStatus = RowStatus.InProgress,
                   withoutIdRegData = None,
                   withIdRegData = None
                 )
