@@ -68,5 +68,89 @@ class SubscriptionAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
+    "must return NotFound and the correct view when SubscriptionPage is not available" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual NOT_FOUND
+      }
+    }
+
+    "must return BadRequest and the correct view when the form is submitted with errors" in {
+      val userAnswersSubCaptureNoPhone = emptyUserAnswers.set(SubscriptionPage, validSubData()).success.value
+      val application                  = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, routes.SubscriptionAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", ""),
+            ("addressLine2", ""),
+            ("addressLine3", ""),
+            ("addressLine4", ""),
+            ("postalCode", ""),
+            ("countryCode", "")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "must return Ok and the correct view when SubscriptionPage is available" in {
+      val userAnswersSubCaptureNoPhone = emptyUserAnswers.set(SubscriptionPage, validSubData()).success.value
+      val application                  = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("addressLine1")
+        contentAsString(result) must include("addressLine2")
+        contentAsString(result) must include("addressLine3")
+        contentAsString(result) must include("addressLine4")
+        contentAsString(result) must include("postalCode")
+        contentAsString(result) must include("countryCode")
+      }
+    }
+
+    "must throw an exception when SubscriptionPage is not available in user answers" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, routes.SubscriptionAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+
+        val exception = intercept[Exception] {
+          val result = route(application, request).value
+          await(result)
+        }
+
+        exception.getMessage mustEqual "Is FM not subscribed in UK"
+      }
+    }
+
+    "must return NotFound when SubscriptionPage is available but subscriptionAddress is not" in {
+      val userAnswersWithoutSubscriptionAddress =
+        emptyUserAnswers.set(SubscriptionPage, validSubData().copy(subscriptionAddress = None)).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutSubscriptionAddress)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+      }
+    }
+
   }
 }
