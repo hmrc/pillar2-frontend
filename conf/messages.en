@@ -494,12 +494,12 @@ captureContactAddress.title = Do you want to use this registered address as the 
 captureContactAddress.heading = Do you want to use this registered address as the contact address?
 captureContactAddress.inset.text = 72 Guild Street Berlin SE23 6FH Germany?
 captureContactAddress.checkYourAnswersLabel = captureContactAddress
-captureContactAddress.error.required = Select yes if captureContactAddress
+captureContactAddress.error.required = Select yes if you want us to use this as the contact address
 captureContactAddress.change.hidden = CaptureContactAddress
 
 SubscriptionAddress.heading.caption = Contact details
-SubscriptionAddress.title = What address do you want to use as the filing member's contact address?
-SubscriptionAddress.heading = What address do you want to use as the filing member's contact address?
+SubscriptionAddress.title = What address do you want to use as the filing member''s contact address?
+SubscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
 SubscriptionAddress.checkYourAnswersLabel = SubscriptionAddress
 SubscriptionAddress.error.required = Select yes if SubscriptionAddress
 SubscriptionAddress.change.hidden = SubscriptionAddress

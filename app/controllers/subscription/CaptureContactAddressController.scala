@@ -87,7 +87,7 @@ class CaptureContactAddressController @Inject() (
                     )(data =>
                       Ok(
                         view(
-                          form.fill(true), // Fill the form with a Boolean value.
+                          form.fill(reg.useRegisteredAddress.fold(false)(useRegAdd => useRegAdd)), // Fill the form with a Boolean value.
                           mode,
                           getNfmAddressLine1(request),
                           getNfmAddressLine2(request),
@@ -310,7 +310,8 @@ class CaptureContactAddressController @Inject() (
                             SubscriptionPage,
                             subData.copy(
                               subscriptionAddress = Some(subscriptionAddress),
-                              contactDetailsStatus = RowStatus.Completed
+                              contactDetailsStatus = RowStatus.Completed,
+                              useRegisteredAddress = Some(value)
                             )
                           )
                         )
@@ -324,7 +325,8 @@ class CaptureContactAddressController @Inject() (
                             SubscriptionPage,
                             subData.copy(
                               subscriptionAddress = Some(subscriptionAddress),
-                              contactDetailsStatus = RowStatus.Completed
+                              contactDetailsStatus = RowStatus.Completed,
+                              useRegisteredAddress = Some(value)
                             )
                           )
                         )
@@ -337,7 +339,7 @@ class CaptureContactAddressController @Inject() (
                     Future.fromTry(
                       request.userAnswers.set(
                         SubscriptionPage,
-                        subData.copy()
+                        subData.copy(useRegisteredAddress = Some(value))
                       )
                     )
                   _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
