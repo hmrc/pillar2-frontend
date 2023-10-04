@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.SecondaryTelephoneFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import models.requests.DataRequest
 import models.subscription.Subscription
 import pages.SubscriptionPage
@@ -100,7 +100,7 @@ class SecondaryTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(secondaryContactTelephone = Some(value))))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.subscription.routes.SubscriptionAddressController.onPageLoad(NormalMode))
             }
             .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )
