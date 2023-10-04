@@ -52,6 +52,7 @@ case class Subscription(
   contactByTelephone:           Option[Boolean] = None,
   telephoneNumber:              Option[String] = None,
   secondaryContactTelephone:    Option[String] = None,
+  useRegisteredAddress:         Option[Boolean] = None,
   subscriptionAddress:          Option[SubscriptionAddress] = None
 )
 
