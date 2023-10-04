@@ -119,7 +119,7 @@ class ContactCheckYourAnswersController @Inject() (
   private def isPrimaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)((data => data.contactByTelephone.fold(false)(contact => contact)))
+      .fold(false)((data => data.contactByTelephone.fold(false)(contact => contact) && data.primaryContactTelephone.isDefined))
 
   private def isSecondaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
