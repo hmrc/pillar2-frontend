@@ -108,18 +108,37 @@ class CaptureContactAddressController @Inject() (
                       case Right(nfmAddress) =>
                         val countryName = countryOptions.getCountryNameFromCode(nfmAddress.countryCode)
                         logger.info(s"Passing country to view: $countryName")
-                        Ok(
-                          view(
-                            form,
-                            mode,
-                            nfmAddress.addressLine1,
-                            nfmAddress.addressLine2.getOrElse(""),
-                            nfmAddress.addressLine3,
-                            nfmAddress.addressLine4.getOrElse(""),
-                            nfmAddress.postalCode.getOrElse(""),
-                            countryName
-                          )
-                        )
+                        request.userAnswers
+                          .get(SubscriptionPage)
+                          .fold(NotFound(notAvailable)) { reg =>
+                            reg.subscriptionAddress.fold(
+                              Ok(
+                                view(
+                                  form,
+                                  mode,
+                                  nfmAddress.addressLine1,
+                                  nfmAddress.addressLine2.getOrElse(""),
+                                  nfmAddress.addressLine3,
+                                  nfmAddress.addressLine4.getOrElse(""),
+                                  nfmAddress.postalCode.getOrElse(""),
+                                  countryName
+                                )
+                              )
+                            )(data =>
+                              Ok(
+                                view(
+                                  form.fill(reg.useRegisteredAddress.fold(false)(useRegAdd => useRegAdd)), // Fill the form with a Boolean value.
+                                  mode,
+                                  nfmAddress.addressLine1,
+                                  nfmAddress.addressLine2.getOrElse(""),
+                                  nfmAddress.addressLine3,
+                                  nfmAddress.addressLine4.getOrElse(""),
+                                  nfmAddress.postalCode.getOrElse(""),
+                                  countryName
+                                )
+                              )
+                            )
+                          }
                       case Left(error) =>
                         // Log the error
                         logger.error(s"Error retrieving Nfm address details: $error")
@@ -164,7 +183,7 @@ class CaptureContactAddressController @Inject() (
                     )(data =>
                       Ok(
                         view(
-                          form.fill(true),
+                          form.fill(reg.useRegisteredAddress.fold(false)(useRegAdd => useRegAdd)),
                           mode,
                           getUpeAddressLine1(request),
                           getUpeAddressLine2(request),
@@ -187,18 +206,37 @@ class CaptureContactAddressController @Inject() (
                       case Right(upeAddress) =>
                         val countryName = countryOptions.getCountryNameFromCode(upeAddress.countryCode)
                         logger.info(s"Passing country to view: $countryName")
-                        Ok(
-                          view(
-                            form,
-                            mode,
-                            upeAddress.addressLine1,
-                            upeAddress.addressLine2.getOrElse(""),
-                            upeAddress.addressLine3,
-                            upeAddress.addressLine4.getOrElse(""),
-                            upeAddress.postalCode.getOrElse(""),
-                            countryName
-                          )
-                        )
+                        request.userAnswers
+                          .get(SubscriptionPage)
+                          .fold(NotFound(notAvailable)) { reg =>
+                            reg.subscriptionAddress.fold(
+                              Ok(
+                                view(
+                                  form,
+                                  mode,
+                                  upeAddress.addressLine1,
+                                  upeAddress.addressLine2.getOrElse(""),
+                                  upeAddress.addressLine3,
+                                  upeAddress.addressLine4.getOrElse(""),
+                                  upeAddress.postalCode.getOrElse(""),
+                                  countryName
+                                )
+                              )
+                            )(data =>
+                              Ok(
+                                view(
+                                  form.fill(reg.useRegisteredAddress.fold(false)(useRegAdd => useRegAdd)), // Fill the form with a Boolean value.
+                                  mode,
+                                  upeAddress.addressLine1,
+                                  upeAddress.addressLine2.getOrElse(""),
+                                  upeAddress.addressLine3,
+                                  upeAddress.addressLine4.getOrElse(""),
+                                  upeAddress.postalCode.getOrElse(""),
+                                  countryName
+                                )
+                              )
+                            )
+                          }
                       case Left(error) =>
                         logger.error(s"Error retrieving Upe address details: $error")
                         BadRequest(
