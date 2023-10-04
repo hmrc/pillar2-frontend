@@ -38,7 +38,7 @@ object EntityTypePartnershipCompanyNameNfmSummary {
               key = "entityType.companyName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
               )
             )

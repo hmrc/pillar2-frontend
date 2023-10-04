@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -38,7 +38,7 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
               key = "entityType.companyName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
                   .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
               )
             )
