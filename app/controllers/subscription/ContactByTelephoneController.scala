@@ -108,7 +108,7 @@ class ContactByTelephoneController @Inject() (
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
                         useContactPrimary = subRegData.useContactPrimary,
-                        primaryContactTelephone = subRegData.primaryContactTelephone,
+                        primaryContactTelephone = None,
                         primaryContactName = subRegData.primaryContactName,
                         groupDetailStatus = subRegData.groupDetailStatus,
                         contactDetailsStatus = subRegData.contactDetailsStatus
