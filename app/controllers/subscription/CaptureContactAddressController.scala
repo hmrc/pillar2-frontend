@@ -34,6 +34,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.countryOptions.CountryOptions
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.CaptureContactAddressView
 
@@ -48,7 +49,8 @@ class CaptureContactAddressController @Inject() (
   page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CaptureContactAddressView,
-  subscriptionService:       SubscriptionService
+  subscriptionService:       SubscriptionService,
+  countryOptions:            CountryOptions
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -79,7 +81,7 @@ class CaptureContactAddressController @Inject() (
                           getNfmAddressLine3(request),
                           getNfmAddressLine4(request),
                           getNfmPostalCode(request),
-                          getNfmCountryCode(request)
+                          countryOptions.getCountryNameFromCode(getNfmCountryCode(request))
                         )
                       )
                     )(data =>
@@ -92,7 +94,7 @@ class CaptureContactAddressController @Inject() (
                           getNfmAddressLine3(request),
                           getNfmAddressLine4(request),
                           getNfmPostalCode(request),
-                          getNfmCountryCode(request)
+                          countryOptions.getCountryNameFromCode(getNfmCountryCode(request))
                         )
                       )
                     )
@@ -104,6 +106,8 @@ class CaptureContactAddressController @Inject() (
                     val nfmAddressResult = subscriptionService.getNfmAddressDetails(filingMember)
                     nfmAddressResult match {
                       case Right(nfmAddress) =>
+                        val countryName = countryOptions.getCountryNameFromCode(nfmAddress.countryCode)
+                        logger.info(s"Passing country to view: $countryName")
                         Ok(
                           view(
                             form,
@@ -113,7 +117,7 @@ class CaptureContactAddressController @Inject() (
                             nfmAddress.addressLine3,
                             nfmAddress.addressLine4.getOrElse(""),
                             nfmAddress.postalCode.getOrElse(""),
-                            nfmAddress.countryCode
+                            countryName
                           )
                         )
                       case Left(error) =>
@@ -154,7 +158,7 @@ class CaptureContactAddressController @Inject() (
                           getUpeAddressLine3(request),
                           getUpeAddressLine4(request),
                           getUpePostalCode(request),
-                          getUpeCountryCode(request)
+                          countryOptions.getCountryNameFromCode(getUpeCountryCode(request))
                         )
                       )
                     )(data =>
@@ -167,7 +171,7 @@ class CaptureContactAddressController @Inject() (
                           getUpeAddressLine3(request),
                           getUpeAddressLine4(request),
                           getUpePostalCode(request),
-                          getUpeCountryCode(request)
+                          countryOptions.getCountryNameFromCode(getUpeCountryCode(request))
                         )
                       )
                     )
@@ -181,6 +185,8 @@ class CaptureContactAddressController @Inject() (
                     val upeAddressResult = subscriptionService.getUpeAddressDetails(registration)
                     upeAddressResult match {
                       case Right(upeAddress) =>
+                        val countryName = countryOptions.getCountryNameFromCode(upeAddress.countryCode)
+                        logger.info(s"Passing country to view: $countryName")
                         Ok(
                           view(
                             form,
@@ -190,7 +196,7 @@ class CaptureContactAddressController @Inject() (
                             upeAddress.addressLine3,
                             upeAddress.addressLine4.getOrElse(""),
                             upeAddress.postalCode.getOrElse(""),
-                            upeAddress.countryCode
+                            countryName
                           )
                         )
                       case Left(error) =>

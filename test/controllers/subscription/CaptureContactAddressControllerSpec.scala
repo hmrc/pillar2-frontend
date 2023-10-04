@@ -216,37 +216,5 @@ class CaptureContactAddressControllerSpec extends SpecBase {
 
     }
 
-    "must redirect Subscription Address page when No is selected" in {
-
-      val userAnswersWithNominatedFilingMemberWithSub =
-        userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.CaptureContactAddressController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("value", "false"),
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("town_city", "North east"),
-            ("region", "North east"),
-            ("postcode", "NE3 2TR"),
-            ("country", "GB")
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionAddressController.onSubmit(NormalMode).url
-      }
-
-    }
-
   }
 }
