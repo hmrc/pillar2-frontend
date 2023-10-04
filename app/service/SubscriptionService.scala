@@ -48,7 +48,7 @@ class SubscriptionService @Inject() (
               UpeRegisteredAddress(
                 addressLine1 = address.address_line_1.getOrElse(""),
                 addressLine2 = address.address_line_2,
-                addressLine3 = address.premises.getOrElse(""),
+                addressLine3 = address.locality.getOrElse(""),
                 addressLine4 = address.region,
                 postalCode = address.postal_code,
                 countryCode = address.country.map(countryOptions.getCountryNameFromCode).getOrElse("")
@@ -63,7 +63,7 @@ class SubscriptionService @Inject() (
             } yield UpeRegisteredAddress(
               addressLine1 = companyProfile.unsanitisedCHROAddress.address_line_1.getOrElse(""),
               addressLine2 = companyProfile.unsanitisedCHROAddress.address_line_2,
-              addressLine3 = companyProfile.unsanitisedCHROAddress.premises.getOrElse(""),
+              addressLine3 = companyProfile.unsanitisedCHROAddress.locality.getOrElse(""),
               addressLine4 = companyProfile.unsanitisedCHROAddress.region,
               postalCode = companyProfile.unsanitisedCHROAddress.postal_code,
               countryCode = companyProfile.unsanitisedCHROAddress.country.map(countryOptions.getCountryNameFromCode).getOrElse("")
@@ -102,7 +102,7 @@ class SubscriptionService @Inject() (
             } yield NfmRegisteredAddress(
               addressLine1 = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.address_line_1.getOrElse(""),
               addressLine2 = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.address_line_2,
-              addressLine3 = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.premises.getOrElse(""),
+              addressLine3 = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.locality.getOrElse(""),
               addressLine4 = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.region,
               postalCode = incorporatedEntityData.companyProfile.unsanitisedCHROAddress.postal_code,
               countryCode =
@@ -122,7 +122,7 @@ class SubscriptionService @Inject() (
             } yield NfmRegisteredAddress(
               addressLine1 = companyProfile.unsanitisedCHROAddress.address_line_1.getOrElse(""),
               addressLine2 = companyProfile.unsanitisedCHROAddress.address_line_2,
-              addressLine3 = companyProfile.unsanitisedCHROAddress.premises.getOrElse(""),
+              addressLine3 = companyProfile.unsanitisedCHROAddress.locality.getOrElse(""),
               addressLine4 = companyProfile.unsanitisedCHROAddress.region,
               postalCode = companyProfile.unsanitisedCHROAddress.postal_code,
               countryCode = companyProfile.unsanitisedCHROAddress.country.map(countryOptions.getCountryNameFromCode).getOrElse("")
