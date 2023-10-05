@@ -215,3 +215,8 @@ GET        /contact-details/second-input-telephone                        contro
 POST       /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /contact-details/address/input                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
