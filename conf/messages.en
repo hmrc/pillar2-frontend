@@ -214,6 +214,7 @@ isUPERegisteredInUK.heading = Is the ultimate parent entity registered in the UK
 isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
 isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is registered in the UK
+isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
 
 contactUPEByTelephone.heading.caption = Business details
 contactUPEByTelephone.title = Can we contact {0} by telephone?
@@ -261,7 +262,7 @@ registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering the nominated filing member for this group
 registeringNfmForThisGroup.caption = Check if the group needs to register
 
-isNFMUKBased.title = isNFMUKBased
+isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
@@ -519,3 +520,34 @@ secondaryTelephone.error.length = The telephone number should be 24 characters o
 secondaryTelephone.error.format = Enter a telephone number in the correct format
 
 
+
+
+subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
+subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
+subscriptionAddress.checkYourAnswersLabel = Address
+subscriptionAddress.addressLine1 = Address line 1
+subscriptionAddress.addressLine2 = Address line 2 (optional)
+subscriptionAddress.town_city = Town or City
+subscriptionAddress.region = Region (optional)
+subscriptionAddress.postcode = Postal code (if applicable)
+subscriptionAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
+subscriptionAddress.country = Country
+subscriptionAddress.country.hint = Enter text and then choose from the list
+subscriptionAddress.addressLine1.error.required = Enter the first line of the address
+subscriptionAddress.town_city.error.required = Enter the town or city
+subscriptionAddress.town_city.error.length = The town or city must be 35 characters or less
+subscriptionAddress.region.error.length = The region must be 35 characters or less
+subscriptionAddress.postcode.error.length = The postal code must be 10 characters or less
+subscriptionAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+subscriptionAddress.country.error.required = Select a country
+subscriptionAddress.country.error.length = The country cannot be more than 35 characters
+subscriptionAddress.heading.caption = Contact details
+subscriptionAddress.messages.error.addressLine1.required=Enter the first line of the address
+subscriptionAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+subscriptionAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+subscriptionAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+subscriptionAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+subscriptionAddress.country = Country
+subscriptionAddress.country.hint = Choose from the list
+subscriptionAddress.checkYourAnswersLabel = Address
+subscriptionAddress.change.hidden =  the registered contact address

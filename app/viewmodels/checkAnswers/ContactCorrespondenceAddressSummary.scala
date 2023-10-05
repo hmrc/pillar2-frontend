@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.{RegistrationPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -45,7 +45,7 @@ object ContactCorrespondenceAddressSummary {
             key = "contactCorrespondenceAddress.checkYourAnswersLabel",
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
-              ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
+              ActionItemViewModel("site.change", controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("contactCorrespondenceAddress.change.hidden"))
             )
           )

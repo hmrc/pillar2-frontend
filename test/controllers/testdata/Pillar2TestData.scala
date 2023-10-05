@@ -376,6 +376,9 @@ trait Pillar2TestData {
       useContactPrimary = Some(false),
       contactDetailsStatus = RowStatus.InProgress
     )
+
+  val validSubscriptionDataNoContactInfo =
+    Subscription(domesticOrMne = MneOrDomestic.Uk, groupDetailStatus = RowStatus.Completed, contactDetailsStatus = RowStatus.InProgress)
   def validNoIdFmData(
     nfmConfirmation:       Boolean = true,
     isNfmRegisteredInUK:   Option[Boolean] = None,
