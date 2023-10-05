@@ -18,7 +18,7 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, RegistrationConnector, SubscriptionConnector, UserAnswersConnectors}
+import connectors.{EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
 import navigation.Navigator
@@ -52,6 +52,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockHttpClient:                                 HttpClient                                 = mock[HttpClient]
   val mockRegistrationConnector:                      RegistrationConnector                      = mock[RegistrationConnector]
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
+  val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
+  val mockTaxEnrolmentsConnector:                     TaxEnrolmentsConnector                     = mock[TaxEnrolmentsConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -69,6 +71,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockPartnershipIdentificationFrontendConnector,
       mockHttpClient,
       mockRegistrationConnector,
-      mockSubscriptionConnector
+      mockSubscriptionConnector,
+      mockEnrolmentStoreProxyConnector,
+      mockTaxEnrolmentsConnector
     ).foreach(Mockito.reset(_))
 }
