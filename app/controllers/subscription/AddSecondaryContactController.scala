@@ -101,7 +101,7 @@ class AddSecondaryContactController @Inject() (
                     updatedAnswers <-
                       Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
           }
