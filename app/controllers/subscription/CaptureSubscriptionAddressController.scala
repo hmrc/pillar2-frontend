@@ -28,6 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
@@ -72,7 +73,7 @@ class CaptureSubscriptionAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(SubscriptionPage, sub.copy(correspondenceAddress = Some(value)))
+                      .set(SubscriptionPage, sub.copy(correspondenceAddress = Some(value), contactDetailsStatus = RowStatus.Completed))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)

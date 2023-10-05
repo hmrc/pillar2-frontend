@@ -214,6 +214,7 @@ isUPERegisteredInUK.heading = Is the ultimate parent entity registered in the UK
 isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
 isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is registered in the UK
+isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
 
 contactUPEByTelephone.heading.caption = Business details
 contactUPEByTelephone.title = Can we contact {0} by telephone?
@@ -261,7 +262,7 @@ registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering the nominated filing member for this group
 registeringNfmForThisGroup.caption = Check if the group needs to register
 
-isNFMUKBased.title = isNFMUKBased
+isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading.caption = Business details
 isNFMUKBased.checkYourAnswersLabel = Filing member location
@@ -515,6 +516,6 @@ subscriptionAddress.messages.error.addressLine1.invalid = The first line of the 
 subscriptionAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 subscriptionAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.country = Country
-subscriptionAddress.country.hint = Enter text and then choose from the list
+subscriptionAddress.country.hint = Choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
