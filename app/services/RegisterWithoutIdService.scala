@@ -32,7 +32,8 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
   ): Future[Either[ApiError, SafeId]] =
     registrationConnector
       .upeRegisterationWithoutID(id, userAnswers) map {
-      case Right(Some(safeId)) => Right(safeId)
+      case Right(Some(safeId)) =>
+        Right(safeId)
       case Right(None) =>
         logger.warn("Upe Registration WithoutId Information MissingError SafeId missing")
         Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))

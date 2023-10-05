@@ -24,7 +24,7 @@ import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{RegisterWithoutIdService, SubscriptionService}
+import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -39,6 +39,7 @@ class CheckYourAnswersController @Inject() (
   override val registerWithoutIdService: RegisterWithoutIdService,
   override val subscriptionService:      SubscriptionService,
   override val userAnswersConnectors:    UserAnswersConnectors,
+  override val taxEnrolmentService:      TaxEnrolmentService,
   val controllerComponents:              MessagesControllerComponents,
   view:                                  CheckYourAnswersView
 )(implicit appConfig:                    FrontendAppConfig)
@@ -57,7 +58,7 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val regdata = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Registration is not available"))
-    val fmData  = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing is not available"))
+    val fmData  = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing Member is not available"))
     createRegistrationAndSubscription(regdata, fmData)
   }
 

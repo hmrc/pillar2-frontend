@@ -26,9 +26,19 @@ case class Registration(
   isRegistrationStatus: RowStatus,
   withIdRegData:        Option[GrsResponse] = None,
   withoutIdRegData:     Option[WithoutIdRegData] = None,
-  safeId:               Option[String] = None
+  registrationInfo:     Option[RegistrationInfo] = None
 )
 
 object Registration {
   implicit val format: OFormat[Registration] = Json.format[Registration]
+}
+
+case class RegistrationInfo(
+  crn:    String,
+  utr:    String,
+  safeId: String
+)
+
+object RegistrationInfo {
+  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
 }
