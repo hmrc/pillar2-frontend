@@ -44,7 +44,9 @@ import viewmodels.implicits._
 object ContactByTelephoneSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(answer.contactByTelephone.fold("")(contact => if (contact) "site.yes" else "site.no"))
+      val value = ValueViewModel(
+        answer.contactByTelephone.fold("")(contact => if (contact && answer.primaryContactTelephone.isDefined) "site.yes" else "site.no")
+      )
       SummaryListRowViewModel(
         key = "contactByTelephone.checkYourAnswersLabel",
         value = value,

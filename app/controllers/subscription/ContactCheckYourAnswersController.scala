@@ -114,8 +114,8 @@ class ContactCheckYourAnswersController @Inject() (
       .get(SubscriptionPage)
       .fold(false)(data =>
         data.addSecondaryContact.fold(false)(contact =>
-          contact
-        ) && data.secondaryContactName.isDefined && data.secondaryContactEmail.isDefined && data.secondaryTelephonePreference.isDefined
+          contact && data.secondaryContactName.isDefined && data.secondaryContactEmail.isDefined && data.secondaryTelephonePreference.isDefined
+        )
       )
 
   private def isPrimaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
@@ -128,7 +128,7 @@ class ContactCheckYourAnswersController @Inject() (
       .get(SubscriptionPage)
       .fold(false)(data =>
         data.secondaryTelephonePreference.fold(false) { contact =>
-          contact
+          contact && data.secondaryContactTelephone.isDefined
         }
       )
 }
