@@ -34,7 +34,7 @@ upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or City
 upeRegisteredAddress.region = Region (optional)
-upeRegisteredAddress.postcode = Postal code (if applicable)
+upeRegisteredAddress.postcode = Postal code
 upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 upeRegisteredAddress.country = Country
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
@@ -50,7 +50,9 @@ upeRegisteredAddress.messages.error.addressLine1.length =The first line of the a
 upeRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
 upeRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 upeRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+upeRegisteredAddress.messages.error.postcode.required = Enter the postal code of the address
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+upeRegisteredAddress.error.format = Enter the post code in the correct format
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 
 

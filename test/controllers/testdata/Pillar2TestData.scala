@@ -43,7 +43,7 @@ trait Pillar2TestData {
             addressLine2 = Some("2"),
             addressLine3 = "3",
             addressLine4 = Some("4"),
-            postalCode = Some("5"),
+            postalCode = "5",
             countryCode = "GB"
           )
         )
@@ -65,7 +65,7 @@ trait Pillar2TestData {
             addressLine2 = Some("2"),
             addressLine3 = "3",
             addressLine4 = Some("4"),
-            postalCode = Some("5"),
+            postalCode = "5",
             countryCode = "GB"
           )
         )
@@ -226,7 +226,7 @@ trait Pillar2TestData {
     addressLine2:          Option[String] = Some("Line2"),
     addressLine3:          String = "Line3",
     addressLine4:          Option[String] = Some("Line4"),
-    postalCode:            Option[String] = Some("VR11 3PA"),
+    postalCode:            String = "VR11 3PA",
     countryCode:           String = "GB"
   ) =
     new Registration(
@@ -264,7 +264,7 @@ trait Pillar2TestData {
     addressLine2:          Option[String] = Some("Line2"),
     addressLine3:          String = "Line3",
     addressLine4:          Option[String] = Some("Line4"),
-    postalCode:            Option[String] = Some("VR11 3PA"),
+    postalCode:            String = "VR11 3PA",
     countryCode:           String = "GB"
   ) =
     new Registration(
@@ -507,7 +507,7 @@ trait Pillar2TestData {
     addressLine2 = Some("Line2"),
     addressLine3 = "Line3",
     addressLine4 = Some("Line4"),
-    postalCode = Some("VR11 3PA"),
+    postalCode = "VR11 3PA",
     countryCode = "GB"
   )
 
