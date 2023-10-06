@@ -137,7 +137,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, "asd", NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-    //this
+
     "must redirect to secondary contact name if they answer yes " in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(

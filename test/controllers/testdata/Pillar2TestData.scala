@@ -329,6 +329,9 @@ trait Pillar2TestData {
       useContactPrimary = Some(false),
       contactDetailsStatus = RowStatus.InProgress
     )
+
+  val validSubscriptionDataNoContactInfo =
+    Subscription(domesticOrMne = MneOrDomestic.Uk, groupDetailStatus = RowStatus.Completed, contactDetailsStatus = RowStatus.InProgress)
   def validNoIdFmData(
     nfmConfirmation:       Boolean = true,
     isNfmRegisteredInUK:   Option[Boolean] = None,
@@ -453,6 +456,11 @@ trait Pillar2TestData {
       )
     )
 
+  val validWithIdNoGRSRegData = Registration(
+    isUPERegisteredInUK = true,
+    isRegistrationStatus = RowStatus.InProgress
+  )
+
   def validWithIdFmRegistrationDataForLimitedComp =
     new FilingMember(
       nfmConfirmation = true,
@@ -486,7 +494,7 @@ trait Pillar2TestData {
   val validWithoutIdRegDataWithName = Registration(
     isUPERegisteredInUK = false,
     isRegistrationStatus = RowStatus.InProgress,
-    withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name"))
+    withoutIdRegData = Some(WithoutIdRegData(upeNameRegistration = "Test Name", upeContactName = Some("testName")))
   )
 
   def validWithoutIdRegDataWithoutName(

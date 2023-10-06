@@ -38,5 +38,5 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
 
 object AddressMappings {
   val maxAddressLineLength = 35
-  val maxPostCodeLength    = 8
+  val maxPostCodeLength    = 10
 }

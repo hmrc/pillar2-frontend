@@ -14,76 +14,71 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.UpeNameRegistrationFormProvider
+import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import models.registration.WithoutIdRegData
-import pages.RegistrationPage
+import models.subscription.SubscriptionAddress
+import pages.SubscriptionPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.UpeNameRegistrationView
+import utils.RowStatus
+import utils.countryOptions.CountryOptions
+import views.html.subscriptionview.CaptureSubscriptionAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpeNameRegistrationController @Inject() (
+class CaptureSubscriptionAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              UpeNameRegistrationFormProvider,
+  formProvider:              CaptureSubscriptionAddressFormProvider,
+  CountryOptions:            CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeNameRegistrationView
+  view:                      CaptureSubscriptionAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-
-  val form = formProvider()
+  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
+  val form: Form[SubscriptionAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val preparedForm = reg.withoutIdRegData.fold(form)(data => form fill data.upeNameRegistration)
-      Ok(view(preparedForm, mode))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(SubscriptionPage)
+      .map { sub =>
+        val preparedForm = sub.correspondenceAddress.fold(form)(data => form fill data)
+        Ok(view(preparedForm, mode, countryList))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          request.userAnswers
-            .get(RegistrationPage)
-            .map { reg =>
-              val withoutId = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
+    request.userAnswers
+      .get(SubscriptionPage)
+      .map { sub =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
+            value =>
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      reg.copy(
-                        withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
-                        withIdRegData = None,
-                        orgType = None
-                      )
-                    )
+                    request.userAnswers
+                      .set(SubscriptionPage, sub.copy(correspondenceAddress = Some(value), contactDetailsStatus = RowStatus.Completed))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
-
-            }
-            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      )
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

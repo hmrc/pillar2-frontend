@@ -78,13 +78,10 @@ class SecondaryTelephonePreferenceController @Inject() (
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { subs =>
-                  val subsData = request.userAnswers
-                    .get(SubscriptionPage)
-                    .getOrElse(throw new Exception("no subscription data found for secondary or primary contact"))
                   for {
                     updatedAnswers <-
                       Future
-                        .fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryTelephonePreference = Some(value))))
+                        .fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryTelephonePreference = Some(value))))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
                 }
@@ -93,15 +90,12 @@ class SecondaryTelephonePreferenceController @Inject() (
               request.userAnswers
                 .get(SubscriptionPage)
                 .map { subs =>
-                  val subsData = request.userAnswers
-                    .get(SubscriptionPage)
-                    .getOrElse(throw new Exception("no subscription data found for secondary or primary contact"))
                   for {
                     updatedAnswers <-
                       Future
-                        .fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryTelephonePreference = Some(value))))
+                        .fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryTelephonePreference = Some(value))))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
           }

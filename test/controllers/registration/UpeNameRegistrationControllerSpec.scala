@@ -20,6 +20,8 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
+import models.grs.EntityType
+import models.registration.{GrsResponse, PartnershipEntityRegistrationData, Registration}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RegistrationPage
@@ -27,6 +29,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import views.html.registrationview.UpeNameRegistrationView
 
 import scala.concurrent.Future
@@ -76,5 +79,63 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
       }
     }
+
+    "journey recovery for GET" should {
+
+      "redirected to journey recovery if they are uk based" in {
+        val ukBased = Registration(isUPERegisteredInUK = true, isRegistrationStatus = RowStatus.InProgress)
+
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, ukBased).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+        }
+      }
+      "redirected to journey recovery if they have chosen an entity type" in {
+        val withEntityType = Registration(
+          isUPERegisteredInUK = true,
+          isRegistrationStatus = RowStatus.InProgress,
+          orgType = Some(EntityType.LimitedLiabilityPartnership)
+        )
+
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, withEntityType).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+        }
+      }
+
+      "redirected to journey recovery if they have any GRS response is saved in the database" in {
+        val withGRSData = Registration(
+          isUPERegisteredInUK = true,
+          isRegistrationStatus = RowStatus.InProgress,
+          withIdRegData = Some(
+            new GrsResponse(
+              partnershipEntityRegistrationData = Some(Json.parse(validRegistrationWithIdResponseForLLP()).as[PartnershipEntityRegistrationData])
+            )
+          )
+        )
+
+        val userAnswers = emptyUserAnswers.set(RegistrationPage, withGRSData).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+        }
+      }
+
+    }
+
   }
 }

@@ -24,7 +24,7 @@ import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.registration.Registration
 import models.requests.DataRequest
-import models.{Mode, UserType}
+import models.{Mode, UserAnswers, UserType}
 import pages.RegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -48,7 +48,6 @@ class EntityTypeController @Inject() (
   requireData:                                       DataRequiredAction,
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
-  page_not_available:                                ErrorTemplate,
   view:                                              EntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -57,18 +56,14 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(RegistrationPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.orgType.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          }
-      case false =>
-        NotFound(notAvailable)
-    }
-
+    (for {
+      reg      <- request.userAnswers.get(RegistrationPage)
+      ukEntity <- request.userAnswers.upeGRSBookmarkLogic
+    } yield {
+      val form         = formProvider()
+      val preparedForm = reg.orgType.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -79,50 +74,58 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              request.userAnswers
-                .get(RegistrationPage)
-                .map { reg =>
-                  val domesticOrMne = reg.isUPERegisteredInUK
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(
-                        request.userAnswers.set(
-                          RegistrationPage,
-                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
-                        )
-                      )
-                    _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                    createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
-                  } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-                }
-                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+              limited(mode)
 
             case EntityType.LimitedLiabilityPartnership =>
-              request.userAnswers
-                .get(RegistrationPage)
-                .map { reg =>
-                  val domesticOrMne = reg.isUPERegisteredInUK
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(
-                        request.userAnswers.set(
-                          RegistrationPage,
-                          Registration(isUPERegisteredInUK = domesticOrMne, isRegistrationStatus = RowStatus.InProgress, orgType = Some(value))
-                        )
-                      )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                    createJourneyRes <-
-                      partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
-                  } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-                }
-                .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+              liability(mode)
           }
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
+  private def limited(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     request.userAnswers
       .get(RegistrationPage)
-      .map(reg => reg.isUPERegisteredInUK)
-      .isDefined
+      .map { reg =>
+        for {
+          updatedAnswers <-
+            Future.fromTry(
+              request.userAnswers.set(
+                RegistrationPage,
+                reg.copy(
+                  isUPERegisteredInUK = true,
+                  orgType = Some(EntityType.UkLimitedCompany),
+                  withoutIdRegData = None,
+                  withIdRegData = None
+                )
+              )
+            )
+          _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
+        } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+      }
+      .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+
+  private def liability(mode: Mode)(implicit request: DataRequest[AnyContent]) =
+    request.userAnswers
+      .get(RegistrationPage)
+      .map { reg =>
+        for {
+          updatedAnswers <-
+            Future.fromTry(
+              request.userAnswers.set(
+                RegistrationPage,
+                reg.copy(
+                  isUPERegisteredInUK = true,
+                  orgType = Some(EntityType.LimitedLiabilityPartnership),
+                  withoutIdRegData = None,
+                  withIdRegData = None
+                )
+              )
+            )
+          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          createJourneyRes <-
+            partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
+        } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+      }
+      .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+
 }

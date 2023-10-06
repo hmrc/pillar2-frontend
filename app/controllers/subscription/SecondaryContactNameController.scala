@@ -23,14 +23,12 @@ import controllers.routes
 import forms.SecondaryContactNameFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.subscription.Subscription
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SecondaryContactNameView
 
@@ -77,11 +75,8 @@ class SecondaryContactNameController @Inject() (
           request.userAnswers
             .get(SubscriptionPage)
             .map { subs =>
-              val subsData = request.userAnswers
-                .get(SubscriptionPage)
-                .getOrElse(throw new Exception("no subscription data found for primary contact"))
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(secondaryContactName = Some(value))))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryContactName = Some(value))))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(mode))
             }
