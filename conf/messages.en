@@ -506,7 +506,8 @@ registrationConfirmation.topup = Pillar 2 top-up tax ID
 registrationConfirmation.whatHappensNext = What happens next
 registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
 registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
-
+registrationConfirmation.whatDidYouThink = What did you think of this service
+registrationConfirmation.takes30 = (takes 30 seconds)
 
 subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
