@@ -28,7 +28,11 @@ object AddSecondaryContactSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
       val value =
-        if (answer.addSecondaryContact.contains(true) && (answer.secondaryContactEmail.isDefined && answer.secondaryContactName.isDefined))
+        if (
+          answer.addSecondaryContact.contains(
+            true
+          ) && (answer.secondaryContactEmail.isDefined && answer.secondaryContactName.isDefined && answer.secondaryTelephonePreference.isDefined)
+        )
           "site.yes"
         else "site.no"
       SummaryListRowViewModel(
