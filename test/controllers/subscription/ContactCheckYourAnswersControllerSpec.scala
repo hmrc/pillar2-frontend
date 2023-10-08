@@ -44,6 +44,14 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .success
     .value
 
+  val completeUserAnswerWithoutSecondaryPhone = emptyUserAnswers
+    .set(
+      SubscriptionPage,
+      ContactCheckAnswerSecondaryWithoutPhone()
+    )
+    .success
+    .value
+
   val noSecondContactUserAnswers = emptyUserAnswers
     .set(
       SubscriptionPage,
@@ -79,6 +87,27 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         contentAsString(result) must include(
           "Contact address"
         )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided without secondary phone" in {
+      val application = applicationBuilder(userAnswers = Some(completeUserAnswerWithoutSecondaryPhone)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Contact details"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+        contentAsString(result) must include(
+          "Contact address"
+        )
+        contentAsString(result) must not include
+          "Second contact telephone number"
       }
     }
     "must return OK and the correct view if only primary Contact and address answer is provided to  question " in {
