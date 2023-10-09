@@ -78,16 +78,26 @@ class GroupAccountingPeriodController @Inject() (
           request.userAnswers
             .get(SubscriptionPage)
             .map { subs =>
-              val mneOrDomestic = subs.domesticOrMne
               for {
                 updatedAnswers <- Future.fromTry(
                                     request.userAnswers.set(
                                       SubscriptionPage,
                                       Subscription(
-                                        domesticOrMne = mneOrDomestic,
+                                        domesticOrMne = subs.domesticOrMne,
                                         groupDetailStatus = RowStatus.Completed,
-                                        contactDetailsStatus = RowStatus.NotStarted,
-                                        accountingPeriod = Some(value)
+                                        contactDetailsStatus = subs.contactDetailsStatus,
+                                        accountingPeriod = Some(value),
+                                        useContactPrimary = subs.useContactPrimary,
+                                        primaryContactName = subs.primaryContactName,
+                                        contactByTelephone = subs.contactByTelephone,
+                                        primaryContactTelephone = subs.primaryContactTelephone,
+                                        primaryContactEmail = subs.primaryContactEmail,
+                                        addSecondaryContact = subs.addSecondaryContact,
+                                        secondaryContactName = subs.secondaryContactName,
+                                        secondaryContactEmail = subs.secondaryContactEmail,
+                                        secondaryTelephonePreference = subs.secondaryTelephonePreference,
+                                        secondaryContactTelephone = subs.secondaryContactTelephone,
+                                        correspondenceAddress = subs.correspondenceAddress
                                       )
                                     )
                                   )
