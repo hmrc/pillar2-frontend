@@ -18,6 +18,7 @@ package controllers.subscription
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
 import pages.SubscriptionPage
@@ -29,21 +30,25 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactCheckYourAnswersView
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Json
 
 class ContactCheckYourAnswersController @Inject() (
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  page_not_available:       ErrorTemplate,
-  view:                     ContactCheckYourAnswersView,
-  countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig)
+  val userAnswersConnectors: UserAnswersConnectors,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  val controllerComponents:  MessagesControllerComponents,
+  page_not_available:        ErrorTemplate,
+  view:                      ContactCheckYourAnswersView,
+  countryOptions:            CountryOptions
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    val subRegData   = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
     val list = isPrimaryPhoneDefined(request) match {
       case true =>
         SummaryListViewModel(
@@ -55,6 +60,19 @@ class ContactCheckYourAnswersController @Inject() (
           ).flatten
         )
       case false =>
+        for {
+          updatedAnswers <-
+            Future
+              .fromTry(
+                request.userAnswers.set(
+                  SubscriptionPage,
+                  subRegData.copy(
+                    contactByTelephone = Some(false)
+                  )
+                )
+              )
+          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        } yield true
         SummaryListViewModel(
           rows = Seq(
             ContactNameComplianceSummary.row(request.userAnswers),
@@ -80,6 +98,19 @@ class ContactCheckYourAnswersController @Inject() (
           ).flatten
         )
       case (true, false) =>
+        for {
+          updatedAnswers <-
+            Future
+              .fromTry(
+                request.userAnswers.set(
+                  SubscriptionPage,
+                  subRegData.copy(
+                    secondaryTelephonePreference = Some(false)
+                  )
+                )
+              )
+          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        } yield true
         SummaryListViewModel(
           rows = Seq(
             SecondaryContactNameSummary.row(request.userAnswers),
@@ -88,6 +119,19 @@ class ContactCheckYourAnswersController @Inject() (
           ).flatten
         )
       case _ =>
+        for {
+          updatedAnswers <-
+            Future
+              .fromTry(
+                request.userAnswers.set(
+                  SubscriptionPage,
+                  subRegData.copy(
+                    addSecondaryContact = Some(false)
+                  )
+                )
+              )
+          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        } yield true
         SummaryListViewModel(rows = Seq())
     }
 
@@ -106,7 +150,7 @@ class ContactCheckYourAnswersController @Inject() (
     request.userAnswers
       .get(SubscriptionPage)
       .fold(false) { data =>
-        data.contactDetailsStatus.toString == "Completed"
+        data.groupDetailStatus.toString == "Completed"
       }
 
   private def isSecondContactDefined(request: DataRequest[AnyContent]): Boolean =
