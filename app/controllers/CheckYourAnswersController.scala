@@ -93,6 +93,7 @@ class CheckYourAnswersController @Inject() (
       case (true, true, _) =>
         SummaryListViewModel(
           rows = Seq(
+            NominateFilingMemberYesNoSummary.row(request.userAnswers),
             EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
             EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
             EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers)
@@ -101,6 +102,7 @@ class CheckYourAnswersController @Inject() (
       case (true, false, _) =>
         SummaryListViewModel(
           rows = Seq(
+            NominateFilingMemberYesNoSummary.row(request.userAnswers),
             EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
             EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
             EntityTypePartnershipCompanyUtrNfmSummary.row(request.userAnswers)
@@ -179,7 +181,7 @@ class CheckYourAnswersController @Inject() (
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
       .get(SubscriptionPage)
-      .fold(false)(data => data.contactDetailsStatus.toString == "Completed")
+      .fold(false)(data => data.groupDetailStatus.toString == "Completed")
 
   private def isUpeWithIdDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers

@@ -84,8 +84,12 @@ class AddSecondaryContactController @Inject() (
                   val subsData =
                     request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Primary details not available"))
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    updatedAnswers <-
+                      Future.fromTry(
+                        request.userAnswers
+                          .set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value), contactDetailsStatus = RowStatus.InProgress))
+                      )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.SecondaryContactNameController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
@@ -112,7 +116,7 @@ class AddSecondaryContactController @Inject() (
                         )
                       )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad)
+                  } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
           }

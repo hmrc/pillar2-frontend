@@ -28,6 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactByTelephoneView
 
@@ -89,7 +90,7 @@ class ContactByTelephoneController @Inject() (
                         primaryContactTelephone = subRegData.primaryContactTelephone,
                         primaryContactName = subRegData.primaryContactName,
                         groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
+                        contactDetailsStatus = RowStatus.InProgress
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -111,7 +112,7 @@ class ContactByTelephoneController @Inject() (
                         primaryContactTelephone = None,
                         primaryContactName = subRegData.primaryContactName,
                         groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
+                        contactDetailsStatus = RowStatus.InProgress
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

@@ -38,7 +38,7 @@ object EntityTypeIncorporatedCompanyNameUpeSummary {
               key = "entityType.companyName.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(value)),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", controllers.registration.routes.StartPageRegistrationController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("entityType.Upe.change.hidden"))
               )
             )
