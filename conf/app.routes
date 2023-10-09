@@ -220,3 +220,5 @@ GET        /contact-details/address/input                        controllers.sub
 POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad()

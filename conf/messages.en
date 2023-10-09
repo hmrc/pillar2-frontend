@@ -519,3 +519,24 @@ subscriptionAddress.country = Country
 subscriptionAddress.country.hint = Choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
+
+
+
+dashboard.title = Your Pillar 2 top-up taxes account
+dashboard.heading = Your Pillar 2 top-up taxes account
+dashboard.topTaxes = Pillar 2 top-up taxes ID:
+dashboard.registrationDate = Registration date:
+dashboard.upe = Ultimate parent entity:
+dashboard.payments = Payments
+dashboard.noPayment = You have no payments due
+dashboard.voluntaryPayment = Make a voluntary payment
+dashboard.paymentHistory = View your payment history
+dashboard.requestPayment = Request a repayment
+dashboard.manageAccount = Manage your account
+dashboard.contactDetails = View and amend contact details
+dashboard.groupDetails = View and amend group details
+dashboard.p1 = This service is being continuously updated. You can anticipate the introduction of more features in line with the development of OECD's policy.
+dashboard.p2 = For more information, please refer to the
+dashboard.link = draft guidance (opens in new tab)
+
+
