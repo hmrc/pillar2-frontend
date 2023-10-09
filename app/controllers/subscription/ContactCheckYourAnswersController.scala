@@ -48,7 +48,8 @@ class ContactCheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val subRegData   = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
+
+    val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
     val list = isPrimaryPhoneDefined(request) match {
       case true =>
         SummaryListViewModel(
