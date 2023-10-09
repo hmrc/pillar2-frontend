@@ -55,11 +55,13 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
         case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == enrolmentKey) =>
-          Future.successful(Left(Redirect(config.pillar2FrontendUrl)))
+          getSubscriptionId(request, enrolments, enrolmentExists = true)
+        case Some(internalId) ~ enrolments ~ Some(affinity) ~ _ =>
+          getSubscriptionId(request, enrolments, internalId, affinity)
+
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
-        case _ ~ _ ~ Some(Individual) ~ _                       => Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
-        case Some(internalId) ~ enrolments ~ Some(affinity) ~ _ => getSubscriptionId(request, enrolments, internalId, affinity)
+        case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
         case _ =>
           logger.warn("Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
@@ -73,11 +75,15 @@ class AuthenticatedIdentifierAction @Inject() (
   }
 
   private def getSubscriptionId[A](
-    request:       Request[A],
-    enrolments:    Enrolments,
-    internalId:    String,
-    affinityGroup: AffinityGroup
+    request:         Request[A],
+    enrolments:      Enrolments,
+    internalId:      String = "",
+    affinityGroup:   AffinityGroup = null,
+    enrolmentExists: Boolean = false
   ): Future[Either[Result, IdentifierRequest[A]]] =
-    Future.successful(Right(IdentifierRequest(request, internalId)))
-
+    if (enrolmentExists) {
+      Future.successful(Left(Redirect(config.pillar2FrontendUrl)))
+    } else {
+      Future.successful(Right(IdentifierRequest(request, internalId)))
+    }
 }

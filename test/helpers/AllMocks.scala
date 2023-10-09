@@ -21,15 +21,20 @@ import config.FrontendAppConfig
 import connectors.{EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
+import models.fm.FilingMember
+import models.registration.Registration
 import navigation.Navigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
+import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import utils.countryOptions.CountryOptions
+import views.html.CheckYourAnswersView
 
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
@@ -45,6 +50,11 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockIdentifierAction:                        IdentifierAction                        = mock[IdentifierAction]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
+  val mockRegisterWithoutIdService:                RegisterWithoutIdService                = mock[RegisterWithoutIdService]
+  val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
+  val mockTaxEnrolmentService:                     TaxEnrolmentService                     = mock[TaxEnrolmentService]
+  val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]
+  val mockCheckYourAnswersView:                    CheckYourAnswersView                    = mock[CheckYourAnswersView]
   val mockTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = mock[TradingBusinessConfirmationFormProvider]
   val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
     mock[IncorporatedEntityIdentificationFrontendConnector]
@@ -54,6 +64,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
   val mockTaxEnrolmentsConnector:                     TaxEnrolmentsConnector                     = mock[TaxEnrolmentsConnector]
+  val mockRegistration:                               Registration                               = mock[Registration]
+  val mockFilingMember:                               FilingMember                               = mock[FilingMember]
 
   override protected def beforeEach(): Unit =
     Seq(
