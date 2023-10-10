@@ -216,7 +216,8 @@ class CheckYourAnswersController @Inject() (
                 request.userAnswers.set(
                   SubscriptionPage,
                   subRegData.copy(
-                    secondaryTelephonePreference = Some(false)
+                    secondaryTelephonePreference = Some(false),
+                    secondaryContactTelephone = None
                   )
                 )
               )
@@ -237,7 +238,10 @@ class CheckYourAnswersController @Inject() (
                 request.userAnswers.set(
                   SubscriptionPage,
                   subRegData.copy(
-                    addSecondaryContact = Some(false)
+                    addSecondaryContact = Some(false),
+                    secondaryContactName = None,
+                    secondaryContactEmail = None,
+                    secondaryContactTelephone = None
                   )
                 )
               )

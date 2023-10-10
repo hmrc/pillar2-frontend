@@ -17,14 +17,20 @@
 package controllers
 
 import base.SpecBase
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages._
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 
+import scala.concurrent.Future
+
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   def controller(): CheckYourAnswersController =
     new CheckYourAnswersController(
+      mockUserAnswersConnectors,
       preAuthenticatedActionBuilders,
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
@@ -63,6 +69,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
 
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       running(application) {
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
@@ -98,6 +105,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -132,6 +140,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -145,7 +154,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           "First contact"
         )
         contentAsString(result) must not include
-          "Second contact"
+          "Second contact name"
       }
     }
 
@@ -165,6 +174,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -198,6 +208,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -231,6 +242,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -264,6 +276,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLLP).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -297,6 +310,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -330,6 +344,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
