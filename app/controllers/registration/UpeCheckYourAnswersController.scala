@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import pages.RegistrationPage
+import pages.{RegistrationPage, upePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,7 +35,6 @@ class UpeCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  page_not_available:       ErrorTemplate,
   view:                     UpeCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
@@ -43,12 +42,8 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val telephonePreference = request.userAnswers.get(RegistrationPage) match {
-      case Some(value) =>
-        value.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(tel => tel))
-      case _ => false
-    }
+      //here you need to implement a logic to make sure every question is answered
+
     val list = SummaryListViewModel(
       rows = Seq(
         UpeNameRegistrationSummary.row(request.userAnswers),
@@ -56,29 +51,13 @@ class UpeCheckYourAnswersController @Inject() (
         UpeContactNameSummary.row(request.userAnswers),
         UpeContactEmailSummary.row(request.userAnswers),
         UpeTelephonePreferenceSummary.row(request.userAnswers),
-        telephonePreference match {
-          case true => UPEContactTelephoneSummary.row(request.userAnswers)
+        request.userAnswers.get(upePhonePreferencePage) match {
+          case Some(true) => UPEContactTelephoneSummary.row(request.userAnswers)
           case _    => None
         }
       ).flatten
     )
-    if (isPreviousPagesDefined(request))
       Ok(view(list))
-    else
-      NotFound(notAvailable)
   }
-  private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(RegistrationPage)
-      .fold(false)(data =>
-        data.withoutIdRegData.fold(false)(withoutId =>
-          withoutId.upeRegisteredAddress.isDefined &&
-            withoutId.upeContactName.isDefined &&
-            withoutId.emailAddress.isDefined &&
-            withoutId.contactUpeByTelephone.fold(false)(contactTel =>
-              contactTel && withoutId.telephoneNumber.isDefined ||
-                !contactTel
-            )
-        )
-      )
+
 }

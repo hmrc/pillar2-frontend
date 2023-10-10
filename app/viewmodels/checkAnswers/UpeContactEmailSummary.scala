@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import pages.upeContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,10 +28,7 @@ object UpeContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(RegistrationPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.map { withoutId =>
-          withoutId.emailAddress.map { answer =>
+      .get(upeContactEmailPage).map{ answer =>
             SummaryListRowViewModel(
               key = "upe-input-business-email.checkYourAnswersLabel",
               value = ValueViewModel(HtmlFormat.escape(answer).toString),
@@ -41,7 +38,4 @@ object UpeContactEmailSummary {
               )
             )
           }
-        }
-      }
-      .flatten
 }

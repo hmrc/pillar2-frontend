@@ -16,6 +16,7 @@
 
 package pages
 
+import models.UpeRegisteredAddress
 import play.api.libs.json.JsPath
 
 case object upeNameRegistrationPage extends QuestionPage[String] {
