@@ -111,7 +111,7 @@ class AddSecondaryContactController @Inject() (
                             secondaryContactEmail = None,
                             secondaryTelephonePreference = None,
                             secondaryContactTelephone = None,
-                            contactDetailsStatus = RowStatus.Completed
+                            contactDetailsStatus = RowStatus.InProgress
                           )
                         )
                       )
