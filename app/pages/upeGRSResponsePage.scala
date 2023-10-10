@@ -16,11 +16,12 @@
 
 package pages
 
+import models.registration.GrsResponse
 import play.api.libs.json.JsPath
 
-case object NominateFilingMemberPage extends QuestionPage[Boolean] {
+case object upeGRSResponsePage extends QuestionPage[GrsResponse] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "NominateFilingMember"
+  override def toString: String = "upeGRSResponse"
 }

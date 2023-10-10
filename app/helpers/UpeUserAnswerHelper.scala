@@ -17,7 +17,7 @@
 package helpers
 
 import models.UserAnswers
-import pages.RegistrationPage
+import pages.{RegistrationPage, upeContactNamePage}
 import utils.RowStatus
 
 trait UpeUserAnswerHelper {
@@ -25,9 +25,7 @@ trait UpeUserAnswerHelper {
   self: UserAnswers =>
 
   def upeContactName: Option[String] =
-    get(RegistrationPage).flatMap { reg =>
-      reg.withoutIdRegData.flatMap(withoutID => withoutID.upeContactName)
-    }
+    get(upeContactNamePage)
 
   def upeNameRegistration: Option[String] =
     get(RegistrationPage).flatMap { reg =>

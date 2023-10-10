@@ -24,12 +24,12 @@ import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.registration.GrsResponse
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.{fmEntityTypePage, fmGRSResponsePage, upeEntityTypePage, upeGRSResponsePage}
 import play.api.libs.json.Json
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,89 +47,58 @@ class GrsReturnController @Inject() (
     extends FrontendBaseController {
 
   def continueUpe(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(RegistrationPage) match {
-      case Some(registration) =>
-        registration.orgType match {
-          case Some(e @ UkLimitedCompany) =>
+    request.userAnswers.get(upeEntityTypePage).map{
+          case  EntityType.UkLimitedCompany =>
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+//              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
-                                 RegistrationPage,
-                                 registration.copy(
-                                   isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
-                                 )
-                               )
+                                 upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
-          case Some(e @ LimitedLiabilityPartnership) =>
+          case EntityType.LimitedLiabilityPartnership =>
             for {
               entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+//              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
-                                 RegistrationPage,
-                                 registration.copy(
-                                   isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
-                                 )
-                               )
+                                 upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-          case _ => throw new IllegalStateException("No valid org type found in registration data")
-        }
-
-      case _ => throw new IllegalStateException("No valid org type found in registration data")
     }
 
-  }
 
   def continueFm(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(NominatedFilingMemberPage) match {
-      case Some(nfmregistration) =>
-        nfmregistration.orgType match {
-          case Some(e @ UkLimitedCompany) =>
+    request.userAnswers.get(fmEntityTypePage).map {
+      case  EntityType.UkLimitedCompany =>
             for {
               entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+//              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
-                                 NominatedFilingMemberPage,
-                                 nfmregistration.copy(
-                                   isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
-                                 )
-                               )
+                                 fmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
-          case Some(e @ LimitedLiabilityPartnership) =>
+      case EntityType.LimitedLiabilityPartnership =>
             for {
               entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+//              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
               userAnswers <- Future.fromTry(
                                request.userAnswers.set(
-                                 NominatedFilingMemberPage,
-                                 nfmregistration.copy(
-                                   isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
-                                 )
-                               )
+                                 fmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
                              )
               - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, e, mode)
+            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-          case _ => throw new IllegalStateException("No valid org type found in Filing Member Registration data")
-        }
-
-      case _ => throw new IllegalStateException("No valid org type found in Filing Member Registration data")
     }
 
   }
@@ -138,7 +107,6 @@ class GrsReturnController @Inject() (
     identifiersMatch: Boolean,
     bvResult:         Option[BusinessVerificationResult],
     grsResult:        GrsRegistrationResult,
-    orgType:          EntityType,
     mode:             Mode
   )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
@@ -161,5 +129,5 @@ class GrsReturnController @Inject() (
         throw new IllegalStateException(
           s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
         )
-    }
+
 }

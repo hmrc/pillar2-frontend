@@ -16,11 +16,12 @@
 
 package pages
 
+import models.subscription.AccountingPeriod
 import play.api.libs.json.JsPath
 
-case object NominateFilingMemberPage extends QuestionPage[Boolean] {
+case object subAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "NominateFilingMember"
+  override def toString: String = "subAccountingPeriod"
 }
