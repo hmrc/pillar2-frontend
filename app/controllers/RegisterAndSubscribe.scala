@@ -121,14 +121,17 @@ trait RegisterAndSubscribe extends Logging {
         }
 
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
-          case Right(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(successReponse.plrReference)))
+          case Right(_) =>
+            logger.info(s"Redirecting to RegistrationConfirmationController for ${successReponse.plrReference}")
+            Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(successReponse.plrReference)))
           case Left(EnrolmentCreationError) =>
-            logger.warn(s"Error: EnrolmentCreationError")
+            logger.warn(s"Encountered EnrolmentCreationError. Redirecting to ErrorController.")
             Future.successful(Redirect(routes.ErrorController.onPageLoad))
           case Left(EnrolmentExistsError) =>
-            logger.warn(s"Error: EnrolmentExistsError")
+            logger.warn(s"Encountered EnrolmentExistsError. Redirecting to ErrorController.")
             Future.successful(Redirect(routes.ErrorController.onPageLoad))
         }
+
       case Left(value) =>
         Future.successful(Redirect(routes.ErrorController.onPageLoad))
     }
