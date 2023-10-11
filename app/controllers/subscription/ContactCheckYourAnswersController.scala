@@ -48,10 +48,9 @@ class ContactCheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val subRegData   = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
-
     (for {
       reg <- request.userAnswers.get(SubscriptionPage)
+
       list = isPrimaryPhoneDefined(request) match {
                case true =>
                  SummaryListViewModel(
@@ -63,6 +62,7 @@ class ContactCheckYourAnswersController @Inject() (
                    ).flatten
                  )
                case false =>
+                 val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
                  for {
                    updatedAnswers <-
                      Future
@@ -75,7 +75,8 @@ class ContactCheckYourAnswersController @Inject() (
                          )
                        )
                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                 } yield true
+                 } yield ()
+
                  SummaryListViewModel(
                    rows = Seq(
                      ContactNameComplianceSummary.row(request.userAnswers),
@@ -103,6 +104,7 @@ class ContactCheckYourAnswersController @Inject() (
                             ).flatten
                           )
                         case (true, false) =>
+                          val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
                           for {
                             updatedAnswers <-
                               Future
@@ -125,6 +127,7 @@ class ContactCheckYourAnswersController @Inject() (
                             ).flatten
                           )
                         case _ =>
+                          val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
                           for {
                             updatedAnswers <-
                               Future
