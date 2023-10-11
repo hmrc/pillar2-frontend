@@ -27,7 +27,7 @@ object SecondaryTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubscriptionPage).map { answer =>
-      val value = if (answer.secondaryTelephonePreference.contains(true)) "site.yes" else "site.no"
+      val value = if (answer.secondaryTelephonePreference.contains(true) && answer.secondaryContactTelephone.isDefined) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "secondaryTelephonePreference.checkYourAnswersLabel",
         value = ValueViewModel(value),

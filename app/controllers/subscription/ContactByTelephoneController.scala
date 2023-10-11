@@ -28,6 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactByTelephoneView
 
@@ -82,7 +83,6 @@ class ContactByTelephoneController @Inject() (
                     request.userAnswers
                       set (SubscriptionPage, subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = subRegData.telephoneNumber,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
@@ -90,11 +90,11 @@ class ContactByTelephoneController @Inject() (
                         primaryContactTelephone = subRegData.primaryContactTelephone,
                         primaryContactName = subRegData.primaryContactName,
                         groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
+                        contactDetailsStatus = RowStatus.InProgress
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(mode))
             case false =>
               val subRegData =
                 request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
@@ -105,15 +105,14 @@ class ContactByTelephoneController @Inject() (
                       set (SubscriptionPage,
                       subRegData.copy(
                         contactByTelephone = Some(value),
-                        telephoneNumber = None,
                         primaryContactEmail = subRegData.primaryContactEmail,
                         domesticOrMne = subRegData.domesticOrMne,
                         accountingPeriod = subRegData.accountingPeriod,
                         useContactPrimary = subRegData.useContactPrimary,
-                        primaryContactTelephone = subRegData.primaryContactTelephone,
+                        primaryContactTelephone = None,
                         primaryContactName = subRegData.primaryContactName,
                         groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
+                        contactDetailsStatus = RowStatus.InProgress
                       ))
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

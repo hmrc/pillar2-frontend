@@ -47,7 +47,7 @@ object ContactEmailAddressSummary {
     answers.get(SubscriptionPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer.primaryContactEmail.toString)
+          HtmlFormat.escape(answer.primaryContactEmail.fold("")(email => email))
         )
       )
       SummaryListRowViewModel(

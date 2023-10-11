@@ -21,7 +21,6 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.requests.DataRequest
-import models.subscription.Subscription
 import models.{MneOrDomestic, Mode, NormalMode}
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
@@ -91,7 +90,7 @@ class ContactNameComplianceController @Inject() (
                   )
                 )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode))
+          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(mode))
       )
   }
 

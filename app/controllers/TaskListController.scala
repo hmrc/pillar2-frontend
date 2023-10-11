@@ -63,7 +63,8 @@ class TaskListController @Inject() (
         statusCount,
         filingMemberStatus = fmStatus.toString,
         groupDetailStatus = groupDetailStatus.toString,
-        contactDetailsStatus = contactDetailsStatus.toString
+        contactDetailsStatus = contactDetailsStatus.toString,
+        RowStatus.NotStarted.toString
       )
     )
   }
