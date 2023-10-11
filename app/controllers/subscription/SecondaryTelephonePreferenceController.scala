@@ -106,7 +106,7 @@ class SecondaryTelephonePreferenceController @Inject() (
                               subsData.copy(
                                 secondaryTelephonePreference = Some(value),
                                 secondaryContactTelephone = None,
-                                contactDetailsStatus = RowStatus.Completed
+                                contactDetailsStatus = RowStatus.InProgress
                               )
                             )
                         )

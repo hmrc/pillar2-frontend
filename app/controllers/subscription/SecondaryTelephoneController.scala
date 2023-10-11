@@ -102,7 +102,7 @@ class SecondaryTelephoneController @Inject() (
                   Future.fromTry(
                     request.userAnswers.set(
                       SubscriptionPage,
-                      subscriptionData.copy(secondaryContactTelephone = Some(value), contactDetailsStatus = RowStatus.Completed)
+                      subscriptionData.copy(secondaryContactTelephone = Some(value), contactDetailsStatus = RowStatus.InProgress)
                     )
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
