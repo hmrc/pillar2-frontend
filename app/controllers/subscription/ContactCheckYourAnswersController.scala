@@ -49,106 +49,112 @@ class ContactCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     val subRegData   = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
-    val list = isPrimaryPhoneDefined(request) match {
-      case true =>
-        SummaryListViewModel(
-          rows = Seq(
-            ContactNameComplianceSummary.row(request.userAnswers),
-            ContactEmailAddressSummary.row(request.userAnswers),
-            ContactByTelephoneSummary.row(request.userAnswers),
-            ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-          ).flatten
-        )
-      case false =>
-        for {
-          updatedAnswers <-
-            Future
-              .fromTry(
-                request.userAnswers.set(
-                  SubscriptionPage,
-                  subRegData.copy(
-                    contactByTelephone = Some(false)
-                  )
-                )
-              )
-          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        } yield true
-        SummaryListViewModel(
-          rows = Seq(
-            ContactNameComplianceSummary.row(request.userAnswers),
-            ContactEmailAddressSummary.row(request.userAnswers),
-            ContactByTelephoneSummary.row(request.userAnswers)
-          ).flatten
-        )
-    }
 
-    val addSecondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        AddSecondaryContactSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val listSecondary = (isSecondContactDefined(request), isSecondaryPhoneDefined(request)) match {
-      case (true, true) =>
+    (for {
+      reg <- request.userAnswers.get(SubscriptionPage)
+      list = isPrimaryPhoneDefined(request) match {
+               case true =>
+                 SummaryListViewModel(
+                   rows = Seq(
+                     ContactNameComplianceSummary.row(request.userAnswers),
+                     ContactEmailAddressSummary.row(request.userAnswers),
+                     ContactByTelephoneSummary.row(request.userAnswers),
+                     ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+                   ).flatten
+                 )
+               case false =>
+                 for {
+                   updatedAnswers <-
+                     Future
+                       .fromTry(
+                         request.userAnswers.set(
+                           SubscriptionPage,
+                           subRegData.copy(
+                             contactByTelephone = Some(false)
+                           )
+                         )
+                       )
+                   _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                 } yield true
+                 SummaryListViewModel(
+                   rows = Seq(
+                     ContactNameComplianceSummary.row(request.userAnswers),
+                     ContactEmailAddressSummary.row(request.userAnswers),
+                     ContactByTelephoneSummary.row(request.userAnswers)
+                   ).flatten
+                 )
+             }
+
+      addSecondaryContactList =
         SummaryListViewModel(
           rows = Seq(
-            SecondaryContactNameSummary.row(request.userAnswers),
-            SecondaryContactEmailSummary.row(request.userAnswers),
-            SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-            SecondaryTelephoneSummary.row(request.userAnswers)
+            AddSecondaryContactSummary.row(request.userAnswers)
           ).flatten
         )
-      case (true, false) =>
-        for {
-          updatedAnswers <-
-            Future
-              .fromTry(
-                request.userAnswers.set(
-                  SubscriptionPage,
-                  subRegData.copy(
-                    secondaryTelephonePreference = Some(false),
-                    secondaryContactTelephone = None
-                  )
-                )
-              )
-          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        } yield true
-        SummaryListViewModel(
-          rows = Seq(
-            SecondaryContactNameSummary.row(request.userAnswers),
-            SecondaryContactEmailSummary.row(request.userAnswers),
-            SecondaryTelephonePreferenceSummary.row(request.userAnswers)
-          ).flatten
-        )
-      case _ =>
-        for {
-          updatedAnswers <-
-            Future
-              .fromTry(
-                request.userAnswers.set(
-                  SubscriptionPage,
-                  subRegData.copy(
-                    addSecondaryContact = Some(false),
-                    secondaryContactName = None,
-                    secondaryContactEmail = None,
-                    secondaryContactTelephone = None
-                  )
-                )
-              )
-          _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        } yield true
-        SummaryListViewModel(rows = Seq())
-    }
 
-    val address = SummaryListViewModel(
-      rows = Seq(
-        ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)
-      ).flatten
-    )
+      listSecondary = (isSecondContactDefined(request), isSecondaryPhoneDefined(request)) match {
+                        case (true, true) =>
+                          SummaryListViewModel(
+                            rows = Seq(
+                              SecondaryContactNameSummary.row(request.userAnswers),
+                              SecondaryContactEmailSummary.row(request.userAnswers),
+                              SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+                              SecondaryTelephoneSummary.row(request.userAnswers)
+                            ).flatten
+                          )
+                        case (true, false) =>
+                          for {
+                            updatedAnswers <-
+                              Future
+                                .fromTry(
+                                  request.userAnswers.set(
+                                    SubscriptionPage,
+                                    subRegData.copy(
+                                      secondaryTelephonePreference = Some(false),
+                                      secondaryContactTelephone = None
+                                    )
+                                  )
+                                )
+                            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                          } yield ()
+                          SummaryListViewModel(
+                            rows = Seq(
+                              SecondaryContactNameSummary.row(request.userAnswers),
+                              SecondaryContactEmailSummary.row(request.userAnswers),
+                              SecondaryTelephonePreferenceSummary.row(request.userAnswers)
+                            ).flatten
+                          )
+                        case _ =>
+                          for {
+                            updatedAnswers <-
+                              Future
+                                .fromTry(
+                                  request.userAnswers.set(
+                                    SubscriptionPage,
+                                    subRegData.copy(
+                                      addSecondaryContact = Some(false),
+                                      secondaryContactName = None,
+                                      secondaryContactEmail = None,
+                                      secondaryContactTelephone = None
+                                    )
+                                  )
+                                )
+                            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                          } yield ()
+                          SummaryListViewModel(rows = Seq())
+                      }
+      address = SummaryListViewModel(
+                  rows = Seq(
+                    ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)
+                  ).flatten
+                )
 
-    if (isPreviousPagesDefined(request))
-      Ok(view(list, addSecondaryContactList, listSecondary, address))
-    else
-      NotFound(notAvailable)
+    } yield
+      if (isPreviousPagesDefined(request))
+        Ok(view(list, addSecondaryContactList, listSecondary, address))
+      else
+        NotFound(notAvailable)).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
   }
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
