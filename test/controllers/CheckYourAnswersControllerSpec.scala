@@ -116,7 +116,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                     addressLine2 = Some("2"),
                     addressLine3 = "3",
                     addressLine4 = Some("4"),
-                    postalCode = Some("5"),
+                    postalCode = "5",
                     countryCode = "GB"
                   )
                 )
@@ -207,7 +207,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                     addressLine2 = Some("2"),
                     addressLine3 = "3",
                     addressLine4 = Some("4"),
-                    postalCode = Some("5"),
+                    postalCode = "5",
                     countryCode = "GB"
                   )
                 )
@@ -301,7 +301,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                   addressLine2 = Some("2"),
                   addressLine3 = "3",
                   addressLine4 = Some("4"),
-                  postalCode = Some("5"),
+                  postalCode = "5",
                   countryCode = "GB"
                 )
               )
@@ -385,7 +385,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                   addressLine2 = Some("2"),
                   addressLine3 = "3",
                   addressLine4 = Some("4"),
-                  postalCode = Some("5"),
+                  postalCode = "5",
                   countryCode = "GB"
                 )
               )
@@ -682,7 +682,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                   addressLine2 = Some("2"),
                   addressLine3 = "3",
                   addressLine4 = Some("4"),
-                  postalCode = Some("5"),
+                  postalCode = "5",
                   countryCode = "GB"
                 )
               )

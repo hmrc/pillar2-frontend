@@ -183,6 +183,10 @@ POST       /contact-details/change-second-contact                  controllers.s
 
 GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
 
+GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+
+
+
 GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)

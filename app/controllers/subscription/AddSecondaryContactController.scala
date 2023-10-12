@@ -23,8 +23,7 @@ import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.subscription.Subscription
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -85,8 +84,12 @@ class AddSecondaryContactController @Inject() (
                   val subsData =
                     request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Primary details not available"))
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    updatedAnswers <-
+                      Future.fromTry(
+                        request.userAnswers
+                          .set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value), contactDetailsStatus = RowStatus.InProgress))
+                      )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.SecondaryContactNameController.onPageLoad(mode))
                 }
                 .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
@@ -99,7 +102,19 @@ class AddSecondaryContactController @Inject() (
                     request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Primary details not available"))
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(SubscriptionPage, subsData.copy(addSecondaryContact = Some(value))))
+                      Future.fromTry(
+                        request.userAnswers.set(
+                          SubscriptionPage,
+                          subsData.copy(
+                            addSecondaryContact = Some(value),
+                            secondaryContactName = None,
+                            secondaryContactEmail = None,
+                            secondaryTelephonePreference = None,
+                            secondaryContactTelephone = None,
+                            contactDetailsStatus = RowStatus.InProgress
+                          )
+                        )
+                      )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
                 }

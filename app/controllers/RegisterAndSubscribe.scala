@@ -116,7 +116,7 @@ trait RegisterAndSubscribe extends Logging {
             val address     = withoutId.upeRegisteredAddress.getOrElse(throw new Exception("Missing WithoutId Address"))
             val countryCode = address.countryCode
             val postCode    = address.postalCode
-            EnrolmentInfo(countryCode = Some(countryCode), nonUkPostcode = postCode, plrId = successReponse.plrReference)
+            EnrolmentInfo(countryCode = Some(countryCode), nonUkPostcode = Some(postCode), plrId = successReponse.plrReference)
           }
         }
 

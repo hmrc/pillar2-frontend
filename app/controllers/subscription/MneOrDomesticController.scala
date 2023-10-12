@@ -78,7 +78,28 @@ class MneOrDomesticController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(domesticOrMne = value)))
+                .fromTry(
+                  request.userAnswers.set(
+                    SubscriptionPage,
+                    subscriptionData.copy(
+                      domesticOrMne = value,
+                      accountingPeriod = subscriptionData.accountingPeriod,
+                      useContactPrimary = subscriptionData.useContactPrimary,
+                      primaryContactName = subscriptionData.primaryContactName,
+                      contactByTelephone = subscriptionData.contactByTelephone,
+                      primaryContactTelephone = subscriptionData.primaryContactTelephone,
+                      primaryContactEmail = subscriptionData.primaryContactEmail,
+                      groupDetailStatus = subscriptionData.groupDetailStatus,
+                      contactDetailsStatus = subscriptionData.contactDetailsStatus,
+                      addSecondaryContact = subscriptionData.addSecondaryContact,
+                      secondaryContactName = subscriptionData.secondaryContactName,
+                      secondaryContactEmail = subscriptionData.secondaryContactEmail,
+                      secondaryTelephonePreference = subscriptionData.secondaryTelephonePreference,
+                      secondaryContactTelephone = subscriptionData.secondaryContactTelephone,
+                      correspondenceAddress = subscriptionData.correspondenceAddress
+                    )
+                  )
+                )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
         }

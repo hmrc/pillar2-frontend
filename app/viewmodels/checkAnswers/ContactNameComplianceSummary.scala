@@ -31,7 +31,7 @@ object ContactNameComplianceSummary {
     answers.get(SubscriptionPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer.primaryContactName.toString)
+          HtmlFormat.escape(answer.primaryContactName.fold("")(name => name))
         )
       )
       SummaryListRowViewModel(

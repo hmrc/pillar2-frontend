@@ -19,10 +19,8 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
-import models.subscription.Subscription
 import models.{Mode, NormalMode}
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
@@ -88,15 +86,15 @@ class UseContactPrimaryController @Inject() (
         formWithErrors =>
           isNfmRegisteredUK(request) match {
             case true =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
             case false =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))
+              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
           },
         value =>
           value match {
             case true =>
-              isNfmRegisteredUK(request) match {
-                case true =>
+              (isNfmRegisteredUK(request), getPhoneNumber(request).isEmpty, getUpePhoneNumber(request).isEmpty) match {
+                case (true, true, _) =>
                   for {
                     updatedAnswers <-
                       Future
@@ -106,6 +104,27 @@ class UseContactPrimaryController @Inject() (
                             subData.copy(
                               domesticOrMne = subData.domesticOrMne,
                               useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByNfmPhoneNumber(request)),
+                              primaryContactName = Some(getName(request)),
+                              primaryContactEmail = Some(getEmail(request)),
+                              groupDetailStatus = subData.groupDetailStatus,
+                              contactDetailsStatus = RowStatus.InProgress
+                            )
+                          )
+                        )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                case (true, false, _) =>
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              domesticOrMne = subData.domesticOrMne,
+                              useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByNfmPhoneNumber(request)),
                               primaryContactName = Some(getName(request)),
                               primaryContactEmail = Some(getEmail(request)),
                               primaryContactTelephone = Some(getPhoneNumber(request)),
@@ -116,7 +135,7 @@ class UseContactPrimaryController @Inject() (
                         )
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-                case false =>
+                case (false, _, true) =>
                   for {
                     updatedAnswers <-
                       Future
@@ -126,6 +145,28 @@ class UseContactPrimaryController @Inject() (
                             subData.copy(
                               domesticOrMne = subData.domesticOrMne,
                               useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByUpePhoneNumber(request)),
+                              primaryContactTelephone = None,
+                              primaryContactName = Some(getUpeName(request)),
+                              primaryContactEmail = Some(getUpeEmail(request)),
+                              groupDetailStatus = subData.groupDetailStatus,
+                              contactDetailsStatus = RowStatus.InProgress
+                            )
+                          )
+                        )
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                case (false, _, false) =>
+                  for {
+                    updatedAnswers <-
+                      Future
+                        .fromTry(
+                          request.userAnswers.set(
+                            SubscriptionPage,
+                            subData.copy(
+                              domesticOrMne = subData.domesticOrMne,
+                              useContactPrimary = Some(value),
+                              contactByTelephone = Some(ContactByUpePhoneNumber(request)),
                               primaryContactName = Some(getUpeName(request)),
                               primaryContactEmail = Some(getUpeEmail(request)),
                               primaryContactTelephone = Some(getUpePhoneNumber(request)),
@@ -223,6 +264,15 @@ class UseContactPrimaryController @Inject() (
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmEmailAddress.fold("")(email => email)))
   }
 
+  private def ContactByNfmPhoneNumber(request: DataRequest[AnyContent]): Boolean = {
+    val registration = request.userAnswers.get(NominatedFilingMemberPage)
+    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.telephoneNumber.fold(false)(tel => tel.nonEmpty)))
+  }
+
+  private def ContactByUpePhoneNumber(request: DataRequest[AnyContent]): Boolean = {
+    val registration = request.userAnswers.get(RegistrationPage)
+    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.nonEmpty))
+  }
   private def getPhoneNumber(request: DataRequest[AnyContent]): String = {
     val registration = request.userAnswers.get(NominatedFilingMemberPage)
     registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))

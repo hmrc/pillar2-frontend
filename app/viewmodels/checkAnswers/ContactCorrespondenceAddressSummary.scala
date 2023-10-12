@@ -26,7 +26,7 @@ import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object CaptureSubscriptionAddressAddressSummary {
+object ContactCorrespondenceAddressSummary {
 
   def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
     answers
@@ -42,14 +42,13 @@ object CaptureSubscriptionAddressAddressSummary {
           val value       = field1 + field2 + field3 + field4 + postcode + countryOptions.getCountryNameFromCode(countryCode.toString())
 
           SummaryListRowViewModel(
-            key = "subscriptionAddress.checkYourAnswersLabel",
+            key = "contactCorrespondenceAddress.checkYourAnswersLabel",
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
               ActionItemViewModel("site.change", controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
+                .withVisuallyHiddenText(messages("contactCorrespondenceAddress.change.hidden"))
             )
           )
         }
       }
-
 }
