@@ -35,8 +35,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       preDataRetrievalActionImpl,
       preDataRequiredActionImpl,
       stubMessagesControllerComponents(),
-      viewCheckYourAnswers,
       viewpageNotAvailable,
+      viewCheckYourAnswers,
       mockCountryOptions
     )
 
@@ -45,13 +45,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "must return Not Found and the correct view with empty user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      try running(application) {
+      running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      } catch {
-        case x: java.lang.Exception =>
-          x.getMessage mustEqual "Subscription data not available"
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
     "must return OK and the correct view if an answer is provided to every question  with Secondary contact detail" in {
