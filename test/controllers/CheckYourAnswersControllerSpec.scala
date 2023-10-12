@@ -17,9 +17,11 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -66,7 +68,48 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
 
-      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question  with Secondary contact detail with no primary phone" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          ContactCheckAnswerSecondaryWithoutPrimaryPhoneContactData()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       running(application) {
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -101,7 +144,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
 
-      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -136,7 +182,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
 
-      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -170,7 +218,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithPhone).success.value
 
-      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -204,7 +254,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
-      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -238,7 +290,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
-      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -272,7 +326,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -306,7 +362,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
-      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
@@ -340,7 +398,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
 
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
-      val application         = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onPageLoad.url)

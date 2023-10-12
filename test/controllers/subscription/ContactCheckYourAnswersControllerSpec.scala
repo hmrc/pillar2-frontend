@@ -49,6 +49,14 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .success
     .value
 
+  val completeUserAnswerWithoutPrimaryPhone = emptyUserAnswers
+    .set(
+      SubscriptionPage,
+      ContactCheckAnswerSecondaryWithoutPrimaryPhoneContactData()
+    )
+    .success
+    .value
+
   val completeUserAnswerWithoutSecondaryPhone = emptyUserAnswers
     .set(
       SubscriptionPage,
@@ -79,6 +87,26 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     }
     "must return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Contact details"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+        contentAsString(result) must include(
+          "Contact address"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question with no primary Phone number " in {
+      val application = applicationBuilder(userAnswers = Some(completeUserAnswerWithoutPrimaryPhone)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))

@@ -81,7 +81,7 @@ class CheckYourAnswersController @Inject() (
                         UPEContactTelephoneSummary.row(request.userAnswers)
                       ).flatten
                     )
-                  case (false, false, _) =>
+                  case (false, false, false) =>
                     SummaryListViewModel(rows =
                       Seq(
                         UpeNameRegistrationSummary.row(request.userAnswers),
@@ -91,7 +91,6 @@ class CheckYourAnswersController @Inject() (
                         UpeTelephonePreferenceSummary.row(request.userAnswers)
                       ).flatten
                     )
-
                 }
 
       listNfm =
@@ -289,7 +288,9 @@ class CheckYourAnswersController @Inject() (
     request.userAnswers
       .get(RegistrationPage)
       .fold(false) { data =>
-        data.withoutIdRegData.isDefined && data.withoutIdRegData.fold(false)(data => data.contactUpeByTelephone.fold(false)(phone => phone))
+        data.withoutIdRegData.isDefined && data.withoutIdRegData.fold(false)(data =>
+          data.contactUpeByTelephone.fold(false)(phone => phone) && data.telephoneNumber.isDefined
+        )
       }
 
   private def isNfmCanContactByPhone(request: DataRequest[AnyContent]): Boolean =

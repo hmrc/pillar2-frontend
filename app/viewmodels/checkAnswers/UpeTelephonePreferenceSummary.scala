@@ -27,7 +27,9 @@ object UpeTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RegistrationPage).map { answer =>
-      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.fold(false)(tel => tel))
+      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId =>
+        withoutId.contactUpeByTelephone.fold(false)(tel => tel) && withoutId.telephoneNumber.isDefined
+      )
       val value =
         if (contactUpeByTelephone) "site.yes" else "site.no"
       SummaryListRowViewModel(
