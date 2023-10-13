@@ -104,7 +104,6 @@ class CheckYourAnswersController @Inject() (
             SummaryListViewModel(
               rows = Seq(
                 NominateFilingMemberYesNoSummary.row(request.userAnswers),
-                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers)
@@ -113,7 +112,6 @@ class CheckYourAnswersController @Inject() (
           case (true, false, _, _) =>
             SummaryListViewModel(
               rows = Seq(
-                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
                 EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
