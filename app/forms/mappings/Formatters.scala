@@ -16,11 +16,10 @@
 
 package forms.mappings
 
+import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import models.Enumerable
 
-import scala.collection.immutable.Seq
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters extends Transforms with Constraints {
@@ -78,9 +77,34 @@ trait Formatters extends Transforms with Constraints {
         case _                                                               => Right(None)
       }
     }
-
     override def unbind(key: String, value: Option[String]): Map[String, String] =
       Map(key -> value.getOrElse(""))
+  }
+
+  private[mappings] def mandatoryPostcodeFormatter(
+    requiredKey:      String,
+    invalidKey:       String,
+    nonUkLengthKey:   String,
+    countryFieldName: String
+  ): Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      val postCode               = postCodeDataTransform(data.get(key))
+      val country                = countryDataTransform(data.get(countryFieldName))
+      val maxLengthNonUKPostcode = 10
+
+      (postCode, country, requiredKey) match {
+        case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp)       => Right(postCodeValidTransform(zip))
+        case (Some(_), Some("GB"), _)                                        => Left(Seq(FormError(key, invalidKey)))
+        case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode => Right(zip)
+        case (Some(_), Some(_), _)                                           => Left(Seq(FormError(key, nonUkLengthKey)))
+        case (Some(zip), None, _)                                            => Right(zip)
+        case (None, _, rk)                                                   => Left(Seq(FormError(key, rk)))
+        case _                                                               => Right("")
+      }
+    }
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
   }
 
   private[mappings] def intFormatter(

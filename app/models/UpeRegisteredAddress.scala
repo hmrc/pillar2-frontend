@@ -39,7 +39,7 @@ case class UpeRegisteredAddress(
   addressLine2: Option[String],
   addressLine3: String,
   addressLine4: Option[String],
-  postalCode:   Option[String],
+  postalCode:   String,
   countryCode:  String
 )
 object UpeRegisteredAddress {
