@@ -104,6 +104,7 @@ class CheckYourAnswersController @Inject() (
             SummaryListViewModel(
               rows = Seq(
                 NominateFilingMemberYesNoSummary.row(request.userAnswers),
+                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
                 EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers)
@@ -113,20 +114,18 @@ class CheckYourAnswersController @Inject() (
             SummaryListViewModel(
               rows = Seq(
                 NominateFilingMemberYesNoSummary.row(request.userAnswers),
+                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
                 EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
                 EntityTypePartnershipCompanyUtrNfmSummary.row(request.userAnswers)
               ).flatten
             )
           case (false, false, true, _) =>
-            SummaryListViewModel(
-              rows = Seq(
-                NominateFilingMemberYesNoSummary.row(request.userAnswers)
-              ).flatten
-            )
+            SummaryListViewModel(rows = Seq.empty)
           case (_, _, _, true) =>
             SummaryListViewModel(rows =
               Seq(
+                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 NfmNameRegistrationSummary.row(request.userAnswers),
                 NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
                 NfmContactNameSummary.row(request.userAnswers),
@@ -138,6 +137,7 @@ class CheckYourAnswersController @Inject() (
           case (_, _, _, _) =>
             SummaryListViewModel(rows =
               Seq(
+                NominateFilingMemberYesNoSummary.row(request.userAnswers),
                 NfmNameRegistrationSummary.row(request.userAnswers),
                 NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
                 NfmContactNameSummary.row(request.userAnswers),

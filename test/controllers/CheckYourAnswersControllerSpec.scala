@@ -156,9 +156,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         contentAsString(result) must include(
           "Ultimate parent"
         )
-        contentAsString(result) must include(
+        contentAsString(result) must not include
           "Nominated filing member"
-        )
         contentAsString(result) must include(
           "First contact"
         )
