@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.Pillar2SessionKeys
 import views.html.RegistrationConfirmationView
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
@@ -30,14 +31,14 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad("1234").url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("1234")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view("N/A")(request, appConfig(application), messages(application)).toString
       }
     }
   }

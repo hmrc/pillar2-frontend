@@ -250,7 +250,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(
-            routes.RegistrationConfirmationController.onPageLoad(validSubscriptionSuccessResponse.plrReference).url
+            routes.RegistrationConfirmationController.onPageLoad.url
           )
 
         }
@@ -344,7 +344,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          routes.RegistrationConfirmationController.onPageLoad(validSubscriptionSuccessResponse.plrReference).url
+          routes.RegistrationConfirmationController.onPageLoad.url
         )
 
       }
@@ -429,7 +429,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          routes.RegistrationConfirmationController.onPageLoad(validSubscriptionSuccessResponse.plrReference).url
+          routes.RegistrationConfirmationController.onPageLoad.url
         )
 
       }
@@ -640,7 +640,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         )
 
         status(result)           shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.RegistrationConfirmationController.onPageLoad("XMPLR0012345678").url)
+        redirectLocation(result) shouldBe Some(routes.RegistrationConfirmationController.onPageLoad.url)
 
       }
 
@@ -726,7 +726,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         // Check the result
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          routes.RegistrationConfirmationController.onPageLoad(validSubscriptionSuccessResponse.plrReference).url
+          routes.RegistrationConfirmationController.onPageLoad.url
         )
       }
 
@@ -791,7 +791,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         // Validate
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          routes.RegistrationConfirmationController.onPageLoad(validSubscriptionSuccessResponse.plrReference).url
+          routes.RegistrationConfirmationController.onPageLoad.url
         )
       }
 

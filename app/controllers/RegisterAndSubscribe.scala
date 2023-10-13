@@ -26,7 +26,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.RegistrationType
+import utils.{Pillar2SessionKeys, RegistrationType}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -119,11 +119,15 @@ trait RegisterAndSubscribe extends Logging {
             EnrolmentInfo(countryCode = Some(countryCode), nonUkPostcode = Some(postCode), plrId = successReponse.plrReference)
           }
         }
-
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
             logger.info(s"Redirecting to RegistrationConfirmationController for ${successReponse.plrReference}")
-            Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(successReponse.plrReference)))
+            Future.successful(
+              Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
+                request.session
+                  + (Pillar2SessionKeys.plrId -> successReponse.plrReference)
+              )
+            )
           case Left(EnrolmentCreationError) =>
             logger.warn(s"Encountered EnrolmentCreationError. Redirecting to ErrorController.")
             Future.successful(Redirect(routes.ErrorController.onPageLoad))

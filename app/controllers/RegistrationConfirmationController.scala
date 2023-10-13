@@ -23,6 +23,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationConfirmationView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import utils.Pillar2SessionKeys
+
 import scala.concurrent.ExecutionContext
 
 class RegistrationConfirmationController @Inject() (
@@ -35,7 +37,7 @@ class RegistrationConfirmationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(ref: String): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Ok(view(ref))
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Ok(view(request.session.get(Pillar2SessionKeys.plrId).getOrElse("N/A")))
   }
 }

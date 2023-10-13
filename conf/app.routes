@@ -223,7 +223,7 @@ GET        /contact-details/change-second-input-telephone                 contro
 POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /review-submit/confirmation/:ref                                       controllers.RegistrationConfirmationController.onPageLoad(ref: String)
+GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
 
 GET        /contact-details/address/input                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
