@@ -21,64 +21,134 @@ import models.registration.RegisterationWithoutIDResponse
 import models.{ApiError, InternalServerError, SafeId, UserAnswers}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
-import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import play.api.http.Status.OK
+import play.api.libs.json._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure => ScalaFailure, Success => ScalaSuccess}
 
 class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
   val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
   val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"
 
-  def upeRegisterationWithoutID(id: String, userAnswers: UserAnswers)(implicit
-    hc:                             HeaderCarrier,
-    ec:                             ExecutionContext
+  def upeRegistrationWithoutID(id: String, userAnswers: UserAnswers)(implicit
+    hc:                            HeaderCarrier,
+    ec:                            ExecutionContext
   ): Future[Either[ApiError, Option[SafeId]]] =
-    http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
+    http.POSTEmpty(s"$upeRegistrationUrl/$id").flatMap {
       case response if is2xx(response.status) =>
-        val safeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-        /*        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
-        val safeIdValue = safeId match {
-          case Some(value) => Some(value.value)
-          case _           => None
-        }*/
-        /*        val v = for {
-          updatedAnswersUpe <- Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue)))
-          savedAnswer       <- userAnswersConnectors.save(updatedAnswersUpe.id, Json.toJson(updatedAnswersUpe.data))
-        } yield (UserAnswers(id = id, data = savedAnswer.as[JsObject]))*/
-        /*        Future.fromTry(userAnswers.set(RegistrationPage, regData.copy(safeId = safeIdValue))).map { updatedAnswers =>
-          userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        }*/
-        Right(safeId)
+        logger.info(s"Received successful response: ${response.body}")
+
+        val safeIdOpt: Option[String] = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId.value)
+        logger.info(s"Parsed safeId from response: $safeIdOpt")
+
+        userAnswers.get(RegistrationPage) match {
+          case Some(regData) =>
+            safeIdOpt match {
+              case Some(safeId) =>
+                logger.info(s"Retrieved RegistrationPage data: $regData")
+
+                val updatedRegData = regData.copy(registrationInfo = regData.registrationInfo.map(_.copy(safeId = safeId)))
+
+                userAnswers.set(RegistrationPage, updatedRegData).toOption match {
+                  case Some(updatedUserAnswers) =>
+                    logger.info(s"Successfully updated userAnswers with new safeId: $updatedUserAnswers")
+
+                    userAnswersConnectors
+                      .save(id, Json.toJson(updatedUserAnswers.data))
+                      .map(_ => Right(Some(SafeId(safeId))))
+                      .recover { case e: Exception =>
+                        logger.error(s"Failed to save updated user answers: ${e.getMessage}")
+                        Left(InternalServerError): Either[ApiError, Option[SafeId]]
+                      }
+
+                  case None =>
+                    logger.error("Failed to update and set userAnswers with new safeId")
+                    Future.successful(Left(InternalServerError): Either[ApiError, Option[SafeId]])
+                }
+
+              case None =>
+                logger.error("safeIdOpt is None")
+                Future.successful(Left(InternalServerError): Either[ApiError, Option[SafeId]])
+            }
+
+          case None =>
+            logger.error("Failed to get RegistrationPage from userAnswers")
+            Future.successful(Left(InternalServerError): Either[ApiError, Option[SafeId]])
+        }
 
       case errorResponse =>
-        logger.warn(s"Upe RegisterWithoutID call failed with Status ${errorResponse.status}")
-        Left(InternalServerError)
+        logger.warn(s"Upe RegisterWithoutID call failed with Status ${errorResponse.status} and body: ${errorResponse.body}")
+        Future.successful(Left(InternalServerError))
     }
 
   def fmRegisterationWithoutID(id: String, userAnswers: UserAnswers)(implicit
     hc:                            HeaderCarrier,
     ec:                            ExecutionContext
-  ): Future[Either[ApiError, Option[SafeId]]] =
-    http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
-      case response if is2xx(response.status) =>
-        val fmsafeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-        val nfmData  = userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Fm Registration Data not available"))
-        val safeIdValue = fmsafeId match {
-          case Some(value) => Some(value.value)
-          case _           => None
+  ): Future[Either[ApiError, Option[SafeId]]] = {
+
+    // Extract the FilingMember data from UserAnswers
+    val nfmDataOption = userAnswers.get(NominatedFilingMemberPage)
+
+    nfmDataOption match {
+      case Some(nfmData) if nfmData.withoutIdRegData.isDefined =>
+        // Serialize the WithoutIdNfmData to JSON
+        val registrationDataJson = Json.toJson(nfmData.withoutIdRegData.get)
+
+        // Make the API call
+        http.POST[JsValue, HttpResponse](s"$fmRegistrationUrl/$id", registrationDataJson).flatMap { response =>
+          response.status match {
+            case OK =>
+              // Changes made here:
+              val safeIdOpt = (response.json \ "registerWithoutIDResponse" \ "responseDetail" \ "SAFEID").asOpt[String]
+
+              safeIdOpt match {
+                case Some(fmsafeId) =>
+                  // Update the FilingMember data with the safeId
+                  val updatedFilingMemberData = nfmData.copy(safeId = Some(fmsafeId))
+
+                  // Update the UserAnswers with the new FilingMember data
+                  userAnswers.set(NominatedFilingMemberPage, updatedFilingMemberData) match {
+                    case ScalaSuccess(updatedAnswers) =>
+                      userAnswersConnectors
+                        .save(id, Json.toJson(updatedAnswers))
+                        .map { _ =>
+                          Right(updatedFilingMemberData.safeId.map(id => SafeId(id)))
+                        }
+                        .recover {
+                          case e: HttpException =>
+                            println(s"Failed to save data with status: ${e.responseCode}. Message: ${e.getMessage}")
+                            logger.error(s"Failed to save data with status: ${e.responseCode}. Message: ${e.getMessage}")
+                            Left(InternalServerError): Either[ApiError, Option[SafeId]]
+                          case e =>
+                            logger.error(s"Unexpected error: ${e.getMessage}")
+                            Left(InternalServerError): Either[ApiError, Option[SafeId]]
+                        }
+                    case ScalaFailure(e) =>
+                      logger.error(s"Failed to update UserAnswers: ${e.getMessage}")
+                      Future.successful(Left(InternalServerError): Either[ApiError, Option[SafeId]])
+                  }
+
+                case None =>
+                  logger.error(s"SAFEID not found in response.")
+                  Future.successful(Left(InternalServerError): Either[ApiError, Option[SafeId]])
+              }
+
+            case _ =>
+              logger.error(s"API call failed with status: ${response.status}. Response body: ${response.body}")
+              Future.successful(Left(InternalServerError))
+          }
         }
-        /*        for {
-          updatedAnswers <- Future.fromTry(userAnswers.set(NominatedFilingMemberPage, nfmData.copy(safeId = safeIdValue)))
-          _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-        } yield ()*/
-        Right(fmsafeId)
-      case errorResponse =>
-        logger.warn(s"Filing Member RegisterWithoutID call failed with Status ${errorResponse.status}")
-        Left(InternalServerError)
+
+      case _ =>
+        logger.error("WithoutIdNfmData not found in UserAnswers.")
+        Future.successful(Left(InternalServerError))
     }
+  }
+
 }

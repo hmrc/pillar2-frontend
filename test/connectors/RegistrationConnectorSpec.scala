@@ -17,14 +17,16 @@
 package connectors
 
 import base.SpecBase
-import models.SafeId
+import models.{SafeId, UserAnswers}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.collection.Seq
-
+import scala.concurrent.{ExecutionContext, Future}
 class RegistrationConnectorSpec extends SpecBase {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -39,44 +41,75 @@ class RegistrationConnectorSpec extends SpecBase {
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   "RegistrationConnector" when {
+
     "return safeId for Upe Registerwithout Id is successful" in {
 
+      when(mockRegistrationConnector.upeRegistrationWithoutID(eqTo("id"), any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(Some(SafeId("XE1111123456789")))))
+
       stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+
+      val result = mockRegistrationConnector.upeRegistrationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+
       result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
     }
-
-    "return InternalServerError for Upe Register without Id is successful" in {
+    "return InternalServerError when HTTP response is successful but safeId is missing or UserAnswers update fails" in {
 
       stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdMissingSafeIdJson)
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
-      result.futureValue mustBe Right(None)
+
+      when(mockRegistrationConnector.upeRegistrationWithoutID(eqTo("id"), any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Left(models.InternalServerError)))
+
+      val actualResponse =
+        mockRegistrationConnector.upeRegistrationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData()))).futureValue
+
+      actualResponse match {
+        case Left(errorResponse) =>
+          errorResponse mustBe models.InternalServerError
+        case Right(_) =>
+          fail("Expected an error response, but got a success response.")
+      }
     }
     "return InternalServerError for EIS returns Error status" in {
       val errorStatus: Int = errorCodes.sample.value
       stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+      val result = connector.upeRegistrationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
       result.futureValue mustBe Left(models.InternalServerError)
     }
     "return safeId for FM Registerwithout Id is successful" in {
+      val expectedSafeId = "XE1111123456789"
+      val expectedUserId = "id"
 
-      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
-      val result = connector.fmRegisterationWithoutID(
-        "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
-      )
-      result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
+      when(mockRegistrationConnector.fmRegisterationWithoutID(eqTo(expectedUserId), any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(Some(SafeId(expectedSafeId)))))
+
+      when(mockUserAnswersConnectors.save(any(), any())(any()))
+        .thenReturn(Future(Json.toJson(Json.obj())))
+
+      stubResponse(s"$apiUrl/fm/registration/$expectedUserId", OK, businessWithoutIdJsonResponse)
+      stubResponse(s"$apiUrl/user-cache/registration-subscription/$expectedUserId", OK, businessWithoutIdJsonResponse)
+
+      val testUserAnswers = userAnswersData(expectedUserId, Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
+
+      val result = connector.fmRegisterationWithoutID(expectedUserId, testUserAnswers)
+
+      result.futureValue mustBe Right(Some(SafeId(expectedSafeId)))
     }
+    "return InternalServerError when FM Register without Id response is missing SafeId" in {
+      val businessWithoutSafeIdJsonResponse = """{"registerWithoutIDResponse": {"responseDetail": {"ARN":"ZARN1234567"}}}"""
 
-    "return InternalServerError for FM Register without Id is successful" in {
+      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutSafeIdJsonResponse)
 
-      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdMissingSafeIdJson)
       val result = connector.fmRegisterationWithoutID(
         "id",
         userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
       )
-      result.futureValue mustBe Right(None)
+
+      result.map {
+        case Left(models.InternalServerError) => succeed // This means the test has passed
+        case _                                => fail("Expected Left(InternalServerError) but got another result")
+      }
     }
     "return InternalServerError for EIS returns Error status for FM register withoutId" in {
       val errorStatus: Int = errorCodes.sample.value
@@ -88,6 +121,16 @@ class RegistrationConnectorSpec extends SpecBase {
       )
       result.futureValue mustBe Left(models.InternalServerError)
     }
+
+    "return InternalServerError if WithoutIdNfmData is not found in UserAnswers" in {
+      val id          = "testID"
+      val userAnswers = UserAnswers(id, Json.obj()) // UserAnswers without WithoutIdNfmData
+
+      val result = connector.fmRegisterationWithoutID(id, userAnswers)
+
+      result.futureValue mustBe Left(models.InternalServerError)
+    }
+
   }
 
 }

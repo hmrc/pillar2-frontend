@@ -31,7 +31,7 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
     ec:                                ExecutionContext
   ): Future[Either[ApiError, SafeId]] =
     registrationConnector
-      .upeRegisterationWithoutID(id, userAnswers) map {
+      .upeRegistrationWithoutID(id, userAnswers) map {
       case Right(Some(safeId)) =>
         Right(safeId)
       case Right(None) =>
