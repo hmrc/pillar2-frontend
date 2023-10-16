@@ -27,9 +27,11 @@ object NfmTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NominatedFilingMemberPage).map { answer =>
-      val contactUpeByTelephone = answer.withoutIdRegData.fold("")(withoutId => withoutId.contactNfmByTelephone.fold("")(tel => tel.toString))
+      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId =>
+        withoutId.contactNfmByTelephone.fold(false)(tel => tel) && withoutId.telephoneNumber.isDefined
+      )
       val value =
-        if (contactUpeByTelephone == "true") "site.yes" else "site.no"
+        if (contactUpeByTelephone) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "contactNfmByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),

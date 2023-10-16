@@ -16,6 +16,7 @@
 
 package controllers.contactdetails
 import base.SpecBase
+import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContentView
@@ -25,7 +26,7 @@ class ContentControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET " in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContentController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContentController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[ContentView]
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import models.NormalMode
 @import config.FrontendAppConfig
 @this(
     layout: templates.Layout,
@@ -22,7 +23,7 @@
 )
 
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("startPageRegistration.title"))) {
@@ -33,7 +34,7 @@
     <p class="govuk-body">@messages("startPageRegistration.p1")</p>
 
      @govukButton(
-      ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad.url)
+      ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode).url)
      )
 
 

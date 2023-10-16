@@ -16,29 +16,30 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import models.UserAnswers
+import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeTelephonePreferenceSummary {
+object EntityTypePartnershipCompanyRegNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegistrationPage).map { answer =>
-      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId =>
-        withoutId.contactUpeByTelephone.fold(false)(tel => tel) && withoutId.telephoneNumber.isDefined
-      )
-      val value =
-        if (contactUpeByTelephone) "site.yes" else "site.no"
-      SummaryListRowViewModel(
-        key = "contactUPEByTelephone.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
-        )
-      )
-    }
+    answers
+      .get(NominatedFilingMemberPage)
+      .flatMap { reg =>
+        reg.withIdRegData.map { withoutId =>
+          withoutId.partnershipEntityRegistrationData.map { answer =>
+            val value = HtmlFormat.escape(answer.companyProfile.fold("")(reg => reg.companyNumber)).toString
+            SummaryListRowViewModel(
+              key = "entityType.companyReg.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent(value))
+            )
+          }
+        }
+      }
+      .flatten
 }

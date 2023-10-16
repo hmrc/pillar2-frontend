@@ -86,7 +86,7 @@ taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
 taskList.task.contact.add = Add Contact details
-taskList.task.contact.edit = Edit Contact details
+taskList.task.contact.edit = Edit contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
@@ -192,10 +192,14 @@ eligibilityconfirmation.h2 = What happens next
 eligibilityconfirmation.p1=You will now need to sign in to HMRC online services to register.
 
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check your answers
-checkYourAnswers.heading.caption = Business details
+upeCheckYourAnswers.title = Check Your Answers
+upeCheckYourAnswers.heading = Check your answers
+upeCheckYourAnswers.heading.caption = Business details
 
+nfmCheckYourAnswers.title = Check Your Answers
+nfmCheckYourAnswers.heading = Check your answers
+nfmCheckYourAnswers.heading.caption = Business details
+nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -225,7 +229,7 @@ contactUPEByTelephone.hint = We will call if we have any questions about the man
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
-contactUPEByTelephone.checkYourAnswersLabel = Telephone contact
+contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden =  your response to whether we make contact by telephone
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
@@ -245,8 +249,8 @@ NominateFilingMemberYesNo.insetText =You must have permission from the UPE to no
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
-NominateFilingMemberYesNo.checkYourAnswersLabel = Filing member preference
-NominateFilingMemberYesNo.change.hidden =  your filing member nomination preference
+NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
+NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -478,6 +482,19 @@ contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
+entityType.companyName.checkYourAnswersLabel = Company
+entityType.companyReg.checkYourAnswersLabel = Company Registration Number
+entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+entityType.Upe.change.hidden = Change the ultimate parent entity
+
+entityType.Nfm.change.hidden = Change the filing member entity
+
+checkYourAnswers.first = First contact
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers
+checkYourAnswers.heading.caption = Review and submit
+checkYourAnswers.upe = Ultimate parent
+checkYourAnswers.nfm = Nominated filing member
 
 
 
@@ -520,6 +537,11 @@ secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
+
+checkYourAnswers.furtherRegistrationDetail = Further registration details
+checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
+checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+site.confirm.send = Confirm and send
 
 
 

@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
+import models.subscription.Subscription
 import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,6 +31,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactCheckYourAnswersView
+
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json.Json
 
@@ -49,9 +51,8 @@ class ContactCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
     (for {
-      reg <- request.userAnswers.get(SubscriptionPage)
-
-      list = isPrimaryPhoneDefined(request) match {
+      sub <- request.userAnswers.get(SubscriptionPage)
+      list = isPrimaryPhoneDefined(sub) match {
                case true =>
                  SummaryListViewModel(
                    rows = Seq(
@@ -178,10 +179,8 @@ class ContactCheckYourAnswersController @Inject() (
         )
       )
 
-  private def isPrimaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false)((data => data.contactByTelephone.fold(false)(contact => contact) && data.primaryContactTelephone.isDefined))
+  private def isPrimaryPhoneDefined(data: Subscription): Boolean =
+    data.contactByTelephone.fold(false)(contact => contact) && data.primaryContactTelephone.isDefined
 
   private def isSecondaryPhoneDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
