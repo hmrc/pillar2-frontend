@@ -50,7 +50,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[UPERegisteredInUKConfirmationView]
         val result  = route(application, request).value
 
@@ -62,7 +62,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
     "must redirect to Entity Type page when valid data is submitted with value YES" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "true"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
@@ -76,7 +76,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
     "must redirect to UPE Name page when valid data is submitted with value NO" in {
 
       val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit().url)
+        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "false"))
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
       val result = controller.onSubmit(NormalMode)()(request)

@@ -17,28 +17,24 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import pages.{NominatedFilingMemberPage, SubscriptionPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UpeTelephonePreferenceSummary {
+object NominateFilingMemberYesNoSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegistrationPage).map { answer =>
-      val contactUpeByTelephone = answer.withoutIdRegData.fold(false)(withoutId =>
-        withoutId.contactUpeByTelephone.fold(false)(tel => tel) && withoutId.telephoneNumber.isDefined
-      )
-      val value =
-        if (contactUpeByTelephone) "site.yes" else "site.no"
+    answers.get(NominatedFilingMemberPage).map { answer =>
+      val value = if (answer.nfmConfirmation) "site.yes" else "site.no"
       SummaryListRowViewModel(
-        key = "contactUPEByTelephone.checkYourAnswersLabel",
+        key = "NominateFilingMemberYesNo.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
+          ActionItemViewModel("site.change", controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("NominateFilingMemberYesNo.change.hidden"))
         )
-      )
+      ).withCssClass("contact-margin-bottom")
     }
 }

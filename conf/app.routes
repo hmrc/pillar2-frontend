@@ -14,11 +14,12 @@ GET         /refresh-session                                                    
 
 GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                                                         controllers.CheckYourAnswersController.onPageLoad
-POST         /check-your-answers                                                        controllers.CheckYourAnswersController.onSubmit
-
-GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad
-POST        /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onSubmit
+GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
+POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
+GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = CheckMode)
 
 GET         /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
@@ -43,6 +44,10 @@ POST        /business-matching/ultimate-parent/no-id/change-input-email         
 
 GET         /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/change-registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/change-registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = CheckMode)
+
+
 
 GET         /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
@@ -78,6 +83,9 @@ POST        /eligibility/confirmation                                           
 GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(mode: Mode = NormalMode, journeyId)
 GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(mode: Mode = NormalMode, journeyId)
 
+GET         /grs-return/checkmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(mode: Mode = CheckMode, journeyId)
+GET         /grs-return/checkmode/fm                                                   controllers.registration.GrsReturnController.continueFm(mode: Mode = CheckMode, journeyId)
+
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
 
@@ -104,7 +112,6 @@ GET         /display-error                                                      
 GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
-
 POST       /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
@@ -160,8 +167,11 @@ GET         /further-details/change-group-status                 controllers.sub
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad
-POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit
+GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
+
+GET         /contact-details/chane-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
