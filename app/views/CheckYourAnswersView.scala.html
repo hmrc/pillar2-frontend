@@ -34,10 +34,9 @@ formHelper: FormWithCSRF,
 <h2 class="govuk-heading-m">@messages("checkYourAnswers.upe")</h2>
     @govukSummaryList(listUpe)
 
-@if(listNfm.rows.length!=0){
+
     <h2 class="govuk-heading-m">@messages("checkYourAnswers.nfm")</h2>
    @govukSummaryList(listNfm)
-}
 
 <h2 class="govuk-heading-m">@messages("checkYourAnswers.furtherRegistrationDetail")</h2>
 @govukSummaryList(furtherRegistrationDetailsList)

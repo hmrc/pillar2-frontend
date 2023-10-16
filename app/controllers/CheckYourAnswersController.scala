@@ -119,7 +119,11 @@ class CheckYourAnswersController @Inject() (
               ).flatten
             )
           case (false, false, true, _) =>
-            SummaryListViewModel(rows = Seq.empty)
+            SummaryListViewModel(rows =
+              Seq(
+                NominateFilingMemberYesNoSummary.row(request.userAnswers)
+              ).flatten
+            )
           case (_, _, _, true) =>
             SummaryListViewModel(rows =
               Seq(
