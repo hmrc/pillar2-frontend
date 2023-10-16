@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
+import connectors.{RegistrationConnector, UserAnswersConnectors}
 import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.registration.{Registration, RegistrationInfo, WithoutIdRegData}
 import models.requests.DataRequest
@@ -32,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.RegisterWithoutIdService
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.{AffinityGroup, Assistant, CredentialRole, Enrolments}
@@ -400,12 +401,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .value
 
       val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
-
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(
+          bind[RegistrationConnector].toInstance(mockRegistrationConnector)
+        )
+        .overrides(
+          bind[RegisterWithoutIdService].toInstance(mockRegisterWithoutIdService)
+        )
         .build()
       running(application) {
+        when(mockRegisterWithoutIdService.sendUpeRegistrationWithoutId(anyString, any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Right(SafeId("XE1111123456789"))))
+        when(mockRegisterWithoutIdService.sendFmRegistrationWithoutId(anyString, any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Right(SafeId("XE1111123456789"))))
+        val response = Future.successful(Right(Some(SafeId("XE1111123456789"))))
+        when(mockRegistrationConnector.upeRegisterationWithoutID(any(), any())(any(), any())).thenReturn(response)
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
