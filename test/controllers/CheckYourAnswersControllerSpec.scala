@@ -400,7 +400,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .success
         .value
 
-      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+      val contactNfmAnswer    = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
       val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
