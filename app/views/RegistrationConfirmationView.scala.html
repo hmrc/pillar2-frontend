@@ -24,7 +24,7 @@
 
 @(pil2Id: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("registrationConfirmation.title"))) {
+@layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
     @formHelper(action = controllers.routes.DashboardController.onPageLoad, 'autoComplete -> "off") {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
