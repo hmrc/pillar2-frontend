@@ -277,7 +277,6 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val regdata = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Registration is not available"))
     val fmData  = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing is not available"))
-    Future.successful(Redirect(controllers.routes.TaskListController.onPageLoad))
     createRegistrationAndSubscription(regdata, fmData)
   }
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
