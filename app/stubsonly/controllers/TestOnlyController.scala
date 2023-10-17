@@ -17,13 +17,16 @@
 package stubsonly.controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class TestOnlyController @Inject() (
@@ -35,6 +38,7 @@ class TestOnlyController @Inject() (
 )(implicit val ec:          ExecutionContext)
     extends FrontendBaseController {
 
+  private val logger = Logger(getClass)
   def clearAllData(): Action[AnyContent] = Action.async { implicit request =>
     testOnlyConnector.clearAllData().map(httpResponse => Ok(httpResponse.body))
   }
@@ -49,6 +53,20 @@ class TestOnlyController @Inject() (
 
   def getAllRecords(): Action[AnyContent] = Action.async { implicit request =>
     testOnlyConnector.getAllRecords().map(httpResponse => Ok((httpResponse.json)))
+  }
+
+  def upsertRecord(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    val data = request.body
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    testOnlyConnector
+      .upsertRecord(id, data)
+      .map { _ =>
+        Ok("Upsert successful")
+      }
+      .recover { case e: RuntimeException =>
+        logger.error(s"Failed to upsert record with id: $id, data: $data", e)
+        InternalServerError("Upsert failed")
+      }
   }
 
   def deEnrol(): Action[AnyContent] = testOnlyAuthorise.async { implicit request =>
