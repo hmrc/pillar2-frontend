@@ -34,14 +34,17 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UpeRegisteredAddress(
+case class RegisteredAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
   addressLine4: Option[String],
   postalCode:   Option[String],
   countryCode:  String
-)
-object UpeRegisteredAddress {
-  implicit val format: OFormat[UpeRegisteredAddress] = Json.format[UpeRegisteredAddress]
+) {
+  val fullAddress: String =
+    List(Some(addressLine1), addressLine2, Some(addressLine3), addressLine4, postalCode, Some(countryCode)).flatten.mkString("\n").strip()
+}
+object RegisteredAddress {
+  implicit val format: OFormat[RegisteredAddress] = Json.format[RegisteredAddress]
 }

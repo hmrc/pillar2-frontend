@@ -20,34 +20,11 @@ import models.UserAnswers
 import pages.{RegistrationPage, upeContactNamePage}
 import utils.RowStatus
 
-trait UpeUserAnswerHelper {
+trait UserAnswerHelper {
 
   self: UserAnswers =>
 
   def upeContactName: Option[String] =
     get(upeContactNamePage)
-
-  def upeNameRegistration: Option[String] =
-    get(RegistrationPage).flatMap { reg =>
-      reg.withoutIdRegData.map(withoutID => withoutID.upeNameRegistration)
-    }
-
-  def upeGRSBookmarkLogic: Option[Boolean] =
-    get(RegistrationPage).flatMap { reg =>
-      if (reg.isUPERegisteredInUK & reg.withoutIdRegData.isEmpty) {
-        Some(true)
-      } else {
-        None
-      }
-    }
-
-  def upeNoIDBookmarkLogic: Option[Boolean] =
-    get(RegistrationPage).flatMap { reg =>
-      if (!reg.isUPERegisteredInUK & reg.withIdRegData.isEmpty & reg.orgType.isEmpty) {
-        Some(true)
-      } else {
-        None
-      }
-    }
 
 }

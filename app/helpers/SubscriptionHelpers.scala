@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package models.fm
+package helpers
 
-import models.grs.EntityType
-import models.registration.GrsResponse
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+import models.registration.upeContactInformation
 
-case class FilingMember(
-  nfmConfirmation:     Boolean,
-  isNfmRegisteredInUK: Option[Boolean] = None,
-  orgType:             Option[EntityType] = None,
-  isNFMnStatus:        RowStatus,
-  withIdRegData:       Option[GrsResponse] = None,
-  withoutIdRegData:    Option[WithoutIdNfmData] = None
-)
+trait SubscriptionHelpers {
 
-object FilingMember {
-  implicit val format: OFormat[FilingMember] = Json.format[FilingMember]
+  def upeContactFormatter(ultimateParent: upeContactInformation) =
+    List(ultimateParent.upeContactName, ultimateParent.upeEmailAddress, ultimateParent.telephoneNumber).mkString("\n").trim
+
 }

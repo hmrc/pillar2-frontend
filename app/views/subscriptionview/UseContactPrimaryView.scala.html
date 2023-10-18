@@ -26,7 +26,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(form: Form[_], mode: Mode, name:String="" ,email:String="", tel:String="")(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode, name: String ,email:String, tel:Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
@@ -37,7 +37,7 @@
         }
         <span class="govuk-caption-l">@messages("useContactPrimary.heading.caption")</span>
 
-        @if(tel!=""){
+        @if(tel.nonEmpty){
                 @govukRadios(
                     RadiosViewModel.yesNo(
                         field  = form("value"),

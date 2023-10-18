@@ -42,7 +42,7 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-      //here you need to implement a logic to make sure every question is answered
+    //here you need to implement a logic to make sure every question is answered
 
     val list = SummaryListViewModel(
       rows = Seq(
@@ -53,11 +53,30 @@ class UpeCheckYourAnswersController @Inject() (
         UpeTelephonePreferenceSummary.row(request.userAnswers),
         request.userAnswers.get(upePhonePreferencePage) match {
           case Some(true) => UPEContactTelephoneSummary.row(request.userAnswers)
-          case _    => None
+          case _          => None
         }
       ).flatten
     )
-      Ok(view(list))
+    Ok(view(list))
   }
+
+  /*
+      This CYA:
+      a) Has the UPE gone through no ID or ID
+        i) ID: Get their org type, GRS data and then send
+        ii) NOID: get name, address, contact Name, telephone, telephone preference
+
+        a) Has the UPE gone through no ID or ID
+    i) ID: Get their org type, GRS data and then send
+    ii) NOID: get name, address, contact Name, telephone, telephone preference
+
+    sub:
+    a) Has the UPE gone through no ID or ID
+    i) ID: Get their org type, GRS data and then send
+    ii) NOID: get name, address, contact Name, telephone, telephone preference
+    a) Has the UPE gone through no ID or ID
+    i) ID: Get their org type, GRS data and then send
+    ii) NOID: get name, address, contact Name, telephone, telephone preference
+   */
 
 }

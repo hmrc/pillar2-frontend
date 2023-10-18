@@ -21,13 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmEmailAddressFormProvider
 import models.Mode
-import models.requests.DataRequest
-import pages.NominatedFilingMemberPage
+import pages.{fmContactEmailPage, fmContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmEmailAddressView
 
 import javax.inject.Inject
@@ -40,62 +38,40 @@ class NfmEmailAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NfmEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      NfmEmailAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getFMContactName(request)
-    val form         = formProvider(userName)
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(NominatedFilingMemberPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.withoutIdRegData.fold(NotFound(notAvailable))(data =>
-              data.fmEmailAddress.fold(Ok(view(form, mode, userName)))(email => Ok(view(form.fill(email), mode, userName)))
-            )
-          }
-      case false => NotFound(notAvailable)
-    }
+    request.userAnswers
+      .get(fmContactNamePage)
+      .map { name =>
+        val form = formProvider(name)
+        val preparedForm = request.userAnswers.get(fmContactEmailPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, name))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = getFMContactName(request)
-    val form     = formProvider(userName)
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value => {
-          val fmRegData =
-            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-          val fmRegDataWithoutId =
-            fmRegData.withoutIdRegData.getOrElse(throw new Exception("nfmNameRegistration and address should be available before email"))
-
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers
-                  set (NominatedFilingMemberPage, fmRegData.copy(withoutIdRegData = Some(fmRegDataWithoutId.copy(fmEmailAddress = Some(value)))))
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
-        }
-      )
-  }
-
-  private def getFMContactName(request: DataRequest[AnyContent]): String = {
-    val fmDetails = request.userAnswers.get(NominatedFilingMemberPage)
-    fmDetails.fold("")(fmData => fmData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
-  }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data => data.withoutIdRegData.fold(false)(withoutId => withoutId.fmContactName.isDefined))
+      .get(fmContactNamePage)
+      .map { userName =>
+        formProvider(userName)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers set (fmContactEmailPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
+          )
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  }
 }

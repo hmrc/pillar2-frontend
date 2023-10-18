@@ -17,41 +17,26 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.NominatedFilingMemberPage
+import pages.fmRegisteredAddressPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object NfmRegisteredAddressSummary {
 
-  def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(NominatedFilingMemberPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.map { withoutId =>
-          withoutId.registeredFmAddress.map { answer =>
-            val field1      = HtmlFormat.escape(answer.addressLine1).toString + "<br>"
-            val field2      = if (answer.addressLine2.isDefined) HtmlFormat.escape(answer.addressLine2.mkString("")) + "<br>" else ""
-            val field3      = HtmlFormat.escape(answer.addressLine3).toString + "<br>"
-            val field4      = if (answer.addressLine4.isDefined) HtmlFormat.escape(answer.addressLine4.mkString("")) + "<br>" else ""
-            val postcode    = if (answer.postalCode.isDefined) HtmlFormat.escape(answer.postalCode.mkString("")) + "<br>" else ""
-            val countryCode = HtmlFormat.escape(answer.countryCode)
-            val value       = field1 + field2 + field3 + field4 + postcode + countryOptions.getCountryNameFromCode(countryCode.toString())
-
-            SummaryListRowViewModel(
-              key = "nfmRegisteredAddress.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(value)),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmRegisteredAddress.checkYourAnswersLabel.hidden"))
-              )
-            )
-          }
-        }
+      .get(fmRegisteredAddressPage)
+      .map { answer =>
+        SummaryListRowViewModel(
+          key = "nfmRegisteredAddress.checkYourAnswersLabel",
+          value = ValueViewModel(answer.fullAddress),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("nfmRegisteredAddress.checkYourAnswersLabel.hidden"))
+          )
+        )
       }
-      .flatten
+
 }

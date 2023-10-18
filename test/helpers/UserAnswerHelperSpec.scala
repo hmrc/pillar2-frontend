@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import pages.RegistrationPage
 
-class UpeUserAnswerHelperSpec extends SpecBase {
+class UserAnswerHelperSpec extends SpecBase {
 
   "UpeUserAnswerConnector" when {
     "upeContactName" should {

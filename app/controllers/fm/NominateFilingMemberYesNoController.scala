@@ -21,15 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
-import models.fm.FilingMember
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominateFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import javax.inject.Inject
@@ -42,7 +39,6 @@ class NominateFilingMemberYesNoController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NominateFilingMemberYesNoFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      NominateFilingMemberYesNoView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -51,20 +47,11 @@ class NominateFilingMemberYesNoController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val regData      = request.userAnswers.get(RegistrationPage)
-    val toDisplay    = regData.fold(false)(data => data.isRegistrationStatus == RowStatus.Completed)
-    toDisplay match {
-      case true =>
-        val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-          case None        => form
-          case Some(value) => form.fill(value.nfmConfirmation)
-        }
-
-        Ok(view(preparedForm, mode))
-      case false => NotFound(notAvailable)
+    val preparedForm = request.userAnswers.get(NominateFilingMemberPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
     }
-
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -75,26 +62,14 @@ class NominateFilingMemberYesNoController @Inject() (
         value =>
           value match {
             case true =>
-              val fmData = request.userAnswers
-                .get(NominatedFilingMemberPage)
-                .getOrElse(FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.InProgress))
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      NominatedFilingMemberPage,
-                      fmData.copy(nfmConfirmation = value)
-                    )
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
             case false =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = value, isNFMnStatus = RowStatus.Completed))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.TaskListController.onPageLoad)
           }
       )

@@ -28,14 +28,15 @@ object UPEContactTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(upeCapturePhonePage).map{answer =>
-            SummaryListRowViewModel(
-              key = "captureTelephoneDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlFormat.escape(answer).toString),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
-              )
-            )
-          }
+      .get(upeCapturePhonePage)
+      .map { answer =>
+        SummaryListRowViewModel(
+          key = "captureTelephoneDetails.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
+          )
+        )
+      }
 }

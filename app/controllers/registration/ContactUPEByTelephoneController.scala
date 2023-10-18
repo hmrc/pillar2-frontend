@@ -21,16 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
 import models.Mode
-import models.requests.DataRequest
-import navigation.Navigator
-import pages.{RegistrationPage, upePhonePreferencePage}
+import pages.{upeContactNamePage, upePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.ContactUPEByTelephoneView
 
 import javax.inject.Inject
@@ -49,7 +45,8 @@ class ContactUPEByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.upeContactName
+    request.userAnswers
+      .get(upeContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         val preparedForm = request.userAnswers.get(upePhonePreferencePage) match {
@@ -63,7 +60,8 @@ class ContactUPEByTelephoneController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.upeContactName
+    request.userAnswers
+      .get(upeContactNamePage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()

@@ -28,14 +28,15 @@ object UpeContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(upeContactEmailPage).map{ answer =>
-            SummaryListRowViewModel(
-              key = "upe-input-business-email.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlFormat.escape(answer).toString),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))
-              )
-            )
-          }
+      .get(upeContactEmailPage)
+      .map { answer =>
+        SummaryListRowViewModel(
+          key = "upe-input-business-email.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))
+          )
+        )
+      }
 }

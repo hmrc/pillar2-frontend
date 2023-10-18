@@ -16,18 +16,24 @@
 
 package models.registration
 
-import models.grs.EntityType
-import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
+import models.UserAnswers
+import pages.{upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
 
-case class Registration(
-  isUPERegisteredInUK:  Boolean,
-  orgType:              Option[EntityType] = None,
-  isRegistrationStatus: RowStatus,
-  withIdRegData:        Option[GrsResponse] = None,
-  withoutIdRegData:     Option[WithoutIdRegData] = None
+case class upeContactInformation(
+  upeContactName:  Option[String],
+  upeEmailAddress:  Option[String],
+  telephoneNumber:  Option[String],
+
 )
 
-object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
+object upeContactInformation {
+  def buildNonUkUpeContactInfo(answers:UserAnswers)={
+    upeContactInformation(answers.get(upeContactNamePage),
+      answers.get(upeContactEmailPage),
+      answers.get(upePhonePreferencePage) match{
+        case Some(true) =>  answers.get(upeCapturePhonePage)
+        case _ => None
+      }
+    )
+  }
 }
