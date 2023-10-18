@@ -45,7 +45,9 @@ trait UpeUserAnswerHelper {
 
   def upeNoIDBookmarkLogic: Option[Boolean] =
     get(RegistrationPage).flatMap { reg =>
-      if (!reg.isUPERegisteredInUK & reg.withIdRegData.isEmpty & reg.orgType.isEmpty) {
+      if (
+        (!reg.isUPERegisteredInUK & reg.withIdRegData.isEmpty & reg.orgType.isEmpty) || (reg.isUPERegisteredInUK & reg.withIdRegData.isEmpty & reg.orgType.isEmpty)
+      ) {
         Some(true)
       } else {
         None
