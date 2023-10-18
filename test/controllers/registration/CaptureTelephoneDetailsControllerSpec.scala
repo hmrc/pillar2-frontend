@@ -22,7 +22,6 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

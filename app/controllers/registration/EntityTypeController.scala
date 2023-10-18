@@ -24,7 +24,7 @@ import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.requests.DataRequest
 import models.{Mode, UserType}
-import pages.{RegistrationPage, upeEntityTypePage}
+import pages.upeEntityTypePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -53,11 +53,11 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-      val preparedForm = request.userAnswers.get(upeEntityTypePage) match{
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, mode))
+    val preparedForm = request.userAnswers.get(upeEntityTypePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
 
   }
 
@@ -70,22 +70,20 @@ class EntityTypeController @Inject() (
           value match {
             case EntityType.UkLimitedCompany =>
               for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
-                _            <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              createJourneyRes
-                <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
-            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+                updatedAnswers   <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
+                _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
+              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
       )
   }
-
 
 }

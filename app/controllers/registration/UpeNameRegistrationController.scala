@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
 import models.registration.WithoutIdRegData
-import pages.{RegistrationPage, upeNameRegistrationPage}
+import pages.upeNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,11 +47,11 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-      val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
-        case Some(value) => form.fill(value)
-        case None => form
-      }
-      Ok(view(preparedForm, mode))
+    val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -60,11 +60,11 @@ class UpeNameRegistrationController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(upeNameRegistrationPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+          for {
+            updatedAnswers <-
+              Future.fromTry(request.userAnswers.set(upeNameRegistrationPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
       )
   }
 

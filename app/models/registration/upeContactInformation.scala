@@ -21,19 +21,18 @@ import pages.{upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upeP
 
 case class upeContactInformation(
   upeContactName:  Option[String],
-  upeEmailAddress:  Option[String],
-  telephoneNumber:  Option[String],
-
+  upeEmailAddress: Option[String],
+  telephoneNumber: Option[String]
 )
 
 object upeContactInformation {
-  def buildNonUkUpeContactInfo(answers:UserAnswers)={
-    upeContactInformation(answers.get(upeContactNamePage),
+  def buildNonUkUpeContactInfo(answers: UserAnswers) =
+    upeContactInformation(
+      answers.get(upeContactNamePage),
       answers.get(upeContactEmailPage),
-      answers.get(upePhonePreferencePage) match{
-        case Some(true) =>  answers.get(upeCapturePhonePage)
-        case _ => None
+      answers.get(upePhonePreferencePage) match {
+        case Some(true) => answers.get(upeCapturePhonePage)
+        case _          => None
       }
     )
-  }
 }

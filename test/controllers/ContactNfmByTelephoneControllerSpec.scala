@@ -23,7 +23,7 @@ import forms.ContactNfmByTelephoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominatedFilingMemberPage
+import pages.fmPhonePreferencePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -44,7 +44,6 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewContactNfmByTelephone
     )
 
@@ -52,8 +51,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData(contactNfmByTelephone = None)).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
@@ -72,7 +70,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmPhonePreferencePage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -108,7 +106,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmPhonePreferencePage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -128,7 +126,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmPhonePreferencePage, false).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

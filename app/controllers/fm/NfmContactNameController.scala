@@ -46,11 +46,11 @@ class NfmContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm= request.userAnswers.get(fmContactNamePage) match{
+    val preparedForm = request.userAnswers.get(fmContactNamePage) match {
       case Some(value) => form.fill(value)
-      case None => form
+      case None        => form
     }
-    Ok(view(preparedForm,mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -58,7 +58,7 @@ class NfmContactNameController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
+        value =>
           for {
             updatedAnswers <-
               Future.fromTry(
@@ -67,7 +67,6 @@ class NfmContactNameController @Inject() (
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))
-        }
       )
   }
 }

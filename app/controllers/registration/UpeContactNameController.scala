@@ -47,7 +47,7 @@ class UpeContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(upeContactNamePage) match {
-      case None => form
+      case None        => form
       case Some(value) => form.fill(value)
     }
 
@@ -59,14 +59,14 @@ class UpeContactNameController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(
-                      request.userAnswers
-                        .set(upeContactNamePage, value)
-                    )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
+          for {
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(upeContactNamePage, value)
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
       )
   }
 

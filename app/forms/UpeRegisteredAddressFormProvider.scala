@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.{AddressMappings, Mappings}
-import models.{RegisteredAddress, UpeRegisteredAddress}
+import models.RegisteredAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 

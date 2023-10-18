@@ -23,7 +23,6 @@ import models.NormalMode
 import models.registration.{Registration, WithoutIdRegData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

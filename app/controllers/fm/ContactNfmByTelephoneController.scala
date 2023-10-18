@@ -45,41 +45,47 @@ class ContactNfmByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(fmContactNamePage).map { name =>
-      val form = formProvider(name)
-      val preparedForm = request.userAnswers.get(fmPhonePreferencePage) match {
-        case Some(value) => form.fill(value)
-        case None => form
+    request.userAnswers
+      .get(fmContactNamePage)
+      .map { name =>
+        val form = formProvider(name)
+        val preparedForm = request.userAnswers.get(fmPhonePreferencePage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, name))
       }
-      Ok(view(preparedForm,mode, name))
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(fmContactNamePage).map { userName =>
-    formProvider(userName)
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value => {
-          value match {
-            case true =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(mode))
+    request.userAnswers
+      .get(fmContactNamePage)
+      .map { userName =>
+        formProvider(userName)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+            value =>
+              value match {
+                case true =>
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(mode))
 
-            case false =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
-          }
-        }
-      )
-  }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))}
+                case false =>
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
+              }
+          )
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  }
 
 }

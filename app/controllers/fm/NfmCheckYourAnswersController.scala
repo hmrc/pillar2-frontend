@@ -49,8 +49,8 @@ class NfmCheckYourAnswersController @Inject() (
         NfmEmailAddressSummary.row(request.userAnswers),
         NfmTelephonePreferenceSummary.row(request.userAnswers),
         request.userAnswers.get(fmPhonePreferencePage) match {
-          case true => NfmContactTelephoneSummary.row(request.userAnswers)
-          case _    => None
+          case Some(true) => NfmContactTelephoneSummary.row(request.userAnswers)
+          case _          => None
         }
       ).flatten
     )

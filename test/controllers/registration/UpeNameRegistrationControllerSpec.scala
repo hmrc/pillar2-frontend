@@ -24,7 +24,6 @@ import models.grs.EntityType
 import models.registration.{GrsResponse, PartnershipEntityRegistrationData, Registration}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.RegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

@@ -49,22 +49,21 @@ class NfmNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
       case Some(value) => form.fill(value)
-      case None => form
+      case None        => form
     }
-     Ok(view(preparedForm, mode))
-     }
+    Ok(view(preparedForm, mode))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
+        value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(fmNameRegistrationPage,value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(fmNameRegistrationPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
-        }
       )
   }
 

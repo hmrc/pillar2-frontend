@@ -17,7 +17,6 @@
 package helpers
 
 import base.SpecBase
-import pages.RegistrationPage
 
 class UserAnswerHelperSpec extends SpecBase {
 

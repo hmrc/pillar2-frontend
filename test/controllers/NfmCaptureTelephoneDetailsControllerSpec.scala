@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.NominatedFilingMemberPage
+import pages.fmCapturePhonePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmCaptureTelephoneDetailsView
@@ -31,8 +31,8 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
   "NfmCaptureTelephoneDetails Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData(telephoneNumber = None)).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -51,7 +51,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmCapturePhonePage, "12312323").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -72,17 +72,13 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdFmData()).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmCapturePhonePage, "bad data").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = formProvider("Test Name").bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
 
         val result = route(application, request).value
 

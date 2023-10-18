@@ -17,7 +17,7 @@
 package helpers
 
 import models.UserAnswers
-import pages.{RegistrationPage, upeContactNamePage}
+import pages.upeContactNamePage
 import utils.RowStatus
 
 trait UserAnswerHelper {

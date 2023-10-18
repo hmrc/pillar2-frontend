@@ -47,59 +47,58 @@ class GrsReturnController @Inject() (
     extends FrontendBaseController {
 
   def continueUpe(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(upeEntityTypePage).map{
-          case  EntityType.UkLimitedCompany =>
-            for {
-              entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
+    request.userAnswers
+      .get(upeEntityTypePage)
+      .map {
+        case EntityType.UkLimitedCompany =>
+          for {
+            entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
 //              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-              userAnswers <- Future.fromTry(
-                               request.userAnswers.set(
-                                 upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
-                             )
-              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+            userAnswers <- Future.fromTry(
+                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                           )
+            - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
-          case EntityType.LimitedLiabilityPartnership =>
-            for {
-              entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+        case EntityType.LimitedLiabilityPartnership =>
+          for {
+            entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
 //              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-              userAnswers <- Future.fromTry(
-                               request.userAnswers.set(
-                                 upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
-                             )
-              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
-        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            userAnswers <- Future.fromTry(
+                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                           )
+            - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-    }
-
+  }
 
   def continueFm(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(fmEntityTypePage).map {
-      case  EntityType.UkLimitedCompany =>
-            for {
-              entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
+    request.userAnswers
+      .get(fmEntityTypePage)
+      .map {
+        case EntityType.UkLimitedCompany =>
+          for {
+            entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
 //              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-              userAnswers <- Future.fromTry(
-                               request.userAnswers.set(
-                                 fmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
-                             )
-              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+            userAnswers <- Future.fromTry(
+                             request.userAnswers.set(fmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                           )
+            - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
-      case EntityType.LimitedLiabilityPartnership =>
-            for {
-              entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+        case EntityType.LimitedLiabilityPartnership =>
+          for {
+            entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
 //              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-              userAnswers <- Future.fromTry(
-                               request.userAnswers.set(
-                                 fmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
-                             )
-              - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
-            } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
-        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
-    }
+            userAnswers <- Future.fromTry(
+                             request.userAnswers.set(fmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                           )
+            - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 
@@ -129,5 +128,5 @@ class GrsReturnController @Inject() (
         throw new IllegalStateException(
           s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
         )
-
+    }
 }

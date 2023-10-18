@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
-import pages.{RegistrationPage, upeContactEmailPage, upeContactNamePage}
+import pages.{upeContactEmailPage, upeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

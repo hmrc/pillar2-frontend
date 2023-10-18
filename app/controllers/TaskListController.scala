@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,32 +38,26 @@ class TaskListController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
-      case None        => RowStatus.NotStarted
-      case Some(value) => value.isRegistrationStatus
-    }
-    val fmStatus = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case None        => RowStatus.NotStarted
-      case Some(value) => value.isNFMnStatus
-    }
-    val groupDetailStatus = request.userAnswers.get(SubscriptionPage) match {
-      case None        => RowStatus.NotStarted
-      case Some(value) => value.groupDetailStatus
-    }
-    val contactDetailsStatus = request.userAnswers.get(SubscriptionPage) match {
-      case None        => RowStatus.NotStarted
-      case Some(value) => value.contactDetailsStatus
-    }
-
-    val statusCount = statusCounter(isRegistrationStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+//    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
+//      case None        => RowStatus.NotStarted
+//      case Some(value) => value.isRegistrationStatus
+//    }
+//    val fmStatus = request.userAnswers.get(NominatedFilingMemberPage) match {
+//      case None        => RowStatus.NotStarted
+//      case Some(value) => value.isNFMnStatus
+//    }
+//    val groupDetailStatus = request.userAnswers.get(SubscriptionPage) match {
+//      case None        => RowStatus.NotStarted
+//      case Some(value) => value.groupDetailStatus
+//    }
+//    val contactDetailsStatus = request.userAnswers.get(SubscriptionPage) match {
+//      case None        => RowStatus.NotStarted
+//      case Some(value) => value.contactDetailsStatus
+//    }
+//
+//    val statusCount = statusCounter(isRegistrationStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
     Ok(
-      view(
-        isRegistrationStatus.toString,
-        statusCount,
-        filingMemberStatus = fmStatus.toString,
-        groupDetailStatus = groupDetailStatus.toString,
-        contactDetailsStatus = contactDetailsStatus.toString
-      )
+      view(counter = 1)
     )
   }
 

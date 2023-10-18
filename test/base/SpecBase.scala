@@ -28,7 +28,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import pages.NominatedFilingMemberPage
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind

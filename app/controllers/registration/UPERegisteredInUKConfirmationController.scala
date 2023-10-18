@@ -21,14 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import models.registration.Registration
-import pages.{RegistrationPage, upeRegisteredInUKPage}
+import pages.upeRegisteredInUKPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject

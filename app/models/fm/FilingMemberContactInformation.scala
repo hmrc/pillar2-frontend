@@ -19,20 +19,20 @@ package models.fm
 import models.UserAnswers
 import pages.{fmCapturePhonePage, fmContactEmailPage, fmContactNamePage, fmPhonePreferencePage}
 
- case class FilingMemberContactInformation(
-                          fmContactName: Option[String] ,
-                          fmEmailAddress: Option[String] ,
-                          telephoneNumber: Option[String]
+case class FilingMemberContactInformation(
+  fmContactName:   Option[String],
+  fmEmailAddress:  Option[String],
+  telephoneNumber: Option[String]
 )
 
 object FilingMemberContactInformation {
-  def buildNonUkFmContactInfo(answers:UserAnswers)={
-    FilingMemberContactInformation(answers.get(fmContactNamePage).orElse(None),
+  def buildNonUkFmContactInfo(answers: UserAnswers) =
+    FilingMemberContactInformation(
+      answers.get(fmContactNamePage).orElse(None),
       answers.get(fmContactEmailPage).orElse(None),
-      answers.get(fmPhonePreferencePage) match{
-        case Some(true) =>  answers.get(fmCapturePhonePage)
-        case _ => None
+      answers.get(fmPhonePreferencePage) match {
+        case Some(true) => answers.get(fmCapturePhonePage)
+        case _          => None
       }
     )
-  }
 }

@@ -48,29 +48,35 @@ class NfmRegisteredAddressController @Inject() (
   val form: Form[RegisteredAddress] = formProvider()
   val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(fmNameRegistrationPage).map { name =>
-      val preparedForm = request.userAnswers.get(fmRegisteredAddressPage) match {
-        case Some(value) => form.fill(value)
-        case None => form
+    request.userAnswers
+      .get(fmNameRegistrationPage)
+      .map { name =>
+        val preparedForm = request.userAnswers.get(fmRegisteredAddressPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, name, countryList))
       }
-      Ok(view(preparedForm, mode, name,countryList))
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(fmNameRegistrationPage).map { name =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
-        value => {
-          for {
-            updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(fmRegisteredAddressPage, value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
-        }
-      )}.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(fmNameRegistrationPage)
+      .map { name =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
+            value =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(request.userAnswers.set(fmRegisteredAddressPage, value))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
+          )
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
 }
