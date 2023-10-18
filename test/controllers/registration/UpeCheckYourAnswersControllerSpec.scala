@@ -67,7 +67,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         status(result) mustEqual OK
         contentAsString(result) must include(
-          "Business details"
+          "Group details"
         )
       }
 
