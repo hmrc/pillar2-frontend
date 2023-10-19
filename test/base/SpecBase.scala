@@ -18,6 +18,8 @@ package base
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, post, put, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.testdata.Pillar2TestData
@@ -28,12 +30,13 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc._
+import play.api.mvc.{BodyParsers, Request, Result, Results}
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,6 +64,8 @@ trait SpecBase
     with HeaderNames
     with ViewInstances
     with IntegrationPatience
+    with GuiceOneAppPerSuite
+    with WireMockServerHandler
     with Pillar2TestData {
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -136,5 +141,44 @@ trait SpecBase
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubDelete(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      delete(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubResponseForPutRequest(expectedEndpoint: String, expectedStatus: Int): StubMapping =
+    server.stubFor(
+      put(urlEqualTo(expectedEndpoint))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+        )
+    )
 
 }

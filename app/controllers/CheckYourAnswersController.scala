@@ -23,9 +23,11 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.requests.DataRequest
 import models.subscription.Subscription
 import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
-import play.api.i18n.I18nSupport
+import play.api.Logging
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -37,17 +39,23 @@ import views.html.subscriptionview.ContactCheckYourAnswersView
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
-  view:                      CheckYourAnswersView,
-  countryOptions:            CountryOptions
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:              MessagesApi,
+  identify:                              IdentifierAction,
+  getData:                               DataRetrievalAction,
+  requireData:                           DataRequiredAction,
+  override val registerWithoutIdService: RegisterWithoutIdService,
+  override val subscriptionService:      SubscriptionService,
+  override val userAnswersConnectors:    UserAnswersConnectors,
+  override val taxEnrolmentService:      TaxEnrolmentService,
+  val controllerComponents:              MessagesControllerComponents,
+  page_not_available:                    ErrorTemplate,
+  view:                                  CheckYourAnswersView,
+  countryOptions:                        CountryOptions
+)(implicit ec:                           ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with RegisterAndSubscribe
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
@@ -269,8 +277,7 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val regdata = request.userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Registration is not available"))
     val fmData  = request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing is not available"))
-    Future.successful(Redirect(controllers.routes.TaskListController.onPageLoad))
-  // createRegistrationAndSubscription(regdata, fmData)
+    createRegistrationAndSubscription(regdata, fmData)
   }
   private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
     request.userAnswers

@@ -16,7 +16,8 @@
 
 package connectors
 
-import play.api.libs.json.JsValue
+import models.UserAnswers
+import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -49,11 +50,16 @@ class UserAnswersConnectors @Inject() (
       }
     }
 
+  def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
+    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
+      response.status match {
+        case OK        => Some(UserAnswers(id = id, data = response.json.as[JsObject]))
+        case NOT_FOUND => None
+        case _         => throw new HttpException(response.body, response.status)
+      }
+    }
+
   def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[String] =
     httpClient.DELETE[String](s"$url/registration-subscription/$id")
-
-  //TODO
-  def lastUpdated(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
-    ???
 
 }

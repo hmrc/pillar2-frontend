@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-object Pillar2SessionKeys {
+sealed trait ApiError
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val plrId                       = "plrId"
-}
+case object NotFoundError extends ApiError
+case object InternalServerError extends ApiError
+case class MandatoryInformationMissingError(value: String = "") extends ApiError
+case class SubscriptionCreateInformationMissingError(value: String = "") extends ApiError
+case class RegistrationWithoutIdInformationMissingError(value: String = "") extends ApiError
+case object SubscriptionCreateError extends ApiError
+case object EnrolmentExistsError extends ApiError
+case object EnrolmentCreationError extends ApiError

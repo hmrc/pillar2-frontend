@@ -27,7 +27,8 @@ case class FilingMember(
   orgType:             Option[EntityType] = None,
   isNFMnStatus:        RowStatus,
   withIdRegData:       Option[GrsResponse] = None,
-  withoutIdRegData:    Option[WithoutIdNfmData] = None
+  withoutIdRegData:    Option[WithoutIdNfmData] = None,
+  safeId:              Option[String] = None
 )
 
 object FilingMember {

@@ -26,6 +26,17 @@ page_not_available.message=You cannot access this page directly
 
 ###############################################
 
+###############################################
+#
+# Error View
+#
+###############################################
+error.title=There is problem with the page.
+error.heading=There is technical difficulties
+error.message=You cannot access this page directly
+
+###############################################
+
 upeRegisteredAddress.title=Where is the registered office address of {0}?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
@@ -545,6 +556,14 @@ site.confirm.send = Confirm and send
 
 
 
+registrationConfirmation.title = Registration complete
+registrationConfirmation.registrationComplete = Registration complete
+registrationConfirmation.topup = Pillar 2 top-up tax ID
+registrationConfirmation.whatHappensNext = What happens next
+registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
+registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
+registrationConfirmation.whatDidYouThink = What did you think of this service
+registrationConfirmation.takes30 = (takes 30 seconds)
 
 subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
@@ -576,8 +595,6 @@ subscriptionAddress.country.hint = Choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
 
-
-
 dashboard.title = Your Pillar 2 top-up taxes account
 dashboard.heading = Your Pillar 2 top-up taxes account
 dashboard.topTaxes = Pillar 2 top-up taxes ID:
@@ -594,5 +611,3 @@ dashboard.groupDetails = View and amend group details
 dashboard.p1 = This service is being continuously updated. You can anticipate the introduction of more features in line with the development of OECD''s policy.
 dashboard.p2 = For more information, please refer to the
 dashboard.link = draft guidance (opens in new tab)
-
-

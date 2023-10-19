@@ -25,7 +25,7 @@ final case class IncorporatedEntityCreateRegistrationRequest(
   optServiceName:            Option[String],
   deskProServiceId:          String,
   signOutUrl:                String,
-  regime:                    String = "PILLAR2",
+  regime:                    String = "PLR",
   accessibilityUrl:          String,
   labels:                    ServiceName
 )

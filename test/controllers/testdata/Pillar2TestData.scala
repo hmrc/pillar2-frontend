@@ -19,18 +19,22 @@ package controllers.testdata
 import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration._
-import models.subscription.{AccountingPeriod, Subscription, SubscriptionAddress}
+import models.subscription.{AccountingPeriod, Subscription, SubscriptionAddress, SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import models.{MneOrDomestic, UpeRegisteredAddress, UserAnswers}
 
 import play.api.libs.json.{JsObject, Json}
 import utils.RowStatus
 
+import java.time.Instant
 import java.time.LocalDate
+
 trait Pillar2TestData {
 
-  val upeCheckAnswerData = Registration(
+  def userAnswersData(id: String, jsonObj: JsObject): UserAnswers = UserAnswers(id, jsonObj, Instant.ofEpochSecond(1))
+
+  def upeCheckAnswerData = new Registration(
     isUPERegisteredInUK = false,
-    isRegistrationStatus = RowStatus.Completed,
+    isRegistrationStatus = RowStatus.InProgress,
     withoutIdRegData = Some(
       WithoutIdRegData(
         upeNameRegistration = "Paddington",
@@ -742,6 +746,10 @@ trait Pillar2TestData {
 
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
 
+  val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
+  val validSubscriptionSuccessResponse =
+    SubscriptionResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
+
   def validRegistrationWithIdResponse(): String =
     s"""{
        |            "companyProfile" : {
@@ -932,4 +940,53 @@ trait Pillar2TestData {
        |    }
        """.stripMargin
 
+  val businessWithoutIdJsonResponse: String =
+    """
+      |{
+      |"registerWithoutIDResponse": {
+      |    "responseCommon": {
+      |"status": "OK",
+      |"processingDate": "2010-12-19T09:30:47Z",
+      |"returnParameters": [
+      |{
+      | "paramName": "SAP_NUMBER", "paramValue": "9876543210"
+      |} ]
+      |},
+      |"responseDetail": {
+      |"SAFEID": "XE1111123456789",
+      |"ARN": "ZARN7654321"
+      |}}}""".stripMargin
+
+  val businessWithoutIdMissingSafeIdJson: String =
+    """
+      |{
+      |"registerWithoutIDResponse": {
+      |    "responseCommon": {
+      |"status": "OK",
+      |"processingDate": "2010-12-19T09:30:47Z",
+      |"returnParameters": [
+      |{
+      | "paramName": "SAP_NUMBER", "paramValue": "0123456789"
+      |} ]
+      |},
+      |"responseDetail": {
+      |"ARN": "ZARN1234567"
+      |}}}""".stripMargin
+
+  val businessSubscriptionSuccessJson: String =
+    """
+      |{
+      |"success" : {
+      |"plrReference":"XMPLR0012345678",
+      |"formBundleNumber":"119000004320",
+      |"processingDate":"2023-09-22"
+      |}
+      |}""".stripMargin
+
+  val businessSubscriptionMissingPlrRefJson: String =
+    """
+      |{
+      |"formBundleNumber":"119000004320",
+      |"processingDate":"2023-09-22"
+      |}""".stripMargin
 }

@@ -19,25 +19,26 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.DashboardView
+import utils.Pillar2SessionKeys
+import views.html.RegistrationConfirmationView
 
-class DashboardControllerSpec extends SpecBase {
+class RegistrationConfirmationControllerSpec extends SpecBase {
 
-  "Dashboard Controller" when {
+  "RegistrationConfirmation Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DashboardView]
+        val view = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view("N/A")(request, appConfig(application), messages(application)).toString
       }
     }
   }
