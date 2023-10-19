@@ -17,6 +17,7 @@
 package controllers.registration
 
 import base.SpecBase
+import models.NormalMode
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,9 +35,9 @@ class StartPageRegistrationControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.registration.routes.StartPageRegistrationController.onPageLoad.url)
+        FakeRequest(GET, controllers.registration.routes.StartPageRegistrationController.onPageLoad(NormalMode).url)
 
-      val result = controller.onPageLoad()()(request)
+      val result = controller.onPageLoad(NormalMode)()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
         "We need to match the details of the ultimate parent entity to HMRC records"

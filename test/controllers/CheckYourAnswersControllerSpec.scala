@@ -17,29 +17,392 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages._
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.CheckYourAnswersView
+
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+  def controller(): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      mockUserAnswersConnectors,
+      preAuthenticatedActionBuilders,
+      preDataRetrievalActionImpl,
+      preDataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      viewpageNotAvailable,
+      viewCheckYourAnswers,
+      mockCountryOptions
+    )
 
   "Check Your Answers Controller" must {
 
-    "must return OK and the correct view for a GET" in {
+    "must return Not Found and the correct view with empty user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "must return OK and the correct view if an answer is provided to every question  with Secondary contact detail" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question  with Secondary contact detail with no primary phone" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          ContactCheckAnswerSecondaryWithoutPrimaryPhoneContactData()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question  with no nominate filing member" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerDataNoNominateNfm()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question  without Secondary contact detail" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithoutSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithoutPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must not include
+          "Second contact name"
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided to every question and phone number also provided" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, upeCheckAnswerDataWithPhone).success.value
+
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Ultimate parent"
+        )
+        contentAsString(result) must include(
+          "Nominated filing member"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with limited company upe" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, nfmCheckAnswerData()).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with fm registration partnership" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with LLP upe" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLLP).success.value
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must return OK and the correct view if an answer is provided with limited company nfm" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Company Registration Number"
+        )
+        contentAsString(result) must include(
+          "Unique Taxpayer Reference"
+        )
+        contentAsString(result) must include(
+          "First contact"
+        )
+        contentAsString(result) must include(
+          "Further registration details"
+        )
+      }
+    }
+
+    "must redirect to other page if confirm and send" in {
+
+      val contactAnswer = emptyUserAnswers
+        .set(
+          SubscriptionPage,
+          CheckAnswerwithSecondaryContactDetail()
+        )
+        .success
+        .value
+
+      val contactNfmAnswer = contactAnswer.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
+
+      val contactUpeNfmAnswer = contactNfmAnswer.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(contactUpeNfmAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
       }
     }
 
