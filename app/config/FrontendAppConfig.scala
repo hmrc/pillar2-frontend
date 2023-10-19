@@ -42,6 +42,17 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl:       String = configuration.get[String]("urls.signOut")
 
+  val enrolmentKey:            String = configuration.get[String](s"keys.enrolmentKey.pillar2")
+  lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
+
+  lazy val enrolmentStoreProxyUrl: String =
+    s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
+
+  val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
+    .get[String]("microservice.services.tax-enrolments.url1")}"
+
+  val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
+
   val accessibilityStatementServicePath: String =
     configuration.get[String]("accessibility-statement.service-path")
 

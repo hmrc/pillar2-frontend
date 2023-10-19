@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package models.registration
 
-object Pillar2SessionKeys {
+import models.SafeId
+import play.api.libs.json.{Reads, __}
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val plrId                       = "plrId"
+case class RegisterationWithoutIDResponse(safeId: SafeId)
+
+object RegisterationWithoutIDResponse {
+
+  implicit val reads: Reads[RegisterationWithoutIDResponse] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "registerWithoutIDResponse" \ "responseDetail" \ "SAFEID").read[String] fmap (id => RegisterationWithoutIDResponse(SafeId(id)))
+  }
+
 }

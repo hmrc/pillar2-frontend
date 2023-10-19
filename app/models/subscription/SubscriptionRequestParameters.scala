@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package models.subscription
 
-object Pillar2SessionKeys {
+import play.api.libs.json.{Json, OFormat}
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val plrId                       = "plrId"
+case class SubscriptionRequestParameters(
+  id:        String,
+  regSafeId: String,
+  fmSafeId:  Option[String]
+)
+object SubscriptionRequestParameters {
+  implicit val format: OFormat[SubscriptionRequestParameters] = Json.format[SubscriptionRequestParameters]
 }

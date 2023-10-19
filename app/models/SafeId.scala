@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-object Pillar2SessionKeys {
+import play.api.libs.json.{JsString, Reads, Writes, __}
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val plrId                       = "plrId"
+case class SafeId(value: String)
+
+object SafeId {
+
+  implicit val reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
+
+  implicit val writes: Writes[SafeId] = Writes(safeId => JsString(safeId.value))
 }

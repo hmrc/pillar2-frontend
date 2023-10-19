@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-object Pillar2SessionKeys {
+import play.api.libs.json.{Json, Reads}
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val plrId                       = "plrId"
+import scala.collection.Seq
+
+case class GroupIds(principalGroupIds: Seq[String], delegatedGroupIds: Seq[String])
+
+object GroupIds {
+  implicit val reads: Reads[GroupIds] = Json.reads[GroupIds]
 }

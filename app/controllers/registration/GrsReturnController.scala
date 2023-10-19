@@ -23,7 +23,7 @@ import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
-import models.registration.GrsResponse
+import models.registration.{GrsResponse, PartnershipEntityRegistrationData, Registration, RegistrationInfo}
 import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -59,7 +59,16 @@ class GrsReturnController @Inject() (
                                  RegistrationPage,
                                  registration.copy(
                                    isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData))),
+                                   registrationInfo = Some(
+                                     RegistrationInfo(
+                                       entityRegData.companyProfile.companyNumber,
+                                       entityRegData.ctutr,
+                                       entityRegData.registration.registeredBusinessPartnerId.getOrElse(
+                                         throw new Exception("No Safe Id for UK Limited Company response")
+                                       )
+                                     )
+                                   )
                                  )
                                )
                              )
@@ -75,7 +84,8 @@ class GrsReturnController @Inject() (
                                  RegistrationPage,
                                  registration.copy(
                                    isRegistrationStatus = isRegistrationStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData))),
+                                   registrationInfo = Some(getRegistrationInfo(entityRegData))
                                  )
                                )
                              )
@@ -103,7 +113,8 @@ class GrsReturnController @Inject() (
                                  NominatedFilingMemberPage,
                                  nfmregistration.copy(
                                    isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )
@@ -119,7 +130,8 @@ class GrsReturnController @Inject() (
                                  NominatedFilingMemberPage,
                                  nfmregistration.copy(
                                    isNFMnStatus = isNfmStatus,
-                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
+                                   withIdRegData = Some(GrsResponse(partnershipEntityRegistrationData = Some(entityRegData))),
+                                   safeId = entityRegData.registration.registeredBusinessPartnerId
                                  )
                                )
                              )
@@ -162,4 +174,17 @@ class GrsReturnController @Inject() (
           s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
         )
     }
+
+  private def getRegistrationInfo(partnershipEntityRegistrationData: PartnershipEntityRegistrationData): RegistrationInfo = {
+    val crn = partnershipEntityRegistrationData.companyProfile match {
+      case Some(companyProfile) => (companyProfile.companyNumber)
+      case _                    => throw new Exception("LLP response without company profile")
+
+    }
+    val utr = partnershipEntityRegistrationData.sautr.getOrElse(throw new Exception("LLP response without Utr available"))
+    val safeId =
+      partnershipEntityRegistrationData.registration.registeredBusinessPartnerId.getOrElse(throw new Exception("No safe id in LLP response"))
+
+    RegistrationInfo(crn, utr, safeId)
+  }
 }

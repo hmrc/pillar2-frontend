@@ -21,8 +21,6 @@ POST        /business-matching/match-hmrc-records                               
 GET         /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = CheckMode)
 
-
-
 GET         /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/ultimate-parent/no-id/change-input-name                  controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
@@ -109,6 +107,7 @@ GET         /account/sign-out                                                   
 GET         /account/signed-out                                                         controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                                               controllers.UnauthorisedController.onPageLoad
+GET         /display-error                                                              controllers.ErrorController.onPageLoad
 
 GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
@@ -159,8 +158,8 @@ POST       /business-matching/filing-member/no-id/change-input-telephone        
 
 GET         /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST        /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET         /further-details/change-accounting-period           controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
-POST        /further-details/change-accounting-period           controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
 GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
 POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
@@ -233,9 +232,12 @@ POST       /contact-details/second-input-telephone                        contro
 GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
+
 GET        /contact-details/address/input                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad()
+GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad
