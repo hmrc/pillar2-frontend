@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import helpers.SubscriptionHelpers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,29 +36,25 @@ class TaskListController @Inject() (
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport with SubscriptionHelpers {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-//    val isRegistrationStatus = request.userAnswers.get(RegistrationPage) match {
-//      case None        => RowStatus.NotStarted
-//      case Some(value) => value.isRegistrationStatus
-//    }
-//    val fmStatus = request.userAnswers.get(NominatedFilingMemberPage) match {
-//      case None        => RowStatus.NotStarted
-//      case Some(value) => value.isNFMnStatus
-//    }
-//    val groupDetailStatus = request.userAnswers.get(SubscriptionPage) match {
-//      case None        => RowStatus.NotStarted
-//      case Some(value) => value.groupDetailStatus
-//    }
-//    val contactDetailsStatus = request.userAnswers.get(SubscriptionPage) match {
-//      case None        => RowStatus.NotStarted
-//      case Some(value) => value.contactDetailsStatus
-//    }
-//
-//    val statusCount = statusCounter(isRegistrationStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+
+    val upeStatus = getUpeStatus(request)
+    val fmStatus = getFmStatus(request)
+    val groupDetailStatus = getGroupDetailStatus(request)
+    val contactDetailsStatus = getContactDetailStatus(request)
+
+    val statusCounter = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+
     Ok(
-      view(counter = 1)
+      view(
+        upeStatus.toString,
+        statusCounter,
+        filingMemberStatus = fmStatus.toString,
+        groupDetailStatus = groupDetailStatus.toString,
+        contactDetailsStatus = contactDetailsStatus.toString
+      )
     )
   }
 
@@ -77,4 +74,6 @@ class TaskListController @Inject() (
         counter
     counter
   }
+
+
 }

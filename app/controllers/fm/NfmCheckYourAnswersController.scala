@@ -40,7 +40,6 @@ class NfmCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    //what do we want to do if they have not provided an answer to every question?
     val list = SummaryListViewModel(
       rows = Seq(
         NfmNameRegistrationSummary.row(request.userAnswers),

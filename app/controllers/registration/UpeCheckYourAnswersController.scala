@@ -19,7 +19,6 @@ package controllers.registration
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.requests.DataRequest
 import pages.upePhonePreferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +26,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersController @Inject() (
@@ -42,10 +40,10 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    //here you need to implement a logic to make sure every question is answered
 
     val list = SummaryListViewModel(
       rows = Seq(
+
         UpeNameRegistrationSummary.row(request.userAnswers),
         UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         UpeContactNameSummary.row(request.userAnswers),
@@ -60,23 +58,5 @@ class UpeCheckYourAnswersController @Inject() (
     Ok(view(list))
   }
 
-  /*
-      This CYA:
-      a) Has the UPE gone through no ID or ID
-        i) ID: Get their org type, GRS data and then send
-        ii) NOID: get name, address, contact Name, telephone, telephone preference
-
-        a) Has the UPE gone through no ID or ID
-    i) ID: Get their org type, GRS data and then send
-    ii) NOID: get name, address, contact Name, telephone, telephone preference
-
-    sub:
-    a) Has the UPE gone through no ID or ID
-    i) ID: Get their org type, GRS data and then send
-    ii) NOID: get name, address, contact Name, telephone, telephone preference
-    a) Has the UPE gone through no ID or ID
-    i) ID: Get their org type, GRS data and then send
-    ii) NOID: get name, address, contact Name, telephone, telephone preference
-   */
 
 }

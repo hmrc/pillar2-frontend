@@ -19,13 +19,10 @@ package controllers.subscription
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.MneOrDomestic
-import models.requests.DataRequest
-import pages.SubscriptionPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
+import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
@@ -36,33 +33,34 @@ class SubCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  page_not_available:       ErrorTemplate,
+  countryOptions:           CountryOptions,
   view:                     SubCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+
     val list = SummaryListViewModel(
       rows = Seq(
         MneOrDomesticSummary.row(request.userAnswers),
         GroupAccountingPeriodSummary.row(request.userAnswers),
         GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
-        GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
+        GroupAccountingPeriodEndDateSummary.row(request.userAnswers),
+        ContactNameComplianceSummary.row(request.userAnswers),
+        ContactEmailAddressSummary.row(request.userAnswers),
+        ContactByTelephoneSummary.row(request.userAnswers),
+        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers),
+        SecondaryContactNameSummary.row(request.userAnswers),
+        SecondaryContactEmailSummary.row(request.userAnswers),
+        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+        SecondaryTelephoneSummary.row(request.userAnswers),
+        CaptureSubscriptionAddressAddressSummary.row(request.userAnswers,countryOptions )
       ).flatten
     )
 
-    if (isPreviousPagesDefined(request))
       Ok(view(list))
-    else
-      NotFound(notAvailable)
+
   }
-  private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false) { data =>
-        (data.domesticOrMne == MneOrDomestic.Uk) || (data.domesticOrMne == MneOrDomestic.UkAndOther) &&
-        data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)
-      }
+
 }

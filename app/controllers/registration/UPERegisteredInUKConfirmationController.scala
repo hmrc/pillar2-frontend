@@ -21,12 +21,13 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import pages.upeRegisteredInUKPage
+import pages.{GrsUpStatusPage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
@@ -64,18 +65,16 @@ class UPERegisteredInUKConfirmationController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsUpStatusPage, RowStatus.InProgress))
+                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
 
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
             case false =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(upeRegisteredInUKPage, value)
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsUpStatusPage, RowStatus.InProgress))
+                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
           }

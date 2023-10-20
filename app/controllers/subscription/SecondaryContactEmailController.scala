@@ -22,15 +22,12 @@ import controllers.actions._
 import controllers.routes
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
-import models.requests.DataRequest
-import models.subscription.Subscription
-import pages.SubscriptionPage
+import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SecondaryContactEmailView
 
 import javax.inject.Inject
@@ -44,62 +41,39 @@ class SecondaryContactEmailController @Inject() (
   formProvider:              SecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactEmailView,
-  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable         = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val secondaryContactName = getSecondaryContactName(request)
-    val form                 = formProvider(secondaryContactName)
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable))(subs =>
-            subs.secondaryContactEmail
-              .fold(Ok(view(form, mode, secondaryContactName)))(data => Ok(view(form.fill(data), mode, secondaryContactName)))
-          )
-      case false => NotFound(notAvailable)
-    }
+    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
+      val form = formProvider(contactName)
+      val preparedForm = request.userAnswers.get(subSecondaryEmailPage) match {
+        case Some(v) => form.fill(v)
+        case None => form
+      }
+      Ok(view(preparedForm, mode, contactName))
+
+    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val secondaryContactName = getSecondaryContactName(request)
-    val form                 = formProvider(secondaryContactName)
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, secondaryContactName))),
-        value =>
-          request.userAnswers
-            .get(SubscriptionPage)
-            .map { subs =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryContactEmail = Some(value))))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
-            }
-            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-      )
+    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
+      val form = formProvider(contactName)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+          value =>
+
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryEmailPage, value))
+              _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
+        )
+    }.getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
   }
 
-  private def getSecondaryContactName(request: DataRequest[AnyContent]): String =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .flatMap { sub =>
-        sub.secondaryContactName
-      }
-      .getOrElse("")
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
-        sub.secondaryContactName
-      }
-      .nonEmpty
 }

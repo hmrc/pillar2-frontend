@@ -19,17 +19,14 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.SecondaryContactNameFormProvider
 import models.Mode
-import models.requests.DataRequest
-import pages.SubscriptionPage
+import pages.subSecondaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SecondaryContactNameView
 
 import javax.inject.Inject
@@ -42,7 +39,6 @@ class SecondaryContactNameController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      SecondaryContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -51,19 +47,11 @@ class SecondaryContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable))(subs =>
-            subs.secondaryContactName
-              .fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          )
-
-      case false => NotFound(notAvailable)
+    val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
+      case Some(v) => form.fill(v)
+      case None => form
     }
-
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,23 +60,11 @@ class SecondaryContactNameController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          request.userAnswers
-            .get(SubscriptionPage)
-            .map { subs =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionPage, subs.copy(secondaryContactName = Some(value))))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryContactNamePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(mode))
-            }
-            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       )
   }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
-        sub.useContactPrimary
-      }
-      .isDefined
 }

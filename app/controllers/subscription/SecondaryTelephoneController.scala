@@ -24,7 +24,7 @@ import forms.SecondaryTelephoneFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.subscription.Subscription
-import pages.SubscriptionPage
+import pages.{SubscriptionPage, subSecondaryCapturePhonePage, subSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -44,71 +44,37 @@ class SecondaryTelephoneController @Inject() (
   formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryTelephoneView,
-  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable         = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val secondaryContactName = getSecondaryContactName(request)
-    val form                 = formProvider(secondaryContactName)
-    getSecondaryContactName(request) match {
-      case "" => NotFound(notAvailable)
-      case _ =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable))(subs =>
-            subs.secondaryContactTelephone.fold(Ok(view(form, mode, secondaryContactName)))(data =>
-              Ok(view(form.fill(data), mode, secondaryContactName))
-            )
-          )
-    }
+    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
+      val form = formProvider(contactName)
+      val preparedForm = request.userAnswers.get(subSecondaryCapturePhonePage) match {
+        case Some(v) => form.fill(v)
+        case None => form
+      }
+      Ok(view(preparedForm, mode, contactName))
+
+    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val secondaryContactName = getSecondaryContactName(request)
-    val form                 = formProvider(secondaryContactName)
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          request.userAnswers
-            .get(SubscriptionPage)
-            .map { sub =>
-              val subscriptionData = request.userAnswers
-                .get(SubscriptionPage)
-                .getOrElse(
-                  Subscription(
-                    domesticOrMne = sub.domesticOrMne,
-                    groupDetailStatus = sub.groupDetailStatus,
-                    contactDetailsStatus = sub.contactDetailsStatus,
-                    accountingPeriod = sub.accountingPeriod,
-                    primaryContactName = sub.primaryContactName,
-                    primaryContactEmail = sub.primaryContactEmail,
-                    primaryContactTelephone = sub.primaryContactTelephone,
-                    useContactPrimary = sub.useContactPrimary,
-                    secondaryContactName = Some(secondaryContactName),
-                    secondaryContactEmail = sub.secondaryContactEmail,
-                    secondaryTelephonePreference = Some(true),
-                    secondaryContactTelephone = Some(value)
-                  )
-                )
-
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubscriptionPage, subscriptionData.copy(secondaryContactTelephone = Some(value))))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
-            }
-            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-      )
+    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
+      val form = formProvider(contactName)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
+              _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+        )
+    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-
-  def getSecondaryContactName(request: DataRequest[AnyContent]): String =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold("")(regData => regData.secondaryContactName.fold("")(name => name))
 
 }

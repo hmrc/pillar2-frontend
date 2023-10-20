@@ -17,6 +17,7 @@
 package forms
 
 import forms.mappings.{AddressMappings, Mappings}
+import models.RegisteredAddress
 import models.subscription.SubscriptionAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
@@ -27,7 +28,7 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
   private val textLength     = 35
   private val addressLength  = 35
   private val postcodeLength = 10
-  def apply(): Form[SubscriptionAddress] = Form(
+  def apply(): Form[RegisteredAddress] = Form(
     mapping(
       "addressLine1" ->
         text("subscriptionAddress.messages.error.addressLine1.required")

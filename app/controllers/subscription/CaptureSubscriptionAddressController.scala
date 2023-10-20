@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
 import models.subscription.SubscriptionAddress
-import pages.SubscriptionPage
+import pages.{SubscriptionPage, subRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -48,22 +48,17 @@ class CaptureSubscriptionAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form: Form[SubscriptionAddress] = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
-        val preparedForm = sub.correspondenceAddress.fold(form)(data => form fill data)
-        Ok(view(preparedForm, mode, countryList))
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
+      case Some(v) => form.fill(v)
+      case None => form
+    }
+    Ok(view(preparedForm,mode, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
         form
           .bindFromRequest()
           .fold(
@@ -71,14 +66,10 @@ class CaptureSubscriptionAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      .set(SubscriptionPage, sub.copy(correspondenceAddress = Some(value), contactDetailsStatus = RowStatus.Completed))
-                  )
+                  Future.fromTry(request.userAnswers.set(subRegisteredAddressPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
+
 }

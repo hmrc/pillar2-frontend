@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.subscription
+package pages
 
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
+import play.api.libs.json.JsPath
+import utils.RowStatus
 
-sealed trait ContactDetailsModel
+case object SubscriptionStatusPage extends QuestionPage[RowStatus] {
 
-case class ContactDetail(contactName: String, ContactEmail: String, ContactTel: Option[String]) extends ContactDetailsModel
-case class NoContactDetailsFound(result: Result= Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) extends ContactDetailsModel
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "SubscriptionStatus"
+}

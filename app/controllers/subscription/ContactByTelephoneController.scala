@@ -20,15 +20,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
-import models.requests.DataRequest
 import models.{Mode, NormalMode}
-import pages.SubscriptionPage
+import pages.{subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactByTelephoneView
 
 import javax.inject.Inject
@@ -41,95 +39,50 @@ class ContactByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              ContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      ContactByTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val userName     = getUserName(request)
-    val form         = formProvider(userName)
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.contactByTelephone.fold(Ok(view(form, mode, userName)))(data => Ok(view(form.fill(data), mode, userName)))
-          }
+    request.userAnswers.get(subPrimaryContactNamePage).map{ contactName=>
+      val form = formProvider(contactName)
+      val preparedForm = request.userAnswers.get(subPrimaryPhonePreferencePage) match{
+        case Some(v) => form.fill(v)
+        case None => form
+      }
+      Ok(view(preparedForm,mode,contactName))
 
-      case false => NotFound(notAvailable)
-    }
+    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val userName = getUserName(request)
-    val form     = formProvider(userName)
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-        value =>
-          value match {
-            case true =>
-              val subRegData =
-                request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      set (SubscriptionPage, subRegData.copy(
-                        contactByTelephone = Some(value),
-                        telephoneNumber = subRegData.telephoneNumber,
-                        primaryContactEmail = subRegData.primaryContactEmail,
-                        domesticOrMne = subRegData.domesticOrMne,
-                        accountingPeriod = subRegData.accountingPeriod,
-                        useContactPrimary = subRegData.useContactPrimary,
-                        primaryContactTelephone = subRegData.primaryContactTelephone,
-                        primaryContactName = subRegData.primaryContactName,
-                        groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
-                      ))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-            case false =>
-              val subRegData =
-                request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Is NFM registered in UK not been selected"))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      set (SubscriptionPage,
-                      subRegData.copy(
-                        contactByTelephone = Some(value),
-                        telephoneNumber = None,
-                        primaryContactEmail = subRegData.primaryContactEmail,
-                        domesticOrMne = subRegData.domesticOrMne,
-                        accountingPeriod = subRegData.accountingPeriod,
-                        useContactPrimary = subRegData.useContactPrimary,
-                        primaryContactTelephone = subRegData.primaryContactTelephone,
-                        primaryContactName = subRegData.primaryContactName,
-                        groupDetailStatus = subRegData.groupDetailStatus,
-                        contactDetailsStatus = subRegData.contactDetailsStatus
-                      ))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-          }
-      )
+    request.userAnswers.get(subPrimaryContactNamePage).map { contactName =>
+      val form = formProvider(contactName)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+          value =>
+            value match {
+              case true =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.userAnswers set(subPrimaryPhonePreferencePage, value))
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+              case false =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.userAnswers set(subPrimaryPhonePreferencePage, value))
+                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+            }
+        )
+    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
-  private def getUserName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(SubscriptionPage)
-    registration.fold("")(regData => regData.primaryContactName.fold("")(primaryContactName => primaryContactName))
-  }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false)(data => data.primaryContactEmail.isDefined)
 
 }
