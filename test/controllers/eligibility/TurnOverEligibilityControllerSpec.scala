@@ -48,7 +48,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Has the group had global revenues of €750 million or more in at least 2 of the previous 4 accounting periods? "
+        "Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
       )
 
     }

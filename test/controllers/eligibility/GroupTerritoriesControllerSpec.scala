@@ -49,7 +49,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Are you registering the ultimate parent of this group?"
+        "Are you registering as the ultimate parent of this group?"
       )
     }
 
