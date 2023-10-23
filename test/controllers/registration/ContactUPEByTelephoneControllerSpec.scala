@@ -20,14 +20,13 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
-import models.registration.{Registration, WithoutIdRegData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.upeContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.registrationview.ContactUPEByTelephoneView
 
 import scala.concurrent.Future
@@ -39,10 +38,8 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
   "Can we contact UPE by Telephone Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val userAnswersWithNoIdNoCapturePhone =
-        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(contactUpeByTelephone = None)).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdNoCapturePhone)).build()
+      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
@@ -61,7 +58,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     }
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val application = applicationBuilder(None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -79,8 +76,8 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     }
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -97,8 +94,8 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       }
 
     }
-    "redirect to journey recovery for GET " when {
-      "no data is found" in {
+    "redirect to journey recovery  " when {
+      "no data is found for GET" in {
         val application = applicationBuilder(userAnswers = None).build()
         running(application) {
           val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
@@ -107,32 +104,10 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
-      "upe is registered in the uk" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdNoGRSRegData).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      "no contact name is found for POST" in {
+        val application = applicationBuilder(userAnswers = None).build()
         running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-
-      "GRS data is found in the database" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-        val application = applicationBuilder(Some(userAnswer)).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-      "no contact name is found" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
-        val application = applicationBuilder(Some(userAnswer)).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+          val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

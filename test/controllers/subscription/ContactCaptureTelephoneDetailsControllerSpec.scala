@@ -22,7 +22,7 @@ import forms.ContactCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubscriptionPage
+import pages.subPrimaryContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData(contactByTelephone = true)).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -50,7 +50,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -60,7 +60,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
       val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData()).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -81,7 +81,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
       val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData()).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -91,24 +91,32 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "3333322223333333332222333333333222233333333322223333333332222333333333222233333333322223333"))
+            .withFormUrlEncodedBody(("value", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(SubscriptionPage, validSubPhoneCaptureData()).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    "must redirect to journey recovery if no primary contact name is found for GET" in {
 
+      val application = applicationBuilder().build()
       running(application) {
-        val request =
-          FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
 
-        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
 
-        status(result) mustEqual BAD_REQUEST
+    }
+    "must redirect to journey recovery if no primary contact name is found for POST" in {
+      val application = applicationBuilder().build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
       }
     }
 

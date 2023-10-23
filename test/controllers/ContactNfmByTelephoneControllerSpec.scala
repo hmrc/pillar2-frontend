@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import controllers.fm.ContactNfmByTelephoneController
 import forms.ContactNfmByTelephoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -35,17 +34,6 @@ import scala.concurrent.Future
 class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
   val formProvider = new ContactNfmByTelephoneFormProvider()
-
-  def controller(): ContactNfmByTelephoneController =
-    new ContactNfmByTelephoneController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewContactNfmByTelephone
-    )
 
   "ContactNfmByTelephone Controller" when {
 

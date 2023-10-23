@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.{upeNameRegistrationPage, upeRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -44,41 +45,43 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+    "must return OK and the correct view for a GET with no previous answer" in {
 
-    "if any data found from the GRS journey" in {
-      val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-
-      }
-    }
-
-    "if no withoutID data or name registration is found" in {
-      val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must return OK and the correct view for a GET" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) should include(
+          "For a UK address, you must enter a correctly formatted UK postcode"
+        )
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously been answered" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+
+        val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) should include(
           "For a UK address, you must enter a correctly formatted UK postcode"
@@ -87,7 +90,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -111,37 +114,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
       }
     }
-    "throw error if upe name is not available" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        try {
-          val request =
-            FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-              .withFormUrlEncodedBody(
-                ("addressLine1", "27 house"),
-                ("addressLine2", "Drive"),
-                ("addressLine3", "Newcastle"),
-                ("addressLine4", "North east"),
-                ("postalCode", "NE3 2TR"),
-                ("countryCode", "GB")
-              )
-
-          val result = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-        } catch {
-          case e: java.lang.Exception =>
-            e.getMessage mustEqual "upeNameRegistration should be available before address"
-        }
-      }
-    }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -166,7 +141,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

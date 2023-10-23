@@ -74,6 +74,6 @@ class NfmCaptureTelephoneDetailsController @Inject() (
               } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
           )
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.subUsePrimaryContactPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,15 +28,11 @@ import viewmodels.implicits._
 object UseContactPrimarySummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(answer.useContactPrimary.toString)
-        )
-      )
+    answers.get(subUsePrimaryContactPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "useContactPrimary.checkYourAnswersLabel",
-        value = value,
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(value))),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("useContactPrimary.change.hidden"))

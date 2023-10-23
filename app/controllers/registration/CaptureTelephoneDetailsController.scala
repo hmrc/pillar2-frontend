@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.upeCapturePhonePage
+import pages.{subPrimaryContactNamePage, upeCapturePhonePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,7 +45,8 @@ class CaptureTelephoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.upeContactName
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         val preparedForm = request.userAnswers.get(upeCapturePhonePage) match {
@@ -59,7 +60,8 @@ class CaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.upeContactName
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()

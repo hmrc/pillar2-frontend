@@ -22,7 +22,7 @@ import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubscriptionPage
+import pages.subPrimaryContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,11 +37,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
   "Contact Name Compliance controller" when {
 
-    "must return OK and the correct view for a GET" in {
-      val userAnswersWithNominatedFilingMemberWithSub =
-        userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionDataWithUsePrimaryName()).success.value
+    "must return OK and the correct view for a GET when no previous data is found" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
@@ -55,9 +53,10 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND if previous page not defined" in {
+    "must return OK and the correct view for a GET when previous data is found" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val ua          = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
@@ -66,16 +65,14 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
-        status(result) mustEqual NOT_FOUND
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val userAnswersWithNominatedFilingMemberWithSub =
-        userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionDataWithUsePrimaryName()).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
@@ -93,10 +90,10 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to UnderConstruction When No is submited" in {
+    "must redirect to primary email page when a valid data is submitted" in {
 
       val userAnswersWithNominatedFilingMemberWithSub =
-        userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionDataWithUsePrimaryName()).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -106,13 +103,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "Primary Contact name"))
-
-        val boundForm = formProvider().bind(Map("value" -> "Primary Contact name"))
-
-        val view = application.injector.instanceOf[ContactNameComplianceView]
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url

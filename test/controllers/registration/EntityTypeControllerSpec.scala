@@ -23,6 +23,7 @@ import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.upeEntityTypePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +39,7 @@ class EntityTypeControllerSpec extends SpecBase {
   "EntityType Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdNoOrg)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
@@ -57,7 +58,8 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithId)).build()
+      val ua          = emptyUserAnswers.set(upeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
@@ -96,8 +98,8 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must redirect to GRS for UK Limited company" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val ua = emptyUserAnswers.set(upeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
@@ -128,8 +130,8 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must redirect to GRS for Limited Liability Partnership" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val ua = emptyUserAnswers.set(upeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()

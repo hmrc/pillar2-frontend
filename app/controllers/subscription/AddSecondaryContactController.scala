@@ -47,37 +47,43 @@ class AddSecondaryContactController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(subPrimaryContactNamePage).map{contactName =>
-    val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match{
-      case Some(value) => form.fill(value)
-      case None => form
-    }
-      Ok(view(preparedForm, contactName,mode))
-    }
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
+      .map { contactName =>
+        val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, contactName, mode))
+      }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(subPrimaryContactNamePage).map{contactName =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-        value =>
-          value match {
-            case true =>
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
+      .map { contactName =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
+            value =>
+              value match {
+                case true =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.SecondaryContactNameController.onPageLoad(mode))
 
-            case false =>
+                case false =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
-          }
-      )}.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

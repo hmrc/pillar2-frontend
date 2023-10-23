@@ -22,6 +22,7 @@ import forms.UpeContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.upeContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,24 +34,12 @@ import scala.concurrent.Future
 class UpeContactNameControllerSpec extends SpecBase {
   def getUpeContactNameFormProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   val formProvider = new UpeContactNameFormProvider()
-  def controller(): UpeContactNameController =
-    new UpeContactNameController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      getUpeContactNameFormProvider,
-      stubMessagesControllerComponents(),
-      viewUpeContactName
-    )
 
   "UpeContactName Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersWithNoIdNoContactName =
-        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(upeContactName = None)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdNoContactName)).build()
+      val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
 
@@ -68,14 +57,14 @@ class UpeContactNameControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val userAnswer = emptyUserAnswers.set(upeContactNamePage, "hello").success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("upeContactName", "Ashley Smith"))
 
         val result = route(application, request).value
 
@@ -96,8 +85,8 @@ class UpeContactNameControllerSpec extends SpecBase {
         }
       }
       "if upe is registered in the UK" in {
-        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdNoGRSRegData).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val userAnswer  = emptyUserAnswers.set(upeContactNamePage, "hello").success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
         running(application) {
           val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
@@ -107,25 +96,13 @@ class UpeContactNameControllerSpec extends SpecBase {
         }
       }
       "if any data found from the GRS journey" in {
-        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = None).build()
         running(application) {
           val request = FakeRequest(GET, routes.UpeContactNameController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
 
-        }
-      }
-
-      "if no withoutID data or address is found" in {
-        val userAnswers = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegData).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-        running(application) {
-          val request = FakeRequest(GET, routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 

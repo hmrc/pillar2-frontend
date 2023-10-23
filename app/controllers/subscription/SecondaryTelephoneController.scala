@@ -19,18 +19,14 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
-import models.requests.DataRequest
-import models.subscription.Subscription
-import pages.{SubscriptionPage, subSecondaryCapturePhonePage, subSecondaryContactNamePage}
+import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SecondaryTelephoneView
 
 import javax.inject.Inject
@@ -43,38 +39,44 @@ class SecondaryTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryTelephoneView,
+  view:                      SecondaryTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subSecondaryCapturePhonePage) match {
-        case Some(v) => form.fill(v)
-        case None => form
-      }
-      Ok(view(preparedForm, mode, contactName))
+    request.userAnswers
+      .get(subSecondaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(subSecondaryCapturePhonePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode, contactName))
 
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(subSecondaryContactNamePage).map { contactName =>
-      val form = formProvider(contactName)
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
-              _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
-        )
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(subSecondaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

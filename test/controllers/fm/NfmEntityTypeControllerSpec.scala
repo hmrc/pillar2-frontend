@@ -23,7 +23,7 @@ import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominatedFilingMemberPage
+import pages.fmEntityTypePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,13 +39,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
   "NfmEntityType Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers
-          .set(NominatedFilingMemberPage, validWithIdFmData(isNfmRegisteredInUK = Some(true)))
-          .success
-          .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -73,16 +68,13 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswersWithNominatedFilingMember =
+      val ua =
         emptyUserAnswers
-          .set(
-            NominatedFilingMemberPage,
-            validWithIdFmData(isNfmRegisteredInUK = Some(true), orgType = Some(EntityType.UkLimitedCompany))
-          )
+          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
           .success
           .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -121,7 +113,13 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     }
     "must redirect to GRS for UK Limited company" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
+      val ua =
+        emptyUserAnswers
+          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
@@ -153,7 +151,13 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
     "must redirect to GRS for Limited Liability Partnership" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLLPForFm))
+      val ua =
+        emptyUserAnswers
+          .set(fmEntityTypePage, EntityType.LimitedLiabilityPartnership)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()

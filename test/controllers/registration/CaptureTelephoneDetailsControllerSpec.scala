@@ -22,6 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{upeCapturePhonePage, upeContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -34,24 +35,11 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 
-  def controller(): CaptureTelephoneDetailsController =
-    new CaptureTelephoneDetailsController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewCaptureTelephoneDetailsView
-    )
-
   "Capture Telephone Details Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersData =
-        emptyUserAnswers.set(RegistrationPage, validNoIdRegData(telephoneNumber = None)).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersData)).build()
+      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
@@ -69,8 +57,8 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must redirect to checkYourAnswers when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -89,32 +77,21 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
 
     }
-    "return bad request if required fields are not filled" in {
-      val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithName).success.value
+    "return bad request if wrong data is inputted" in {
+      val userAnswer  = emptyUserAnswers.set(upeCapturePhonePage, "asdads").success.value
       val application = applicationBuilder(Some(userAnswer)).build()
       running(application) {
         val request =
           FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("telephoneNumber", ""))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
     }
 
-    "redirect to journey recovery for GET " when {
-      "no data is found" in {
-        val application = applicationBuilder(userAnswers = None).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-      "upe is registered in the uk" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdNoGRSRegData).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+    "redirect to journey recovery  " when {
+      "no data is found for primary contact for GET" in {
+        val application = applicationBuilder(None).build()
         running(application) {
           val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
@@ -123,36 +100,14 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         }
       }
 
-      "GRS data is found in the database" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-        val application = applicationBuilder(Some(userAnswer)).build()
+      "no contact name is found for POST" in {
+        val application = applicationBuilder(None).build()
         running(application) {
           val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
-      }
-      "no contact name is found" in {
-        val userAnswer  = emptyUserAnswers.set(RegistrationPage, validWithoutIdRegDataWithoutName()).success.value
-        val application = applicationBuilder(Some(userAnswer)).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-    }
-    "Journey recovery when no data for POST" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
-        "telephoneNumber" -> "12321321"
-      )
-      running(application) {
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

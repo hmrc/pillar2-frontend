@@ -18,12 +18,10 @@ package controllers.subscription
 
 import base.SpecBase
 import forms.SecondaryTelephoneFormProvider
-import models.subscription.Subscription
-import models.{MneOrDomestic, NormalMode, UserAnswers}
-import pages.SubscriptionPage
+import models.NormalMode
+import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.subscriptionview.SecondaryTelephoneView
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
@@ -33,19 +31,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
   "SecondaryTelephone Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET if no previous data is found" in {
 
-      val subscription =
-        Subscription(
-          domesticOrMne = MneOrDomestic.Uk,
-          groupDetailStatus = RowStatus.Completed,
-          contactDetailsStatus = RowStatus.InProgress,
-          secondaryContactName = Some("someName")
-        )
-      val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
+      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
 
@@ -54,23 +43,20 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "someName")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val subscription =
-        Subscription(
-          domesticOrMne = MneOrDomestic.Uk,
-          groupDetailStatus = RowStatus.Completed,
-          contactDetailsStatus = RowStatus.InProgress,
-          secondaryContactName = Some("someName"),
-          secondaryContactTelephone = Some("1234567")
-        )
-      val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val ua = emptyUserAnswers
+        .set(subSecondaryContactNamePage, "name")
+        .success
+        .value
+        .set(subSecondaryCapturePhonePage, "1234567")
+        .success
+        .value
+      val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
@@ -90,8 +76,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val bigString   = "asdqwdwq" * 100
+      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+      val bigString   = "123" * 100
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
@@ -104,10 +91,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
-    "must redirect to Not Found page for a GET if no previous existing data is found" in {
+    "must redirect to Journey recovery page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
@@ -117,6 +104,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual NOT_FOUND
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

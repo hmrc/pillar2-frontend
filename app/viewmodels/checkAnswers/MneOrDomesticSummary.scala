@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.subMneOrDomesticPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,10 +28,10 @@ import viewmodels.implicits._
 object MneOrDomesticSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
+    answers.get(subMneOrDomesticPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.domesticOrMne.toString}"))
+          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.toString}"))
         )
       )
       SummaryListRowViewModel(

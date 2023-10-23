@@ -19,10 +19,8 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
-import controllers.routes
 import forms.EntityTypeFormProvider
 import models.grs.EntityType
-import models.requests.DataRequest
 import models.{Mode, UserType}
 import pages.upeEntityTypePage
 import play.api.i18n.I18nSupport

@@ -40,14 +40,13 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       preDataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      viewpageNotAvailable,
       viewNominateFilingMemberYesNo
     )
 
   "Is UPE Registered in UK Confirmation Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoIdCompleted)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
@@ -59,18 +58,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND and the Page Not available view for a direct hit url" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-
-        status(result) mustBe NOT_FOUND
-      }
-    }
-
-    "must redirect to Under Construction page when valid data is submitted with value YES" in {
+    "must redirect to FM UK based? page when valid data is submitted with value YES" in {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
@@ -82,7 +70,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to Check Your Answer page when valid data is submitted with value NO" in {
+    "must redirect to task list page when valid data is submitted with value NO" in {
 
       val request =
         FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)

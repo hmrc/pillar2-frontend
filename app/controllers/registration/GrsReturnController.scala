@@ -19,14 +19,12 @@ package controllers.registration
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Mode
-import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
 import models.registration.GrsResponse
-import pages.{GrsFilingMemberStatusPage, GrsUpStatusPage, fmEntityTypePage, fmGRSResponsePage, upeEntityTypePage, upeGRSResponsePage}
+import pages._
 import play.api.libs.json.Json
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -54,23 +52,23 @@ class GrsReturnController @Inject() (
         case EntityType.UkLimitedCompany =>
           for {
             entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+            isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage,isRegistrationStatus ))
-            - <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage, isRegistrationStatus))
+            -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
         case EntityType.LimitedLiabilityPartnership =>
           for {
             entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-              isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+            isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage,isRegistrationStatus ))
-            - <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage, isRegistrationStatus))
+            -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
@@ -84,23 +82,23 @@ class GrsReturnController @Inject() (
         case EntityType.UkLimitedCompany =>
           for {
             entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+            isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(fmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage,isNfmStatus ))
-            - <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, isNfmStatus))
+            -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
         case EntityType.LimitedLiabilityPartnership =>
           for {
             entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-              isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+            isNfmStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(fmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage,isNfmStatus ))
-            - <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, isNfmStatus))
+            -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

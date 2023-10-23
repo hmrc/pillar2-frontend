@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.subSecondaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -26,8 +26,8 @@ import viewmodels.implicits._
 object SecondaryTelephonePreferenceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
-      val value = if (answer.secondaryTelephonePreference.contains(true)) "site.yes" else "site.no"
+    answers.get(subSecondaryPhonePreferencePage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "secondaryTelephonePreference.checkYourAnswersLabel",
         value = ValueViewModel(value),

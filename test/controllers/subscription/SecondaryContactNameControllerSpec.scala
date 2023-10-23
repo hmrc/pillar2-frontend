@@ -19,16 +19,14 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.SecondaryContactNameFormProvider
-import models.subscription.Subscription
-import models.{MneOrDomestic, NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubscriptionPage
+import pages.subSecondaryContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.subscriptionview.SecondaryContactNameView
 
 import scala.concurrent.Future
@@ -39,17 +37,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
   "SecondaryContactName Controller" when {
 
-    "must return OK and the correct view for a GET" in {
-      val subscription =
-        Subscription(
-          domesticOrMne = MneOrDomestic.Uk,
-          groupDetailStatus = RowStatus.Completed,
-          contactDetailsStatus = RowStatus.InProgress,
-          useContactPrimary = Some(false)
-        )
-      val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    "must return OK and the correct view for a GET if no previous data is found" in {
+      val application = applicationBuilder().build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
@@ -64,18 +53,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val subscription =
-        Subscription(
-          domesticOrMne = MneOrDomestic.Uk,
-          groupDetailStatus = RowStatus.Completed,
-          contactDetailsStatus = RowStatus.InProgress,
-          secondaryContactName = Some("answer"),
-          useContactPrimary = Some(false)
-        )
-
-      val userAnswers = UserAnswers(userAnswersId).set(SubscriptionPage, subscription).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
@@ -85,7 +64,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -113,52 +92,12 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Not Found page for a GET if no previous existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
-
-      running(application) {
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "name")
-
-      running(application) {
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
     "must redirect to secondary contact email when the user enters a valid answer " in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed,
-            secondaryContactName = Some("someName")
-          )
-        )
-        .success
-        .value
-
-      val application = applicationBuilder(Some(userAnswers))
+      val ua = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "someName")
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))

@@ -49,7 +49,7 @@ class SecondaryContactNameController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
       case Some(v) => form.fill(v)
-      case None => form
+      case None    => form
     }
     Ok(view(preparedForm, mode))
   }
@@ -60,10 +60,10 @@ class SecondaryContactNameController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryContactNamePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(mode))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryContactNamePage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(mode))
       )
   }
 

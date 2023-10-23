@@ -46,15 +46,14 @@ class ContactNameComplianceController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match{
+    val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
       case Some(v) => form.fill(v)
-      case None => form
+      case None    => form
     }
-    Ok(view(preparedForm,mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-
     form
       .bindFromRequest()
       .fold(
@@ -68,7 +67,5 @@ class ContactNameComplianceController @Inject() (
           } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode))
       )
   }
-
-
 
 }

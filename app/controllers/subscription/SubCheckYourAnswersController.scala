@@ -40,26 +40,27 @@ class SubCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-
     val list = SummaryListViewModel(
       rows = Seq(
         MneOrDomesticSummary.row(request.userAnswers),
         GroupAccountingPeriodSummary.row(request.userAnswers),
         GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
         GroupAccountingPeriodEndDateSummary.row(request.userAnswers),
+        UseContactPrimarySummary.row(request.userAnswers),
         ContactNameComplianceSummary.row(request.userAnswers),
         ContactEmailAddressSummary.row(request.userAnswers),
         ContactByTelephoneSummary.row(request.userAnswers),
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers),
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
         SecondaryTelephoneSummary.row(request.userAnswers),
-        CaptureSubscriptionAddressAddressSummary.row(request.userAnswers,countryOptions )
+        CaptureSubscriptionAddressAddressSummary.row(request.userAnswers, countryOptions)
       ).flatten
     )
 
-      Ok(view(list))
+    Ok(view(list))
 
   }
 

@@ -20,7 +20,6 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.testdata.Pillar2TestData
 import helpers.{AllMocks, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
@@ -28,7 +27,6 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import pages.NominatedFilingMemberPage
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
@@ -39,7 +37,6 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.RowStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,30 +57,11 @@ trait SpecBase
     with EssentialActionCaller
     with HeaderNames
     with ViewInstances
-    with IntegrationPatience
-    with Pillar2TestData {
+    with IntegrationPatience {
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  def userAnswersWithNoId: UserAnswers = emptyUserAnswers.set(RegistrationPage, validNoIdRegDataforSub()).success.value
-  def userAnswersNfmNoId:  UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmData).success.value
-  def userAnswersNfmYesId: UserAnswers = emptyUserAnswers.set(NominatedFilingMemberPage, validYesIdNfmData).success.value
-  def userAnswersWithNoIdCompleted: UserAnswers =
-    emptyUserAnswers.set(RegistrationPage, validNoIdRegData(isRegistrationStatus = RowStatus.Completed)).success.value
-
-  def userAnswersWithIdForLimitedComp: UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLimitedCompany).success.value
-  def userAnswersWithIdForLLP:         UserAnswers = emptyUserAnswers.set(RegistrationPage, validWithIdRegDataForLLP).success.value
-
-  def userAnswersWithIdForLimitedCompForFm: UserAnswers =
-    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForLimitedComp).success.value
-
-  def userAnswersWithIdForLLPForFm: UserAnswers =
-    emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmRegistrationDataForPartnership).success.value
-
   val userAnswersId: String = "id"
-
-  def userAnswersWithId:      UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationData).success.value
-  def userAnswersWithIdNoOrg: UserAnswers = emptyUserAnswers.set(RegistrationPage, validIdRegistrationDataWithNoOrgType).success.value
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
@@ -113,7 +91,7 @@ trait SpecBase
 
   def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
     override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, validUserAnswersGrsDataForLimitedCompany)))
+      Future.successful(Right(DataRequest(request.request, request.userId, testUserAnswers)))
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {

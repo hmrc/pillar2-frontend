@@ -19,17 +19,14 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.AddSecondaryContactFormProvider
-import models.fm.FilingMember
-import models.subscription.Subscription
-import models.{MneOrDomestic, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.subscriptionview.AddSecondaryContactView
 
 import scala.concurrent.Future
@@ -42,20 +39,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
+        .set(subPrimaryContactNamePage, "name")
         .success
         .value
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed,
-            primaryContactName = Some("asd")
-          )
-        )
-        .success
-        .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -66,26 +53,17 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), "asd", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), "name", NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed,
-            primaryContactName = Some("asd"),
-            useContactPrimary = Some(true)
-          )
-        )
+        .set(subPrimaryContactNamePage, "name")
         .success
         .value
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
+        .set(subAddSecondaryContactPage, true)
         .success
         .value
 
@@ -99,7 +77,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), "asd", NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), "name", NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -109,15 +87,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed,
-            primaryContactName = Some("asd")
-          )
-        )
+        .set(subPrimaryContactNamePage, "name")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -140,14 +110,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must redirect to secondary contact name if they answer yes " in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(
-          SubscriptionPage,
-          Subscription(
-            MneOrDomestic.Uk,
-            contactDetailsStatus = RowStatus.InProgress,
-            groupDetailStatus = RowStatus.Completed
-          )
-        )
+        .set(subPrimaryContactNamePage, "name")
+        .success
+        .value
+        .set(subAddSecondaryContactPage, true)
         .success
         .value
 
@@ -164,6 +130,30 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url
+
+      }
+    }
+    "must redirect to the page where we capture their address if they answer no " in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(subPrimaryContactNamePage, "name")
+        .success
+        .value
+        .set(subAddSecondaryContactPage, false)
+        .success
+        .value
+
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result =
+          route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url
 
       }
     }

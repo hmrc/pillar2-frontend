@@ -40,10 +40,8 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-
     val list = SummaryListViewModel(
       rows = Seq(
-
         UpeNameRegistrationSummary.row(request.userAnswers),
         UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         UpeContactNameSummary.row(request.userAnswers),
@@ -57,6 +55,5 @@ class UpeCheckYourAnswersController @Inject() (
     )
     Ok(view(list))
   }
-
 
 }

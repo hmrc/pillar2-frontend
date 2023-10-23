@@ -45,44 +45,48 @@ class ContactByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(subPrimaryContactNamePage).map{ contactName=>
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subPrimaryPhonePreferencePage) match{
-        case Some(v) => form.fill(v)
-        case None => form
-      }
-      Ok(view(preparedForm,mode,contactName))
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(subPrimaryPhonePreferencePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode, contactName))
 
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers.get(subPrimaryContactNamePage).map { contactName =>
-      val form = formProvider(contactName)
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-          value =>
-            value match {
-              case true =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(request.userAnswers set(subPrimaryPhonePreferencePage, value))
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-              case false =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(request.userAnswers set(subPrimaryPhonePreferencePage, value))
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-            }
-        )
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(subPrimaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            value =>
+              value match {
+                case true =>
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+                case false =>
+                  for {
+                    updatedAnswers <-
+                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
+                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+              }
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
-
 
 }

@@ -85,7 +85,7 @@ class ContactNfmByTelephoneController @Inject() (
               }
           )
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

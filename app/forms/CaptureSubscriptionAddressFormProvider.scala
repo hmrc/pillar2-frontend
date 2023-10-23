@@ -18,7 +18,6 @@ package forms
 
 import forms.mappings.{AddressMappings, Mappings}
 import models.RegisteredAddress
-import models.subscription.SubscriptionAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
@@ -55,6 +54,6 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
           .verifying(maxLength(textLength, "subscriptionAddress.country.error.length"))
-    )(SubscriptionAddress.apply)(SubscriptionAddress.unapply)
+    )(RegisteredAddress.apply)(RegisteredAddress.unapply)
   )
 }

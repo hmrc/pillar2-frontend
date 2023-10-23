@@ -21,14 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import models.subscription.SubscriptionAddress
-import pages.{SubscriptionPage, subRegisteredAddressPage}
-import play.api.data.Form
+import pages.subRegisteredAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
@@ -48,28 +45,28 @@ class CaptureSubscriptionAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form = formProvider()
+  val form        = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
       case Some(v) => form.fill(v)
-      case None => form
+      case None    => form
     }
-    Ok(view(preparedForm,mode, countryList))
+    Ok(view(preparedForm, mode, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
-            value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(subRegisteredAddressPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-          )
-      }
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
+        value =>
+          for {
+            updatedAnswers <-
+              Future.fromTry(request.userAnswers.set(subRegisteredAddressPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      )
+  }
 
 }

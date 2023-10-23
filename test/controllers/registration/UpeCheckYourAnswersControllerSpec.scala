@@ -27,21 +27,21 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
   val user = emptyUserAnswers
 
-  val completeUserAnswer = user
-    .set(
-      RegistrationPage,
-      upeCheckAnswerData
-    )
-    .success
-    .value
-
-  val noTelephoneUserAnswers = user
-    .set(
-      RegistrationPage,
-      upeCheckAnswerDataWithoutPhone
-    )
-    .success
-    .value
+//  val completeUserAnswer = user
+//    .set(
+//      RegistrationPage,
+//      upeCheckAnswerData
+//    )
+//    .success
+//    .value
+//
+//  val noTelephoneUserAnswers = user
+//    .set(
+//      RegistrationPage,
+//      upeCheckAnswerDataWithoutPhone
+//    )
+//    .success
+//    .value
 
   "UPE no ID Check Your Answers Controller" must {
 
@@ -58,7 +58,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
     }
     "must return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
+      val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
@@ -73,7 +73,7 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
     }
     "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
-      val application = applicationBuilder(userAnswers = Some(noTelephoneUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)

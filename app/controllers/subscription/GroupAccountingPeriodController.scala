@@ -40,7 +40,7 @@ class GroupAccountingPeriodController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupAccountingPeriodView,
+  view:                      GroupAccountingPeriodView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -48,11 +48,11 @@ class GroupAccountingPeriodController @Inject() (
   def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-  val pareparedForm = request.userAnswers.get(subAccountingPeriodPage) match{
-    case Some(v) => form.fill(v)
-    case None => form
-  }
-    Ok(view(pareparedForm,mode))
+    val pareparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
+    }
+    Ok(view(pareparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -63,10 +63,10 @@ class GroupAccountingPeriodController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad)
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad)
       )
   }
 

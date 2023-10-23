@@ -36,21 +36,21 @@ class TaskListController @Inject() (
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport with SubscriptionHelpers {
+    with I18nSupport
+    with SubscriptionHelpers {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-
-    val upeStatus = getUpeStatus(request)
-    val fmStatus = getFmStatus(request)
-    val groupDetailStatus = getGroupDetailStatus(request)
+    val upeStatus            = getUpeStatus(request)
+    val fmStatus             = getFmStatus(request)
+    val groupDetailStatus    = getGroupDetailStatus(request)
     val contactDetailsStatus = getContactDetailStatus(request)
 
-    val statusCounter = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+    val count = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
 
     Ok(
       view(
         upeStatus.toString,
-        statusCounter,
+        count,
         filingMemberStatus = fmStatus.toString,
         groupDetailStatus = groupDetailStatus.toString,
         contactDetailsStatus = contactDetailsStatus.toString
@@ -74,6 +74,5 @@ class TaskListController @Inject() (
         counter
     counter
   }
-
 
 }

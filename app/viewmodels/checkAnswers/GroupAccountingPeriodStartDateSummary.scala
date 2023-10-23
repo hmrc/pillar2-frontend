@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.UserAnswers
-import pages.SubscriptionPage
+import pages.subAccountingPeriodPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,8 +29,8 @@ import viewmodels.implicits._
 object GroupAccountingPeriodStartDateSummary {
   val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
-      val startDate = HtmlFormat.escape(answer.accountingPeriod.fold("")(data => dateHelper.formatDateGDS(data.startDate)))
+    answers.get(subAccountingPeriodPage).map { answer =>
+      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.startDate))
       SummaryListRowViewModel(
         key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(startDate))
