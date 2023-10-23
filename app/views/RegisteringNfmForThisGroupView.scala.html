@@ -45,8 +45,8 @@
                 legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeading(Large),
                 items  = RegisteringNfmForThisGroup.options
             )
+            .withHint(Hint(content = Text(messages("registeringNfmForThisGroup.hint"))))
         )
-
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )

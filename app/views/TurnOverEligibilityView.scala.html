@@ -41,6 +41,7 @@
                 legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large),
                 items  = TurnOverEligibility.options
             )
+            .withHint(Hint(content = Text(messages("turnOverEligibility.hint"))))
         )
 
         @govukButton(

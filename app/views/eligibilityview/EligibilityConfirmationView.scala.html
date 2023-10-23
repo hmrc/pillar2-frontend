@@ -33,8 +33,9 @@
         @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
 
             <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
-            <h2 class="govuk-heading-m">@messages("eligibilityconfirmation.h2")</h2>
             <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
+
+            <div class="govuk-inset-text">@messages("eligibilityconfirmation.inset-text")</div>
 
             @govukButton(
                 ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
