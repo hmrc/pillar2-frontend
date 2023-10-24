@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("isUPERegisteredInUK.title"))) {
 
-    @formHelper(action = controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

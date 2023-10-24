@@ -35,6 +35,6 @@ object AddSecondaryContactSummary {
           ActionItemViewModel("site.change", controllers.subscription.routes.AddSecondaryContactController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
         )
-      )
+      ).withCssClass("contact-margin-bottom")
     }
 }

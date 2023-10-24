@@ -42,8 +42,8 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(maxLength(textLength, "upeRegisteredAddress.region.error.length"))
         ),
       "postalCode" ->
-        optionalPostcode(
-          Some("upeRegisteredAddress.postcode.error.invalid"),
+        mandatoryPostcode(
+          "upeRegisteredAddress.messages.error.postcode.required",
           "upeRegisteredAddress.postcode.error.invalid",
           "upeRegisteredAddress.postcode.error.length",
           "countryCode"

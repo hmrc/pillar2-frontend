@@ -85,8 +85,10 @@ trait SubscriptionHelpers {
               }
             }
             .getOrElse(RowStatus.Completed)
-        } else {
+        } else if (!nominated) {
           RowStatus.Completed
+        } else {
+          RowStatus.NotStarted
         }
       }
       .getOrElse(RowStatus.NotStarted)

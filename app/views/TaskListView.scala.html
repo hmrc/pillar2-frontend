@@ -22,7 +22,7 @@
 )
 
 
-@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted", cyaStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -166,12 +166,27 @@
                     <span class="app-task-list__section-number">3. </span>
                     @messages("taskList.task.review.heading")
                 </h2>
+
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                           @messages("taskList.task.review")
+                          @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
+                              <a href="/report-pillar2-top-up-taxes/review-submit/check-answers" aria-describedby="eligibility-status">
+                                 @messages("taskList.task.review")
+                              </a>
+                            } else {
+                             @messages("taskList.task.review")
+                            }
                         </span>
-                        <span class="hmrc-status-tag">@messages("task.status.cannotStartYet")</span>
+                        @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" && cyaStatus =="Completed" ){
+                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" && cyaStatus == "InProgress" ) {
+                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "Completed" && cyaStatus == "NotStarted") {
+                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        } else  {
+                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
+                        }
                     </li>
                 </ul>
             </li>

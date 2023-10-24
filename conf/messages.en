@@ -26,6 +26,17 @@ page_not_available.message=You cannot access this page directly
 
 ###############################################
 
+###############################################
+#
+# Error View
+#
+###############################################
+error.title=There is problem with the page.
+error.heading=There is technical difficulties
+error.message=You cannot access this page directly
+
+###############################################
+
 upeRegisteredAddress.title=Where is the registered office address of {0}?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
@@ -34,7 +45,7 @@ upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or City
 upeRegisteredAddress.region = Region (optional)
-upeRegisteredAddress.postcode = Postal code (if applicable)
+upeRegisteredAddress.postcode = Postal code
 upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 upeRegisteredAddress.country = Country
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
@@ -50,7 +61,9 @@ upeRegisteredAddress.messages.error.addressLine1.length =The first line of the a
 upeRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
 upeRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 upeRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+upeRegisteredAddress.messages.error.postcode.required = Enter the postal code
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+upeRegisteredAddress.error.format = Enter the post code in the correct format
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 
 
@@ -84,7 +97,7 @@ taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
 taskList.task.contact.add = Add Contact details
-taskList.task.contact.edit = Edit Contact details
+taskList.task.contact.edit = Edit contact details
 taskList.task.review.heading = Review and submit
 taskList.task.review = Check your answers
 
@@ -190,10 +203,14 @@ eligibilityconfirmation.h2 = What happens next
 eligibilityconfirmation.p1=You will now need to sign in to HMRC online services to register.
 
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check your answers
-checkYourAnswers.heading.caption = Business details
+upeCheckYourAnswers.title = Check Your Answers
+upeCheckYourAnswers.heading = Check your answers
+upeCheckYourAnswers.heading.caption = Business details
 
+nfmCheckYourAnswers.title = Check Your Answers
+nfmCheckYourAnswers.heading = Check your answers
+nfmCheckYourAnswers.heading.caption = Business details
+nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -223,7 +240,7 @@ contactUPEByTelephone.hint = We will call if we have any questions about the man
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
-contactUPEByTelephone.checkYourAnswersLabel = Telephone contact
+contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden =  your response to whether we make contact by telephone
 captureTelephoneDetails.heading.caption = Business details
 captureTelephoneDetails.title = What is the telephone number for {0}?
@@ -243,8 +260,8 @@ NominateFilingMemberYesNo.insetText =You must have permission from the UPE to no
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
-NominateFilingMemberYesNo.checkYourAnswersLabel = Filing member preference
-NominateFilingMemberYesNo.change.hidden =  your filing member nomination preference
+NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
+NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
 entityType.caption = Business details
 entityType.title = What type of company is the ultimate parent entity?
@@ -433,13 +450,14 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = You need to enter the email address for {0}
 contactEmailAddress.error.length = The email address should be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = Changing contact email
+contactEmailAddress.change.hidden = the first contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
+contactByTelephone.change.hidden = your response to whether we can contact the first contact provided by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
@@ -449,30 +467,73 @@ contactCaptureTelephoneDetails.error.required = You need to enter the telephone 
 contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
+
+
+contactNameCompliance.checkYourAnswersLabel = Contact name
+contactNameCompliance.change.hidden =  the first contact name
+contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
+contactCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
+addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+secondaryContactName.checkYourAnswersLabel = Second contact name
+secondaryContactEmail.checkYourAnswersLabel = Second contact email address
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+
+addSecondaryContact.change.hidden = your response to whether you want to provide a second contact
+secondaryContactName.change.hidden = the second contact name
+secondaryContactEmail.change.hidden = the second contact email address
+secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact provided by telephone
+secondaryTelephone.change.hidden = the telephone number for the second contact
+contactCorrespondenceAddress.checkYourAnswersLabel = Address
+contactCorrespondenceAddress.change.hidden = the contact address
+contactCheckYourAnswers.first = First contact
+contactCheckYourAnswers.heading = Check your answers
+contactCheckYourAnswers.title = Check your answers
+contactCheckYourAnswers.heading.caption = Contact details
+contactCheckYourAnswers.second = Second contact
+contactCheckYourAnswers.address = Contact address
+
+entityType.companyName.checkYourAnswersLabel = Company
+entityType.companyReg.checkYourAnswersLabel = Company Registration Number
+entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
+entityType.Upe.change.hidden = Change the ultimate parent entity
+
+entityType.Nfm.change.hidden = Change the filing member entity
+
+checkYourAnswers.first = First contact
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers
+checkYourAnswers.heading.caption = Review and submit
+checkYourAnswers.upe = Ultimate parent
+checkYourAnswers.nfm = Nominated filing member
+
+
+
+
+
 addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
-addSecondaryContact.checkYourAnswersLabel = addSecondaryContact
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
-addSecondaryContact.change.hidden = AddSecondaryContact
+addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
-secondaryContactName.checkYourAnswersLabel = Secondary Contact
+secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
-secondaryContactName.change.hidden = SecondaryContactName
+
 
 secondaryContactEmail.title =What is the email address for {0}?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
-secondaryContactEmail.checkYourAnswersLabel = Email Address
+secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes
 secondaryContactEmail.error.required = You need to enter the email address for {0}
 secondaryContactEmail.error.length = The email address should be 160 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
-secondaryContactEmail.change.hidden = SecondaryContactEmail
+
 
 secondaryTelephonePreference.title = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
@@ -483,12 +544,26 @@ secondaryTelephonePreference.change.hidden = SecondaryTelephonePreference
 secondaryTelephone.title = What is the telephone number for {0}?
 secondaryTelephone.heading = What is the telephone number for {0}?
 secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
-secondaryTelephone.checkYourAnswersLabel = the second contact telephone number
+secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
-secondaryTelephone.change.hidden = SecondaryTelephone
 
+checkYourAnswers.furtherRegistrationDetail = Further registration details
+checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
+checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+site.confirm.send = Confirm and send
+
+
+
+registrationConfirmation.title = Registration complete
+registrationConfirmation.registrationComplete = Registration complete
+registrationConfirmation.topup = Pillar 2 top-up tax ID
+registrationConfirmation.whatHappensNext = What happens next
+registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
+registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
+registrationConfirmation.whatDidYouThink = What did you think of this service
+registrationConfirmation.takes30 = (takes 30 seconds)
 
 subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
@@ -519,3 +594,20 @@ subscriptionAddress.country = Country
 subscriptionAddress.country.hint = Choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
+
+dashboard.title = Your Pillar 2 top-up taxes account
+dashboard.heading = Your Pillar 2 top-up taxes account
+dashboard.topTaxes = Pillar 2 top-up taxes ID:
+dashboard.registrationDate = Registration date:
+dashboard.upe = Ultimate parent entity:
+dashboard.payments = Payments
+dashboard.noPayment = You have no payments due
+dashboard.voluntaryPayment = Make a voluntary payment
+dashboard.paymentHistory = View your payment history
+dashboard.requestPayment = Request a repayment
+dashboard.manageAccount = Manage your account
+dashboard.contactDetails = View and amend contact details
+dashboard.groupDetails = View and amend group details
+dashboard.p1 = This service is being continuously updated. You can anticipate the introduction of more features in line with the development of OECD''s policy.
+dashboard.p2 = For more information, please refer to the
+dashboard.link = draft guidance (opens in new tab)
