@@ -38,7 +38,7 @@ class Kb750IneligibleControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Based on your answers, this group does not need to register for Pillar 2 top-up tax"
+        "Based on your answers, this group does not need to report Pillar 2 top-up taxes"
       )
     }
 
