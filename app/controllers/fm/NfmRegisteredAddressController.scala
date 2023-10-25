@@ -20,9 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
-import models.{Mode, RegisteredAddress}
+import models.Mode
 import pages.{fmNameRegistrationPage, fmRegisteredAddressPage}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,7 +44,7 @@ class NfmRegisteredAddressController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[RegisteredAddress] = formProvider()
+  val form        = formProvider()
   val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers

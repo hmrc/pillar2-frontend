@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-import models.{Mode, RegisteredAddress}
+import models.{Mode, UKAddress}
 import pages.{upeNameRegistrationPage, upeRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -46,7 +46,7 @@ class UpeRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form: Form[RegisteredAddress] = formProvider()
+  val form: Form[UKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(upeNameRegistrationPage)

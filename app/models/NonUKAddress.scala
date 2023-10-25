@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.fm
+package models
 
 /*
  * Copyright 2023 HM Revenue & Customs
@@ -33,15 +33,24 @@ package models.fm
  */
 
 import play.api.libs.json.{Json, OFormat}
+import play.twirl.api.HtmlFormat
 
-case class NfmRegisteredAddress(
+case class NonUKAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
   addressLine4: Option[String],
   postalCode:   Option[String],
   countryCode:  String
-)
-object NfmRegisteredAddress {
-  implicit val format: OFormat[NfmRegisteredAddress] = Json.format[NfmRegisteredAddress]
+) {
+
+  val field1   = HtmlFormat.escape(addressLine1).toString + "<br>"
+  val field2   = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
+  val field3   = HtmlFormat.escape(addressLine3).toString + "<br>"
+  val field4   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
+  val postcode = if (postalCode.isDefined) HtmlFormat.escape(postalCode.mkString("")) + "<br>" else ""
+  val fullAddress: String = field1 + field2 + field3 + field4 + postcode
+}
+object NonUKAddress {
+  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
 }

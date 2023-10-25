@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package models.fm
 
-import models.UKAddress
-import play.api.libs.json.JsPath
+import models.NonUKAddress
+import play.api.libs.json.{Json, OFormat}
 
-case object upeRegisteredAddressPage extends QuestionPage[UKAddress] {
+case class FilingMemberNonUKData(
+  registeredFmName:    String,
+  registeredFmAddress: NonUKAddress,
+  contactName:         String,
+  emailAddress:        String,
+  phonePreference:     Boolean,
+  telephone:           Option[String] = None
+)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "upeRegisteredAddress"
+object FilingMemberNonUKData {
+  implicit val format: OFormat[FilingMemberNonUKData] = Json.format[FilingMemberNonUKData]
 }

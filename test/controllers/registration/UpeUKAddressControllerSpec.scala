@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class UpeRegisteredAddressControllerSpec extends SpecBase {
+class UpeUKAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
 
   "UpeRegisteredAddress Controller" when {

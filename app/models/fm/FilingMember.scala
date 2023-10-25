@@ -16,17 +16,18 @@
 
 package models.fm
 
+import models.grs.EntityType
+import models.registration.GrsResponse
 import play.api.libs.json.{Json, OFormat}
 
-case class WithoutIdNfmData(
-  registeredFmName:      String,
-  registeredFmAddress:   Option[NfmRegisteredAddress] = None,
-  fmContactName:         Option[String] = None,
-  fmEmailAddress:        Option[String] = None,
-  contactNfmByTelephone: Option[Boolean] = None,
-  telephoneNumber:       Option[String] = None
+case class FilingMember(
+  isNfmRegisteredInUK: Boolean,
+  orgType:             Option[EntityType] = None,
+  withIdRegData:       Option[GrsResponse] = None,
+  withoutIdRegData:    Option[FilingMemberNonUKData] = None,
+  safeId:              Option[String] = None
 )
 
-object WithoutIdNfmData {
-  implicit val format: OFormat[WithoutIdNfmData] = Json.format[WithoutIdNfmData]
+object FilingMember {
+  implicit val format: OFormat[FilingMember] = Json.format[FilingMember]
 }

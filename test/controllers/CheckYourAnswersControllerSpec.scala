@@ -18,15 +18,14 @@ package controllers
 
 import base.SpecBase
 import connectors.{RegistrationConnector, UserAnswersConnectors}
-import models.fm.{FilingMember, NfmRegisteredAddress, WithoutIdNfmData}
-import models.registration.{Registration, RegistrationInfo, WithoutIdRegData}
+import models.fm.{NfmRegisteredAddress, WithoutIdNfmData}
+import models.registration.WithoutIdRegData
 import models.requests.DataRequest
 import models.subscription.Subscription
-import models.{EnrolmentInfo, MandatoryInformationMissingError, MneOrDomestic, SafeId, SubscriptionCreateError, UpeRegisteredAddress, UserAnswers}
+import models.{EnrolmentInfo, MandatoryInformationMissingError, MneOrDomestic, SafeId, SubscriptionCreateError, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
@@ -54,7 +53,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       mockUserAnswersConnectors,
       mockTaxEnrolmentService,
       mockControllerComponents,
-      viewpageNotAvailable,
       mockCheckYourAnswersView,
       mockCountryOptions
     )

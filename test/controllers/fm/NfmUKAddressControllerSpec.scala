@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class NfmRegisteredAddressControllerSpec extends SpecBase {
+class NfmUKAddressControllerSpec extends SpecBase {
   val formProvider = new NfmRegisteredAddressFormProvider()
 
   "Nfm Registered Address Controller" must {

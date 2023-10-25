@@ -72,9 +72,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
             case false =>
               for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsUpStatusPage, RowStatus.InProgress))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
           }

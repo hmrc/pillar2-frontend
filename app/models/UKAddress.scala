@@ -35,12 +35,12 @@ package models
 import play.api.libs.json.{Json, OFormat}
 import play.twirl.api.HtmlFormat
 
-case class RegisteredAddress(
+case class UKAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
   addressLine4: Option[String],
-  postalCode:   Option[String],
+  postalCode:   String,
   countryCode:  String
 ) {
 
@@ -48,9 +48,9 @@ case class RegisteredAddress(
   val field2   = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
   val field3   = HtmlFormat.escape(addressLine3).toString + "<br>"
   val field4   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
-  val postcode = if (postalCode.isDefined) HtmlFormat.escape(postalCode.mkString("")) + "<br>" else ""
+  val postcode = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 }
-object RegisteredAddress {
-  implicit val format: OFormat[RegisteredAddress] = Json.format[RegisteredAddress]
+object UKAddress {
+  implicit val format: OFormat[UKAddress] = Json.format[UKAddress]
 }

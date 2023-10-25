@@ -42,35 +42,28 @@ class ContactCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-//    request.userAnswers.get(subAddSecondaryContactPage).map { provided =>
-//      if (provided)
-//        (for {
-//          primaryName <- request.userAnswers.get(subPrimaryContactNamePage)
-//          primaryEmail <- request.userAnswers.get(subPrimaryEmailPage)
-//          primaryEmail <- request.userAnswers.get(subPrimaryEmailPage)
-//
-//        })
-//    }
-    val list = SummaryListViewModel(
-      rows = Seq(UseContactPrimarySummary.row(request.userAnswers), UseContactPrimarySummary.row(request.userAnswers)).flatten
+    val primaryContactList = SummaryListViewModel(
+      rows = Seq(
+        ContactNameComplianceSummary.row(request.userAnswers),
+        ContactEmailAddressSummary.row(request.userAnswers),
+        ContactByTelephoneSummary.row(request.userAnswers),
+        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+      ).flatten
+    )
+    val secondaryPreference = SummaryListViewModel(
+      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
+    )
+    val secondaryContactList = SummaryListViewModel(
+      rows = Seq(
+        SecondaryContactNameSummary.row(request.userAnswers),
+        SecondaryContactEmailSummary.row(request.userAnswers),
+        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+        SecondaryTelephoneSummary.row(request.userAnswers)
+      ).flatten
     )
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    Ok(view())
-
+    Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
   }
 }
-/*
-UseContactPrimarySummary.row(request.userAnswers),
-ContactNameComplianceSummary.row(request.userAnswers),
-ContactEmailAddressSummary.row(request.userAnswers),
-ContactByTelephoneSummary.row(request.userAnswers),
-ContactCaptureTelephoneDetailsSummary.row(request.userAnswers),
-AddSecondaryContactSummary.row(request.userAnswers),
-SecondaryContactNameSummary.row(request.userAnswers),
-SecondaryContactEmailSummary.row(request.userAnswers),
-SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-SecondaryTelephoneSummary.row(request.userAnswers),
-CaptureSubscriptionAddressAddressSummary.row(request.userAnswers, countryOptions)
- */

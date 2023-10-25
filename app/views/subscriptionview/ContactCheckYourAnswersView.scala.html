@@ -22,8 +22,8 @@
     govukButton: GovukButton
 )
 
-<!--list: SummaryList, addSecondaryContactList:SummaryList, listSecondary: SummaryList, address: SummaryList-->
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@(list: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 <div class="contact-details">
@@ -36,7 +36,6 @@
 
     @if(listSecondary.rows.length!=0){
         @govukSummaryList(listSecondary)
-      }
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)
     }

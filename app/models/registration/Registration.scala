@@ -16,18 +16,27 @@
 
 package models.registration
 
-import models.UKAddress
+import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
 
-case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  UKAddress,
-  upeContactName:        String,
-  emailAddress:          String,
-  contactUpeByTelephone: Boolean,
-  telephoneNumber:       Option[String] = None
+case class Registration(
+  isUPERegisteredInUK: Boolean,
+  orgType:             Option[EntityType] = None,
+  withIdRegData:       Option[GrsResponse] = None,
+  withoutIdRegData:    Option[WithoutIdRegData] = None,
+  registrationInfo:    Option[RegistrationInfo] = None
 )
 
-object WithoutIdRegData {
-  implicit val format: OFormat[WithoutIdRegData] = Json.format[WithoutIdRegData]
+object Registration {
+  implicit val format: OFormat[Registration] = Json.format[Registration]
+}
+
+case class RegistrationInfo(
+  crn:    String,
+  utr:    String,
+  safeId: String
+)
+
+object RegistrationInfo {
+  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
 }
