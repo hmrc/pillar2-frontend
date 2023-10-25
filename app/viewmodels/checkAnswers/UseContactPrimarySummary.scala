@@ -32,7 +32,7 @@ object UseContactPrimarySummary {
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "useContactPrimary.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape(value))),
+        value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.UseContactPrimaryController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("useContactPrimary.change.hidden"))

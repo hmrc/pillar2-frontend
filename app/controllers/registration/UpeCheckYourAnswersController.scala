@@ -19,7 +19,6 @@ package controllers.registration
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.upePhonePreferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,10 +46,7 @@ class UpeCheckYourAnswersController @Inject() (
         UpeContactNameSummary.row(request.userAnswers),
         UpeContactEmailSummary.row(request.userAnswers),
         UpeTelephonePreferenceSummary.row(request.userAnswers),
-        request.userAnswers.get(upePhonePreferencePage) match {
-          case Some(true) => UPEContactTelephoneSummary.row(request.userAnswers)
-          case _          => None
-        }
+        UPEContactTelephoneSummary.row(request.userAnswers)
       ).flatten
     )
     Ok(view(list))

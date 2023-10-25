@@ -19,19 +19,22 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.fmRegisteredAddressPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object NfmRegisteredAddressSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(fmRegisteredAddressPage)
       .map { answer =>
+        val country = countryOptions.getCountryNameFromCode(answer.countryCode)
         SummaryListRowViewModel(
           key = "nfmRegisteredAddress.checkYourAnswersLabel",
-          value = ValueViewModel(answer.fullAddress),
+          value = ValueViewModel(HtmlContent(answer.fullAddress ++ country)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nfmRegisteredAddress.checkYourAnswersLabel.hidden"))

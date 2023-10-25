@@ -33,7 +33,7 @@ object UpeRegisteredAddressSummary {
       val country = countryOptions.getCountryNameFromCode(answer.countryCode)
       SummaryListRowViewModel(
         key = "upeRegisteredAddress.checkYourAnswersLabel",
-        value = ValueViewModel(answer.fullAddress ++ country),
+        value = ValueViewModel(HtmlContent(answer.fullAddress ++ country)),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("upeRegisteredAddress.change.hidden"))

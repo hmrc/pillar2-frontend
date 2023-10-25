@@ -43,14 +43,11 @@ class NfmCheckYourAnswersController @Inject() (
     val list = SummaryListViewModel(
       rows = Seq(
         NfmNameRegistrationSummary.row(request.userAnswers),
-        NfmRegisteredAddressSummary.row(request.userAnswers),
+        NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
         NfmTelephonePreferenceSummary.row(request.userAnswers),
-        request.userAnswers.get(fmPhonePreferencePage) match {
-          case Some(true) => NfmContactTelephoneSummary.row(request.userAnswers)
-          case _          => None
-        }
+        NfmContactTelephoneSummary.row(request.userAnswers)
       ).flatten
     )
     Ok(view(list))

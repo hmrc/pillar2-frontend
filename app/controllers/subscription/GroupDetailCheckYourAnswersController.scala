@@ -28,7 +28,7 @@ import viewmodels.govuk.summarylist._
 import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.SubCheckYourAnswersView
 
-class SubCheckYourAnswersController @Inject() (
+class GroupDetailCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
@@ -45,18 +45,7 @@ class SubCheckYourAnswersController @Inject() (
         MneOrDomesticSummary.row(request.userAnswers),
         GroupAccountingPeriodSummary.row(request.userAnswers),
         GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
-        GroupAccountingPeriodEndDateSummary.row(request.userAnswers),
-        UseContactPrimarySummary.row(request.userAnswers),
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers),
-        AddSecondaryContactSummary.row(request.userAnswers),
-        SecondaryContactNameSummary.row(request.userAnswers),
-        SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers),
-        CaptureSubscriptionAddressAddressSummary.row(request.userAnswers, countryOptions)
+        GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
       ).flatten
     )
 
