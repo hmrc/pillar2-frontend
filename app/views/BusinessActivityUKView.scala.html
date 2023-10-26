@@ -42,6 +42,7 @@
                 legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large),
                 items = BusinessActivityUK.options
             )
+            .withHint(Hint(content = Text(messages("businessActivityUK.hint"))))
         )
 
         @govukButton(

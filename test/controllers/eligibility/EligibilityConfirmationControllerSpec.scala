@@ -38,7 +38,7 @@ class EligibilityConfirmationControllerSpec extends SpecBase {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "You need to register this group for Pillar 2 top-up tax"
+        "You need to register this group to report Pillar 2 top-up taxes"
       )
 
     }

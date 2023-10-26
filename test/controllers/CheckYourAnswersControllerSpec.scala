@@ -31,12 +31,6 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.RegisterWithoutIdService
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.auth.core.{AffinityGroup, Assistant, CredentialRole, Enrolments}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -338,9 +332,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CheckYourAnswersView]
+        val list = SummaryListViewModel(Seq.empty)
+
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Company Registration Number"
