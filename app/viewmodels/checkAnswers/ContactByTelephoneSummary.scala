@@ -49,7 +49,7 @@ object ContactByTelephoneSummary {
 
       SummaryListRowViewModel(
         key = "contactByTelephone.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape(value))),
+        value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.ContactByTelephoneController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))

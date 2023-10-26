@@ -56,7 +56,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       mockCheckYourAnswersView,
       mockCountryOptions
     )
-
+  val nfmNoID = emptyUserAnswers.set()
+  val nfmId   = ???
+  val upNoID  = ???
+  val upId    = ???
   "Check Your Answers Controller" must {
 
     "must return Not Found and the correct view with empty user answers" in {

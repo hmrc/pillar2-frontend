@@ -71,17 +71,30 @@ class CheckYourAnswersController @Inject() (
         UpeContactNameSummary.row(request.userAnswers),
         UpeContactEmailSummary.row(request.userAnswers),
         UpeTelephonePreferenceSummary.row(request.userAnswers),
-        UPEContactTelephoneSummary.row(request.userAnswers)
+        UPEContactTelephoneSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyNameUpeSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyRegUpeSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyUtrUpeSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyNameUpeSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyRegUpeSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyUtrUpeSummary.row(request.userAnswers)
       ).flatten
     )
     val nfmSummaryList = SummaryListViewModel(
       rows = Seq(
+        NominateFilingMemberYesNoSummary.row(request.userAnswers),
         NfmNameRegistrationSummary.row(request.userAnswers),
         NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
         NfmTelephonePreferenceSummary.row(request.userAnswers),
-        NfmContactTelephoneSummary.row(request.userAnswers)
+        NfmContactTelephoneSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
+        EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
+        EntityTypePartnershipCompanyUtrNfmSummary.row(request.userAnswers)
       ).flatten
     )
     val primaryContactList = SummaryListViewModel(

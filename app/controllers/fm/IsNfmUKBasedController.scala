@@ -63,9 +63,9 @@ class IsNfmUKBasedController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
                 updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
-                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
 
             case false =>

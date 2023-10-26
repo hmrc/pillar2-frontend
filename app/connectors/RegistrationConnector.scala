@@ -65,7 +65,6 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
         val fmsafeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-//        val nfmData  = userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Fm Registration Data not available"))
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
           case _           => None
