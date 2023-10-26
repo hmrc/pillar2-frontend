@@ -19,7 +19,7 @@ package pages
 import play.api.libs.json.JsPath
 import utils.RowStatus
 
-case object GrsUpStatusPage extends QuestionPage[RowStatus] {
+case object GrsUpeStatusPage extends QuestionPage[RowStatus] {
 
   override def path: JsPath = JsPath \ toString
 

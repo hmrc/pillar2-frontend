@@ -16,11 +16,39 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object NominateFilingMemberPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "NominateFilingMember"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers.remove(fmRegisteredInUKPage).flatMap(
+        _.remove(fmNameRegistrationPage).flatMap(
+          _.remove(fmRegisteredAddressPage).flatMap(
+            _.remove(fmContactNamePage).flatMap(
+              _.remove(fmContactEmailPage).flatMap(
+                _.remove(fmPhonePreferencePage).flatMap(
+                  _.remove(fmCapturePhonePage).flatMap(
+                    _.remove(GrsFilingMemberStatusPage).flatMap(
+                      _.remove(fmEntityTypePage).flatMap(
+                        _.remove(fmGRSResponsePage)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

@@ -16,11 +16,41 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object upeRegisteredInUKPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "upeRegisteredInUK"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(true)) {
+      userAnswers
+        .remove(upeNameRegistrationPage)
+        .flatMap(
+          _.remove(upeRegisteredAddressPage).flatMap(
+            _.remove(upeContactNamePage).flatMap(
+              _.remove(upeContactEmailPage).flatMap(
+                _.remove(upePhonePreferencePage).flatMap(
+                  _.remove(upeCapturePhonePage)
+                )
+              )
+            )
+          )
+        )
+    } else if (value.contains(false)) {
+      userAnswers
+        .remove(GrsUpeStatusPage)
+        .flatMap(
+          _.remove(upeEntityTypePage).flatMap(
+            _.remove(upeGRSResponsePage)
+          )
+        )
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

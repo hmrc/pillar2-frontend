@@ -56,7 +56,7 @@ class GrsReturnController @Inject() (
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage, isRegistrationStatus))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
             -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
 
@@ -67,7 +67,7 @@ class GrsReturnController @Inject() (
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
                            )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpStatusPage, isRegistrationStatus))
+            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
             -            <- userAnswersConnectors.save(userAnswers2.id, Json.toJson(userAnswers2.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
       }

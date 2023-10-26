@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import pages.{GrsUpStatusPage, upeRegisteredInUKPage}
+import pages.{GrsUpeStatusPage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -66,9 +66,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
             case true =>
               for {
                 updatedAnswers  <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsUpStatusPage, RowStatus.InProgress))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
                 _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
             case false =>
               for {

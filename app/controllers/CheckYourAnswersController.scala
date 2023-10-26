@@ -129,8 +129,8 @@ class CheckYourAnswersController @Inject() (
             .map { ukBased =>
               if (ukBased) {
                 (for {
-                  entityType <- request.userAnswers.get(upeEntityTypePage)
-                  grsData    <- request.userAnswers.get(upeGRSResponsePage)
+                  entityType <- request.userAnswers.get(fmEntityTypePage)
+                  grsData    <- request.userAnswers.get(fmGRSResponsePage)
                 } yield Right(
                   FilingMember(isNfmRegisteredInUK = ukBased, orgType = Some(entityType), withIdRegData = Some(grsData), withoutIdRegData = None)
                 )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
@@ -198,6 +198,8 @@ class CheckYourAnswersController @Inject() (
         }
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
+  // noinspection ScalaStyle
   private def createUltimateParent(request: DataRequest[AnyContent]): Either[Result, Registration] =
     request.userAnswers
       .get(upeRegisteredInUKPage)

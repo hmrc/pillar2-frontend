@@ -21,12 +21,13 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.IsNFMUKBasedFormProvider
 import models.Mode
-import pages.fmRegisteredInUKPage
+import pages.{GrsFilingMemberStatusPage, fmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
 
 import javax.inject.Inject
@@ -53,7 +54,6 @@ class IsNfmUKBasedController @Inject() (
     }
     Ok(view(preparedForm, mode))
   }
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
@@ -63,9 +63,9 @@ class IsNfmUKBasedController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
+                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
 
             case false =>

@@ -18,7 +18,7 @@ package helpers
 
 import models.registration.upeContactInformation
 import models.requests.DataRequest
-import pages.{GrsFilingMemberStatusPage, GrsUpStatusPage, NominateFilingMemberPage, fmCapturePhonePage, fmContactEmailPage, fmContactNamePage, fmEntityTypePage, fmGRSResponsePage, fmNameRegistrationPage, fmPhonePreferencePage, fmRegisteredAddressPage, fmRegisteredInUKPage, subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage, subRegisteredAddressPage, upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upeEntityTypePage, upeGRSResponsePage, upeNameRegistrationPage, upePhonePreferencePage, upeRegisteredAddressPage, upeRegisteredInUKPage}
+import pages.{GrsFilingMemberStatusPage, GrsUpeStatusPage, NominateFilingMemberPage, fmCapturePhonePage, fmContactEmailPage, fmContactNamePage, fmEntityTypePage, fmGRSResponsePage, fmNameRegistrationPage, fmPhonePreferencePage, fmRegisteredAddressPage, fmRegisteredInUKPage, subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage, subRegisteredAddressPage, upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upeEntityTypePage, upeGRSResponsePage, upeNameRegistrationPage, upePhonePreferencePage, upeRegisteredAddressPage, upeRegisteredInUKPage}
 import play.api.mvc.AnyContent
 import utils.RowStatus
 
@@ -47,7 +47,7 @@ trait SubscriptionHelpers {
           (for {
             entityType <- request.userAnswers.get(upeEntityTypePage)
             grsData    <- request.userAnswers.get(upeGRSResponsePage)
-            grsStatus  <- request.userAnswers.get(GrsUpStatusPage)
+            grsStatus  <- request.userAnswers.get(GrsUpeStatusPage)
           } yield grsStatus).getOrElse(RowStatus.InProgress)
         }
       }
