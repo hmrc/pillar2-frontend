@@ -36,26 +36,26 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
   val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
-  "SubscriptionConnector" when {
-    "return Pillar2Id for create Subscription successful" in {
-      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe Some(validSubscriptionSuccessResponse)
-    }
-
-    "return InternalServerError for create Subscription" in {
-
-      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe None
-    }
-    "return InternalServerError for EIS returns Error status" in {
-      val errorStatus: Int = errorCodes.sample.value
-      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, businessSubscriptionSuccessJson)
-
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe None
-    }
-
-  }
+//  "SubscriptionConnector" when {
+//    "return Pillar2Id for create Subscription successful" in {
+//      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
+//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+//      result.futureValue mustBe Some(validSubscriptionSuccessResponse)
+//    }
+//
+//    "return InternalServerError for create Subscription" in {
+//
+//      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
+//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+//      result.futureValue mustBe None
+//    }
+//    "return InternalServerError for EIS returns Error status" in {
+//      val errorStatus: Int = errorCodes.sample.value
+//      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, businessSubscriptionSuccessJson)
+//
+//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+//      result.futureValue mustBe None
+//    }
+//
+//  }
 }

@@ -19,7 +19,7 @@ package helpers
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig}
-import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner}
+import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -105,7 +105,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     hmrcTimeoutDilogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     hmrcScripts,
-    new StandardAlphaBanner
+    new StandardBetaBanner
   )
 
   val viewGroupTerritories: GroupTerritoriesView =

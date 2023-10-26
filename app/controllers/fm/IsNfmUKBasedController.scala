@@ -54,6 +54,15 @@ class IsNfmUKBasedController @Inject() (
     }
     Ok(view(preparedForm, mode))
   }
+
+  /*
+  updatedAnswers1 <- Future.fromTry(
+                       request.userAnswers
+                         .get(GrsUpeStatusPage)
+                         .map(updatedAnswers.set(GrsUpeStatusPage, _))
+                         .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
+                     )
+   */
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
@@ -63,9 +72,14 @@ class IsNfmUKBasedController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
+                updatedAnswers1 <- Future.fromTry(
+                                     request.userAnswers
+                                       .get(GrsFilingMemberStatusPage)
+                                       .map(updatedAnswers.set(GrsFilingMemberStatusPage, _))
+                                       .getOrElse(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
+                                   )
+                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
 
             case false =>

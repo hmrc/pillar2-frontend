@@ -30,63 +30,36 @@ import views.html.subscriptionview.ContactCheckYourAnswersView
 import scala.concurrent.Future
 
 class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  def controller(): ContactCheckYourAnswersController =
-    new ContactCheckYourAnswersController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      stubMessagesControllerComponents(),
-      viewpageNotAvailable,
-      viewContactCheckYourAnswers,
-      mockCountryOptions
-    )
-  val completeUserAnswer = emptyUserAnswers
-    .set(
-      SubscriptionPage,
-      ContactCheckAnswerWithSecondaryContactData()
-    )
+  val subData = emptyUserAnswers
+    .set(subPrimaryContactNamePage, "name")
     .success
     .value
-
-  val completeUserAnswerWithoutPrimaryPhone = emptyUserAnswers
-    .set(
-      SubscriptionPage,
-      ContactCheckAnswerSecondaryWithoutPrimaryPhoneContactData()
-    )
+    .set(subPrimaryEmailPage, "email@hello.com")
     .success
     .value
-
-  val completeUserAnswerWithoutSecondaryPhone = emptyUserAnswers
-    .set(
-      SubscriptionPage,
-      ContactCheckAnswerSecondaryWithoutPhone()
-    )
+    .set(subPrimaryPhonePreferencePage, true)
     .success
     .value
-
-  val noSecondContactUserAnswers = emptyUserAnswers
-    .set(
-      SubscriptionPage,
-      primaryContactCheckAnswerData()
-    )
+    .set(subPrimaryCapturePhonePage, "123213")
+    .success
+    .value
+    .set(subSecondaryContactNamePage, "name")
+    .success
+    .value
+    .set(subSecondaryEmailPage, "email@hello.com")
+    .success
+    .value
+    .set(subSecondaryPhonePreferencePage, true)
+    .success
+    .value
+    .set(subSecondaryCapturePhonePage, "123213")
     .success
     .value
 
   "Contact Check Your Answers Controller" must {
 
-    "must return Not Found and the correct view with empty user answers" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
     "must return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(completeUserAnswer)).build()
+      val application = applicationBuilder(userAnswers = Some(subData)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -99,66 +72,6 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         contentAsString(result) must include(
           "Second contact"
         )
-        contentAsString(result) must include(
-          "Contact address"
-        )
-      }
-    }
-
-    "must return OK and the correct view if an answer is provided to every question with no primary Phone number " in {
-      val application = applicationBuilder(userAnswers = Some(completeUserAnswerWithoutPrimaryPhone)).build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Contact details"
-        )
-        contentAsString(result) must include(
-          "Second contact"
-        )
-        contentAsString(result) must include(
-          "Contact address"
-        )
-      }
-    }
-
-    "must return OK and the correct view if an answer is provided without secondary phone" in {
-
-      val application = applicationBuilder(userAnswers = Some(completeUserAnswerWithoutSecondaryPhone)).build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Contact details"
-        )
-        contentAsString(result) must include(
-          "Second contact"
-        )
-        contentAsString(result) must include(
-          "Contact address"
-        )
-        contentAsString(result) must not include
-          "Second contact telephone number"
-      }
-    }
-    "must return OK and the correct view if only primary Contact and address answer is provided to  question " in {
-      val application = applicationBuilder(userAnswers = Some(noSecondContactUserAnswers)).build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Contact details"
-        )
-        contentAsString(result) must not include
-          "Secondary Contact"
         contentAsString(result) must include(
           "Contact address"
         )

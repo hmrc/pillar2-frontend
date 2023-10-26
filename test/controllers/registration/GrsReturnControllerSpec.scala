@@ -18,6 +18,7 @@ package controllers.registration
 
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
+import models.NormalMode
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import org.mockito.ArgumentMatchers.any
@@ -101,7 +102,7 @@ class GrsReturnControllerSpec extends SpecBase {
         when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse))
 
-        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe(NormalMode, "journeyId").url)
 
         val result = route(application, request).value
 
@@ -124,7 +125,7 @@ class GrsReturnControllerSpec extends SpecBase {
         when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
-        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe(NormalMode, "journeyId").url)
 
         val result = route(application, request).value
 
@@ -148,7 +149,7 @@ class GrsReturnControllerSpec extends SpecBase {
         when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse))
 
-        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm(NormalMode, "journeyId").url)
 
         val result = route(application, request).value
 
@@ -171,7 +172,7 @@ class GrsReturnControllerSpec extends SpecBase {
         when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
-        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm(NormalMode, "journeyId").url)
 
         val result = route(application, request).value
 
