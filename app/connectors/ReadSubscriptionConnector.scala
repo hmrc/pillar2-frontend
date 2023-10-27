@@ -40,11 +40,11 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
         case response =>
           Some(response)
         case errorResponse =>
-          logger.warn(s"Create Subscription failed with Status")
-          Some(errorResponse)
+          logger.warn(s"read Subscription failed with reference " + errorResponse.plrReference)
+          None
       }
       .recover { case e: Exception =>
-        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when create subscription was called")
+        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when read subscription was called")
         None
       }
   }

@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{ReadSubscriptionConnector}
+import connectors.ReadSubscriptionConnector
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionResponse}
 import models.{ApiError, SubscriptionCreateError}
 import uk.gov.hmrc.http.HeaderCarrier
