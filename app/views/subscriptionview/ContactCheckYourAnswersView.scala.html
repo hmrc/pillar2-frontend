@@ -23,22 +23,18 @@
 )
 
 
-@(list: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 <div class="contact-details">
     <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
 <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
-    @govukSummaryList(list)
+    @govukSummaryList(listPrimary)
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
         @govukSummaryList(addSecondaryContactList)
-
-    @if(listSecondary.rows.length!=0){
-        @govukSummaryList(listSecondary)
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)
-    }
 
     <br>
     @govukButton(

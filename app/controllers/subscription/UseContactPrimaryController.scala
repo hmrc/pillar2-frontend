@@ -83,7 +83,7 @@ class UseContactPrimaryController @Inject() (
                     updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
                     updatedAnswers4 <-
                       Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers2)))
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                     _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>

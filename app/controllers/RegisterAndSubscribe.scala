@@ -105,7 +105,8 @@ trait RegisterAndSubscribe extends Logging {
             logger.warn(s"Error $value")
             value match {
               case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
-              case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+              //here
+              case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
             }
         }
       case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
