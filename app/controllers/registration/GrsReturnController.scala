@@ -22,7 +22,7 @@ import models.Mode
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
-import models.registration.GrsResponse
+import models.registration.{GrsResponse, RegistrationInfo}
 import pages._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -45,6 +45,14 @@ class GrsReturnController @Inject() (
 )(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController {
 
+
+  /*
+  registrationInfo = Some(
+    RegistrationInfo(
+      entityRegData.companyProfile.companyNumber,
+      entityRegData.ctutr,
+      entityRegData.registration.registeredBusinessPartnerId.getOrElse(
+   */
   def continueUpe(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(upeEntityTypePage)
@@ -52,6 +60,9 @@ class GrsReturnController @Inject() (
         case EntityType.UkLimitedCompany =>
           for {
             entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
+//            registeredInfo = RegistrationInfo(crn= entityRegData.companyProfile.companyNumber,
+//              utr= entityRegData.ctutr ,
+//              safeId = entityRegData.registration.registeredBusinessPartnerId)
             isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))

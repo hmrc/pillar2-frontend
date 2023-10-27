@@ -227,6 +227,7 @@ class CheckYourAnswersController @Inject() (
             grsData    <- request.userAnswers.get(upeGRSResponsePage)
           } yield Right(
             Registration(isUPERegisteredInUK = ukBased, orgType = Some(entityType), withIdRegData = Some(grsData), withoutIdRegData = None)
+//            ,registrationInfo = Some(Regs))
           )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
         } else if (!ukBased) {
           (for {
