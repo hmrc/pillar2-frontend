@@ -112,4 +112,14 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+
+  def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus) =
+    if (
+      upe == RowStatus.Completed &
+        nfm == RowStatus.Completed &
+        groupDetail == RowStatus.Completed &
+        contactDetail == RowStatus.Completed
+    ) {
+      RowStatus.NotStarted.toString
+    } else { "Cannot start yet" }
 }

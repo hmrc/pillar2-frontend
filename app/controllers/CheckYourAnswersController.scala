@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import helpers.SubscriptionHelpers
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
@@ -29,6 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -52,7 +54,8 @@ class CheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with RegisterAndSubscribe
-    with Logging {
+    with Logging
+    with SubscriptionHelpers {
 
   // noinspection ScalaStyle
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
@@ -119,6 +122,7 @@ class CheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
+
     Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryPreference, secondaryContactList, address))
 
   }

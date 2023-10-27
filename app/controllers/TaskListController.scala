@@ -40,12 +40,12 @@ class TaskListController @Inject() (
     with SubscriptionHelpers {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val upeStatus            = getUpeStatus(request)
-    val fmStatus             = getFmStatus(request)
-    val groupDetailStatus    = getGroupDetailStatus(request)
-    val contactDetailsStatus = getContactDetailStatus(request)
-
-    val count = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+    val upeStatus             = getUpeStatus(request)
+    val fmStatus              = getFmStatus(request)
+    val groupDetailStatus     = getGroupDetailStatus(request)
+    val contactDetailsStatus  = getContactDetailStatus(request)
+    val reviewAndSubmitStatus = finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
+    val count                 = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
 
     Ok(
       view(
@@ -54,7 +54,7 @@ class TaskListController @Inject() (
         filingMemberStatus = fmStatus.toString,
         groupDetailStatus = groupDetailStatus.toString,
         contactDetailsStatus = contactDetailsStatus.toString,
-        RowStatus.NotStarted.toString
+        reviewAndSubmitStatus
       )
     )
   }

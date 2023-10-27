@@ -16,4 +16,4 @@
 
 package models.subscription
 
-case class SubscriptionContactDetails(contactName: String, ContactEmail: String, ContactTel: Option[String])
+case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])

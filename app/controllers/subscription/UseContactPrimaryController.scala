@@ -80,10 +80,11 @@ class UseContactPrimaryController @Inject() (
                     updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
                     updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
                     updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
-                    updatedAnswers3 <-
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
+                    updatedAnswers4 <-
                       Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers2.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers2)))
-                    _ <- userAnswersConnectors.save(updatedAnswers3.id, Json.toJson(updatedAnswers3.data))
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers2)))
+                    _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>
                   for {
@@ -106,13 +107,15 @@ class UseContactPrimaryController @Inject() (
               (for {
                 contactName  <- request.userAnswers.get(fmContactNamePage)
                 contactEmail <- request.userAnswers.get(fmContactEmailPage)
-              } yield Right(SubscriptionContactDetails(contactName, contactEmail, request.userAnswers.get(fmCapturePhonePage))))
+                phonePref    <- request.userAnswers.get(fmPhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(fmCapturePhonePage))))
                 .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               (for {
                 contactName  <- request.userAnswers.get(upeContactNamePage)
                 contactEmail <- request.userAnswers.get(upeContactEmailPage)
-              } yield Right(SubscriptionContactDetails(contactName, contactEmail, request.userAnswers.get(upeCapturePhonePage))))
+                phonePref    <- request.userAnswers.get(upePhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage))))
                 .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             }
           }
@@ -120,7 +123,8 @@ class UseContactPrimaryController @Inject() (
           for {
             contactName  <- request.userAnswers.get(upeContactNamePage)
             contactEmail <- request.userAnswers.get(upeContactEmailPage)
-          } yield Right(SubscriptionContactDetails(contactName, contactEmail, request.userAnswers.get(upeCapturePhonePage)))
+            phonePref    <- request.userAnswers.get(upePhonePreferencePage)
+          } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage)))
         }
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
