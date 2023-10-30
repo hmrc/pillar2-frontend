@@ -30,7 +30,6 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     hc:                              HeaderCarrier,
     ec:                              ExecutionContext
   ): Future[Either[ApiError, SubscriptionResponse]] =
-    //We may need to check Read Subscription here.
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
       case Some(subscriptionSuccessResponse) =>
         Right(subscriptionSuccessResponse)
