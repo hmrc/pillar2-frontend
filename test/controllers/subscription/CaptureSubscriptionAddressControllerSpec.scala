@@ -35,13 +35,21 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
   "UpeRegisteredAddress Controller" when {
 
-    "redirect to journey recovery if no data found with GET" in {
+    "redirect to contact CYA when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val request = FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
       }
     }
 

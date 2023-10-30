@@ -71,28 +71,36 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val longString  = "12321312" * 100
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", longString))
+          FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "12345"))
 
-        val boundForm = formProvider.bind(Map("value" -> longString))
-
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
-
-        val result = route(application, request).value
+        val view      = application.injector.instanceOf[SecondaryContactEmailView]
+        val boundForm = formProvider.bind(Map("value" -> "12345"))
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 

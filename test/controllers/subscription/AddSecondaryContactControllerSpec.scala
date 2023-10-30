@@ -77,7 +77,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), "name", NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), "name", NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -104,7 +104,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "asd", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -138,14 +138,12 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .set(subPrimaryContactNamePage, "name")
         .success
         .value
-        .set(subAddSecondaryContactPage, false)
-        .success
-        .value
 
       val application = applicationBuilder(Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "false")
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -161,13 +159,14 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to Not Found page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
+      val request     = FakeRequest(GET, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
 
       running(application) {
         val result =
           route(application, request).value
 
-        status(result) mustEqual NOT_FOUND
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

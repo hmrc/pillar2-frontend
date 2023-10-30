@@ -36,7 +36,6 @@ class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
 
   "NFMContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
@@ -61,16 +60,15 @@ class NfmContactNameControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswer =
-        emptyUserAnswers.set(fmContactNamePage, "goodbye").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody("value" -> "goodbye")
 
         val result = route(application, request).value
 

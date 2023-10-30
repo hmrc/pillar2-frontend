@@ -55,7 +55,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
       val startDate   = LocalDate.of(2023, 12, 31)
-      val endDate     = LocalDate.of(2023, 12, 31)
+      val endDate     = LocalDate.of(2025, 12, 31)
       val date        = AccountingPeriod(startDate, endDate)
       val ua          = emptyUserAnswers.set(subAccountingPeriodPage, date).success.value
       val application = applicationBuilder(Some(ua)).build()
@@ -67,7 +67,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(date), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -92,7 +92,8 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
+
+        redirectLocation(result).value mustEqual controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url
       }
 
     }

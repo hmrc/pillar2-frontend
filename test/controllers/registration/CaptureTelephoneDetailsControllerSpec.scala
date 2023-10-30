@@ -22,7 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeCapturePhonePage, upeContactNamePage}
+import pages.upeContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -48,7 +48,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[CaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("sad"), NormalMode, "sad")(
           request,
           appConfig(application),
           messages(application)
@@ -78,12 +78,12 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     }
     "return bad request if wrong data is inputted" in {
-      val userAnswer  = emptyUserAnswers.set(upeCapturePhonePage, "asdads").success.value
-      val application = applicationBuilder(Some(userAnswer)).build()
+      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =
           FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+            .withFormUrlEncodedBody("value" -> "adsasd")
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }

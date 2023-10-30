@@ -680,6 +680,9 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .set(fmContactEmailPage, email)
         .success
         .value
+        .set(fmPhonePreferencePage, false)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -846,6 +849,9 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .set(upeContactEmailPage, email)
         .success
         .value
+        .set(upePhonePreferencePage, false)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -875,6 +881,9 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .set(upeContactEmailPage, email)
         .success
         .value
+        .set(upePhonePreferencePage, false)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -892,75 +901,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
       }
     }
-//
-//    "must redirect to Add secondary contact page when Yes is selected with UPE default contact details" in {
-//
-//      val userAnswersWithUpeMemberWithSub =
-//        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswersWithUpeMemberWithSub))
-//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//        .build()
-//
-//      running(application) {
-//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//
-//        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-//          .withFormUrlEncodedBody(("value", "true"))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
-//      }
-//
-//    }
-//
-//    "must redirect to UnderConstruction When No is submitted" in {
-//
-//      val userAnswersWithNominatedFilingMemberWithSub =
-//        userAnswersNfmNoId.set(SubscriptionPage, validSubscriptionData()).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
-//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//        .build()
-//
-//      running(application) {
-//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//
-//        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-//          .withFormUrlEncodedBody(("value", "false"))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
-//      }
-//
-//    }
-//
-//    "must redirect to UnderConstruction When No is submitted with upe contact details" in {
-//
-//      val userAnswersWithUpeContactWithSub =
-//        userAnswersWithNoId.set(SubscriptionPage, validSubscriptionData()).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswersWithUpeContactWithSub))
-//        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//        .build()
-//
-//      running(application) {
-//        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-//
-//        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-//          .withFormUrlEncodedBody(("value", "false"))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
-//      }
-//
-//    }
 
   }
 }

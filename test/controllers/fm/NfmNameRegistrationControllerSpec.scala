@@ -67,7 +67,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
           request,
           appConfig(application),
           messages(application)

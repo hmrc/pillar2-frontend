@@ -149,7 +149,13 @@ class CheckYourAnswersController @Inject() (
                   entityType <- request.userAnswers.get(fmEntityTypePage)
                   grsData    <- request.userAnswers.get(fmGRSResponsePage)
                 } yield Right(
-                  FilingMember(isNfmRegisteredInUK = ukBased, orgType = Some(entityType), withIdRegData = Some(grsData), withoutIdRegData = None)
+                  FilingMember(
+                    isNfmRegisteredInUK = ukBased,
+                    orgType = Some(entityType),
+                    withIdRegData = Some(grsData),
+                    withoutIdRegData = None,
+                    safeId = request.userAnswers.get(FmSafeIDPage)
+                  )
                 )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
               } else if (!ukBased) {
                 (for {
@@ -225,9 +231,15 @@ class CheckYourAnswersController @Inject() (
           (for {
             entityType <- request.userAnswers.get(upeEntityTypePage)
             grsData    <- request.userAnswers.get(upeGRSResponsePage)
+            regInfo    <- request.userAnswers.get(GrsUpeRegInfoPage)
           } yield Right(
-            Registration(isUPERegisteredInUK = ukBased, orgType = Some(entityType), withIdRegData = Some(grsData), withoutIdRegData = None)
-//            ,registrationInfo = Some(Regs))
+            Registration(
+              isUPERegisteredInUK = ukBased,
+              orgType = Some(entityType),
+              withIdRegData = Some(grsData),
+              withoutIdRegData = None,
+              registrationInfo = Some(regInfo)
+            )
           )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
         } else if (!ukBased) {
           (for {

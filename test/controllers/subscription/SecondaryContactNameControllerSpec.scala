@@ -93,12 +93,11 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must redirect to secondary contact email when the user enters a valid answer " in {
-      val ua = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua))
+      val application = applicationBuilder(None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-
+        .withFormUrlEncodedBody("value" -> "name")
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result =

@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object FmSafeIDPage extends QuestionPage[String] {
 
-class UpeContactNameFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  val max = 200
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("upe-input-business-name.error.required")
-        .verifying(maxLength(max, "upe-input-business-name.error.length"))
-    )
+  override def toString: String = "FmSafeID"
 }

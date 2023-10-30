@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.fmContactNamePage
+import pages.fmNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -36,9 +36,9 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
   "Nfm Registered Address Controller" must {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET if no previous data is found" in {
       val data =
-        emptyUserAnswers.set(fmContactNamePage, "adios").success.value
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -55,7 +55,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
       val data =
-        emptyUserAnswers.set(fmContactNamePage, "adios").success.value
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -82,7 +82,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
       val data =
-        emptyUserAnswers.set(fmContactNamePage, "adios").success.value
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -108,7 +108,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid address length is used  when country code is GB" in {
       val data =
-        emptyUserAnswers.set(fmContactNamePage, "adios").success.value
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

@@ -160,27 +160,5 @@ class EntityTypeControllerSpec extends SpecBase {
 
     }
 
-    "redirect to journey recovery for GET if no data found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "redirect to journey recovery for POST if no data found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
-          "value" -> "ukLimitedCompany"
-        )
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
   }
 }

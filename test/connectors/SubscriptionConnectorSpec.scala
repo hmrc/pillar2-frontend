@@ -17,10 +17,12 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
+import java.time.LocalDate
 import scala.collection.Seq
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
@@ -36,26 +38,45 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
   val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
-//  "SubscriptionConnector" when {
-//    "return Pillar2Id for create Subscription successful" in {
-//      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
-//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-//      result.futureValue mustBe Some(validSubscriptionSuccessResponse)
-//    }
-//
-//    "return InternalServerError for create Subscription" in {
-//
-//      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
-//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-//      result.futureValue mustBe None
-//    }
-//    "return InternalServerError for EIS returns Error status" in {
-//      val errorStatus: Int = errorCodes.sample.value
-//      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, businessSubscriptionSuccessJson)
-//
-//      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-//      result.futureValue mustBe None
-//    }
-//
-//  }
+  private val businessSubscriptionSuccessJson: String =
+    """
+      |{
+      |"success" : {
+      |"plrReference":"XMPLR0012345678",
+      |"formBundleNumber":"119000004320",
+      |"processingDate":"2023-09-22"
+      |}
+      |}""".stripMargin
+  val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
+  val validSubscriptionSuccessResponse =
+    SubscriptionResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
+
+  val businessSubscriptionMissingPlrRefJson: String =
+    """
+      |{
+      |"formBundleNumber":"119000004320",
+      |"processingDate":"2023-09-22"
+      |}""".stripMargin
+  "SubscriptionConnector" when {
+    "return Pillar2Id for create Subscription successful" in {
+      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
+      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+      result.futureValue mustBe Some(validSubscriptionSuccessResponse)
+    }
+
+    "return InternalServerError for create Subscription" in {
+
+      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
+      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+      result.futureValue mustBe None
+    }
+    "return InternalServerError for EIS returns Error status" in {
+      val errorStatus: Int = errorCodes.sample.value
+      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, businessSubscriptionSuccessJson)
+
+      val result = connector.crateSubscription(validSubscriptionCreateParameter)
+      result.futureValue mustBe None
+    }
+
+  }
 }

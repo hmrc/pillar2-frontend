@@ -22,7 +22,7 @@ import forms.IsNFMUKBasedFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominateFilingMemberPage
+import pages.{NominateFilingMemberPage, fmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -57,7 +57,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(NominateFilingMemberPage, true)
+          .set(fmRegisteredInUKPage, true)
           .success
           .value
 

@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.upeContactNamePage
+import pages.{upeContactNamePage, upePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,11 +33,12 @@ import scala.concurrent.Future
 
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
-  val formProvider = new ContactUPEByTelephoneFormProvider()
+  val form         = new ContactUPEByTelephoneFormProvider()
+  val formProvider = form("sad")
 
   "Can we contact UPE by Telephone Controller" when {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -48,7 +49,33 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactUPEByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("true"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "sad")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+
+      }
+    }
+
+    "return OK and the correct view for a GET if previous data is found" in {
+      val ua = emptyUserAnswers
+        .set(upeContactNamePage, "sad")
+        .success
+        .value
+        .set(upePhonePreferencePage, true)
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactUPEByTelephoneView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "sad")(
           request,
           appConfig(application),
           messages(application)
@@ -58,7 +85,12 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     }
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val application = applicationBuilder(None)
+
+      val ua = emptyUserAnswers
+        .set(upeContactNamePage, "sad")
+        .success
+        .value
+      val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

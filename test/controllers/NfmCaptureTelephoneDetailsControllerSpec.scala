@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.fmCapturePhonePage
+import pages.{fmCapturePhonePage, fmContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmCaptureTelephoneDetailsView
@@ -32,7 +32,9 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val ua = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -42,7 +44,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -51,7 +53,13 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(fmCapturePhonePage, "12312323").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers
+        .set(fmCapturePhonePage, "12312323")
+        .success
+        .value
+        .set(fmContactNamePage, "name")
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -63,7 +71,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("TestName").fill("1234567"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("12312323"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -72,7 +80,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(fmCapturePhonePage, "bad data").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(fmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -86,5 +94,29 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to journey recovery if no data found for contact name for GET" in {
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirect to journey recovery if no data found for contact name for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+
+    }
   }
 }

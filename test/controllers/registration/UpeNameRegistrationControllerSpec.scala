@@ -69,7 +69,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpeNameRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("asd"), NormalMode)(
           request,
           appConfig(application),
           messages(application)

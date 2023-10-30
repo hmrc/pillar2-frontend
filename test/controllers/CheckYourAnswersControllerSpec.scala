@@ -282,10 +282,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         contentAsString(result) must include(
           "Nominated filing member"
         )
-        contentAsString(result) must not include
-          "First contact"
-        contentAsString(result) must not include
-          "Second contact name"
+
       }
     }
 

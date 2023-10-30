@@ -17,12 +17,19 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.MneOrDomesticFormProvider
 import models.{MneOrDomestic, NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.subMneOrDomesticPage
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.MneOrDomesticView
+
+import scala.concurrent.Future
 
 class MneOrDomesticControllerSpec extends SpecBase {
 
@@ -46,7 +53,11 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -78,17 +89,18 @@ class MneOrDomesticControllerSpec extends SpecBase {
     }
 
     "must redirect to accounting period page when valid data is submitted" in {
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "ukAndOther")
+        val result = route(application, request).value
 
-        status(result) mustEqual Ok
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url
       }
     }

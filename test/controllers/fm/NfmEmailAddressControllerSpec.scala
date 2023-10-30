@@ -38,8 +38,8 @@ class NfmEmailAddressControllerSpec extends SpecBase {
   "NfmContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None)
+      val ua = emptyUserAnswers.set(fmContactNamePage, "Ashley Smith").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -79,13 +79,38 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswer =
+        emptyUserAnswers.set(fmContactNamePage, "alex").success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "redirect to journey recovery if no contact name is found for GET" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "redirect to journey recovery if no contact name is found for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

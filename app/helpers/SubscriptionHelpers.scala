@@ -76,15 +76,17 @@ trait SubscriptionHelpers {
                     RowStatus.InProgress
                   }
                 }).getOrElse(RowStatus.InProgress)
-              } else {
+              } else if (ukBased) {
                 (for {
                   entityType <- request.userAnswers.get(fmEntityTypePage)
                   grsData    <- request.userAnswers.get(fmGRSResponsePage)
                   grsStatus  <- request.userAnswers.get(GrsFilingMemberStatusPage)
                 } yield grsStatus).getOrElse(RowStatus.InProgress)
+              } else {
+                RowStatus.NotStarted
               }
             }
-            .getOrElse(RowStatus.Completed)
+            .getOrElse(RowStatus.InProgress)
         } else if (!nominated) {
           RowStatus.Completed
         } else {

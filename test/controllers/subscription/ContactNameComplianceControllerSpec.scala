@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.subPrimaryContactNamePage
-import play.api.inject.bind
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -66,7 +66,11 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -92,18 +96,16 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must redirect to primary email page when a valid data is submitted" in {
 
-      val userAnswersWithNominatedFilingMemberWithSub =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMemberWithSub))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onSubmit(NormalMode).url)
-        val result  = route(application, request).value
+          .withFormUrlEncodedBody("value" -> "name")
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url

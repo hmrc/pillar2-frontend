@@ -22,7 +22,7 @@ import forms.SecondaryTelephonePreferenceFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subSecondaryContactNamePage
+import pages.{subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
   val form         = new SecondaryTelephonePreferenceFormProvider()
-  val formProvider = form("true")
+  val formProvider = form("name")
   "SecondaryTelephonePreference Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
@@ -55,7 +55,13 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .set(subSecondaryContactNamePage, "name")
+        .success
+        .value
+        .set(subSecondaryPhonePreferencePage, true)
+        .success
+        .value
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -141,7 +147,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

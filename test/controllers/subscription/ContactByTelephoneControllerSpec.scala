@@ -33,15 +33,16 @@ import scala.concurrent.Future
 
 class ContactByTelephoneControllerSpec extends SpecBase {
 
-  val formProvider = new ContactByTelephoneFormProvider()
+  val form         = new ContactByTelephoneFormProvider()
+  val formProvider = form("name")
 
   "Can we contact  by Telephone Controller" should {
 
     "return OK and the correct view for a GET" in {
-      val userAnswersSubCaptureNoPhone =
+      val ua =
         emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode).url)
@@ -50,7 +51,35 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+
+      }
+    }
+
+    "return OK and the correct view for a GET if page has previously been answered" in {
+      val ua =
+        emptyUserAnswers
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryPhonePreferencePage, true)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactByTelephoneView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -65,9 +94,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
           .set(subPrimaryContactNamePage, "name")
           .success
           .value
-          .set(subPrimaryPhonePreferencePage, true)
-          .success
-          .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -76,6 +103,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody("value" -> "true")
 
         val result = route(application, request).value
 
@@ -90,9 +118,6 @@ class ContactByTelephoneControllerSpec extends SpecBase {
           .set(subPrimaryContactNamePage, "name")
           .success
           .value
-          .set(subPrimaryPhonePreferencePage, false)
-          .success
-          .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -102,7 +127,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-
+            .withFormUrlEncodedBody("value" -> "false")
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -114,12 +139,11 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val userAnswer  = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(userAnswer)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "")
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
+        status(result) mustEqual BAD_REQUEST
       }
     }
 
@@ -131,7 +155,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
 
     }
@@ -142,7 +166,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

@@ -21,8 +21,7 @@
     govukButton: GovukButton
 )
 
-
-@(upeNoIDStatus:String="NotStarted", counter: Int, filingMemberStatus:String="not started", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted", cyaStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(ultimateParentStatus:String="NotStarted", counter: Int, filingMemberStatus:String="notStarted", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted", cyaStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -44,7 +43,7 @@
                 <ul class="app-task-list__items">
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                          @if(upeNoIDStatus == "Completed"){
+                          @if(ultimateParentStatus == "Completed"){
                               <a href="/report-pillar2-top-up-taxes/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
                                  @messages("taskList.task.business.ultimate.edit")
                               </a>
@@ -54,15 +53,15 @@
                                 </a>
                             }
                         </span>
-                        @if(upeNoIDStatus == "Completed"){
+                        @if(ultimateParentStatus == "Completed"){
                         <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(upeNoIDStatus.equals("InProgress")) {
+                        } else if(ultimateParentStatus.equals("InProgress")) {
                         <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                         } else  {
                         <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
                         }
                     </li>
-                    @if(upeNoIDStatus == "Completed"){
+                    @if(ultimateParentStatus == "Completed"){
                     <li class="app-task-list__item">
                          <span class="app-task-list__task-name">
                              @if(filingMemberStatus == "Completed"){

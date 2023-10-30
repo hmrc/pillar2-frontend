@@ -38,7 +38,7 @@ import forms.UpeContactEmailFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.upeContactEmailPage
+import pages.{upeContactEmailPage, upeContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -55,8 +55,8 @@ class UpeContactEmailControllerSpec extends SpecBase {
   "UpeContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
 
@@ -65,7 +65,32 @@ class UpeContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpeContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
+        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val ua = emptyUserAnswers
+        .set(upeContactNamePage, "name")
+        .success
+        .value
+        .set(upeContactEmailPage, "hello@bye.com")
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpeContactEmailView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("name").fill("hello@bye.com"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -74,8 +99,9 @@ class UpeContactEmailControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersData = emptyUserAnswers.set(upeContactEmailPage, "hello@goobye.adios").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersData))
+
+      val ua = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -92,12 +118,10 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val userAnswersData = emptyUserAnswers.set(upeContactEmailPage, "hello").success.value
-      val application = applicationBuilder(Some(userAnswersData))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val ua = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
           "emailAddress" -> "hey"
         )
@@ -106,7 +130,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "Journey Recovery when no data in GET" in {
+    "Journey Recovery when no data found for contact name in GET" in {
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(GET, routes.UpeContactEmailController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "al@gmail.com"
@@ -118,16 +142,13 @@ class UpeContactEmailControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    "Journey Recovery when no data in POST" in {
+    "Journey Recovery when no data found for contact name in POST" in {
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+      val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "al@gmail.com"
       )
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

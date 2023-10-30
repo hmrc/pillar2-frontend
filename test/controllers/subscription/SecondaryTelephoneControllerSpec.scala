@@ -66,7 +66,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("1234567"), NormalMode, "someName")(
+        contentAsString(result) mustEqual view(formProvider.fill("1234567"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -97,13 +97,13 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must redirect to Journey recovery page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
 
       running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
         val result =
           route(application, request).value
 
-        status(result) mustEqual NOT_FOUND
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
@@ -120,6 +120,25 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
+    }
+    "redirect to a page to capture their address if valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(subSecondaryContactNamePage, "name")
+        .success
+        .value
+
+      val application = applicationBuilder(Some(ua)).build()
+
+      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("value" -> "123123")
+
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url
+      }
+
     }
 
   }

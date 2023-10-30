@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.{upeNameRegistrationPage, upeRegisteredAddressPage}
+import pages.upeNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -36,7 +36,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
   "UpeRegisteredAddress Controller" when {
 
-    "if no data found with GET" in {
+    "redirect to journey recovery if no data found with GET" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
@@ -45,14 +45,12 @@ class UpeUKAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    "must return OK and the correct view for a GET with no previous answer" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+    "return OK and the correct view for a GET with no previous answer" in {
+      val ua = emptyUserAnswers.set(upeNameRegistrationPage, "company").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
@@ -64,8 +62,8 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page previously been answered" in {
-
-      val application = applicationBuilder(userAnswers = None)
+      val ua = emptyUserAnswers.set(upeNameRegistrationPage, "company").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

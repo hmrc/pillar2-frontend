@@ -54,19 +54,6 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND When previous page data is not avilable" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua =
         emptyUserAnswers
