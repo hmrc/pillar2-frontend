@@ -83,7 +83,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     "journey recovery for GET" should {
 
       "redirected to journey recovery if they are uk based" in {
-        val ukBased = Registration(isUPERegisteredInUK = true, isRegistrationStatus = RowStatus.InProgress)
+        val ukBased = Registration(isUPERegisteredInUK = true, isRegistrationStatus = RowStatus.InProgress, withIdRegData = Some(GrsResponse()))
 
         val userAnswers = emptyUserAnswers.set(RegistrationPage, ukBased).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

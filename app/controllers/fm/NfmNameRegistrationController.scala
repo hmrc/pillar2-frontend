@@ -81,7 +81,7 @@ class NfmNameRegistrationController @Inject() (
                                 request.userAnswers.set(
                                   NominatedFilingMemberPage,
                                   regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)),
-                                  orgType = None, withIdRegData = None)
+                                  orgType = None, withIdRegData = None, isNfmRegisteredInUK = Some(false))
                                 )
                               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -93,6 +93,6 @@ class NfmNameRegistrationController @Inject() (
   private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
     request.userAnswers
       .get(NominatedFilingMemberPage)
-      .fold(true)(data => data.isNfmRegisteredInUK.getOrElse(true))
+      .fold(true)(data => data.isNfmRegisteredInUK.getOrElse(true) && (data.withIdRegData.isDefined && data.isNfmRegisteredInUK.getOrElse(true)))
 
 }

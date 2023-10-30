@@ -40,10 +40,10 @@ class TaskListControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         contentAsString(result) should include(
-          "Register for Pillar 2 top-up tax"
+          "Register your group"
         )
         contentAsString(result) should include(
-          "Application incomplete"
+          "Registration incomplete"
         )
         contentAsString(result) should include(
           "Review and submit"
