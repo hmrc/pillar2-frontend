@@ -23,10 +23,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.subscription.ReadSubscriptionRequestParameters
+import models.ApiError
+import models.subscription.{ReadSubscriptionRequestParameters, Subscription}
+import pages.SubscriptionPage
 import services.{ReadSubscriptionService, SubscriptionService}
 
-import scala.concurrent.ExecutionContext
+import java.time.format.DateTimeFormatter
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   getData:                     DataRetrievalAction,
@@ -39,9 +42,20 @@ class DashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val readsub = readSubscriptionService.readSubscription(id = "1231222", plrReference = "abcaaaa")
-    println("********************************************************************************" + readsub)
-    Ok(view())
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    readSubscriptionService.readSubscription(id = "1231222", plrReference = "abcaaaa").flatMap {
+      case Right(subscription) =>
+        val organisationName = subscription.upeDetails.map(_.organisationName).getOrElse("Default Organisation Name")
+        val registrationDate =
+          subscription.upeDetails.map(_.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))).getOrElse("Default Date")
+        // Assuming you want to use the plrReference from the service call
+        val plrRef = subscription.formBundleNumber.getOrElse("XMPLR0123456789")
+        Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
+
+      case Left(error: ApiError) =>
+        // Handle the error scenario, maybe show an error page or a message
+        Future.successful(InternalServerError("Failed to fetch subscription details")) // This is a simple example, adjust as necessary
+    }
   }
+
 }

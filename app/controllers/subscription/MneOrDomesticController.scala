@@ -74,7 +74,9 @@ class MneOrDomesticController @Inject() (
           val subscriptionData =
             request.userAnswers
               .get(SubscriptionPage)
-              .getOrElse(Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted))
+              .getOrElse(
+                Subscription(domesticOrMne = value, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted)
+              )
           for {
             updatedAnswers <-
               Future

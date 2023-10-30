@@ -51,7 +51,12 @@ case class Subscription(
   secondaryContactEmail:        Option[String] = None,
   contactByTelephone:           Option[Boolean] = None,
   secondaryContactTelephone:    Option[String] = None,
-  correspondenceAddress:        Option[SubscriptionAddress] = None
+  correspondenceAddress:        Option[SubscriptionAddress] = None,
+  accountStatus:                Option[AccountStatus] = None,
+  formBundleNumber:             Option[String] = None,
+  upeDetails:                   Option[UpeDetails] = None,
+  upeCorrespAddressDetails:     Option[UpeCorrespAddressDetails] = None,
+  filingMemberDetails:          Option[FilingMemberDetails] = None
 )
 
 object Subscription {

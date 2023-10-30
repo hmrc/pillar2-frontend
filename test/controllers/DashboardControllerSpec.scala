@@ -17,9 +17,24 @@
 package controllers
 
 import base.SpecBase
+import connectors.ReadSubscriptionConnector
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.MneOrDomestic
+import models.subscription.{ReadSubscriptionRequestParameters, Subscription, UpeDetails}
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.when
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ReadSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.RowStatus
 import views.html.DashboardView
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardControllerSpec extends SpecBase {
 
@@ -27,18 +42,50 @@ class DashboardControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val mockSubscription = Subscription(
+        domesticOrMne = MneOrDomestic.Uk,
+        groupDetailStatus = RowStatus.Completed,
+        contactDetailsStatus = RowStatus.Completed,
+        upeDetails = Some(
+          UpeDetails(
+            organisationName = "Test Org",
+            registrationDate = LocalDate.now(),
+            safeId = Some("SafeID12345"),
+            customerIdentification1 = Some("CustID1"),
+            customerIdentification2 = Some("CustID2"),
+            domesticOnly = true,
+            filingMember = true
+          )
+        ),
+        formBundleNumber = Some("XMPLR0123456789")
+      )
+
+      when(mockReadSubscriptionService.readSubscription(anyString, anyString)(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(mockSubscription)))
+
+      val application = applicationBuilder()
+        .overrides(bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService))
+        .build()
 
       running(application) {
+
         val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[DashboardView]
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[DashboardView]
+        val organisationName = "Test Org"
+        val registrationDate = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val plrRef           = "XMPLR0123456789"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(organisationName, registrationDate, plrRef)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
+
   }
+
 }

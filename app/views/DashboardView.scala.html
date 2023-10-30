@@ -21,17 +21,18 @@
         govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
 
 @layout(pageTitle = titleNoForm(messages("dashboard.title")), showBackLink = false) {
 
  <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@messages("dashboard.heading")</h1>
  <br>
- <span class="govuk-caption-m">@messages("dashboard.topTaxes") XMPLR0123456789 </span>
+ <span class="govuk-caption-m">@messages("dashboard.topTaxes") @plrReference </span>
  <br>
- <span class="govuk-caption-m">@messages("dashboard.registrationDate") 7th March 2024</span>
+ <span class="govuk-caption-m">@messages("dashboard.registrationDate") @registrationDate</span>
  <br>
- <span class="govuk-caption-m">@messages("dashboard.upe") ABC Limited</span>
+ <span class="govuk-caption-m">@messages("dashboard.upe") @organisationName</span>
 
  <br>
  <br>

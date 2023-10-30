@@ -19,6 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import play.api.Logging
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -31,17 +32,18 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
   def readSubscription(readSubscriptionParameter: ReadSubscriptionRequestParameters)(implicit
     hc:                                           HeaderCarrier,
     ec:                                           ExecutionContext
-  ): Future[Option[SubscriptionResponse]] = {
+  ): Future[Option[JsValue]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}" +
       s"/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
+
+    println(s"subscriptionUrl :  $subscriptionUrl")
     http
-      .GET[SubscriptionResponse](s"$subscriptionUrl")
+      .GET[JsValue](s"$subscriptionUrl")
       .map {
         case response =>
-          println("............fsdfsd............................." + response)
           Some(response)
         case errorResponse =>
-          logger.warn(s"read Subscription failed with reference " + errorResponse.plrReference)
+          logger.warn(s"read Subscription failed with reference " + readSubscriptionParameter.plrReference)
           None
       }
       .recover { case e: Exception =>

@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
-import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import services.{ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -52,6 +52,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
   val mockRegisterWithoutIdService:                RegisterWithoutIdService                = mock[RegisterWithoutIdService]
   val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
+  val mockReadSubscriptionService:                 ReadSubscriptionService                 = mock[ReadSubscriptionService]
   val mockTaxEnrolmentService:                     TaxEnrolmentService                     = mock[TaxEnrolmentService]
   val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]
   val mockCheckYourAnswersView:                    CheckYourAnswersView                    = mock[CheckYourAnswersView]

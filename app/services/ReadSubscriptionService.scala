@@ -17,24 +17,30 @@
 package services
 
 import connectors.ReadSubscriptionConnector
-import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionResponse}
+import models.subscription.{ReadSubscriptionRequestParameters, Subscription, SubscriptionResponse}
 import models.{ApiError, SubscriptionCreateError}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.SubscriptionTransformer
+import utils.SubscriptionTransformer.jsValueToSubscription
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionService @Inject() (readSubscriptionConnector: ReadSubscriptionConnector) {
 
-  def readSubscription(id: String, plrReference: String)(implicit
-    hc:                    HeaderCarrier,
-    ec:                    ExecutionContext
-  ): Future[Either[ApiError, SubscriptionResponse]] =
-    //We may need to check Read Subscription here.
-    readSubscriptionConnector.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)) map {
-      case Some(subscriptionSuccessResponse) =>
-        Right(subscriptionSuccessResponse)
-      case None =>
-        Left(SubscriptionCreateError)
-    }
+  def readSubscription(id: String, plrReference: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, Subscription]] =
+    readSubscriptionConnector
+      .readSubscription(ReadSubscriptionRequestParameters(id, plrReference))
+      .map {
+        case Some(jsValue) =>
+          SubscriptionTransformer.jsValueToSubscription(jsValue) match {
+            case s @ Right(_) => s
+            case Left(error)  => Left(error)
+          }
+        case None =>
+          // Handle the case where the Option is None. Maybe return an appropriate ApiError.
+          Left(SubscriptionCreateError) // Or any other ApiError that's appropriate for this scenario.
+      }
+
 }

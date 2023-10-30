@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package models.fm
+package models.subscription
 
-import models.grs.EntityType
-import models.registration.GrsResponse
 import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
-case class FilingMember(
-  nfmConfirmation:     Boolean,
-  isNfmRegisteredInUK: Option[Boolean] = None,
-  orgType:             Option[EntityType] = None,
-  isNFMnStatus:        RowStatus,
-  withIdRegData:       Option[GrsResponse] = None,
-  withoutIdRegData:    Option[WithoutIdNfmData] = None,
-  safeId:              Option[String] = None
+
+final case class AccountStatus(
+  inactive: Boolean
 )
 
-object FilingMember {
-  implicit val format: OFormat[FilingMember] = Json.format[FilingMember]
+object AccountStatus {
+  implicit val format: OFormat[AccountStatus] = Json.format[AccountStatus]
 }
