@@ -268,8 +268,8 @@ NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing me
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
 entityType.caption = Group details
-entityType.title = What type of company is the ultimate parent entity?
-entityType.heading = What type of company is the ultimate parent entity?
+entityType.title = What entity type is the ultimate parent?
+entityType.heading = What entity type is the ultimate parent?
 entityType.ukLimitedCompany = UK limited company
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.companyTypeNotListed = Entity type not listed
@@ -329,8 +329,8 @@ nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of th
 nfmRegisteredAddress.country = Country
 
 
-nfmEntityType.title = What type of company is the nominated filing member?
-nfmEntityType.heading = What type of company is the nominated filing member?
+nfmEntityType.title = What entity type is the nominated filing member?
+nfmEntityType.heading = What entity type is the nominated filing member?
 nfmEntityType.ukLimitedCompany = UK limited company
 nfmEntityType.limitedLiabilityPartnership = Limited liability partnership
 nfmEntityType.checkYourAnswersLabel = Org Type
@@ -398,7 +398,7 @@ contactNfmByTelephone.error.required = Select yes if we can contact {0} by telep
 nfmCaptureTelephoneDetails.heading.caption = Group details
 nfmCaptureTelephoneDetails.title = What is the telephone number for {0}?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192
+nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
