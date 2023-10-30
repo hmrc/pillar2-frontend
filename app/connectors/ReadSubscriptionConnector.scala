@@ -33,11 +33,12 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
     ec:                                           ExecutionContext
   ): Future[Option[SubscriptionResponse]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}" +
-      s"/report-pillar2-top-up-taxes/subscription/read-subscription/:${readSubscriptionParameter.id}/:${readSubscriptionParameter.plrReference}"
+      s"/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
     http
       .GET[SubscriptionResponse](s"$subscriptionUrl")
       .map {
         case response =>
+          println("............fsdfsd............................." + response)
           Some(response)
         case errorResponse =>
           logger.warn(s"read Subscription failed with reference " + errorResponse.plrReference)
