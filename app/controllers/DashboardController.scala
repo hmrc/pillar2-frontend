@@ -48,12 +48,10 @@ class DashboardController @Inject() (
         val organisationName = subscription.upeDetails.map(_.organisationName).getOrElse("Default Organisation Name")
         val registrationDate =
           subscription.upeDetails.map(_.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))).getOrElse("Default Date")
-        // Assuming you want to use the plrReference from the service call
         val plrRef = subscription.formBundleNumber.getOrElse("XMPLR0123456789")
         Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
 
       case Left(error: ApiError) =>
-        // Handle the error scenario, maybe show an error page or a message
         Future.successful(InternalServerError("Failed to fetch subscription details")) // This is a simple example, adjust as necessary
     }
   }

@@ -17,17 +17,16 @@
 package controllers
 
 import base.SpecBase
-import connectors.ReadSubscriptionConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.MneOrDomestic
-import models.subscription.{ReadSubscriptionRequestParameters, Subscription, UpeDetails}
+import models.subscription.{Subscription, UpeDetails}
+import models.{ApiError, SubscriptionCreateError}
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ReadSubscriptionService
+import uk.gov.hmrc.hmrcfrontend.controllers.routes
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RowStatus
 import views.html.DashboardView
@@ -68,8 +67,7 @@ class DashboardControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[DashboardView]
 
@@ -83,6 +81,23 @@ class DashboardControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must return InternalServerError when there's an error fetching subscription" in {
+      when(mockReadSubscriptionService.readSubscription(anyString, anyString)(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Left(SubscriptionCreateError))) // Mock the error response
+
+      val application = applicationBuilder()
+        .overrides(bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        contentAsString(result) mustEqual "Failed to fetch subscription details"
       }
     }
 
