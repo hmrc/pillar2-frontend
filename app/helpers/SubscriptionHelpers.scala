@@ -16,10 +16,12 @@
 
 package helpers
 
-import models.registration.upeContactInformation
+import models.fm.{FilingMember, FilingMemberNonUKData}
+import models.registration.{Registration, WithoutIdRegData}
 import models.requests.DataRequest
-import pages.{GrsFilingMemberStatusPage, GrsUpeStatusPage, NominateFilingMemberPage, fmCapturePhonePage, fmContactEmailPage, fmContactNamePage, fmEntityTypePage, fmGRSResponsePage, fmNameRegistrationPage, fmPhonePreferencePage, fmRegisteredAddressPage, fmRegisteredInUKPage, subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage, subRegisteredAddressPage, upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upeEntityTypePage, upeGRSResponsePage, upeNameRegistrationPage, upePhonePreferencePage, upeRegisteredAddressPage, upeRegisteredInUKPage}
-import play.api.mvc.AnyContent
+import pages._
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{AnyContent, Result}
 import utils.RowStatus
 
 trait SubscriptionHelpers {
@@ -124,4 +126,168 @@ trait SubscriptionHelpers {
     ) {
       RowStatus.NotStarted.toString
     } else { "Cannot start yet" }
+
+  // noinspection ScalaStyle
+  def createFilingMember(request: DataRequest[AnyContent]): Either[Result, FilingMember] =
+    request.userAnswers
+      .get(NominateFilingMemberPage)
+      .map { nominated =>
+        if (nominated) {
+          request.userAnswers
+            .get(fmRegisteredInUKPage)
+            .map { ukBased =>
+              if (ukBased) {
+                (for {
+                  entityType <- request.userAnswers.get(fmEntityTypePage)
+                  grsData    <- request.userAnswers.get(fmGRSResponsePage)
+                } yield Right(
+                  FilingMember(
+                    isNfmRegisteredInUK = ukBased,
+                    orgType = Some(entityType),
+                    withIdRegData = Some(grsData),
+                    withoutIdRegData = None,
+                    safeId = request.userAnswers.get(FmSafeIDPage)
+                  )
+                )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+              } else if (!ukBased) {
+                (for {
+                  nameReg      <- request.userAnswers.get(fmNameRegistrationPage)
+                  address      <- request.userAnswers.get(fmRegisteredAddressPage)
+                  contactName  <- request.userAnswers.get(fmContactNamePage)
+                  contactEmail <- request.userAnswers.get(fmContactEmailPage)
+                  phonePref    <- request.userAnswers.get(fmPhonePreferencePage)
+                } yield
+                  if (phonePref) {
+                    request.userAnswers
+                      .get(fmCapturePhonePage)
+                      .map { tel =>
+                        Right(
+                          FilingMember(
+                            isNfmRegisteredInUK = false,
+                            orgType = None,
+                            withIdRegData = None,
+                            withoutIdRegData = Some(
+                              FilingMemberNonUKData(
+                                registeredFmName = nameReg,
+                                registeredFmAddress = address,
+                                contactName = contactName,
+                                emailAddress = contactEmail,
+                                phonePreference = phonePref,
+                                telephone = Some(tel)
+                              )
+                            )
+                          )
+                        )
+                      // here we could send them to a page where they get told you haven't answered every question try again
+                      }
+                      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                  } else {
+                    Right(
+                      FilingMember(
+                        isNfmRegisteredInUK = false,
+                        orgType = None,
+                        withIdRegData = None,
+                        withoutIdRegData = Some(
+                          FilingMemberNonUKData(
+                            registeredFmName = nameReg,
+                            registeredFmAddress = address,
+                            contactName = contactName,
+                            emailAddress = contactEmail,
+                            phonePreference = phonePref,
+                            telephone = None
+                          )
+                        )
+                      )
+                    )
+                  }).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+              } else {
+                Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
+            }
+            .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        } else if (!nominated) {
+          //what will you do if a filing member is not nominated?
+          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        } else {
+          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+      }
+      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
+  // noinspection ScalaStyle
+  def createUltimateParent(request: DataRequest[AnyContent]): Either[Result, Registration] =
+    request.userAnswers
+      .get(upeRegisteredInUKPage)
+      .map { ukBased =>
+        if (ukBased) {
+          (for {
+            entityType <- request.userAnswers.get(upeEntityTypePage)
+            grsData    <- request.userAnswers.get(upeGRSResponsePage)
+            regInfo    <- request.userAnswers.get(GrsUpeRegInfoPage)
+          } yield Right(
+            Registration(
+              isUPERegisteredInUK = ukBased,
+              orgType = Some(entityType),
+              withIdRegData = Some(grsData),
+              withoutIdRegData = None,
+              registrationInfo = Some(regInfo)
+            )
+          )).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        } else if (!ukBased) {
+          (for {
+            nameReg      <- request.userAnswers.get(upeNameRegistrationPage)
+            address      <- request.userAnswers.get(upeRegisteredAddressPage)
+            contactName  <- request.userAnswers.get(upeContactNamePage)
+            contactEmail <- request.userAnswers.get(upeContactEmailPage)
+            phonePref    <- request.userAnswers.get(upePhonePreferencePage)
+          } yield
+            if (phonePref) {
+              request.userAnswers
+                .get(upeCapturePhonePage)
+                .map { tel =>
+                  Right(
+                    Registration(
+                      isUPERegisteredInUK = false,
+                      orgType = None,
+                      withIdRegData = None,
+                      withoutIdRegData = Some(
+                        WithoutIdRegData(
+                          upeNameRegistration = nameReg,
+                          upeRegisteredAddress = address,
+                          upeContactName = contactName,
+                          emailAddress = contactEmail,
+                          contactUpeByTelephone = phonePref,
+                          telephoneNumber = Some(tel)
+                        )
+                      )
+                    )
+                  )
+                // here we could send them to a page where they get told you haven't answered every question try again
+                }
+                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            } else {
+              Right(
+                Registration(
+                  isUPERegisteredInUK = false,
+                  orgType = None,
+                  withIdRegData = None,
+                  withoutIdRegData = Some(
+                    WithoutIdRegData(
+                      upeNameRegistration = nameReg,
+                      upeRegisteredAddress = address,
+                      upeContactName = contactName,
+                      emailAddress = contactEmail,
+                      contactUpeByTelephone = phonePref,
+                      telephoneNumber = None
+                    )
+                  )
+                )
+              )
+            }).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        } else {
+          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+
+      }
+      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 }

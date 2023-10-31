@@ -73,27 +73,26 @@ class UseContactPrimaryController @Inject() (
             formWithErrors =>
               Future
                 .successful(BadRequest(view(formWithErrors, mode, contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel))),
-            value =>
-              value match {
+            value => {
+              val (x, y) = value match {
                 case true =>
-                  for {
-                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
-                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
-                    updatedAnswers4 <-
-                      Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
-                    _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                  val primaryContactDetail = request.userAnswers
+                    .setOrException(subUsePrimaryContactPage, value)
+                    .setOrException(subPrimaryEmailPage, contactDetail.ContactEmail)
+                    .setOrException(subPrimaryPhonePreferencePage, contactDetail.phonePref)
+                    .setOrException(subPrimaryContactNamePage, contactDetail.contactName)
+                  (primaryContactDetail, Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode)))
                 case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode))
+                  val subUser = request.userAnswers.setOrException(subUsePrimaryContactPage, value)
+                  (subUser, Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode)))
               }
+              for {
+                _ <- userAnswersConnectors.save(x.id, Json.toJson(x.data))
+              } yield y
+            }
           )
       case Left(result) => Future.successful(result)
+
     }
   }
 

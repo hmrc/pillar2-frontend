@@ -19,7 +19,7 @@ package pages
 import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case object subUsePrimaryContactPage extends QuestionPage[Boolean] {
 
@@ -27,18 +27,19 @@ case object subUsePrimaryContactPage extends QuestionPage[Boolean] {
 
   override def toString: String = "subUsePrimaryContact"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(subPrimaryContactNamePage)
-        .flatMap(
-          _.remove(subPrimaryEmailPage).flatMap(
-            _.remove(subPrimaryPhonePreferencePage).flatMap(
-              _.remove(subPrimaryCapturePhonePage)
+  override def cleanupBeforeSettingValue(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.get(subUsePrimaryContactPage) match {
+      case originalOption @ Some(_) if originalOption != value =>
+        userAnswers
+          .remove(subPrimaryContactNamePage)
+          .flatMap(
+            _.remove(subPrimaryEmailPage).flatMap(
+              _.remove(subPrimaryPhonePreferencePage).flatMap(
+                _.remove(subPrimaryCapturePhonePage)
+              )
             )
           )
-        )
-    } else {
-      super.cleanup(value, userAnswers)
+      case _ => Success(userAnswers)
     }
+
 }
