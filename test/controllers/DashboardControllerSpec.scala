@@ -86,7 +86,7 @@ class DashboardControllerSpec extends SpecBase {
 
     "must return InternalServerError when there's an error fetching subscription" in {
       when(mockReadSubscriptionService.readSubscription(anyString, anyString)(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Left(SubscriptionCreateError))) // Mock the error response
+        .thenReturn(Future.successful(Left(SubscriptionCreateError)))
 
       val application = applicationBuilder()
         .overrides(bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService))

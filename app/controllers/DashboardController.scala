@@ -52,7 +52,7 @@ class DashboardController @Inject() (
         Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
 
       case Left(error: ApiError) =>
-        Future.successful(InternalServerError("Failed to fetch subscription details")) // This is a simple example, adjust as necessary
+        Future.successful(InternalServerError("Failed to fetch subscription details"))
     }
   }
 

@@ -39,8 +39,7 @@ class ReadSubscriptionService @Inject() (readSubscriptionConnector: ReadSubscrip
             case Left(error)  => Left(error)
           }
         case None =>
-          // Handle the case where the Option is None. Maybe return an appropriate ApiError.
-          Left(SubscriptionCreateError) // Or any other ApiError that's appropriate for this scenario.
+          Left(SubscriptionCreateError)
       }
 
 }
