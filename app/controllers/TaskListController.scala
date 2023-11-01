@@ -36,15 +36,14 @@ class TaskListController @Inject() (
   view:                     TaskListView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport
-    with SubscriptionHelpers {
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val upeStatus             = getUpeStatus(request)
-    val fmStatus              = getFmStatus(request)
-    val groupDetailStatus     = getGroupDetailStatus(request)
-    val contactDetailsStatus  = getContactDetailStatus(request)
-    val reviewAndSubmitStatus = finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
+    val upeStatus             = request.userAnswers.upeStatus
+    val fmStatus              = request.userAnswers.fmStatus
+    val groupDetailStatus     = request.userAnswers.groupDetailStatus
+    val contactDetailsStatus  = request.userAnswers.contactDetailStatus
+    val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
     val count                 = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
 
     Ok(

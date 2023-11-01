@@ -20,17 +20,17 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import helpers.SubscriptionHelpers
-import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.registration.{Registration, WithoutIdRegData}
+import models.MandatoryInformationMissingError
+import models.registration.{Registration, RegistrationInfo}
 import models.requests.DataRequest
-import pages._
+import pages.UpeRegInformationPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
+import utils.RegistrationType
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -54,8 +54,7 @@ class CheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with RegisterAndSubscribe
-    with Logging
-    with SubscriptionHelpers {
+    with Logging {
 
   // noinspection ScalaStyle
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
@@ -128,11 +127,11 @@ class CheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val upe      = createUltimateParent(request)
-    val fmSafeID = createFilingMember(request)
-    (upe, fmSafeID) match {
-      case (Right(upe), Right(fmSafeID)) => createRegistrationAndSubscription(upe, fmSafeID)
-      case _                             => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    val upeRegInfo = request.userAnswers.getUpRegData
+    val fmSafeID   = request.userAnswers.getFmSafeID
+    (upeRegInfo, fmSafeID) match {
+      case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
+      case _                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 

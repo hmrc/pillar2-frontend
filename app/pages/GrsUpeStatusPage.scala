@@ -23,5 +23,5 @@ case object GrsUpeStatusPage extends QuestionPage[RowStatus] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "GrsUpStatus"
+  override def toString: String = "GrsUpeStatus"
 }

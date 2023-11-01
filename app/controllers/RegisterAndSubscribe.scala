@@ -18,10 +18,10 @@ package controllers
 
 import connectors.UserAnswersConnectors
 import models.fm.FilingMember
-import models.registration.Registration
+import models.registration.{Registration, RegistrationInfo}
 import models.requests.DataRequest
 import models.{EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo, MandatoryInformationMissingError}
-import pages.NominateFilingMemberPage
+import pages.{NominateFilingMemberPage, upeRegisteredAddressPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
@@ -36,15 +36,16 @@ trait RegisterAndSubscribe extends Logging {
   val subscriptionService:      SubscriptionService
   val userAnswersConnectors:    UserAnswersConnectors
   val taxEnrolmentService:      TaxEnrolmentService
+
   // noinspection ScalaStyle
-  def createRegistrationAndSubscription(registration: Registration, filingMemeber: FilingMember)(implicit
-    hc:                                               HeaderCarrier,
-    ec:                                               ExecutionContext,
-    request:                                          DataRequest[AnyContent]
+  def createRegistrationAndSubscription(regInformation: Option[RegistrationInfo], fmSafeID: Option[String])(implicit
+    hc:                                                 HeaderCarrier,
+    ec:                                                 ExecutionContext,
+    request:                                            DataRequest[AnyContent]
   ): Future[Result] =
-    (registration.registrationInfo, filingMemeber.safeId) match {
+    (regInformation, fmSafeID) match {
       case (Some(regInfo), Some(fmSafeId)) =>
-        createSubscription(RegistrationType.WithId, registration, regInfo.safeId, Some(fmSafeId))
+        createSubscription(RegistrationType.WithId, regInformation, regInfo.safeId, Some(fmSafeId))
       case (Some(regInfo), None) =>
         request.userAnswers
           .get(NominateFilingMemberPage)
@@ -52,7 +53,7 @@ trait RegisterAndSubscribe extends Logging {
             if (nominated) {
               registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
                 case Right(fmSafeId) =>
-                  createSubscription(RegistrationType.WithId, registration, regInfo.safeId, Some(fmSafeId.value))
+                  createSubscription(RegistrationType.WithId, regInformation, regInfo.safeId, Some(fmSafeId.value))
                 case Left(value) =>
                   logger.warn(s"Error $value")
                   value match {
@@ -61,7 +62,7 @@ trait RegisterAndSubscribe extends Logging {
                   }
               }
             } else {
-              createSubscription(RegistrationType.WithId, registration, regInfo.safeId)
+              createSubscription(RegistrationType.WithId, regInformation, regInfo.safeId)
             }
           }
           .getOrElse(Future.successful(Redirect(routes.ErrorController.onPageLoad)))
@@ -69,7 +70,7 @@ trait RegisterAndSubscribe extends Logging {
       case (None, Some(fmSafeId)) =>
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
           case Right(upeSafeId) =>
-            createSubscription(RegistrationType.NoId, registration, upeSafeId.value, Some(fmSafeId))
+            createSubscription(RegistrationType.NoId, regInformation, upeSafeId.value, Some(fmSafeId))
           case Left(value) =>
             logger.warn(s"Error $value")
             value match {
@@ -87,7 +88,7 @@ trait RegisterAndSubscribe extends Logging {
                 if (nominated) {
                   registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
                     case Right(fmSafeId) =>
-                      createSubscription(RegistrationType.NoId, registration, upeSafeId.value, Some(fmSafeId.value))
+                      createSubscription(RegistrationType.NoId, regInformation, upeSafeId.value, Some(fmSafeId.value))
                     case Left(value) =>
                       logger.warn(s"Error $value")
                       value match {
@@ -96,7 +97,7 @@ trait RegisterAndSubscribe extends Logging {
                       }
                   }
                 } else {
-                  createSubscription(RegistrationType.NoId, registration, upeSafeId.value)
+                  createSubscription(RegistrationType.NoId, regInformation, upeSafeId.value)
                 }
               }
               .getOrElse(Future.successful(Redirect(routes.ErrorController.onPageLoad)))
@@ -112,20 +113,20 @@ trait RegisterAndSubscribe extends Logging {
       case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
     }
 
-  private def createSubscription(regType: RegistrationType, registration: Registration, upeSafeId: String, fmSafeId: Option[String] = None)(implicit
-    hc:                                   HeaderCarrier,
-    ec:                                   ExecutionContext,
-    request:                              DataRequest[AnyContent]
+  def createSubscription(regType: RegistrationType, regInformation: Option[RegistrationInfo], upeSafeId: String, fmSafeId: Option[String] = None)(
+    implicit
+    hc:      HeaderCarrier,
+    ec:      ExecutionContext,
+    request: DataRequest[AnyContent]
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).flatMap {
       case Right(successReponse) =>
         val enrolmentInfo = {
           if (regType == RegistrationType.WithId) {
-            val registrationInfo = registration.registrationInfo.getOrElse(throw new Exception("Registration Info Not found"))
+            val registrationInfo = regInformation.getOrElse(throw new Exception("Registration Info Not found"))
             EnrolmentInfo(ctUtr = Some(registrationInfo.utr), crn = Some(registrationInfo.crn), plrId = successReponse.plrReference)
           } else {
-            val withoutId   = registration.withoutIdRegData.getOrElse(throw new Exception("Missing WithoutId Data"))
-            val address     = withoutId.upeRegisteredAddress
+            val address     = request.userAnswers.get(upeRegisteredAddressPage).getOrElse(throw new Exception("Registration Info Not found"))
             val countryCode = address.countryCode
             val postCode    = address.postalCode
             EnrolmentInfo(countryCode = Some(countryCode), nonUkPostcode = Some(postCode), plrId = successReponse.plrReference)

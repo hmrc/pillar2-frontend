@@ -19,9 +19,9 @@ package pages
 import models.registration.RegistrationInfo
 import play.api.libs.json.JsPath
 
-case object GrsUpeRegInfoPage extends QuestionPage[RegistrationInfo] {
+case object UpeRegInformationPage extends QuestionPage[RegistrationInfo] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "GrsRegistrationInformation"
+  override def toString: String = "UpeRegInformation"
 }

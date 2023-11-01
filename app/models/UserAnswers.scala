@@ -16,6 +16,7 @@
 
 package models
 
+import helpers.SubscriptionHelpers
 import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -28,7 +29,7 @@ final case class UserAnswers(
   id:          String,
   data:        JsObject = Json.obj(),
   lastUpdated: Instant = Instant.now
-) {
+) extends SubscriptionHelpers {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
