@@ -35,8 +35,6 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
   ): Future[Option[JsValue]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}" +
       s"/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
-
-    println(s"subscriptionUrl :  $subscriptionUrl")
     http
       .GET[JsValue](s"$subscriptionUrl")
       .map {

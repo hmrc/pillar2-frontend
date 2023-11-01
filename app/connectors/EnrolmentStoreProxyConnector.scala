@@ -57,4 +57,36 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
       }
 
   }
+
+//  def getPirid(plrReference: String)(implicit
+//                                            hc: HeaderCarrier,
+//                                            ec: ExecutionContext
+//  ): Future[Boolean] = {
+//    val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
+//    val submissionUrl = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
+//    // /                                /enrolment-store/enrolments/:serviceName/groups
+//    http
+//      .GET[HttpResponse](
+//        submissionUrl
+//      )(rds = readRaw, hc = hc, ec = ec)
+//      .map {
+//        case response if response.status == NO_CONTENT => false
+//        case response if is2xx(response.status) =>
+//          response.json
+//            .asOpt[EnrolmentResponse]
+//            .exists(groupIds =>
+//              if (groupIds.enrolments..nonEmpty) {
+//                true
+//              } else {
+//                false
+//              }
+//            )
+//        case response =>
+//          logger.warn(s"Enrolment response not formed. ${response.status} response status")
+//          throw new IllegalStateException()
+//      }
+//
+//  }
+
+  //EnrolmentResponse.scala
 }

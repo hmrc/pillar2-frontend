@@ -16,21 +16,17 @@
 
 package controllers
 
-import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.ApiError
-import models.subscription.{ReadSubscriptionRequestParameters, Subscription}
-import pages.SubscriptionPage
-import services.{ReadSubscriptionService, SubscriptionService}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReadSubscriptionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
 class DashboardController @Inject() (
   getData:                     DataRetrievalAction,
   identify:                    IdentifierAction,
@@ -43,7 +39,8 @@ class DashboardController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    readSubscriptionService.readSubscription(id = "1231222", plrReference = "abcaaaa").flatMap {
+    val userId = request.userAnswers.id
+    readSubscriptionService.readSubscription(id = userId, plrReference = "XMPLR0123456789").flatMap {
       case Right(subscription) =>
         val organisationName = subscription.upeDetails.map(_.organisationName).getOrElse("Default Organisation Name")
         val registrationDate =
@@ -51,8 +48,8 @@ class DashboardController @Inject() (
         val plrRef = subscription.formBundleNumber.getOrElse("XMPLR0123456789")
         Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
 
-      case Left(error: ApiError) =>
-        Future.successful(InternalServerError("Failed to fetch subscription details"))
+      case Left(error) =>
+        Future.successful(InternalServerError("Subscription not found in user answers"))
     }
   }
 
