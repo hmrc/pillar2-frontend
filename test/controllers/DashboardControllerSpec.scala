@@ -73,7 +73,7 @@ class DashboardControllerSpec extends SpecBase {
 
         val organisationName = "Test Org"
         val registrationDate = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val plrRef           = "XMPLR0123456789"
+        val plrRef           = "PLRID"
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(organisationName, registrationDate, plrRef)(
@@ -97,7 +97,7 @@ class DashboardControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
-        contentAsString(result) mustEqual "Failed to fetch subscription details"
+        contentAsString(result) mustEqual "Subscription not found in user answers"
       }
     }
 

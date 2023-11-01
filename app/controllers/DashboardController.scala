@@ -18,9 +18,11 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.requests.IdentifierRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
+import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 
@@ -40,12 +42,19 @@ class DashboardController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val userId = request.userAnswers.id
-    readSubscriptionService.readSubscription(id = userId, plrReference = "XMPLR0123456789").flatMap {
+    val userEnrolments: Set[Enrolment] = request.enrolments.getOrElse(Set.empty)
+    val identifierName = "PLRID"
+    val extractedValue = userEnrolments.flatMap(_.getIdentifier(identifierName)).headOption.map(_.value)
+    extractedValue.foreach(value => println(s"Extracted value: $value"))
+
+    val plrReference = userEnrolments.flatMap(_.getIdentifier(identifierName)).headOption.map(_.value).getOrElse(identifierName)
+
+    readSubscriptionService.readSubscription(id = userId, plrReference = plrReference).flatMap {
       case Right(subscription) =>
         val organisationName = subscription.upeDetails.map(_.organisationName).getOrElse("Default Organisation Name")
         val registrationDate =
           subscription.upeDetails.map(_.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))).getOrElse("Default Date")
-        val plrRef = subscription.formBundleNumber.getOrElse("XMPLR0123456789")
+        val plrRef = plrReference
         Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
 
       case Left(error) =>
