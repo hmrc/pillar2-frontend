@@ -40,7 +40,8 @@
                 field = form("value"),
                 legend = LegendViewModel(messages("secondaryTelephonePreference.heading", userName)).asPageHeading(Large)
             )
-            )
+            .withHint(Hint(content = Text(messages("secondaryTelephonePreference.hint"))))
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")

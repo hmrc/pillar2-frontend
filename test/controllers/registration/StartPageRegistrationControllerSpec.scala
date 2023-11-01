@@ -40,7 +40,7 @@ class StartPageRegistrationControllerSpec extends SpecBase {
       val result = controller.onPageLoad(NormalMode)()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "We need to match the details of this ultimate parent entity to HMRC records"
+        "We need to match the details of the ultimate parent entity to HMRC records"
       )
     }
 
