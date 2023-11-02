@@ -17,7 +17,6 @@
 package helpers
 
 import models.UserAnswers
-import models.registration.RegistrationInfo
 import pages._
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -150,13 +149,13 @@ trait SubscriptionHelpers {
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-  def getUpRegData: Either[Result, Option[RegistrationInfo]] =
+  def getUpRegData: Either[Result, Option[String]] =
     get(upeRegisteredInUKPage)
       .map { ukBased =>
         if (ukBased) {
           (for {
             regInfo <- get(UpeRegInformationPage)
-          } yield Right(Some(regInfo))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+          } yield Right(Some(regInfo.safeId))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
         } else if (!ukBased) {
           Right(None)
         } else {

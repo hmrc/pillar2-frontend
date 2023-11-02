@@ -36,8 +36,11 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller" when {
 
     "redirect to contact CYA when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -52,7 +55,6 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
       }
     }
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None)

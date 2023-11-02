@@ -28,12 +28,12 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class UseContactPrimaryController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -61,7 +61,6 @@ class UseContactPrimaryController @Inject() (
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     contactDetail(request) match {
       case Right(contactDetail) =>
@@ -71,26 +70,27 @@ class UseContactPrimaryController @Inject() (
             formWithErrors =>
               Future
                 .successful(BadRequest(view(formWithErrors, mode, contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel))),
-            value => {
-              val (databaseAction, navigation) = value match {
+            value =>
+              value match {
                 case true =>
-                  val primaryContactDetail = request.userAnswers
-                    .setOrException(subUsePrimaryContactPage, value)
-                    .setOrException(subPrimaryEmailPage, contactDetail.ContactEmail)
-                    .setOrException(subPrimaryPhonePreferencePage, contactDetail.phonePref)
-                    .setOrException(subPrimaryContactNamePage, contactDetail.contactName)
-                  (primaryContactDetail, Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode)))
+                  for {
+                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
+                    updatedAnswers4 <-
+                      Future
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                    _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>
-                  val usePrimaryContact = request.userAnswers.setOrException(subUsePrimaryContactPage, value)
-                  (usePrimaryContact, Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode)))
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode))
               }
-              for {
-                _ <- userAnswersConnectors.save(databaseAction.id, Json.toJson(databaseAction.data))
-              } yield navigation
-            }
           )
       case Left(result) => Future.successful(result)
-
     }
   }
 

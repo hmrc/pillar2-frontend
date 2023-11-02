@@ -18,7 +18,7 @@ package helpers
 
 import base.SpecBase
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.registration._
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NonUKAddress, UKAddress}
 import pages._
@@ -536,6 +536,66 @@ class SubscriptionHelpersSpec extends SpecBase {
         val status     = RowStatus.Completed
 
         userAnswer.finalCYAStatus(status, status, status, RowStatus.InProgress) mustEqual "Cannot start yet"
+      }
+    }
+
+    "getFmSafeId" should {
+      "return the safe id retrieved from GRS if the nfm is registered in the UK" in {
+        val userAnswer = emptyUserAnswers
+          .set(NominateFilingMemberPage, true)
+          .success
+          .value
+          .set(fmRegisteredInUKPage, true)
+          .success
+          .value
+          .set(FmSafeIDPage, "12323212")
+          .success
+          .value
+        userAnswer.getFmSafeID mustBe Right(Some("12323212"))
+      }
+
+      "return none if fm is non-uk based" in {
+        val userAnswer = emptyUserAnswers
+          .set(NominateFilingMemberPage, true)
+          .success
+          .value
+          .set(fmRegisteredInUKPage, false)
+          .success
+          .value
+        userAnswer.getFmSafeID mustBe Right(None)
+      }
+
+      "return none if no filing member is nominated" in {
+        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        userAnswer.getFmSafeID mustBe Right(None)
+      }
+      "redirected to journey recovery if no data can be found for nominated filing member" in {
+        val userAnswer = emptyUserAnswers
+        userAnswer.getFmSafeID mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+    "getUpeRegData" should {
+      "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
+        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567")
+        val userAnswer = emptyUserAnswers
+          .set(upeRegisteredInUKPage, true)
+          .success
+          .value
+          .set(UpeRegInformationPage, regData)
+          .success
+          .value
+        userAnswer.getUpRegData mustBe Right(Some("567"))
+      }
+
+      "return none if upe is non-uk based" in {
+        val userAnswer = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
+
+        userAnswer.getUpRegData mustBe Right(None)
+      }
+
+      "redirected to journey recovery if no data can be found for nominated filing member" in {
+        val userAnswer = emptyUserAnswers
+        userAnswer.getUpRegData mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 

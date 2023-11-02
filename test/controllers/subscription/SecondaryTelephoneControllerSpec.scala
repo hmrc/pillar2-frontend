@@ -17,12 +17,19 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.SecondaryTelephoneFormProvider
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage}
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryTelephoneView
+
+import scala.concurrent.Future
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
@@ -121,18 +128,22 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
     "redirect to a page to capture their address if valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(subSecondaryContactNamePage, "name")
         .success
         .value
 
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(Some(ua))
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "123123")
 
       running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
