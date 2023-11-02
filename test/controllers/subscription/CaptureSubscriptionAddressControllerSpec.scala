@@ -23,7 +23,6 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.SubscriptionPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -36,20 +35,29 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
   "UpeRegisteredAddress Controller" when {
 
-    "if no data found with GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
+    "redirect to contact CYA when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
       }
     }
-
     "must return OK and the correct view for a GET" in {
-      val userAnswersSubscription = emptyUserAnswers.set(SubscriptionPage, validSubscriptionDataNoContactInfo).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubscription))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -65,8 +73,8 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersSubscription = emptyUserAnswers.set(SubscriptionPage, validSubscriptionDataNoContactInfo).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubscription))
+
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -91,8 +99,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersSubscription = emptyUserAnswers.set(SubscriptionPage, validSubscriptionDataNoContactInfo).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubscription))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -116,8 +123,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersSubscription = emptyUserAnswers.set(SubscriptionPage, validSubscriptionDataNoContactInfo).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubscription))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -141,24 +147,6 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-      }
-    }
-
-    "redirected to journey recovery if no subscription data found with POST" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

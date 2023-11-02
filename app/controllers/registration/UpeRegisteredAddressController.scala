@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-import models.{Mode, UpeRegisteredAddress}
-import pages.RegistrationPage
+import models.{Mode, UKAddress}
+import pages.{upeNameRegistrationPage, upeRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -46,37 +46,39 @@ class UpeRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form: Form[UpeRegisteredAddress] = formProvider()
+  val form: Form[UKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      noIDData           <- reg.withoutIdRegData
-      userName           <- Some(noIDData.upeNameRegistration)
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val preparedForm = noIDData.upeRegisteredAddress.fold(form)(data => form fill data)
-      Ok(view(preparedForm, mode, userName, countryList))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(upeNameRegistrationPage)
+      .map { name =>
+        val preparedForm = request.userAnswers.get(upeRegisteredAddressPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, name, countryList))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    (for {
-      name      <- request.userAnswers.upeNameRegistration
-      reg       <- request.userAnswers.get(RegistrationPage)
-      withoutId <- reg.withoutIdRegData
-    } yield form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
-        value =>
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers
-                  .set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(upeRegisteredAddress = Some(value)))))
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
-      )).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    request.userAnswers
+      .get(upeNameRegistrationPage)
+      .map { name =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
+            value =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers
+                      .set(upeRegisteredAddressPage, value)
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

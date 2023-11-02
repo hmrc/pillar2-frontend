@@ -16,12 +16,11 @@
 
 package pages
 
-import models.fm.FilingMember
 import play.api.libs.json.JsPath
 
-case object NominatedFilingMemberPage extends QuestionPage[FilingMember] {
+case object upeNameRegistrationPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "FilingMember"
+  override def toString: String = "upeNameRegistration"
 }

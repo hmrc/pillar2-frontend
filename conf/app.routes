@@ -191,7 +191,11 @@ POST       /contact-details/second-contact                        controllers.su
 GET        /contact-details/change-second-contact                 controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
-GET        /further-details/check-answers                         controllers.subscription.SubCheckYourAnswersController.onPageLoad
+GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
+
+GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+
+
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 

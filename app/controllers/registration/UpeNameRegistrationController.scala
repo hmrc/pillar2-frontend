@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
 import models.registration.WithoutIdRegData
-import pages.RegistrationPage
+import pages.upeNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,13 +47,11 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val preparedForm = reg.withoutIdRegData.fold(form)(data => form fill data.upeNameRegistration)
-      Ok(view(preparedForm, mode))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -62,27 +60,11 @@ class UpeNameRegistrationController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          request.userAnswers
-            .get(RegistrationPage)
-            .map { reg =>
-              val withoutId = reg.withoutIdRegData.getOrElse(WithoutIdRegData(upeNameRegistration = value))
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      reg.copy(
-                        withoutIdRegData = Some(withoutId.copy(upeNameRegistration = value)),
-                        withIdRegData = None,
-                        orgType = None
-                      )
-                    )
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
-
-            }
-            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+          for {
+            updatedAnswers <-
+              Future.fromTry(request.userAnswers.set(upeNameRegistrationPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
       )
   }
 

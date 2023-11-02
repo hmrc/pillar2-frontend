@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.subAddSecondaryContactPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -26,15 +26,8 @@ import viewmodels.implicits._
 object AddSecondaryContactSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
-      val value =
-        if (
-          answer.addSecondaryContact.contains(
-            true
-          ) && (answer.secondaryContactEmail.isDefined && answer.secondaryContactName.isDefined && answer.secondaryTelephonePreference.isDefined)
-        )
-          "site.yes"
-        else "site.no"
+    answers.get(subAddSecondaryContactPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "addSecondaryContact.checkYourAnswersLabel",
         value = ValueViewModel(value),

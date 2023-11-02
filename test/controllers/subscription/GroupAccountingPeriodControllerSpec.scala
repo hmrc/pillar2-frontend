@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.GroupAccountingPeriodFormProvider
-import models.subscription.{AccountingPeriod, Subscription}
-import models.{MneOrDomestic, NormalMode, UserAnswers}
+import models.NormalMode
+import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubscriptionPage
+import pages.subAccountingPeriodPage
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.subscriptionview.GroupAccountingPeriodView
 
 import java.time.LocalDate
@@ -38,54 +36,46 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
 
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
-
   "GroupAccountingPeriod Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET if no previous data is found" in {
 
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(SubscriptionPage, Subscription(MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted))
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val application = applicationBuilder().build()
 
       running(application) {
-
-        val result = route(application, getRequest).value
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(getRequest, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-      val startDate = LocalDate.of(2023, 12, 31)
-      val endDate   = LocalDate.of(2023, 12, 31)
-      val userAnswers =
-        emptyUserAnswers
-          .set(
-            SubscriptionPage,
-            Subscription(
-              domesticOrMne = MneOrDomestic.Uk,
-              groupDetailStatus = RowStatus.Completed,
-              contactDetailsStatus = RowStatus.NotStarted,
-              accountingPeriod = Some(AccountingPeriod(startDate, endDate))
-            )
-          )
-          .success
-          .value
+    "must return OK and the correct view for a GET if page has previously been answered" in {
+      val startDate   = LocalDate.of(2023, 12, 31)
+      val endDate     = LocalDate.of(2025, 12, 31)
+      val date        = AccountingPeriod(startDate, endDate)
+      val ua          = emptyUserAnswers.set(subAccountingPeriodPage, date).success.value
+      val application = applicationBuilder(Some(ua)).build()
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(date), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to the group check your answers page when valid data is submitted" in {
+
+      val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
-
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
@@ -102,7 +92,8 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad.url
+
+        redirectLocation(result).value mustEqual controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url
       }
 
     }
@@ -124,28 +115,6 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody(
-          "startDate.day"   -> "31",
-          "startDate.month" -> "12",
-          "startDate.year"  -> "2023",
-          "endDate.day"     -> "31",
-          "endDate.month"   -> "12",
-          "endDate.year"    -> "2024"
-        )
-
-      running(application) {
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

@@ -16,25 +16,28 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.NominatedFilingMemberPage
+import models.UserAnswers
+import pages.upeGRSResponsePage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object IsNfmUKBasedSummary {
+object EntityTypePartnershipCompanyUtrUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NominatedFilingMemberPage).map { answer =>
-      val value = if (answer.isNfmRegisteredInUK.contains(true)) "site.yes" else "site.no"
-      SummaryListRowViewModel(
-        key = "isNFMUKBased.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("isNFMUKBased.change.hidden"))
-        )
-      )
-    }
+    answers
+      .get(upeGRSResponsePage)
+      .flatMap { GRS =>
+        GRS.partnershipEntityRegistrationData.flatMap { regData =>
+          regData.sautr.map(sautr =>
+            SummaryListRowViewModel(
+              key = "entityType.companyUtr.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent(sautr))
+            )
+          )
+        }
+      }
+
 }

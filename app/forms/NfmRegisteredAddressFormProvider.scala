@@ -16,18 +16,17 @@
 
 package forms
 
-import forms.mappings.Mappings
-import models.fm.NfmRegisteredAddress
+import forms.mappings.{AddressMappings, Mappings}
+import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
-import forms.mappings.AddressMappings
+
 import javax.inject.Inject
 
 class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength       = 35
-  private val addressLength    = 35
-  private val postalCodeLength = 200
-  def apply(): Form[NfmRegisteredAddress] = Form(
+  private val textLength    = 35
+  private val addressLength = 35
+  def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
         text("nfmRegisteredAddress.messages.error.addressLine1.required")
@@ -54,6 +53,6 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
       "countryCode" ->
         text("nfmRegisteredAddress.country.error.required")
           .verifying(maxLength(textLength, "nfmRegisteredAddress.country.error.length"))
-    )(NfmRegisteredAddress.apply)(NfmRegisteredAddress.unapply)
+    )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

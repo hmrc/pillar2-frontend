@@ -21,15 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import models.fm.WithoutIdNfmData
-import models.requests.DataRequest
-import pages.NominatedFilingMemberPage
+import pages.fmNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.errors.ErrorTemplate
 import views.html.fmview.NfmNameRegistrationView
 
 import javax.inject.Inject
@@ -42,7 +39,6 @@ class NfmNameRegistrationController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  page_not_available:        ErrorTemplate,
   view:                      NfmNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -51,19 +47,11 @@ class NfmNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case false =>
-        val preparedForm = request.userAnswers.get(NominatedFilingMemberPage) match {
-          case None        => form
-          case Some(value) => value.withoutIdRegData.fold(form)(data => form.fill(data.registeredFmName))
-        }
-        Ok(view(preparedForm, mode))
-      case true =>
-        NotFound(notAvailable)
-
+    val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
     }
-
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -71,28 +59,12 @@ class NfmNameRegistrationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val regData =
-            request.userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Filing member registered in UK not been selected"))
-          val regDataWithoutId = regData.withoutIdRegData.getOrElse(WithoutIdNfmData(registeredFmName = value))
-
+        value =>
           for {
-            updatedAnswers <- Future.fromTry(
-                                request.userAnswers.set(
-                                  NominatedFilingMemberPage,
-                                  regData copy (withoutIdRegData = Some(regDataWithoutId.copy(registeredFmName = value)),
-                                  orgType = None, withIdRegData = None, isNfmRegisteredInUK = Some(false))
-                                )
-                              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(fmNameRegistrationPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
-        }
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]) =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(true)(data => data.isNfmRegisteredInUK.getOrElse(true) && (data.withIdRegData.isDefined && data.isNfmRegisteredInUK.getOrElse(true)))
 
 }

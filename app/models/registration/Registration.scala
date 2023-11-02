@@ -18,15 +18,13 @@ package models.registration
 
 import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
 
 case class Registration(
-  isUPERegisteredInUK:  Boolean,
-  orgType:              Option[EntityType] = None,
-  isRegistrationStatus: RowStatus,
-  withIdRegData:        Option[GrsResponse] = None,
-  withoutIdRegData:     Option[WithoutIdRegData] = None,
-  registrationInfo:     Option[RegistrationInfo] = None
+  isUPERegisteredInUK: Boolean,
+  orgType:             Option[EntityType] = None,
+  withIdRegData:       Option[GrsResponse] = None,
+  withoutIdRegData:    Option[WithoutIdRegData] = None,
+  registrationInfo:    Option[RegistrationInfo] = None
 )
 
 object Registration {

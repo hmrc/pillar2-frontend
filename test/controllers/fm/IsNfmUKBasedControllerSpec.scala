@@ -19,16 +19,14 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
-import models.fm.FilingMember
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominatedFilingMemberPage
+import pages.{NominateFilingMemberPage, fmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
 
 import scala.concurrent.Future
@@ -40,10 +38,8 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
   "IsNFMUKBased Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithIdFmData()).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
@@ -57,27 +53,11 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND if previous page not defined" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(
-            NominatedFilingMemberPage,
-            FilingMember(true, Some(true), isNFMnStatus = RowStatus.InProgress)
-          )
+          .set(fmRegisteredInUKPage, true)
           .success
           .value
 
@@ -120,8 +100,12 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
     }
 
     "must redirect to NfmEntityType to choose companyType when Yes is submited" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
+      val userAnswers =
+        UserAnswers(userAnswersId)
+          .set(NominateFilingMemberPage, true)
+          .success
+          .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -139,9 +123,13 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to UnderConstruction When No is submited" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithIdForLimitedCompForFm))
+    "must redirect to Name Registration When No is submited" in {
+      val userAnswers =
+        UserAnswers(userAnswersId)
+          .set(NominateFilingMemberPage, false)
+          .success
+          .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

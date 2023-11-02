@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package models.fm
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+import models.grs.EntityType
+import play.api.libs.json.JsPath
 
-case class WithoutIdNfmData(
-  registeredFmName:      String,
-  registeredFmAddress:   Option[NfmRegisteredAddress] = None,
-  fmContactName:         Option[String] = None,
-  fmEmailAddress:        Option[String] = None,
-  contactNfmByTelephone: Option[Boolean] = None,
-  telephoneNumber:       Option[String] = None
-)
+case object fmEntityTypePage extends QuestionPage[EntityType] {
 
-object WithoutIdNfmData {
-  implicit val format: OFormat[WithoutIdNfmData] = Json.format[WithoutIdNfmData]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "fmEntityType"
 }
+
+//case class RegistrationInfo(
+//  crn:    String,
+//  utr:    String,
+//  safeId: String
+//)
+//
+//object RegistrationInfo {
+//  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
+//}

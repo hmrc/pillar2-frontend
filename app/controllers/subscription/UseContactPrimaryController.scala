@@ -21,19 +21,19 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
+import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
-import pages.{NominatedFilingMemberPage, RegistrationPage, SubscriptionPage}
+import pages._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class UseContactPrimaryController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -41,256 +41,119 @@ class UseContactPrimaryController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UseContactPrimaryFormProvider,
-  page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UseContactPrimaryView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form = formProvider()
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        isNfmRegisteredUK(request) match {
-          case true =>
-            request.userAnswers
-              .get(SubscriptionPage)
-              .fold(NotFound(notAvailable)) { reg =>
-                reg.useContactPrimary.fold(Ok(view(form, mode, getName(request), getEmail(request), getPhoneNumber(request))))(data =>
-                  Ok(view(form.fill(data), mode, getName(request), getEmail(request), getPhoneNumber(request)))
-                )
-              }
-          case false =>
-            isUpeRegisteredUK(request) match {
-              case true =>
-                request.userAnswers
-                  .get(SubscriptionPage)
-                  .fold(NotFound(notAvailable)) { reg =>
-                    reg.useContactPrimary.fold(Ok(view(form, mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request))))(data =>
-                      Ok(view(form.fill(data), mode, getUpeName(request), getUpeEmail(request), getUpePhoneNumber(request)))
-                    )
-                  }
-              case false => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)) // ask for primary conact
-            }
-        }
-      case false => NotFound(notAvailable)
-    }
-  }
-  // noinspection ScalaStyle
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val subData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("subscription data is available"))
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors =>
-          isNfmRegisteredUK(request) match {
-            case true =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
-            case false =>
-              Future.successful(BadRequest(view(formWithErrors, mode, getName(request), getEmail(request), getPhoneNumber(request))))
-          },
-        value =>
-          value match {
-            case true =>
-              (isNfmRegisteredUK(request), getPhoneNumber(request).isEmpty, getUpePhoneNumber(request).isEmpty) match {
-                case (true, true, _) =>
-                  for {
-                    updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              domesticOrMne = subData.domesticOrMne,
-                              useContactPrimary = Some(value),
-                              contactByTelephone = Some(ContactByNfmPhoneNumber(request)),
-                              primaryContactName = Some(getName(request)),
-                              primaryContactEmail = Some(getEmail(request)),
-                              groupDetailStatus = subData.groupDetailStatus,
-                              contactDetailsStatus = RowStatus.InProgress
-                            )
-                          )
-                        )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-                case (true, false, _) =>
-                  for {
-                    updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              domesticOrMne = subData.domesticOrMne,
-                              useContactPrimary = Some(value),
-                              contactByTelephone = Some(ContactByNfmPhoneNumber(request)),
-                              primaryContactName = Some(getName(request)),
-                              primaryContactEmail = Some(getEmail(request)),
-                              primaryContactTelephone = Some(getPhoneNumber(request)),
-                              groupDetailStatus = subData.groupDetailStatus,
-                              contactDetailsStatus = RowStatus.InProgress
-                            )
-                          )
-                        )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-                case (false, _, true) =>
-                  for {
-                    updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              domesticOrMne = subData.domesticOrMne,
-                              useContactPrimary = Some(value),
-                              contactByTelephone = Some(ContactByUpePhoneNumber(request)),
-                              primaryContactTelephone = None,
-                              primaryContactName = Some(getUpeName(request)),
-                              primaryContactEmail = Some(getUpeEmail(request)),
-                              groupDetailStatus = subData.groupDetailStatus,
-                              contactDetailsStatus = RowStatus.InProgress
-                            )
-                          )
-                        )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-                case (false, _, false) =>
-                  for {
-                    updatedAnswers <-
-                      Future
-                        .fromTry(
-                          request.userAnswers.set(
-                            SubscriptionPage,
-                            subData.copy(
-                              domesticOrMne = subData.domesticOrMne,
-                              useContactPrimary = Some(value),
-                              contactByTelephone = Some(ContactByUpePhoneNumber(request)),
-                              primaryContactName = Some(getUpeName(request)),
-                              primaryContactEmail = Some(getUpeEmail(request)),
-                              primaryContactTelephone = Some(getUpePhoneNumber(request)),
-                              groupDetailStatus = subData.groupDetailStatus,
-                              contactDetailsStatus = RowStatus.InProgress
-                            )
-                          )
-                        )
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
-              }
-            case false =>
-              if (subData.useContactPrimary.fold(false)(usePrimary => usePrimary)) {
-                for {
-                  updatedAnswers <-
-                    Future
-                      .fromTry(
-                        request.userAnswers.set(
-                          SubscriptionPage,
-                          subData.copy(
-                            domesticOrMne = subData.domesticOrMne,
-                            useContactPrimary = Some(value),
-                            groupDetailStatus = subData.groupDetailStatus,
-                            contactDetailsStatus = RowStatus.InProgress,
-                            primaryContactName = None,
-                            primaryContactEmail = None,
-                            contactByTelephone = None,
-                            primaryContactTelephone = None
-                          )
-                        )
-                      )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
-              } else {
-                for {
-                  updatedAnswers <-
-                    Future
-                      .fromTry(
-                        request.userAnswers.set(
-                          SubscriptionPage,
-                          subData.copy(
-                            domesticOrMne = subData.domesticOrMne,
-                            accountingPeriod = subData.accountingPeriod,
-                            primaryContactEmail = subData.primaryContactEmail,
-                            contactByTelephone = subData.contactByTelephone,
-                            primaryContactTelephone = subData.primaryContactTelephone,
-                            primaryContactName = subData.primaryContactName,
-                            groupDetailStatus = subData.groupDetailStatus,
-                            contactDetailsStatus = RowStatus.InProgress,
-                            useContactPrimary = Some(value)
-                          )
-                        )
-                      )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
-              }
-          }
-      )
-  }
 
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false) { data =>
-        data.groupDetailStatus.toString == "Completed"
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    (for {
+      nfmNominated     <- request.userAnswers.get(NominateFilingMemberPage)
+      upeMneOrDomestic <- request.userAnswers.get(upeRegisteredInUKPage)
+    } yield {
+      val nfmMneOrDom = request.userAnswers.get(fmRegisteredInUKPage)
+      (nfmNominated, upeMneOrDomestic, nfmMneOrDom) match {
+        case (true, _, Some(false))                        => fmNoID(mode)
+        case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
+        case _ => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
       }
-
-  private def isNfmRegisteredUK(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .flatMap { nfm =>
-        nfm.isNfmRegisteredInUK
-      } match {
-      case Some(false) => true
-      case _           => false
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  }
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    contactDetail(request) match {
+      case Right(contactDetail) =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future
+                .successful(BadRequest(view(formWithErrors, mode, contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel))),
+            value =>
+              value match {
+                case true =>
+                  for {
+                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
+                    updatedAnswers4 <-
+                      Future
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                    _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
+                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                case false =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode))
+              }
+          )
+      case Left(result) => Future.successful(result)
     }
+  }
 
-  private def isUpeRegisteredUK(request: DataRequest[AnyContent]): Boolean =
+  private def contactDetail(request: DataRequest[AnyContent]): Either[Result, SubscriptionContactDetails] =
     request.userAnswers
-      .get(RegistrationPage)
-      .map { upe =>
-        upe.isUPERegisteredInUK
-      } match {
-      case Some(false) => true
-      case _           => false
-    }
+      .get(NominateFilingMemberPage)
+      .flatMap { registered =>
+        if (registered) {
+          request.userAnswers.get(fmRegisteredInUKPage).map { ukBased =>
+            if (!ukBased) {
+              (for {
+                contactName  <- request.userAnswers.get(fmContactNamePage)
+                contactEmail <- request.userAnswers.get(fmContactEmailPage)
+                phonePref    <- request.userAnswers.get(fmPhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(fmCapturePhonePage))))
+                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            } else {
+              (for {
+                contactName  <- request.userAnswers.get(upeContactNamePage)
+                contactEmail <- request.userAnswers.get(upeContactEmailPage)
+                phonePref    <- request.userAnswers.get(upePhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage))))
+                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            }
+          }
+        } else {
+          for {
+            contactName  <- request.userAnswers.get(upeContactNamePage)
+            contactEmail <- request.userAnswers.get(upeContactEmailPage)
+            phonePref    <- request.userAnswers.get(upePhonePreferencePage)
+          } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage)))
+        }
+      }
+      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-  private def getName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(NominatedFilingMemberPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmContactName.fold("")(name => name)))
-  }
+  private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
+    (for {
+      contactName  <- request.userAnswers.get(fmContactNamePage)
+      contactEmail <- request.userAnswers.get(fmContactEmailPage)
+      telPref      <- request.userAnswers.get(fmPhonePreferencePage)
+    } yield {
+      val contactTel = request.userAnswers.get(fmCapturePhonePage)
+      request.userAnswers.get(subUsePrimaryContactPage) match {
+        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
+        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
+        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
+        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+      }
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-  private def getEmail(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(NominatedFilingMemberPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.fmEmailAddress.fold("")(email => email)))
-  }
-
-  private def ContactByNfmPhoneNumber(request: DataRequest[AnyContent]): Boolean = {
-    val registration = request.userAnswers.get(NominatedFilingMemberPage)
-    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.telephoneNumber.fold(false)(tel => tel.nonEmpty)))
-  }
-
-  private def ContactByUpePhoneNumber(request: DataRequest[AnyContent]): Boolean = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold(false)(regData => regData.withoutIdRegData.fold(false)(withoutId => withoutId.contactUpeByTelephone.nonEmpty))
-  }
-  private def getPhoneNumber(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(NominatedFilingMemberPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
-  }
-
-  private def getUpeName(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.upeContactName.fold("")(name => name)))
-  }
-
-  private def getUpeEmail(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.emailAddress.fold("")(email => email)))
-  }
-
-  private def getUpePhoneNumber(request: DataRequest[AnyContent]): String = {
-    val registration = request.userAnswers.get(RegistrationPage)
-    registration.fold("")(regData => regData.withoutIdRegData.fold("")(withoutId => withoutId.telephoneNumber.fold("")(tel => tel)))
-  }
+  private def upeNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
+    (for {
+      contactName  <- request.userAnswers.get(upeContactNamePage)
+      contactEmail <- request.userAnswers.get(upeContactEmailPage)
+      telPref      <- request.userAnswers.get(upePhonePreferencePage)
+    } yield {
+      val contactTel = request.userAnswers.get(upeCapturePhonePage)
+      request.userAnswers.get(subUsePrimaryContactPage) match {
+        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
+        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
+        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
+        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+      }
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
 }

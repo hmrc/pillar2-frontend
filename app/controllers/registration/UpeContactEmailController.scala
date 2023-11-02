@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
-import pages.RegistrationPage
+import pages.{upeContactEmailPage, upeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,35 +44,37 @@ class UpeContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      withoutId          <- reg.withoutIdRegData
-      userName           <- request.userAnswers.upeContactName
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val form         = formProvider(userName)
-      val preparedForm = withoutId.emailAddress.map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode, userName))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(upeContactNamePage)
+      .map { username =>
+        val form = formProvider(username)
+        val preparedForm = request.userAnswers.get(upeContactEmailPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode, username))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    (for {
-      name      <- request.userAnswers.upeContactName
-      reg       <- request.userAnswers.get(RegistrationPage)
-      withoutId <- reg.withoutIdRegData
-    } yield formProvider(name)
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
-        value =>
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers.set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(emailAddress = Some(value)))))
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
-      )).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    request.userAnswers
+      .get(upeContactNamePage)
+      .map { name =>
+        formProvider(name)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+            value =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(
+                    request.userAnswers.set(upeContactEmailPage, value)
+                  )
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

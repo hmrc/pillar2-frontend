@@ -21,8 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import models.registration.Registration
-import pages.RegistrationPage
+import pages.{GrsUpeStatusPage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,9 +48,9 @@ class UPERegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RegistrationPage) match {
+    val preparedForm = request.userAnswers.get(upeRegisteredInUKPage) match {
       case None        => form
-      case Some(value) => form.fill(value.isUPERegisteredInUK)
+      case Some(value) => form.fill(value)
     }
 
     Ok(view(preparedForm, mode))
@@ -65,41 +64,20 @@ class UPERegisteredInUKConfirmationController @Inject() (
         value =>
           value match {
             case true =>
-              val regData =
-                request.userAnswers
-                  .get(RegistrationPage)
-                  .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
-
-              val checkedRegData =
-                regData.withIdRegData.fold(
-                  regData copy (isUPERegisteredInUK = value,
-                  isRegistrationStatus = RowStatus.InProgress, withoutIdRegData = None)
-                )(_ => regData)
-
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(RegistrationPage, checkedRegData))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                updatedAnswers1 <- Future.fromTry(
+                                     request.userAnswers
+                                       .get(GrsUpeStatusPage)
+                                       .map(updatedAnswers.set(GrsUpeStatusPage, _))
+                                       .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
+                                   )
+                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
-
             case false =>
-              val regData =
-                request.userAnswers
-                  .get(RegistrationPage)
-                  .getOrElse(Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
-
-              val checkedRegData =
-                regData.withIdRegData.fold(regData)(_ => Registration(isUPERegisteredInUK = value, isRegistrationStatus = RowStatus.InProgress))
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(
-                      RegistrationPage,
-                      checkedRegData.copy(isUPERegisteredInUK = value, orgType = None, withIdRegData = None)
-                    )
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
           }

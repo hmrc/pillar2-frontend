@@ -19,15 +19,13 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.requests.DataRequest
-import pages.NominatedFilingMemberPage
+import pages.fmPhonePreferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.errors.ErrorTemplate
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersController @Inject() (
@@ -35,7 +33,6 @@ class NfmCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  page_not_available:       ErrorTemplate,
   view:                     FilingMemberCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
@@ -43,12 +40,6 @@ class NfmCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    val telephonePreference = request.userAnswers.get(NominatedFilingMemberPage) match {
-      case Some(value) =>
-        value.withoutIdRegData.fold(false)(data => data.contactNfmByTelephone.fold(false)(tel => tel))
-      case _ => false
-    }
     val list = SummaryListViewModel(
       rows = Seq(
         NfmNameRegistrationSummary.row(request.userAnswers),
@@ -56,30 +47,10 @@ class NfmCheckYourAnswersController @Inject() (
         NfmContactNameSummary.row(request.userAnswers),
         NfmEmailAddressSummary.row(request.userAnswers),
         NfmTelephonePreferenceSummary.row(request.userAnswers),
-        telephonePreference match {
-          case true => NfmContactTelephoneSummary.row(request.userAnswers)
-          case _    => None
-        }
+        NfmContactTelephoneSummary.row(request.userAnswers)
       ).flatten
     )
-    if (isPreviousPagesDefined(request))
-      Ok(view(list))
-    else
-      NotFound(notAvailable)
+    Ok(view(list))
   }
-  private def isPreviousPagesDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(NominatedFilingMemberPage)
-      .fold(false)(data =>
-        data.withoutIdRegData.fold(false)(withoutId =>
-          withoutId.registeredFmName.nonEmpty &&
-            withoutId.registeredFmAddress.isDefined &&
-            withoutId.fmContactName.isDefined &&
-            withoutId.fmEmailAddress.isDefined &&
-            withoutId.contactNfmByTelephone.fold(false)(contactTel =>
-              contactTel && withoutId.telephoneNumber.isDefined ||
-                !contactTel
-            )
-        )
-      )
+
 }

@@ -16,8 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, NormalMode, UserAnswers}
-import pages.{NominatedFilingMemberPage, RegistrationPage}
+import models.{NormalMode, UserAnswers}
+import pages.fmGRSResponsePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,21 +29,18 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(NominatedFilingMemberPage)
-      .flatMap { reg =>
-        reg.withIdRegData.map { withoutId =>
-          withoutId.incorporatedEntityRegistrationData.map { answer =>
-            val value = HtmlFormat.escape(answer.companyProfile.companyName).toString
-            SummaryListRowViewModel(
-              key = "entityType.companyName.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(value)),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
-                  .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
-              )
+      .get(fmGRSResponsePage)
+      .flatMap { GRS =>
+        GRS.incorporatedEntityRegistrationData.map { answer =>
+          val value = HtmlFormat.escape(answer.companyProfile.companyName).toString
+          SummaryListRowViewModel(
+            key = "entityType.companyName.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(value)),
+            actions = Seq(
+              ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+                .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
             )
-          }
+          )
         }
       }
-      .flatten
 }

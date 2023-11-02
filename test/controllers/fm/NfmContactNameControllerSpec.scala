@@ -22,10 +22,8 @@ import forms.NfmContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominatedFilingMemberPage
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmContactNameView
@@ -36,14 +34,10 @@ class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
 
   "NFMContactName Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode))
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmDataDefForContactName).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -63,28 +57,16 @@ class NfmContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmDataDefForContactName).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "Ashley Smith"))
+            .withFormUrlEncodedBody("value" -> "goodbye")
 
         val result = route(application, request).value
 

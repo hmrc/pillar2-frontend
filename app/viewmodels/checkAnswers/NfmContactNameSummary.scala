@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.NominatedFilingMemberPage
+import pages.fmContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,20 +28,15 @@ object NfmContactNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(NominatedFilingMemberPage)
-      .flatMap { reg =>
-        reg.withoutIdRegData.map { withoutId =>
-          withoutId.fmContactName.map { answer =>
-            SummaryListRowViewModel(
-              key = "nfmContactName.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlFormat.escape(answer).toString),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmContactName.checkYourAnswersLabel.hidden"))
-              )
-            )
-          }
-        }
+      .get(fmContactNamePage)
+      .map { answer =>
+        SummaryListRowViewModel(
+          key = "nfmContactName.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("nfmContactName.checkYourAnswersLabel.hidden"))
+          )
+        )
       }
-      .flatten
 }
