@@ -108,6 +108,16 @@ task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
 
 
+grs.registration.failed.header = Sorry, there is a problem with the service
+grs.registration.failed.line1 = Try again later.
+grs.registration.failed.line2 = Your company details could not be confirmed.
+grs.registration.failed.line3-hyperlink = Go back to select the entity type
+grs.registration.failed.line3-cont = to try again.
+
+
+
+
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
