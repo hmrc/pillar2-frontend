@@ -29,43 +29,19 @@ import java.time.Instant
 class RegistrationConnectorSpec extends SpecBase {
 
   val businessWithoutIdJsonResponse: String =
-    """
-| {
-  |
-  "registerWithoutIDResponse": {
-    | "responseCommon": {
-    | "status": "OK",
-    | "processingDate": "2010-12-19T09:30:47Z",
-    | "returnParameters": [
-    | {
-    | "paramName": "SAP_NUMBER", "paramValue": "9876543210"
-    |}]
-    |},
-    | "responseDetail": {
-    | "SAFEID": "XE1111123456789",
-    | "ARN": "ZARN7654321"
-    |}}
-}
-""".stripMargin
+    """{
+      |  "processingDate" : "2023-11-03T11:21:32Z",
+      |  "sapNumber" : "0100429672",
+      |  "safeId" : "XE1111123456789"
+      |}
+      |""".stripMargin
 
   val businessWithoutIdMissingSafeIdJson: String =
-    """
-| {
-  |
-  "registerWithoutIDResponse": {
-    | "responseCommon": {
-    | "status": "OK",
-    | "processingDate": "2010-12-19T09:30:47Z",
-    | "returnParameters": [
-    | {
-    | "paramName": "SAP_NUMBER", "paramValue": "0123456789"
-    |}]
-    |},
-    | "responseDetail": {
-    | "ARN": "ZARN1234567"
-    |}}
-}
-""".stripMargin
+    """{
+      |  "processingDate" : "2023-11-03T11:21:32Z",
+      |  "sapNumber" : "0100429672"
+      |}
+      |""".stripMargin
 
   val businessSubscriptionSuccessJson: String =
     """
