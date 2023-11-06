@@ -22,7 +22,7 @@ import forms.NfmEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NominatedFilingMemberPage
+import pages.fmContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,11 +38,8 @@ class NfmEmailAddressControllerSpec extends SpecBase {
   "NfmContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmDataForContactEmail).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+      val ua = emptyUserAnswers.set(fmContactNamePage, "Ashley Smith").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -61,21 +58,11 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validNoIdNfmDataForContactEmail).success.value
+      val userAnswer =
+        emptyUserAnswers.set(fmContactNamePage, "alex").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -92,13 +79,38 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswer =
+        emptyUserAnswers.set(fmContactNamePage, "alex").success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "redirect to journey recovery if no contact name is found for GET" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "redirect to journey recovery if no contact name is found for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

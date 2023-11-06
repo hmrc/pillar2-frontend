@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RegistrationPage
+import pages.upeNameRegistrationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,11 +27,10 @@ import viewmodels.implicits._
 object UpeNameRegistrationSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegistrationPage).map { answer =>
-      val upeNameRegistration = answer.withoutIdRegData.fold("")(withoutId => withoutId.upeNameRegistration)
+    answers.get(upeNameRegistrationPage).map { answer =>
       SummaryListRowViewModel(
         key = "upeNameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(upeNameRegistration).toString),
+        value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("upeNameRegistration.change.hidden"))

@@ -17,10 +17,10 @@
 package connectors
 
 import base.SpecBase
-import models.{NormalMode, UserType}
 import models.grs.EntityType.LimitedLiabilityPartnership
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.IncorporatedEntityCreateRegistrationRequest
+import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,9 +29,9 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import scala.concurrent.Future
 
 class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
-
-  val apiUrl    = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
-  val connector = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
+  private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
+  val apiUrl                                     = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
+  val connector                                  = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
   "PartnershipEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createPartnershipJourney" in {

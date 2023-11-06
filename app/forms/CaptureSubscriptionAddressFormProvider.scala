@@ -17,17 +17,16 @@
 package forms
 
 import forms.mappings.{AddressMappings, Mappings}
-import models.subscription.SubscriptionAddress
+import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
 class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength     = 35
-  private val addressLength  = 35
-  private val postcodeLength = 10
-  def apply(): Form[SubscriptionAddress] = Form(
+  private val textLength    = 35
+  private val addressLength = 35
+  def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
         text("subscriptionAddress.messages.error.addressLine1.required")
@@ -54,6 +53,6 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
           .verifying(maxLength(textLength, "subscriptionAddress.country.error.length"))
-    )(SubscriptionAddress.apply)(SubscriptionAddress.unapply)
+    )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

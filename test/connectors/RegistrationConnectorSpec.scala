@@ -17,16 +17,53 @@
 package connectors
 
 import base.SpecBase
-import models.SafeId
+import models.{NonUKAddress, SafeId, UKAddress, UserAnswers}
 import org.scalacheck.Gen
+import pages._
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 
-import scala.collection.Seq
+import java.time.Instant
 
 class RegistrationConnectorSpec extends SpecBase {
 
+  val businessWithoutIdJsonResponse: String =
+    """{
+      |  "processingDate" : "2023-11-03T11:21:32Z",
+      |  "sapNumber" : "0100429672",
+      |  "safeId" : "XE1111123456789"
+      |}
+      |""".stripMargin
+
+  val businessWithoutIdMissingSafeIdJson: String =
+    """{
+      |  "processingDate" : "2023-11-03T11:21:32Z",
+      |  "sapNumber" : "0100429672"
+      |}
+      |""".stripMargin
+
+  val businessSubscriptionSuccessJson: String =
+    """
+| {
+  |
+  "success": {
+    | "plrReference": "XMPLR0012345678",
+    | "formBundleNumber": "119000004320",
+    | "processingDate": "2023-09-22"
+    |}
+  |
+}
+""".stripMargin
+
+  val businessSubscriptionMissingPlrRefJson: String =
+    """
+    |{
+    |"formBundleNumber":"119000004320",
+    |"processingDate":"2023-09-22"
+    |}""".stripMargin
+
+  def userAnswersData(id: String, jsonObj: JsObject): UserAnswers = UserAnswers(id, jsonObj, Instant.ofEpochSecond(1))
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.pillar2.port" -> server.port()
@@ -37,26 +74,89 @@ class RegistrationConnectorSpec extends SpecBase {
 
   val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-
+  val ukAddress = UKAddress(
+    addressLine1 = "1 drive",
+    addressLine2 = None,
+    addressLine3 = "la la land",
+    addressLine4 = None,
+    postalCode = "m19hgs",
+    countryCode = "AB"
+  )
+  private val noIDUpeData =
+    emptyUserAnswers
+      .set(upeNameRegistrationPage, "name")
+      .success
+      .value
+      .set(upeRegisteredInUKPage, false)
+      .success
+      .value
+      .set(upeRegisteredAddressPage, ukAddress)
+      .success
+      .value
+      .set(upeContactNamePage, "contactName")
+      .success
+      .value
+      .set(upeContactEmailPage, "some@email.com")
+      .success
+      .value
+      .set(upePhonePreferencePage, true)
+      .success
+      .value
+      .set(upeCapturePhonePage, "12312321")
+      .success
+      .value
+  val nonUkAddress = NonUKAddress(
+    addressLine1 = "1 drive",
+    addressLine2 = None,
+    addressLine3 = "la la land",
+    addressLine4 = None,
+    postalCode = None,
+    countryCode = "AB"
+  )
+  val nfmNoID = emptyUserAnswers
+    .set(NominateFilingMemberPage, true)
+    .success
+    .value
+    .set(fmRegisteredInUKPage, false)
+    .success
+    .value
+    .set(fmNameRegistrationPage, "name")
+    .success
+    .value
+    .set(fmRegisteredAddressPage, nonUkAddress)
+    .success
+    .value
+    .set(fmContactNamePage, "contactName")
+    .success
+    .value
+    .set(fmContactEmailPage, "some@email.com")
+    .success
+    .value
+    .set(fmPhonePreferencePage, true)
+    .success
+    .value
+    .set(fmCapturePhonePage, "12312321")
+    .success
+    .value
   "RegistrationConnector" when {
-    "return safeId for Upe Registerwithout Id is successful" in {
+    "return safeId for Upe Register without Id is successful" in {
 
       stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> noIDUpeData)))
       result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
     }
 
     "return InternalServerError for Upe Register without Id is successful" in {
 
       stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdMissingSafeIdJson)
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> noIDUpeData)))
       result.futureValue mustBe Right(None)
     }
     "return InternalServerError for EIS returns Error status" in {
       val errorStatus: Int = errorCodes.sample.value
       stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
-      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> validNoIdRegData())))
+      val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> noIDUpeData)))
       result.futureValue mustBe Left(models.InternalServerError)
     }
     "return safeId for FM Registerwithout Id is successful" in {
@@ -64,7 +164,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
+        userAnswersData("id", Json.obj("FilingMember" -> nfmNoID))
       )
       result.futureValue mustBe Right(Some(SafeId("XE1111123456789")))
     }
@@ -74,7 +174,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdMissingSafeIdJson)
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
+        userAnswersData("id", Json.obj("FilingMember" -> nfmNoID))
       )
       result.futureValue mustBe Right(None)
     }
@@ -84,7 +184,7 @@ class RegistrationConnectorSpec extends SpecBase {
 
       val result = connector.fmRegisterationWithoutID(
         "id",
-        userAnswersData("id", Json.obj("FilingMember" -> validNoIdFmData(isNfmRegisteredInUK = Some(false))))
+        userAnswersData("id", Json.obj("FilingMember" -> nfmNoID))
       )
       result.futureValue mustBe Left(models.InternalServerError)
     }

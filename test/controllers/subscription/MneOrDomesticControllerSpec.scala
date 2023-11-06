@@ -17,15 +17,19 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.MneOrDomesticFormProvider
-import models.fm.FilingMember
-import models.subscription.Subscription
 import models.{MneOrDomestic, NormalMode, UserAnswers}
-import pages.{NominatedFilingMemberPage, SubscriptionPage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.subMneOrDomesticPage
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.RowStatus
 import views.html.subscriptionview.MneOrDomesticView
+
+import scala.concurrent.Future
 
 class MneOrDomesticControllerSpec extends SpecBase {
 
@@ -33,9 +37,9 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
   "MneOrDomestic Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
+        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
 
@@ -49,49 +53,24 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(
-            SubscriptionPage,
-            Subscription(domesticOrMne = MneOrDomestic.Uk, groupDetailStatus = RowStatus.InProgress, contactDetailsStatus = RowStatus.NotStarted)
-          )
-          .success
-          .value
-          .set(NominatedFilingMemberPage, FilingMember(nfmConfirmation = true, isNFMnStatus = RowStatus.Completed))
-          .success
-          .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
-
-        val view = application.injector.instanceOf[MneOrDomesticView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), NormalMode)(
           request,
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when no previous data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[MneOrDomesticView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -103,15 +82,26 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[MneOrDomesticView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to accounting period page when valid data is submitted" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "ukAndOther")
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url
       }
     }
 

@@ -27,7 +27,7 @@ class UpeContactNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "upeContactName" -> text("upe-input-business-name.error.required")
+      "value" -> text("upe-input-business-name.error.required")
         .verifying(maxLength(max, "upe-input-business-name.error.length"))
     )
 }

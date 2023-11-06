@@ -19,67 +19,18 @@ package helpers
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig}
-import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
+import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{BusinessActivityUKView, CheckYourAnswersView, EntityTypeView, GroupTerritoriesView, Kb750IneligibleView, KbMnIneligibleView, KbUKIneligibleView, NfmEntityTypeView, RegisteringNfmForThisGroupView, TurnOverEligibilityView}
+import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
-import views.html.errors.ErrorTemplate
 import views.html.fmview._
 import views.html.registrationview._
 import views.html.subscriptionview._
-import views.html.subscriptionview.{ContactByTelephoneView, ContactCaptureTelephoneDetailsView, ContactCheckYourAnswersView, GroupAccountingPeriodView, MneOrDomesticView, SubCheckYourAnswersView}
 import views.html.templates._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
-
-  val viewSecondaryTelephone: SecondaryTelephoneView =
-    new SecondaryTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewSecondaryTelephonePreference: SecondaryTelephonePreferenceView =
-    new SecondaryTelephonePreferenceView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewSecondaryContactEmail: SecondaryContactEmailView =
-    new SecondaryContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewSecondaryContactName: SecondaryContactNameView =
-    new SecondaryContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewAddSecondaryContact: AddSecondaryContactView =
-    new AddSecondaryContactView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewMneOrDomestic: MneOrDomesticView =
-    new MneOrDomesticView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewNfmCaptureTelephoneDetails: NfmCaptureTelephoneDetailsView =
-    new NfmCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewContactCaptureTelephoneDetails: ContactCaptureTelephoneDetailsView =
-    new ContactCaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-  val viewContactNfmByTelephone: ContactNfmByTelephoneView =
-    new ContactNfmByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewGroupAccountingPeriod: GroupAccountingPeriodView =
-    new GroupAccountingPeriodView(pillar2layout, formWithCSRF, govukErrorSummary, govukDateInput, govukButton)
-
-  val viewNfmNameRegistrationController: NfmNameRegistrationView =
-    new NfmNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewNfmEntityType: NfmEntityTypeView =
-    new NfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewIsNFMUKBased: IsNFMUKBasedView =
-    new IsNFMUKBasedView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewEntityType: EntityTypeView =
-    new EntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
-
-  val viewNfmContactName: NfmContactNameView =
-    new NfmContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-
-  val viewNfmEmailAddress: NfmEmailAddressView =
-    new NfmEmailAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
@@ -157,8 +108,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StandardBetaBanner
   )
 
-  val viewpageNotAvailable: ErrorTemplate = new ErrorTemplate(pillar2layout)
-
   val viewGroupTerritories: GroupTerritoriesView =
     new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
@@ -209,10 +158,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
     new FilingMemberCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
-  val viewContactCheckYourAnswers: ContactCheckYourAnswersView =
-    new ContactCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
-  val viewCheckYourAnswers: CheckYourAnswersView =
-    new CheckYourAnswersView(pillar2layout, govukSummaryList, govukButton, formWithCSRF)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 

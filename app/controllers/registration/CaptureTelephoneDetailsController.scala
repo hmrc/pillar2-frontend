@@ -21,13 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.RegistrationPage
+import pages.{subPrimaryContactNamePage, upeCapturePhonePage, upeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.registrationview.CaptureTelephoneDetailsView
 
 import javax.inject.Inject
@@ -46,39 +45,37 @@ class CaptureTelephoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      noIDData           <- reg.withoutIdRegData
-      userName           <- request.userAnswers.upeContactName
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val form         = formProvider(userName)
-      val preparedForm = noIDData.telephoneNumber.map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode, userName))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    request.userAnswers
+      .get(upeContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(upeCapturePhonePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, mode, contactName))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    (for {
-      name      <- request.userAnswers.upeContactName
-      reg       <- request.userAnswers.get(RegistrationPage)
-      withoutId <- reg.withoutIdRegData
-    } yield formProvider(name)
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
-        value =>
-          for {
-            updatedAnswers <-
-              Future.fromTry(
-                request.userAnswers.set(
-                  RegistrationPage,
-                  reg.copy(isRegistrationStatus = RowStatus.Completed, withoutIdRegData = Some(withoutId.copy(telephoneNumber = Some(value))))
-                )
-              )
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
-      )).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    request.userAnswers
+      .get(upeContactNamePage)
+      .map { contactName =>
+        formProvider(contactName)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            value =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(request.userAnswers.set(upeCapturePhonePage, value))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 

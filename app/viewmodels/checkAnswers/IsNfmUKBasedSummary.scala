@@ -16,30 +16,25 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
-import pages.RegistrationPage
+import models.{CheckMode, UserAnswers}
+import pages.fmRegisteredInUKPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object EntityTypePartnershipCompanyRegUprSummary {
+object IsNfmUKBasedSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers
-      .get(RegistrationPage)
-      .flatMap { reg =>
-        reg.withIdRegData.map { withoutId =>
-          withoutId.partnershipEntityRegistrationData.map { answer =>
-            val value = HtmlFormat.escape(answer.companyProfile.fold("")(reg => reg.companyNumber)).toString
-            SummaryListRowViewModel(
-              key = "entityType.companyReg.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(value))
-            )
-          }
-        }
-      }
-      .flatten
+    answers.get(fmRegisteredInUKPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
+      SummaryListRowViewModel(
+        key = "isNFMUKBased.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("isNFMUKBased.change.hidden"))
+        )
+      )
+    }
 }

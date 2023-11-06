@@ -19,20 +19,15 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
-import models.requests.DataRequest
-import models.subscription.Subscription
-import pages.SubscriptionPage
+import pages.subAccountingPeriodPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.GroupAccountingPeriodView
 
 import javax.inject.Inject
@@ -45,8 +40,7 @@ class GroupAccountingPeriodController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupAccountingPeriodView,
-  page_not_available:        ErrorTemplate
+  view:                      GroupAccountingPeriodView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -54,17 +48,11 @@ class GroupAccountingPeriodController @Inject() (
   def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-
-    isPreviousPageDefined(request) match {
-      case _ =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable)) { subscription =>
-            subscription.accountingPeriod.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          }
-      case "other" => NotFound(notAvailable)
+    val pareparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
+    Ok(view(pareparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -75,43 +63,12 @@ class GroupAccountingPeriodController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          request.userAnswers
-            .get(SubscriptionPage)
-            .map { subs =>
-              for {
-                updatedAnswers <- Future.fromTry(
-                                    request.userAnswers.set(
-                                      SubscriptionPage,
-                                      Subscription(
-                                        domesticOrMne = subs.domesticOrMne,
-                                        groupDetailStatus = RowStatus.Completed,
-                                        contactDetailsStatus = subs.contactDetailsStatus,
-                                        accountingPeriod = Some(value),
-                                        useContactPrimary = subs.useContactPrimary,
-                                        primaryContactName = subs.primaryContactName,
-                                        contactByTelephone = subs.contactByTelephone,
-                                        primaryContactTelephone = subs.primaryContactTelephone,
-                                        primaryContactEmail = subs.primaryContactEmail,
-                                        addSecondaryContact = subs.addSecondaryContact,
-                                        secondaryContactName = subs.secondaryContactName,
-                                        secondaryContactEmail = subs.secondaryContactEmail,
-                                        secondaryTelephonePreference = subs.secondaryTelephonePreference,
-                                        secondaryContactTelephone = subs.secondaryContactTelephone,
-                                        correspondenceAddress = subs.correspondenceAddress
-                                      )
-                                    )
-                                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SubCheckYourAnswersController.onPageLoad)
-            }
-            .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad)
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): String =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold("other")(data => data.domesticOrMne.toString)
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =
     form.copy(errors = form.errors.map {

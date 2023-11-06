@@ -16,32 +16,27 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.NominatedFilingMemberPage
+import models.UserAnswers
+import pages.upeGRSResponsePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NfmCaptureTelephoneDetailsSummary {
+object EntityTypePartnershipCompanyRegUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(NominatedFilingMemberPage)
-      .flatMap(reg =>
-        reg.withoutIdRegData.flatMap(withoutId =>
-          withoutId.telephoneNumber.map(answer =>
+      .get(upeGRSResponsePage)
+      .flatMap { GRS =>
+        GRS.partnershipEntityRegistrationData.flatMap { PEregData =>
+          PEregData.companyProfile.map { answer =>
             SummaryListRowViewModel(
-              key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlFormat.escape(answer).toString),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.change.hidden"))
-              )
+              key = "entityType.companyReg.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent(answer.companyNumber))
             )
-          )
-        )
-      )
-
+          }
+        }
+      }
 }

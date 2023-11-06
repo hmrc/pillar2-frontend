@@ -19,15 +19,12 @@ package models.fm
 import models.grs.EntityType
 import models.registration.GrsResponse
 import play.api.libs.json.{Json, OFormat}
-import utils.RowStatus
 
 case class FilingMember(
-  nfmConfirmation:     Boolean,
-  isNfmRegisteredInUK: Option[Boolean] = None,
+  isNfmRegisteredInUK: Boolean,
   orgType:             Option[EntityType] = None,
-  isNFMnStatus:        RowStatus,
   withIdRegData:       Option[GrsResponse] = None,
-  withoutIdRegData:    Option[WithoutIdNfmData] = None,
+  withoutIdRegData:    Option[FilingMemberNonUKData] = None,
   safeId:              Option[String] = None
 )
 

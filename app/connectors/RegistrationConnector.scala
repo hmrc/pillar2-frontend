@@ -19,12 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import models.registration.RegisterationWithoutIDResponse
 import models.{ApiError, InternalServerError, SafeId, UserAnswers}
-import pages.{NominatedFilingMemberPage, RegistrationPage}
 import play.api.Logging
-import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +65,6 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
         val fmsafeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
-        val nfmData  = userAnswers.get(NominatedFilingMemberPage).getOrElse(throw new Exception("Fm Registration Data not available"))
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
           case _           => None

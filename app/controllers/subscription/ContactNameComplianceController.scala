@@ -20,16 +20,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
-import models.requests.DataRequest
-import models.{MneOrDomestic, Mode, NormalMode}
-import pages.SubscriptionPage
+import models.{Mode, NormalMode}
+import pages.subPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.errors.ErrorTemplate
 import views.html.subscriptionview.ContactNameComplianceView
 
 import javax.inject.Inject
@@ -41,7 +38,6 @@ class ContactNameComplianceController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              ContactNameComplianceFormProvider,
-  page_not_available:        ErrorTemplate,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactNameComplianceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -50,21 +46,14 @@ class ContactNameComplianceController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
-    isPreviousPageDefined(request) match {
-      case true =>
-        request.userAnswers
-          .get(SubscriptionPage)
-          .fold(NotFound(notAvailable)) { reg =>
-            reg.primaryContactName.fold(Ok(view(form, mode)))(data => Ok(view(form.fill(data), mode)))
-          }
-
-      case false => NotFound(notAvailable)
+    val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val subRegData = request.userAnswers.get(SubscriptionPage).getOrElse(throw new Exception("Subscription data not available"))
     form
       .bindFromRequest()
       .fold(
@@ -73,34 +62,10 @@ class ContactNameComplianceController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(
-                  request.userAnswers.set(
-                    SubscriptionPage,
-                    subRegData.copy(
-                      domesticOrMne = subRegData.domesticOrMne,
-                      accountingPeriod = subRegData.accountingPeriod,
-                      useContactPrimary = subRegData.useContactPrimary,
-                      primaryContactEmail = subRegData.primaryContactEmail,
-                      contactByTelephone = subRegData.contactByTelephone,
-                      primaryContactTelephone = subRegData.primaryContactTelephone,
-                      primaryContactName = Some(value),
-                      groupDetailStatus = subRegData.groupDetailStatus,
-                      contactDetailsStatus = RowStatus.InProgress
-                    )
-                  )
-                )
+                .fromTry(request.userAnswers.set(subPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(mode))
+          } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode))
       )
   }
-
-  private def isPreviousPageDefined(request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers
-      .get(SubscriptionPage)
-      .fold(false) { data =>
-        data.useContactPrimary.isDefined ||
-        (data.useContactPrimary.isEmpty && ((data.domesticOrMne == MneOrDomestic.UkAndOther || data.domesticOrMne == MneOrDomestic.Uk) &&
-          data.accountingPeriod.fold(false)(data => data.startDate.toString.nonEmpty && data.endDate.toString.nonEmpty)))
-      }
 
 }

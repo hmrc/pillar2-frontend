@@ -17,13 +17,9 @@
 package connectors
 
 import base.SpecBase
-import models.SafeId
-import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-
-import scala.collection.Seq
 
 class UserAnswersConnectorSpec extends SpecBase {
 

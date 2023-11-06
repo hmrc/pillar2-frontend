@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
-import pages.RegistrationPage
+import pages.upeContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,38 +46,27 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      reg                <- request.userAnswers.get(RegistrationPage)
-      withoutId          <- reg.withoutIdRegData
-      address            <- withoutId.upeRegisteredAddress
-      bookmarkPrevention <- request.userAnswers.upeNoIDBookmarkLogic
-    } yield {
-      val preparedForm = withoutId.upeContactName.map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode))
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-  }
+    val preparedForm = request.userAnswers.get(upeContactNamePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
+    Ok(view(preparedForm, mode))
+  }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          request.userAnswers
-            .get(RegistrationPage)
-            .flatMap { reg =>
-              reg.withoutIdRegData.map { withoutId =>
-                for {
-                  updatedAnswers <-
-                    Future.fromTry(
-                      request.userAnswers
-                        .set(RegistrationPage, reg.copy(withoutIdRegData = Some(withoutId.copy(upeContactName = Some(value)))))
-                    )
-                  _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
-              }
-            }
-            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+          for {
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers
+                  .set(upeContactNamePage, value)
+              )
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
       )
   }
 

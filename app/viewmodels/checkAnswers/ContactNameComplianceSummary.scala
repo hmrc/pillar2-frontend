@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.SubscriptionPage
+import pages.subPrimaryContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,12 +28,8 @@ import viewmodels.implicits._
 object ContactNameComplianceSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubscriptionPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(answer.primaryContactName.fold("")(name => name))
-        )
-      )
+    answers.get(subPrimaryContactNamePage).map { answer =>
+      val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
       SummaryListRowViewModel(
         key = "contactNameCompliance.checkYourAnswersLabel",
         value = value,

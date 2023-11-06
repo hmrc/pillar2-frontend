@@ -21,14 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import models.subscription.SubscriptionAddress
-import pages.SubscriptionPage
-import play.api.data.Form
+import pages.subRegisteredAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
@@ -48,37 +45,28 @@ class CaptureSubscriptionAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form: Form[SubscriptionAddress] = formProvider()
+  val form        = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
-        val preparedForm = sub.correspondenceAddress.fold(form)(data => form fill data)
-        Ok(view(preparedForm, mode, countryList))
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
+    }
+    Ok(view(preparedForm, mode, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(SubscriptionPage)
-      .map { sub =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
-            value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers
-                      .set(SubscriptionPage, sub.copy(correspondenceAddress = Some(value), contactDetailsStatus = RowStatus.Completed))
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad)
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
+        value =>
+          for {
+            updatedAnswers <-
+              Future.fromTry(request.userAnswers.set(subRegisteredAddressPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad)
+      )
   }
+
 }

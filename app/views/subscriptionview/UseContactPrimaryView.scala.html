@@ -26,7 +26,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(form: Form[_], mode: Mode, name:String="" ,email:String="", tel:String="")(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode, name: String ,email:String, tel:Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
@@ -37,21 +37,14 @@
         }
         <span class="govuk-caption-l">@messages("useContactPrimary.heading.caption")</span>
 
-        @if(tel!=""){
+
                 @govukRadios(
                     RadiosViewModel.yesNo(
                         field  = form("value"),
                         fieldset = FieldsetViewModel(Legend(HtmlContent(headingContent)))
                     )
                 )
-        } else {
-                @govukRadios(
-                RadiosViewModel.yesNo(
-                field  = form("value"),
-                fieldset = FieldsetViewModel(Legend(HtmlContent(headingContentWithoutPhone)))
-                )
-                )
-        }
+
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
@@ -70,25 +63,11 @@ s"""<h1 class="govuk-heading-l long-word">${messages("useContactPrimary.heading"
 |            $email
 |        </li>
 |        <li>
-|           $tel
+|           ${tel.getOrElse("")}
 |        </li>
 |    </ul>
 |</div>
 |""".stripMargin
 }
 
-@headingContentWithoutPhone = @{
-s"""<h1 class="govuk-heading-l long-word">${messages("useContactPrimary.heading")}
-    |</h1>
-|<div class="govuk-inset-text">
-    |    <ul class="govuk-list">
-    |        <li>
-    |            $name
-    |        </li>
-    |        <li>
-    |            $email
-    |        </li>
-    |    </ul>
-    |</div>
-|""".stripMargin
-}
+

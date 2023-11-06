@@ -22,7 +22,7 @@ import forms.ContactEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubscriptionPage
+import pages.subPrimaryContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,7 +40,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val userAnswersSubContactEmail =
-        emptyUserAnswers.set(SubscriptionPage, validSubEmailData()).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -53,7 +53,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("Ashley Smith"), NormalMode, "Ashley Smith")(
+        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -61,19 +61,9 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must redirect to the next page when valid data is submitted" in {
       val userAnswersSubContactEmail =
-        emptyUserAnswers.set(SubscriptionPage, validSubEmailData()).success.value
+        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -92,13 +82,37 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val ua          = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "must redirect to journey recovery if no primary contact name is found for GET" in {
+
+      val application = applicationBuilder().build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+
+    }
+    "must redirect to journey recovery if no primary contact name is found for POST" in {
+      val application = applicationBuilder().build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

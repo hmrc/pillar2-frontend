@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.NominatedFilingMemberPage
+import pages.fmNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -31,15 +31,15 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class NfmRegisteredAddressControllerSpec extends SpecBase {
+class NfmUKAddressControllerSpec extends SpecBase {
   val formProvider = new NfmRegisteredAddressFormProvider()
 
   "Nfm Registered Address Controller" must {
 
-    "must return OK and the correct view for a GET" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+    "must return OK and the correct view for a GET if no previous data is found" in {
+      val data =
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -52,20 +52,11 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         )
       }
     }
-    "must return NOT_FOUND when page fetched directly" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual NOT_FOUND
-      }
-    }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWithNominatedFilingMember =
-        emptyUserAnswers.set(NominatedFilingMemberPage, validWithoutIdFmDataAddress()).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNominatedFilingMember))
+      val data =
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -90,7 +81,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val data =
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -114,7 +107,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid address length is used  when country code is GB" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoId))
+      val data =
+        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
