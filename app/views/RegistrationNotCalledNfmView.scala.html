@@ -20,7 +20,7 @@
     govukButton: GovukButton
 )
 
-@(journeyType: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("task-list.title")),
@@ -30,17 +30,12 @@
         <h1 class="govuk-heading-l">@messages("grs.registration.failed.header")</h1>
         <p class="govuk-body govuk-!-margin-bottom-5">@messages("grs.registration.failed.line1")</p>
         <p class="govuk-body govuk-!-margin-bottom-5">@messages("grs.registration.failed.line2")</p>
-                @if(journeyType == "upe"){
-                    <p class="govuk-body">
-             <a href="/report-pillar2-top-up-taxes/business-matching/ultimate-parent/uk-based/org-type" class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.failed.line3-hyperlink")</a>
-            <a> @messages("grs.registration.failed.line3-cont")</a>
-            </p>
-            } else {
+
             <p class="govuk-body">
             <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/uk-based/org-type " class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.failed.line3-hyperlink")</a>
              <a> @messages("grs.registration.failed.line3-cont")</a>
             </p>
-            }
+
 
 
 

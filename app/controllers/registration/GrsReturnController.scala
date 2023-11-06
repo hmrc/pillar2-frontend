@@ -19,6 +19,7 @@ package controllers.registration
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Mode
+import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
@@ -61,7 +62,7 @@ class GrsReturnController @Inject() (
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
             userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration)
 
         case EntityType.LimitedLiabilityPartnership =>
           for {
@@ -82,7 +83,7 @@ class GrsReturnController @Inject() (
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
             userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
@@ -102,7 +103,7 @@ class GrsReturnController @Inject() (
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, isNfmStatus))
             userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeID))
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration)
 
         case EntityType.LimitedLiabilityPartnership =>
           for {
@@ -115,22 +116,20 @@ class GrsReturnController @Inject() (
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, isNfmStatus))
             userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeID))
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
+          } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
-
+  // noinspection ScalaStyle
   private def handleGrsAndBvResult(
     identifiersMatch: Boolean,
     bvResult:         Option[BusinessVerificationResult],
     grsResult:        GrsRegistrationResult,
-    mode:             Mode
+    journeyType :     JourneyType
   )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
-      case (false, _, _, _) =>
-        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-      case (_, Some(BusinessVerificationResult(Fail)), _, _) =>
+      case (false, _, _, _)| (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember=>
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       case (_, _, _, Some(businessPartnerId)) =>
         Redirect(controllers.routes.TaskListController.onPageLoad)

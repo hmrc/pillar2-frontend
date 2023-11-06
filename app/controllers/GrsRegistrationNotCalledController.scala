@@ -21,7 +21,7 @@ import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationNotCalledView
+import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledUpeView}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -29,13 +29,18 @@ import scala.concurrent.ExecutionContext
 class GrsRegistrationNotCalledController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RegistrationNotCalledView
+  upeView:                  RegistrationNotCalledUpeView,
+  nfmView:                  RegistrationNotCalledNfmView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view("nfm"))
+  def onPageLoadUpe: Action[AnyContent] = identify { implicit request =>
+    Ok(upeView())
+  }
+
+  def onPageLoadNfm: Action[AnyContent] = identify { implicit request =>
+    Ok(nfmView())
   }
 
 }
