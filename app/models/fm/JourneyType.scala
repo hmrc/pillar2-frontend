@@ -18,11 +18,9 @@ package models.fm
 
 sealed trait JourneyType
 
-
 object JourneyType {
   case object FilingMember extends JourneyType
 
   case object UltimateParent extends JourneyType
-
 
 }
