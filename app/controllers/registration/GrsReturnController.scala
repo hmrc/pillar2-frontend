@@ -23,7 +23,8 @@ import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
 import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult}
-import models.registration.{GrsResponse, RegistrationInfo}
+import models.registration.{GrsResponse, IncorporatedEntityRegistrationData, RegistrationInfo}
+import models.requests.DataRequest
 import pages._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -43,60 +44,90 @@ class GrsReturnController @Inject() (
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector
-)(implicit ec:                                       ExecutionContext)
+)(implicit hc: HeaderCarrier,
+  ec:   ExecutionContext)
     extends FrontendBaseController {
+  // noinspection ScalaStyle
+
+  /*
+  for {
+    entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
+    safeId = entityRegData.registration.registeredBusinessPartnerId.getOrElse(throw new Exception("No safe id in LLP response"))
+    registeredInfo = RegistrationInfo(
+                       crn = entityRegData.companyProfile match {
+                         case Some(v) => v.companyNumber
+                         case _       => throw new Exception("LLP response without company profile")
+                       },
+                       utr = entityRegData.sautr.getOrElse(throw new Exception("LLP response without Utr available")),
+                       safeId = safeId
+                     )
+    isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
+
+  } yield
+}
+.getOrElse(
+   */
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(upeEntityTypePage)
       .map {
-        case EntityType.UkLimitedCompany =>
-          for {
-            entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
-            safeId = entityRegData.registration.registeredBusinessPartnerId.getOrElse(throw new Exception("No safe id in UK Limited response"))
-            registeredInfo       = RegistrationInfo(crn = entityRegData.companyProfile.companyNumber, utr = entityRegData.ctutr, safeId = safeId)
-            isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-            userAnswers <- Future.fromTry(
-                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
-                           )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
-            userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
-            -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(
-            entityRegData.identifiersMatch,
-            entityRegData.businessVerification,
-            entityRegData.registration,
-            JourneyType.UltimateParent
-          )
+        case EntityType.UkLimitedCompany => upeLimited (request,journeyId)
 
         case EntityType.LimitedLiabilityPartnership =>
-          for {
-            entityRegData <- partnershipIdentificationFrontendConnector.getJourneyData(journeyId)
-            safeId = entityRegData.registration.registeredBusinessPartnerId.getOrElse(throw new Exception("No safe id in LLP response"))
-            registeredInfo = RegistrationInfo(
-                               crn = entityRegData.companyProfile match {
-                                 case Some(v) => v.companyNumber
-                                 case _       => throw new Exception("LLP response without company profile")
-                               },
-                               utr = entityRegData.sautr.getOrElse(throw new Exception("LLP response without Utr available")),
-                               safeId = safeId
-                             )
-            isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
-            userAnswers <- Future.fromTry(
-                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(entityRegData)))
-                           )
-            userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, isRegistrationStatus))
-            userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
-            -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-          } yield handleGrsAndBvResult(
-            entityRegData.identifiersMatch,
-            entityRegData.businessVerification,
-            entityRegData.registration,
-            JourneyType.UltimateParent
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+          partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap{data =>
+            if (data.registration.registrationStatus == Registered) {
+              data.registration.registeredBusinessPartnerId.map { safeId =>
+                for {
+                companyProfile = data.companyProfile
+                companyNumber = companyProfile.companyNumber
+                  utr        <- data.sautr
+                registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId)
+                userAnswers <- Future.fromTry(
+                  request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
+                )
+                userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
+                userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
+                - <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
+                } yield
+                  handleGrsAndBvResult(
+                    data.identifiersMatch,
+                    data.businessVerification,
+                    data.registration,
+                    JourneyType.UltimateParent
+                  )
+              }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+            }
+            else{
+              Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent))
+            }
+          }
+      }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
+
+  }
+
+  private def upeLimited(request: DataRequest[AnyContent], journeyId: String): Future[Result] = {
+    incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+      if (data.registration.registrationStatus == Registered) {
+        data.registration.registeredBusinessPartnerId.map { safeId =>
+          val registeredInfo = RegistrationInfo(crn = data.companyProfile.companyNumber, utr = data.ctutr, safeId = safeId)
+          for {
+            userAnswers <- Future.fromTry(
+              request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
+            userAnswers2
+              <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
+            userAnswers3
+              <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
+            -
+              <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
+
+          } yield handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent)
+        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      } else {
+        Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent))
+      }
+    }
   }
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
