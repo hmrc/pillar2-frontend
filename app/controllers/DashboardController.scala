@@ -23,12 +23,18 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import scala.concurrent.ExecutionContext
+import services.ReadSubscriptionService
+import uk.gov.hmrc.auth.core.Enrolment
+
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   getData:                  DataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   view:                     DashboardView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -36,6 +42,24 @@ class DashboardController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Ok(view())
+    val userId = request.userAnswers.id
+    val userEnrolments: Set[Enrolment] = request.enrolments.getOrElse(Set.empty)
+    val identifierName = "PLRID"
+    val extractedValue = userEnrolments.flatMap(_.getIdentifier(identifierName)).headOption.map(_.value)
+    extractedValue.foreach(value => println(s"Extracted value: $value"))
+
+    val plrReference = userEnrolments.flatMap(_.getIdentifier(identifierName)).headOption.map(_.value).getOrElse(identifierName)
+
+    readSubscriptionService.readSubscription(id = userId, plrReference = plrReference).flatMap {
+      case Right(subscription) =>
+        val organisationName = subscription.upeDetails.map(_.organisationName).getOrElse("Default Organisation Name")
+        val registrationDate =
+          subscription.upeDetails.map(_.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))).getOrElse("Default Date")
+        val plrRef = plrReference
+        Future.successful(Ok(view(organisationName, registrationDate, plrRef)))
+
+      case Left(error) =>
+        Future.successful(InternalServerError("Subscription not found in user answers"))
+    }
   }
 }
