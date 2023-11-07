@@ -25,7 +25,7 @@
 @(pil2Id: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
-    @formHelper(action = controllers.routes.DashboardController.onPageLoad, 'autoComplete -> "off") {
+
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
         @messages("registrationConfirmation.registrationComplete")
@@ -44,10 +44,11 @@
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))
+        .asLink(routes.DashboardController.onPageLoad.url)
     )
 
     <p class="govuk-body">
         <a href="/report-pillar2-top-up-taxes/under-construction" class="govuk-link">@messages("registrationConfirmation.whatDidYouThink")</a> @messages("registrationConfirmation.takes30")
     </p>
-    }
+
 }
