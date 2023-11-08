@@ -36,7 +36,7 @@ object GroupAccountingPeriodSummary {
         key = "groupAccountingPeriod.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent("")),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.routes.UnderConstructionController.onPageLoad.url)
+          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )
       ).withCssClass("no-border-bottom")

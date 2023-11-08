@@ -38,7 +38,7 @@ object MneOrDomesticSummary {
         key = "mneOrDomestic.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.routes.UnderConstructionController.onPageLoad.url)
+          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
             .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
         )
       )
