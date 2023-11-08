@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
-import pages.upeEntityTypePage
+import pages.{upeEntityTypePage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

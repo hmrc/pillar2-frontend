@@ -245,3 +245,4 @@ GET        /contact-details/address/change-input                controllers.subs
 POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad
+GET        /errors/restart-error                                                  controllers.BookmarkPreventionController.onPageLoad

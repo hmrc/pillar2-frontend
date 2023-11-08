@@ -84,7 +84,7 @@ class GrsReturnController @Inject() (
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
 
   }
   def continueFm(mode: Mode, journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -117,7 +117,7 @@ class GrsReturnController @Inject() (
             -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
           } yield handleGrsAndBvResult(entityRegData.identifiersMatch, entityRegData.businessVerification, entityRegData.registration, mode)
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
 
   }
 

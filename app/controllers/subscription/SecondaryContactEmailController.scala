@@ -19,7 +19,6 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}

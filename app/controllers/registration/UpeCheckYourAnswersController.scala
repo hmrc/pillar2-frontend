@@ -22,6 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -39,17 +40,22 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val list = SummaryListViewModel(
-      rows = Seq(
-        UpeNameRegistrationSummary.row(request.userAnswers),
-        UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
-        UpeContactNameSummary.row(request.userAnswers),
-        UpeContactEmailSummary.row(request.userAnswers),
-        UpeTelephonePreferenceSummary.row(request.userAnswers),
-        UPEContactTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    )
-    Ok(view(list))
+
+    if (request.userAnswers.upeStatus == RowStatus.Completed) {
+      val list = SummaryListViewModel(
+        rows = Seq(
+          UpeNameRegistrationSummary.row(request.userAnswers),
+          UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
+          UpeContactNameSummary.row(request.userAnswers),
+          UpeContactEmailSummary.row(request.userAnswers),
+          UpeTelephonePreferenceSummary.row(request.userAnswers),
+          UPEContactTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      )
+      Ok(view(list))
+    }else{
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    }
   }
 
 }

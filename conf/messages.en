@@ -23,7 +23,8 @@ date.year = Year
 page_not_available.title=Task not yet started
 page_not_available.heading=Task not yet started
 page_not_available.message=The task you are trying to access cannot be started until the previous task has been completed.
-page_not_available.link=return to your Pillar 2 top-up taxes registration.
+page_not_available.link=return to your Pillar 2 top-up taxes registration
+page_not_available.message2 = and complete the required tasks.
 
 ###############################################
 
