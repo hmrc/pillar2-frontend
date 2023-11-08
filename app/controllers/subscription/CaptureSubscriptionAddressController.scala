@@ -49,14 +49,14 @@ class CaptureSubscriptionAddressController @Inject() (
   val form        = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-      if (request.userAnswers.isPageDefined(subAddSecondaryContactPage)){
+    if (request.userAnswers.isPageDefined(subAddSecondaryContactPage)) {
       val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
         case Some(v) => form.fill(v)
-        case None => form
+        case None    => form
       }
       Ok(view(preparedForm, mode, countryList))
-    }else{
-    Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
 

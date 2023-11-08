@@ -48,14 +48,13 @@ class GroupAccountingPeriodController @Inject() (
   def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-      if (request.userAnswers.isPageDefined(subMneOrDomesticPage)){
+    if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
       val preparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
         case Some(v) => form.fill(v)
-        case None => form
+        case None    => form
       }
       Ok(view(preparedForm, mode))
-    }
-    else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

@@ -50,10 +50,10 @@ class ContactNameComplianceController @Inject() (
     if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
       val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
         case Some(v) => form.fill(v)
-        case None => form
+        case None    => form
       }
       Ok(view(preparedForm, mode))
-    } else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

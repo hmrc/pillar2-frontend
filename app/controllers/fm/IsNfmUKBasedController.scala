@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.IsNFMUKBasedFormProvider
 import models.Mode
-import pages.{GrsFilingMemberStatusPage, fmRegisteredInUKPage}
+import pages.{GrsFilingMemberStatusPage, NominateFilingMemberPage, fmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -48,7 +48,7 @@ class IsNfmUKBasedController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
+    if (request.userAnswers.isPageDefined(NominateFilingMemberPage)) {
       val preparedForm = request.userAnswers.get(fmRegisteredInUKPage) match {
         case Some(value) => form.fill(value)
         case None        => form

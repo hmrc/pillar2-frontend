@@ -50,10 +50,10 @@ class SecondaryContactNameController @Inject() (
     if (request.userAnswers.isPageDefined(subPrimaryContactNamePage)) {
       val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
         case Some(v) => form.fill(v)
-        case None => form
+        case None    => form
       }
       Ok(view(preparedForm, mode))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

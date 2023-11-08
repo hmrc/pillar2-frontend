@@ -51,10 +51,10 @@ class MneOrDomesticController @Inject() (
     if (request.userAnswers.fmStatus == RowStatus.Completed) {
       val preparedForm = request.userAnswers.get(subMneOrDomesticPage) match {
         case Some(value) => form.fill(value)
-        case None => form
+        case None        => form
       }
       Ok(view(preparedForm, mode))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

@@ -50,7 +50,7 @@ class GroupDetailCheckYourAnswersController @Inject() (
     )
     if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
       Ok(view(list))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
