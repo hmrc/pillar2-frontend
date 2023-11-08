@@ -27,26 +27,47 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
-  extends Logging {
+    extends Logging {
 
   def readSubscription(readSubscriptionParameter: ReadSubscriptionRequestParameters)(implicit
-                                                                                     hc:                                           HeaderCarrier,
-                                                                                     ec:                                           ExecutionContext
+    hc:                                           HeaderCarrier,
+    ec:                                           ExecutionContext
   ): Future[Option[JsValue]] = {
-    val subscriptionUrl = s"${config.pillar2BaseUrl}" +
-      s"/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
+    val subscriptionUrl =
+      s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
     http
-      .GET[JsValue](s"$subscriptionUrl")
+      .GET[HttpResponse](subscriptionUrl)
       .map {
+        case response if response.status == 200 =>
+          Some(response.json)
         case response =>
-          Some(response)
-        case errorResponse =>
-          logger.warn(s"read Subscription failed with reference " + readSubscriptionParameter.plrReference)
+          logger.warn(s"Read subscription failed with status: ${response.status} and body: ${response.body}")
           None
       }
       .recover { case e: Exception =>
-        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when read subscription was called")
+        logger.error(s"Exception thrown when calling read subscription: ${e.getMessage}")
         None
       }
   }
+
+//  def readSubscription(readSubscriptionParameter: ReadSubscriptionRequestParameters)(implicit
+//    hc:                                           HeaderCarrier,
+//    ec:                                           ExecutionContext
+//  ): Future[Option[JsValue]] = {
+//    val subscriptionUrl = s"${config.pillar2BaseUrl}" +
+//      s"/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
+//    http
+//      .GET[JsValue](s"$subscriptionUrl")
+//      .map {
+//        case response =>
+//          Some(response)
+//        case errorResponse =>
+//          logger.warn(s"read Subscription failed with reference " + readSubscriptionParameter.plrReference)
+//          None
+//      }
+//      .recover { case e: Exception =>
+//        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when read subscription was called")
+//        None
+//      }
+//  }
 }

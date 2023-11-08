@@ -16,66 +16,91 @@
 
 package utils
 
-import models.{ApiError, MneOrDomestic, SubscriptionCreateError}
-import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, FilingMemberDetails, Subscription, SubscriptionAddress, UpeCorrespAddressDetails, UpeDetails}
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
+import models.registration.RegistrationInfo
+import models.subscription.{AccountStatus, AccountingPeriod, FilingMemberDetails}
+import models.{ApiError, InternalServerError, MandatoryInformationMissingError, MneOrDomestic, UKAddress, UserAnswers}
+import pages.{FmSafeIDPage, UpeRegInformationPage, subAccountStatusPage, subAccountingPeriodPage, subFillingMemberDetailsPage, subMneOrDomesticPage, subPrimaryContactNamePage, subPrimaryEmailPage, subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryEmailPage, upeNameRegistrationPage, upeRegisteredAddressPage}
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 
+import java.time.LocalDate
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.libs.json
+import java.util.UUID
 object SubscriptionTransformer {
 
-  def jsValueToSubscription(jsValue: JsValue): Either[ApiError, Subscription] = {
-    val upeDetailsResult               = (jsValue \ "upeDetails").validate[UpeDetails]
-    val upeCorrespAddressDetailsResult = (jsValue \ "upeCorrespAddressDetails").validate[UpeCorrespAddressDetails]
-    val primaryContactNameResult       = (jsValue \ "primaryContactName").validate[String]
-    val primaryContactEmailResult      = (jsValue \ "primaryContactEmail").validate[String]
-    val secondaryContactNameResult     = (jsValue \ "secondaryContactName").validate[String]
-    val secondaryContactEmailResult    = (jsValue \ "secondaryContactEmail").validate[String]
-    val filingMemberDetailsResult      = (jsValue \ "filingMemberDetails").validate[FilingMemberDetails]
-    val accountingPeriodResult         = (jsValue \ "accountingPeriod").validate[AccountingPeriod]
-    val accountStatusResult            = (jsValue \ "accountStatus").validate[AccountStatus]
+  def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] = {
+    val randomId    = UUID.randomUUID().toString
+    val userAnswers = UserAnswers(randomId, Json.obj())
 
-    val results = List(
-      upeDetailsResult,
-      upeCorrespAddressDetailsResult,
-      primaryContactNameResult,
-      primaryContactEmailResult,
-      secondaryContactNameResult,
-      secondaryContactEmailResult,
-      filingMemberDetailsResult,
-      accountingPeriodResult,
-      accountStatusResult
-    )
-
-    results.collect { case JsError(errors) => errors }.foreach { errors =>
-      errors.foreach { case (path, e) =>
-        println(s"Error at $path: ${e.mkString(", ")}")
-      }
+    // Extract registration info
+    val registrationInfo = (jsValue \ "upeRegInformationId").validate[RegistrationInfo](Json.reads[RegistrationInfo]) match {
+      case JsSuccess(value, _) =>
+        value.copy(
+          registrationDate = (jsValue \ "upeRegInformationId" \ "registrationDate").asOpt[String].map(LocalDate.parse),
+          filingMember = Some((jsValue \ "upeRegInformationId" \ "filingMember").as[Boolean])
+        )
+      case JsError(errors) => return Left(MandatoryInformationMissingError("Error parsing RegistrationInfo"))
     }
 
-    for {
-      upeDetails               <- upeDetailsResult.asOpt
-      upeCorrespAddressDetails <- upeCorrespAddressDetailsResult.asOpt
-      primaryContactName       <- primaryContactNameResult.asOpt
-      primaryContactEmail      <- primaryContactEmailResult.asOpt
-      secondaryContactName     <- secondaryContactNameResult.asOpt
-      secondaryContactEmail    <- secondaryContactEmailResult.asOpt
-      filingMemberDetails      <- filingMemberDetailsResult.asOpt
-      accountingPeriod         <- accountingPeriodResult.asOpt
-      accountStatus            <- accountStatusResult.asOpt
-    } yield Subscription(
-      domesticOrMne = if (upeDetails.domesticOnly) MneOrDomestic.Uk else MneOrDomestic.UkAndOther,
-      groupDetailStatus = RowStatus.Completed,
-      accountingPeriod = Some(accountingPeriod),
-      contactDetailsStatus = RowStatus.Completed,
-      primaryContactName = Some(primaryContactName),
-      primaryContactEmail = Some(primaryContactEmail),
-      secondaryContactName = Some(secondaryContactName),
-      secondaryContactEmail = Some(secondaryContactEmail),
-      secondaryContactTelephone = None,
-      correspondenceAddress = None,
-      accountStatus = Some(accountStatus),
-      upeDetails = Some(upeDetails),
-      upeCorrespAddressDetails = Some(upeCorrespAddressDetails),
-      filingMemberDetails = Some(filingMemberDetails)
-    )
-  }.toRight(SubscriptionCreateError)
+    // Extract UK address
+    val ukAddress = (jsValue \ "upeRegisteredAddress").validate[UKAddress](
+      (
+        (__ \ "addressLine1").read[String] and
+          (__ \ "addressLine2").readNullable[String] and
+          (__ \ "addressLine3").read[String] and
+          Reads.pure(None: Option[String]) and
+          (__ \ "postalCode").read[String] and
+          (__ \ "countryCode").read[String]
+      )(UKAddress.apply _)
+    ) match {
+      case JsSuccess(value, _) => value
+      case JsError(errors)     => return Left(MandatoryInformationMissingError("Error parsing UKAddress"))
+    }
+
+    // Extract filing member details
+    val filingMemberDetails = (jsValue \ "subFilingMemberDetails").validate[FilingMemberDetails](Json.reads[FilingMemberDetails]) match {
+      case JsSuccess(value, _) => value
+      case JsError(errors)     => return Left(MandatoryInformationMissingError("Error parsing FilingMemberDetails"))
+    }
+
+    // Extract accounting period
+    val accountingPeriod = (jsValue \ "subAccountingPeriod").validate[AccountingPeriod](Json.reads[AccountingPeriod]) match {
+      case JsSuccess(value, _) =>
+        value.copy(
+          duetDate = (jsValue \ "subAccountingPeriod" \ "duetDate").asOpt[String].map(LocalDate.parse)
+        )
+      case JsError(errors) => return Left(MandatoryInformationMissingError("Error parsing AccountingPeriod"))
+    }
+
+    // Extract account status
+    val accountStatus = (jsValue \ "subAccountStatus").validate[AccountStatus](Json.reads[AccountStatus]) match {
+      case JsSuccess(value, _) => value
+      case JsError(errors)     => return Left(MandatoryInformationMissingError("Error parsing AccountStatus"))
+    }
+
+    val result = for {
+
+      u1 <- userAnswers.set(subMneOrDomesticPage, (jsValue \ "subMneOrDomestic").as[MneOrDomestic]).toEither.left.map(_ => InternalServerError)
+      u2 <- u1.set(upeNameRegistrationPage, (jsValue \ "upeNameRegistration").as[String]).toEither.left.map(_ => InternalServerError)
+      u3 <- u2.set(subPrimaryContactNamePage, (jsValue \ "subPrimaryContactName").as[String]).toEither.left.map(_ => InternalServerError)
+      u4 <- u3.set(subPrimaryEmailPage, (jsValue \ "subPrimaryEmail").as[String]).toEither.left.map(_ => InternalServerError)
+
+      u5  <- u4.set(subSecondaryContactNamePage, (jsValue \ "subSecondaryContactName").as[String]).toEither.left.map(_ => InternalServerError)
+      u6  <- u5.set(UpeRegInformationPage, registrationInfo).toEither.left.map(_ => InternalServerError)
+      u7  <- u6.set(upeRegisteredAddressPage, ukAddress).toEither.left.map(_ => InternalServerError)
+      u8  <- u7.set(FmSafeIDPage, (jsValue \ "FmSafeID").as[String]).toEither.left.map(_ => InternalServerError)
+      u9  <- u8.set(subFillingMemberDetailsPage, filingMemberDetails).toEither.left.map(_ => InternalServerError)
+      u10 <- u9.set(subAccountingPeriodPage, accountingPeriod).toEither.left.map(_ => InternalServerError)
+      u11 <- u10.set(subAccountStatusPage, accountStatus).toEither.left.map(_ => InternalServerError)
+
+      telephone    = (jsValue \ "subSecondaryCapturePhone").asOpt[String]
+      telephoneStr = telephone.getOrElse("")
+
+      u12 <- u11.set(subSecondaryEmailPage, (jsValue \ "subSecondaryEmail").as[String]).toEither.left.map(_ => InternalServerError)
+      u13 <- u12.set(subSecondaryCapturePhonePage, telephoneStr).toEither.left.map(_ => InternalServerError)
+    } yield u13
+
+    result
+  }
 }
