@@ -165,8 +165,7 @@ trait SubscriptionHelpers {
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-
-   def isPreviousPageDefined(request: DataRequest[AnyContent], PageName: QuestionPage[Boolean]): Boolean =
+  def isPreviousPageDefined(request: DataRequest[AnyContent], PageName: QuestionPage[Boolean]): Boolean =
     request.userAnswers
       .get(PageName)
       .fold(false)(data => !data.toString.isEmpty)
