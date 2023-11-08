@@ -38,7 +38,8 @@ import java.time.LocalDate
 
 case class AccountingPeriod(
   startDate: LocalDate,
-  endDate:   LocalDate
+  endDate:   LocalDate,
+  duetDate:  Option[LocalDate] = None
 )
 
 object AccountingPeriod {
