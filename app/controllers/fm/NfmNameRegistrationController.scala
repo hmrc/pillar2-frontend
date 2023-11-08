@@ -50,10 +50,10 @@ class NfmNameRegistrationController @Inject() (
     if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
       val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
         case Some(value) => form.fill(value)
-        case None => form
+        case None        => form
       }
       Ok(view(preparedForm, mode))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

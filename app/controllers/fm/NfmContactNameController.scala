@@ -47,14 +47,14 @@ class NfmContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(fmRegisteredAddressPage)) {
-    val preparedForm = request.userAnswers.get(fmContactNamePage) match {
-      case Some(value) => form.fill(value)
-      case None => form
+      val preparedForm = request.userAnswers.get(fmContactNamePage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
-    Ok(view(preparedForm, mode))
-  }else{
-    Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
-  }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

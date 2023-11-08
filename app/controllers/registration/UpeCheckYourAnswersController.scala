@@ -40,7 +40,6 @@ class UpeCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-
     if (request.userAnswers.upeStatus == RowStatus.Completed) {
       val list = SummaryListViewModel(
         rows = Seq(
@@ -53,7 +52,7 @@ class UpeCheckYourAnswersController @Inject() (
         ).flatten
       )
       Ok(view(list))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

@@ -52,7 +52,7 @@ class NfmCheckYourAnswersController @Inject() (
         ).flatten
       )
       Ok(view(list))
-    }else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

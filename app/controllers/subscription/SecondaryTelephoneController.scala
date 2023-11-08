@@ -56,7 +56,7 @@ class SecondaryTelephoneController @Inject() (
         Ok(view(preparedForm, mode, contactName))
 
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
 
   }
 

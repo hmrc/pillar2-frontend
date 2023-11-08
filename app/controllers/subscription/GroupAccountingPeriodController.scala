@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
-import pages.subAccountingPeriodPage
+import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -48,11 +48,16 @@ class GroupAccountingPeriodController @Inject() (
   def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val pareparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
+      if (request.userAnswers.isPageDefined(subMneOrDomesticPage)){
+      val preparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
+        case Some(v) => form.fill(v)
+        case None => form
+      }
+      Ok(view(preparedForm, mode))
     }
-    Ok(view(pareparedForm, mode))
+    else{
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

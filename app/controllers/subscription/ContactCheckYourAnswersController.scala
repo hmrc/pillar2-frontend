@@ -23,10 +23,12 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.ContactCheckYourAnswersView
+
 import scala.concurrent.ExecutionContext
 
 class ContactCheckYourAnswersController @Inject() (
@@ -64,6 +66,10 @@ class ContactCheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+    if (request.userAnswers.contactDetailStatus == RowStatus.Completed) {
+      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+    }else{
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    }
   }
 }

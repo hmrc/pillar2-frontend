@@ -51,10 +51,10 @@ class NominateFilingMemberYesNoController @Inject() (
     if (request.userAnswers.upeStatus == RowStatus.Completed) {
       val preparedForm = request.userAnswers.get(NominateFilingMemberPage) match {
         case Some(value) => form.fill(value)
-        case None => form
+        case None        => form
       }
       Ok(view(preparedForm, mode))
-    } else{
+    } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }

@@ -54,11 +54,11 @@ class NfmEntityTypeController @Inject() (
     if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
       val preparedForm = request.userAnswers.get(fmEntityTypePage) match {
         case Some(value) => form.fill(value)
-        case None => form
+        case None        => form
       }
       Ok(view(preparedForm, mode))
-    }else{
-    Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
 
