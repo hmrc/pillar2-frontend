@@ -21,12 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
-import models.registration.WithoutIdRegData
-import pages.upeNameRegistrationPage
+import pages.{QuestionPage, upeNameRegistrationPage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.errors.ErrorTemplate
 import views.html.registrationview.UpeNameRegistrationView
 
 import javax.inject.Inject
@@ -39,7 +39,8 @@ class UpeNameRegistrationController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeNameRegistrationView
+  view:                      UpeNameRegistrationView,
+  page_not_available:        ErrorTemplate
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -47,11 +48,18 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    val notAvailable = page_not_available("page_not_available.title", "page_not_available.heading", "page_not_available.message")
+    request.userAnswers.isPreviousPageDefined(request, upeRegisteredInUKPage) match {
+      case true =>
+        val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode))
+      case false =>
+        NotFound(notAvailable)
     }
-    Ok(view(preparedForm, mode))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -67,5 +75,7 @@ class UpeNameRegistrationController @Inject() (
           } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
       )
   }
+
+
 
 }

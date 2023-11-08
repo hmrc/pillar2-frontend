@@ -17,8 +17,9 @@
 package helpers
 
 import models.UserAnswers
+import models.requests.DataRequest
 import pages._
-import play.api.mvc.Result
+import play.api.mvc.{AnyContent, Result}
 import play.api.mvc.Results.Redirect
 import utils.RowStatus
 
@@ -163,4 +164,10 @@ trait SubscriptionHelpers {
         }
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
+
+   def isPreviousPageDefined(request: DataRequest[AnyContent], PageName: QuestionPage[Boolean]): Boolean =
+    request.userAnswers
+      .get(PageName)
+      .fold(false)(data => !data.toString.isEmpty)
 }
