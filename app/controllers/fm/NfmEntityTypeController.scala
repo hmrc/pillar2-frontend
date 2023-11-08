@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
-import pages.fmEntityTypePage
+import pages.{fmEntityTypePage, fmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -51,11 +51,15 @@ class NfmEntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(fmEntityTypePage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
+      val preparedForm = request.userAnswers.get(fmEntityTypePage) match {
+        case Some(value) => form.fill(value)
+        case None => form
+      }
+      Ok(view(preparedForm, mode))
+    }else{
+    Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

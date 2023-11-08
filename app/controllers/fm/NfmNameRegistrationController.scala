@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import pages.fmNameRegistrationPage
+import pages.{fmNameRegistrationPage, fmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,11 +47,15 @@ class NfmNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
+      val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
+        case Some(value) => form.fill(value)
+        case None => form
+      }
+      Ok(view(preparedForm, mode))
+    }else{
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

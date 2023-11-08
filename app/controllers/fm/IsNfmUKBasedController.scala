@@ -48,21 +48,17 @@ class IsNfmUKBasedController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(fmRegisteredInUKPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
+      val preparedForm = request.userAnswers.get(fmRegisteredInUKPage) match {
+        case Some(value) => form.fill(value)
+        case None => form
+      }
+      Ok(view(preparedForm, mode))
+    }else{
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
-    Ok(view(preparedForm, mode))
   }
 
-  /*
-  updatedAnswers1 <- Future.fromTry(
-                       request.userAnswers
-                         .get(GrsUpeStatusPage)
-                         .map(updatedAnswers.set(GrsUpeStatusPage, _))
-                         .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
-                     )
-   */
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
