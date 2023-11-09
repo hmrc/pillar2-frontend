@@ -18,9 +18,10 @@ package controllers.fm
 
 import base.SpecBase
 import forms.NominateFilingMemberYesNoFormProvider
-import models.NormalMode
+import models.{NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,11 +43,19 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       stubMessagesControllerComponents(),
       viewNominateFilingMemberYesNo
     )
+  val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
+  val completeUpeJourney = emptyUserAnswers
+    .setOrException(upeRegisteredInUKPage, false)
+    .setOrException(upeNameRegistrationPage, "name")
+    .setOrException(upeRegisteredAddressPage, UkAddress)
+    .setOrException(upeContactNamePage, "another name")
+    .setOrException(upeContactEmailPage, "email")
+    .setOrException(upePhonePreferencePage, false)
 
-  "Is UPE Registered in UK Confirmation Controller" must {
+  "Nominate filing member Controller" must {
 
-    "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
+    "must return OK and the correct view for a GET if page previously not answered" in {
+      val application = applicationBuilder(userAnswers = Some(completeUpeJourney)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
@@ -54,6 +63,19 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        status(result) mustBe OK
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val application = applicationBuilder(userAnswers = Some(completeUpeJourney.setOrException(NominateFilingMemberPage, true))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
+        val result  = route(application, request).value
+
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
         status(result) mustBe OK
       }
     }

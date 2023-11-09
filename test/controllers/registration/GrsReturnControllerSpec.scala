@@ -182,5 +182,17 @@ class GrsReturnControllerSpec extends SpecBase {
       }
 
     }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm(NormalMode, "journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+      }
+    }
   }
 }

@@ -19,10 +19,10 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeContactNameFormProvider
-import models.NormalMode
+import models.{NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.upeContactNamePage
+import pages.{upeContactNamePage, upeRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -34,12 +34,12 @@ import scala.concurrent.Future
 class UpeContactNameControllerSpec extends SpecBase {
   def getUpeContactNameFormProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   val formProvider = new UpeContactNameFormProvider()
-
+  val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
   "UpeContactName Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val ua          = emptyUserAnswers.setOrException(upeRegisteredAddressPage, UkAddress)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
 
@@ -57,7 +57,7 @@ class UpeContactNameControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.setOrException(upeContactNamePage, "name").setOrException(upeRegisteredAddressPage, UkAddress)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
@@ -72,6 +72,18 @@ class UpeContactNameControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

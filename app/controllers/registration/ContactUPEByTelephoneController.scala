@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
 import models.Mode
-import pages.{upeContactNamePage, upePhonePreferencePage}
+import pages.{upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,17 +45,18 @@ class ContactUPEByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(upeContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(upePhonePreferencePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-
-        Ok(view(preparedForm, mode, contactName))
+    (for {
+      _           <- request.userAnswers.get(upeContactEmailPage)
+      contactName <- request.userAnswers.get(upeContactNamePage)
+    } yield {
+      val form = formProvider(contactName)
+      val preparedForm = request.userAnswers.get(upePhonePreferencePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
       }
+
+      Ok(view(preparedForm, mode, contactName))
+    })
       .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
 

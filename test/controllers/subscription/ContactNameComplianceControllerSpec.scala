@@ -19,16 +19,18 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactNameComplianceFormProvider
-import models.NormalMode
+import models.subscription.AccountingPeriod
+import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subPrimaryContactNamePage
+import pages.{subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContactNameComplianceView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ContactNameComplianceControllerSpec extends SpecBase {
@@ -38,8 +40,10 @@ class ContactNameComplianceControllerSpec extends SpecBase {
   "Contact Name Compliance controller" when {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val ua = emptyUserAnswers
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
@@ -55,7 +59,10 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when previous data is found" in {
 
-      val ua          = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subPrimaryContactNamePage, "name")
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -71,6 +78,18 @@ class ContactNameComplianceControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

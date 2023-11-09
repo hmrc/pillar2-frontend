@@ -130,16 +130,15 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "Journey Recovery when no data found for contact name in GET" in {
+    "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(GET, routes.UpeContactEmailController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
-        "emailAddress" -> "al@gmail.com"
-      )
       running(application) {
+        val request = FakeRequest(GET, routes.UpeContactEmailController.onPageLoad(NormalMode).url)
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
     "Journey Recovery when no data found for contact name in POST" in {

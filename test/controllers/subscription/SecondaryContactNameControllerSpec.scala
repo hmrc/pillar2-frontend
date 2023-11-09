@@ -22,7 +22,7 @@ import forms.SecondaryContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subSecondaryContactNamePage
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val application = applicationBuilder().build()
+      val ua          = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true).setOrException(subPrimaryContactNamePage, "asd")
+      val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
@@ -53,7 +54,10 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subAddSecondaryContactPage, true)
+        .setOrException(subPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -69,6 +73,18 @@ class SecondaryContactNameControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 
