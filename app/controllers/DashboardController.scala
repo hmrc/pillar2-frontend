@@ -24,6 +24,7 @@ import views.html.DashboardView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.registration.RegistrationInfo
+import models.subscription.ReadSubscriptionRequestParameters
 import pages.{UpeRegInformationPage, upeNameRegistrationPage}
 import play.api.Logging
 import services.ReadSubscriptionService
@@ -53,7 +54,9 @@ class DashboardController @Inject() (
       .map(_.value)
       .getOrElse(identifierName)
 
-    readSubscriptionService.readSubscription(userId, plrReference).flatMap {
+    val readSubscriptionParameters = ReadSubscriptionRequestParameters(userId, plrReference)
+
+    readSubscriptionService.readSubscription(readSubscriptionParameters).flatMap {
       case Right(userAnswers) =>
         val organisationName = userAnswers.get[String](upeNameRegistrationPage).getOrElse("Default Organisation Name")
 

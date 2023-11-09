@@ -208,7 +208,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   val sampleRegistrationInfo = RegistrationInfo(
     crn = "CRN123456",
     utr = "UTR654321",
-    safeId = "SAFEID789012"
+    safeId = "SAFEID789012",
+    registrationDate = None,
+    filingMember = None
   )
 
   val registration = Registration(
@@ -337,7 +339,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must trigger create subscription API if nfm and upe data is found" in {
-      val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567")
+      val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
       val userAnswer = emptyUserAnswers
         .set(upeRegisteredInUKPage, true)
         .success
