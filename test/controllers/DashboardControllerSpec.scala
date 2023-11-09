@@ -17,80 +17,83 @@
 package controllers
 
 import base.SpecBase
-import models.UserAnswers
+import models.registration.RegistrationInfo
+import models.subscription.ReadSubscriptionRequestParameters
+import models.{MandatoryInformationMissingError, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeRegInformationPage, upeNameRegistrationPage}
+import play.api.libs.json.Json
+import play.api.mvc.ControllerHelpers.TODO.executionContext
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.DashboardView
+
+import java.time.LocalDate
+import scala.concurrent.Future
 class DashboardControllerSpec extends SpecBase {
 
-  def controller(): DashboardController =
-    new DashboardController(
-      preDataRetrievalActionImpl,
-      preAuthenticatedActionBuilders,
-      preDataRequiredActionImpl,
-      mockReadSubscriptionService,
-      stubMessagesControllerComponents(),
-      viewDashboardView
-    )
+  val mockDashboardView                   = mock[DashboardView]
+  val stubbedMessagesControllerComponents = stubMessagesControllerComponents()
 
-  val userAnswers: UserAnswers = emptyUserAnswers
-  val subData = emptyUserAnswers
+  val controller = new DashboardController(
+    preDataRetrievalActionImpl,
+    preAuthenticatedActionBuilders,
+    preDataRequiredActionImpl,
+    mockReadSubscriptionService,
+    stubbedMessagesControllerComponents,
+    mockDashboardView
+  )(executionContext, appConfig)
 
-  "Dashboard Controller" when {
+  "Dashboard Controller" should {
+    "return OK and the correct view for a GET" in {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-//        val view = application.injector.instanceOf[DashboardView]
-
-        //  status(result) mustEqual OK
-//        contentAsString(result) mustEqual view("organisationName", "registrationDate", "plrReference")(
-//          request,
-//          appConfig(application),
-//          messages(application)
-//        ).toString
-      }
-    }
-
-    /* "handle errors during subscription retrieval" in {
-      val mockReadSubscriptionService = mock[ReadSubscriptionService]
-
-      val apiError = MandatoryInformationMissingError("Some error message")
-
-      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters]))
-        .thenReturn(Future.successful(Left(apiError)))
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj(
+          upeNameRegistrationPage.toString -> Json.toJson("Test Organisation"),
+          UpeRegInformationPage.toString   -> Json.toJson(RegistrationInfo("crn", "utr", "safeId", Some(LocalDate.now()), Some(true)))
         )
-        .build()
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
 
-      running(application) {
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-      }
+      val expectedHtmlContent = "<div>Test Organisation</div>"
+      when(
+        mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any())
+      ).thenReturn(Html(expectedHtmlContent))
+
+      val result = controller.onPageLoad(FakeRequest(GET, "/dashboard"))
+
+      status(result) mustBe OK
+      contentAsString(result) must include("Test Organisation")
+
     }
-    "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "return InternalServerError when the readSubscription service fails" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(MandatoryInformationMissingError("Some error"))))
 
-      running(application) {
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
 
-        val result = route(application, request).value
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) must include("Subscription not found in user answers")
+    }
 
-        val view = application.injector.instanceOf[DashboardView]
+    "return OK but with default values when user answers are incomplete" in {
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj()
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
 
-        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
-      }
-    }*/
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
+
+      status(result) mustBe OK
+    }
+
   }
 }
