@@ -17,22 +17,9 @@
 package controllers
 
 import base.SpecBase
-import models.{NormalMode, UserAnswers}
-import models.subscription.ReadSubscriptionRequestParameters
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.fmContactNamePage
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
+import models.UserAnswers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import services.{ReadSubscriptionService, SubscriptionTransformerWrapper}
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.DashboardView
-
-import scala.concurrent.{ExecutionContext, Future}
 class DashboardControllerSpec extends SpecBase {
 
   def controller(): DashboardController =
@@ -59,9 +46,9 @@ class DashboardControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DashboardView]
+//        val view = application.injector.instanceOf[DashboardView]
 
-//        status(result) mustEqual OK
+        //  status(result) mustEqual OK
 //        contentAsString(result) mustEqual view("organisationName", "registrationDate", "plrReference")(
 //          request,
 //          appConfig(application),
