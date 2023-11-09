@@ -34,7 +34,12 @@ class IndexController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Redirect(routes.TaskListController.onPageLoad)
+    if (request.enrolments.exists(_.key == appConfig.enrolmentKey)) {
+      Redirect(routes.DashboardController.onPageLoad)
+    } else {
+      Redirect(routes.TaskListController.onPageLoad)
+    }
+
   }
 
 }
