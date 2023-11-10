@@ -25,7 +25,7 @@
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")),showBackLink = false) {
 
     <h1 class="govuk-heading-l">@messages("ManageFurtherGroupDetail.checkYourAnswers.heading")</h1>
 
