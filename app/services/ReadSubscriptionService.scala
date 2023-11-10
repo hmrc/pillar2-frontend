@@ -24,8 +24,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.SubscriptionTransformer
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait SubscriptionTransformerWrapper {
   def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] =
@@ -43,14 +43,3 @@ class ReadSubscriptionService @Inject() (
         Future.successful(Left(SubscriptionCreateError))
     }
 }
-//  def readSubscription(id: String, plrReference: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, UserAnswers]] =
-//    readSubscriptionConnector
-//      .readSubscription(ReadSubscriptionRequestParameters(id, plrReference))
-//      .map {
-//        case Some(jsValue) =>
-//          SubscriptionTransformer.jsValueToSubscription(jsValue) match {
-//            case Right(userAnswers) => Right(userAnswers)
-//            case Left(error)        => Left(error)
-//          }
-//        case None => Left(SubscriptionCreateError)
-//      }
