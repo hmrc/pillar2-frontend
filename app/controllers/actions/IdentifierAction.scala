@@ -56,7 +56,7 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
 
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(Admin) =>
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
