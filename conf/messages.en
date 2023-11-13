@@ -121,9 +121,9 @@ grs.registration.error.b11 =  If you think you made an error when entering them 
 grs.registration.error.b12 =  go back to select the entity type
 grs.registration.error.b13 =  and try again using different details.
 grs.registration.error.b21 =  You can
-grs.registration.error.b22 =  search Companies House for the company registration number and registered office address (open in a new tab).
+grs.registration.error.b22 =  search Companies House for the company registration number and registered office address (opens in a new tab).
 grs.registration.error.b31 =  You can
-grs.registration.error.b32 =  ask for a copy of your Corporation Tax Unique Taxpayer Reference (open in a new tab).
+grs.registration.error.b32 =  ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab).
 
 
 
