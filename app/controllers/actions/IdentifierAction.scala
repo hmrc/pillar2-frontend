@@ -54,10 +54,9 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
-        case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == enrolmentKey) =>
-          getSubscriptionId(request, enrolments, enrolmentExists = true)
+
         case Some(internalId) ~ enrolments ~ Some(affinity) ~ _ =>
-          getSubscriptionId(request, enrolments, internalId, affinity)
+          Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
@@ -74,16 +73,4 @@ class AuthenticatedIdentifierAction @Inject() (
 
   }
 
-  private def getSubscriptionId[A](
-    request:         Request[A],
-    enrolments:      Enrolments,
-    internalId:      String = "",
-    affinityGroup:   AffinityGroup = null,
-    enrolmentExists: Boolean = false
-  ): Future[Either[Result, IdentifierRequest[A]]] =
-    if (enrolmentExists) {
-      Future.successful(Left(Redirect(config.pillar2FrontendUrl)))
-    } else {
-      Future.successful(Right(IdentifierRequest(request, internalId)))
-    }
 }
