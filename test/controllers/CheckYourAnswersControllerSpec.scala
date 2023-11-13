@@ -91,7 +91,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
   val validSubscriptionSuccessResponse =
-    SubscriptionResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
+    SubscriptionResponse(
+      plrReference = "XMPLR0012345678",
+      formBundleNumber = "119000004320",
+      processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
+    )
   val nfmNoID = emptyUserAnswers
     .set(NominateFilingMemberPage, true)
     .success

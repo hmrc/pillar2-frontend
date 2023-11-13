@@ -18,9 +18,9 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDate)
+case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime)
 
 object SubscriptionResponse {
   implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
