@@ -28,15 +28,22 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
 
   import java.time.LocalDate
 
-  def apply(): Form[AccountingPeriod] =
-    Form(
-      mapping(
-        "startDate" -> localDate("groupAccountingPeriod.error.startDate.format", "groupAccountingPeriod.error.startDate.required", "", "")
-          .verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.minimum")),
-        "endDate" -> localDate("groupAccountingPeriod.error.endDate.format", "groupAccountingPeriod.error.endDate.required", "", "")
-          .verifying("groupAccountingPeriod.error.endDate.before.startDate", endDate => endDate.isAfter(LocalDate.now()))
-      )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))((accountingPeriod: AccountingPeriod) =>
-        Some(accountingPeriod.startDate, accountingPeriod.endDate)
+  def apply(): Form[AccountingPeriod] = Form(
+    mapping(
+      "startDate" -> localDate(
+        "groupAccountingPeriod.error.startDate.format",
+        "groupAccountingPeriod.error.startDate.required",
+        "",
+        ""
+      ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.minimum")),
+      "endDate" -> localDate(
+        "groupAccountingPeriod.error.endDate.format",
+        "groupAccountingPeriod.error.endDate.required",
+        "",
+        ""
       )
-    )
+    )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
+      Some((accountingPeriod.startDate, accountingPeriod.endDate))
+    ).verifying("groupAccountingPeriod.error.endDate.before.startDate", fields => fields.endDate isAfter fields.startDate)
+  )
 }
