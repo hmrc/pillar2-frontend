@@ -167,6 +167,12 @@ GET         /further-details/change-group-status                 controllers.sub
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/further-details/change-group-status                 controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/further-details/change-group-status                  controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
+
+
 GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
@@ -192,6 +198,9 @@ GET        /contact-details/change-second-contact                 controllers.su
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
+GET        /manage-account/account-details/summary                controllers.subscription.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+
+
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 
