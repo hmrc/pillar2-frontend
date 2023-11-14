@@ -51,4 +51,3 @@ class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
     )
   }
 }
-
