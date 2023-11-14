@@ -19,6 +19,8 @@ package models.registration
 import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+
 case class Registration(
   isUPERegisteredInUK: Boolean,
   orgType:             Option[EntityType] = None,
@@ -32,9 +34,11 @@ object Registration {
 }
 
 case class RegistrationInfo(
-  crn:    String,
-  utr:    String,
-  safeId: String
+  crn:              String,
+  utr:              String,
+  safeId:           String,
+  registrationDate: Option[LocalDate],
+  filingMember:     Option[Boolean]
 )
 
 object RegistrationInfo {

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models.requests
+package services
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.JsValue
 import models.UserAnswers
-import uk.gov.hmrc.auth.core.Enrolment
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+import models.ApiError
+import utils.SubscriptionTransformer
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+class DefaultSubscriptionTransformerWrapper extends SubscriptionTransformerWrapper {
+
+  override def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] =
+    // Your implementation to convert JsValue to UserAnswers
+    // It could be as simple as calling a method if that's already implemented elsewhere
+    SubscriptionTransformer.jsValueToSubscription(jsValue)
+}
