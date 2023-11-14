@@ -44,6 +44,6 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       )
     )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
       Some((accountingPeriod.startDate, accountingPeriod.endDate))
-    ).verifying("groupAccountingPeriod.error.endDate.before.startDate", fields => fields.endDate isAfter fields.startDate)
+    ).verifying("groupAccountingPeriod.error.endDate.before.startDate", a => a.endDate isAfter a.startDate)
   )
 }
