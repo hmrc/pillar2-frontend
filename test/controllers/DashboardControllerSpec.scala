@@ -28,6 +28,7 @@ import play.api.mvc.ControllerHelpers.TODO.executionContext
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.DashboardView
 
@@ -48,8 +49,32 @@ class DashboardControllerSpec extends SpecBase {
   )(executionContext, appConfig)
 
   "Dashboard Controller" should {
-    "return OK and the correct view for a GET" in {
+//    "return OK and the correct view for a GET" in {
+//
+//      val userAnswers = UserAnswers(
+//        id = "some-user-id",
+//        data = Json.obj(
+//          upeNameRegistrationPage.toString -> Json.toJson("Test Organisation"),
+//          UpeRegInformationPage.toString   -> Json.toJson(RegistrationInfo("crn", "utr", "safeId", Some(LocalDate.now()), Some(true)))
+//        )
+//      )
+//      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+//        .thenReturn(Future.successful(Right(userAnswers)))
+//
+//      val expectedHtmlContent = "<div>Test Organisation</div>"
+//      when(
+//        mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any())
+//      ).thenReturn(Html(expectedHtmlContent))
+//
+//      val result = controller.onPageLoad(FakeRequest(GET, "/dashboard"))
+//
+//      status(result) mustBe OK
+//      contentAsString(result) must include("Test Organisation")
+//
+//    }
 
+    "return OK and the correct view for a GET" in {
+      val plrId = "some-plr-id"
       val userAnswers = UserAnswers(
         id = "some-user-id",
         data = Json.obj(
@@ -57,19 +82,26 @@ class DashboardControllerSpec extends SpecBase {
           UpeRegInformationPage.toString   -> Json.toJson(RegistrationInfo("crn", "utr", "safeId", Some(LocalDate.now()), Some(true)))
         )
       )
+
+      // Mock enrolments to include PLRID
+      val enrolments = Enrolments(Set(Enrolment("HMRC-PILLAR2-ORG", Seq(EnrolmentIdentifier("PLRID", plrId)), "Activated")))
+
+      // Mock ReadSubscriptionService
       when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(userAnswers)))
 
+      // Adjust the expected HTML content based on the updated userAnswers
       val expectedHtmlContent = "<div>Test Organisation</div>"
-      when(
-        mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any())
-      ).thenReturn(Html(expectedHtmlContent))
+      when(mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any()))
+        .thenReturn(Html(expectedHtmlContent))
 
-      val result = controller.onPageLoad(FakeRequest(GET, "/dashboard"))
+      // Create a FakeRequest with the mocked enrolments
+      val fakeRequest = FakeRequest(GET, "/dashboard").withEnrolments(enrolments)
+
+      val result = controller.onPageLoad(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) must include("Test Organisation")
-
     }
 
     "return InternalServerError when the readSubscription service fails" in {

@@ -56,6 +56,7 @@ class AuthenticatedIdentifierAction @Inject() (
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
 
         case Some(internalId) ~ enrolments ~ Some(affinity) ~ _ =>
+          logger.debug(s"Enrolments retrieved: $enrolments")
           Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ _ ~ Some(Assistant) =>
