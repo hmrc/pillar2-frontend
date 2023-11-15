@@ -64,7 +64,13 @@ class GrsReturnController @Inject() (
       if (data.registration.registrationStatus == Registered) {
         data.registration.registeredBusinessPartnerId
           .map { safeId =>
-            val registeredInfo = RegistrationInfo(crn = data.companyProfile.companyNumber, utr = data.ctutr, safeId = safeId)
+            val registeredInfo = RegistrationInfo(
+              crn = data.companyProfile.companyNumber,
+              utr = data.ctutr,
+              safeId = safeId,
+              registrationDate = None,
+              filingMember = None
+            )
             for {
               userAnswers <- Future.fromTry(request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
               userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
@@ -88,7 +94,7 @@ class GrsReturnController @Inject() (
           companyNumber = companyProfile.companyNumber
           utr <- data.sautr
         } yield {
-          val registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId)
+          val registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId, registrationDate = None, filingMember = None)
           for {
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))

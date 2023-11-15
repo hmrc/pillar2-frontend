@@ -576,7 +576,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     }
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
-        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567")
+        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
         val userAnswer = emptyUserAnswers
           .set(upeRegisteredInUKPage, true)
           .success

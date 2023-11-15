@@ -23,19 +23,54 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import scala.concurrent.ExecutionContext
+import models.registration.RegistrationInfo
+import models.subscription.ReadSubscriptionRequestParameters
+import pages.{UpeRegInformationPage, upeNameRegistrationPage}
+import play.api.Logging
+import services.ReadSubscriptionService
+import uk.gov.hmrc.auth.core.Enrolment
+
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
-  getData:                  DataRetrievalAction,
-  identify:                 IdentifierAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     DashboardView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  getData:                     DataRetrievalAction,
+  identify:                    IdentifierAction,
+  requireData:                 DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        DashboardView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val userId         = request.userId
+    val identifierName = "PLRID"
+    val plrReference = request.enrolments
+      .flatMap(_.find(_.key.equalsIgnoreCase(identifierName)))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(identifierName)))
+      .map(_.value)
+      .getOrElse(identifierName)
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Ok(view())
+    val readSubscriptionParameters = ReadSubscriptionRequestParameters(userId, plrReference)
+
+    readSubscriptionService.readSubscription(readSubscriptionParameters).flatMap {
+      case Right(userAnswers) =>
+        val organisationName = userAnswers.get[String](upeNameRegistrationPage).getOrElse("Default Organisation Name")
+
+        val registrationDateFormatted = userAnswers
+          .get[RegistrationInfo](UpeRegInformationPage)
+          .flatMap(_.registrationDate)
+          .map(_.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
+          .getOrElse("Default Date")
+
+        Future.successful(Ok(view(organisationName, registrationDateFormatted, plrReference)))
+
+      case Left(error) =>
+        logger.error(s"Error retrieving subscription  $error")
+        Future.successful(InternalServerError("Subscription not found in user answers"))
+    }
   }
 }
