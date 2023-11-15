@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.registration.RegisterationWithoutIDResponse
+import models.registration.RegistrationWithoutIDResponse
 import models.{ApiError, InternalServerError, SafeId, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -38,7 +38,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        val safeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
+        val safeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         /*        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
         val safeIdValue = safeId match {
           case Some(value) => Some(value.value)
@@ -64,7 +64,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        val fmsafeId = response.json.asOpt[RegisterationWithoutIDResponse].map(_.safeId)
+        val fmsafeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
           case _           => None

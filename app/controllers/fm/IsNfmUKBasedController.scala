@@ -54,15 +54,6 @@ class IsNfmUKBasedController @Inject() (
     }
     Ok(view(preparedForm, mode))
   }
-
-  /*
-  updatedAnswers1 <- Future.fromTry(
-                       request.userAnswers
-                         .get(GrsUpeStatusPage)
-                         .map(updatedAnswers.set(GrsUpeStatusPage, _))
-                         .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
-                     )
-   */
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
