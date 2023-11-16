@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import models.SubscriptionCreateError
 import models.subscription.SubscriptionResponse
+import org.joda.time.LocalDateTime
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
@@ -44,7 +45,7 @@ class SubscriptionServiceSpec extends SpecBase {
       val response = SubscriptionResponse(
         plrReference = "XE1111123456789",
         formBundleNumber = "12345678",
-        processingDate = LocalDate.now()
+        processingDate = LocalDate.now().atStartOfDay()
       )
       when(mockSubscriptionConnector.crateSubscription(any())(any(), any())).thenReturn(Future.successful(Some(response)))
       service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>

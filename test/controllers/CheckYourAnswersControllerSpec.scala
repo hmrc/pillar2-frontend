@@ -91,7 +91,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
   val validSubscriptionSuccessResponse =
-    SubscriptionResponse(plrReference = "XMPLR0012345678", formBundleNumber = "119000004320", processingDate = LocalDate.parse("2023-09-22"))
+    SubscriptionResponse(
+      plrReference = "XMPLR0012345678",
+      formBundleNumber = "119000004320",
+      processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
+    )
   val nfmNoID = emptyUserAnswers
     .set(NominateFilingMemberPage, true)
     .success
@@ -205,10 +209,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         )
       )
     )
+
   val sampleRegistrationInfo = RegistrationInfo(
     crn = "CRN123456",
     utr = "UTR654321",
-    safeId = "SAFEID789012"
+    safeId = "SAFEID789012",
+    registrationDate = None,
+    filingMember = None
   )
 
   val registration = Registration(
@@ -337,7 +344,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must trigger create subscription API if nfm and upe data is found" in {
-      val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567")
+      val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
       val userAnswer = emptyUserAnswers
         .set(upeRegisteredInUKPage, true)
         .success

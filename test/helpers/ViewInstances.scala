@@ -161,4 +161,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
 
+  val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
+
 }

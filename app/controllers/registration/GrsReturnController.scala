@@ -53,7 +53,13 @@ class GrsReturnController @Inject() (
           for {
             entityRegData <- incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId)
             safeId = entityRegData.registration.registeredBusinessPartnerId.getOrElse(throw new Exception("No safe id in UK Limited response"))
-            registeredInfo       = RegistrationInfo(crn = entityRegData.companyProfile.companyNumber, utr = entityRegData.ctutr, safeId = safeId)
+            registeredInfo = RegistrationInfo(
+                               crn = entityRegData.companyProfile.companyNumber,
+                               utr = entityRegData.ctutr,
+                               safeId = safeId,
+                               registrationDate = None,
+                               filingMember = None
+                             )
             isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(
                              request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(entityRegData)))
@@ -73,7 +79,9 @@ class GrsReturnController @Inject() (
                                  case _       => throw new Exception("LLP response without company profile")
                                },
                                utr = entityRegData.sautr.getOrElse(throw new Exception("LLP response without Utr available")),
-                               safeId = safeId
+                               safeId = safeId,
+                               registrationDate = None,
+                               filingMember = None
                              )
             isRegistrationStatus = if (entityRegData.registration.registrationStatus == Registered) RowStatus.Completed else RowStatus.InProgress
             userAnswers <- Future.fromTry(

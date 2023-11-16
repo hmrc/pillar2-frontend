@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
-import uk.gov.hmrc.auth.core.Enrolment
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+import models.subscription.{AccountStatus, AccountingPeriod}
+import play.api.libs.json.JsPath
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+case object subAccountStatusPage extends QuestionPage[AccountStatus] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "subAccountStatus"
+}
