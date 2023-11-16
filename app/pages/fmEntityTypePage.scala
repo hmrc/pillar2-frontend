@@ -25,13 +25,3 @@ case object fmEntityTypePage extends QuestionPage[EntityType] {
 
   override def toString: String = "fmEntityType"
 }
-
-//case class RegistrationInfo(
-//  crn:    String,
-//  utr:    String,
-//  safeId: String
-//)
-//
-//object RegistrationInfo {
-//  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
-//}

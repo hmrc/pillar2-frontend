@@ -47,7 +47,7 @@ class NfmNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(fmRegisteredInUKPage)) {
+    if (request.userAnswers.get(fmRegisteredInUKPage).contains(false)) {
       val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
         case Some(value) => form.fill(value)
         case None        => form

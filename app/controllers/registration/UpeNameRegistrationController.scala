@@ -46,7 +46,7 @@ class UpeNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(upeRegisteredInUKPage)) {
+    if (request.userAnswers.get(upeRegisteredInUKPage).contains(false)) {
       val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
         case Some(value) => form.fill(value)
         case None        => form

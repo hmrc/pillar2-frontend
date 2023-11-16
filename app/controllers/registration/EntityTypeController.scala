@@ -51,7 +51,7 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(upeRegisteredInUKPage)) {
+    if (request.userAnswers.get(upeRegisteredInUKPage).contains(true)) {
       val preparedForm = request.userAnswers.get(upeEntityTypePage) match {
         case None        => form
         case Some(value) => form.fill(value)
