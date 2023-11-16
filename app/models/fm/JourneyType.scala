@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models.fm
 
-import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+sealed trait JourneyType
 
-import scala.concurrent.{ExecutionContext, Future}
+object JourneyType {
+  case object FilingMember extends JourneyType
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRetrievalAction {
+  case object UltimateParent extends JourneyType
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-    Future(OptionalDataRequest(request.request, request.userId, dataToReturn))
-
-  override protected implicit val executionContext: ExecutionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
 }
