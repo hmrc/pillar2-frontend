@@ -191,6 +191,8 @@ POST        /contact-details/input-name                       controllers.subscr
 GET         /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
+GET         /manage-account/contact-details/change-input-name   controllers.subscription.manageAccount.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-input-name    controllers.subscription.manageAccount.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
 GET        /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
@@ -207,6 +209,7 @@ GET        /contact-details/check-answers                  controllers.subscript
 
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+GET        /manage-account/contact-details/check-answers   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
 
 
 
@@ -215,15 +218,26 @@ POST       /contact-details/input-email                            controllers.s
 GET        /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET        /manage-account/contact-details/change-input-email       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/contact-details/change-input-email        controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
 GET        /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
+GET        /manage-account/contact-details/change-telephone       controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/contact-details/change-telephone        controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /manage-account/contact-details/change-input-telephone                controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-input-telephone                controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
