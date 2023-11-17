@@ -80,11 +80,11 @@ GET         /eligibility/confirmation                                           
 POST        /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onSubmit
 
 
-GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(mode: Mode = NormalMode, journeyId)
-GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(mode: Mode = NormalMode, journeyId)
+GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
+GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
 
-GET         /grs-return/checkmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(mode: Mode = CheckMode, journeyId)
-GET         /grs-return/checkmode/fm                                                   controllers.registration.GrsReturnController.continueFm(mode: Mode = CheckMode, journeyId)
+GET         /grs-return/checkmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
+GET         /grs-return/checkmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
 
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
@@ -170,6 +170,12 @@ GET         /further-details/change-group-status                 controllers.sub
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/further-details/change-group-status                 controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/further-details/change-group-status                  controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
+
+
 GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
@@ -195,6 +201,9 @@ GET        /contact-details/change-second-contact                 controllers.su
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
+GET        /manage-account/account-details/summary                controllers.subscription.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+
+
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 
@@ -248,3 +257,9 @@ GET        /contact-details/address/change-input                controllers.subs
 POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad
+
+GET        /business-matching/ultimate-parent/uk-based/error/fail                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
+GET        /business-matching/filing-member/uk-based/error/fail                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
+
+GET        /business-matching/ultimate-parent/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadUpe
+GET        /business-matching/filing-member/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadNfm

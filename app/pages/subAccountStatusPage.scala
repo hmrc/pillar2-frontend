@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package models.registration
+package pages
 
-import models.SafeId
-import play.api.libs.json.{Reads, __}
+import models.subscription.{AccountStatus, AccountingPeriod}
+import play.api.libs.json.JsPath
 
-case class RegisterationWithoutIDResponse(safeId: SafeId)
+case object subAccountStatusPage extends QuestionPage[AccountStatus] {
 
-object RegisterationWithoutIDResponse {
+  override def path: JsPath = JsPath \ toString
 
-  implicit val reads: Reads[RegisterationWithoutIDResponse] = {
-    import play.api.libs.functional.syntax._
-    (__ \ "safeId").read[String] fmap (id => RegisterationWithoutIDResponse(SafeId(id)))
-  }
-
+  override def toString: String = "subAccountStatus"
 }

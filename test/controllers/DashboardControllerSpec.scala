@@ -17,28 +17,83 @@
 package controllers
 
 import base.SpecBase
+import models.registration.RegistrationInfo
+import models.subscription.ReadSubscriptionRequestParameters
+import models.{MandatoryInformationMissingError, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeRegInformationPage, upeNameRegistrationPage}
+import play.api.libs.json.Json
+import play.api.mvc.ControllerHelpers.TODO.executionContext
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.DashboardView
 
+import java.time.LocalDate
+import scala.concurrent.Future
 class DashboardControllerSpec extends SpecBase {
 
-  "Dashboard Controller" when {
+  val mockDashboardView                   = mock[DashboardView]
+  val stubbedMessagesControllerComponents = stubMessagesControllerComponents()
 
-    "must return OK and the correct view for a GET" in {
+  val controller = new DashboardController(
+    preDataRetrievalActionImpl,
+    preAuthenticatedActionBuilders,
+    preDataRequiredActionImpl,
+    mockReadSubscriptionService,
+    stubbedMessagesControllerComponents,
+    mockDashboardView
+  )(executionContext, appConfig)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+  "Dashboard Controller" should {
+    "return OK and the correct view for a GET" in {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.DashboardController.onPageLoad.url)
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj(
+          upeNameRegistrationPage.toString -> Json.toJson("Test Organisation"),
+          UpeRegInformationPage.toString   -> Json.toJson(RegistrationInfo("crn", "utr", "safeId", Some(LocalDate.now()), Some(true)))
+        )
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
 
-        val result = route(application, request).value
+      val expectedHtmlContent = "<div>Test Organisation</div>"
+      when(
+        mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any())
+      ).thenReturn(Html(expectedHtmlContent))
 
-        val view = application.injector.instanceOf[DashboardView]
+      val result = controller.onPageLoad(FakeRequest(GET, "/dashboard"))
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
-      }
+      status(result) mustBe OK
+      contentAsString(result) must include("Test Organisation")
+
     }
+
+    "return InternalServerError when the readSubscription service fails" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(MandatoryInformationMissingError("Some error"))))
+
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) must include("Subscription not found in user answers")
+    }
+
+    "return OK but with default values when user answers are incomplete" in {
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj()
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
+
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
+
+      status(result) mustBe OK
+    }
+
   }
 }

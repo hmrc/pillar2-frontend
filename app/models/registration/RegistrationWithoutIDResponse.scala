@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.registration
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
-import uk.gov.hmrc.auth.core.Enrolment
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+import models.SafeId
+import play.api.libs.json.{Reads, __}
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+case class RegistrationWithoutIDResponse(safeId: SafeId)
+
+object RegistrationWithoutIDResponse {
+
+  implicit val reads: Reads[RegistrationWithoutIDResponse] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "safeId").read[String] fmap (id => RegistrationWithoutIDResponse(SafeId(id)))
+  }
+
+}

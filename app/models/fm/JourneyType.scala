@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.fm
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
-import uk.gov.hmrc.auth.core.Enrolment
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+sealed trait JourneyType
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+object JourneyType {
+  case object FilingMember extends JourneyType
+
+  case object UltimateParent extends JourneyType
+
+}

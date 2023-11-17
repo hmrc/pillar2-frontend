@@ -14,73 +14,66 @@
  * limitations under the License.
  */
 
-package controllers.fm
+package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.IsNFMUKBasedFormProvider
+import forms.GroupAccountingPeriodFormProvider
 import models.Mode
-import pages.{GrsFilingMemberStatusPage, fmRegisteredInUKPage}
+import pages.subAccountingPeriodPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.fmview.IsNFMUKBasedView
+import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsNfmUKBasedController @Inject() (
+class GroupAccountingPeriodController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              IsNFMUKBasedFormProvider,
+  formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      IsNFMUKBasedView
+  view:                      GroupAccountingPeriodView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(fmRegisteredInUKPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    val pareparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
-    Ok(view(preparedForm, mode))
+    Ok(view(pareparedForm, mode))
   }
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
+    remapFormErrors(
+      form
+        .bindFromRequest()
+    )
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          value match {
-            case true =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(
-                                     request.userAnswers
-                                       .get(GrsFilingMemberStatusPage)
-                                       .map(updatedAnswers.set(GrsFilingMemberStatusPage, _))
-                                       .getOrElse(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
-                                   )
-                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-              } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
-
-            case false =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
-          }
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
       )
   }
+
+  private def remapFormErrors[A](form: Form[A]): Form[A] =
+    form.copy(errors = form.errors.map {
+      case e if e.key == "" => e.copy(key = "endDate")
+      case e                => e
+    })
 
 }
