@@ -199,6 +199,11 @@ POST       /contact-details/second-contact                        controllers.su
 GET        /contact-details/change-second-contact                 controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
+GET        /manage-account/contact-details/change-second-contact     controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
+POST      /manage-account/contact-details/change-second-contact      controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+
+
+
 GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
 GET        /manage-account/account-details/summary                controllers.subscription.ManageGroupDetailsCheckYourAnswersController.onPageLoad
 
@@ -244,20 +249,36 @@ POST       /contact-details/second-input-name                        controllers
 GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
+GET        /contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /contact-details/second-input-email                        controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/second-input-email                       controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-input-email                  controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-email                 controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+
+GET       /manage-account/contact-details/change-second-input-email       controllers.subscription.manageAccount.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST      /manage-account/contact-details/change-second-input-email        controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-telephone                  controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
 POST      /contact-details/change-second-telephone                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
+GET        /manage-account/contact-details/change-second-telephone   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST      /manage-account/contact-details/change-second-telephone    controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /manage-account/contact-details/change-second-input-telephone     controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/contact-details/change-second-input-telephone      controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+
 
 
 GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
@@ -266,5 +287,10 @@ GET        /contact-details/address/input                        controllers.sub
 POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /manage-account/contact-details/address/change-input                controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST      /manage-account/contact-details/address/change-input                  controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad

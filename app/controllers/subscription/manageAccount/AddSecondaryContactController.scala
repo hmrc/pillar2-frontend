@@ -18,62 +18,69 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.ContactEmailAddressFormProvider
+import controllers.actions._
+import forms.AddSecondaryContactFormProvider
 import models.Mode
-import pages.{subPrimaryContactNamePage, subPrimaryEmailPage}
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.ContactEmailAddressView
+import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactEmailAddressController @Inject() (
+class AddSecondaryContactController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactEmailAddressFormProvider,
+  formProvider:              AddSecondaryContactFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactEmailAddressView
+  view:                      AddSecondaryContactView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(subPrimaryContactNamePage)
       .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subPrimaryEmailPage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
+        val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
         }
-        Ok(view(preparedForm, mode, contactName))
-
+        Ok(view(preparedForm, contactName, mode))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(subPrimaryContactNamePage)
       .map { contactName =>
-        val form = formProvider(contactName)
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
             value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers set (subPrimaryEmailPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
+              value match {
+                case true =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad)
+
+                case false =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+              }
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -24,9 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers.manageAccount.{ContactByTelephoneSummary, ContactCaptureTelephoneDetailsSummary, ContactEmailAddressSummary}
-import viewmodels.checkAnswers._
-import viewmodels.checkAnswers.manageAccount.ContactNameComplianceSummary
+import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.ContactCheckYourAnswersView
 

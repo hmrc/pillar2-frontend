@@ -18,37 +18,38 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.ContactEmailAddressFormProvider
+import controllers.actions._
+import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
-import pages.{subPrimaryContactNamePage, subPrimaryEmailPage}
+import pages.{subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.ContactEmailAddressView
+import views.html.subscriptionview.SecondaryTelephonePreferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactEmailAddressController @Inject() (
+class SecondaryTelephonePreferenceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactEmailAddressFormProvider,
+  formProvider:              SecondaryTelephonePreferenceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactEmailAddressView
+  view:                      SecondaryTelephonePreferenceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(subSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subPrimaryEmailPage) match {
+        val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -61,7 +62,7 @@ class ContactEmailAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(subSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -69,11 +70,18 @@ class ContactEmailAddressController @Inject() (
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers set (subPrimaryEmailPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
+              value match {
+                case true =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
+                case false =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
+              }
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
