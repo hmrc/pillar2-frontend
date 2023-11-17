@@ -74,7 +74,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers set (subPrimaryCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+              } yield Redirect(controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad)
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -200,7 +200,7 @@ GET        /contact-details/change-second-contact                 controllers.su
 POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 GET        /manage-account/contact-details/change-second-contact     controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
-POST      /manage-account/contact-details/change-second-contact      controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+POST       /manage-account/contact-details/change-second-contact     controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 
 
@@ -249,8 +249,8 @@ POST       /contact-details/second-input-name                        controllers
 GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+GET        /manage-account/contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /manage-account/contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /contact-details/second-input-email                        controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)

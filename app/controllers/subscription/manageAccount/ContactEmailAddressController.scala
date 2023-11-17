@@ -73,7 +73,7 @@ class ContactEmailAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers set (subPrimaryEmailPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
+              } yield Redirect(controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad)
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

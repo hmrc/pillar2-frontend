@@ -76,13 +76,13 @@ class ContactByTelephoneController @Inject() (
                     updatedAnswers <-
                       Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+                  } yield Redirect(controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad)
                 case false =>
                   for {
                     updatedAnswers <-
                       Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                  } yield Redirect(controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad)
               }
           )
       }

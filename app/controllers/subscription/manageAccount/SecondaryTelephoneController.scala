@@ -27,7 +27,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.SecondaryTelephoneView
+import views.html.subscriptionview.manageAccount.SecondaryTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,7 +73,7 @@ class SecondaryTelephoneController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+              } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
