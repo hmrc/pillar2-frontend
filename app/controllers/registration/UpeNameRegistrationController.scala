@@ -21,10 +21,10 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
-import pages.{upeNameRegistrationPage, upeRegisteredInUKPage}
+import pages.{upeEntityTypePage, upeNameRegistrationPage, upeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.UpeNameRegistrationView
 
@@ -45,16 +45,23 @@ class UpeNameRegistrationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.get(upeRegisteredInUKPage).contains(false)) {
-      val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
     }
+    val result: Future[Result] = if (request.userAnswers.get(upeRegisteredInUKPage).contains(false)) {
+      Future.successful(Ok(view(preparedForm, mode)))
+    } else if (request.userAnswers.get(upeRegisteredInUKPage).contains(true) & request.userAnswers.get(upeEntityTypePage).isEmpty) {
+      for {
+        updatedAnswers <-
+          Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, false))
+        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+      } yield Ok(view(preparedForm, mode))
+    } else {
+      Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+    }
+    result
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
