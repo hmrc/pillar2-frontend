@@ -22,11 +22,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import models.registration.RegistrationInfo
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{UpeRegInformationPage, upeNameRegistrationPage}
+import pages.{UpeRegInformationPage, fmDashboardPage, upeContactNamePage, upeNameRegistrationPage}
 import play.api.Logging
 import services.ReadSubscriptionService
 import uk.gov.hmrc.auth.core.Enrolment
@@ -36,6 +37,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
+  val userAnswersConnectors:   UserAnswersConnectors,
   getData:                     DataRetrievalAction,
   identify:                    IdentifierAction,
   requireData:                 DataRequiredAction,
@@ -48,42 +50,43 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    logger.debug(s"IndexController - Enrolments: ${request.enrolments}")
-    val userId = request.userId
-    val plrReference = request.enrolments
-      .flatMap(_.find { enrolment =>
-        enrolment.key.equalsIgnoreCase("HMRC-PILLAR2-ORG") &&
-        enrolment.identifiers.exists(_.key.equalsIgnoreCase("PLRID"))
-      })
-      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
-      .map(_.value)
+    val plrReference = extractPlrReference(request.enrolments)
+    val userId       = request.userId
 
     plrReference match {
       case Some(ref) =>
-        for {
-          readSub <- readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref))
-          result <- readSub match {
-                      case Right(userAnswers) =>
-                        getSome(userAnswers) match {
-                          case Some((companyName, regDate)) =>
-                            Future.successful(Ok(view(companyName, regDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")), ref)))
-                          case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-                        }
-                      case Left(error) =>
-                        logger.error(s"Error retrieving subscription: $error")
-                        Future.successful(InternalServerError("Internal Server Error occurred"))
-                    }
-        } yield result
+        readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref)).flatMap {
+          case Right(_) =>
+            userAnswersConnectors.getUserAnswer(userId).flatMap {
+              case Some(userAnswers) =>
+                userAnswers.get(fmDashboardPage) match {
+                  case Some(dashboardInfo) =>
+                    Future.successful(
+                      Ok(view(dashboardInfo.organisationName, dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")), ref))
+                    )
+                  case None =>
+                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                }
+              case None =>
+                Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            }
+
+          case Left(error) =>
+            logger.error(s"Error retrieving subscription: $error")
+            Future.successful(InternalServerError("Internal Server Error occurred"))
+        }
 
       case None =>
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 
-  private def getSome(userAnswers: UserAnswers) =
-    (userAnswers.get(upeNameRegistrationPage), userAnswers.get(UpeRegInformationPage).flatMap(_.registrationDate)) match {
-      case (Some(x), Some(y)) => Option(x, y)
-      case _                  => None
+  private def extractPlrReference(enrolmentsOption: Option[Set[Enrolment]]): Option[String] =
+    enrolmentsOption.flatMap { enrolments =>
+      enrolments
+        .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
+        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+        .map(_.value)
     }
 
 }
