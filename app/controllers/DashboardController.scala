@@ -51,7 +51,7 @@ class DashboardController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val plrReference = extractPlrReference(request.enrolments)
-    val userId       = request.userId
+    val userId       = request.userAnswers.id
 
     plrReference match {
       case Some(ref) =>
