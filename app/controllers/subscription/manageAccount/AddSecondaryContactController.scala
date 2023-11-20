@@ -70,7 +70,6 @@ class AddSecondaryContactController @Inject() (
             value =>
               value match {
                 case true =>
-                  println("*********************************************************************************************8888888")
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
