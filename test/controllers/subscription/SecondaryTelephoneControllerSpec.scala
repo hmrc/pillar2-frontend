@@ -22,7 +22,7 @@ import forms.SecondaryTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage}
+import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,7 +40,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
 
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryPhonePreferencePage, true)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
@@ -57,12 +59,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .set(subSecondaryContactNamePage, "name")
-        .success
-        .value
-        .set(subSecondaryCapturePhonePage, "1234567")
-        .success
-        .value
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryPhonePreferencePage, true)
+        .setOrException(subSecondaryCapturePhonePage, "1234567")
+
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -101,7 +101,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
-    "must redirect to Journey recovery page for a GET if no previous existing data is found" in {
+    "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -111,7 +111,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package helpers
 
-import models.grs.EntityType
-import play.api.libs.json.JsPath
+import models.UserAnswers
+import play.api.libs.json.Reads
+import queries.Gettable
 
-case object fmEntityTypePage extends QuestionPage[EntityType] {
+trait BookmarkHelper {
 
-  override def path: JsPath = JsPath \ toString
+  self: UserAnswers =>
 
-  override def toString: String = "fmEntityType"
+  def isPageDefined[A](page: Gettable[A])(implicit rds: Reads[A]): Boolean =
+    get(page) match {
+      case Some(_) => true
+      case _       => false
+    }
+
 }

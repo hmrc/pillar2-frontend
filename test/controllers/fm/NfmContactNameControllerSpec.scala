@@ -19,9 +19,10 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmContactNameFormProvider
-import models.NormalMode
+import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{fmContactNamePage, fmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -32,12 +33,12 @@ import scala.concurrent.Future
 
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
-
+  val nonUkAddress: NonUKAddress = NonUKAddress("this", None, "over", None, None, countryCode = "AR")
   "NFMContactName Controller" when {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None)
+    "must return OK and the correct view for a GET if page previously not answered" in {
+      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredAddressPage, nonUkAddress)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -54,6 +55,40 @@ class NfmContactNameControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val userAnswers = emptyUserAnswers
+        .setOrException(fmRegisteredAddressPage, nonUkAddress)
+        .setOrException(fmContactNamePage, "name")
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmContactNameView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

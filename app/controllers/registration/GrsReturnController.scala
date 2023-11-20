@@ -55,7 +55,7 @@ class GrsReturnController @Inject() (
         case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
 
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
 
   }
 
@@ -158,7 +158,7 @@ class GrsReturnController @Inject() (
             }
           }
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
 
   }
 

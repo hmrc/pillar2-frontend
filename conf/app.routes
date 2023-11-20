@@ -263,3 +263,4 @@ GET        /business-matching/filing-member/uk-based/error/fail                 
 
 GET        /business-matching/ultimate-parent/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadNfm
+GET        /errors/restart-error                                                  controllers.BookmarkPreventionController.onPageLoad

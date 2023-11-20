@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
-import pages.{subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,18 +45,19 @@ class SecondaryTelephonePreferenceController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(subSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode, contactName))
-
+    (for {
+      _           <- request.userAnswers.get(subSecondaryEmailPage)
+      contactName <- request.userAnswers.get(subSecondaryContactNamePage)
+    } yield {
+      val form = formProvider(contactName)
+      val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Ok(view(preparedForm, mode, contactName))
+
+    })
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
 
   }
 

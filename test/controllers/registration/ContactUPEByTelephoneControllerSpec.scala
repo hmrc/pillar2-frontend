@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeContactNamePage, upePhonePreferencePage}
+import pages.{upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
   "Can we contact UPE by Telephone Controller" when {
 
     "return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val ua = emptyUserAnswers
+        .setOrException(upeContactNamePage, "sad")
+        .setOrException(upeContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -60,12 +62,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
-        .set(upeContactNamePage, "sad")
-        .success
-        .value
-        .set(upePhonePreferencePage, true)
-        .success
-        .value
+        .setOrException(upeContactNamePage, "sad")
+        .setOrException(upeContactEmailPage, "email")
+        .setOrException(upePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -126,24 +125,22 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       }
 
     }
-    "redirect to journey recovery  " when {
-      "no data is found for GET" in {
-        val application = applicationBuilder(userAnswers = None).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
+    "redirect to book mark prevention page for GET if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
-      "no contact name is found for POST" in {
-        val application = applicationBuilder(userAnswers = None).build()
-        running(application) {
-          val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
+    }
+    "redirect to journey recovery when no contact name is found for POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

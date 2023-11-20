@@ -21,11 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import pages.fmNameRegistrationPage
+import pages.{fmEntityTypePage, fmNameRegistrationPage, fmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.fmview.NfmNameRegistrationView
 
@@ -46,12 +46,23 @@ class NfmNameRegistrationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
       case Some(value) => form.fill(value)
       case None        => form
     }
-    Ok(view(preparedForm, mode))
+    val result: Future[Result] = if (request.userAnswers.get(fmRegisteredInUKPage).contains(false)) {
+      Future.successful(Ok(view(preparedForm, mode)))
+    } else if (request.userAnswers.get(fmRegisteredInUKPage).contains(true) & request.userAnswers.get(fmEntityTypePage).isEmpty) {
+      for {
+        updatedAnswers <-
+          Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, false))
+        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+      } yield Ok(view(preparedForm, mode))
+    } else {
+      Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+    }
+    result
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

@@ -21,11 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import pages.subRegisteredAddressPage
+import pages.{subAddSecondaryContactPage, subRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
@@ -48,11 +49,15 @@ class CaptureSubscriptionAddressController @Inject() (
   val form        = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
+    if (request.userAnswers.isPageDefined(subAddSecondaryContactPage)) {
+      val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
+      }
+      Ok(view(preparedForm, mode, countryList))
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
-    Ok(view(preparedForm, mode, countryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

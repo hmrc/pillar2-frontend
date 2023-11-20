@@ -22,7 +22,7 @@ import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.fmNameRegistrationPage
+import pages.{fmNameRegistrationPage, fmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,8 +38,8 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
   "NfmNameRegistrationController Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
@@ -54,8 +54,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val pageAnswer = emptyUserAnswers.set(fmNameRegistrationPage, "alex").success.value
+      val pageAnswer = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false).setOrException(fmNameRegistrationPage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
@@ -72,6 +71,18 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 
