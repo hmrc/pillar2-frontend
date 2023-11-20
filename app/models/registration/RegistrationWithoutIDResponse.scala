@@ -19,13 +19,13 @@ package models.registration
 import models.SafeId
 import play.api.libs.json.{Reads, __}
 
-case class RegisterationWithoutIDResponse(safeId: SafeId)
+case class RegistrationWithoutIDResponse(safeId: SafeId)
 
-object RegisterationWithoutIDResponse {
+object RegistrationWithoutIDResponse {
 
-  implicit val reads: Reads[RegisterationWithoutIDResponse] = {
+  implicit val reads: Reads[RegistrationWithoutIDResponse] = {
     import play.api.libs.functional.syntax._
-    (__ \ "safeId").read[String] fmap (id => RegisterationWithoutIDResponse(SafeId(id)))
+    (__ \ "safeId").read[String] fmap (id => RegistrationWithoutIDResponse(SafeId(id)))
   }
 
 }
