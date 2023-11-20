@@ -214,7 +214,7 @@ GET        /contact-details/check-answers                  controllers.subscript
 
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
-GET        /manage-account/contact-details/check-answers   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
+GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
 
 
 
