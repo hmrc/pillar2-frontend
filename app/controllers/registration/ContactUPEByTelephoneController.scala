@@ -46,7 +46,7 @@ class ContactUPEByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(upeContactNamePage) //fmDashboardPage
+      .get(upeContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         val preparedForm = request.userAnswers.get(upePhonePreferencePage) match {
