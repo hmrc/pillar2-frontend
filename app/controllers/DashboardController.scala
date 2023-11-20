@@ -19,14 +19,13 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{Mode, UserAnswers}
-import models.registration.RegistrationInfo
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{UpeRegInformationPage, fmDashboardPage, upeContactNamePage, upeNameRegistrationPage}
+import pages.fmDashboardPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
+import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 
@@ -49,7 +48,7 @@ class DashboardController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val plrReference = extractPlrReference(request.enrolments)
-    val userId       = request.userAnswers.id
+    val userId       = request.userId
 
     plrReference match {
       case Some(ref) =>
