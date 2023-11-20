@@ -55,8 +55,9 @@ trait RegisterAndSubscribe extends Logging {
                 case Left(value) =>
                   logger.warn(s"Error $value")
                   value match {
-                    case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.ErrorController.onPageLoad))
-                    case _                                   => Future.successful(Redirect(routes.ErrorController.onPageLoad))
+                    case MandatoryInformationMissingError(_) =>
+                      Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
+                    case _ => Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
                   }
               }
             } else {
@@ -72,8 +73,9 @@ trait RegisterAndSubscribe extends Logging {
           case Left(value) =>
             logger.warn(s"Error $value")
             value match {
-              case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
-              case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+              case MandatoryInformationMissingError(_) =>
+                Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
+              case _ => Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
             }
         }
 
@@ -90,21 +92,23 @@ trait RegisterAndSubscribe extends Logging {
                     case Left(value) =>
                       logger.warn(s"Error $value")
                       value match {
-                        case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
-                        case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+                        case MandatoryInformationMissingError(_) =>
+                          Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
+                        case _ => Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
                       }
                   }
                 } else {
                   createSubscription(upeSafeId.value)
                 }
               }
-              .getOrElse(Future.successful(Redirect(routes.ErrorController.onPageLoad)))
+              .getOrElse(Future.successful(Redirect(routes.UnderConstructionController.onPageLoad)))
 
           case Left(value) =>
             logger.warn(s"Error $value")
             value match {
-              case MandatoryInformationMissingError(_) => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
-              case _                                   => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
+              case MandatoryInformationMissingError(_) =>
+                Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
+              case _ => Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
             }
         }
       case _ => Future.successful(Redirect(routes.UnderConstructionController.onPageLoad))
@@ -137,7 +141,9 @@ trait RegisterAndSubscribe extends Logging {
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
-            logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
+            for {
+              dataRemoval <- userAnswersConnectors.remove(request.userId)
+            } logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
             Future.successful(
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
@@ -146,13 +152,13 @@ trait RegisterAndSubscribe extends Logging {
             )
           case Left(EnrolmentCreationError) =>
             logger.warn(s"Encountered EnrolmentCreationError. Redirecting to ErrorController.")
-            Future.successful(Redirect(routes.ErrorController.onPageLoad))
+            Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
           case Left(EnrolmentExistsError) =>
             logger.warn(s"Encountered EnrolmentExistsError. Redirecting to ErrorController.")
-            Future.successful(Redirect(routes.ErrorController.onPageLoad))
+            Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
         }
 
-      case Left(value) =>
-        Future.successful(Redirect(routes.ErrorController.onPageLoad))
+      case Left(_) =>
+        Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
     }
 }

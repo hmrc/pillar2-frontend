@@ -108,6 +108,8 @@ GET         /account/signed-out                                                 
 
 GET         /unauthorised                                                               controllers.UnauthorisedController.onPageLoad
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
+GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
+
 
 GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
