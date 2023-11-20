@@ -53,6 +53,8 @@ class DashboardController @Inject() (
     val plrReference = extractPlrReference(request.enrolments)
     val userId       = request.userAnswers.id
 
+    println(s"PLR Reference: $plrReference, User ID: $userId")
+
     plrReference match {
       case Some(ref) =>
         readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref)).flatMap {
@@ -77,6 +79,7 @@ class DashboardController @Inject() (
         }
 
       case None =>
+        println("Redirecting due to missing PLR reference")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
