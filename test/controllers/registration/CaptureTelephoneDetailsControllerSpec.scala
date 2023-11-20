@@ -22,7 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.upeContactNamePage
+import pages.{upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,8 +37,10 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   "Capture Telephone Details Controller" when {
 
-    "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+    "must return OK and the correct view for a GET if page previously not answered" in {
+      val ua = emptyUserAnswers
+        .setOrException(upeContactNamePage, "sad")
+        .setOrException(upePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -49,6 +51,28 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("sad"), NormalMode, "sad")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val ua = emptyUserAnswers
+        .setOrException(upeContactNamePage, "sad")
+        .setOrException(upePhonePreferencePage, true)
+        .setOrException(upeCapturePhonePage, "12321")
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CaptureTelephoneDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("sad").fill("12321"), NormalMode, "sad")(
           request,
           appConfig(application),
           messages(application)
@@ -89,25 +113,23 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to journey recovery  " when {
-      "no data is found for primary contact for GET" in {
-        val application = applicationBuilder(None).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
+    "redirect to book mark prevention page" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
+    }
 
-      "no contact name is found for POST" in {
-        val application = applicationBuilder(None).build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
+    "redirect to journey recovery if no contact name is found for POST" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

@@ -53,6 +53,18 @@ class NfmUKAddressControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
       val data =
         emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value

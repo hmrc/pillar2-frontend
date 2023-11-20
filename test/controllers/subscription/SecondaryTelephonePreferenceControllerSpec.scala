@@ -22,7 +22,7 @@ import forms.SecondaryTelephonePreferenceFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,9 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
   "SecondaryTelephonePreference Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryEmailPage, "he@a.com")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -56,12 +58,10 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .set(subSecondaryContactNamePage, "name")
-        .success
-        .value
-        .set(subSecondaryPhonePreferencePage, true)
-        .success
-        .value
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryEmailPage, "he@a.com")
+        .setOrException(subSecondaryPhonePreferencePage, true)
+
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -137,7 +137,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       }
     }
-    "must redirect to Journey recovery page for a GET if no previous existing data is found" in {
+    "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode).url)
@@ -147,7 +147,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package models.registration
+package helpers
 
-import models.SafeId
-import play.api.libs.json.{Reads, __}
+import models.UserAnswers
+import play.api.libs.json.Reads
+import queries.Gettable
 
-case class RegisterationWithoutIDResponse(safeId: SafeId)
+trait BookmarkHelper {
 
-object RegisterationWithoutIDResponse {
+  self: UserAnswers =>
 
-  implicit val reads: Reads[RegisterationWithoutIDResponse] = {
-    import play.api.libs.functional.syntax._
-    (__ \ "safeId").read[String] fmap (id => RegisterationWithoutIDResponse(SafeId(id)))
-  }
+  def isPageDefined[A](page: Gettable[A])(implicit rds: Reads[A]): Boolean =
+    get(page) match {
+      case Some(_) => true
+      case _       => false
+    }
 
 }

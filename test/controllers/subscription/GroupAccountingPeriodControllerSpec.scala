@@ -19,11 +19,11 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.GroupAccountingPeriodFormProvider
-import models.NormalMode
 import models.subscription.AccountingPeriod
+import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subAccountingPeriodPage
+import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -35,12 +35,14 @@ import scala.concurrent.Future
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
-
+  val startDate    = LocalDate.of(2023, 12, 31)
+  val endDate      = LocalDate.of(2025, 12, 31)
   "GroupAccountingPeriod Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
+      val ua = emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
 
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
@@ -54,10 +56,9 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
-      val startDate   = LocalDate.of(2023, 12, 31)
-      val endDate     = LocalDate.of(2025, 12, 31)
+
       val date        = AccountingPeriod(startDate, endDate)
-      val ua          = emptyUserAnswers.set(subAccountingPeriodPage, date).success.value
+      val ua          = emptyUserAnswers.setOrException(subAccountingPeriodPage, date).setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -68,6 +69,18 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(date), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

@@ -122,7 +122,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no data is found for secondary contact name" in {
+    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
@@ -136,7 +136,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to bookmark page if no data is found for primary contact name page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url)
@@ -145,7 +145,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

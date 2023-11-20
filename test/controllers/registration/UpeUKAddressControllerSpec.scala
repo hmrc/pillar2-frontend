@@ -36,13 +36,13 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
   "UpeRegisteredAddress Controller" when {
 
-    "redirect to journey recovery if no data found with GET" in {
+    "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
     "return OK and the correct view for a GET with no previous answer" in {

@@ -22,7 +22,7 @@ import forms.NfmEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.fmContactNamePage
+import pages.{fmContactEmailPage, fmContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,8 +37,8 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
   "NfmContactEmail Controller" when {
 
-    "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers.set(fmContactNamePage, "Ashley Smith").success.value
+    "return OK and the correct view for a GET if page not previously answered" in {
+      val ua = emptyUserAnswers.setOrException(fmContactNamePage, "Ashley Smith")
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -58,9 +58,32 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val ua = emptyUserAnswers
+        .setOrException(fmContactNamePage, "Ashley Smith")
+        .setOrException(fmContactEmailPage, "hello@goodbye.com")
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmEmailAddressView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("Ashley Smith").fill("hello@goodbye.com"), NormalMode, "Ashley Smith")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
       val userAnswer =
-        emptyUserAnswers.set(fmContactNamePage, "alex").success.value
+        emptyUserAnswers.setOrException(fmContactNamePage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -91,7 +114,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to journey recovery if no contact name is found for GET" in {
+    "redirect to book mark page if no contact name is found for GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -99,7 +122,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
           FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
     "redirect to journey recovery if no contact name is found for POST" in {

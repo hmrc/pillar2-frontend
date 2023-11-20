@@ -23,7 +23,7 @@ import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.fmEntityTypePage
+import pages.{fmEntityTypePage, fmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,9 +38,9 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
   "NfmEntityType Controller" when {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+    "must return OK and the correct view for a GET if page previously not answered" in {
+      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredInUKPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -57,9 +57,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua =
         emptyUserAnswers
-          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
-          .success
-          .value
+          .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(fmRegisteredInUKPage, true)
 
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -76,6 +75,17 @@ class NfmEntityTypeControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

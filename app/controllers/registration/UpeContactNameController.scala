@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
-import pages.upeContactNamePage
+import pages.{upeContactNamePage, upeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,12 +46,17 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(upeContactNamePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    if (request.userAnswers.isPageDefined(upeRegisteredAddressPage)) {
+      val preparedForm = request.userAnswers.get(upeContactNamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
 
-    Ok(view(preparedForm, mode))
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form

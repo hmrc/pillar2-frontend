@@ -16,11 +16,6 @@
 
 package controllers
 
-import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -29,8 +24,11 @@ import models.registration.RegistrationInfo
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{UpeRegInformationPage, fmDashboardPage, upeContactNamePage, upeNameRegistrationPage}
 import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
-import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject

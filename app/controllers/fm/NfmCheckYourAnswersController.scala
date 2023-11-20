@@ -19,10 +19,10 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.fmPhonePreferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -40,17 +40,21 @@ class NfmCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val list = SummaryListViewModel(
-      rows = Seq(
-        NfmNameRegistrationSummary.row(request.userAnswers),
-        NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
-        NfmContactNameSummary.row(request.userAnswers),
-        NfmEmailAddressSummary.row(request.userAnswers),
-        NfmTelephonePreferenceSummary.row(request.userAnswers),
-        NfmContactTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    )
-    Ok(view(list))
+    if (request.userAnswers.fmStatus == RowStatus.Completed) {
+      val list = SummaryListViewModel(
+        rows = Seq(
+          NfmNameRegistrationSummary.row(request.userAnswers),
+          NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
+          NfmContactNameSummary.row(request.userAnswers),
+          NfmEmailAddressSummary.row(request.userAnswers),
+          NfmTelephonePreferenceSummary.row(request.userAnswers),
+          NfmContactTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      )
+      Ok(view(list))
+    } else {
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+    }
   }
 
 }

@@ -38,8 +38,8 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
   "IsNFMUKBased Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
@@ -52,14 +52,24 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+      }
+    }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
