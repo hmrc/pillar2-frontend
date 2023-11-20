@@ -641,4 +641,25 @@ dashboard.p1 = This service is being continuously updated. You can anticipate th
 dashboard.p2 = For more information, please refer to the
 dashboard.link = draft guidance (opens in new tab)
 
+unauthorised.org.standard.heading = Sorry, you''re unable to use this service
+unauthorised.org.standard.message = You''ve signed in with a standard organisation account.
+unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
+unauthorised.org.standard.message3 = You need to find someone with an administrator''s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
+unauthorised.org.standard.hyperlink = Read the draft guidance for more information on who can use this service.
+
+unauthorised.agent.heading = Sorry, you''re unable to use this service
+unauthorised.agent.message = You''ve signed in using an agent''s Government Gateway user ID. Agents cannot use this service to register or administer a group''s Pillar 2 top-up taxes.
+unauthorised.agent.message2 = If you are an agent who has been given authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.hyper1 = sign in via Agent Services.
+unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.hyper2 = request authorisation via Agent services.
+unauthorised.agent.hyper3 = Read the draft guidance for more information on who can use this service.
+
+
+unauthorised.individual.heading = Sorry, you''re unable to use this service
+unauthorised.individual.message = You''ve signed in with an individual account. Only users with an organisation account can register to use this service.
+unauthorised.individual.message2 = If you still need to register,
+unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
+unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 ManageFurtherGroupDetail.checkYourAnswers.heading = Group details
+
