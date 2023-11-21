@@ -22,7 +22,7 @@ import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.upeNameRegistrationPage
+import pages.{upeNameRegistrationPage, upeRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,8 +38,8 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
   "UpeNameRegistration Controller" must {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val ua          = emptyUserAnswers.setOrException(upeRegisteredInUKPage, false)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
 
@@ -59,7 +59,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
-      val userAnswer  = emptyUserAnswers.set(upeNameRegistrationPage, "asd").success.value
+      val userAnswer  = emptyUserAnswers.setOrException(upeNameRegistrationPage, "asd").setOrException(upeRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
@@ -76,6 +76,38 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         ).toString
       }
 
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider().bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[UpeNameRegistrationView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {

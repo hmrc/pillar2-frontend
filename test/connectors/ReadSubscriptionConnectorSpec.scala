@@ -19,11 +19,9 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.Fault
 import models.subscription.ReadSubscriptionRequestParameters
-import org.scalacheck.Gen
-import play.api.{Application, Configuration}
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import uk.gov.hmrc.auth.core.AuthConnector
 
 class ReadSubscriptionConnectorSpec extends SpecBase {
   private val readSubscriptionPath       = "/report-pillar2-top-up-taxes/subscription/read-subscription"

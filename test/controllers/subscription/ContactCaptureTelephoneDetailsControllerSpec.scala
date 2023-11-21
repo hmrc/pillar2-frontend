@@ -22,7 +22,7 @@ import forms.ContactCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subPrimaryContactNamePage
+import pages.{subPrimaryCapturePhonePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,9 +37,9 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   "ContactCaptureTelephoneDetails Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        emptyUserAnswers.setOrException(subPrimaryContactNamePage, "name").setOrException(subPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -51,6 +51,30 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val userAnswers: UserAnswers =
+        emptyUserAnswers
+          .setOrException(subPrimaryContactNamePage, "name")
+          .setOrException(subPrimaryPhonePreferencePage, true)
+          .setOrException(subPrimaryCapturePhonePage, "123132")
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -97,7 +121,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to journey recovery if no primary contact name is found for GET" in {
+    "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()
       running(application) {
@@ -105,7 +129,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
 
     }

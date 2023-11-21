@@ -16,12 +16,13 @@
 
 package pages
 
-import models.grs.EntityType
+import models.subscription.DashboardInfo
 import play.api.libs.json.JsPath
 
-case object fmEntityTypePage extends QuestionPage[EntityType] {
+case object fmDashboardPage extends QuestionPage[DashboardInfo] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "fmEntityType"
+  override def toString: String = "fmDashboard"
+
 }

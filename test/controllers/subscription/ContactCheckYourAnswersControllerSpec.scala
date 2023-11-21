@@ -17,6 +17,7 @@
 package controllers.subscription
 
 import base.SpecBase
+import models.NonUKAddress
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -28,36 +29,30 @@ import viewmodels.govuk.SummaryListFluency
 import scala.concurrent.Future
 
 class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  val subData = emptyUserAnswers
-    .set(subPrimaryContactNamePage, "name")
-    .success
-    .value
-    .set(subPrimaryEmailPage, "email@hello.com")
-    .success
-    .value
-    .set(subPrimaryPhonePreferencePage, true)
-    .success
-    .value
-    .set(subPrimaryCapturePhonePage, "123213")
-    .success
-    .value
-    .set(subSecondaryContactNamePage, "name")
-    .success
-    .value
-    .set(subSecondaryEmailPage, "email@hello.com")
-    .success
-    .value
-    .set(subSecondaryPhonePreferencePage, true)
-    .success
-    .value
-    .set(subSecondaryCapturePhonePage, "123213")
-    .success
-    .value
+  val subDataWithAddress = emptyUserAnswers
+    .setOrException(subPrimaryContactNamePage, "name")
+    .setOrException(subPrimaryEmailPage, "email@hello.com")
+    .setOrException(subPrimaryPhonePreferencePage, true)
+    .setOrException(subPrimaryCapturePhonePage, "123213")
+    .setOrException(subSecondaryContactNamePage, "name")
+    .setOrException(subSecondaryEmailPage, "email@hello.com")
+    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(subSecondaryCapturePhonePage, "123213")
+    .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+  val subDataWithoutAddress = emptyUserAnswers
+    .setOrException(subPrimaryContactNamePage, "name")
+    .setOrException(subPrimaryEmailPage, "email@hello.com")
+    .setOrException(subPrimaryPhonePreferencePage, true)
+    .setOrException(subPrimaryCapturePhonePage, "123213")
+    .setOrException(subSecondaryContactNamePage, "name")
+    .setOrException(subSecondaryEmailPage, "email@hello.com")
+    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(subSecondaryCapturePhonePage, "123213")
 
   "Contact Check Your Answers Controller" must {
 
     "must return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(subData)).build()
+      val application = applicationBuilder(userAnswers = Some(subDataWithAddress)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -73,6 +68,18 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         contentAsString(result) must include(
           "Contact address"
         )
+      }
+    }
+
+    "redirect to bookmark page if address page not answered" in {
+      val application = applicationBuilder(userAnswers = Some(subDataWithoutAddress)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package models.subscription
 
-import models.grs.EntityType
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object fmEntityTypePage extends QuestionPage[EntityType] {
+import java.time.LocalDate
 
-  override def path: JsPath = JsPath \ toString
+case class DashboardInfo(
+  organisationName: String,
+  registrationDate: LocalDate
+)
 
-  override def toString: String = "fmEntityType"
+object DashboardInfo {
+  implicit val format: OFormat[DashboardInfo] = Json.format[DashboardInfo]
 }

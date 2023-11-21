@@ -18,28 +18,22 @@ package services
 
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{ApiError, SubscriptionCreateError, UserAnswers}
+import models.{ApiError, SubscriptionCreateError}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.SubscriptionTransformer
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait SubscriptionTransformerWrapper {
-  def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] =
-    SubscriptionTransformer.jsValueToSubscription(jsValue)
-}
 class ReadSubscriptionService @Inject() (
-  readSubscriptionConnector:      ReadSubscriptionConnector,
-  subscriptionTransformerWrapper: SubscriptionTransformerWrapper
+  readSubscriptionConnector: ReadSubscriptionConnector,
+  implicit val ec:           ExecutionContext
 ) {
-  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, UserAnswers]] =
-    readSubscriptionConnector.readSubscription(parameters).flatMap {
+  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
+    readSubscriptionConnector.readSubscription(parameters).map {
       case Some(jsValue) =>
-        Future.successful(subscriptionTransformerWrapper.jsValueToSubscription(jsValue))
+        Right(jsValue)
       case None =>
-        Future.successful(Left(SubscriptionCreateError))
+        Left(SubscriptionCreateError)
     }
 }

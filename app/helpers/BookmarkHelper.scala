@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package services
+package helpers
 
-import play.api.libs.json.JsValue
 import models.UserAnswers
-import models.ApiError
-import utils.SubscriptionTransformer
+import play.api.libs.json.Reads
+import queries.Gettable
 
-class DefaultSubscriptionTransformerWrapper extends SubscriptionTransformerWrapper {
+trait BookmarkHelper {
 
-  override def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] =
-    // Your implementation to convert JsValue to UserAnswers
-    // It could be as simple as calling a method if that's already implemented elsewhere
-    SubscriptionTransformer.jsValueToSubscription(jsValue)
+  self: UserAnswers =>
+
+  def isPageDefined[A](page: Gettable[A])(implicit rds: Reads[A]): Boolean =
+    get(page) match {
+      case Some(_) => true
+      case _       => false
+    }
+
 }
