@@ -36,7 +36,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
   val form         = new ContactByTelephoneFormProvider()
   val formProvider = form("name")
 
-  "ContactByTelephoneController for View Contact details" should {
+  "ContactByTelephone Controller for View Contact details" should {
 
     "return OK and the correct view for a GET" in {
       val ua =
@@ -147,7 +147,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to journey recovery if no primary contact name is found for GET" in {
+    "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()
       running(application) {
@@ -155,7 +155,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
 
     }

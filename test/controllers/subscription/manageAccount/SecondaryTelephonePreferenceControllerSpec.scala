@@ -19,10 +19,10 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.SecondaryTelephonePreferenceFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,9 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
   "SecondaryTelephonePreference Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryEmailPage, "he@a.com")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -49,19 +51,17 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, CheckMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .set(subSecondaryContactNamePage, "name")
-        .success
-        .value
-        .set(subSecondaryPhonePreferencePage, true)
-        .success
-        .value
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subSecondaryEmailPage, "he@a.com")
+        .setOrException(subSecondaryPhonePreferencePage, true)
+
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -72,7 +72,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), CheckMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -97,7 +97,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, CheckMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -137,7 +137,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       }
     }
-    "must redirect to Journey recovery page for a GET if no previous existing data is found" in {
+    "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
@@ -147,7 +147,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

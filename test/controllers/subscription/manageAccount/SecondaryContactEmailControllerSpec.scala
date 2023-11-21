@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.SecondaryContactEmailFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}
@@ -49,7 +49,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, CheckMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -96,7 +96,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(
+        contentAsString(result) mustEqual view(boundForm, CheckMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -122,7 +122,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no data is found for secondary contact name" in {
+    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
@@ -136,7 +136,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to bookmark page if no data is found for primary contact name page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
@@ -145,7 +145,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

@@ -19,10 +19,10 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.SecondaryContactNameFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subSecondaryContactNamePage
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val application = applicationBuilder().build()
+      val ua          = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true).setOrException(subPrimaryContactNamePage, "asd")
+      val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
@@ -48,12 +49,15 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), CheckMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(subAddSecondaryContactPage, true)
+        .setOrException(subPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -64,11 +68,23 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), CheckMode)(
           request,
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 
@@ -88,7 +104,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, CheckMode)(request, appConfig(application), messages(application)).toString
       }
     }
 

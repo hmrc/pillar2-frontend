@@ -19,10 +19,10 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactEmailAddressFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subPrimaryContactNamePage
+import pages.{subPrimaryContactNamePage, subPrimaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -35,9 +35,9 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
   val formProvider = new ContactEmailAddressFormProvider()
 
-  "ContactEmailAddress Controller for View Contact details" when {
+  "ContactEmail Address Controller for View Contact details" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET if page previously  not answered" in {
 
       val userAnswersSubContactEmail =
         emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
@@ -53,7 +53,31 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously has been answered" in {
+
+      val userAnswersSubContactEmail =
+        emptyUserAnswers.setOrException(subPrimaryContactNamePage, "name").setOrException(subPrimaryEmailPage, "hello@goodbye.com")
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactEmailAddressView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), CheckMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -93,7 +117,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to journey recovery if no primary contact name is found for GET" in {
+    "redirect to bookmark page  if no primary contact name is found for GET" in {
 
       val application = applicationBuilder().build()
       running(application) {
@@ -101,7 +125,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
 
     }

@@ -114,6 +114,20 @@ trait SubscriptionHelpers {
     }
   }
 
+  def manageContactDetailStatus: Boolean = {
+    val p1  = get(subPrimaryContactNamePage).isDefined
+    val p2  = get(subPrimaryEmailPage).isDefined
+    val p3  = get(subPrimaryPhonePreferencePage).isDefined
+    val s1  = get(subSecondaryContactNamePage).isDefined
+    val s2  = get(subSecondaryEmailPage).isDefined
+    val s3  = get(subSecondaryPhonePreferencePage).isDefined
+    val ad1 = get(subRegisteredAddressPage).isDefined
+    (p1, p2, p3, s1, s2, s3, ad1) match {
+      case (true, true, true, true, true, true, true) => true
+      case _                                          => false
+    }
+  }
+
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus) =
     if (
       upe == RowStatus.Completed &

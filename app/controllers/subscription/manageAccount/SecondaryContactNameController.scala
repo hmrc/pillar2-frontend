@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
 import models.Mode
-import pages.subSecondaryContactNamePage
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,11 +47,16 @@ class SecondaryContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
-    }
-    Ok(view(preparedForm, mode))
+    (for {
+      _ <- request.userAnswers.get(subAddSecondaryContactPage)
+      _ <- request.userAnswers.get(subPrimaryContactNamePage)
+    } yield {
+      val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
+      }
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

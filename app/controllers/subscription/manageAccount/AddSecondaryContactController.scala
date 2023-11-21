@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage}
+import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,16 +47,17 @@ class AddSecondaryContactController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(subPrimaryContactNamePage)
-      .map { contactName =>
-        val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
-        Ok(view(preparedForm, contactName, mode))
+    (for {
+      _           <- request.userAnswers.get(subPrimaryEmailPage)
+      contactName <- request.userAnswers.get(subPrimaryContactNamePage)
+    } yield {
+      val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Ok(view(preparedForm, contactName, mode))
+    })
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
