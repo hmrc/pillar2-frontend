@@ -41,7 +41,6 @@ To use testonly route locally .
 
     sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 
-
 ### License
 
 
