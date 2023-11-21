@@ -64,7 +64,7 @@ trait RegisterAndSubscribe extends Logging {
               createSubscription(regInfo)
             }
           }
-          .getOrElse(Future.successful(Redirect(routes.ErrorController.onPageLoad)))
+          .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
       case (None, Some(fmSafeId)) =>
         registerWithoutIdService.sendUpeRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
@@ -141,9 +141,8 @@ trait RegisterAndSubscribe extends Logging {
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
-            for {
-              dataRemoval <- userAnswersConnectors.remove(request.userId)
-            } logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
+            userAnswersConnectors.remove(request.userId)
+            logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
             Future.successful(
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
