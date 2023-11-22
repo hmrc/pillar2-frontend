@@ -39,6 +39,15 @@ error.heading=There is technical difficulties
 error.message=You cannot access this page directly
 
 ###############################################
+cannotReturnAfterSubscriptionError.heading= You cannot return, your registration is complete
+cannotReturnAfterSubscriptionError.message= You have successfully registered to report pillar 2 top-up taxes.
+cannotReturnAfterSubscriptionError.message2= You can now
+cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
+
+
+
+
+
 
 upeRegisteredAddress.title=Where is the registered office address of {0}?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
