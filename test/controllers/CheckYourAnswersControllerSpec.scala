@@ -30,6 +30,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.Pillar2SessionKeys
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -372,6 +373,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url).withSession(Pillar2SessionKeys.plrId -> "")
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad.url
       }
     }
 
