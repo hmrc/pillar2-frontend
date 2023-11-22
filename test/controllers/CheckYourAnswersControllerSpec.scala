@@ -375,5 +375,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
+    "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        when(mockSubscriptionService.checkAndCreateSubscription(any(),any(),any())(any(),any())).thenReturn(Future.successful(Right(SubscriptionSuccessResponse)))
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application,request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad.url
+      }
+    }
+
   }
 }
