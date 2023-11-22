@@ -26,9 +26,8 @@
 @(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
-<div class="contact-details">
-    <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
+<div class="manage-contact-details">
+    <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading.caption")</h1>
 <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
     @govukSummaryList(listPrimary)
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
@@ -39,7 +38,7 @@
 
     <br>
     @govukButton(
-    ButtonViewModel(messages("site.save-and-continue"))
+    ButtonViewModel(messages("site.mange.save-and-continue"))
     .withAttribute("id","continue")
     .asLink(controllers.routes.UnderConstructionController.onPageLoad.url)
 )

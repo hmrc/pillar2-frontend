@@ -487,7 +487,7 @@ contactByTelephone.title = Can we contact {0} by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = your response to whether we can contact the first contact provided by telephone
+contactByTelephone.change.hidden = your response to whether we can contact the first contact by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
@@ -512,7 +512,7 @@ secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 addSecondaryContact.change.hidden = your response to whether you want to provide a second contact
 secondaryContactName.change.hidden = the second contact name
 secondaryContactEmail.change.hidden = the second contact email address
-secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact provided by telephone
+secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact by telephone
 secondaryTelephone.change.hidden = the telephone number for the second contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
@@ -522,7 +522,7 @@ contactCheckYourAnswers.title = Check your answers
 contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
-
+subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
 entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
@@ -570,7 +570,7 @@ secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
-secondaryTelephonePreference.change.hidden = SecondaryTelephonePreference
+
 
 secondaryTelephone.title = What is the telephone number for {0}?
 secondaryTelephone.heading = What is the telephone number for {0}?
