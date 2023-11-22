@@ -17,12 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{Mode, UserType, registration}
 import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
+import models.{Mode, UserType, registration}
 import play.api.i18n.MessagesApi
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

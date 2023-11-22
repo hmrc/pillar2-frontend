@@ -19,8 +19,6 @@ package models.registration
 import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
 final case class PartnershipEntityRegistrationData(
   companyProfile:       Option[CompanyProfile],
   sautr:                Option[String],

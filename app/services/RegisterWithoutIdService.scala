@@ -17,10 +17,10 @@
 package services
 
 import connectors.RegistrationConnector
-import models.UserAnswers
+import models.{ApiError, RegistrationWithoutIdInformationMissingError, SafeId, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{ApiError, MandatoryInformationMissingError, RegistrationWithoutIdInformationMissingError, SafeId}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

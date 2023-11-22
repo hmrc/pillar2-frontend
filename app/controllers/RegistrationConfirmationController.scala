@@ -16,15 +16,15 @@
 
 package controllers
 
-import javax.inject.Inject
+import config.FrontendAppConfig
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationConfirmationView
-import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import utils.Pillar2SessionKeys
+import views.html.RegistrationConfirmationView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class RegistrationConfirmationController @Inject() (
