@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
+@import play.twirl.api.Html
 
 @this(
     govukLayout: GovukLayout,
@@ -32,28 +33,10 @@
         betaBanner: StandardBetaBanner
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
-
-    @hmrcHead(
-        nonce     = CSPNonce.get,
-        headBlock = if(timeout) { Some(
-            hmrcTimeoutDialog(TimeoutDialog(
-                timeout             = Some(appConfig.timeout),
-                countdown           = Some(appConfig.countdown),
-                keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
-                keepAliveButtonText = Some(messages("timeout.keepAlive")),
-                timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
-                signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
-                signOutButtonText   = Some(messages("timeout.signOut")),
-                title               = Some(messages("timeout.title")),
-                message             = Some(messages("timeout.message"))
-            )))
-        } else None
-    )
-
-    <link href="@routes.Assets.versioned("stylesheets/application.css")" media="all" rel="stylesheet" type="text/css"@CSPNonce.get.map {n=> nonce="@n"} />
+@headBlock.getOrElse(Html(""))
 }
 
 @additionalScripts = {
@@ -85,7 +68,7 @@
 
 @govukLayout(
     pageTitle   = Some(pageTitle),
-    headBlock   = Some(head),
+    headBlock   = Some(hmrcHead(headBlock = Some(head))),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(routes.IndexController.onPageLoad.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
@@ -94,7 +77,6 @@
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
     scriptsBlock       = Some(hmrcScripts(
-        nonce        = CSPNonce.get,
         scriptsBlock = Some(additionalScripts)
     ))
 )(content)
