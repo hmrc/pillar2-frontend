@@ -19,10 +19,10 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.MneOrDomesticFormProvider
-import models.{MneOrDomestic, NormalMode, UserAnswers}
+import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subMneOrDomesticPage
+import pages.{NominateFilingMemberPage, subMneOrDomesticPage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,10 +38,9 @@ class MneOrDomesticControllerSpec extends SpecBase {
   "MneOrDomestic Controller" when {
 
     "must return OK and the correct view for a GET when previous data is found" in {
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+      val userAnswer = emptyUserAnswers
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(NominateFilingMemberPage, false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
 
@@ -63,7 +62,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(NominateFilingMemberPage, false))).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
@@ -71,6 +70,18 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.MneOrDomesticController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 

@@ -52,6 +52,7 @@ class UseContactPrimaryController @Inject() (
     (for {
       nfmNominated     <- request.userAnswers.get(NominateFilingMemberPage)
       upeMneOrDomestic <- request.userAnswers.get(upeRegisteredInUKPage)
+      _                <- request.userAnswers.get(subAccountingPeriodPage)
     } yield {
       val nfmMneOrDom = request.userAnswers.get(fmRegisteredInUKPage)
       (nfmNominated, upeMneOrDomestic, nfmMneOrDom) match {
@@ -59,7 +60,7 @@ class UseContactPrimaryController @Inject() (
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
         case _ => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
       }
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }).getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     contactDetail(request) match {

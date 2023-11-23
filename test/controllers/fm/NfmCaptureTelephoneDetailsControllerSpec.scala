@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.fm
 
 import base.SpecBase
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.{fmCapturePhonePage, fmContactNamePage}
+import pages.{fmCapturePhonePage, fmContactNamePage, fmPhonePreferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmCaptureTelephoneDetailsView
@@ -32,7 +32,9 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val ua = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+      val ua = emptyUserAnswers
+        .setOrException(fmContactNamePage, "name")
+        .setOrException(fmPhonePreferencePage, true)
 
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -54,13 +56,9 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
-        .set(fmCapturePhonePage, "12312323")
-        .success
-        .value
-        .set(fmContactNamePage, "name")
-        .success
-        .value
-
+        .setOrException(fmCapturePhonePage, "12312323")
+        .setOrException(fmContactNamePage, "name")
+        .setOrException(fmPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -94,7 +92,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to journey recovery if no data found for contact name for GET" in {
+    "redirect to book mark page if no data found for contact name or phone preference for GET" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
@@ -102,7 +100,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
     }
 

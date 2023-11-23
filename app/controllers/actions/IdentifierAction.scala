@@ -23,13 +23,14 @@ import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import views.html.UnauthorisedView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,12 +56,13 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
 
-        case Some(internalId) ~ enrolments ~ Some(affinity) ~ _ =>
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
 
-        case _ ~ _ ~ _ ~ Some(Assistant) =>
-          Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
-        case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+        case _ ~ _ ~ Some(Organisation) ~ _ =>
+          Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
+        case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
+        case _ ~ _ ~ Some(Agent) ~ _      => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
           logger.warn("Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))

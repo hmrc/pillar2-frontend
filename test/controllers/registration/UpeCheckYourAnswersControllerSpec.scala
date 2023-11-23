@@ -17,48 +17,25 @@
 package controllers.registration
 
 import base.SpecBase
-import org.mockito.Mockito.when
-import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 
 class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  val user = emptyUserAnswers
-
   "UPE no ID Check Your Answers Controller" must {
 
-    "must return OK and the correct view " in {
+    "redirect to bookmark prevention page if all required pages have not been answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
         val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Group details"
-        )
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
 
     }
-    "must return OK and the correct view if an answer is provided to every question except telephone preference " in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        when(mockCountryOptions.getCountryNameFromCode("GB")).thenReturn("United Kingdom")
-        val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Check your answers"
-        )
-      }
-
-    }
-
   }
 }

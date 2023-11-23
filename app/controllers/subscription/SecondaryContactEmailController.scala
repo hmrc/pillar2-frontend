@@ -19,7 +19,6 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}
@@ -57,7 +56,7 @@ class SecondaryContactEmailController @Inject() (
         Ok(view(preparedForm, mode, contactName))
 
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
 
   }
 

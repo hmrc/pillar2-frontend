@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{fmCapturePhonePage, fmContactNamePage}
+import pages.{fmCapturePhonePage, fmContactNamePage, fmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,17 +45,18 @@ class NfmCaptureTelephoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(fmContactNamePage)
-      .map { name =>
-        val form = formProvider(name)
-        val preparedForm = request.userAnswers.get(fmCapturePhonePage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
-        Ok(view(preparedForm, mode, name))
+    (for {
+      _    <- request.userAnswers.get(fmPhonePreferencePage)
+      name <- request.userAnswers.get(fmContactNamePage)
+    } yield {
+      val form = formProvider(name)
+      val preparedForm = request.userAnswers.get(fmCapturePhonePage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Ok(view(preparedForm, mode, name))
+    })
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
 
   }
 

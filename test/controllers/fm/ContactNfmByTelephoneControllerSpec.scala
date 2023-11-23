@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
@@ -22,7 +22,7 @@ import forms.ContactNfmByTelephoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmContactNamePage, fmPhonePreferencePage}
+import pages.{fmContactEmailPage, fmContactNamePage, fmPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,9 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val ua          = emptyUserAnswers.set(fmContactNamePage, "TestName").success.value
+      val ua = emptyUserAnswers
+        .setOrException(fmContactNamePage, "TestName")
+        .setOrException(fmContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -60,12 +62,9 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
-        .set(fmPhonePreferencePage, true)
-        .success
-        .value
-        .set(fmContactNamePage, "TestName")
-        .success
-        .value
+        .setOrException(fmPhonePreferencePage, true)
+        .setOrException(fmContactNamePage, "TestName")
+        .setOrException(fmContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -140,7 +139,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
     }
 
-    "redirect to Journey Recovery if no contact name is found in GET" in {
+    "redirect to book mark page if no contact name or contact email is found for GET" in {
       val application = applicationBuilder(userAnswers = None)
         .build()
       running(application) {
@@ -150,7 +149,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.BookmarkPreventionController.onPageLoad.url
       }
 
     }
