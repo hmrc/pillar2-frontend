@@ -3,7 +3,7 @@ import sbt._
 object AppDependencies {
   import play.core.PlayVersion
   val mongoVersion = "1.5.0"
-  val bootstrapVersion="8.0.0"
+  val bootstrapVersion="7.12.0"
   val compile = Seq(
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc"       %% "play-frontend-hmrc"             % "7.29.0-play-28",
