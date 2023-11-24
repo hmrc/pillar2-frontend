@@ -18,7 +18,6 @@ package controllers.actions
 
 import models.requests.IdentifierRequest
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

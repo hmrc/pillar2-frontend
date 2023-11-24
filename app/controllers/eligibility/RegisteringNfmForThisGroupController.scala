@@ -43,14 +43,14 @@ import utils.Pillar2SessionKeys
 import views.html.RegisteringNfmForThisGroupView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RegisteringNfmForThisGroupController @Inject() (
   formProvider:             RegisteringNfmForThisGroupFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegisteringNfmForThisGroupView,
   sessionData:              SessionData
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -19,13 +19,11 @@ package utils
 import models.registration.RegistrationInfo
 import models.subscription.{AccountStatus, AccountingPeriod, FilingMemberDetails}
 import models.{ApiError, InternalServerError, MandatoryInformationMissingError, MneOrDomestic, UKAddress, UserAnswers}
-import pages.{FmSafeIDPage, UpeRegInformationPage, subAccountStatusPage, subAccountingPeriodPage, subFillingMemberDetailsPage, subMneOrDomesticPage, subPrimaryContactNamePage, subPrimaryEmailPage, subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryEmailPage, upeNameRegistrationPage, upeRegisteredAddressPage}
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import pages._
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.LocalDate
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import play.api.libs.json
 import java.util.UUID
 object SubscriptionTransformer {
 
