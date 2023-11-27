@@ -47,7 +47,7 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val plrReference = extractPlrReference(request.enrolments)
+    val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
     val userId       = request.userId
 
     plrReference match {
