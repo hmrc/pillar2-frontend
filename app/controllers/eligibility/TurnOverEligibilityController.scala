@@ -26,14 +26,14 @@ import utils.Pillar2SessionKeys
 import views.html.TurnOverEligibilityView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class TurnOverEligibilityController @Inject() (
   formProvider:             TurnOverEligibilityFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     TurnOverEligibilityView,
   sessionData:              SessionData
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -21,17 +21,16 @@ import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{RegistrationFailedNfmView, RegistrationFailedUpeView, RegistrationNotCalledNfmView}
+import views.html.{RegistrationFailedNfmView, RegistrationFailedUpeView}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class GrsRegistrationFailedController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   upeView:                  RegistrationFailedUpeView,
   nfmView:                  RegistrationFailedNfmView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

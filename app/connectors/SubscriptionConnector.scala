@@ -19,7 +19,6 @@ package connectors
 import config.FrontendAppConfig
 import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import play.api.Logging
-import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 

@@ -17,14 +17,12 @@
 package controllers
 
 import config.FrontendAppConfig
-
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.UnauthorisedView
 import views.html.errors.ErrorTemplate
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ErrorController @Inject() (val controllerComponents: MessagesControllerComponents, ErrorView: ErrorTemplate)(implicit
