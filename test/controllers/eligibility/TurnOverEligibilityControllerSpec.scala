@@ -19,7 +19,6 @@ package controllers.eligibility
 import base.SpecBase
 import forms.TurnOverEligibilityFormProvider
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 

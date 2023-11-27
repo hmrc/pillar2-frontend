@@ -24,14 +24,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledUpeView}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class GrsRegistrationNotCalledController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   upeView:                  RegistrationNotCalledUpeView,
   nfmView:                  RegistrationNotCalledNfmView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
