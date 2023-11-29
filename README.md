@@ -21,7 +21,7 @@ To run the unit tests:
 
 To check code coverage:
 
-    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport
+    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport 
 
 
 ### Eligibility question
