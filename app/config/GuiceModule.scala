@@ -21,7 +21,7 @@ import com.google.inject.{AbstractModule, Provides}
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl, PartnershipIdentificationFrontendConnector, PartnershipIdentificationFrontendConnectorImpl}
 import controllers.actions._
 import play.api.{Configuration, Environment}
-import services.{DefaultSubscriptionTransformerWrapper, SubscriptionTransformerWrapper}
+
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -33,8 +33,6 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
   override def configure(): Unit = {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
-
-    bind(classOf[SubscriptionTransformerWrapper]).to(classOf[DefaultSubscriptionTransformerWrapper]).asEagerSingleton()
 
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
