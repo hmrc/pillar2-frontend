@@ -17,178 +17,83 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import controllers.actions.AuthenticatedIdentifierAction
-import generators.ModelGenerators
-import models.SubscriptionCreateError
-import models.requests.IdentifierRequest
+import models.registration.RegistrationInfo
 import models.subscription.ReadSubscriptionRequestParameters
+import models.{MandatoryInformationMissingError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{UpeRegInformationPage, upeNameRegistrationPage}
+import play.api.libs.json.Json
 import play.api.mvc.ControllerHelpers.TODO.executionContext
-import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier}
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.DashboardView
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-class CustomIdentifierAction @Inject() (
-  authConnector: AuthConnector,
-  config:        FrontendAppConfig,
-  parser:        BodyParsers.Default,
-  enrolmentsSet: Set[Enrolment]
-)(implicit ec:   ExecutionContext)
-    extends AuthenticatedIdentifierAction(authConnector, config, parser) {
+import java.time.LocalDate
+import scala.concurrent.Future
+class DashboardControllerSpec extends SpecBase {
 
-  override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-    val identifierRequest = IdentifierRequest(request, "some-user-id", enrolmentsSet)
-
-    Future.successful(Right(identifierRequest))
-  }
-}
-
-class DashboardControllerSpec extends SpecBase with ModelGenerators {
-
+  val mockDashboardView                   = mock[DashboardView]
   val stubbedMessagesControllerComponents = stubMessagesControllerComponents()
-  val bodyParsers                         = new BodyParsers.Default
+
+  val controller = new DashboardController(
+    preDataRetrievalActionImpl,
+    preAuthenticatedActionBuilders,
+    preDataRequiredActionImpl,
+    mockReadSubscriptionService,
+    stubbedMessagesControllerComponents,
+    mockDashboardView
+  )(executionContext, appConfig)
 
   "Dashboard Controller" should {
+    "return OK and the correct view for a GET" in {
 
-    "Dashboard Controller" should {
-
-      "return OK and the correct view for a GET" in {
-
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("PLRID", "12345678"),
-              EnrolmentIdentifier("UTR", "ABC12345")
-            ),
-            state = "activated"
-          ),
-          Enrolment(
-            key = "HMRC-VAT-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("VRN", "987654321"),
-              EnrolmentIdentifier("UTR", "DEF67890")
-            ),
-            state = "activated"
-          )
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj(
+          upeNameRegistrationPage.toString -> Json.toJson("Test Organisation"),
+          UpeRegInformationPage.toString   -> Json.toJson(RegistrationInfo("crn", "utr", "safeId", Some(LocalDate.now()), Some(true)))
         )
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
 
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
+      val expectedHtmlContent = "<div>Test Organisation</div>"
+      when(
+        mockDashboardView.apply(any[String], any[String], any[String])(any(), any(), any())
+      ).thenReturn(Html(expectedHtmlContent))
 
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
+      val result = controller.onPageLoad(FakeRequest(GET, "/dashboard"))
 
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+      status(result) mustBe OK
+      contentAsString(result) must include("Test Organisation")
 
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
-          request,
-          { _: IdentifierRequest[AnyContent] =>
-            Future.successful(Ok)
-          }
-        )
+    }
 
-        status(result) mustEqual OK
-      }
+    "return InternalServerError when the readSubscription service fails" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(MandatoryInformationMissingError("Some error"))))
 
-      "return Internal Server Error for a GET when there's an error retrieving subscription" in {
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("PLRID", "12345678"),
-              EnrolmentIdentifier("UTR", "ABC12345")
-            ),
-            state = "activated"
-          ),
-          Enrolment(
-            key = "HMRC-VAT-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("VRN", "987654321"),
-              EnrolmentIdentifier("UTR", "DEF67890")
-            ),
-            state = "activated"
-          )
-        )
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
 
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) must include("Subscription not found in user answers")
+    }
 
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
+    "return OK but with default values when user answers are incomplete" in {
+      val userAnswers = UserAnswers(
+        id = "some-user-id",
+        data = Json.obj()
+      )
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(userAnswers)))
 
-        when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Left(SubscriptionCreateError)))
+      val result = controller.onPageLoad(FakeRequest(GET, "/"))
 
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
-          request,
-          { _: IdentifierRequest[AnyContent] =>
-            Future.successful(InternalServerError)
-          }
-        )
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-      }
-
-      "return SEE_OTHER and the correct view for a GET when PLR reference is missing" in {
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-van",
-            identifiers = Seq(
-            ),
-            state = "activated"
-          )
-        )
-
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
-
-        val dashboardController = new DashboardController(
-          mockUserAnswersConnectors,
-          mockDataRetrievalAction,
-          customIdentifierAction,
-          mockDataRequiredAction,
-          mockReadSubscriptionService,
-          mockControllerComponents,
-          mockDashboardView
-        )(executionContext, appConfig)
-
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
-
-        when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Left(SubscriptionCreateError)))
-
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
-          request,
-          { _: IdentifierRequest[AnyContent] => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) }
-        )
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
+      status(result) mustBe OK
     }
 
   }
-
 }
