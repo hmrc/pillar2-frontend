@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package services
 
-import models.subscription.DashboardInfo
-import play.api.libs.json.JsPath
+import play.api.libs.json.JsValue
+import models.UserAnswers
+import models.ApiError
+import utils.SubscriptionTransformer
 
-case object fmDashboardPage extends QuestionPage[DashboardInfo] {
+class DefaultSubscriptionTransformerWrapper extends SubscriptionTransformerWrapper {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "fmDashboard"
-
+  override def jsValueToSubscription(jsValue: JsValue): Either[ApiError, UserAnswers] =
+    // Your implementation to convert JsValue to UserAnswers
+    // It could be as simple as calling a method if that's already implemented elsewhere
+    SubscriptionTransformer.jsValueToSubscription(jsValue)
 }
