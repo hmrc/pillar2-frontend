@@ -22,6 +22,7 @@ import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
 import models.{MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
@@ -30,6 +31,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 class ReadSubscriptionServiceSpec extends SpecBase {
@@ -44,45 +46,6 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
   val id           = "testId"
   val plrReference = "testPlrRef"
-  val validJsValue = Json.parse("""{
-      |    "subMneOrDomestic": "uk",
-      |    "upeNameRegistration": "International Organisation Inc.",
-      |    "subPrimaryContactName": "Fred Flintstone",
-      |    "subPrimaryEmail": "fred.flintstone@aol.com",
-      |    "subSecondaryContactName": "Donald Trump",
-      |    "upeRegInformationId": {
-      |        "crn": "12345678",
-      |        "utr": "12345678",
-      |        "safeId": "",
-      |        "registrationDate": "2022-01-31",
-      |        "filingMember": false
-      |    },
-      |    "upeRegisteredAddress": {
-      |        "addressLine1": "1 High Street",
-      |        "addressLine2": "Egham",
-      |        "addressLine3": "Surrey",
-      |        "postalCode": "HP13 6TT",
-      |        "countryCode": "GB"
-      |    },
-      |    "FmSafeID": "XL6967739016188",
-      |    "subFilingMemberDetails": {
-      |        "safeId": "XL6967739016188",
-      |        "customerIdentification1": "1234Z678",
-      |        "customerIdentification2": "1234567Y",
-      |        "organisationName": "Domestic Operations Ltd"
-      |    },
-      |    "subAccountingPeriod": {
-      |        "startDate": "2023-04-06",
-      |        "endDate": "2023-04-06",
-      |        "duetDate": "2023-04-06"
-      |    },
-      |    "subAccountStatus": {
-      |        "inactive": true
-      |    },
-      |    "subSecondaryEmail": "fred.flintstone@potus.com",
-      |    "subSecondaryCapturePhone": "0115 9700 700"
-      |}""".stripMargin)
-  val invalidJsValue = Json.parse("""{"invalid": "json"}""")
 
   private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
 
@@ -92,93 +55,41 @@ class ReadSubscriptionServiceSpec extends SpecBase {
   "ReadSubscriptionService" when {
 
     "return UserAnswers when the connector returns valid data and transformation is successful" in {
-      val validJsValue = Json.parse("""{
-          |    "subMneOrDomestic": "uk",
-          |    "upeNameRegistration": "International Organisation Inc.",
-          |    "subPrimaryContactName": "Fred Flintstone",
-          |    "subPrimaryEmail": "fred.flintstone@aol.com",
-          |    "subSecondaryContactName": "Donald Trump",
-          |    "upeRegInformationId": {
-          |        "crn": "12345678",
-          |        "utr": "12345678",
-          |        "safeId": "",
-          |        "registrationDate": "2022-01-31",
-          |        "filingMember": false
-          |    },
-          |    "upeRegisteredAddress": {
-          |        "addressLine1": "1 High Street",
-          |        "addressLine2": "Egham",
-          |        "addressLine3": "Surrey",
-          |        "postalCode": "HP13 6TT",
-          |        "countryCode": "GB"
-          |    },
-          |    "FmSafeID": "XL6967739016188",
-          |    "subFilingMemberDetails": {
-          |        "safeId": "XL6967739016188",
-          |        "customerIdentification1": "1234Z678",
-          |        "customerIdentification2": "1234567Y",
-          |        "organisationName": "Domestic Operations Ltd"
-          |    },
-          |    "subAccountingPeriod": {
-          |        "startDate": "2023-04-06",
-          |        "endDate": "2023-04-06",
-          |        "duetDate": "2023-04-06"
-          |    },
-          |    "subAccountStatus": {
-          |        "inactive": true
-          |    },
-          |    "subSecondaryEmail": "fred.flintstone@potus.com",
-          |    "subSecondaryCapturePhone": "0115 9700 700"
-          |}""".stripMargin)
-
-      val userAnswers                        = UserAnswers("some-id", validJsValue.as[JsObject])
-      val mockSubscriptionTransformerWrapper = mock[SubscriptionTransformerWrapper]
-      val expectedResult                     = Right(userAnswers)
-
-      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(validJsValue.as[JsObject])))
-
-      when(mockSubscriptionTransformerWrapper.jsValueToSubscription(validJsValue))
-        .thenReturn(Right(userAnswers))
-
-      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, mockSubscriptionTransformerWrapper)
-
-      val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
-
-      result shouldBe expectedResult
-    }
-
-    "return ApiError when the connector returns valid data but transformation fails" in {
-      val mockSubscriptionTransformerWrapper = mock[SubscriptionTransformerWrapper]
-      implicit val hc: HeaderCarrier = HeaderCarrier()
-
-      val id                  = "testId"
-      val plrReference        = "testPlrReference"
-      val invalidJsValue      = Json.parse("""{"name":"Joe","age":null}""")
-      val transformationError = MandatoryInformationMissingError("some error message")
-
-      // Mock the transformation to return an error
-      when(mockSubscriptionTransformerWrapper.jsValueToSubscription(any[JsValue]))
-        .thenReturn(Left(transformationError))
+      val validJsValue: JsValue = Json.parse("""{ "someField": "someValue" }""")
 
       val mockReadSubscriptionConnector = mock[ReadSubscriptionConnector]
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(invalidJsValue)))
+        .thenReturn(Future.successful(Some(validJsValue.as[JsObject])))
 
-      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, mockSubscriptionTransformerWrapper)
+      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
       val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
-      result mustBe Left(transformationError)
+      result shouldBe Right(validJsValue)
+    }
+
+    "return the raw JSON data even if it's invalid for the application's needs" in {
+      val invalidJsValue: JsValue = Json.parse("""{"name":"Joe","age":null}""")
+
+      val id           = "testId"
+      val plrReference = "testPlrReference"
+      val parameters   = ReadSubscriptionRequestParameters(id, plrReference)
+
+      val mockReadSubscriptionConnector = mock[ReadSubscriptionConnector]
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(invalidJsValue)))
+      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
+
+      val result = service.readSubscription(parameters).futureValue
+      result shouldBe Right(invalidJsValue)
     }
 
     "return SubscriptionCreateError when the connector returns None" in {
       implicit val hc: HeaderCarrier = HeaderCarrier()
-      val mockSubscriptionTransformerWrapper = mock[SubscriptionTransformerWrapper]
 
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(None))
-      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, mockSubscriptionTransformerWrapper)
+      val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
       val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
