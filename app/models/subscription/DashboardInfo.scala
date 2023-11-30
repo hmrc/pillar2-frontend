@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.subscription
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
-import uk.gov.hmrc.auth.core.Enrolment
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers], enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+import play.api.libs.json.{Json, OFormat}
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
-    extends WrappedRequest[A](request)
+import java.time.LocalDate
+
+case class DashboardInfo(
+  organisationName: String,
+  registrationDate: LocalDate
+)
+
+object DashboardInfo {
+  implicit val format: OFormat[DashboardInfo] = Json.format[DashboardInfo]
+}
