@@ -18,25 +18,22 @@ package controllers.actions
 
 import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
-import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataRequiredAction with Logging {
+class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataRequiredAction {
 
-  override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-    logger.debug(s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}")
-
+  override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     request.userAnswers match {
       case None =>
+        //temp code
         Future.successful(Right(DataRequest(request.request, request.userId, UserAnswers("12345"))))
+      //Future.successful(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
       case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, data, request.enrolments)))
+        Future.successful(Right(DataRequest(request.request, request.userId, data)))
     }
-  }
-
 }
 
 trait DataRequiredAction extends ActionRefiner[OptionalDataRequest, DataRequest]
