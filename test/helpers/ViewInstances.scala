@@ -19,7 +19,7 @@ package helpers
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig}
-import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardAlphaBanner, StandardBetaBanner}
+import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils

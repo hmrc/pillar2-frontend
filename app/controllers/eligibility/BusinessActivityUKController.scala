@@ -26,13 +26,13 @@ import utils.Pillar2SessionKeys
 import views.html.BusinessActivityUKView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 class BusinessActivityUKController @Inject() (
   formProvider:             BusinessActivityUKFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     BusinessActivityUKView,
   sessionData:              SessionData
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

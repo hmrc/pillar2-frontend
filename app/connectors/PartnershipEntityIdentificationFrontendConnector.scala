@@ -17,9 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{Mode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
+import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}

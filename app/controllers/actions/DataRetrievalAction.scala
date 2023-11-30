@@ -19,6 +19,7 @@ package controllers.actions
 import connectors.UserAnswersConnectors
 import models.UserAnswers
 import models.requests.{IdentifierRequest, OptionalDataRequest}
+import play.api.Logging
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,7 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class DataRetrievalActionImpl @Inject() (
   val userAnswersConnectors:     UserAnswersConnectors
 )(implicit val executionContext: ExecutionContext)
-    extends DataRetrievalAction {
+    extends DataRetrievalAction
+    with Logging {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -38,10 +40,12 @@ class DataRetrievalActionImpl @Inject() (
       OptionalDataRequest(
         request.request,
         request.userId,
-        Some(UserAnswers(id = request.userId, data = data.getOrElse(Json.obj()).as[JsObject]))
+        Some(UserAnswers(id = request.userId, data = data.getOrElse(Json.obj()).as[JsObject])),
+        Some(request.enrolments.toSet)
       )
     }
   }
+
 }
 
 trait DataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalDataRequest]
