@@ -27,14 +27,14 @@ import utils.Pillar2SessionKeys
 import views.html.GroupTerritoriesView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class GroupTerritoriesController @Inject() (
   formProvider:             GroupTerritoriesFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
   sessionData:              SessionData
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
