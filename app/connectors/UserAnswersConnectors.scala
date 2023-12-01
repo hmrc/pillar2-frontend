@@ -60,6 +60,6 @@ class UserAnswersConnectors @Inject() (
     }
 
   def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[String] =
-    httpClient.DELETE[String](s"$url/registration-subscription/$id")
+    httpClient.DELETE[String](s"$url/user-cache/registration-subscription/$id")
 
 }
