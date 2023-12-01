@@ -30,7 +30,7 @@ import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
 import scala.concurrent.ExecutionContext
-
+import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
@@ -71,5 +71,15 @@ class ManageContactCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+//    val upeRegInfo = request.userAnswers.getUpRegData
+//    val fmSafeID = request.userAnswers.getFmSafeID
+//    (upeRegInfo, fmSafeID) match {
+//     // case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
+//      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+//    }
+    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
   }
 }
