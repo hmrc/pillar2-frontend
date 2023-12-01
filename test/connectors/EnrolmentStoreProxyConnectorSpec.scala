@@ -19,7 +19,6 @@ package connectors
 import base.SpecBase
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class EnrolmentStoreProxyConnectorSpec extends SpecBase {
