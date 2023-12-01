@@ -38,6 +38,12 @@ error.title=There is problem with the page.
 error.heading=There is technical difficulties
 error.message=You cannot access this page directly
 
+
+error.eis.title= Sorry, there is a problem with the service
+error.eis.heading= Sorry, there is a problem with the service
+error.eis.message1= You must still register, please try again later.
+error.eis.message2= We saved your answers. They will be available for 28 days.
+error.eis.link= Return to registration to try again
 ###############################################
 
 upeRegisteredAddress.title=Where is the registered office address of {0}?

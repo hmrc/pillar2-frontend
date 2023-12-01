@@ -111,6 +111,8 @@ GET         /unauthorised/standard-user                                         
 GET         /unauthorised/individual                                                     controllers.UnauthorisedIndividualAffinityController.onPageLoad
 GET         /unauthorised/agent                                                          controllers.UnauthorisedAgentAffinityController.onPageLoad
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
+GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
+
 
 GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
