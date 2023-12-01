@@ -23,7 +23,6 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import java.time.LocalDate
-import scala.collection.Seq
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
