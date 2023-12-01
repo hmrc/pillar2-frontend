@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
+  identify:                 IdentifierAction
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
