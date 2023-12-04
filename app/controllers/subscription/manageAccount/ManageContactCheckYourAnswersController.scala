@@ -20,8 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.AmendSubscriptionRequestParameters
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.AmendSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -38,7 +40,8 @@ class ManageContactCheckYourAnswersController @Inject() (
   requireData:               DataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageContactCheckYourAnswersView,
-  countryOptions:            CountryOptions
+  countryOptions:            CountryOptions,
+  amendSubscriptionService:  AmendSubscriptionService
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -79,7 +82,10 @@ class ManageContactCheckYourAnswersController @Inject() (
 //    (upeRegInfo, fmSafeID) match {
 //     // case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
 //      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
 //    }
+    println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%caloin")
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.id.toString)) // do flat map
     Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
   }
 }

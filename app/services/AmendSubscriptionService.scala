@@ -29,7 +29,7 @@ class AmendSubscriptionService @Inject() (
   amendSubscriptionConnector: AmendSubscriptionConnector,
   implicit val ec:            ExecutionContext
 ) {
-  def readSubscription(parameters: AmendSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
+  def amendSubscription(parameters: AmendSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
     amendSubscriptionConnector.amendSubscription(parameters).map {
       case Some(jsValue) =>
         Right(jsValue)
