@@ -648,6 +648,9 @@ dashboard.groupDetails = View and amend group details
 dashboard.p1 = This service is being continuously updated. You can anticipate the introduction of more features in line with the development of OECD''s policy.
 dashboard.p2 = For more information, please refer to the
 dashboard.link = draft guidance (opens in new tab)
+dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
+dashboard.inactive.link = draft guidance (opens in a new tab)
+
 
 unauthorised.org.standard.heading = Sorry, you''re unable to use this service
 unauthorised.org.standard.message = You''ve signed in with a standard organisation account.
