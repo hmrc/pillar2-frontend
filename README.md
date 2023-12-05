@@ -1,48 +1,60 @@
-
 # pillar2-frontend
 
-This service provides a means for users to ensure that large multinational businesses pay a minimum
+This service provides the users with means to ensure the large multinational businesses pay a minimum
 level of corporate income tax (15%) on the profits.
 
-## Using Service Manager
+## Running the service locally
 
-You can use service manager to provide assets to the frontend. the PILLAR2_ALL service is responsible for starting up all services required by the tax credits service project.
-This can be start or stop by running:
+The below command ensures the compilation is successful without any errors
 
-    sm --start PILLAR2_ALL
-    sm --stop PILLAR2_ALL
+`sbt clean update compile`
 
+#### To check code coverage:
 
-## Integration and unit tests
+`sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport`
 
-To run the unit tests:
+#### Integration and unit tests
 
-    Run 'sbt test' from within the project
+To run the unit tests within the project:
 
-To check code coverage:
+`sbt test`
 
-    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport 
+#### Starting the server in local
+`sbt run`
 
+By default, the service runs locally on port **10050**
 
-### Eligibility question
+To use test-only route locally, run the below:
 
-Eligibility questions journey start  with this url '/eligibility/group-in-multiple-territories' and there are four different questions to check eligibility.
-User does not need to be authenticated for this journey.
+`sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'`
 
-Endpoint to start eligibility questions.
+### Using Service Manager
 
-    /eligibility/group-in-multiple-territories
+You can use service manager to provide necessary assets to the pillar2 backend.
+**PILLAR2_ALL** service is responsible for starting up all the services required by the tax credits service project.
 
+This can be started by running the below in a new terminal:
 
-if all question asked in this journey answered with 'yes' then this mean you need to pay Global Minimum Tax, User will be redirected to  HMRC online services to register.
+    sm2 --start PILLAR2_ALL
 
+#### Using sbt
 
-To use testonly route locally .
+For local development, use `sbt run` but if it is already running in sm2, execute below command to stop the
+service before running sbt commands.
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+    sm2 --stop PILLAR_2_FRONTEND
 
+This is an authenticated service, so users first need to be authenticated via GG in order to use the service.
+
+Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page
+
+Make sure to fill in the fields as below:
+
+***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
+
+***Affinity Group: Organisation***
+<br><br><br>
 
 ### License
-
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
