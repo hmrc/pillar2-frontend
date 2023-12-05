@@ -58,18 +58,27 @@ class DashboardController @Inject() (
               case Some(userAnswers) =>
                 (for {
                   dashboardInfo <- userAnswers.get(fmDashboardPage)
-                  status        <- userAnswers.get(subAccountStatusPage)
-                  inactiveStatus = status.inactive
-                } yield Future.successful(
-                  Ok(
-                    view(
-                      dashboardInfo.organisationName,
-                      dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                      ref,
-                      inactiveStatus
+
+                } yield {
+                  val inactiveStatus = userAnswers
+                    .get(subAccountStatusPage)
+                    .map { acctStatus =>
+                      acctStatus.inactive
+                    }
+                    .getOrElse(false)
+                  println(s"what is status here -------------- $inactiveStatus")
+
+                  Future.successful(
+                    Ok(
+                      view(
+                        dashboardInfo.organisationName,
+                        dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                        ref,
+                        inactiveStatus
+                      )
                     )
                   )
-                )).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
               case None =>
                 Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
