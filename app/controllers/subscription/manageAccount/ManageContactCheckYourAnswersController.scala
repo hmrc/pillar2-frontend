@@ -18,8 +18,9 @@ package controllers.subscription.manageAccount
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.{AmendSubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.AmendSubscriptionRequestParameters
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -29,19 +30,21 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
-
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logging
 class ManageContactCheckYourAnswersController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageContactCheckYourAnswersView,
-  countryOptions:            CountryOptions
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:  UserAnswersConnectors,
+  identify:                   IdentifierAction,
+  getData:                    DataRetrievalAction,
+  requireData:                DataRequiredAction,
+  val controllerComponents:   MessagesControllerComponents,
+  view:                       ManageContactCheckYourAnswersView,
+  countryOptions:             CountryOptions,
+  amendSubscriptionConnector: AmendSubscriptionConnector
+)(implicit ec:                ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val primaryContactList = SummaryListViewModel(
@@ -71,5 +74,10 @@ class ManageContactCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    amendSubscriptionConnector.amendSubscription(AmendSubscriptionRequestParameters(request.userId))
+    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
   }
 }

@@ -220,6 +220,7 @@ GET        /contact-details/check-answers                  controllers.subscript
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
+POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit()
 
 
 
