@@ -22,9 +22,10 @@ import controllers.actions.AuthenticatedIdentifierAction
 import generators.ModelGenerators
 import models.SubscriptionCreateError
 import models.requests.IdentifierRequest
-import models.subscription.ReadSubscriptionRequestParameters
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.subAccountStatusPage
 import play.api.mvc.ControllerHelpers.TODO.executionContext
 import play.api.mvc._
 import play.api.test.FakeRequest
@@ -187,8 +188,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
-    }
 
+    }
   }
 
 }

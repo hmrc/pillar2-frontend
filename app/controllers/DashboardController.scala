@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.fmDashboardPage
+import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -56,14 +56,28 @@ class DashboardController @Inject() (
           case Right(_) =>
             userAnswersConnectors.getUserAnswer(userId).flatMap {
               case Some(userAnswers) =>
-                userAnswers.get(fmDashboardPage) match {
-                  case Some(dashboardInfo) =>
-                    Future.successful(
-                      Ok(view(dashboardInfo.organisationName, dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")), ref))
+                (for {
+                  dashboardInfo <- userAnswers.get(fmDashboardPage)
+
+                } yield {
+                  val inactiveStatus = userAnswers
+                    .get(subAccountStatusPage)
+                    .map { acctStatus =>
+                      acctStatus.inactive
+                    }
+                    .getOrElse(false)
+                  Future.successful(
+                    Ok(
+                      view(
+                        dashboardInfo.organisationName,
+                        dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                        ref,
+                        inactiveStatus
+                      )
                     )
-                  case None =>
-                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-                }
+                  )
+                }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
               case None =>
                 Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             }
