@@ -66,8 +66,6 @@ class DashboardController @Inject() (
                       acctStatus.inactive
                     }
                     .getOrElse(false)
-                  println(s"what is status here -------------- $inactiveStatus")
-
                   Future.successful(
                     Ok(
                       view(
