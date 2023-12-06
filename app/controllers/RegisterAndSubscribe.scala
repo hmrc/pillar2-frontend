@@ -137,7 +137,7 @@ trait RegisterAndSubscribe extends Logging {
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
-            logger.info(s"Redirecting to.... RegistrationConfirmationController for ${successResponse.plrReference}")
+            logger.info(s"Redirecting to. RegistrationConfirmationController for ${successResponse.plrReference}")
             Future.successful(
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
