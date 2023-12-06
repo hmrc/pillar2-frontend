@@ -56,5 +56,4 @@ class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswe
           logger.error(s"Unexpected error when calling amend subscription: ${e.getMessage}")
           Future.failed(e)
       }
-
 }

@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{CheckMode, Mode}
 import models.subscription.AmendSubscriptionRequestParameters
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,6 +32,7 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
+import scala.Right
 import scala.concurrent.ExecutionContext
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
@@ -76,16 +78,12 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-//    val upeRegInfo = request.userAnswers.getUpRegData
-//    val fmSafeID = request.userAnswers.getFmSafeID
-//    (upeRegInfo, fmSafeID) match {
-//     // case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
-//      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def onSubmit(mode: Mode = CheckMode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% calling frontend side ...." + request.userId)
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
+      case Right(s) => Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+      case Left(_)  => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
 
-//    }
-    println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%caloin")
-    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.id.toString)) // do flat map
-    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
   }
 }
