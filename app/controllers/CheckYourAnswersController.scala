@@ -25,6 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -115,9 +116,11 @@ class CheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-
-    Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryPreference, secondaryContactList, address))
-
+    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
+      Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad)
+    } else {
+      Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryPreference, secondaryContactList, address))
+    }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>

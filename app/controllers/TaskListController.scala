@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import helpers.SubscriptionHelpers
 import play.api.i18n.I18nSupport
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
+import utils.{Pillar2SessionKeys, RowStatus}
 import utils.RowStatus._
 import views.html.TaskListView
 
@@ -45,17 +46,20 @@ class TaskListController @Inject() (
     val contactDetailsStatus  = request.userAnswers.contactDetailStatus
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
     val count                 = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
-
-    Ok(
-      view(
-        upeStatus.toString,
-        count,
-        filingMemberStatus = fmStatus.toString,
-        groupDetailStatus = groupDetailStatus.toString,
-        contactDetailsStatus = contactDetailsStatus.toString,
-        reviewAndSubmitStatus
+    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
+      Redirect(routes.RegistrationConfirmationController.onPageLoad)
+    } else {
+      Ok(
+        view(
+          upeStatus.toString,
+          count,
+          filingMemberStatus = fmStatus.toString,
+          groupDetailStatus = groupDetailStatus.toString,
+          contactDetailsStatus = contactDetailsStatus.toString,
+          reviewAndSubmitStatus
+        )
       )
-    )
+    }
   }
 
   private def statusCounter(
