@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
@@ -35,12 +35,10 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
     }
         <span class="govuk-caption-l">@messages("taskList.task.contact.heading", contactName)</span>
-        <h1 class="govuk-heading-l">@messages("addSecondaryContact.heading", contactName)</h1>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel("")
+                legend = LegendViewModel(messages("addSecondaryContact.heading", contactName)).asPageHeading(Large)
             ).withHint(Hint(content = Text(messages("addSecondaryContact.hint"))))
             )
 
