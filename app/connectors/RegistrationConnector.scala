@@ -38,6 +38,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
+        logger.info(s"Upe RegisterWithoutID successful with response $response")
         val safeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         /*        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
         val safeIdValue = safeId match {
@@ -64,6 +65,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
+        logger.info(s"FilingMember RegisterWithoutID successful with response $response")
         val fmsafeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
@@ -75,7 +77,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         } yield ()*/
         Right(fmsafeId)
       case errorResponse =>
-        logger.warn(s"Filing Member RegisterWithoutID call failed with Status ${errorResponse.status}")
+        logger.warn(s"FilingMember RegisterWithoutID call failed with Status ${errorResponse.status}")
         Left(InternalServerError)
     }
 }

@@ -25,6 +25,7 @@ import models.grs.{BusinessVerificationResult, EntityType, GrsRegistrationResult
 import models.registration.{GrsResponse, RegistrationInfo}
 import models.requests.DataRequest
 import pages._
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,15 +45,20 @@ class GrsReturnController @Inject() (
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector
 )(implicit ec:                                       ExecutionContext)
-    extends FrontendBaseController {
+    extends FrontendBaseController
+    with Logging {
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(upeEntityTypePage)
       .map {
-        case EntityType.UkLimitedCompany => upeLimited(request, journeyId)
+        case EntityType.UkLimitedCompany =>
+          logger.info("UK Limited Company - Entity type selected")
+          upeLimited(request, journeyId)
 
-        case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
+        case EntityType.LimitedLiabilityPartnership =>
+          logger.info("Limited liability partnership - Entity type selected")
+          upePartnership(request, journeyId)
 
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
