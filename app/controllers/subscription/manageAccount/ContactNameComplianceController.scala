@@ -19,65 +19,53 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.GroupAccountingPeriodFormProvider
-import models.Mode
-import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
-import play.api.data.Form
+import forms.ContactNameComplianceFormProvider
+import models.{Mode, NormalMode}
+import pages.subPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
+import views.html.subscriptionview.manageAccount.ContactNameComplianceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GroupAccountingPeriodController @Inject() (
+class ContactNameComplianceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              GroupAccountingPeriodFormProvider,
+  formProvider:              ContactNameComplianceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupAccountingPeriodView
+  view:                      ContactNameComplianceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+  val form = formProvider()
 
-  def form = formProvider()
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
-      val preparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    remapFormErrors(
-      form
-        .bindFromRequest()
-    )
+    form
+      .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
+            updatedAnswers <-
+              Future
+                .fromTry(request.userAnswers.set(subPrimaryContactNamePage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad)
       )
   }
-
-  private def remapFormErrors[A](form: Form[A]): Form[A] =
-    form.copy(errors = form.errors.map {
-      case e if e.key == "" => e.copy(key = "endDate")
-      case e                => e
-    })
 
 }
