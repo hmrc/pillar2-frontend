@@ -18,25 +18,33 @@ package controllers.subscription.manageAccount
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.AmendSubscriptionRequestParameters
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.AmendSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
+
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  countryOptions:           CountryOptions,
-  view:                     ManageGroupDetailsCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  val controllerComponents:  MessagesControllerComponents,
+  countryOptions:            CountryOptions,
+  view:                      ManageGroupDetailsCheckYourAnswersView,
+  amendSubscriptionService:  AmendSubscriptionService,
+  val userAnswersConnectors: UserAnswersConnectors
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val list = SummaryListViewModel(
@@ -54,7 +62,13 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     // call to backend for amend  etmp
-    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
+      case Right(s) =>
+        userAnswersConnectors.remove(request.userId) // change  code according to your need
+        logger.info(s"Redirecting to Dashboard ")
+        Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
 
   }
 
