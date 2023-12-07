@@ -210,7 +210,9 @@ POST       /manage-account/contact-details/change-second-contact     controllers
 
 
 GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
-GET        /manage-account/account-details/summary                controllers.subscription.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+
+GET        /manage-account/account-details/summary                controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+POST        /manage-account/account-details/summary               controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit
 
 
 

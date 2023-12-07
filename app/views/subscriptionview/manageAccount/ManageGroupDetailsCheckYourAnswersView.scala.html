@@ -19,26 +19,27 @@
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF,
 )
 
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")),showBackLink = false) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
+        <h1 class="govuk-heading-l">@messages("ManageFurtherGroupDetail.checkYourAnswers.heading")</h1>
 
-    <h1 class="govuk-heading-l">@messages("ManageFurtherGroupDetail.checkYourAnswers.heading")</h1>
-
-    @govukSummaryList(list)
+        @govukSummaryList(list)
 
 
-    <br>
-    @govukButton(
-    ButtonViewModel(messages("site.mange.save-and-continue"))
-    .withAttribute("id","continue")
-    .asLink(controllers.routes.UnderConstructionController.onPageLoad.url)
-)
+        <br>
+        @govukButton(
+            ButtonViewModel(messages("site.mange.save-and-continue")).withAttribute("id", "submit")
+        )
+    )
 
+    }
 
 }
 

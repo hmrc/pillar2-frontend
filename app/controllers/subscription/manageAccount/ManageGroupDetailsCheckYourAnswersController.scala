@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package controllers.subscription.manageAccount
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -26,7 +26,7 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
-
+import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
@@ -49,6 +49,12 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     )
 
     Ok(view(list))
+
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    // call to backend for amend  etmp
+    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
 
   }
 

@@ -44,7 +44,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Check your answer")
@@ -62,7 +62,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Check your answer")
