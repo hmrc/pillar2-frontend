@@ -5,7 +5,8 @@ level of corporate income tax (15%) on the profits.
 
 ## Running the service locally
 
-The below command ensures the compilation is successful without any errors
+#### To compile the project:
+The below command ensures the project is compiled without any errors
 
 `sbt clean update compile`
 
@@ -53,7 +54,94 @@ Make sure to fill in the fields as below:
 ***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
 
 ***Affinity Group: Organisation***
-<br><br><br>
+
+### Testing endpoints
+
+This frontend service provides a few test-only endpoints, exposed via the **GET** and
+**POST** HTTP methods in order to be operated by the browser.
+
+---------------------
+
+```POST /stub-grs-journey-data```
+
+Submits the `stub-grs-journey-data` collection
+
+> Response status: 200
+
+---------------------
+
+```GET /stub-grs-journey-data```
+
+Gets the `stub-grs-journey-data` collection posted previously
+
+> Response status: 200
+
+---------------------
+
+```GET /get-all```
+
+Gets all the records from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /clear-all```
+
+Clears all the records from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /clear-all```
+
+Clears all the records data from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /clear-current```
+
+Clears the current records data from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /registration-data```
+
+Gets the registration data from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /eligibility/clear-session```
+
+Clears the Eligibility journey session data from the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET  /upsertRecord/:id```
+
+Upsert's a record with ID to the Stubs
+
+> Response status: 200
+
+---------------------
+
+```GET /de-enrol```
+
+De-enrols the Pillar2 enrolment from the Stubs
+
+> Response status: 200
+
+---------------------
+<br><br>
 
 ### License
 
