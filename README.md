@@ -55,7 +55,7 @@ Make sure to fill in the fields as below:
 
 ***Affinity Group: Organisation***
 
-## Testing endpoints
+## Testing Endpoints
 
 This frontend service provides a few test-only endpoints, exposed via the **GET** and
 **POST** HTTP methods in order to be operated by the browser.
