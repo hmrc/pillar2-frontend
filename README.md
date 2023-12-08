@@ -1,12 +1,11 @@
 # pillar2-frontend
 
-This service provides the users with means to ensure the large multinational businesses pay a minimum
+The Pillar2 frontend service provide the users with means to ensure the large multinational businesses pay a minimum
 level of corporate income tax (15%) on the profits.
 
 ## Running the service locally
 
 #### To compile the project:
-The below command ensures the project is compiled without any errors
 
 `sbt clean update compile`
 
@@ -47,7 +46,7 @@ service before running sbt commands.
 
 This is an authenticated service, so users first need to be authenticated via GG in order to use the service.
 
-Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page
+Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
 
 Make sure to fill in the fields as below:
 
@@ -64,7 +63,7 @@ This frontend service provides a few test-only endpoints, exposed via the **GET*
 
 ```GET /get-all```
 
-Gets all the records from the Mongo DB in the backend
+Gets all the record from the Mongo DB in the backend
 
 > Response status: 200
 
@@ -80,7 +79,7 @@ Clears all the record from the Mongo DB in the backend
 
 ```GET /clear-current```
 
-Clears the current records from the Mongo DB in the backend
+Clears the current record from the Mongo DB in the backend
 
 > Response status: 200
 
