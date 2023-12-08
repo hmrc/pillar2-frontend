@@ -82,7 +82,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
         userAnswersConnectors.remove(request.userId) // change  code according to your need
-        logger.info(s"Redirecting to Dashboard ")
+        logger.info(s"Redirecting to Dashboard from contact details")
         Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
