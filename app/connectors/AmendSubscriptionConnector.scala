@@ -37,7 +37,7 @@ class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswe
     ec:                                             ExecutionContext
   ): Future[Option[JsValue]] =
     http
-      .POST[AmendSubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", amendSubscriptionParameter)
+      .PUT[AmendSubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", amendSubscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
           Some(response.json)
