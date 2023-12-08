@@ -20,8 +20,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.AmendSubscriptionRequestParameters
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.AmendSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -29,8 +32,7 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
-
+import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
@@ -38,10 +40,12 @@ class ManageContactCheckYourAnswersController @Inject() (
   requireData:               DataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageContactCheckYourAnswersView,
-  countryOptions:            CountryOptions
+  countryOptions:            CountryOptions,
+  amendSubscriptionService:  AmendSubscriptionService
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val primaryContactList = SummaryListViewModel(
@@ -71,5 +75,17 @@ class ManageContactCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    // call to backend for amend  etmp
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
+      case Right(s) =>
+        userAnswersConnectors.remove(request.userId) // change  code according to your need
+        logger.info(s"Redirecting to Dashboard ")
+        Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
+
   }
 }

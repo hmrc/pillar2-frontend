@@ -19,31 +19,32 @@
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+   formHelper: FormWithCSRF,
 )
 
 
 @(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title")), showBackLink = false) {
-<div class="manage-contact-details">
-    <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading.caption")</h1>
-<h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
-    @govukSummaryList(listPrimary)
+    @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
+        <div class="manage-contact-details">
+            <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading.caption")</h1>
+        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
+            @govukSummaryList(listPrimary)
 
-    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
-        @govukSummaryList(addSecondaryContactList)
-         @govukSummaryList(listSecondary)
+            <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+                @govukSummaryList(addSecondaryContactList)
+                 @govukSummaryList(listSecondary)
 
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
-        @govukSummaryList(address)
-    <br>
-    @govukButton(
-    ButtonViewModel(messages("site.mange.save-and-continue"))
-    .withAttribute("id","continue")
-    .asLink(controllers.routes.UnderConstructionController.onPageLoad.url)
-)
+                <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
+                @govukSummaryList(address)
+            <br>
+            @govukButton(
+                ButtonViewModel(messages("site.mange.save-and-continue")).withAttribute("id", "submit")
+            )
 
-</div>
+        </div>
+}
 }
 
