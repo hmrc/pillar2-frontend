@@ -55,32 +55,16 @@ Make sure to fill in the fields as below:
 
 ***Affinity Group: Organisation***
 
-### Testing endpoints
+## Testing endpoints
 
 This frontend service provides a few test-only endpoints, exposed via the **GET** and
 **POST** HTTP methods in order to be operated by the browser.
 
 ---------------------
 
-```POST /stub-grs-journey-data```
-
-Submits the `stub-grs-journey-data` collection
-
-> Response status: 200
-
----------------------
-
-```GET /stub-grs-journey-data```
-
-Gets the `stub-grs-journey-data` collection posted previously
-
-> Response status: 200
-
----------------------
-
 ```GET /get-all```
 
-Gets all the records from the Stubs
+Gets all the records from the Mongo DB in the backend
 
 > Response status: 200
 
@@ -88,15 +72,7 @@ Gets all the records from the Stubs
 
 ```GET /clear-all```
 
-Clears all the records from the Stubs
-
-> Response status: 200
-
----------------------
-
-```GET /clear-all```
-
-Clears all the records data from the Stubs
+Clears all the record from the Mongo DB in the backend
 
 > Response status: 200
 
@@ -104,7 +80,7 @@ Clears all the records data from the Stubs
 
 ```GET /clear-current```
 
-Clears the current records data from the Stubs
+Clears the current records from the Mongo DB in the backend
 
 > Response status: 200
 
@@ -112,7 +88,7 @@ Clears the current records data from the Stubs
 
 ```GET /registration-data```
 
-Gets the registration data from the Stubs
+Gets the registration data from the Mongo DB in the backend
 
 > Response status: 200
 
@@ -120,23 +96,15 @@ Gets the registration data from the Stubs
 
 ```GET /eligibility/clear-session```
 
-Clears the Eligibility journey session data from the Stubs
+Clears the Eligibility journey session data from the Mongo DB in the backend
 
 > Response status: 200
 
 ---------------------
 
-```GET  /upsertRecord/:id```
+```POST  /upsertRecord/:id```
 
-Upsert's a record with ID to the Stubs
-
-> Response status: 200
-
----------------------
-
-```GET /de-enrol```
-
-De-enrols the Pillar2 enrolment from the Stubs
+Upsert's a record with ID to the Mongo DB in the backend
 
 > Response status: 200
 
