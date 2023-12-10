@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 import scala.concurrent.Future
-
+import play.api.libs.json._
 class AmendSubscriptionServiceSpec extends SpecBase {
 
   val service: AmendSubscriptionService = app.injector.instanceOf[AmendSubscriptionService]
@@ -42,21 +42,20 @@ class AmendSubscriptionServiceSpec extends SpecBase {
     .build()
 
   "AmendSubscriptionService" when {
-//    "must return Pillar2Id if all success" in {
-//      val mockResponse = JsValue("xzxz");
-//
-//    //  when(mockAmendSubscriptionService.amendSubscription(any())(any())).thenReturn())
-//      when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-//        .thenReturn(Future.successful(Right(mockResponse)))
-//      service.amendSubscription(AmendSubscriptionRequestParameters("id")) .map { res =>
-//        res mustBe (Right(mockResponse))
-//      }
-//    }
+    "must return Pillar2Id if all success" in {
+      val mockResponse = Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
+      when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
+        .thenReturn(Future.successful(Right(mockResponse)))
+      service.amendSubscription(AmendSubscriptionRequestParameters("id")).map { res =>
+        res mustBe (Right(mockResponse))
+      }
+    }
 
 //    "must return when there is problem of creating" in {
 //      val response = Future.successful(None)
-//      when(mockSubscriptionConnector.crateSubscription(any())(any(), any())).thenReturn(response)
-//      service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
+//      when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
+//        .thenReturn(Future.successful(Right(response)))
+//      service.amendSubscription(AmendSubscriptionRequestParameters("id")).map { res =>
 //        res mustBe Left(SubscriptionCreateError)
 //      }
 //    }
