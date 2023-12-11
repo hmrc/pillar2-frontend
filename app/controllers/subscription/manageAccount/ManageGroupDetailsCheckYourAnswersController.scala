@@ -55,17 +55,14 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
       ).flatten
     )
-
     Ok(view(list))
-
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    // call to backend for amend  etmp
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
-        userAnswersConnectors.remove(request.userId) // change  code according to your need
-        logger.info(s"Redirecting to Dashboard ")
+        userAnswersConnectors.remove(request.userId)
+        logger.info(s"Redirecting to Dashboard from group details ")
         Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
