@@ -18,7 +18,7 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.{EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
+import connectors.{AmendSubscriptionConnector, EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
@@ -70,6 +70,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
   val mockReadSubscriptionService:                    ReadSubscriptionService                    = mock[ReadSubscriptionService]
   val mockReadSubscriptionConnector:                  ReadSubscriptionConnector                  = mock[ReadSubscriptionConnector]
+  val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
 
   override protected def beforeEach(): Unit =
     Seq(

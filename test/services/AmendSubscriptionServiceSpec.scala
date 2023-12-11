@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import connectors.SubscriptionConnector
+import connectors.{AmendSubscriptionConnector, SubscriptionConnector}
 import models.SubscriptionCreateError
 import models.subscription.{AmendSubscriptionRequestParameters, SubscriptionResponse}
 import org.mockito.ArgumentMatchers.any
@@ -26,10 +26,10 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json._
 class AmendSubscriptionServiceSpec extends SpecBase {
 
@@ -37,28 +37,31 @@ class AmendSubscriptionServiceSpec extends SpecBase {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService)
+      bind[AmendSubscriptionConnector].toInstance(mockAmendSubscriptionConnector)
     )
     .build()
 
   "AmendSubscriptionService" when {
+
     "must return Pillar2Id if all success" in {
-      val mockResponse = Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
-      when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-        .thenReturn(Future.successful(Right(mockResponse)))
+      val mockResponse: Option[JsValue] =
+        Some(Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}"""))
+      when(mockAmendSubscriptionConnector.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(mockResponse))
+
       service.amendSubscription(AmendSubscriptionRequestParameters("id")).map { res =>
-        res mustBe (Right(mockResponse))
+        res mustBe mockResponse
       }
     }
 
-//    "must return when there is problem of creating" in {
-//      val response = Future.successful(None)
-//      when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-//        .thenReturn(Future.successful(Right(response)))
-//      service.amendSubscription(AmendSubscriptionRequestParameters("id")).map { res =>
-//        res mustBe Left(SubscriptionCreateError)
-//      }
-//    }
+    "must return when there is a problem of creating" in {
+      when(mockAmendSubscriptionConnector.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(None))
+
+      service.amendSubscription(AmendSubscriptionRequestParameters("id")).map { res =>
+        res mustBe Left(SubscriptionCreateError)
+      }
+    }
 
   }
 }
