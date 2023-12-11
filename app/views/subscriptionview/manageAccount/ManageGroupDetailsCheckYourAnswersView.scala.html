@@ -28,14 +28,14 @@
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")),showBackLink = false) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("ManageFurtherGroupDetail.checkYourAnswers.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("manageFurtherGroupDetail.checkYourAnswers.heading")</h1>
 
         @govukSummaryList(list)
 
 
         <br>
         @govukButton(
-            ButtonViewModel(messages("site.mange.save-and-continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit")
         )
 
 

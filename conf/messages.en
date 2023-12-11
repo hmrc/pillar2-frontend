@@ -11,7 +11,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.save-and-continue= Save and continue
-site.mange.save-and-continue =  Save and return to homepage
+site.manage.save-and-continue =  Save and return to homepage
 date.day = Day
 date.month = Month
 date.year = Year
@@ -681,5 +681,5 @@ unauthorised.individual.message = You''ve signed in with an individual account. 
 unauthorised.individual.message2 = If you still need to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
-ManageFurtherGroupDetail.checkYourAnswers.heading = Group details
+manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
