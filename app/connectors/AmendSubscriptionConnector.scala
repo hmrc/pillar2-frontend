@@ -30,14 +30,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
 
-  val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription"
+  private val amendSubscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription"
 
   def amendSubscription(amendSubscriptionParameter: AmendSubscriptionRequestParameters)(implicit
     hc:                                             HeaderCarrier,
     ec:                                             ExecutionContext
   ): Future[Option[JsValue]] =
     http
-      .PUT[AmendSubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", amendSubscriptionParameter)
+      .PUT[AmendSubscriptionRequestParameters, HttpResponse](s"$amendSubscriptionUrl", amendSubscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
           Some(response.json)
