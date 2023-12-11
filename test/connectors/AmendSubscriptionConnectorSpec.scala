@@ -20,6 +20,7 @@ import base.SpecBase
 import models.subscription.{AmendResponse, AmendSubscriptionRequestParameters}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 
@@ -51,11 +52,25 @@ class AmendSubscriptionConnectorSpec extends SpecBase {
     )
 
   "AmendSubscriptionConnector" when {
-    "amendSubscription must return status as 200 for successful amend subscription" in {
-      stubResponseForPutRequest(s"/report-pillar2-top-up-taxes/subscription/amend-subscription", OK)
+
+    "amendSubscription must handle the response correctly for a successful amend subscription" in {
+      val expectedEndpoint = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
+      val expectedStatus   = 200
+      val successResponse = Json.obj(
+        "success" -> Json.obj(
+          "processingDate"   -> "2022-01-31T09:26:17Z",
+          "formBundleNumber" -> "119000004320"
+        )
+      )
+      stubResponseForPutRequest(expectedEndpoint, expectedStatus, Some(successResponse.toString()))
+
       val result = connector.amendSubscription(validAmendSubscriptionParameter)
-      result.futureValue mustBe Some(OK)
+
+      whenReady(result) { response =>
+        response mustBe Some(successResponse)
+      }
     }
+
   }
 
 }

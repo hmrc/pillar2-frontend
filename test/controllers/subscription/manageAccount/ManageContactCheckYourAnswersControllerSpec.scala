@@ -20,15 +20,16 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, AmendSubscriptionRequestParameters, DashboardInfo}
-import models.{MneOrDomestic, NonUKAddress}
+import models.{ApiError, MneOrDomestic, NonUKAddress, SubscriptionCreateError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.AmendSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -111,7 +112,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
-    "must trigger create subscription API if nfm and upe data is found" in {
+    "must trigger amend subscription API if all data is avaliable for contact detail" in {
       val startDate = LocalDate.of(2023, 12, 31)
       val endDate   = LocalDate.of(2025, 12, 31)
       val date      = AccountingPeriod(startDate, endDate)
@@ -148,20 +149,22 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
-//    "must redirect to journey recovery if no data is for either upe or nfm found" in {
-//
-//      val application = applicationBuilder(userAnswers = None)
-//      .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
-//      .build()
-//      val mockResponse = Json.parse("""{"Error":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
-//      running(application) { when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-//          .thenReturn(Future.successful(Left(mockResponse)))
-//        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
-//        val result  = route(application, request).value
-//        status(result) mustBe SEE_OTHER
-//        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-//      }
-//    }
+    "must redirect to journey recovery if no data if no data is found for amend contact detail" in {
+      val mockAmendSubscriptionService = mock[AmendSubscriptionService]
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
+        .build()
+
+      val mockResponse: Either[ApiError, JsValue] = Left(SubscriptionCreateError)
+      when(mockAmendSubscriptionService.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(mockResponse))
+
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+      val result  = route(application, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+    }
 
   }
 }
