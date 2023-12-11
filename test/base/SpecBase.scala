@@ -150,14 +150,6 @@ trait SpecBase
         )
     )
 
-//  protected def stubResponseForPutRequest(expectedEndpoint: String, expectedStatus: Int): StubMapping =
-//    server.stubFor(
-//      put(urlEqualTo(expectedEndpoint))
-//        .willReturn(
-//          aResponse()
-//            .withStatus(expectedStatus)
-//        )
-//    )
 
   protected def stubResponseForPutRequest(expectedEndpoint: String, expectedStatus: Int, responseBody: Option[String] = None): StubMapping =
     server.stubFor(
