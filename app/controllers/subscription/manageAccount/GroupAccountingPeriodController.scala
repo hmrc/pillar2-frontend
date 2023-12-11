@@ -70,7 +70,7 @@ class GroupAccountingPeriodController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
+          } yield Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
       )
   }
 
