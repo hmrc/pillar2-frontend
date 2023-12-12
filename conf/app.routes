@@ -14,6 +14,8 @@ GET         /refresh-session                                                    
 
 GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
+
+
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
 GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
@@ -223,8 +225,8 @@ GET        /contact-details/check-answers                  controllers.subscript
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 
 GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
-POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
-
+POST        /manage-account/contact-details/summary  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
+GET        /error/amend                              controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoadError
 
 GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)

@@ -49,8 +49,10 @@ cannotReturnAfterSubscriptionError.heading= You cannot return, your registration
 cannotReturnAfterSubscriptionError.message= You have successfully registered to report pillar 2 top-up taxes.
 cannotReturnAfterSubscriptionError.message2= You can now
 cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
-
-
+error.eis.title = Sorry, there is a problem with the service
+error.eis.heading = Sorry, there is a problem with the service
+error.amend.try= Please try again later.
+error.amend.home = Return to your account homepage to try again
 
 
 

@@ -64,7 +64,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         userAnswersConnectors.remove(request.userId)
         logger.info(s"Redirecting to Dashboard from group details ")
         Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
-      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case _ => Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoadError))
     }
 
   }

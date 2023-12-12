@@ -30,7 +30,7 @@ import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
-import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
+import views.html.subscriptionview.manageAccount.{AmendErrorView, ManageContactCheckYourAnswersView}
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
@@ -40,6 +40,7 @@ class ManageContactCheckYourAnswersController @Inject() (
   requireData:               DataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageContactCheckYourAnswersView,
+  viewError:                 AmendErrorView,
   countryOptions:            CountryOptions,
   amendSubscriptionService:  AmendSubscriptionService
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -83,8 +84,12 @@ class ManageContactCheckYourAnswersController @Inject() (
         userAnswersConnectors.remove(request.userId)
         logger.info(s"Redirecting to Dashboard from contact details")
         Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
-      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case _ => Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoadError))
     }
 
+  }
+
+  def onPageLoadError(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Ok(viewError())
   }
 }
