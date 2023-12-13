@@ -89,4 +89,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
+
+  val showPaymentsSection: Boolean = configuration.get[Boolean]("dashboard.showPaymentsSection")
 }
