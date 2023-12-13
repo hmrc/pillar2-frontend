@@ -113,6 +113,28 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+  val primaryTelephone : Boolean = get(subPrimaryPhonePreferencePage).map(nominated =>
+    if (nominated & get(subPrimaryCapturePhonePage).isDefined) true else false).getOrElse(false)
+  def primaryContactCompleted : Boolean ={
+    if(get(subPrimaryContactNamePage).isDefined & get(subPrimaryEmailPage).isDefined & primaryTelephone) true else false
+  }
+  val secondaryTelephone : Boolean = get(subSecondaryPhonePreferencePage).map(nominated =>
+    if (nominated & get(subSecondaryCapturePhonePage).isDefined) true else false).getOrElse(false)
+  def secondaryContactCompleted: Boolean ={
+    get(subAddSecondaryContactPage).map(nominated =>
+      if (nominated & get(subSecondaryContactNamePage).isDefined & get(subSecondaryEmailPage).isDefined & primaryTelephone) true else false
+
+    )
+    if(get(subPrimaryContactNamePage).isDefined & get(subPrimaryEmailPage).isDefined & primaryTelephone) true else false
+  }
+
+  def groupDetailStatusChecker : RowStatus= {
+    get()
+  }
+  def finalStatusCheck(): Boolean ={
+    if (groupDetailStatus == RowStatus.Completed & fmStatus == RowStatus.Completed &  upeStatus == RowStatus.Completed)
+      true else false
+  }
 
   def manageContactDetailStatus: Boolean = {
     val p1  = get(subPrimaryContactNamePage).isDefined
