@@ -90,5 +90,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 
-  val showPaymentsSection: Boolean = configuration.get[Boolean]("dashboard.showPaymentsSection")
+  val showPaymentsSection: Boolean = configuration.get[Boolean]("features.showPaymentsSection")
 }
