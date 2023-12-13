@@ -54,11 +54,11 @@
                             }
                         </span>
                         @if(ultimateParentStatus == "Completed"){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        <span class="hmrc-status-tag" id="eligibility-status" > @messages("task.status.completed") </span>
                         } else if(ultimateParentStatus.equals("InProgress")) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        <span class="hmrc-status-tag" id="eligibility-status"> @messages("task.status.inProgress") </span>
                         } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        <span class="hmrc-status-tag" id="eligibility-status"> @messages("task.status.notStarted") </span>
                         }
                     </li>
                     @if(ultimateParentStatus == "Completed"){
@@ -75,25 +75,25 @@
                             }
                         </span>
                         @if(filingMemberStatus == "Completed"){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        <span class="hmrc-status-tag" id="nfm-status" > @messages("task.status.completed") </span>
                         } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        <span class="hmrc-status-tag" id="nfm-status"> @messages("task.status.inProgress") </span>
                         } else  {
-                        <span class="hmrc-status-tag"  id="submit-pay-status-co">
+                        <span class="hmrc-status-tag"  id="submit-pay-status-co nfm-status">
                             @messages("task.status.notStarted")</span>
                         }
                     </li>
                     } else{
                     <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
+                        <span class="app-task-list__task-name" id="nfm-status">
                             @messages("taskList.task.business.filingMember")
                         </span>
                         @if(filingMemberStatus == "Completed"){
-                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                            <span class="hmrc-status-tag" id="nfm-status"> @messages("task.status.completed") </span>
                         } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        <span class="hmrc-status-tag" id="nfm-status"> @messages("task.status.inProgress") </span>
                         } else  {
-                        <span class="hmrc-status-tag" id="submit-pay-status-uc">
+                        <span class="hmrc-status-tag" id="submit-pay-status-uc nfm-status">
                             @messages("task.status.cannotStartYet")</span>
                         }
                     </li>
@@ -102,11 +102,11 @@
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                           @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-                              <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                              <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="group-details-status">
                                  @messages("taskList.task.business.sub.edit")
                               </a>
                             } else if (filingMemberStatus == "Completed" &&  ( groupDetailStatus=="NotStarted" ||  groupDetailStatus=="InProgress")){
-                                <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
+                                <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="group-details-status">
                                  @messages("taskList.task.business.sub.add")
                                 </a>
                             } else {
@@ -114,13 +114,13 @@
                             }
                         </span>
                         @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        <span class="hmrc-status-tag" id="group-details-status" > @messages("task.status.completed") </span>
                         } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="InProgress" ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        <span class="hmrc-status-tag" id="group-details-status"> @messages("task.status.inProgress") </span>
                         } else if(filingMemberStatus == "Completed" && groupDetailStatus=="NotStarted" ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        <span class="hmrc-status-tag" id="group-details-status"> @messages("task.status.notStarted") </span>
                         } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
+                        <span class="hmrc-status-tag" id="group-details-status"> @messages("task.status.cannotStartYet") </span>
                         }
                     </li>
 
@@ -136,11 +136,11 @@
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                           @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
-                              <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
+                              <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="contact-details-status">
                                  @messages("taskList.task.contact.edit")
                               </a>
                             } else if (filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
-                                <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
+                                <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="contact-details-status">
                                  @messages("taskList.task.contact.add")
                                 </a>
                             } else {
@@ -148,13 +148,13 @@
                             }
                         </span>
                         @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        <span class="hmrc-status-tag" id="contact-details-status"> @messages("task.status.completed") </span>
                         } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                        <span class="hmrc-status-tag" id="contact-details-status"> @messages("task.status.inProgress") </span>
                         } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        <span class="hmrc-status-tag" id="contact-details-status"> @messages("task.status.notStarted") </span>
                         } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
+                        <span class="hmrc-status-tag" id="contact-details-status"> @messages("task.status.cannotStartYet") </span>
                         }
                     </li>
                 </ul>
@@ -170,7 +170,7 @@
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                           @if(cyaStatus =="NotStarted"){
-                              <a href="/report-pillar2-top-up-taxes/review-submit/check-answers" aria-describedby="eligibility-status">
+                              <a href="/report-pillar2-top-up-taxes/review-submit/check-answers" aria-describedby="review-submit">
                                  @messages("taskList.task.review")
                               </a>
                             } else {
@@ -178,11 +178,11 @@
                             }
                         </span>
                         @if( cyaStatus =="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                        <span class="hmrc-status-tag" id="review-submit"> @messages("task.status.completed") </span>
                         } else if( cyaStatus == "NotStarted") {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                        <span class="hmrc-status-tag" id="review-submit"> @messages("task.status.notStarted") </span>
                         } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
+                        <span class="hmrc-status-tag" id="review-submit"> @messages("task.status.cannotStartYet") </span>
                         }
                     </li>
                 </ul>

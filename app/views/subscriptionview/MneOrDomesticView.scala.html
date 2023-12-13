@@ -37,7 +37,7 @@
         <span class="govuk-caption-l">@messages("mneOrDomestic.heading.caption")</span>
         @govukRadios(
             RadiosViewModel(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("mneOrDomestic.heading")).asPageHeading(Large),
                 items  = MneOrDomestic.options
             )
