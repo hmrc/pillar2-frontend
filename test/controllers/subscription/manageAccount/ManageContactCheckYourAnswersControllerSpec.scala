@@ -134,7 +134,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
-    "trigger amend subscription API if all data is avaliable for contact detail" in {
+    "trigger amend subscription API if all data is available for contact detail" in {
       val application = applicationBuilder(userAnswers = Some(amendSubscription))
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
