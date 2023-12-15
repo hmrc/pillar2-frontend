@@ -29,7 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.AmendSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -78,9 +78,31 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         )
       )
     )
+
+  val startDate = LocalDate.of(2023, 12, 31)
+  val endDate   = LocalDate.of(2025, 12, 31)
+  val date      = AccountingPeriod(startDate, endDate)
+  val amendSubscription = emptyUserAnswers
+    .setOrException(upeRegisteredInUKPage, true)
+    .setOrException(upeNameRegistrationPage, "International Organisation Inc.")
+    .setOrException(subPrimaryContactNamePage, "Name")
+    .setOrException(subPrimaryEmailPage, "email@email.com")
+    .setOrException(subPrimaryPhonePreferencePage, true)
+    .setOrException(subPrimaryCapturePhonePage, "123456789")
+    .setOrException(subAddSecondaryContactPage, true)
+    .setOrException(subSecondaryContactNamePage, "second contact name")
+    .setOrException(subSecondaryEmailPage, "second@email.com")
+    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(subSecondaryCapturePhonePage, "123456789")
+    .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+    .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+    .setOrException(subAccountingPeriodPage, date)
+    .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
+    .setOrException(NominateFilingMemberPage, false)
+
   "Contact Check Your Answers Controller" must {
 
-    "must return OK and the correct view if an answer is provided to every question " in {
+    "return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(subDataWithAddress)).build()
 
       running(application) {
@@ -112,32 +134,14 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
-    "must trigger amend subscription API if all data is avaliable for contact detail" in {
-      val startDate = LocalDate.of(2023, 12, 31)
-      val endDate   = LocalDate.of(2025, 12, 31)
-      val date      = AccountingPeriod(startDate, endDate)
-      val userAnswer = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeNameRegistrationPage, "International Organisation Inc.")
-        .setOrException(subPrimaryContactNamePage, "Name")
-        .setOrException(subPrimaryEmailPage, "email@email.com")
-        .setOrException(subPrimaryPhonePreferencePage, true)
-        .setOrException(subPrimaryCapturePhonePage, "123456789")
-        .setOrException(subAddSecondaryContactPage, true)
-        .setOrException(subSecondaryContactNamePage, "second contact name")
-        .setOrException(subSecondaryEmailPage, "second@email.com")
-        .setOrException(subSecondaryPhonePreferencePage, true)
-        .setOrException(subSecondaryCapturePhonePage, "123456789")
-        .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, date)
-        .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
-        .setOrException(NominateFilingMemberPage, false)
-
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
+    "trigger amend subscription API if all data is avaliable for contact detail" in {
+      val application = applicationBuilder(userAnswers = Some(amendSubscription))
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
+        val mockHttpResponse = HttpResponse(OK, "")
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
         val mockResponse = Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
         when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
           .thenReturn(Future.successful(Right(mockResponse)))
@@ -149,7 +153,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
-    "must redirect to journey recovery if no data if no data is found for amend contact detail" in {
+    "redirect to journey recovery if no data if no data is found for amend contact detail" in {
       val mockAmendSubscriptionService = mock[AmendSubscriptionService]
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
