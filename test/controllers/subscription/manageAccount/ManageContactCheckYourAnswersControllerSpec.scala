@@ -166,5 +166,16 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
     }
 
+    "must return OK display error page if needed" in {
+      val application = applicationBuilder().build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoadError.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("Sorry, there is a problem with the service ")
+        contentAsString(result) must include("Please try again later.")
+      }
+    }
+
   }
 }

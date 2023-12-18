@@ -310,3 +310,8 @@ GET        /business-matching/ultimate-parent/uk-based/error/no-match           
 GET        /business-matching/filing-member/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadNfm
 GET        /errors/restart-error                                                  controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+GET        /error/amend                                                          controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoadError
+
+
+
+

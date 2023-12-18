@@ -683,3 +683,7 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
+error.eis.title = Sorry, there is a problem with the service
+error.eis.heading = Sorry, there is a problem with the service
+error.amend.try= Please try again later.
+error.amend.home = Return to your account homepage to try again

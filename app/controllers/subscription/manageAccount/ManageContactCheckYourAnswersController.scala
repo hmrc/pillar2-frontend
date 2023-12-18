@@ -30,7 +30,7 @@ import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
-import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
+import views.html.subscriptionview.manageAccount.{AmendErrorView, ManageContactCheckYourAnswersView}
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
@@ -41,7 +41,8 @@ class ManageContactCheckYourAnswersController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageContactCheckYourAnswersView,
   countryOptions:            CountryOptions,
-  amendSubscriptionService:  AmendSubscriptionService
+  amendSubscriptionService:  AmendSubscriptionService,
+  viewError:                 AmendErrorView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -87,4 +88,9 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
 
   }
+
+  def onPageLoadError(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Ok(viewError())
+  }
+
 }
