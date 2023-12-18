@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.{AccountingPeriod, SubscriptionRequestParameters, SubscriptionResponse}
+import models.subscription.{AccountingPeriod, SubscriptionResponse}
 import models.{MandatoryInformationMissingError, MneOrDomestic, NonUKAddress, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -30,7 +30,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.RegisterWithoutIdService
+import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import utils.{Pillar2SessionKeys, RowStatus}
 import viewmodels.govuk.SummaryListFluency
 
@@ -38,23 +38,15 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  def controller(): CheckYourAnswersController =
-    new CheckYourAnswersController(
-      mockMessagesApi,
-      mockIdentifierAction,
-      mockDataRetrievalAction,
-      mockDataRequiredAction,
-      mockRegisterWithoutIdService,
-      mockSubscriptionService,
-      mockUserAnswersConnectors,
-      mockTaxEnrolmentService,
-      mockControllerComponents,
-      mockCheckYourAnswersView,
-      mockCountryOptions
-    )
 
-  val date = LocalDate.now()
-  val nonUkAddress = NonUKAddress(
+  private val response = SubscriptionResponse(
+    plrReference = "XE1111123456789",
+    formBundleNumber = "12345678",
+    processingDate = LocalDate.now().atStartOfDay()
+  )
+
+  private val date = LocalDate.now()
+  private val nonUkAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
@@ -62,7 +54,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     postalCode = None,
     countryCode = "AB"
   )
-  val ukAddress = UKAddress(
+  private val ukAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
@@ -70,7 +62,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     postalCode = "m19hgs",
     countryCode = "AB"
   )
-  val grsResponse = GrsResponse(
+  private val grsResponse = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(
         companyProfile = CompanyProfile(
@@ -90,15 +82,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       )
     )
   )
-
-  val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
-  val validSubscriptionSuccessResponse =
-    SubscriptionResponse(
-      plrReference = "XMPLR0012345678",
-      formBundleNumber = "119000004320",
-      processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
-    )
-  val nfmNoID = emptyUserAnswers
+  private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+  private val defaultUserAnswer = emptyUserAnswers
+    .setOrException(upeRegisteredInUKPage, true)
+    .setOrException(UpeRegInformationPage, regData)
+    .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+    .setOrException(subRegisteredAddressPage, nonUkAddress)
+    .setOrException(NominateFilingMemberPage, false)
+    .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+    .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
+    .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(upeGRSResponsePage, grsResponse)
+  private val nfmNoID = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
     .setOrException(fmRegisteredInUKPage, false)
     .setOrException(fmNameRegistrationPage, "name")
@@ -107,12 +102,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(fmContactEmailPage, "some@email.com")
     .setOrException(fmPhonePreferencePage, true)
     .setOrException(fmCapturePhonePage, "12312321")
-  val nfmId = emptyUserAnswers
+  private val nfmId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
     .setOrException(fmRegisteredInUKPage, true)
     .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(fmGRSResponsePage, grsResponse)
-  val upNoID = emptyUserAnswers
+  private val upNoID = emptyUserAnswers
     .setOrException(upeNameRegistrationPage, "name")
     .setOrException(upeRegisteredInUKPage, false)
     .setOrException(upeRegisteredAddressPage, ukAddress)
@@ -120,13 +115,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(upeContactEmailPage, "some@email.com")
     .setOrException(upePhonePreferencePage, true)
     .setOrException(upeCapturePhonePage, "12312321")
-  val upId = emptyUserAnswers
+  private val upId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
     .setOrException(upeRegisteredInUKPage, true)
     .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(fmGRSResponsePage, grsResponse)
 
-  val subData = emptyUserAnswers
+  private val subData = emptyUserAnswers
     .setOrException(subPrimaryContactNamePage, "name")
     .setOrException(subPrimaryEmailPage, "email@hello.com")
     .setOrException(subPrimaryPhonePreferencePage, true)
@@ -135,7 +130,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(subSecondaryEmailPage, "email@hello.com")
     .setOrException(subSecondaryPhonePreferencePage, true)
     .setOrException(subSecondaryCapturePhonePage, "123213")
-  val filingMember =
+  private val filingMember =
     FilingMember(
       isNfmRegisteredInUK = false,
       withoutIdRegData = Some(
@@ -150,7 +145,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       )
     )
 
-  val sampleRegistrationInfo = RegistrationInfo(
+  private val sampleRegistrationInfo = RegistrationInfo(
     crn = "CRN123456",
     utr = "UTR654321",
     safeId = "SAFEID789012",
@@ -158,7 +153,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     filingMember = None
   )
 
-  val registration = Registration(
+  private val registration = Registration(
     isUPERegisteredInUK = false,
     withoutIdRegData = Some(
       WithoutIdRegData(
@@ -284,24 +279,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "trigger create subscription API if nfm and upe data is found" in {
-      val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
-      val userAnswer = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(UpeRegInformationPage, regData)
-        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-        .setOrException(subPrimaryPhonePreferencePage, false)
-        .setOrException(subRegisteredAddressPage, nonUkAddress)
-        .setOrException(subAddSecondaryContactPage, false)
-        .setOrException(NominateFilingMemberPage, false)
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val userAnswer = defaultUserAnswer
+        .setOrException(subPrimaryPhonePreferencePage, false)
+        .setOrException(subAddSecondaryContactPage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
+        )
+        .build()
       running(application) {
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(response)))
+        when(mockTaxEnrolmentService.checkAndCreateEnrolment(any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/errors/eis")
+        redirectLocation(result) mustBe Some(routes.RegistrationConfirmationController.onPageLoad.url)
       }
     }
 
@@ -325,50 +321,98 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         redirectLocation(result).value mustEqual controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad.url
       }
     }
+    "user is redirected to error page" should {
+      "they miss mandatory information filing member" in {
 
-    "mandatory information is missing for filing member" in {
-      val ua = emptyUserAnswers
-        .setOrException(UpeRegInformationPage, RegistrationInfo(crn = "123", utr = "456", safeId = "UpeSafeID", None, None))
-        .setOrException(FmSafeIDPage, "fmSafeID")
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(NominateFilingMemberPage, true)
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[RegisterWithoutIdService].toInstance(mockRegisterWithoutIdService))
-        .build()
+        val ua = emptyUserAnswers
+          .setOrException(UpeRegInformationPage, RegistrationInfo(crn = "123", utr = "456", safeId = "UpeSafeID", None, None))
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
 
-      running(application) {
-        when(mockRegisterWithoutIdService.sendFmRegistrationWithoutId(any(), any())(any(), any()))
-          .thenReturn(Future.successful(Left(MandatoryInformationMissingError("wrong"))))
-        val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
-        val result  = route(application, request).value
+        val application = applicationBuilder(Some(ua))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(bind[RegisterWithoutIdService].toInstance(mockRegisterWithoutIdService))
+          .build()
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
 
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
+
+        }
       }
-    }
 
-    "mandatory information is missing for upe" in {
-      val ua = emptyUserAnswers
-        .setOrException(UpeRegInformationPage, RegistrationInfo(crn = "123", utr = "456", safeId = "UpeSafeID", None, None))
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(NominateFilingMemberPage, false)
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[RegisterWithoutIdService].toInstance(mockRegisterWithoutIdService))
-        .build()
+      "they miss mandatory information for upe" in {
+        val ua = emptyUserAnswers
+          .setOrException(UpeRegInformationPage, RegistrationInfo(crn = "123", utr = "456", safeId = "UpeSafeID", None, None))
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, false)
+        val application = applicationBuilder(Some(ua))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(bind[RegisterWithoutIdService].toInstance(mockRegisterWithoutIdService))
+          .build()
 
-      running(application) {
-        when(mockRegisterWithoutIdService.sendUpeRegistrationWithoutId(any(), any())(any(), any()))
-          .thenReturn(Future.successful(Left(MandatoryInformationMissingError("wrong"))))
-        val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
-        val result  = route(application, request).value
+        running(application) {
+          when(mockRegisterWithoutIdService.sendUpeRegistrationWithoutId(any(), any())(any(), any()))
+            .thenReturn(Future.successful(Left(MandatoryInformationMissingError("wrong"))))
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
+        }
       }
+
+      "chosen yes for nominating primary phone but not provided one" in {
+        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+        val userAnswer = defaultUserAnswer
+          .setOrException(subPrimaryPhonePreferencePage, true)
+          .setOrException(subAddSecondaryContactPage, false)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(response)))
+          when(mockTaxEnrolmentService.checkAndCreateEnrolment(any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
+        }
+      }
+      "chosen yes for nominating secondary phone but not provided one" in {
+        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+        val userAnswer = defaultUserAnswer
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, true)
+          .setOrException(subSecondaryPhonePreferencePage, true)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(response)))
+          when(mockTaxEnrolmentService.checkAndCreateEnrolment(any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
+        }
+      }
+
     }
 
   }

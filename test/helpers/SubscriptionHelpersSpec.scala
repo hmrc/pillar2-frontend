@@ -623,6 +623,8 @@ class SubscriptionHelpersSpec extends SpecBase {
           .setOrException(GrsUpeStatusPage, RowStatus.Completed)
           .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
           .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
+          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(upeGRSResponsePage, grsResponse)
 
         userAnswers.finalStatusCheck mustEqual true
       }

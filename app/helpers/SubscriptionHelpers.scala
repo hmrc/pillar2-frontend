@@ -127,7 +127,7 @@ trait SubscriptionHelpers {
         & get(subRegisteredAddressPage).isDefined
     ) true
     else false
-    
+
   def finalStatusCheck: Boolean =
     if (groupDetailStatus == RowStatus.Completed & fmStatus == RowStatus.Completed & upeStatus == RowStatus.Completed & groupDetailStatusChecker)
       true
