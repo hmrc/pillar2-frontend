@@ -293,6 +293,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .setOrException(subRegisteredAddressPage, nonUkAddress)
         .setOrException(subAddSecondaryContactPage, false)
         .setOrException(NominateFilingMemberPage, false)
+
+
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
