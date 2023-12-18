@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
-import models.{MandatoryInformationMissingError, NonUKAddress, UKAddress}
+import models.subscription.{AccountingPeriod, SubscriptionRequestParameters, SubscriptionResponse}
+import models.{MandatoryInformationMissingError, MneOrDomestic, NonUKAddress, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -293,7 +293,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .setOrException(subRegisteredAddressPage, nonUkAddress)
         .setOrException(subAddSecondaryContactPage, false)
         .setOrException(NominateFilingMemberPage, false)
-
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
 
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {

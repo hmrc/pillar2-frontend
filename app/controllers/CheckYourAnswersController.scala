@@ -131,5 +131,4 @@ class CheckYourAnswersController @Inject() (
       case _ => Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
-
 }

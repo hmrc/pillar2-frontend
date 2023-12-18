@@ -613,6 +613,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "final status checker" should {
 
       "return true if all the tasks have been completed for the subscription journey " in {
+        val date = LocalDate.now()
         val userAnswers = emptyUserAnswers
           .setOrException(subPrimaryPhonePreferencePage, false)
           .setOrException(subAddSecondaryContactPage, false)
@@ -620,8 +621,10 @@ class SubscriptionHelpersSpec extends SpecBase {
           .setOrException(NominateFilingMemberPage, false)
           .setOrException(upeRegisteredInUKPage, true)
           .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+          .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+          .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
 
-        userAnswers.groupDetailStatusChecker mustEqual true
+        userAnswers.finalStatusCheck mustEqual true
       }
     }
 
