@@ -599,6 +599,32 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
     }
 
+    "groupDetails status checker" should {
+
+      "return true if right combination of the contact details and the subscription address have been answered " in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+        userAnswers.groupDetailStatusChecker mustEqual true
+      }
+    }
+
+    "final status checker" should {
+
+      "return true if all the tasks have been completed for the subscription journey " in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+          .setOrException(NominateFilingMemberPage, false)
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+
+        userAnswers.groupDetailStatusChecker mustEqual true
+      }
+    }
+
   }
 
 }

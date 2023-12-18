@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.RegisterWithoutIdService
-import utils.Pillar2SessionKeys
+import utils.{Pillar2SessionKeys, RowStatus}
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -181,7 +181,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" must {
 
-    "must return OK and the correct view if an answer is provided to every contact detail question" in {
+    "return OK and the correct view if an answer is provided to every contact detail question" in {
       val application = applicationBuilder(userAnswers = Some(subData))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -200,7 +200,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must return OK and the correct view if an answer is provided to every ultimate parent question" in {
+    "return OK and the correct view if an answer is provided to every ultimate parent question" in {
       val application = applicationBuilder(userAnswers = Some(upNoID))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -215,7 +215,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         )
       }
     }
-    "must return OK and the correct view if an answer is provided to every Filing member question" in {
+    "return OK and the correct view if an answer is provided to every Filing member question" in {
 
       val application = applicationBuilder(userAnswers = Some(nfmNoID))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -233,7 +233,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must return OK and the correct view if an answer is provided with limited company upe" in {
+    "return OK and the correct view if an answer is provided with limited company upe" in {
 
       val application = applicationBuilder(userAnswers = Some(upId))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -258,7 +258,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must return OK and the correct view if an answer is provided with limited company nfm" in {
+    "return OK and the correct view if an answer is provided with limited company nfm" in {
 
       val application = applicationBuilder(userAnswers = Some(nfmId))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -283,11 +283,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must trigger create subscription API if nfm and upe data is found" in {
+    "trigger create subscription API if nfm and upe data is found" in {
       val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
       val userAnswer = emptyUserAnswers
         .setOrException(upeRegisteredInUKPage, true)
         .setOrException(UpeRegInformationPage, regData)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(subPrimaryPhonePreferencePage, false)
+        .setOrException(subRegisteredAddressPage, nonUkAddress)
+        .setOrException(subAddSecondaryContactPage, false)
         .setOrException(NominateFilingMemberPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
@@ -298,14 +302,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must redirect to journey recovery if no data is for either upe or nfm found" in {
+    "redirect to journey recovery if no data is for either upe or nfm found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
       }
     }
 

@@ -114,19 +114,17 @@ trait SubscriptionHelpers {
     }
   }
   val primaryTelephone: Boolean =
-    get(subPrimaryPhonePreferencePage).map(nominated => if (nominated & get(subPrimaryCapturePhonePage).isDefined) true else false).getOrElse(false)
-  private def primaryContactCompleted: Boolean =
-    if (get(subPrimaryContactNamePage).isDefined & get(subPrimaryEmailPage).isDefined & primaryTelephone) true else false
+    get(subPrimaryPhonePreferencePage).map(nominated => if (nominated & get(subPrimaryCapturePhonePage).isEmpty) false else true).getOrElse(false)
+
   val secondaryTelephone: Boolean = get(subSecondaryPhonePreferencePage)
-    .map(nominated => if (nominated & get(subSecondaryCapturePhonePage).isDefined) true else false)
+    .map(nominated => if (nominated & get(subSecondaryCapturePhonePage).isEmpty) false else true)
     .getOrElse(false)
-  def secondaryContactCompleted: Boolean =
-    if (get(subSecondaryContactNamePage).isDefined & get(subSecondaryEmailPage).isDefined & secondaryTelephone) true else false
 
   def groupDetailStatusChecker: Boolean =
     if (
-      primaryContactCompleted & secondaryContactCompleted &
-        get(subAddSecondaryContactPage).contains(true) & get(subRegisteredAddressPage).isDefined
+      primaryTelephone &
+        ((get(subAddSecondaryContactPage).contains(true) & secondaryTelephone) | get(subAddSecondaryContactPage).contains(false))
+        & get(subRegisteredAddressPage).isDefined
     ) true
     else false
   def finalStatusCheck: Boolean =
