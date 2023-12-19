@@ -39,13 +39,13 @@ class UpeRegisteredAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeRegisteredAddressFormProvider,
-  CountryOptions:            CountryOptions,
+  val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
+  // val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   val form: Form[UKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
@@ -55,7 +55,7 @@ class UpeRegisteredAddressController @Inject() (
           case Some(value) => form.fill(value)
           case None        => form
         }
-        Ok(view(preparedForm, mode, name, countryList))
+        Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
       .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
@@ -67,7 +67,7 @@ class UpeRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
             value =>
               for {
                 updatedAnswers <-

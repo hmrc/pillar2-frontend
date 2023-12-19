@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.countryOptions.CountryOptions
+import utils.countryOptions.{CountryOptions, CountryOptionsNonUK}
 import views.html.fmview.NfmRegisteredAddressView
 
 import javax.inject.Inject
@@ -38,14 +38,14 @@ class NfmRegisteredAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              NfmRegisteredAddressFormProvider,
-  countryOptions:            CountryOptions,
+  val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form        = formProvider()
-  val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
+  val form = formProvider()
+  // val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(fmNameRegistrationPage)
@@ -54,7 +54,7 @@ class NfmRegisteredAddressController @Inject() (
           case Some(value) => form.fill(value)
           case None        => form
         }
-        Ok(view(preparedForm, mode, name, countryList))
+        Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
       .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
@@ -66,7 +66,7 @@ class NfmRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryList))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
             value =>
               for {
                 updatedAnswers <-

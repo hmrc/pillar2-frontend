@@ -17,6 +17,7 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import utils.InputOption
+@import views.html.components.InputSelect
 
 @this(
     layout: templates.Layout,
@@ -24,11 +25,12 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-        govukSelect: GovukSelect
+    govukSelect: GovukSelect,
+    select: InputSelect,
 )
 
 
-@(form: Form[_], mode: Mode, UserName:String ="", options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("nfmRegisteredAddress.title", UserName ))) {
 
@@ -79,22 +81,16 @@
 
             )
         )
-        @govukSelect(
-            SelectViewModel(
-                field = form("countryCode"),
-                items = Seq(SelectItem(value = Some(""))) ++
-                        options.map(valueOption =>
-                            SelectItem(
-                                value = Some(valueOption.value),
-                                text = valueOption.label
-                            )
-                        ),
-                label = LabelViewModel(messages("nfmRegisteredAddress.country"))
-            ).withCssClass("govuk-input")
-             .withFormGroupClasses("govuk-input--width-20")
-            .withHint(Hint(content = Text(messages("nfmRegisteredAddress.country.hint"))))
-        )
 
+        @select(field = form("countryCode"),
+            label = messages("nfmRegisteredAddress.country"),
+            labelClasses = Set("govuk-heading-l"),
+            labelAsHeading = true,
+            options = countryOptions,
+            placeholder = Some(messages("site.address.country.select")),
+            formGroupClasses = Set("autocomplete-wrapper"),
+            selectAttribute = Map("data-non-uk-countries" -> "")
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
