@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.countryOptions.{CountryOptions, CountryOptionsNonUK}
+import utils.countryOptions.CountryOptions
 import views.html.fmview.NfmRegisteredAddressView
 
 import javax.inject.Inject
@@ -45,7 +45,6 @@ class NfmRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form = formProvider()
-  // val countryList = countryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(fmNameRegistrationPage)

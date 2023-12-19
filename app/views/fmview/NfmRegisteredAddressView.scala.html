@@ -86,7 +86,7 @@
                 name = form("countryCode").name,
                 label = Label(
                     isPageHeading = true,
-                    classes = Set("govuk-heading-l").mkString(" "),
+                    classes = "govuk-heading-l",
                     content = Text(messages("upeRegisteredAddress.country"))
                 ),
                 hint = Some(Hint(content = Text(messages("nfmRegisteredAddress.country.hint")))),
@@ -103,7 +103,7 @@
                                 selected = form("countryCode").value.contains(valueOption.value)
                             )
                         ),
-                formGroupClasses = Set("autocomplete-wrapper").mkString(" "),
+                formGroupClasses = "autocomplete-wrapper",
                 attributes = Map("data-non-uk-countries" -> ""),
                 errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
             )
