@@ -501,14 +501,18 @@ class SubscriptionHelpersSpec extends SpecBase {
     }
 
     "contact detail status" should {
-      "return completed if an answer is provided both pages" in {
+      "return completed if an answer is provided to the right combination of pages" in {
         val userAnswer = emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
+          .setOrException(subPrimaryContactNamePage, "name")
+          .setOrException(subPrimaryEmailPage, "email@hello.com")
+          .setOrException(subPrimaryPhonePreferencePage, true)
+          .setOrException(subPrimaryCapturePhonePage, "123213")
+          .setOrException(subAddSecondaryContactPage, true)
+          .setOrException(subSecondaryContactNamePage, "name")
+          .setOrException(subSecondaryEmailPage, "email@hello.com")
+          .setOrException(subSecondaryPhonePreferencePage, true)
+          .setOrException(subSecondaryCapturePhonePage, "123213")
+          .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
         userAnswer.contactDetailStatus mustEqual RowStatus.Completed
       }
 

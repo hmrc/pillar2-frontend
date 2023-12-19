@@ -104,15 +104,13 @@ trait SubscriptionHelpers {
     }
   }
 
-  def contactDetailStatus: RowStatus = {
-    val first = get(subPrimaryContactNamePage).isDefined
-    val last  = get(subRegisteredAddressPage).isDefined
-    (first, last) match {
-      case (true, true)  => RowStatus.Completed
-      case (true, false) => RowStatus.InProgress
-      case _             => RowStatus.NotStarted
+  def contactDetailStatus: RowStatus =
+    get(subPrimaryContactNamePage) match {
+      case Some(_) if groupDetailStatusChecker => RowStatus.Completed
+      case None                                => RowStatus.NotStarted
+      case _                                   => RowStatus.InProgress
     }
-  }
+
   val primaryTelephone: Boolean =
     get(subPrimaryPhonePreferencePage).map(nominated => if (nominated & get(subPrimaryCapturePhonePage).isEmpty) false else true).getOrElse(false)
 
