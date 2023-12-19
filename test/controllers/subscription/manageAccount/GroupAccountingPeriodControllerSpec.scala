@@ -107,7 +107,9 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        redirectLocation(
+          result
+        ).value mustEqual controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       }
 
     }

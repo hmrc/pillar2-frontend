@@ -18,7 +18,7 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.{EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
+import connectors.{AmendSubscriptionConnector, EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
-import services.{ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import services.{AmendSubscriptionService, ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -63,12 +63,14 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockHttpClient:                                 HttpClient                                 = mock[HttpClient]
   val mockRegistrationConnector:                      RegistrationConnector                      = mock[RegistrationConnector]
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
+  val mockAmendSubscriptionService:                   AmendSubscriptionService                   = mock[AmendSubscriptionService]
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
   val mockTaxEnrolmentsConnector:                     TaxEnrolmentsConnector                     = mock[TaxEnrolmentsConnector]
   val mockRegistration:                               Registration                               = mock[Registration]
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
   val mockReadSubscriptionService:                    ReadSubscriptionService                    = mock[ReadSubscriptionService]
   val mockReadSubscriptionConnector:                  ReadSubscriptionConnector                  = mock[ReadSubscriptionConnector]
+  val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
