@@ -13,7 +13,17 @@ You can use service manage to run all dependent microservices using the command 
 Or you could run this microservice locally using
 
     sbt run
+Test-only route:
 
+    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+To run locally:
+
+Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
+
+
+***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
+
+***Affinity Group: Organisation***
 ## Key Terminologies
 
 ### Ultimate Parent Entity (UPE):
@@ -33,9 +43,7 @@ To run Integration tests:
 
     sbt it:test
 
-Test-only route:
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 
 
 ### License
