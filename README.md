@@ -1,43 +1,39 @@
 
 # pillar2-frontend
+Front-end microservice for Pillar 2  project. Pillar 2 refers to the Global Minimum Tax being introduced by the Organisation for Economic Cooperation and Development (OECD).
 
-This service provides a means for users to ensure that large multinational businesses pay a minimum
-level of corporate income tax (15%) on the profits.
+The Pillar 2 Tax will ensure that global Multinational Enterprises (MNEs) with a turnover of >€750m are subject to a minimum Effective Tax Rate of 15%, i.e. a top-up tax for Medium to Large MNEs.
 
-## Using Service Manager
+## Running the service
 
-You can use service manager to provide assets to the frontend. the PILLAR2_ALL service is responsible for starting up all services required by the tax credits service project.
-This can be start or stop by running:
+You can use service manage to run all dependent microservices using the command below
 
-    sm --start PILLAR2_ALL
-    sm --stop PILLAR2_ALL
+    sm2 --start PILLAR2_ALL
+    sm2 --stop PILLAR2_ALL
+Or you could run this microservice locally using
 
+    sbt run
 
+## Key Terminologies
+
+### Ultimate Parent Entity (UPE):
+An ultimate parent is not a subsidiary of any other company and has a controlling interest in one or more other entities.
+### Nominated Filing Member (NFM):
+The nominated filing member is responsible for managing the group's tax returns and keeping business records.
 ## Integration and unit tests
 
 To run the unit tests:
 
-    Run 'sbt test' from within the project
+    Run 'sbt test' from directory the project is stored in
 
 To check code coverage:
 
     sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport 
+To run Integration tests:
 
+    sbt it:test
 
-### Eligibility question
-
-Eligibility questions journey start  with this url '/eligibility/group-in-multiple-territories' and there are four different questions to check eligibility.
-User does not need to be authenticated for this journey.
-
-Endpoint to start eligibility questions.
-
-    /eligibility/group-in-multiple-territories
-
-
-if all question asked in this journey answered with 'yes' then this mean you need to pay Global Minimum Tax, User will be redirected to  HMRC online services to register.
-
-
-To use testonly route locally .
+Test-only route:
 
     sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 
