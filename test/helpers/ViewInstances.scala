@@ -105,7 +105,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     hmrcTimeoutDilogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     hmrcScripts,
-    new StandardBetaBanner
+    new StandardBetaBanner,
+    new Stylesheets
   )
 
   val viewGroupTerritories: GroupTerritoriesView =

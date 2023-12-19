@@ -17,7 +17,6 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import utils.InputOption
-@import views.html.components.InputSelect
 
 @this(
     layout: templates.Layout,
@@ -25,8 +24,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    govukSelect: GovukSelect,
-    select: InputSelect,
+    govukSelect: GovukSelect
 )
 
 
@@ -84,54 +82,33 @@
             .withHint(Hint(content = Text(messages("subscriptionAddress.postcode.hint"))).withCssClass("govuk-input--width-30"))
         )
 
-@*
-        @govukSelect(
-            SelectViewModel(
-                field = form("countryCode"),
-                items = Seq(SelectItem(value = Some(""))) ++
-                options.map (valueOption =>
-                    SelectItem (
-                        value = Some(valueOption.value),
-                        text = valueOption.label
-                    )
-                ),
-                label = LabelViewModel(messages("subscriptionAddress.country"))
-            ).withCssClass("govuk-input")
-            .withFormGroupClasses("govuk-input--width-20")
-            .withHint(Hint(content = Text(messages("subscriptionAddress.country.hint"))))
-        )
-
         @govukSelect(
             Select(
-                id = field.id,
-                name = field.name,
-                label = Label(isPageHeading = labelAsHeading,
-                classes = labelClasses.mkString(" "),
-                content = Text(label)
-            ),
-            hint = if(hint.isDefined) Some(Hint(content = Text(hint.get))) else None,
-            items = Seq(SelectItem(value = Some(""), text = placeholder.getOrElse(""))) ++
-            options.map(valueOption =>
-                SelectItem(
-                    value = Some(valueOption.value),
-                    text = valueOption.label,
-                    selected = field.value.contains(valueOption.value)
-                )
-            ),
-            formGroupClasses = formGroupClasses.mkString(" "),
-            attributes = selectAttribute,
-            errorMessage = field.error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
-        ))
-*@
-
-        @select(field = form("countryCode"),
-            label = messages("subscriptionAddress.country"),
-            labelClasses = Set("govuk-heading-l"),
-            labelAsHeading = true,
-            options = countryOptions,
-            placeholder = Some(messages("site.address.country.select")),
-            formGroupClasses = Set("autocomplete-wrapper"),
-            selectAttribute = Map("data-non-uk-countries" -> "")
+                id = form("countryCode").id,
+                name = form("countryCode").name,
+                label = Label(
+                    isPageHeading = true,
+                    classes = Set("govuk-heading-l").mkString(" "),
+                    content = Text(messages("subscriptionAddress.country"))
+                ),
+                hint = Some(Hint(content = Text(messages("subscriptionAddress.country.hint")))),
+                items = Seq(
+                            SelectItem(
+                                value = Some(""),
+                                text = messages("site.address.country.select")
+                            )
+                        ) ++
+                        countryOptions.map(valueOption =>
+                            SelectItem(
+                                value = Some(valueOption.value),
+                                text = valueOption.label,
+                                selected = form("countryCode").value.contains(valueOption.value)
+                            )
+                        ),
+                formGroupClasses = Set("autocomplete-wrapper").mkString(" "),
+                attributes = Map("data-non-uk-countries" -> ""),
+                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+            )
         )
 
         @govukButton(
