@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+
 @this(
     layout: templates.Layout,
     govukButton: GovukButton
@@ -31,7 +32,7 @@
 
 
             <p class="govuk-body">
-                <a> @messages("tasklist.incomplete.message")</a>
+                 @messages("tasklist.incomplete.message")
             <a href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax " class="govuk-link govuk-link--no-visited-state"> @messages("tasklist.incomplete.link")</a>
             </p>
 
