@@ -19,12 +19,13 @@ package services
 import connectors.SubscriptionConnector
 import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import models.{ApiError, SubscriptionCreateError}
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
+class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) extends Logging {
 
   def checkAndCreateSubscription(id: String, regSafeId: String, fmSafeId: Option[String])(implicit
     hc:                              HeaderCarrier,
@@ -33,6 +34,9 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     //We may need to check Read Subscription here.
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
       case Some(subscriptionSuccessResponse) =>
+        logger.info(
+          s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} with reference ${subscriptionSuccessResponse.plrReference}"
+        )
         Right(subscriptionSuccessResponse)
       case None =>
         Left(SubscriptionCreateError)
