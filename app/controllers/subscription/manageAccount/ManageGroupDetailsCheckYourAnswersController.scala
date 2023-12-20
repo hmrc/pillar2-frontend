@@ -61,9 +61,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
-        userAnswersConnectors.remove(request.userId)
-        logger.info(s"Redirecting to Dashboard from group details ")
-        Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+        userAnswersConnectors.remove(request.userId).map { _ =>
+          logger.info(s"Redirecting to Dashboard from group details ")
+          Redirect(controllers.routes.DashboardController.onPageLoad)
+        }
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 

@@ -141,14 +141,13 @@ trait RegisterAndSubscribe extends Logging {
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
-            userAnswersConnectors.remove(request.userId)
-            logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
-            Future.successful(
+            userAnswersConnectors.remove(request.userId).map { _ =>
+              logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
                   + (Pillar2SessionKeys.plrId -> successResponse.plrReference)
               )
-            )
+            }
           case Left(EnrolmentCreationError) =>
             logger.warn(s"Encountered EnrolmentCreationError. Redirecting to ErrorController.")
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
