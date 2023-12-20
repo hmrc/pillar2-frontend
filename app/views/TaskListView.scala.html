@@ -62,42 +62,71 @@
                         }
                     </li>
                     @if(ultimateParentStatus == "Completed"){
-                    <li class="app-task-list__item">
-                         <span class="app-task-list__task-name">
-                             @if(filingMemberStatus == "Completed"){
+                        <li class="app-task-list__item">
+                            <span class="app-task-list__task-name">
                                 <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
-                                @messages("taskList.task.business.filingMember.edit")
+                                @if(filingMemberStatus == "Completed"){
+                                    @messages("taskList.task.business.filingMember.edit")
+                                } else {
+                                    @messages("taskList.task.business.filingMember.add")
+                                }
                                 </a>
-                            } else {
+                            </span>
+                            @if(filingMemberStatus == "Completed"){
+                                <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                            } else if(filingMemberStatus == "InProgress") {
+                            <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                            } else  {
+                            <span class="hmrc-status-tag"  id="submit-pay-status-co">
+                            @messages("task.status.notStarted")</span>
+                            }
+                        </li>
+                    } else {
+                        <li class="app-task-list__item">
+                            <span class="app-task-list__task-name">
+                                @if(filingMemberStatus == "Completed") {
+                                    <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
+                                    @messages("taskList.task.business.filingMember.edit")
+                                    </a>
+                                } else if(filingMemberStatus == "InProgress") {
                                 <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
                                 @messages("taskList.task.business.filingMember.add")
                                 </a>
-                            }
-                        </span>
-                        @if(filingMemberStatus == "Completed"){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"  id="submit-pay-status-co">
-                            @messages("task.status.notStarted")</span>
-                        }
-                    </li>
-                    } else{
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            @messages("taskList.task.business.filingMember")
-                        </span>
-                        @if(filingMemberStatus == "Completed"){
-                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
-                        <span class="hmrc-status-tag" id="submit-pay-status-uc">
+                                } else {
+                                <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
+                                @messages("taskList.task.business.filingMember")
+                                </a>
+                                }
+                            </span>
+                            @if(filingMemberStatus == "Completed") {
+                                <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
+                            } else if(filingMemberStatus == "InProgress") {
+                            <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
+                            } else {
+                            <span class="hmrc-status-tag" id="submit-pay-status-uc">
                             @messages("task.status.cannotStartYet")</span>
-                        }
-                    </li>
+                            }
+                        </li>
                     }
+
+
+                    @*                    else{*@
+@*                        <li class="app-task-list__item">*@
+@*                            <span class="app-task-list__task-name">*@
+@*                                <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">*@
+@*                                @messages("taskList.task.business.filingMember")*@
+@*                                </a>*@
+@*                            </span>*@
+@*                            @if(filingMemberStatus == "Completed"){*@
+@*                                <span class="hmrc-status-tag" > @messages("task.status.completed") </span>*@
+@*                            } else if(filingMemberStatus == "InProgress") {*@
+@*                            <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>*@
+@*                            } else  {*@
+@*                            <span class="hmrc-status-tag" id="submit-pay-status-uc">*@
+@*                            @messages("task.status.cannotStartYet")</span>*@
+@*                            }*@
+@*                        </li>*@
+@*                    }*@
 
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
