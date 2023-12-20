@@ -78,8 +78,8 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.postcode"))
             )
                     .withWidth(Fixed10)
-                    .withHint(Hint(content = Text(messages("upeRegisteredAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
                     .withAutocomplete("postal-code")
+                    .withHint(Hint(content = Text(messages("upeRegisteredAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
         )
 
             @govukSelect(
