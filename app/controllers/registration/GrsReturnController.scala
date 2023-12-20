@@ -52,14 +52,8 @@ class GrsReturnController @Inject() (
     request.userAnswers
       .get(upeEntityTypePage)
       .map {
-        case EntityType.UkLimitedCompany =>
-          logger.info("UK Limited Company - Entity type selected")
-          upeLimited(request, journeyId)
-
-        case EntityType.LimitedLiabilityPartnership =>
-          logger.info("Limited liability partnership - Entity type selected")
-          upePartnership(request, journeyId)
-
+        case EntityType.UkLimitedCompany            => upeLimited(request, journeyId)
+        case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)))
 
@@ -83,11 +77,27 @@ class GrsReturnController @Inject() (
               userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
               -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
 
-            } yield handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent)
+            } yield handleGrsAndBvResult(
+              data.identifiersMatch,
+              data.businessVerification,
+              data.registration,
+              JourneyType.UltimateParent,
+              journeyId,
+              EntityType.UkLimitedCompany
+            )
           }
           .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       } else {
-        Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent))
+        Future.successful(
+          handleGrsAndBvResult(
+            data.identifiersMatch,
+            data.businessVerification,
+            data.registration,
+            JourneyType.UltimateParent,
+            journeyId,
+            EntityType.UkLimitedCompany
+          )
+        )
       }
     }
 
@@ -112,12 +122,23 @@ class GrsReturnController @Inject() (
             data.identifiersMatch,
             data.businessVerification,
             data.registration,
-            JourneyType.UltimateParent
+            JourneyType.UltimateParent,
+            journeyId,
+            EntityType.LimitedLiabilityPartnership
           )
         }
       }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       else {
-        Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent))
+        Future.successful(
+          handleGrsAndBvResult(
+            data.identifiersMatch,
+            data.businessVerification,
+            data.registration,
+            JourneyType.UltimateParent,
+            journeyId,
+            EntityType.LimitedLiabilityPartnership
+          )
+        )
       }
     }
 
@@ -137,11 +158,27 @@ class GrsReturnController @Inject() (
                     userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
                     -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
 
-                  } yield handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.UltimateParent)
+                  } yield handleGrsAndBvResult(
+                    data.identifiersMatch,
+                    data.businessVerification,
+                    data.registration,
+                    JourneyType.FilingMember,
+                    journeyId,
+                    EntityType.UkLimitedCompany
+                  )
                 }
                 .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
-              Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.FilingMember))
+              Future.successful(
+                handleGrsAndBvResult(
+                  data.identifiersMatch,
+                  data.businessVerification,
+                  data.registration,
+                  JourneyType.FilingMember,
+                  journeyId,
+                  EntityType.UkLimitedCompany
+                )
+              )
             }
           }
         case EntityType.LimitedLiabilityPartnership =>
@@ -156,11 +193,27 @@ class GrsReturnController @Inject() (
                     userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
                     -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
 
-                  } yield handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.FilingMember)
+                  } yield handleGrsAndBvResult(
+                    data.identifiersMatch,
+                    data.businessVerification,
+                    data.registration,
+                    JourneyType.FilingMember,
+                    journeyId,
+                    EntityType.LimitedLiabilityPartnership
+                  )
                 }
                 .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
-              Future.successful(handleGrsAndBvResult(data.identifiersMatch, data.businessVerification, data.registration, JourneyType.FilingMember))
+              Future.successful(
+                handleGrsAndBvResult(
+                  data.identifiersMatch,
+                  data.businessVerification,
+                  data.registration,
+                  JourneyType.FilingMember,
+                  journeyId,
+                  EntityType.LimitedLiabilityPartnership
+                )
+              )
             }
           }
       }
@@ -172,16 +225,22 @@ class GrsReturnController @Inject() (
     identifiersMatch: Boolean,
     bvResult:         Option[BusinessVerificationResult],
     grsResult:        GrsRegistrationResult,
-    journeyType:      JourneyType
+    journeyType:      JourneyType,
+    journeyId:        String,
+    entityType:       EntityType
   ): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
+        logger.info(s"Filing Member Business Verification failed for $entityType with journey ID $journeyId")
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
+        logger.info(s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId")
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
       case (true, _, _, Some(_)) =>
+        logger.info(s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list")
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
+        logger.info(s"$journeyType registration failed for $entityType with journey ID $journeyId")
         (grsResult.failures, journeyType) match {
           case (_, JourneyType.FilingMember) =>
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)
