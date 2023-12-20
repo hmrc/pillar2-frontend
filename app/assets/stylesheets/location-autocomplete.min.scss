@@ -7,12 +7,6 @@
   font-family: $govuk-font-family;
 }
 
-// Makes the autocomplete dropdown arrow visible
-.autocomplete__wrapper .autocomplete__dropdown-arrow-down {
-  z-index: 0;
-  pointer-events: none;
-}
-
 // Ensure if there is a server error on render, then the input has a red border until focused
 .govuk-form-group--error .autocomplete__wrapper input {
   border: 2px solid $govuk-error-colour;
