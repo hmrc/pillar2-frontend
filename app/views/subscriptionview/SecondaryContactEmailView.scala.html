@@ -46,7 +46,7 @@
             )
             .withHint(Hint(content = Text(messages("secondaryContactEmail.hint"))))
             .withWidth(TwoThirds)
-            .withInputType("email")
+            .asEmail()
         )
 
         @govukButton(
