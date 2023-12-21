@@ -287,11 +287,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(
           bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
         )
         .build()
       running(application) {
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(response)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         when(mockTaxEnrolmentService.checkAndCreateEnrolment(any())(any(), any())).thenReturn(Future.successful(Right(OK)))
 
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
