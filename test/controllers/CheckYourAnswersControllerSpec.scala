@@ -31,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.http.HttpResponse
 import utils.{Pillar2SessionKeys, RowStatus}
 import viewmodels.govuk.SummaryListFluency
 
@@ -283,7 +284,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswer = defaultUserAnswer
         .setOrException(subPrimaryPhonePreferencePage, false)
         .setOrException(subAddSecondaryContactPage, false)
-
+      val mockHttpResponse = HttpResponse(OK, "")
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(
           bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -293,7 +294,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         .build()
       running(application) {
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(response)))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future)
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
         when(mockTaxEnrolmentService.checkAndCreateEnrolment(any())(any(), any())).thenReturn(Future.successful(Right(OK)))
 
         val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
