@@ -72,7 +72,8 @@
                 field = form("addressLine4"),
                 label = LabelViewModel(messages("subscriptionAddress.region"))
         )
-              .withWidth(TwoThirds)
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level1")
           )
         @govukInput(
             InputViewModel(
