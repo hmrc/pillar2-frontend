@@ -127,9 +127,8 @@ class CheckYourAnswersController @Inject() (
     val upeRegInfo = request.userAnswers.getUpRegData
     val fmSafeID   = request.userAnswers.getFmSafeID
     (upeRegInfo, fmSafeID) match {
-      case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
-      case _                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case (Right(upe), Right(s)) if request.userAnswers.finalStatusCheck => createRegistrationAndSubscription(upe, s)
+      case _ => Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
-
 }

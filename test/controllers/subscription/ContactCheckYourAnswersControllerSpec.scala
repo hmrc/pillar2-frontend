@@ -34,6 +34,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(subPrimaryEmailPage, "email@hello.com")
     .setOrException(subPrimaryPhonePreferencePage, true)
     .setOrException(subPrimaryCapturePhonePage, "123213")
+    .setOrException(subAddSecondaryContactPage, true)
     .setOrException(subSecondaryContactNamePage, "name")
     .setOrException(subSecondaryEmailPage, "email@hello.com")
     .setOrException(subSecondaryPhonePreferencePage, true)
