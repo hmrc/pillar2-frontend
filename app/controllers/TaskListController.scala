@@ -54,26 +54,17 @@ class TaskListController @Inject() (
     }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val upeStatus            = request.userAnswers.upeStatus
-    val fmStatus             = request.userAnswers.fmStatus
-    val groupDetailStatus    = request.userAnswers.groupDetailStatus
-    val contactDetailsStatus = request.userAnswers.contactDetailStatus
+    val upeStatus             = request.userAnswers.upeStatus
+    val fmStatus              = request.userAnswers.fmStatus
+    val groupDetailStatus     = request.userAnswers.groupDetailStatus
+    val contactDetailsStatus  = request.userAnswers.contactDetailStatus
+    val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
 
-    // Calculate the CYA status using the previously calculated string
-    val reviewAndSubmitStatusString = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
-
-    // Get status messages for each section
-    val ultimateParentStatusMessage = getStatusMessage(upeStatus)
-    val filingMemberStatusMessage   = getStatusMessage(fmStatus)
-    val groupDetailsStatusMessage   = getStatusMessage(groupDetailStatus)
-    val contactDetailsStatusMessage = getStatusMessage(contactDetailsStatus)
-    val cyaSectionStatusMessage     = getCyaStatusMessage(reviewAndSubmitStatusString) // Use the calculated status string here
-
-    logger.info(s"ultimateParentStatusMessage: $ultimateParentStatusMessage")
-    logger.info(s"filingMemberStatusMessage: $filingMemberStatusMessage")
-    logger.info(s"groupDetailsStatusMessage: $groupDetailsStatusMessage")
-    logger.info(s"contactDetailsStatusMessage: $contactDetailsStatusMessage")
-    logger.info(s"cyaSectionStatusMessage: $cyaSectionStatusMessage")
+    logger.info(s"upeStatus: ${upeStatus.toString}")
+    logger.info(s"fmStatus: ${fmStatus.toString}")
+    logger.info(s"groupDetailStatus: ${groupDetailStatus.toString}")
+    logger.info(s"contactDetailsStatus: ${contactDetailsStatus.toString}")
+    logger.info(s"reviewAndSubmitStatus: $reviewAndSubmitStatus")
 
     // Calculate the number of completed sections
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
@@ -82,12 +73,12 @@ class TaskListController @Inject() (
     // Render the view with the required parameters
     Ok(
       view(
-        ultimateParentStatusMessage,
+        upeStatus.toString,
         count,
-        filingMemberStatusMessage,
-        groupDetailsStatusMessage,
-        contactDetailsStatusMessage,
-        cyaSectionStatusMessage
+        fmStatus.toString,
+        groupDetailStatus.toString,
+        contactDetailsStatus.toString,
+        reviewAndSubmitStatus
       )
     )
   }
