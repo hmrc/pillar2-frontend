@@ -28,6 +28,8 @@ import views.html.TaskListView
 
 import javax.inject.Inject
 
+case class TaskInfo(name: String, status: String, link: Option[String])
+
 class TaskListController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
@@ -39,19 +41,77 @@ class TaskListController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getStatusMessage(status: RowStatus)(implicit messages: Messages): String = status match {
-    case RowStatus.Completed  => messages("task.status.completed")
-    case RowStatus.InProgress => messages("task.status.inProgress")
-    case RowStatus.NotStarted => messages("task.status.notStarted")
-    case _                    => messages("task.status.cannotStartYet") // For other cases, such as "Cannot start yet"
-  }
+//  private def getStatusMessage(status: RowStatus)(implicit messages: Messages): String = status match {
+//    case RowStatus.Completed  => messages("task.status.completed")
+//    case RowStatus.InProgress => messages("task.status.inProgress")
+//    case RowStatus.NotStarted => messages("task.status.notStarted")
+//    case _                    => messages("task.status.cannotStartYet") // For other cases, such as "Cannot start yet"
+//  }
+//
+//  private def getCyaStatusMessage(status: String)(implicit messages: Messages): String =
+//    status match {
+//      case "Completed"  => Messages("task.status.completed")
+//      case "InProgress" => Messages("task.status.inProgress")
+//      case _            => Messages("task.status.notStarted") // Adjust for "Cannot start yet"
+//    }
 
-  private def getCyaStatusMessage(status: String)(implicit messages: Messages): String =
-    status match {
-      case "Completed"  => Messages("task.status.completed")
-      case "InProgress" => Messages("task.status.inProgress")
-      case _            => Messages("task.status.notStarted") // Adjust for "Cannot start yet"
+  private def buildTaskInfo(
+    ultimateParentStatus: String,
+    filingMemberStatus:   String,
+    groupDetailStatus:    String,
+    contactDetailsStatus: String,
+    cyaStatus:            String
+  ): (TaskInfo, TaskInfo, TaskInfo, TaskInfo, TaskInfo) = {
+    val ultimateParentInfo = if (ultimateParentStatus == "Completed") {
+      TaskInfo("ultimateParent", "completed", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
+    } else if (ultimateParentStatus == "InProgress") {
+      TaskInfo("ultimateParent", "inProgress", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
+    } else {
+      TaskInfo("ultimateParent", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
     }
+
+    val filingMemberInfo = if (ultimateParentStatus == "Completed") {
+      if (filingMemberStatus == "Completed") {
+        TaskInfo("filingMember", "completed", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
+      } else {
+        TaskInfo("filingMember", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
+      }
+    } else {
+      TaskInfo("filingMember", "cannotStartYet", None)
+    }
+
+    val groupDetailInfo = if (filingMemberStatus == "Completed") {
+      if (groupDetailStatus == "Completed") {
+        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+      } else {
+        TaskInfo("groupDetail", "notStarted", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+      }
+    } else {
+      TaskInfo("groupDetail", "cannotStartYet", None)
+    }
+
+    val contactDetailsInfo = if (groupDetailStatus == "Completed") {
+      if (contactDetailsStatus == "Completed") {
+        TaskInfo("contactDetails", "completed", Some("/report-pillar2-top-up-taxes/contact-details/content"))
+      } else {
+        TaskInfo("contactDetails", "notStarted", Some("/report-pillar2-top-up-taxes/contact-details/content"))
+      }
+    } else {
+      TaskInfo("contactDetails", "cannotStartYet", None)
+    }
+
+    val cyaInfo = if (contactDetailsStatus == "Completed") {
+      if (cyaStatus == "Completed") {
+        TaskInfo("cya", "completed", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
+      } else {
+        TaskInfo("cya", "notStarted", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
+      }
+    } else {
+      TaskInfo("cya", "cannotStartYet", None)
+    }
+
+    (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
+  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val upeStatus             = request.userAnswers.upeStatus
@@ -59,6 +119,14 @@ class TaskListController @Inject() (
     val groupDetailStatus     = request.userAnswers.groupDetailStatus
     val contactDetailsStatus  = request.userAnswers.contactDetailStatus
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
+
+    val (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo) = buildTaskInfo(
+      request.userAnswers.upeStatus.toString,
+      request.userAnswers.fmStatus.toString,
+      request.userAnswers.groupDetailStatus.toString,
+      request.userAnswers.contactDetailStatus.toString,
+      reviewAndSubmitStatus
+    )
 
     logger.info(s"upeStatus: ${upeStatus.toString}")
     logger.info(s"fmStatus: ${fmStatus.toString}")
@@ -73,12 +141,12 @@ class TaskListController @Inject() (
     // Render the view with the required parameters
     Ok(
       view(
-        upeStatus.toString,
+        ultimateParentInfo,
         count,
-        fmStatus.toString,
-        groupDetailStatus.toString,
-        contactDetailsStatus.toString,
-        reviewAndSubmitStatus
+        filingMemberInfo,
+        groupDetailInfo,
+        contactDetailsInfo,
+        cyaInfo
       )
     )
   }
