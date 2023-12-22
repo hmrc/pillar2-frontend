@@ -28,7 +28,7 @@
 )
 
 
-@(form: Form[_], mode: Mode, options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
@@ -72,39 +72,52 @@
             InputViewModel(
                 field = form("addressLine4"),
                 label = LabelViewModel(messages("subscriptionAddress.region"))
-        )
+            )
             .withWidth(TwoThirds)
             .withAutocomplete("address-level1")
           )
+
         @govukInput(
             InputViewModel(
-             field = form("postalCode"),
-             label = LabelViewModel(messages("subscriptionAddress.postcode"))
-          )
+                field = form("postalCode"),
+                label = LabelViewModel(messages("subscriptionAddress.postcode"))
+            )
             .withWidth(Fixed10)
             .withAutocomplete("postal-code")
             .withHint(Hint(content = Text(messages("subscriptionAddress.postcode.hint"))).withCssClass("govuk-input--width-30"))
-            )
-
+        )
 
         @govukSelect(
-        SelectViewModel(
-        field = form("countryCode"),
-        items = Seq(SelectItem(value = Some(""))) ++
-        options.map(valueOption =>
-        SelectItem(
-        value = Some(valueOption.value),
-        text = valueOption.label
-        )
-        ),
-        label = LabelViewModel(messages("subscriptionAddress.country"))
-        ).withCssClass("govuk-input")
-        .withFormGroupClasses("govuk-input--width-20")
-        .withHint(Hint(content = Text(messages("subscriptionAddress.country.hint"))))
+            Select(
+                id = form("countryCode").id,
+                name = form("countryCode").name,
+                label = Label(
+                    isPageHeading = true,
+                    classes = "govuk-heading-l",
+                    content = Text(messages("subscriptionAddress.country"))
+                ),
+                hint = Some(Hint(content = Text(messages("subscriptionAddress.country.hint")))),
+                items = Seq(
+                            SelectItem(
+                                value = Some(""),
+                                text = messages("site.address.country.select")
+                            )
+                        ) ++
+                        countryOptions.map(valueOption =>
+                            SelectItem(
+                                value = Some(valueOption.value),
+                                text = valueOption.label,
+                                selected = form("countryCode").value.contains(valueOption.value)
+                            )
+                        ),
+                formGroupClasses = "autocomplete-wrapper",
+                attributes = Map("data-non-uk-countries" -> ""),
+                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+            )
         )
 
         @govukButton(
-        ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue"))
         )
-        }
-        }
+    }
+}

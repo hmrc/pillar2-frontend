@@ -18,6 +18,7 @@ package forms.mappings
 
 import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 
 trait Constraints {
@@ -25,7 +26,7 @@ trait Constraints {
   val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
-  protected def country(countryOptions: CountryOptions, errorKey: String): Constraint[String] =
+  protected def country(countryOptions: CountryOptions, errorKey: String)(implicit messages: Messages): Constraint[String] =
     Constraint { input =>
       countryOptions.options
         .find(_.value == input)

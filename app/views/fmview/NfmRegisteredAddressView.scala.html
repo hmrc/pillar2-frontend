@@ -24,11 +24,11 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-        govukSelect: GovukSelect
+    govukSelect: GovukSelect
 )
 
 
-@(form: Form[_], mode: Mode, UserName:String ="", options: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("nfmRegisteredAddress.title", UserName ))) {
 
@@ -83,22 +83,35 @@
             .withHint(Hint(content = Text(messages("nfmRegisteredAddress.postcode.hint"))).withCssClass("govuk-input--width-20")
             )
         )
+
         @govukSelect(
-            SelectViewModel(
-                field = form("countryCode"),
-                items = Seq(SelectItem(value = Some(""))) ++
-                        options.map(valueOption =>
+            Select(
+                id = form("countryCode").id,
+                name = form("countryCode").name,
+                label = Label(
+                    isPageHeading = true,
+                    classes = "govuk-heading-l",
+                    content = Text(messages("nfmRegisteredAddress.country"))
+                ),
+                hint = Some(Hint(content = Text(messages("nfmRegisteredAddress.country.hint")))),
+                items = Seq(
+                            SelectItem(
+                                value = Some(""),
+                                text = messages("site.address.country.select")
+                            )
+                        ) ++
+                        countryOptions.map(valueOption =>
                             SelectItem(
                                 value = Some(valueOption.value),
-                                text = valueOption.label
+                                text = valueOption.label,
+                                selected = form("countryCode").value.contains(valueOption.value)
                             )
                         ),
-                label = LabelViewModel(messages("nfmRegisteredAddress.country"))
-            ).withCssClass("govuk-input")
-             .withFormGroupClasses("govuk-input--width-20")
-            .withHint(Hint(content = Text(messages("nfmRegisteredAddress.country.hint"))))
+                formGroupClasses = "autocomplete-wrapper",
+                attributes = Map("data-non-uk-countries" -> ""),
+                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+            )
         )
-
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
