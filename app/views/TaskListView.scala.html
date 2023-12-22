@@ -51,6 +51,7 @@
                         <a href="/report-pillar2-top-up-taxes/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
                         @messages("taskList.task.business.ultimate.add")
                         </a>
+
                     }
                     </span>
                     @if(ultimateParentStatus == "Completed"){
@@ -84,19 +85,6 @@
                         }
                     </li>
                 } else{
-@*                    <li class="app-task-list__item">*@
-@*                        <span class="app-task-list__task-name">*@
-@*                        @messages("taskList.task.business.filingMember")*@
-@*                        </span>*@
-@*                        @if(filingMemberStatus == "Completed"){*@
-@*                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>*@
-@*                        } else if(filingMemberStatus == "InProgress") {*@
-@*                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>*@
-@*                        } else  {*@
-@*                        <span class="hmrc-status-tag" id="submit-pay-status-uc">*@
-@*                        @messages("task.status.cannotStartYet")</span>*@
-@*                        }*@
-@*                    </li>*@
 
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
@@ -104,6 +92,9 @@
                             <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
                             @messages("taskList.task.business.filingMember.edit")
                             </a>
+
+                        } else if(filingMemberStatus == "NotStarted") {
+                            @messages("taskList.task.business.filingMember")
                         } else {
                             <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
                             @messages("taskList.task.business.filingMember.add")
@@ -172,6 +163,10 @@
                         <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
                         @messages("taskList.task.contact.add")
                         </a>
+                        } else if (filingMemberStatus == "InProgress" && groupDetailStatus=="Completed" &&  contactDetailsStatus=="Completed"){
+                        <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
+                        @messages("taskList.task.contact.edit")
+                        </a>
                         } else {
                         @messages("taskList.task.contact")
                         }
@@ -182,6 +177,8 @@
                     <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
                     } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
                     <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
+                    } else if(filingMemberStatus == "InProgress" && groupDetailStatus == "Completed" && contactDetailsStatus == "Completed") {
+                    <span class="hmrc-status-tag"> @messages("task.status.completed") </span>
                     } else  {
                     <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
                     }
