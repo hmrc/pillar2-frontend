@@ -21,6 +21,7 @@ import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
+import services.audit.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -38,8 +39,9 @@ trait PartnershipIdentificationFrontendConnector {
 }
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:  FrontendAppConfig,
-  httpClient: HttpClient
+  appConfig:    FrontendAppConfig,
+  httpClient:   HttpClient,
+  auditService: AuditService
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
@@ -52,19 +54,24 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
     val serviceName = ServiceName()
-
-    httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-      s"$apiUrl/limited-liability-partnership-journey",
-      IncorporatedEntityCreateRegistrationRequest(
-        continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
-        businessVerificationCheck = appConfig.partnershipBvEnabled,
-        optServiceName = Some(serviceName.en.optServiceName),
-        deskProServiceId = appConfig.appName,
-        signOutUrl = appConfig.signOutUrl,
-        accessibilityUrl = appConfig.accessibilityStatementPath,
-        labels = serviceName
-      )
+    val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
+      continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
+      businessVerificationCheck = appConfig.partnershipBvEnabled,
+      optServiceName = Some(serviceName.en.optServiceName),
+      deskProServiceId = appConfig.appName,
+      signOutUrl = appConfig.signOutUrl,
+      accessibilityUrl = appConfig.accessibilityStatementPath,
+      labels = serviceName
     )
+
+    val response = httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
+      s"$apiUrl/limited-liability-partnership-journey",
+      registrationRequest
+    )
+    response.map { res =>
+      auditService.auditGrsForLLP(registrationRequest, res)
+    }
+    response
   }
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
