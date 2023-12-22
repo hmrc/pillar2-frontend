@@ -30,14 +30,15 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcScripts: HmrcScripts,
-        betaBanner: StandardBetaBanner
+    betaBanner: StandardBetaBanner,
+    stylesheets: Stylesheets
 )
 
 @(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
     @headBlock.getOrElse(Html(""))
-    <link href="@routes.Assets.versioned("stylesheets/application.css")" media="all" rel="stylesheet" type="text/css"@CSPNonce.get.map {n=> nonce="@n"} />
+    @stylesheets()
 }
 
 @additionalScripts = {

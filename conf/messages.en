@@ -12,6 +12,8 @@ site.signIn = Sign in
 site.govuk = GOV.UK
 site.save-and-continue= Save and continue
 site.manage.save-and-continue =  Save and return to homepage
+site.address.country.select = Select a country
+
 date.day = Day
 date.month = Month
 date.year = Year
@@ -66,6 +68,7 @@ upeRegisteredAddress.region = Region (optional)
 upeRegisteredAddress.postcode = Postal code
 upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 upeRegisteredAddress.country = Country
+upeRegisteredAddress.country.hint = Enter text and then choose from the list
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
 upeRegisteredAddress.town_city.error.required = Enter the town or city
 upeRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
@@ -364,8 +367,7 @@ nfmRegisteredAddress.messages.error.addressLine1.length = The first line of the 
 nfmRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
 nfmRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
-nfmRegisteredAddress.country = Country
-
+nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
 
 nfmEntityType.title = What entity type is the nominated filing member?
 nfmEntityType.heading = What entity type is the nominated filing member?
@@ -396,9 +398,6 @@ nfmEmailAddress.error.length = The email address should be 132 characters or les
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
-nfmRegisteredAddress.country.hint = Choose from the list
-nfmRegisteredAddress.checkYourAnswersLabel = Address
-nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
 nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden =  the name of the nominated filing member
 
@@ -637,7 +636,7 @@ subscriptionAddress.messages.error.addressLine1.invalid = The first line of the 
 subscriptionAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 subscriptionAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.country = Country
-subscriptionAddress.country.hint = Choose from the list
+subscriptionAddress.country.hint = Enter text and then choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
 

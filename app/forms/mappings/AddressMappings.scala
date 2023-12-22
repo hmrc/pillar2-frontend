@@ -18,6 +18,7 @@ package forms.mappings
 
 import play.api.data.Forms.of
 import play.api.data.{FieldMapping, Mapping}
+import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 
 trait AddressMappings extends Mappings with Constraints with Transforms {
@@ -37,7 +38,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
   ): FieldMapping[String] =
     of(mandatoryPostcodeFormatter(requiredKey, invalidKey, nonUkLengthKey, countryFieldName))
 
-  def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String): Mapping[String] =
+  def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String)(implicit messages: Messages): Mapping[String] =
     text(keyRequired)
       .verifying(country(countryOptions, keyInvalid))
 
