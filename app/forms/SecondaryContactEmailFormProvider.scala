@@ -26,7 +26,7 @@ class SecondaryContactEmailFormProvider @Inject() extends Mappings {
   val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
   def apply(userName: String): Form[String] =
     Form(
-      "value" -> text("secondaryContactEmail.error.required", Seq(userName))
+      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
         .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
         .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
     )
