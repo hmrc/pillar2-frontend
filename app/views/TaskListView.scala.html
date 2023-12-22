@@ -33,12 +33,14 @@
     <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
 
     <ol class="app-task-list">
+            <!-- Business Section -->
         <li>
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">1. </span>
                 @messages("taskList.task.business.heading")
             </h2>
             <ul class="app-task-list__items">
+                    <!-- Ultimate Parent Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @ultimateParentInfo.link.map { link =>
@@ -50,10 +52,11 @@
                     <span class="hmrc-status-tag">@messages(s"task.status.${ultimateParentInfo.status}")</span>
                 </li>
 
+                    <!-- Filing Member Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @filingMemberInfo.link.map { link =>
-                    <a href="@link" aria-describedby="nfm-status">@messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status == "Completed") "edit" else "add"}")</a>
+                    <a href="@link" aria-describedby="nfm-status">@messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status == "Completed") "edit" else if(filingMemberInfo.status == "CannotStartYet") "default" else "add"}")</a>
                     }.getOrElse {
                         @messages("taskList.task.business.filingMember")
                     }
@@ -61,10 +64,11 @@
                     <span class="hmrc-status-tag">@messages(s"task.status.${filingMemberInfo.status}")</span>
                 </li>
 
+                    <!-- Group Detail Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @groupDetailInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.business.sub.${if(groupDetailInfo.status == "Completed") "edit" else "add"}")</a>
+                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.business.sub.${if(groupDetailInfo.status == "Completed") "edit" else if(groupDetailInfo.status == "CannotStartYet") "default" else "add"}")</a>
                     }.getOrElse {
                         @messages("taskList.task.business.more")
                     }
@@ -74,6 +78,7 @@
             </ul>
         </li>
 
+            <!-- Contact Details Section -->
         <li>
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2. </span>
@@ -83,7 +88,7 @@
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @contactDetailsInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else "add"}")</a>
+                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else if(contactDetailsInfo.status == "CannotStartYet") "default" else "add"}")</a>
                     }.getOrElse {
                         @messages("taskList.task.contact")
                     }
@@ -93,6 +98,7 @@
             </ul>
         </li>
 
+            <!-- Review and Submit Section -->
         <li>
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">3. </span>
@@ -102,7 +108,7 @@
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @cyaInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.review.${if(cyaInfo.status == "Completed") "edit" else "add"}")</a>
+                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.review.${if(cyaInfo.status == "Completed") "edit" else if(cyaInfo.status == "CannotStartYet") "default" else "add"}")</a>
                     }.getOrElse {
                         @messages("taskList.task.review")
                     }

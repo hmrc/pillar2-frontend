@@ -28,7 +28,8 @@ import views.html.TaskListView
 
 import javax.inject.Inject
 
-case class TaskInfo(name: String, status: String, link: Option[String])
+//case class TaskInfo(name: String, status: String, link: Option[String])
+case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
 
 class TaskListController @Inject() (
   val controllerComponents: MessagesControllerComponents,
@@ -41,19 +42,182 @@ class TaskListController @Inject() (
     with I18nSupport
     with Logging {
 
-//  private def getStatusMessage(status: RowStatus)(implicit messages: Messages): String = status match {
-//    case RowStatus.Completed  => messages("task.status.completed")
-//    case RowStatus.InProgress => messages("task.status.inProgress")
-//    case RowStatus.NotStarted => messages("task.status.notStarted")
-//    case _                    => messages("task.status.cannotStartYet") // For other cases, such as "Cannot start yet"
-//  }
-//
-//  private def getCyaStatusMessage(status: String)(implicit messages: Messages): String =
-//    status match {
-//      case "Completed"  => Messages("task.status.completed")
-//      case "InProgress" => Messages("task.status.inProgress")
-//      case _            => Messages("task.status.notStarted") // Adjust for "Cannot start yet"
+//  private def buildTaskInfo(
+//    ultimateParentStatus: String,
+//    filingMemberStatus:   String,
+//    groupDetailStatus:    String,
+//    contactDetailsStatus: String,
+//    cyaStatus:            String
+//  ): (TaskInfo, TaskInfo, TaskInfo, TaskInfo, TaskInfo) = {
+//    val ultimateParentInfo = if (ultimateParentStatus == "Completed") {
+//      TaskInfo("ultimateParent", "completed", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
+//    } else if (ultimateParentStatus == "InProgress") {
+//      TaskInfo("ultimateParent", "inProgress", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
+//    } else {
+//      TaskInfo("ultimateParent", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
 //    }
+//
+//    val filingMemberInfo = if (ultimateParentStatus == "Completed") {
+//      if (filingMemberStatus == "Completed") {
+//        TaskInfo("filingMember", "completed", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
+//      } else {
+//        TaskInfo("filingMember", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
+//      }
+//    } else {
+//      TaskInfo("filingMember", "cannotStartYet", None)
+//    }
+//
+//    val groupDetailInfo = if (filingMemberStatus == "Completed") {
+//      if (groupDetailStatus == "Completed") {
+//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+//      } else if (
+//        filingMemberInfo.name.equals("filingMember") && filingMemberInfo.status.equals(
+//          "completed"
+//        ) && (groupDetailStatus == "Completed" || groupDetailStatus == "InProgress")
+//      ) {
+//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+//      } else if (
+//        filingMemberInfo.name.equals("filingMember") && filingMemberInfo.status.equals(
+//          "completed"
+//        ) && (groupDetailStatus == "Completed" || groupDetailStatus == "InProgress")
+//      ) {
+//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+//      } else {
+//        TaskInfo("groupDetail", "notStarted", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
+//      }
+//    } else {
+//      TaskInfo("groupDetail", "cannotStartYet", None)
+//    }
+//
+//    val contactDetailsInfo = if (groupDetailStatus == "Completed") {
+//      if (contactDetailsStatus == "Completed") {
+//        TaskInfo("contactDetails", "completed", Some("/report-pillar2-top-up-taxes/contact-details/content"))
+//      } else {
+//        TaskInfo("contactDetails", "notStarted", Some("/report-pillar2-top-up-taxes/contact-details/content"))
+//      }
+//    } else {
+//      TaskInfo("contactDetails", "cannotStartYet", None)
+//    }
+//
+//    val cyaInfo = if (contactDetailsStatus == "Completed") {
+//      if (cyaStatus == "Completed") {
+//        TaskInfo("cya", "completed", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
+//      } else {
+//        TaskInfo("cya", "notStarted", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
+//      }
+//    } else {
+//      TaskInfo("cya", "cannotStartYet", None)
+//    }
+//
+//    if(ultimateParentStatus == "Completed"){
+//
+//    } else {
+//
+//    }
+//
+//    if(ultimateParentStatus == "Completed"){
+//
+//    }
+//    else if(ultimateParentStatus.equals("InProgress")) {
+//
+//    }  else  {
+//
+//    }
+//
+//    if (ultimateParentStatus == "Completed")
+//      {
+//        if(filingMemberStatus == "Completed"){
+//
+//        } else {
+//
+//        }
+//        if(filingMemberStatus == "Completed"){
+//
+//        } else if(filingMemberStatus == "InProgress") {
+//
+//        } else  {
+//
+//        }
+//
+//      }
+//    else
+//      {
+//        if(filingMemberStatus == "Completed"){
+//
+//        } else if(filingMemberStatus == "NotStarted") {
+//
+//        } else {
+//
+//        }
+//        if(filingMemberStatus == "Completed"){
+//
+//        } else if(filingMemberStatus == "InProgress") {
+//
+//        } else  {
+//
+//        }
+//      }
+//
+//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
+//
+//    } else if (filingMemberStatus == "Completed" &&  ( groupDetailStatus=="NotStarted" ||  groupDetailStatus=="InProgress")){
+//
+//    } else if (filingMemberStatus == "InProgress" &&  groupDetailStatus=="Completed"){
+//
+//    } else {
+//
+//    }
+//
+//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
+//
+//    } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="InProgress" ) {
+//
+//    } else if(filingMemberStatus == "InProgress" &&  groupDetailStatus=="Completed" ) {
+//
+//    } else if(filingMemberStatus == "Completed" && groupDetailStatus=="NotStarted" ) {
+//
+//    } else  {
+//
+//    }
+//
+//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
+//
+//    } else if (filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
+//
+//    }  else if (filingMemberStatus == "InProgress" && groupDetailStatus=="Completed" &&  contactDetailsStatus=="Completed"){
+//
+//    } else {
+//
+//    }
+//
+//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" ){
+//
+//    } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
+//
+//    } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
+//
+//    }  else if(filingMemberStatus == "InProgress" && groupDetailStatus == "Completed" && contactDetailsStatus == "Completed") {
+//
+//    } else  {
+//
+//    }
+//
+//    if(cyaStatus =="NotStarted"){
+//
+//    } else {
+//
+//    }
+//
+//    if( cyaStatus =="Completed" ){
+//
+//    } else if( cyaStatus == "NotStarted") {
+//
+//    } else  {
+//
+//    }
+//
+//      (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
+//  }
 
   private def buildTaskInfo(
     ultimateParentStatus: String,
@@ -62,52 +226,63 @@ class TaskListController @Inject() (
     contactDetailsStatus: String,
     cyaStatus:            String
   ): (TaskInfo, TaskInfo, TaskInfo, TaskInfo, TaskInfo) = {
-    val ultimateParentInfo = if (ultimateParentStatus == "Completed") {
-      TaskInfo("ultimateParent", "completed", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-    } else if (ultimateParentStatus == "InProgress") {
-      TaskInfo("ultimateParent", "inProgress", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-    } else {
-      TaskInfo("ultimateParent", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-    }
+    // Define links for each task
+    val ultimateParentLink = "/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"
+    val filingMemberLink   = "/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"
+    val groupDetailLink    = "/report-pillar2-top-up-taxes/further-details/group-status"
+    val contactDetailsLink = "/report-pillar2-top-up-taxes/contact-details/content"
+    val cyaLink            = "/report-pillar2-top-up-taxes/review-submit/check-answers"
+
+    // Logic for creating TaskInfo objects
+    val ultimateParentInfo = TaskInfo(
+      "ultimateParent",
+      ultimateParentStatus,
+      Some(ultimateParentLink),
+      if (ultimateParentStatus == "Completed") Some("edit") else Some("add")
+    )
 
     val filingMemberInfo = if (ultimateParentStatus == "Completed") {
-      if (filingMemberStatus == "Completed") {
-        TaskInfo("filingMember", "completed", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
-      } else {
-        TaskInfo("filingMember", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
-      }
+      TaskInfo(
+        "filingMember",
+        filingMemberStatus,
+        Some(filingMemberLink),
+        if (filingMemberStatus == "Completed") Some("edit") else Some("add")
+      )
     } else {
-      TaskInfo("filingMember", "cannotStartYet", None)
+      TaskInfo("filingMember", "cannotStartYet", None, None)
     }
 
     val groupDetailInfo = if (filingMemberStatus == "Completed") {
-      if (groupDetailStatus == "Completed") {
-        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-      } else {
-        TaskInfo("groupDetail", "notStarted", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-      }
+      TaskInfo(
+        "groupDetail",
+        groupDetailStatus,
+        Some(groupDetailLink),
+        if (groupDetailStatus == "Completed") Some("edit") else Some("add")
+      )
     } else {
-      TaskInfo("groupDetail", "cannotStartYet", None)
+      TaskInfo("groupDetail", "cannotStartYet", None, None)
     }
 
     val contactDetailsInfo = if (groupDetailStatus == "Completed") {
-      if (contactDetailsStatus == "Completed") {
-        TaskInfo("contactDetails", "completed", Some("/report-pillar2-top-up-taxes/contact-details/content"))
-      } else {
-        TaskInfo("contactDetails", "notStarted", Some("/report-pillar2-top-up-taxes/contact-details/content"))
-      }
+      TaskInfo(
+        "contactDetails",
+        contactDetailsStatus,
+        Some(contactDetailsLink),
+        if (contactDetailsStatus == "Completed") Some("edit") else Some("add")
+      )
     } else {
-      TaskInfo("contactDetails", "cannotStartYet", None)
+      TaskInfo("contactDetails", "cannotStartYet", None, None)
     }
 
     val cyaInfo = if (contactDetailsStatus == "Completed") {
-      if (cyaStatus == "Completed") {
-        TaskInfo("cya", "completed", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
-      } else {
-        TaskInfo("cya", "notStarted", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
-      }
+      TaskInfo(
+        "cya",
+        cyaStatus,
+        Some(cyaLink),
+        if (cyaStatus == "Completed") Some("edit") else Some("add")
+      )
     } else {
-      TaskInfo("cya", "cannotStartYet", None)
+      TaskInfo("cya", "cannotStartYet", None, None)
     }
 
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
@@ -134,11 +309,9 @@ class TaskListController @Inject() (
     logger.info(s"contactDetailsStatus: ${contactDetailsStatus.toString}")
     logger.info(s"reviewAndSubmitStatus: $reviewAndSubmitStatus")
 
-    // Calculate the number of completed sections
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
       .count(_ == RowStatus.Completed)
 
-    // Render the view with the required parameters
     Ok(
       view(
         ultimateParentInfo,
