@@ -92,4 +92,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
       )
     } else { Map("english" -> Lang(ENGLISH)) }
 
+  val showPaymentsSection: Boolean = configuration.get[Boolean]("features.showPaymentsSection")
 }
