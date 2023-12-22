@@ -126,6 +126,7 @@ task.status.Completed = Completed
 
 task.status.notStarted = Not started
 task.status.inProgress = In progress
+task.status.InProgress = In progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
 

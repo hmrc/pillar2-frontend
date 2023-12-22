@@ -67,11 +67,18 @@
                     <!-- Group Detail Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
-                    @groupDetailInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.business.sub.${if(groupDetailInfo.status == "Completed") "edit" else if(groupDetailInfo.status == "CannotStartYet") "default" else "add"}")</a>
-                    }.getOrElse {
-                        @messages("taskList.task.business.more")
-                    }
+@*                    @groupDetailInfo.link.map { link =>*@
+@*                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.business.sub.${if(groupDetailInfo.status == "Completed") "edit" else if(groupDetailInfo.status == "CannotStartYet") "default" else "add"}")</a>*@
+@*                    }.getOrElse {*@
+@*                        @messages("taskList.task.business.more")*@
+@*                    }*@
+                        @groupDetailInfo.link.map { link =>
+                        <a href="@link" aria-describedby="eligibility-status">
+                        @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse("default")}")
+                        </a>
+                        }.getOrElse {
+                            @messages("taskList.task.business.more")
+                        }
                     </span>
                     <span class="hmrc-status-tag">@messages(s"task.status.${groupDetailInfo.status}")</span>
                 </li>
@@ -87,11 +94,16 @@
             <ul class="app-task-list__items">
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
-                    @contactDetailsInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else if(contactDetailsInfo.status == "CannotStartYet") "default" else "add"}")</a>
-                    }.getOrElse {
-                        @messages("taskList.task.contact")
-                    }
+@*                    @contactDetailsInfo.link.map { link =>*@
+@*                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else if(contactDetailsInfo.status == "CannotStartYet") "default" else "add"}")</a>*@
+@*                    }.getOrElse {*@
+@*                        @messages("taskList.task.contact")*@
+@*                    }*@
+                        @contactDetailsInfo.link.map { link =>
+                        <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "completed") "edit" else "add"}")</a>
+                        }.getOrElse {
+                            @messages("taskList.task.contact")
+                        }
                     </span>
                     <span class="hmrc-status-tag">@messages(s"task.status.${contactDetailsInfo.status}")</span>
                 </li>

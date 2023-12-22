@@ -18,12 +18,11 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.requests.DataRequest
 import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Pillar2SessionKeys, RowStatus}
+import utils.RowStatus
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -41,184 +40,6 @@ class TaskListController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-
-//  private def buildTaskInfo(
-//    ultimateParentStatus: String,
-//    filingMemberStatus:   String,
-//    groupDetailStatus:    String,
-//    contactDetailsStatus: String,
-//    cyaStatus:            String
-//  ): (TaskInfo, TaskInfo, TaskInfo, TaskInfo, TaskInfo) = {
-//    val ultimateParentInfo = if (ultimateParentStatus == "Completed") {
-//      TaskInfo("ultimateParent", "completed", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-//    } else if (ultimateParentStatus == "InProgress") {
-//      TaskInfo("ultimateParent", "inProgress", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-//    } else {
-//      TaskInfo("ultimateParent", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"))
-//    }
-//
-//    val filingMemberInfo = if (ultimateParentStatus == "Completed") {
-//      if (filingMemberStatus == "Completed") {
-//        TaskInfo("filingMember", "completed", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
-//      } else {
-//        TaskInfo("filingMember", "notStarted", Some("/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"))
-//      }
-//    } else {
-//      TaskInfo("filingMember", "cannotStartYet", None)
-//    }
-//
-//    val groupDetailInfo = if (filingMemberStatus == "Completed") {
-//      if (groupDetailStatus == "Completed") {
-//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-//      } else if (
-//        filingMemberInfo.name.equals("filingMember") && filingMemberInfo.status.equals(
-//          "completed"
-//        ) && (groupDetailStatus == "Completed" || groupDetailStatus == "InProgress")
-//      ) {
-//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-//      } else if (
-//        filingMemberInfo.name.equals("filingMember") && filingMemberInfo.status.equals(
-//          "completed"
-//        ) && (groupDetailStatus == "Completed" || groupDetailStatus == "InProgress")
-//      ) {
-//        TaskInfo("groupDetail", "completed", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-//      } else {
-//        TaskInfo("groupDetail", "notStarted", Some("/report-pillar2-top-up-taxes/further-details/group-status"))
-//      }
-//    } else {
-//      TaskInfo("groupDetail", "cannotStartYet", None)
-//    }
-//
-//    val contactDetailsInfo = if (groupDetailStatus == "Completed") {
-//      if (contactDetailsStatus == "Completed") {
-//        TaskInfo("contactDetails", "completed", Some("/report-pillar2-top-up-taxes/contact-details/content"))
-//      } else {
-//        TaskInfo("contactDetails", "notStarted", Some("/report-pillar2-top-up-taxes/contact-details/content"))
-//      }
-//    } else {
-//      TaskInfo("contactDetails", "cannotStartYet", None)
-//    }
-//
-//    val cyaInfo = if (contactDetailsStatus == "Completed") {
-//      if (cyaStatus == "Completed") {
-//        TaskInfo("cya", "completed", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
-//      } else {
-//        TaskInfo("cya", "notStarted", Some("/report-pillar2-top-up-taxes/review-submit/check-answers"))
-//      }
-//    } else {
-//      TaskInfo("cya", "cannotStartYet", None)
-//    }
-//
-//    if(ultimateParentStatus == "Completed"){
-//
-//    } else {
-//
-//    }
-//
-//    if(ultimateParentStatus == "Completed"){
-//
-//    }
-//    else if(ultimateParentStatus.equals("InProgress")) {
-//
-//    }  else  {
-//
-//    }
-//
-//    if (ultimateParentStatus == "Completed")
-//      {
-//        if(filingMemberStatus == "Completed"){
-//
-//        } else {
-//
-//        }
-//        if(filingMemberStatus == "Completed"){
-//
-//        } else if(filingMemberStatus == "InProgress") {
-//
-//        } else  {
-//
-//        }
-//
-//      }
-//    else
-//      {
-//        if(filingMemberStatus == "Completed"){
-//
-//        } else if(filingMemberStatus == "NotStarted") {
-//
-//        } else {
-//
-//        }
-//        if(filingMemberStatus == "Completed"){
-//
-//        } else if(filingMemberStatus == "InProgress") {
-//
-//        } else  {
-//
-//        }
-//      }
-//
-//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-//
-//    } else if (filingMemberStatus == "Completed" &&  ( groupDetailStatus=="NotStarted" ||  groupDetailStatus=="InProgress")){
-//
-//    } else if (filingMemberStatus == "InProgress" &&  groupDetailStatus=="Completed"){
-//
-//    } else {
-//
-//    }
-//
-//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-//
-//    } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="InProgress" ) {
-//
-//    } else if(filingMemberStatus == "InProgress" &&  groupDetailStatus=="Completed" ) {
-//
-//    } else if(filingMemberStatus == "Completed" && groupDetailStatus=="NotStarted" ) {
-//
-//    } else  {
-//
-//    }
-//
-//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
-//
-//    } else if (filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
-//
-//    }  else if (filingMemberStatus == "InProgress" && groupDetailStatus=="Completed" &&  contactDetailsStatus=="Completed"){
-//
-//    } else {
-//
-//    }
-//
-//    if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" ){
-//
-//    } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
-//
-//    } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
-//
-//    }  else if(filingMemberStatus == "InProgress" && groupDetailStatus == "Completed" && contactDetailsStatus == "Completed") {
-//
-//    } else  {
-//
-//    }
-//
-//    if(cyaStatus =="NotStarted"){
-//
-//    } else {
-//
-//    }
-//
-//    if( cyaStatus =="Completed" ){
-//
-//    } else if( cyaStatus == "NotStarted") {
-//
-//    } else  {
-//
-//    }
-//
-//      (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
-//  }
-
   private def buildTaskInfo(
     ultimateParentStatus: String,
     filingMemberStatus:   String,
@@ -241,48 +62,55 @@ class TaskListController @Inject() (
       if (ultimateParentStatus == "Completed") Some("edit") else Some("add")
     )
 
-    val filingMemberInfo = if (ultimateParentStatus == "Completed") {
-      TaskInfo(
-        "filingMember",
-        filingMemberStatus,
-        Some(filingMemberLink),
-        if (filingMemberStatus == "Completed") Some("edit") else Some("add")
-      )
-    } else {
-      TaskInfo("filingMember", "cannotStartYet", None, None)
+
+    val filingMemberInfo = ultimateParentStatus match {
+      case "Completed" =>
+        TaskInfo(
+          "filingMember",
+          filingMemberStatus,
+          Some(filingMemberLink),
+          if (filingMemberStatus == "Completed") Some("edit") else Some("add")
+        )
+      case "InProgress" =>
+        TaskInfo(
+          "filingMember",
+          if (filingMemberStatus == "NotStarted") "cannotStartYet" else filingMemberStatus,
+          if (filingMemberStatus == "NotStarted") None else Some(filingMemberLink),
+          if (filingMemberStatus == "Completed") Some("edit") else if (filingMemberStatus == "NotStarted") None else Some("add")
+        )
+      case _ =>
+        TaskInfo("filingMember", "cannotStartYet", None, None)
     }
 
-    val groupDetailInfo = if (filingMemberStatus == "Completed") {
-      TaskInfo(
-        "groupDetail",
-        groupDetailStatus,
-        Some(groupDetailLink),
-        if (groupDetailStatus == "Completed") Some("edit") else Some("add")
-      )
-    } else {
-      TaskInfo("groupDetail", "cannotStartYet", None, None)
+    val groupDetailInfo = (filingMemberStatus, groupDetailStatus) match {
+      case (_, "Completed") =>
+        TaskInfo("groupDetail", "completed", Some(groupDetailLink), Some("edit"))
+      case ("Completed", "InProgress") =>
+        TaskInfo("groupDetail", "inProgress", Some(groupDetailLink), Some("add"))
+      case ("Completed", "NotStarted") =>
+        TaskInfo("groupDetail", "notStarted", Some(groupDetailLink), Some("add"))
+      case ("InProgress", _) | (_, "InProgress") =>
+        TaskInfo("groupDetail", "cannotStartYet", None, None)
+      case (_, "NotStarted") =>
+        TaskInfo("groupDetail", "cannotStartYet", None, None)
+      case _ =>
+        TaskInfo("groupDetail", "default", None, None) // Handle other unforeseen cases
     }
 
-    val contactDetailsInfo = if (groupDetailStatus == "Completed") {
-      TaskInfo(
-        "contactDetails",
-        contactDetailsStatus,
-        Some(contactDetailsLink),
-        if (contactDetailsStatus == "Completed") Some("edit") else Some("add")
-      )
-    } else {
-      TaskInfo("contactDetails", "cannotStartYet", None, None)
+
+    val contactDetailsInfo = (filingMemberStatus, groupDetailStatus, contactDetailsStatus) match {
+      case ("Completed", "Completed", "Completed") | ("InProgress", "Completed", "Completed") =>
+        TaskInfo("contactDetails", "completed", Some(contactDetailsLink), Some("edit"))
+      case ("Completed", "Completed", _) =>
+        TaskInfo("contactDetails", contactDetailsStatus, Some(contactDetailsLink), Some("add"))
+      case _ =>
+        TaskInfo("contactDetails", "cannotStartYet", None, None)
     }
 
-    val cyaInfo = if (contactDetailsStatus == "Completed") {
-      TaskInfo(
-        "cya",
-        cyaStatus,
-        Some(cyaLink),
-        if (cyaStatus == "Completed") Some("edit") else Some("add")
-      )
-    } else {
-      TaskInfo("cya", "cannotStartYet", None, None)
+    val cyaInfo = cyaStatus match {
+      case "Completed"  => TaskInfo("cya", "completed", Some(cyaLink), Some("edit"))
+      case "NotStarted" => TaskInfo("cya", "notStarted", Some(cyaLink), Some("add"))
+      case _            => TaskInfo("cya", "cannotStartYet", None, None)
     }
 
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
