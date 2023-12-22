@@ -97,7 +97,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "AshleySmith@email.com"))
+            .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
@@ -111,7 +111,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }

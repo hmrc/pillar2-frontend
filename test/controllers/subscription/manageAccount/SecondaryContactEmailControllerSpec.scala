@@ -89,10 +89,10 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "12345"))
+            .withFormUrlEncodedBody(("emailAddress", "12345"))
 
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
-        val boundForm = formProvider.bind(Map("value" -> "12345"))
+        val boundForm = formProvider.bind(Map("emailAddress" -> "12345"))
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -112,7 +112,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
-          .withFormUrlEncodedBody("value" -> "something@gmail.com")
+          .withFormUrlEncodedBody("emailAddress" -> "something@gmail.com")
         val result =
           route(application, request).value
 
@@ -126,7 +126,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
-        .withFormUrlEncodedBody("value" -> "name@gmail.com")
+        .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {
         val result = route(application, request).value
