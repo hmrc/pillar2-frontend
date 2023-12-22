@@ -22,7 +22,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
+import utils.{Pillar2SessionKeys, RowStatus}
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -62,7 +62,6 @@ class TaskListController @Inject() (
       if (ultimateParentStatus == "Completed") Some("edit") else Some("add")
     )
 
-
     val filingMemberInfo = ultimateParentStatus match {
       case "Completed" =>
         TaskInfo(
@@ -96,7 +95,6 @@ class TaskListController @Inject() (
       case _ =>
         TaskInfo("groupDetail", "default", None, None) // Handle other unforeseen cases
     }
-
 
     val contactDetailsInfo = (filingMemberStatus, groupDetailStatus, contactDetailsStatus) match {
       case ("Completed", "Completed", "Completed") | ("InProgress", "Completed", "Completed") =>
@@ -140,15 +138,19 @@ class TaskListController @Inject() (
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
       .count(_ == RowStatus.Completed)
 
-    Ok(
-      view(
-        ultimateParentInfo,
-        count,
-        filingMemberInfo,
-        groupDetailInfo,
-        contactDetailsInfo,
-        cyaInfo
+    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
+      Redirect(routes.RegistrationConfirmationController.onPageLoad)
+    } else {
+      Ok(
+        view(
+          ultimateParentInfo,
+          count,
+          filingMemberInfo,
+          groupDetailInfo,
+          contactDetailsInfo,
+          cyaInfo
+        )
       )
-    )
+    }
   }
 }

@@ -22,7 +22,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.Pillar2SessionKeys
 import views.html.TaskListView
-
+case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
 class TaskListControllerSpec extends SpecBase {
 
   "Task List Controller" must {
@@ -64,5 +64,10 @@ class TaskListControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad.url
       }
     }
+  }
+
+  private def buildFilingMemberInfo(ultimateParentStatus: String, filingMemberStatus: String): TaskInfo = {
+    // replicate the logic from your controller
+    // return the TaskInfo object
   }
 }
