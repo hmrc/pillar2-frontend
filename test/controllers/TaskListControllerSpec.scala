@@ -65,9 +65,4 @@ class TaskListControllerSpec extends SpecBase {
       }
     }
   }
-
-  private def buildFilingMemberInfo(ultimateParentStatus: String, filingMemberStatus: String): TaskInfo = {
-    // replicate the logic from your controller
-    // return the TaskInfo object
-  }
 }
