@@ -45,23 +45,26 @@
                  field = form("addressLine1"),
                  label = LabelViewModel(messages("subscriptionAddress.addressLine1"))
              )
-             .withWidth(TwoThirds)
-         )
+                    .withWidth(TwoThirds)
+                    .withAutocomplete("address-line1")
+            )
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine2"),
                 label = LabelViewModel(messages("subscriptionAddress.addressLine2"))
              )
-             .withWidth(TwoThirds)
-        )
+                .withWidth(TwoThirds)
+                .withAutocomplete("address-line2")
+            )
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
                 label = LabelViewModel(messages("subscriptionAddress.town_city"))
              )
-             .withWidth(TwoThirds)
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level2")
         )
 
         @govukInput(
@@ -70,7 +73,8 @@
                 label = LabelViewModel(messages("subscriptionAddress.region"))
             )
             .withWidth(TwoThirds)
-        )
+            .withAutocomplete("address-level1")
+          )
 
         @govukInput(
             InputViewModel(
@@ -78,6 +82,7 @@
                 label = LabelViewModel(messages("subscriptionAddress.postcode"))
             )
             .withWidth(Fixed10)
+            .withAutocomplete("postal-code")
             .withHint(Hint(content = Text(messages("subscriptionAddress.postcode.hint"))).withCssClass("govuk-input--width-30"))
         )
 

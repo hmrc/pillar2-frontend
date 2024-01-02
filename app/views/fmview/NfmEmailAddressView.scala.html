@@ -39,13 +39,13 @@
      <span class="govuk-caption-l">@messages("nfmEmailAddress.heading.caption")</span>
         @govukInput(
             InputViewModel(
-                field = form("value"),
+                field = form("emailAddress"),
                 label = LabelViewModel(messages("nfmEmailAddress.heading", UserName)).asPageHeading(Large)
                 .withCssClass("long-word")
             )
             .withHint(Hint(content = Text(messages("nfmEmailAddress.hint"))))
             .withWidth(TwoThirds)
-            .withInputType("email")
+            .asEmail()
         )
 
         @govukButton(

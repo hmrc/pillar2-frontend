@@ -47,6 +47,7 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.addressLine1"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("address-line1")
         )
         @govukInput(
             InputViewModel(
@@ -54,6 +55,7 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.addressLine2"))
             )
                     .withWidth(TwoThirds)
+                    .withAutocomplete("address-line2")
         )
         @govukInput(
             InputViewModel(
@@ -61,6 +63,7 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.town_city"))
             )
                     .withWidth(TwoThirds)
+                    .withAutocomplete("address-level2")
         )
         @govukInput(
             InputViewModel(
@@ -68,6 +71,7 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.region"))
             )
                     .withWidth(TwoThirds)
+                    .withAutocomplete("address-level1")
         )
         @govukInput(
             InputViewModel(
@@ -75,6 +79,7 @@
                 label = LabelViewModel(messages("upeRegisteredAddress.postcode"))
             )
                     .withWidth(Fixed10)
+                    .withAutocomplete("postal-code")
                     .withHint(Hint(content = Text(messages("upeRegisteredAddress.postcode.hint"))).withCssClass("govuk-input--width-20"))
         )
 

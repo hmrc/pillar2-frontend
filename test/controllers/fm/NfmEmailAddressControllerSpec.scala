@@ -93,7 +93,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "AshleySmith@email.com"))
+            .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
@@ -108,7 +108,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
@@ -130,7 +130,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
