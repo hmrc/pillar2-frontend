@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import views.html.TaskListView
 
 import javax.inject.Inject
 
-//case class TaskInfo(name: String, status: String, link: Option[String])
 case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
 
 class TaskListController @Inject() (
@@ -40,7 +39,7 @@ class TaskListController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-  private def buildTaskInfo(
+  def buildTaskInfo(
     ultimateParentStatus: String,
     filingMemberStatus:   String,
     groupDetailStatus:    String,
@@ -93,7 +92,7 @@ class TaskListController @Inject() (
       case (_, "NotStarted") =>
         TaskInfo("groupDetail", "cannotStartYet", None, None)
       case _ =>
-        TaskInfo("groupDetail", "default", None, None) // Handle other unforeseen cases
+        TaskInfo("groupDetail", "default", None, None)
     }
 
     val contactDetailsInfo = (filingMemberStatus, groupDetailStatus, contactDetailsStatus) match {
@@ -128,12 +127,6 @@ class TaskListController @Inject() (
       request.userAnswers.contactDetailStatus.toString,
       reviewAndSubmitStatus
     )
-
-    logger.info(s"upeStatus: ${upeStatus.toString}")
-    logger.info(s"fmStatus: ${fmStatus.toString}")
-    logger.info(s"groupDetailStatus: ${groupDetailStatus.toString}")
-    logger.info(s"contactDetailsStatus: ${contactDetailsStatus.toString}")
-    logger.info(s"reviewAndSubmitStatus: $reviewAndSubmitStatus")
 
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
       .count(_ == RowStatus.Completed)

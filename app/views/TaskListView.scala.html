@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,11 +67,6 @@
                     <!-- Group Detail Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
-@*                    @groupDetailInfo.link.map { link =>*@
-@*                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.business.sub.${if(groupDetailInfo.status == "Completed") "edit" else if(groupDetailInfo.status == "CannotStartYet") "default" else "add"}")</a>*@
-@*                    }.getOrElse {*@
-@*                        @messages("taskList.task.business.more")*@
-@*                    }*@
                         @groupDetailInfo.link.map { link =>
                         <a href="@link" aria-describedby="eligibility-status">
                         @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse("default")}")
@@ -94,11 +89,6 @@
             <ul class="app-task-list__items">
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
-@*                    @contactDetailsInfo.link.map { link =>*@
-@*                    <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else if(contactDetailsInfo.status == "CannotStartYet") "default" else "add"}")</a>*@
-@*                    }.getOrElse {*@
-@*                        @messages("taskList.task.contact")*@
-@*                    }*@
                         @contactDetailsInfo.link.map { link =>
                         <a href="@link" aria-describedby="eligibility-status">@messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "completed") "edit" else "add"}")</a>
                         }.getOrElse {
