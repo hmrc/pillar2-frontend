@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package stubsonly.models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.JsPath
 
-case class TestOnlyAuthorisedRequest[A](
-  request:          Request[A],
-  internalId:       String,
-  groupId:          String,
-  pillar2Reference: Option[String]
-) extends WrappedRequest[A](request)
+case object plrReferencePage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "plrReference"
+}
