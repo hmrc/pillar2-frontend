@@ -22,11 +22,11 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class NfmContactNameFormProvider @Inject() extends Mappings {
-  private val scriptInjectionRegex = """[^<>]+"""
+  private val nameRegex = """[^<>]+"""
   def apply(): Form[String] =
     Form(
       "value" -> text("nfmContactName.error.required")
         .verifying(maxLength(105, "nfmContactName.error.length"))
-        .verifying(regexp(scriptInjectionRegex, "nfmContactName.error.scriptinjection"))
+        .verifying(regexp(nameRegex, "nfmContactName.error.scriptinjection"))
     )
 }
