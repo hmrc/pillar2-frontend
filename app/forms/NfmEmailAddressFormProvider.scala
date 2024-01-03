@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,15 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
+  val maxLength            = 132
+  val emailRegex           = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
+  val scriptInjectionRegex = """[<>\"'`]+""".r
 
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("nfmEmailAddress.error.required", Seq(userName))
         .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
         .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
+        .verifying("nfmEmailAddress.error.scriptinjection", email => !scriptInjectionRegex.findFirstIn(email).isDefined)
     )
 }

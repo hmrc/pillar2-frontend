@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class NfmContactNameFormProvider @Inject() extends Mappings {
-
+  private val scriptInjectionRegex = """[^<>]+"""
   def apply(): Form[String] =
     Form(
       "value" -> text("nfmContactName.error.required")
         .verifying(maxLength(105, "nfmContactName.error.length"))
+        .verifying(regexp(scriptInjectionRegex, "nfmContactName.error.scriptinjection"))
     )
 }
