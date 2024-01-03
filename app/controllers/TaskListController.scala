@@ -87,12 +87,14 @@ class TaskListController @Inject() (
         TaskInfo("groupDetail", "inProgress", Some(groupDetailLink), Some("add"))
       case ("Completed", "NotStarted") =>
         TaskInfo("groupDetail", "notStarted", Some(groupDetailLink), Some("add"))
+      case ("InProgress", "InProgress") =>
+        TaskInfo("groupDetail", "inProgress", Some(groupDetailLink), Some("add"))
       case ("InProgress", _) | (_, "InProgress") =>
         TaskInfo("groupDetail", "cannotStartYet", None, None)
       case (_, "NotStarted") =>
         TaskInfo("groupDetail", "cannotStartYet", None, None)
       case _ =>
-        TaskInfo("groupDetail", "default", None, None)
+        TaskInfo("groupDetail", "cannotStartYet", None, None)
     }
 
     val contactDetailsInfo = (filingMemberStatus, groupDetailStatus, contactDetailsStatus) match {
