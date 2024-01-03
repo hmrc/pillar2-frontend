@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package services.audit
 
-import models.audit.{GrsAuditEvent, GrsReturnAuditEvent, GrsReturnAuditEventForLLP}
+import models.audit.{GrsAuditEvent, GrsAuditEventForLLP, GrsReturnAuditEvent, GrsReturnAuditEventForLLP}
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.Logging
@@ -56,7 +56,7 @@ class AuditService @Inject() (
     responseReceived:    GrsCreateRegistrationResponse
   )(implicit hc:         HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
-      GrsAuditEvent(
+      GrsAuditEventForLLP(
         requestData = registrationRequest,
         responseData = responseReceived
       ).extendedDataEvent
