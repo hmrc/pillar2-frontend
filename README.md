@@ -23,7 +23,6 @@ To check code coverage:
 
     sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport 
 
-
 ### Eligibility question
 
 Eligibility questions journey start  with this url '/eligibility/group-in-multiple-territories' and there are four different questions to check eligibility.
