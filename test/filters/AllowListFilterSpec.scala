@@ -38,10 +38,10 @@ class AllowListFilterSpec extends SpecBase {
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.jvm"               -> false,
-        "metrics.enabled"           -> false,
-        "filters.allowlist.ips"     -> Seq[String]("127.0.0.2"),
-        "filters.allowlist.enabled" -> true
+        "metrics.jvm"                         -> false,
+        "metrics.enabled"                     -> false,
+        "bootstrap.filters.allowlist.ips"     -> Seq[String]("127.0.0.2"),
+        "bootstrap.filters.allowlist.enabled" -> true
       )
       .routes {
         case (GET, "/report-pillar2-top-up-taxes") => TestAction(Ok("success"))
@@ -63,8 +63,8 @@ class AllowListFilterSpec extends SpecBase {
         status(result) mustBe 303
       }
 
-      "redirect to shutter page" in {
-        redirectLocation(result) mustBe Some("https://gov.uk")
+      "redirect to unauthorised page" in {
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/unauthorised")
       }
     }
 
