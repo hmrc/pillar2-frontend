@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,15 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
       .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
-          logger.info(s"Subscription request is successful with status ${response.status} ")
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Subscription request is successful with status ${response.status} ")
           Some(response.json.as[SuccessResponse].success)
 
         case errorResponse =>
-          logger.warn(s"Subscription call failed with status ${errorResponse.status}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Subscription call failed with status ${errorResponse.status}")
           None
       }
       .recover { case e: Exception =>
-        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when create subscription was called")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error message ${e.printStackTrace()} has been thrown when create subscription was called")
         None
       }
 

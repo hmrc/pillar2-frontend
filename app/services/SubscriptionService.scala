@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,9 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
       case Some(subscriptionSuccessResponse) =>
         logger.info(
-          s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} with reference ${subscriptionSuccessResponse.plrReference}"
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] " +
+            s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} " +
+            s"with reference ${subscriptionSuccessResponse.plrReference}"
         )
         Right(subscriptionSuccessResponse)
       case None =>

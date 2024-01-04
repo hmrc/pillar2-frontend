@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
       case Right(Some(safeId)) =>
         Right(safeId)
       case Right(None) =>
-        logger.warn("Upe Registration WithoutId Information MissingError SafeId missing")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Upe Registration WithoutId Information MissingError SafeId missing")
         Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))
       case Left(error) =>
-        logger.warn(s"Upe Registration WithoutId Information $error")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Upe Registration WithoutId Information $error")
         Left(error)
     }
 
@@ -50,10 +50,10 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
       .fmRegisterationWithoutID(id, userAnswers) map {
       case Right(Some(safeId)) => Right(safeId)
       case Right(None) =>
-        logger.warn("Filing Member Registration WithoutId Information MissingError SafeId missing")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member Registration WithoutId Information MissingError SafeId missing")
         Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))
       case Left(error) =>
-        logger.warn(s"Filing Member Registration WithoutId Information $error")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member Registration WithoutId Information $error")
         Left(error)
     }
 

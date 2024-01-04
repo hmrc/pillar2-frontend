@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package utils
 
+import uk.gov.hmrc.http.HeaderCarrier
+
 object Pillar2SessionKeys {
 
   val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
@@ -24,4 +26,6 @@ object Pillar2SessionKeys {
   val turnOverEligibilityValue    = "turnOverEligibilityValue"
   val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
   val plrId                       = "plrId"
+
+  def sessionId(hc: HeaderCarrier): String = hc.sessionId.map(_.value).getOrElse("No Session ID available")
 }

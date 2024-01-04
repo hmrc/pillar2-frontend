@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$upeRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        logger.info(s"UPE register without ID successful with response ${response.status}")
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] UPE register without ID successful with response ${response.status}")
         val safeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         /*        val regData = userAnswers.get(RegistrationPage).getOrElse(throw new Exception("Upe Registration Data not available"))
         val safeIdValue = safeId match {
@@ -55,7 +55,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         Right(safeId)
 
       case errorResponse =>
-        logger.warn(s"UPE register without ID call failed with status ${errorResponse.status}")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] UPE register without ID call failed with status ${errorResponse.status}")
         Left(InternalServerError)
     }
 
@@ -65,7 +65,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        logger.info(s"Filing Member registration without ID successful with response ${response.status}")
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID successful with response ${response.status}")
         val fmsafeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
@@ -77,7 +77,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         } yield ()*/
         Right(fmsafeId)
       case errorResponse =>
-        logger.warn(s"Filing Member registration without ID call failed with status ${errorResponse.status}")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID call failed with status ${errorResponse.status}")
         Left(InternalServerError)
     }
 }

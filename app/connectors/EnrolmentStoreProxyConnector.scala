@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
               }
             )
         case response =>
-          logger.warn(s"Enrolment response not formed. ${response.status} response status")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Enrolment response not formed. ${response.status} response status")
           throw new IllegalStateException()
       }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,17 +43,17 @@ class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswe
           Some(response.json)
 
         case errorResponse =>
-          logger.warn(s"Amend Subscription failed with Status ${errorResponse.status}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Amend Subscription failed with Status ${errorResponse.status}")
           None
       }
       .recoverWith {
         case _: NotFoundException | _: UpstreamErrorResponse =>
           Future.successful(None)
         case e: IOException =>
-          logger.warn(s"Connection issue when calling amend subscription: ${e.getMessage}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Connection issue when calling amend subscription: ${e.getMessage}")
           Future.successful(None)
         case e: Exception =>
-          logger.error(s"Unexpected error when calling amend subscription: ${e.getMessage}")
+          logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Unexpected error when calling amend subscription: ${e.getMessage}")
           Future.failed(e)
       }
 

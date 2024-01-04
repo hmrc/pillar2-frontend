@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
         case _: NotFoundException | _: UpstreamErrorResponse =>
           Future.successful(None)
         case e: IOException =>
-          logger.warn(s"Connection issue when calling read subscription: ${e.getMessage}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Connection issue when calling read subscription: ${e.getMessage}")
           Future.successful(None)
         case e: Exception =>
-          logger.error(s"Unexpected error when calling read subscription: ${e.getMessage}")
+          logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Unexpected error when calling read subscription: ${e.getMessage}")
           Future.failed(e)
       }
 

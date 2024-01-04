@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ class TaxEnrolmentsConnector @Inject() (
       case responseMessage if is2xx(responseMessage.status) =>
         Some(responseMessage.status)
       case responseMessage =>
-        logger.error(s"Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
+        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
         None
     }
   }

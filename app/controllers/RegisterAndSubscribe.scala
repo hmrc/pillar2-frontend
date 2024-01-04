@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@ trait RegisterAndSubscribe extends Logging {
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).flatMap {
       case Right(successResponse) =>
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}]")
         val enrolmentInfo = request.userAnswers
           .get(upeRegisteredInUKPage)
           .flatMap { ukBased =>
@@ -155,6 +156,7 @@ trait RegisterAndSubscribe extends Logging {
         }
 
       case Left(_) =>
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}]")
         Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
     }
 }
