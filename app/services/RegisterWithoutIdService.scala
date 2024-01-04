@@ -20,6 +20,7 @@ import connectors.RegistrationConnector
 import models.{ApiError, RegistrationWithoutIdInformationMissingError, SafeId, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

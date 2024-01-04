@@ -21,6 +21,7 @@ import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse,
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +46,9 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           None
       }
       .recover { case e: Exception =>
-        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error message ${e.printStackTrace()} has been thrown when create subscription was called")
+        logger.warn(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error message ${e.printStackTrace()} has been thrown when create subscription was called"
+        )
         None
       }
 

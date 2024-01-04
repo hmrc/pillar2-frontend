@@ -21,6 +21,7 @@ import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import models.{ApiError, SubscriptionCreateError}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

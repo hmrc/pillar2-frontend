@@ -22,6 +22,7 @@ import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +42,9 @@ class TaxEnrolmentsConnector @Inject() (
       case responseMessage if is2xx(responseMessage.status) =>
         Some(responseMessage.status)
       case responseMessage =>
-        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
+        logger.error(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}"
+        )
         None
     }
   }

@@ -23,6 +23,7 @@ import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,7 +66,9 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
   ): Future[Either[ApiError, Option[SafeId]]] =
     http.POSTEmpty(s"$fmRegistrationUrl/$id") map {
       case response if is2xx(response.status) =>
-        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID successful with response ${response.status}")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID successful with response ${response.status}"
+        )
         val fmsafeId = response.json.asOpt[RegistrationWithoutIDResponse].map(_.safeId)
         val safeIdValue = fmsafeId match {
           case Some(value) => Some(value.value)
@@ -77,7 +80,9 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         } yield ()*/
         Right(fmsafeId)
       case errorResponse =>
-        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID call failed with status ${errorResponse.status}")
+        logger.warn(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member registration without ID call failed with status ${errorResponse.status}"
+        )
         Left(InternalServerError)
     }
 }
