@@ -31,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
+import utils.Pillar2SessionKeys
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,6 +62,7 @@ class GrsReturnController @Inject() (
 
   private def upeLimited(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
     incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+      logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}]")
       if (data.registration.registrationStatus == Registered) {
         data.registration.registeredBusinessPartnerId
           .map { safeId =>
@@ -103,6 +105,7 @@ class GrsReturnController @Inject() (
 
   private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
     partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+      logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}]")
       if (data.registration.registrationStatus == Registered) {
         for {
           safeId         <- data.registration.registeredBusinessPartnerId
@@ -228,19 +231,27 @@ class GrsReturnController @Inject() (
     journeyType:      JourneyType,
     journeyId:        String,
     entityType:       EntityType
-  ): Result =
+  )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
-        logger.info(s"Filing Member Business Verification failed for $entityType with journey ID $journeyId")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Filing Member Business Verification failed for $entityType with journey ID $journeyId"
+        )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
-        logger.info(s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] " +
+            s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
+        )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
       case (true, _, _, Some(_)) =>
-        logger.info(s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] " +
+            s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
+        )
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
-        logger.info(s"$journeyType registration failed for $entityType with journey ID $journeyId")
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] $journeyType registration failed for $entityType with journey ID $journeyId")
         (grsResult.failures, journeyType) match {
           case (_, JourneyType.FilingMember) =>
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)
@@ -249,7 +260,8 @@ class GrsReturnController @Inject() (
         }
       case _ =>
         throw new IllegalStateException(
-          s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] " +
+            s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
         )
     }
 }

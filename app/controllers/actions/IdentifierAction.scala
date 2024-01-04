@@ -31,6 +31,8 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import utils.Pillar2SessionKeys
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction
@@ -42,7 +44,7 @@ class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
   config:                        FrontendAppConfig,
   val parser:                    BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext, hc: HeaderCarrier)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
@@ -63,7 +65,7 @@ class AuthenticatedIdentifierAction @Inject() (
         case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _      => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
-          logger.warn("Unable to retrieve internal id or affinity group")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>

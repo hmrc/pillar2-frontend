@@ -20,14 +20,20 @@ import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataRequiredAction with Logging {
+class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext, hc: HeaderCarrier) extends DataRequiredAction with Logging {
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-    logger.debug(s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}")
+    logger.debug(
+      s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] " +
+        s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
+    )
 
     request.userAnswers match {
       case None =>

@@ -24,6 +24,9 @@ import models.subscription.AmendSubscriptionRequestParameters
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import utils.Pillar2SessionKeys
 import services.AmendSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -42,7 +45,7 @@ class ManageContactCheckYourAnswersController @Inject() (
   view:                      ManageContactCheckYourAnswersView,
   countryOptions:            CountryOptions,
   amendSubscriptionService:  AmendSubscriptionService
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec:               ExecutionContext, hc: HeaderCarrier, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -81,7 +84,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
         userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"Redirecting to Dashboard from contact details")
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Redirecting to Dashboard from contact details")
           Redirect(controllers.routes.DashboardController.onPageLoad)
         }
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

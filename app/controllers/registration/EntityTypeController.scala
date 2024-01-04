@@ -31,6 +31,9 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EntityTypeView
+import uk.gov.hmrc.http.HeaderCarrier
+
+import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +48,7 @@ class EntityTypeController @Inject() (
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              EntityTypeView
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig, hc: HeaderCarrier)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -72,7 +75,7 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              logger.info("Calling UK Limited Company in EntityTypeController class")
+              logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Calling UK Limited Company in EntityTypeController class")
               for {
                 updatedAnswers   <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
                 _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -80,7 +83,7 @@ class EntityTypeController @Inject() (
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
-              logger.info("Calling Limited Liability Partnership in EntityTypeController class")
+              logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Calling Limited Liability Partnership in EntityTypeController class")
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

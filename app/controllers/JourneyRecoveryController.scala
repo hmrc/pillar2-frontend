@@ -25,7 +25,9 @@ import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
+import uk.gov.hmrc.http.HeaderCarrier
 
+import utils.Pillar2SessionKeys
 import javax.inject.Inject
 
 class JourneyRecoveryController @Inject() (
@@ -33,13 +35,14 @@ class JourneyRecoveryController @Inject() (
   identify:                 IdentifierAction,
   continueView:             JourneyRecoveryContinueView,
   startAgainView:           JourneyRecoveryStartAgainView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig, hc: HeaderCarrier)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify { implicit request =>
     val safeUrl: Option[String] = continueUrl.flatMap { unsafeUrl =>
+      logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}]")
       unsafeUrl.getEither(OnlyRelative) match {
         case Right(safeUrl) =>
           Some(safeUrl.url)
