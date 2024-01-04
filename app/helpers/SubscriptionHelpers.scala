@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,16 +103,42 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+  
+  def contactDetailStatus: RowStatus =
+    get(subAddSecondaryContactPage)
+      .map { addSecondContact =>
+        if (!addSecondContact) {
+          (for {
+            primaryContactName   <- get(subPrimaryContactNamePage)
+            primaryEmail         <- get(subPrimaryEmailPage)
+            primaryTelPref       <- get(subPrimaryPhonePreferencePage)
+            secondaryContactPref <- get(subUsePrimaryContactPage)
 
-  def contactDetailStatus: RowStatus = {
-    val first = get(subPrimaryContactNamePage).isDefined
-    val last  = get(subRegisteredAddressPage).isDefined
-    (first, last) match {
-      case (true, true)  => RowStatus.Completed
-      case (true, false) => RowStatus.InProgress
-      case _             => RowStatus.NotStarted
-    }
-  }
+          } yield {
+            val telephone = get(subPrimaryCapturePhonePage).isDefined
+            if ((primaryTelPref & telephone) | !primaryTelPref) {
+              RowStatus.Completed
+            } else {
+              RowStatus.InProgress
+            }
+          }).getOrElse(RowStatus.InProgress)
+        } else {
+          (for {
+            secondContactName <- get(subSecondaryContactNamePage)
+            secondEmail       <- get(subSecondaryEmailPage)
+            secondTelPref     <- get(subSecondaryPhonePreferencePage)
+          } yield {
+            val telephone = get(subSecondaryCapturePhonePage).isDefined
+
+            if ((secondTelPref & telephone) | !secondTelPref) {
+              RowStatus.Completed
+            } else {
+              RowStatus.InProgress
+            }
+          }).getOrElse(RowStatus.InProgress)
+        }
+      }
+      .getOrElse(RowStatus.NotStarted)
 
   def manageContactDetailStatus: Boolean = {
     val p1  = get(subPrimaryContactNamePage).isDefined
