@@ -44,7 +44,7 @@ class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
   config:                        FrontendAppConfig,
   val parser:                    BodyParsers.Default
-)(implicit val executionContext: ExecutionContext, hc: HeaderCarrier)
+)(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
