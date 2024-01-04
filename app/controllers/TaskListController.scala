@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import helpers.SubscriptionHelpers
+import pages.plrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,37 +30,50 @@ import utils.RowStatus._
 import views.html.TaskListView
 
 import javax.inject.Inject
-
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logging
 class TaskListController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  view:                     TaskListView
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:  MessagesControllerComponents,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  view:                      TaskListView,
+  val userAnswersConnectors: UserAnswersConnectors
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val upeStatus             = request.userAnswers.upeStatus
     val fmStatus              = request.userAnswers.fmStatus
     val groupDetailStatus     = request.userAnswers.groupDetailStatus
     val contactDetailsStatus  = request.userAnswers.contactDetailStatus
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
     val count                 = statusCounter(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus, NotStarted)
+    val plrReference          = request.userAnswers.get(plrReferencePage).isDefined
     if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
     } else {
-      Ok(
-        view(
-          upeStatus.toString,
-          count,
-          filingMemberStatus = fmStatus.toString,
-          groupDetailStatus = groupDetailStatus.toString,
-          contactDetailsStatus = contactDetailsStatus.toString,
-          reviewAndSubmitStatus
+      if (plrReference) {
+        userAnswersConnectors.remove(request.userId).map { _ =>
+          logger.info(s"Remove existing amend data from local database if exist")
+          Redirect(routes.TaskListController.onPageLoad)
+        }
+      } else {
+        Future.successful(
+          Ok(
+            view(
+              upeStatus.toString,
+              count,
+              filingMemberStatus = fmStatus.toString,
+              groupDetailStatus = groupDetailStatus.toString,
+              contactDetailsStatus = contactDetailsStatus.toString,
+              reviewAndSubmitStatus
+            )
+          )
         )
-      )
+      }
     }
   }
 
