@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import views.html.helper.CSPNonce
 
-import forms.mappings.Mappings
-import play.api.data.Form
+@this()
 
-import javax.inject.Inject
-
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
-        .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
-    )
-}
+@()(implicit request: Request[_])
+<link @{CSPNonce.attr} href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
+<script @{CSPNonce.attr} src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

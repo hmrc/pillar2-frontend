@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
+import mapping.Constants.{ENGLISH, WELSH}
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
@@ -46,15 +47,15 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
 
   lazy val enrolmentStoreProxyUrl: String =
-    s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
+    s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
+      .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
 
   val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
     .get[String]("microservice.services.tax-enrolments.url1")}"
 
   val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
 
-  val accessibilityStatementServicePath: String =
-    configuration.get[String]("accessibility-statement.service-path")
+  val accessibilityStatementServicePath: String = configuration.get[String]("accessibility-statement.service-path")
 
   val accessibilityStatementPath: String =
     s"/accessibility-statement$accessibilityStatementServicePath"
@@ -62,31 +63,39 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
   val exitSurveyUrl:             String = s"$exitSurveyBaseUrl/feedback/pillar2-frontend"
 
-  def languageMap: Map[String, Lang] = Map(
-    "en" -> Lang("en"),
-    "cy" -> Lang("cy")
-  )
-
   val timeout:   Int = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
-  val incorporatedEntityIdentificationFrontendBaseUrl: String =
-    servicesConfig.baseUrl("incorporated-entity-identification-frontend")
-  val partnershipEntityIdentificationFrontendBaseUrl: String =
-    servicesConfig.baseUrl("partnership-identification-frontend")
+  val pillar2BaseUrl:                                  String = servicesConfig.baseUrl("pillar2")
+  val incorporatedEntityIdentificationFrontendBaseUrl: String = servicesConfig.baseUrl("incorporated-entity-identification-frontend")
+  val partnershipEntityIdentificationFrontendBaseUrl:  String = servicesConfig.baseUrl("partnership-identification-frontend")
 
   val grsContinueUrl:              String  = configuration.get[String]("urls.grsContinue")
   val incorporatedEntityBvEnabled: Boolean = configuration.get[Boolean]("features.incorporatedEntityBvEnabled")
   val partnershipBvEnabled:        Boolean = configuration.get[Boolean]("features.partnershipBvEnabled")
 
   //Enable Disable
-  val privateBetaEnabled: Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
-  val languageTranslationEnabled: Boolean =
-    configuration.get[Boolean]("features.welsh-translation")
+  val privateBetaEnabled:         Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
+  val languageTranslationEnabled: Boolean = configuration.get[Boolean]("features.welsh-translation")
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
 
-  lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
+  lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
+  lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
+
+  def languageMap: Map[String, Lang] =
+    if (languageTranslationEnabled) {
+      Map(
+        "english" -> Lang(ENGLISH),
+        "cymraeg" -> Lang(WELSH)
+      )
+    } else { Map("english" -> Lang(ENGLISH)) }
+
+  val showPaymentsSection: Boolean = configuration.get[Boolean]("features.showPaymentsSection")
+
+  def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
+  lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
+  lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
+  lazy val excludedPaths:  Seq[String] = configuration.get[Seq[String]]("filters.allowlist.excluded")
 }

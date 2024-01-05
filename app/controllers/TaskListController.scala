@@ -17,7 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.plrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,16 +31,20 @@ import javax.inject.Inject
 
 case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class TaskListController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  view:                     TaskListView
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:  MessagesControllerComponents,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  view:                      TaskListView,
+  val userAnswersConnectors: UserAnswersConnectors
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
+
   def buildTaskInfo(
     ultimateParentStatus: String,
     filingMemberStatus:   String,
@@ -115,13 +121,13 @@ class TaskListController @Inject() (
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
   }
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val upeStatus            = request.userAnswers.upeStatus
-    val fmStatus             = request.userAnswers.fmStatus
-    val groupDetailStatus    = request.userAnswers.groupDetailStatus
-    val contactDetailsStatus = request.userAnswers.contactDetailStatus
-
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val upeStatus             = request.userAnswers.upeStatus
+    val fmStatus              = request.userAnswers.fmStatus
+    val groupDetailStatus     = request.userAnswers.groupDetailStatus
+    val contactDetailsStatus  = request.userAnswers.contactDetailStatus
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
+    val plrReference          = request.userAnswers.get(plrReferencePage).isDefined
 
     val (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo) = buildTaskInfo(
       request.userAnswers.upeStatus.toString,
@@ -135,18 +141,20 @@ class TaskListController @Inject() (
       .count(_ == RowStatus.Completed)
 
     if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
     } else {
-      Ok(
-        view(
-          ultimateParentInfo,
-          count,
-          filingMemberInfo,
-          groupDetailInfo,
-          contactDetailsInfo,
-          cyaInfo
+      if (plrReference) {
+        userAnswersConnectors.remove(request.userId).map { _ =>
+          logger.info(s"Remove existing amend data from local database if exist")
+          Redirect(routes.TaskListController.onPageLoad)
+        }
+      } else {
+        Future.successful(
+          Ok(
+            view(ultimateParentInfo, count, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
+          )
         )
-      )
+      }
     }
   }
 }

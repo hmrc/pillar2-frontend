@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package forms
+package utils.countryOptions
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import mapping.Constants.UK_COUNTRY_CODE
+import play.api.Environment
+import play.api.i18n.Messages
+import utils.InputOption
 
-import javax.inject.Inject
+import javax.inject.Singleton
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
-        .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
-    )
+@Singleton
+class CountryOptionsNonUK @Inject() (
+  environment: Environment,
+  config:      FrontendAppConfig
+) extends CountryOptions(environment, config) {
+  override def options()(implicit messages: Messages): Seq[InputOption] =
+    CountryOptions.getCountries(environment, getFileName()).filterNot(x => x.value == UK_COUNTRY_CODE)
 }

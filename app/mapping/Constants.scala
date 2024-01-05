@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package mapping
 
-import forms.mappings.Mappings
-import play.api.data.Form
+object Constants {
 
-import javax.inject.Inject
+  final val ENGLISH         = "en"
+  final val WELSH           = "cy"
+  final val UK_COUNTRY_CODE = "GB"
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
-        .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
-    )
 }

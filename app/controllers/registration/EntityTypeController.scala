@@ -23,6 +23,7 @@ import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
 import pages.{upeEntityTypePage, upeRegisteredInUKPage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,7 +47,8 @@ class EntityTypeController @Inject() (
   view:                                              EntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form = formProvider()
 
@@ -70,6 +72,7 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
+              logger.info("Calling UK Limited Company in EntityTypeController class")
               for {
                 updatedAnswers   <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
                 _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -77,6 +80,7 @@ class EntityTypeController @Inject() (
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
+              logger.info("Calling Limited Liability Partnership in EntityTypeController class")
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

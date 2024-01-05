@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object plrReferencePage extends QuestionPage[String] {
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
-        .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "plrReference"
 }

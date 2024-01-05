@@ -501,7 +501,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     }
 
     "contact detail status" should {
-      "return completed if an answer is provided both pages" in {
+      "return completed if an answer is provided to the right combination of pages" in {
         val userAnswer = emptyUserAnswers
           .set(subPrimaryContactNamePage, "name")
           .success
@@ -633,6 +633,37 @@ class SubscriptionHelpersSpec extends SpecBase {
       "redirected to journey recovery if no data can be found for nominated filing member" in {
         val userAnswer = emptyUserAnswers
         userAnswer.getUpRegData mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+
+    "groupDetails status checker" should {
+
+      "return true if right combination of the contact details and the subscription address have been answered " in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+        userAnswers.groupDetailStatusChecker mustEqual true
+      }
+    }
+
+    "final status checker" should {
+
+      "return true if all the tasks have been completed for the subscription journey " in {
+        val date = LocalDate.now()
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+          .setOrException(NominateFilingMemberPage, false)
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+          .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+          .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
+          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(upeGRSResponsePage, grsResponse)
+
+        userAnswers.finalStatusCheck mustEqual true
       }
     }
 

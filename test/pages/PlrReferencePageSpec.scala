@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import models.grs.EntityType
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Inject
+class PlrReferencePageSpec extends PageBehaviours {
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "secondaryContactEmail.error.length"))
-        .verifying(regexp(emailRegex, "secondaryContactEmail.error.format"))
-    )
+  "plrReferencePage" - {
+
+    beRetrievable[String](plrReferencePage)
+
+    beSettable[String](plrReferencePage)
+
+    beRemovable[String](plrReferencePage)
+  }
 }
