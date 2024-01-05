@@ -34,17 +34,27 @@
             @messages("registrationConfirmation.topup")<br><strong>@pil2Id</strong>
         </div>
     </div>
+    <h2 class="govuk-heading-s govuk-!-margin-top-5">Registration date: 1 January 2025</h2>
     <h2 class="govuk-heading-m">@messages("registrationConfirmation.whatHappensNext")</h2>
+
     <p class="govuk-body">
     @messages("registrationConfirmation.p1")
     </p>
+    <p class="govuk-body"><strong>@messages("registrationConfirmation.p2")</strong></p>
     <p class="govuk-body">
-    @messages("registrationConfirmation.p2")
+    @messages("registrationConfirmation.p3")
+    </p>
+    <p class="govuk-body">
+    <a class="govuk-link" href="#"> @messages("registrationConfirmation.link")</a>
     </p>
 
-    @govukButton(
-        ButtonViewModel(messages("site.continue"))
-        .asLink(routes.DashboardController.onPageLoad.url)
-    )
+    <p class="govuk-body">
+    @messages("registrationConfirmation.p3")
+    </p>
+    <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.next")</h2>
+    <p class="govuk-body">
+    @messages("registrationConfirmation.now")
+        <a class="govuk-link" href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"> @messages("registrationConfirmation.link-home")</a>
+    </p>
 
 }

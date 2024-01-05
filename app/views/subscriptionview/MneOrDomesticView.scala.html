@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
+@import viewmodels.LegendSize.Medium
 
 @this(
     layout: templates.Layout,
@@ -35,10 +35,20 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
         <span class="govuk-caption-l">@messages("mneOrDomestic.heading.caption")</span>
+        <h1 class="govuk-heading-l">@messages("mneOrDomestic.heading")</h1>
+        <p class="govuk-body">@messages("mneOrDomestic.p1")</p>
+        <p class="govuk-body">@messages("mneOrDomestic.p2")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@messages("mneOrDomestic.l1")</li>
+            <li>@messages("mneOrDomestic.l2")</li>
+        </ul>
+        <p class="govuk-body">@messages("mneOrDomestic.p3")</p>
+        <p class="govuk-body">@messages("mneOrDomestic.p4")</p>
+        <p class="govuk-body">@messages("mneOrDomestic.p5")</p>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("mneOrDomestic.heading")).asPageHeading(Large),
+                legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
                 items  = MneOrDomestic.options
             )
         )
