@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,13 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(subPrimaryEmailPage, "email@hello.com")
     .setOrException(subPrimaryPhonePreferencePage, true)
     .setOrException(subPrimaryCapturePhonePage, "123213")
+    .setOrException(subAddSecondaryContactPage, true)
     .setOrException(subSecondaryContactNamePage, "name")
     .setOrException(subSecondaryEmailPage, "email@hello.com")
     .setOrException(subSecondaryPhonePreferencePage, true)
     .setOrException(subSecondaryCapturePhonePage, "123213")
     .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+
   val subDataWithoutAddress = emptyUserAnswers
     .setOrException(subPrimaryContactNamePage, "name")
     .setOrException(subPrimaryEmailPage, "email@hello.com")

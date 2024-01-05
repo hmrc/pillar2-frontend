@@ -120,7 +120,7 @@ class TaskListController @Inject() (
     val fmStatus             = request.userAnswers.fmStatus
     val groupDetailStatus    = request.userAnswers.groupDetailStatus
     val contactDetailsStatus = request.userAnswers.contactDetailStatus
-    println(s" what is contactDetailStatus -------------+++++++++++++++++--------------$contactDetailsStatus")
+
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
 
     val (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo) = buildTaskInfo(

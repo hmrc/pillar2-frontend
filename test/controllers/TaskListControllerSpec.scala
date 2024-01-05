@@ -606,7 +606,7 @@ class TaskListControllerSpec extends SpecBase {
           controller.buildTaskInfo("Unknown", "Unknown", "Unknown", "Unknown", "Unknown")
 
         groupDetailInfo.name   shouldBe "groupDetail"
-        groupDetailInfo.status shouldBe "default"
+        groupDetailInfo.status shouldBe "cannotStartYet"
         groupDetailInfo.link   shouldBe None
         groupDetailInfo.action shouldBe None
       }

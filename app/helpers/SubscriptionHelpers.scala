@@ -103,7 +103,7 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
-  
+
   def contactDetailStatus: RowStatus =
     get(subAddSecondaryContactPage)
       .map { addSecondContact =>

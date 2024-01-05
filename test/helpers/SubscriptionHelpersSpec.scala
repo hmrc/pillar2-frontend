@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -506,6 +506,24 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(subPrimaryContactNamePage, "name")
           .success
           .value
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryEmailPage, "email@hello.com")
+          .success
+          .value
+          .set(subPrimaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(subPrimaryCapturePhonePage, "123213")
+          .success
+          .value
+          .set(subAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(subUsePrimaryContactPage, true)
+          .success
+          .value
           .set(subRegisteredAddressPage, nonUkAddress)
           .success
           .value
@@ -513,7 +531,26 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        val userAnswer = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryEmailPage, "email@hello.com")
+          .success
+          .value
+          .set(subPrimaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(subAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(subUsePrimaryContactPage, true)
+          .success
+          .value
+
         userAnswer.contactDetailStatus mustEqual RowStatus.InProgress
       }
 
