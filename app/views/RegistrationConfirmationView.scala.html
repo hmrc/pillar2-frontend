@@ -15,14 +15,15 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import java.time.LocalDate
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukButton: GovukButton
 )
 
-@(pil2Id: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@(pil2Id: String, currentDate:String, mneDomestic:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
@@ -34,11 +35,10 @@
             @messages("registrationConfirmation.topup")<br><strong>@pil2Id</strong>
         </div>
     </div>
-    <h2 class="govuk-heading-s govuk-!-margin-top-5">Registration date: 1 January 2025</h2>
-    <h2 class="govuk-heading-m">@messages("registrationConfirmation.whatHappensNext")</h2>
+    <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.reg-date") @currentDate</h2>
 
     <p class="govuk-body">
-    @messages("registrationConfirmation.p1")
+    @messages("registrationConfirmation.p1", mneDomestic)
     </p>
     <p class="govuk-body"><strong>@messages("registrationConfirmation.p2")</strong></p>
     <p class="govuk-body">
@@ -49,7 +49,7 @@
     </p>
 
     <p class="govuk-body">
-    @messages("registrationConfirmation.p3")
+    @messages("registrationConfirmation.p4")
     </p>
     <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.next")</h2>
     <p class="govuk-body">

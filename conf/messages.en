@@ -613,15 +613,15 @@ site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
+registrationConfirmation.reg-date = Registration date:
 registrationConfirmation.topup = Group''s Pillar 2 top-up taxes ID
 registrationConfirmation.whatHappensNext = What happens next
-registrationConfirmation.p1 = Your group has registered to report for Domestic Top-up Tax and Multinational Top-up Tax.
+registrationConfirmation.p1 = Your group has registered to report for {0}.
 registrationConfirmation.p2 = You will not be emailed a confirmation of this registration.
 registrationConfirmation.p3 = You can save a record of this registration completion as a PDF (depending on your browser it will open in a new window or tab, or save to your download folder).
 registrationConfirmation.link = Save a record of this registration completion
 registrationConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
 registrationConfirmation.next = What happens next
-registrationConfirmation.p4 = You can now report and manage your Pillar 2 top-up taxes.
 registrationConfirmation.now = You can now
 registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes.
 registrationConfirmation.whatDidYouThink = What did you think of this service

@@ -23,5 +23,6 @@ object Pillar2SessionKeys {
   val evidenceRequestedFlag       = "evidenceRequestedFlag"
   val turnOverEligibilityValue    = "turnOverEligibilityValue"
   val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
+  val updateMneOrDomestic         = "updateMneOrDomestic"
   val plrId                       = "plrId"
 }

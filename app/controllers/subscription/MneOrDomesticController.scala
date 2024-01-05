@@ -16,6 +16,7 @@
 
 package controllers.subscription
 
+import cache.SessionData
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
@@ -40,7 +41,8 @@ class MneOrDomesticController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      MneOrDomesticView
+  view:                      MneOrDomesticView,
+  sessionData:               SessionData
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -71,6 +73,7 @@ class MneOrDomesticController @Inject() (
                 .fromTry(request.userAnswers.set(subMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
+            .withSession((sessionData.updateMneOrDomestic(value.toString)))
       )
   }
 
