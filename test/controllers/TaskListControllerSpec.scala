@@ -20,7 +20,7 @@ import base.SpecBase
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress}
+import models.{MneOrDomestic, NonUKAddress, TaskAction, TaskStatus}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api.test.FakeRequest
@@ -346,12 +346,18 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (ultimateParentInfo, filingMemberInfo, _, _, _) =
-          controller.buildTaskInfo("Completed", "Completed", "NotStarted", "NotStarted", "NotStarted")
+          controller.buildTaskInfo(
+            TaskStatus.Completed.toString,
+            TaskStatus.Completed.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString
+          )
 
-        ultimateParentInfo.status shouldBe "Completed"
-        ultimateParentInfo.action shouldBe Some("edit")
-        filingMemberInfo.status   shouldBe "Completed"
-        filingMemberInfo.action   shouldBe Some("edit")
+        ultimateParentInfo.status shouldBe TaskStatus.Completed.toString
+        ultimateParentInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
+        filingMemberInfo.status   shouldBe TaskStatus.Completed.toString
+        filingMemberInfo.action   shouldBe Some(TaskAction.Edit.toString.toLowerCase())
       }
     }
 
@@ -400,12 +406,18 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (ultimateParentInfo, filingMemberInfo, _, _, _) =
-          controller.buildTaskInfo("Completed", "Completed", "NotStarted", "NotStarted", "NotStarted")
+          controller.buildTaskInfo(
+            TaskStatus.Completed.toString,
+            TaskStatus.Completed.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString
+          )
 
-        ultimateParentInfo.status shouldBe "Completed"
-        ultimateParentInfo.action shouldBe Some("edit")
-        filingMemberInfo.status   shouldBe "Completed"
-        filingMemberInfo.action   shouldBe Some("edit")
+        ultimateParentInfo.status shouldBe TaskStatus.Completed.toString
+        ultimateParentInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
+        filingMemberInfo.status   shouldBe TaskStatus.Completed.toString
+        filingMemberInfo.action   shouldBe Some(TaskAction.Edit.toString.toLowerCase())
       }
     }
 
@@ -453,10 +465,16 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (_, _, _, _, cyaInfo) =
-          controller.buildTaskInfo("NotStarted", "NotStarted", "NotStarted", "NotStarted", "Completed")
+          controller.buildTaskInfo(
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.Completed.toString
+          )
 
-        cyaInfo.status shouldBe "completed"
-        cyaInfo.action shouldBe Some("edit")
+        cyaInfo.status shouldBe TaskStatus.Completed.toString.toLowerCase()
+        cyaInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
       }
 
     }
@@ -506,10 +524,16 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (_, _, groupDetailInfo, _, _) =
-          controller.buildTaskInfo("Completed", "Completed", "InProgress", "NotStarted", "NotStarted")
+          controller.buildTaskInfo(
+            TaskStatus.Completed.toString,
+            TaskStatus.Completed.toString,
+            TaskStatus.InProgress.toString,
+            TaskStatus.NotStarted.toString,
+            TaskStatus.NotStarted.toString
+          )
 
         groupDetailInfo.status shouldBe "inProgress"
-        groupDetailInfo.action shouldBe Some("add")
+        groupDetailInfo.action shouldBe Some(TaskAction.Add.toString.toLowerCase())
       }
 
     }
@@ -555,10 +579,16 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (_, _, _, contactDetailsInfo, _) =
-          controller.buildTaskInfo("Completed", "Completed", "Completed", "InProgress", "NotStarted")
+          controller.buildTaskInfo(
+            TaskStatus.Completed.toString,
+            TaskStatus.Completed.toString,
+            TaskStatus.Completed.toString,
+            TaskStatus.InProgress.toString,
+            TaskStatus.NotStarted.toString.toString
+          )
 
-        contactDetailsInfo.status shouldBe "InProgress"
-        contactDetailsInfo.action shouldBe Some("add")
+        contactDetailsInfo.status shouldBe TaskStatus.InProgress.toString
+        contactDetailsInfo.action shouldBe Some(TaskAction.Add.toString.toLowerCase())
       }
     }
 
@@ -603,7 +633,13 @@ class TaskListControllerSpec extends SpecBase {
 
         val controller = application.injector.instanceOf[TaskListController]
         val (_, _, groupDetailInfo, _, _) =
-          controller.buildTaskInfo("Unknown", "Unknown", "Unknown", "Unknown", "Unknown")
+          controller.buildTaskInfo(
+            TaskStatus.Default.toString,
+            TaskStatus.Default.toString,
+            TaskStatus.Default.toString,
+            TaskStatus.Default.toString,
+            TaskStatus.Default.toString
+          )
 
         groupDetailInfo.name   shouldBe "groupDetail"
         groupDetailInfo.status shouldBe "cannotStartYet"

@@ -16,10 +16,7 @@
 
 package models
 
-import controllers.TaskInfo
 import play.api.i18n.Messages
-import play.api.i18n.Messages
-import play.twirl.api.Html
 
 object TaskViewHelpers {
   def statusToString(status: TaskStatus)(implicit messages: Messages): String = status match {
@@ -42,19 +39,6 @@ object TaskViewHelpers {
     case "NotStarted"     => TaskStatus.NotStarted
     case "CannotStartYet" => TaskStatus.CannotStartYet
     case _                => TaskStatus.Default
-  }
-
-  def renderTask(taskInfo: TaskInfo, messageKeyBase: String)(implicit messages: Messages): Html = {
-    val actionKey   = taskInfo.action.map(actionToString).getOrElse("default")
-    val taskStatus  = statusToString(taskInfo.status)
-    val linkTextKey = s"$messageKeyBase.$actionKey"
-    val linkText = taskInfo.link
-      .map { link =>
-        s"""<a href="$link" aria-describedby="eligibility-status">${messages(linkTextKey)}</a>"""
-      }
-      .getOrElse(messages(s"$messageKeyBase"))
-    val statusTag = s"""<span class="hmrc-status-tag">$taskStatus</span>"""
-    Html(s"""<li class="app-task-list__item"><span class="app-task-list__task-name">$linkText</span>$statusTag</li>""")
   }
 
 }
