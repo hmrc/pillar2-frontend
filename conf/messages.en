@@ -115,6 +115,7 @@ taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
 taskList.task.business.more.edit = Edit further business details
 taskList.task.business.sub.add = Add further group details
+taskList.task.business.sub.Add = Add further group details
 taskList.task.business.sub.edit = Edit further group details
 taskList.task.contact.heading = Contact details
 taskList.task.contact = Contact details
@@ -132,6 +133,7 @@ task.status.inProgress = In progress
 task.status.InProgress = In progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
+task.status.CannotStartYet = Cannot start yet
 
 
 grs.registration.failed.header = Sorry, there is a problem with the service
