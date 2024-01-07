@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 trait IdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
