@@ -33,7 +33,7 @@ class JourneyRecoveryController @Inject() (
   identify:                 IdentifierAction,
   continueView:             JourneyRecoveryContinueView,
   startAgainView:           JourneyRecoveryStartAgainView
-)(implicit appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
