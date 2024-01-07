@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
@@ -37,15 +38,18 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
       .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
       .map {
         case response if is2xx(response.status) =>
-          logger.info(s"Subscription request is successful with status ${response.status} ")
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
           Some(response.json.as[SuccessResponse].success)
 
         case errorResponse =>
-          logger.warn(s"Subscription call failed with status ${errorResponse.status}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
           None
       }
       .recover { case e: Exception =>
-        logger.warn(s"Error message ${e.printStackTrace()} has been thrown when create subscription was called")
+        logger.warn(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Error message ${e.printStackTrace()} has been thrown when create subscription was called"
+        )
         None
       }
 
