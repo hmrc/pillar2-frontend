@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) extends Logging {
 
@@ -35,10 +36,10 @@ class RegisterWithoutIdService @Inject() (registrationConnector: RegistrationCon
       case Right(Some(safeId)) =>
         Right(safeId)
       case Right(None) =>
-        logger.warn("Upe Registration WithoutId Information MissingError SafeId missing")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Upe Registration WithoutId Information MissingError SafeId missing")
         Left(RegistrationWithoutIdInformationMissingError("Missing safeId"))
       case Left(error) =>
-        logger.warn(s"Upe Registration WithoutId Information $error")
+        logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Upe Registration WithoutId Information $error")
         Left(error)
     }
 
