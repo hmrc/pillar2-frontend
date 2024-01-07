@@ -20,17 +20,15 @@ import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext, hc: HeaderCarrier) extends DataRequiredAction with Logging {
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
     logger.debug(
-      s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
+      s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
     )
 
     request.userAnswers match {
