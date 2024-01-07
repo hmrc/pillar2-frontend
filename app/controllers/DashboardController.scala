@@ -28,12 +28,10 @@ import services.ReadSubscriptionService
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
-import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 class DashboardController @Inject() (
   val userAnswersConnectors:   UserAnswersConnectors,
@@ -43,7 +41,7 @@ class DashboardController @Inject() (
   val readSubscriptionService: ReadSubscriptionService,
   val controllerComponents:    MessagesControllerComponents,
   view:                        DashboardView
-)(implicit ec:                 ExecutionContext, hc: HeaderCarrier, appConfig: FrontendAppConfig)
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -87,7 +85,7 @@ class DashboardController @Inject() (
             }
 
           case Left(error) =>
-            logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
+            logger.error(s"Error retrieving subscription: $error")
             Future.successful(InternalServerError("Internal Server Error occurred"))
         }
 
