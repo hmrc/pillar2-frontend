@@ -25,15 +25,17 @@ import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
+import utils.Pillar2SessionKeys
 
 class JourneyRecoveryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   continueView:             JourneyRecoveryContinueView,
   startAgainView:           JourneyRecoveryStartAgainView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit hc:              HeaderCarrier, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -44,7 +46,7 @@ class JourneyRecoveryController @Inject() (
         case Right(safeUrl) =>
           Some(safeUrl.url)
         case Left(message) =>
-          logger.info(message)
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - $message")
           None
       }
     }
