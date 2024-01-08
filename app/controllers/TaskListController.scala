@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.TaskInfo
-import models.TaskViewHelpers.stringToTaskStatus
+
 import pages.plrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -124,18 +124,18 @@ class TaskListController @Inject() (
     val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
     val plrReference          = request.userAnswers.get(plrReferencePage).isDefined
 
-    val upeStatusTask             = stringToTaskStatus(request.userAnswers.upeStatus.toString)
-    val fmStatusTask              = stringToTaskStatus(request.userAnswers.fmStatus.toString)
-    val groupDetailStatusTask     = stringToTaskStatus(request.userAnswers.groupDetailStatus.toString)
-    val contactDetailsStatusTask  = stringToTaskStatus(request.userAnswers.contactDetailStatus.toString)
-    val reviewAndSubmitStatusTask = stringToTaskStatus(reviewAndSubmitStatus)
+    val upeStatusTask             = request.userAnswers.upeStatus.toString
+    val fmStatusTask              = request.userAnswers.fmStatus.toString
+    val groupDetailStatusTask     = request.userAnswers.groupDetailStatus.toString
+    val contactDetailsStatusTask  = request.userAnswers.contactDetailStatus.toString
+    val reviewAndSubmitStatusTask = reviewAndSubmitStatus
 
     val (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo) = buildTaskInfo(
-      upeStatusTask.toString,
-      fmStatusTask.toString,
-      groupDetailStatusTask.toString,
-      contactDetailsStatusTask.toString,
-      reviewAndSubmitStatusTask.toString
+      upeStatusTask,
+      fmStatusTask,
+      groupDetailStatusTask,
+      contactDetailsStatusTask,
+      reviewAndSubmitStatusTask
     )
 
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
