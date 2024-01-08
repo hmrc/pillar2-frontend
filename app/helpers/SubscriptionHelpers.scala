@@ -109,10 +109,9 @@ trait SubscriptionHelpers {
       .map { addSecondContact =>
         if (!addSecondContact) {
           (for {
-            primaryContactName   <- get(subPrimaryContactNamePage)
-            primaryEmail         <- get(subPrimaryEmailPage)
-            primaryTelPref       <- get(subPrimaryPhonePreferencePage)
-            secondaryContactPref <- get(subUsePrimaryContactPage)
+            primaryContactName <- get(subPrimaryContactNamePage)
+            primaryEmail       <- get(subPrimaryEmailPage)
+            primaryTelPref     <- get(subPrimaryPhonePreferencePage)
 
           } yield {
             val telephone = get(subPrimaryCapturePhonePage).isDefined

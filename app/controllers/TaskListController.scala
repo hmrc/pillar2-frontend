@@ -112,7 +112,6 @@ class TaskListController @Inject() (
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
   }
 
-
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val upeStatus             = request.userAnswers.upeStatus
     val fmStatus              = request.userAnswers.fmStatus
