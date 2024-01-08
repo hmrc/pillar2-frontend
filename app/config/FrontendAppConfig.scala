@@ -84,6 +84,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
   lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
 
+  val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
+  val registrationControllerDomestic: String = "Domestic Top-up Tax"
+
   def languageMap: Map[String, Lang] =
     if (languageTranslationEnabled) {
       Map(

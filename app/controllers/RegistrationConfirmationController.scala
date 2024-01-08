@@ -43,8 +43,8 @@ class RegistrationConfirmationController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     val mneDomestic = request.session.data.get(Pillar2SessionKeys.updateMneOrDomestic) match {
-      case Some("ukAndOther") => "Domestic Top-up Tax and Multinational Top-up Tax"
-      case _                  => "Domestic Top-up Tax"
+      case Some("ukAndOther") => appConfig.registrationControllerMne
+      case _                  => appConfig.registrationControllerDomestic
     }
     Ok(view(request.session.get(Pillar2SessionKeys.plrId).getOrElse("N/A"), currentDate.toString(), mneDomestic))
 
