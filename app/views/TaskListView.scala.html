@@ -97,7 +97,7 @@
                     <span class="app-task-list__task-name">
                     @contactDetailsInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "completed") "edit" else "add"}")
+                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else "add"}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.contact")

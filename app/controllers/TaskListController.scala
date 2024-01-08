@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.TaskInfo
 import models.TaskViewHelpers.stringToTaskStatus
 import pages.plrReferencePage
 import play.api.Logging
@@ -29,8 +30,6 @@ import utils.{Pillar2SessionKeys, RowStatus}
 import views.html.TaskListView
 
 import javax.inject.Inject
-
-case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaskListController @Inject() (
@@ -53,60 +52,65 @@ class TaskListController @Inject() (
     cyaStatus:            String
   ): (TaskInfo, TaskInfo, TaskInfo, TaskInfo, TaskInfo) = {
     // Define links for each task
-    val ultimateParentLink = "/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"
-    val filingMemberLink   = "/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"
-    val groupDetailLink    = "/report-pillar2-top-up-taxes/further-details/group-status"
-    val contactDetailsLink = "/report-pillar2-top-up-taxes/contact-details/content"
-    val cyaLink            = "/report-pillar2-top-up-taxes/review-submit/check-answers"
-
+    val ultimateParentLink = appConfig.ultimateParentLink
+    val filingMemberLink   = appConfig.filingMemberLink
+    val groupDetailLink    = appConfig.groupDetailLink
+    val contactDetailsLink = appConfig.contactDetailsLink
+    val cyaLink            = appConfig.cyaLink
     // Logic for creating TaskInfo objects
     val ultimateParentInfo = TaskInfo(
       "ultimateParent",
       ultimateParentStatus,
       Some(ultimateParentLink),
-      if (ultimateParentStatus == "Completed") Some("edit") else Some("add")
+      if (ultimateParentStatus == RowStatus.Completed.value) Some(RowStatus.edit.value) else Some(RowStatus.add.value)
     )
 
     val filingMemberInfo = ultimateParentStatus match {
-      case "Completed" =>
+      case RowStatus.Completed.value =>
         TaskInfo(
           "filingMember",
           filingMemberStatus,
           Some(filingMemberLink),
-          if (filingMemberStatus == "Completed") Some("edit") else Some("add")
+          if (filingMemberStatus == RowStatus.Completed.value) Some(RowStatus.edit.value) else Some(RowStatus.add.value)
         )
-      case "InProgress" =>
+      case RowStatus.InProgress.value =>
         TaskInfo(
           "filingMember",
-          if (filingMemberStatus == "NotStarted") "cannotStartYet" else filingMemberStatus,
-          if (filingMemberStatus == "NotStarted") None else Some(filingMemberLink),
-          if (filingMemberStatus == "Completed") Some("edit") else if (filingMemberStatus == "NotStarted") None else Some("add")
+          if (filingMemberStatus == RowStatus.NotStarted.value) RowStatus.CannotStartYet.value else filingMemberStatus,
+          if (filingMemberStatus == RowStatus.NotStarted.value) None else Some(filingMemberLink),
+          if (filingMemberStatus == RowStatus.Completed.value) Some(RowStatus.edit.value)
+          else if (filingMemberStatus == RowStatus.NotStarted.value) None
+          else Some(RowStatus.add.value)
         )
-      case _ => TaskInfo("filingMember", "cannotStartYet", None, None)
+      case _ => TaskInfo("filingMember", RowStatus.CannotStartYet.value, None, None)
     }
 
     val groupDetailInfo = (filingMemberStatus, groupDetailStatus) match {
-      case (_, "Completed")                      => TaskInfo("groupDetail", "completed", Some(groupDetailLink), Some("edit"))
-      case ("Completed", "InProgress")           => TaskInfo("groupDetail", "inProgress", Some(groupDetailLink), Some("add"))
-      case ("Completed", "NotStarted")           => TaskInfo("groupDetail", "notStarted", Some(groupDetailLink), Some("add"))
-      case ("InProgress", "InProgress")          => TaskInfo("groupDetail", "inProgress", Some(groupDetailLink), Some("add"))
-      case ("InProgress", _) | (_, "InProgress") => TaskInfo("groupDetail", "cannotStartYet", None, None)
-      case (_, "NotStarted")                     => TaskInfo("groupDetail", "cannotStartYet", None, None)
-      case _                                     => TaskInfo("groupDetail", "cannotStartYet", None, None)
+      case (_, RowStatus.Completed.value) => TaskInfo("groupDetail", RowStatus.Completed.value, Some(groupDetailLink), Some(RowStatus.edit.value))
+      case (RowStatus.Completed.value, RowStatus.InProgress.value) =>
+        TaskInfo("groupDetail", RowStatus.InProgress.value, Some(groupDetailLink), Some(RowStatus.add.value))
+      case (RowStatus.Completed.value, RowStatus.NotStarted.value) =>
+        TaskInfo("groupDetail", RowStatus.NotStarted.value, Some(groupDetailLink), Some(RowStatus.add.value))
+      case (RowStatus.InProgress.value, RowStatus.InProgress.value) =>
+        TaskInfo("groupDetail", RowStatus.InProgress.value, Some(groupDetailLink), Some(RowStatus.add.value))
+      case (RowStatus.InProgress.value, _) | (_, RowStatus.InProgress.value) => TaskInfo("groupDetail", RowStatus.CannotStartYet.value, None, None)
+      case (_, RowStatus.NotStarted.value)                                   => TaskInfo("groupDetail", RowStatus.CannotStartYet.value, None, None)
+      case _                                                                 => TaskInfo("groupDetail", RowStatus.CannotStartYet.value, None, None)
     }
 
     val contactDetailsInfo = (filingMemberStatus, groupDetailStatus, contactDetailsStatus) match {
-      case ("Completed", "Completed", "Completed") | ("InProgress", "Completed", "Completed") =>
-        TaskInfo("contactDetails", "completed", Some(contactDetailsLink), Some("edit"))
-      case ("Completed", "Completed", _) | (_, _, "InProgress") =>
-        TaskInfo("contactDetails", contactDetailsStatus, Some(contactDetailsLink), Some("add"))
-      case _ => TaskInfo("contactDetails", "cannotStartYet", None, None)
+      case (RowStatus.Completed.value, RowStatus.Completed.value, RowStatus.Completed.value) |
+          (RowStatus.InProgress.value, RowStatus.Completed.value, RowStatus.Completed.value) =>
+        TaskInfo("contactDetails", RowStatus.Completed.value, Some(contactDetailsLink), Some(RowStatus.edit.value))
+      case (RowStatus.Completed.value, RowStatus.Completed.value, _) | (_, _, RowStatus.InProgress.value) =>
+        TaskInfo("contactDetails", contactDetailsStatus, Some(contactDetailsLink), Some(RowStatus.add.value))
+      case _ => TaskInfo("contactDetails", RowStatus.CannotStartYet.value, None, None)
     }
 
     val cyaInfo = cyaStatus match {
-      case "Completed"  => TaskInfo("cya", "completed", Some(cyaLink), Some("edit"))
-      case "NotStarted" => TaskInfo("cya", "notStarted", Some(cyaLink), Some("add"))
-      case _            => TaskInfo("cya", "cannotStartYet", None, None)
+      case RowStatus.Completed.value  => TaskInfo("cya", RowStatus.Completed.value, Some(cyaLink), Some(RowStatus.edit.value))
+      case RowStatus.NotStarted.value => TaskInfo("cya", RowStatus.NotStarted.value, Some(cyaLink), Some(RowStatus.add.value))
+      case _                          => TaskInfo("cya", RowStatus.CannotStartYet.value, None, None)
     }
 
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)

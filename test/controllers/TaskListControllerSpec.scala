@@ -473,7 +473,7 @@ class TaskListControllerSpec extends SpecBase {
             TaskStatus.Completed.toString
           )
 
-        cyaInfo.status shouldBe TaskStatus.Completed.toString.toLowerCase()
+        cyaInfo.status shouldBe TaskStatus.Completed.toString
         cyaInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
       }
 
@@ -532,7 +532,7 @@ class TaskListControllerSpec extends SpecBase {
             TaskStatus.NotStarted.toString
           )
 
-        groupDetailInfo.status shouldBe "inProgress"
+        groupDetailInfo.status shouldBe TaskStatus.InProgress.toString
         groupDetailInfo.action shouldBe Some(TaskAction.Add.toString.toLowerCase())
       }
 
@@ -642,7 +642,7 @@ class TaskListControllerSpec extends SpecBase {
           )
 
         groupDetailInfo.name   shouldBe "groupDetail"
-        groupDetailInfo.status shouldBe "cannotStartYet"
+        groupDetailInfo.status shouldBe TaskStatus.CannotStartYet.toString
         groupDetailInfo.link   shouldBe None
         groupDetailInfo.action shouldBe None
       }

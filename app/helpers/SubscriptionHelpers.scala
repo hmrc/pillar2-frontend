@@ -105,44 +105,12 @@ trait SubscriptionHelpers {
   }
 
   def contactDetailStatus: RowStatus =
-    get(subAddSecondaryContactPage)
-      .map { addSecondContact =>
-        if (!addSecondContact) {
-          (for {
-            primaryContactName <- get(subPrimaryContactNamePage)
-            primaryEmail       <- get(subPrimaryEmailPage)
-            primaryTelPref     <- get(subPrimaryPhonePreferencePage)
+    get(subPrimaryContactNamePage) match {
+      case Some(_) if groupDetailStatusChecker => RowStatus.Completed
+      case None                                => RowStatus.NotStarted
+      case _                                   => RowStatus.InProgress
+    }
 
-          } yield {
-            val telephone = get(subPrimaryCapturePhonePage).isDefined
-            if ((primaryTelPref & telephone) | !primaryTelPref) {
-              RowStatus.Completed
-            } else {
-              RowStatus.InProgress
-            }
-          }).getOrElse(RowStatus.InProgress)
-        } else {
-          (for {
-            secondContactName <- get(subSecondaryContactNamePage)
-            secondEmail       <- get(subSecondaryEmailPage)
-            secondTelPref     <- get(subSecondaryPhonePreferencePage)
-          } yield {
-            val telephone = get(subSecondaryCapturePhonePage).isDefined
-
-            if ((secondTelPref & telephone) | !secondTelPref) {
-              RowStatus.Completed
-            } else {
-              RowStatus.InProgress
-            }
-          }).getOrElse(RowStatus.InProgress)
-        }
-      }
-      .getOrElse(RowStatus.NotStarted)
-  get(subPrimaryContactNamePage) match {
-    case Some(_) if groupDetailStatusChecker => RowStatus.Completed
-    case None                                => RowStatus.NotStarted
-    case _                                   => RowStatus.InProgress
-  }
 
   val primaryTelephone: Boolean =
     get(subPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(subPrimaryCapturePhonePage).isEmpty) false else true)

@@ -84,6 +84,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
   lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
 
+  val ultimateParentLink: String = servicesConfig.getString("urls.ultimateParentLink")
+  val filingMemberLink:   String = servicesConfig.getString("urls.filingMemberLink")
+  val groupDetailLink:    String = servicesConfig.getString("urls.groupDetailLink")
+  val contactDetailsLink: String = servicesConfig.getString("urls.contactDetailsLink")
+  val cyaLink:            String = servicesConfig.getString("urls.cyaLink")
+
   def languageMap: Map[String, Lang] =
     if (languageTranslationEnabled) {
       Map(
