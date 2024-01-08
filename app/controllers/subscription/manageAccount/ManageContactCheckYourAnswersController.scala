@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,9 +80,10 @@ class ManageContactCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
-        userAnswersConnectors.remove(request.userId)
-        logger.info(s"Redirecting to Dashboard from contact details")
-        Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+        userAnswersConnectors.remove(request.userId).map { _ =>
+          logger.info(s"Redirecting to Dashboard from contact details")
+          Redirect(controllers.routes.DashboardController.onPageLoad)
+        }
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 

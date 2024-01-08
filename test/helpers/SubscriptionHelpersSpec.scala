@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -501,14 +501,18 @@ class SubscriptionHelpersSpec extends SpecBase {
     }
 
     "contact detail status" should {
-      "return completed if an answer is provided both pages" in {
+      "return completed if an answer is provided to the right combination of pages" in {
         val userAnswer = emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
+          .setOrException(subPrimaryContactNamePage, "name")
+          .setOrException(subPrimaryEmailPage, "email@hello.com")
+          .setOrException(subPrimaryPhonePreferencePage, true)
+          .setOrException(subPrimaryCapturePhonePage, "123213")
+          .setOrException(subAddSecondaryContactPage, true)
+          .setOrException(subSecondaryContactNamePage, "name")
+          .setOrException(subSecondaryEmailPage, "email@hello.com")
+          .setOrException(subSecondaryPhonePreferencePage, true)
+          .setOrException(subSecondaryCapturePhonePage, "123213")
+          .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
         userAnswer.contactDetailStatus mustEqual RowStatus.Completed
       }
 
@@ -596,6 +600,37 @@ class SubscriptionHelpersSpec extends SpecBase {
       "redirected to journey recovery if no data can be found for nominated filing member" in {
         val userAnswer = emptyUserAnswers
         userAnswer.getUpRegData mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+
+    "groupDetails status checker" should {
+
+      "return true if right combination of the contact details and the subscription address have been answered " in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+        userAnswers.groupDetailStatusChecker mustEqual true
+      }
+    }
+
+    "final status checker" should {
+
+      "return true if all the tasks have been completed for the subscription journey " in {
+        val date = LocalDate.now()
+        val userAnswers = emptyUserAnswers
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, nonUkAddress)
+          .setOrException(NominateFilingMemberPage, false)
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+          .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+          .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
+          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(upeGRSResponsePage, grsResponse)
+
+        userAnswers.finalStatusCheck mustEqual true
       }
     }
 

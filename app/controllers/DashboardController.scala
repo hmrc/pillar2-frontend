@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ class DashboardController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
     val userId       = request.userId
+    val showPayments = appConfig.showPaymentsSection
 
     plrReference match {
       case Some(ref) =>
@@ -72,7 +73,8 @@ class DashboardController @Inject() (
                         dashboardInfo.organisationName,
                         dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
                         ref,
-                        inactiveStatus
+                        inactiveStatus,
+                        showPayments
                       )
                     )
                   )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
             key = "entityType.companyName.checkYourAnswersLabel",
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
-              ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+              ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
                 .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
             )
           )

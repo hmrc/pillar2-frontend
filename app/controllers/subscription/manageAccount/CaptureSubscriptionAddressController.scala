@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,13 @@ class CaptureSubscriptionAddressController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              CaptureSubscriptionAddressFormProvider,
-  CountryOptions:            CountryOptions,
+  val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CaptureSubscriptionAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val countryList = CountryOptions.options.sortWith((s, t) => s.label(0).toLower < t.label(0).toLower)
-  val form        = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(subAddSecondaryContactPage)) {
@@ -53,7 +52,7 @@ class CaptureSubscriptionAddressController @Inject() (
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, mode, countryList))
+      Ok(view(preparedForm, mode, countryOptions.options()))
     } else {
       Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
@@ -63,7 +62,7 @@ class CaptureSubscriptionAddressController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryList))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options()))),
         value =>
           for {
             updatedAnswers <-

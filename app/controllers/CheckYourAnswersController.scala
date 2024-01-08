@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,9 +127,8 @@ class CheckYourAnswersController @Inject() (
     val upeRegInfo = request.userAnswers.getUpRegData
     val fmSafeID   = request.userAnswers.getFmSafeID
     (upeRegInfo, fmSafeID) match {
-      case (Right(upe), Right(s)) => createRegistrationAndSubscription(upe, s)
-      case _                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case (Right(upe), Right(s)) if request.userAnswers.finalStatusCheck => createRegistrationAndSubscription(upe, s)
+      case _ => Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
-
 }

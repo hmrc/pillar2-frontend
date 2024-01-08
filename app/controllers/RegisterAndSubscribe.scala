@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,18 +42,17 @@ trait RegisterAndSubscribe extends Logging {
     request:                                       DataRequest[AnyContent]
   ): Future[Result] =
     (upeSafeId, fmSafeID) match {
-      case (Some(regInfo), Some(fmSafeId)) =>
-        createSubscription(regInfo, Some(fmSafeId))
-      case (Some(regInfo), None) =>
+      case (Some(upeSafeId), Some(fmSafeId)) =>
+        createSubscription(upeSafeId, Some(fmSafeId))
+      case (Some(upeSafeId), None) =>
         request.userAnswers
           .get(NominateFilingMemberPage)
           .map { nominated =>
             if (nominated) {
               registerWithoutIdService.sendFmRegistrationWithoutId(request.userId, request.userAnswers).flatMap {
                 case Right(fmSafeId) =>
-                  createSubscription(regInfo, Some(fmSafeId.value))
+                  createSubscription(upeSafeId, Some(fmSafeId.value))
                 case Left(value) =>
-                  logger.warn(s"Error $value")
                   value match {
                     case MandatoryInformationMissingError(_) =>
                       Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
@@ -61,7 +60,8 @@ trait RegisterAndSubscribe extends Logging {
                   }
               }
             } else {
-              createSubscription(regInfo)
+              logger.info("Calling subscription with UPE as default filing member")
+              createSubscription(upeSafeId)
             }
           }
           .getOrElse(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
@@ -71,7 +71,6 @@ trait RegisterAndSubscribe extends Logging {
           case Right(upeSafeId) =>
             createSubscription(upeSafeId.value, Some(fmSafeId))
           case Left(value) =>
-            logger.warn(s"Error $value")
             value match {
               case MandatoryInformationMissingError(_) =>
                 Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
@@ -90,7 +89,6 @@ trait RegisterAndSubscribe extends Logging {
                     case Right(fmSafeId) =>
                       createSubscription(upeSafeId.value, Some(fmSafeId.value))
                     case Left(value) =>
-                      logger.warn(s"Error $value")
                       value match {
                         case MandatoryInformationMissingError(_) =>
                           Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
@@ -98,13 +96,13 @@ trait RegisterAndSubscribe extends Logging {
                       }
                   }
                 } else {
+                  logger.info("Calling subscription with UPE as default filing member")
                   createSubscription(upeSafeId.value)
                 }
               }
               .getOrElse(Future.successful(Redirect(routes.UnderConstructionController.onPageLoad)))
 
           case Left(value) =>
-            logger.warn(s"Error $value")
             value match {
               case MandatoryInformationMissingError(_) =>
                 Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
@@ -141,19 +139,18 @@ trait RegisterAndSubscribe extends Logging {
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
-            userAnswersConnectors.remove(request.userId)
-            logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
-            Future.successful(
+            userAnswersConnectors.remove(request.userId).map { _ =>
+              logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
                   + (Pillar2SessionKeys.plrId -> successResponse.plrReference)
               )
-            )
+            }
           case Left(EnrolmentCreationError) =>
-            logger.warn(s"Encountered EnrolmentCreationError. Redirecting to ErrorController.")
+            logger.warn(s"Encountered EnrolmentCreationError $EnrolmentCreationError. Redirecting to ErrorController.")
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
           case Left(EnrolmentExistsError) =>
-            logger.warn(s"Encountered EnrolmentExistsError. Redirecting to ErrorController.")
+            logger.warn(s"Encountered EnrolmentExistsError $EnrolmentExistsError. Redirecting to ErrorController.")
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
         }
 

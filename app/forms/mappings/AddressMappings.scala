@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package forms.mappings
 
 import play.api.data.Forms.of
 import play.api.data.{FieldMapping, Mapping}
+import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 
 trait AddressMappings extends Mappings with Constraints with Transforms {
@@ -37,7 +38,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
   ): FieldMapping[String] =
     of(mandatoryPostcodeFormatter(requiredKey, invalidKey, nonUkLengthKey, countryFieldName))
 
-  def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String): Mapping[String] =
+  def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String)(implicit messages: Messages): Mapping[String] =
     text(keyRequired)
       .verifying(country(countryOptions, keyInvalid))
 

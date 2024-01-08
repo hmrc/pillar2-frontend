@@ -1,5 +1,13 @@
 [
   [
+    "Andorra",
+    "country:AD"
+  ],
+  [
+    "United Arab Emirates",
+    "country:AE"
+  ],
+  [
     "Afghanistan",
     "country:AF"
   ],
@@ -8,20 +16,12 @@
     "country:AG"
   ],
   [
-    "Algeria",
-    "country:DZ"
-  ],
-  [
     "Anguilla",
     "country:AI"
   ],
   [
     "Albania",
     "country:AL"
-  ],
-  [
-    "Andorra",
-    "country:AD"
   ],
   [
     "Armenia",
@@ -68,6 +68,10 @@
     "country:AZ"
   ],
   [
+    "Bosnia and Herzegovina",
+    "country:BA"
+  ],
+  [
     "Barbados",
     "country:BB"
   ],
@@ -100,6 +104,10 @@
     "country:BJ"
   ],
   [
+    "Saint Barthelemy",
+    "country:BL"
+  ],
+  [
     "Bermuda",
     "country:BM"
   ],
@@ -116,20 +124,12 @@
     "country:BQ"
   ],
   [
-    "Bosnia and Herzegovina",
-    "country:BA"
-  ],
-  [
     "Brazil",
     "country:BR"
   ],
   [
     "Bahamas",
     "country:BS"
-  ],
-  [
-    "Belize",
-    "country:BZ"
   ],
   [
     "Bhutan",
@@ -148,8 +148,8 @@
     "country:BY"
   ],
   [
-    "British Indian Ocean Territory",
-    "country:IO"
+    "Belize",
+    "country:BZ"
   ],
   [
     "Canada",
@@ -160,12 +160,20 @@
     "country:CC"
   ],
   [
+    "Democratic Republic of the Congo",
+    "country:CD"
+  ],
+  [
     "Central African Republic",
     "country:CF"
   ],
   [
-    "Congo (Democratic Republic)",
-    "country:CD"
+    "Republic of the Congo",
+    "country:CG"
+  ],
+  [
+    "Switzerland",
+    "country:CH"
   ],
   [
     "Cote d'Ivoire",
@@ -184,10 +192,6 @@
     "country:CM"
   ],
   [
-    "Cambodia",
-    "country:KH"
-  ],
-  [
     "China",
     "country:CN"
   ],
@@ -196,16 +200,12 @@
     "country:CO"
   ],
   [
-    "Comoros",
-    "country:KM"
-  ],
-  [
     "Costa Rica",
     "country:CR"
   ],
   [
-    "Croatia",
-    "country:HR"
+    "Serbia and Montenegro",
+    "country:CS"
   ],
   [
     "Cuba",
@@ -232,6 +232,10 @@
     "country:CZ"
   ],
   [
+    "Germany",
+    "country:DE"
+  ],
+  [
     "Djibouti",
     "country:DJ"
   ],
@@ -246,6 +250,10 @@
   [
     "Dominican Republic",
     "country:DO"
+  ],
+  [
+    "Algeria",
+    "country:DZ"
   ],
   [
     "Ecuador",
@@ -272,20 +280,8 @@
     "country:ES"
   ],
   [
-    "El Salvador",
-    "country:SV"
-  ],
-  [
     "Ethiopia",
     "country:ET"
-  ],
-  [
-    "Equatorial Guinea",
-    "country:GQ"
-  ],
-  [
-    "European Union",
-    "country:EU"
   ],
   [
     "Finland",
@@ -300,6 +296,10 @@
     "country:FK"
   ],
   [
+    "Micronesia",
+    "country:FM"
+  ],
+  [
     "Faroe Islands",
     "country:FO"
   ],
@@ -312,6 +312,10 @@
     "country:GA"
   ],
   [
+    "United Kingdom",
+    "country:GB"
+  ],
+  [
     "Grenada",
     "country:GD"
   ],
@@ -322,10 +326,6 @@
   [
     "French Guiana",
     "country:GF"
-  ],
-  [
-    "Germany",
-    "country:DE"
   ],
   [
     "Guernsey",
@@ -356,8 +356,16 @@
     "country:GP"
   ],
   [
+    "Equatorial Guinea",
+    "country:GQ"
+  ],
+  [
     "Greece",
     "country:GR"
+  ],
+  [
+    "South Georgia and the Southern Sandwich Islands",
+    "country:GS"
   ],
   [
     "Guatemala",
@@ -388,6 +396,10 @@
     "country:HN"
   ],
   [
+    "Croatia",
+    "country:HR"
+  ],
+  [
     "Haiti",
     "country:HT"
   ],
@@ -414,6 +426,10 @@
   [
     "India",
     "country:IN"
+  ],
+  [
+    "British Indian Ocean Territory",
+    "country:IO"
   ],
   [
     "Iraq",
@@ -456,8 +472,16 @@
     "country:KG"
   ],
   [
+    "Cambodia",
+    "country:KH"
+  ],
+  [
     "Kiribati",
     "country:KI"
+  ],
+  [
+    "Comoros",
+    "country:KM"
   ],
   [
     "Saint Kitts and Nevis",
@@ -500,6 +524,10 @@
     "country:LI"
   ],
   [
+    "Sri Lanka",
+    "country:LK"
+  ],
+  [
     "Liberia",
     "country:LR"
   ],
@@ -522,10 +550,6 @@
   [
     "Libya",
     "country:LY"
-  ],
-  [
-    "Micronesia",
-    "country:FM"
   ],
   [
     "Morocco",
@@ -624,10 +648,6 @@
     "country:NA"
   ],
   [
-    "NATO",
-    "country:NT"
-  ],
-  [
     "New Caledonia",
     "country:NC"
   ],
@@ -704,6 +724,10 @@
     "country:PL"
   ],
   [
+    "Saint Pierre and Miquelon",
+    "country:PM"
+  ],
+  [
     "Pitcairn Islands",
     "country:PN"
   ],
@@ -736,10 +760,6 @@
     "country:RE"
   ],
   [
-    "Republic of the Congo",
-    "country:CG"
-  ],
-  [
     "Romania",
     "country:RO"
   ],
@@ -756,16 +776,8 @@
     "country:RW"
   ],
   [
-    "Saint Pierre and Miquelon",
-    "country:PM"
-  ],
-  [
     "Saudi Arabia",
     "country:SA"
-  ],
-  [
-    "Serbia and Montenegro",
-    "country:CS"
   ],
   [
     "Solomon Islands",
@@ -796,8 +808,8 @@
     "country:SI"
   ],
   [
-    "Sri Lanka",
-    "country:LK"
+    "Svalbard and Jan Mayen",
+    "country:SJ"
   ],
   [
     "Slovakia",
@@ -820,28 +832,24 @@
     "country:SO"
   ],
   [
-    "South Sudan",
-    "country:SS"
+    "Suriname",
+    "country:SR"
   ],
   [
-    "South Georgia and the Southern Sandwich Islands",
-    "country:GS"
+    "South Sudan",
+    "country:SS"
   ],
   [
     "Sao Tome and Principe",
     "country:ST"
   ],
   [
+    "El Salvador",
+    "country:SV"
+  ],
+  [
     "Sint Maarten (Dutch part)",
     "country:SX"
-  ],
-  [
-    "Suriname",
-    "country:SR"
-  ],
-  [
-    "Svalbard and Jan Mayen",
-    "country:SJ"
   ],
   [
     "Syria",
@@ -850,10 +858,6 @@
   [
     "Swaziland",
     "country:SZ"
-  ],
-  [
-    "Switzerland",
-    "country:CH"
   ],
   [
     "Turks and Caicos Islands",
@@ -880,7 +884,7 @@
     "country:TJ"
   ],
   [
-    "Tokelau Islands",
+    "Tokelau",
     "country:TK"
   ],
   [
@@ -928,28 +932,12 @@
     "country:UG"
   ],
   [
-    "United Arab Emirates",
-    "country:AE"
-  ],
-  [
-    "United Kingdom",
-    "country:GB"
-  ],
-  [
     "United States Minor Outlying Islands",
     "country:UM"
   ],
   [
-    "United Nations",
-    "country:UN"
-  ],
-  [
     "United States of America",
     "country:US"
-  ],
-  [
-    "United States Virgin Islands",
-    "country:VI"
   ],
   [
     "Uruguay",
@@ -974,6 +962,10 @@
   [
     "British Virgin Islands",
     "country:VG"
+  ],
+  [
+    "United States Virgin Islands",
+    "country:VI"
   ],
   [
     "Vietnam",

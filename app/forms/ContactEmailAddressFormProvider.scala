@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class ContactEmailAddressFormProvider @Inject() extends Mappings {
 
   def apply(userName: String): Form[String] =
     Form(
-      "value" -> text("contactEmailAddress.error.required", Seq(userName))
+      "emailAddress" -> text("contactEmailAddress.error.required", Seq(userName))
         .verifying(maxLength(maxLength, "contactEmailAddress.error.length"))
         .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
     )

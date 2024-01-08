@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
+import mapping.Constants.WELSH
 import play.api.Environment
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import utils.InputOption
 
@@ -26,13 +28,19 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
-  def options: Seq[InputOption] = CountryOptions.getCountries(environment, config.locationCanonicalList)
+  def options()(implicit messages: Messages): Seq[InputOption] = CountryOptions.getCountries(environment, getFileName())
 
-  def getCountryNameFromCode(code: String): String =
+  def getCountryNameFromCode(code: String)(implicit messages: Messages): String =
     options
       .find(_.value == code)
       .map(_.label)
       .getOrElse(code)
+
+  def getFileName()(implicit messages: Messages): String = {
+    val isWelsh = messages.lang.code == WELSH
+    if (isWelsh) config.locationCanonicalListCY else config.locationCanonicalList
+  }
+
 }
 object CountryOptions {
 
@@ -44,7 +52,7 @@ object CountryOptions {
         Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
           _.map { countryList =>
             InputOption(countryList(1).replaceAll("country:", ""), countryList.head)
-          }
+          }.sortBy(x => x.label.toLowerCase)
         }
       }
       .getOrElse {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "AshleySmith@email.com"))
+            .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
@@ -111,7 +111,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
