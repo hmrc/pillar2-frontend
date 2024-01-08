@@ -111,7 +111,6 @@ trait SubscriptionHelpers {
       case _                                   => RowStatus.InProgress
     }
 
-
   val primaryTelephone: Boolean =
     get(subPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(subPrimaryCapturePhonePage).isEmpty) false else true)
 
