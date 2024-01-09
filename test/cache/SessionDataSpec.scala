@@ -16,8 +16,9 @@
 
 package cache
 import base.SpecBase
+import models.NormalMode
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.Pillar2SessionKeys
@@ -25,26 +26,45 @@ import utils.Pillar2SessionKeys
 class SessionDataSpec extends SpecBase {
   val sessionData = new SessionData();
   "SessionDataSpec" when {
-    implicit val requestBusinessActivityUK: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad())
-    "must store data into session in Post" in {
-      implicit val updatedRequest =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit().url)
+    "must store data into session for Post on BusinessActivityUK page" in {
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "no"))
           .withSession((Pillar2SessionKeys.businessActivityUKPageYesNo, "no"))
-      sessionData.updateBusinessActivityUKYesNo("no")(requestBusinessActivityUK)
-      updatedRequest.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
+      sessionData.updateBusinessActivityUKYesNo("no")
+      request.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
     }
-
-    implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.subscription.routes.MneOrDomesticController.onPageLoad())
-    "must store MNE or Domestic value into session in Post" in {
-      implicit val updatedRequest =
-        FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit().url)
-          .withFormUrlEncodedBody(("value", "Domestic Top-up Tax"))
-          .withSession((Pillar2SessionKeys.updateMneOrDomestic, "Domestic Top-up Tax"))
-      sessionData.updateMneOrDomestic("Domestic Top-up Tax")(requestMneOrDomestic)
-      updatedRequest.session.get(Pillar2SessionKeys.updateMneOrDomestic) shouldEqual Some("Domestic Top-up Tax")
+    "must store data into session for Post on TurnOverEligibility page" in {
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "no"))
+          .withSession((Pillar2SessionKeys.turnOverEligibilityValue, "no"))
+      sessionData.updateTurnOverEligibilitySessionData("no")
+      request.session.get(Pillar2SessionKeys.turnOverEligibilityValue) shouldEqual Some("no")
+    }
+    "must store data into session for Post on GroupTerritories page" in {
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "no"))
+          .withSession((Pillar2SessionKeys.groupTerritoriesPageYesNo, "no"))
+      sessionData.updateGroupTerritoriesYesNo("no")
+      request.session.get(Pillar2SessionKeys.groupTerritoriesPageYesNo) shouldEqual Some("no")
+    }
+    "must store data into session for Post on RegisteringNfmForThisGroup page" in {
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "no"))
+          .withSession((Pillar2SessionKeys.registeringNfmForThisGroup, "no"))
+      sessionData.registeringNfmForThisGroup("no")
+      request.session.get(Pillar2SessionKeys.registeringNfmForThisGroup) shouldEqual Some("no")
+    }
+    "must store data into session for Post on MneOrDomestic page" in {
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", "no"))
+          .withSession((Pillar2SessionKeys.updateMneOrDomestic, "no"))
+      sessionData.updateMneOrDomestic("no")
+      request.session.get(Pillar2SessionKeys.updateMneOrDomestic) shouldEqual Some("no")
     }
   }
 }
