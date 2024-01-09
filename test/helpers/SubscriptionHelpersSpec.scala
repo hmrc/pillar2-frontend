@@ -503,21 +503,54 @@ class SubscriptionHelpersSpec extends SpecBase {
     "contact detail status" should {
       "return completed if an answer is provided to the right combination of pages" in {
         val userAnswer = emptyUserAnswers
-          .setOrException(subPrimaryContactNamePage, "name")
-          .setOrException(subPrimaryEmailPage, "email@hello.com")
-          .setOrException(subPrimaryPhonePreferencePage, true)
-          .setOrException(subPrimaryCapturePhonePage, "123213")
-          .setOrException(subAddSecondaryContactPage, true)
-          .setOrException(subSecondaryContactNamePage, "name")
-          .setOrException(subSecondaryEmailPage, "email@hello.com")
-          .setOrException(subSecondaryPhonePreferencePage, true)
-          .setOrException(subSecondaryCapturePhonePage, "123213")
-          .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryEmailPage, "email@hello.com")
+          .success
+          .value
+          .set(subPrimaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(subPrimaryCapturePhonePage, "123213")
+          .success
+          .value
+          .set(subAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(subUsePrimaryContactPage, true)
+          .success
+          .value
+          .set(subRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
         userAnswer.contactDetailStatus mustEqual RowStatus.Completed
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        val userAnswer = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryContactNamePage, "name")
+          .success
+          .value
+          .set(subPrimaryEmailPage, "email@hello.com")
+          .success
+          .value
+          .set(subPrimaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(subAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(subUsePrimaryContactPage, true)
+          .success
+          .value
+
         userAnswer.contactDetailStatus mustEqual RowStatus.InProgress
       }
 
