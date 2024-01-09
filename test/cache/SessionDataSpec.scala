@@ -26,24 +26,24 @@ class SessionDataSpec extends SpecBase {
   val sessionData = new SessionData();
   "SessionDataSpec" when {
     implicit val requestBusinessActivityUK: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+      FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad())
     "must store data into session in Post" in {
       implicit val updatedRequest =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
+        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "no"))
           .withSession((Pillar2SessionKeys.businessActivityUKPageYesNo, "no"))
-      sessionData.updateBusinessActivityUKYesNo("no")
+      sessionData.updateBusinessActivityUKYesNo("no")(requestBusinessActivityUK)
       updatedRequest.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
     }
 
     implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.subscription.routes.MneOrDomesticController.onPageLoad)
+      FakeRequest(controllers.subscription.routes.MneOrDomesticController.onPageLoad())
     "must store MNE or Domestic value into session in Post" in {
       implicit val updatedRequest =
-        FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit.url)
+        FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "Domestic Top-up Tax"))
           .withSession((Pillar2SessionKeys.updateMneOrDomestic, "Domestic Top-up Tax"))
-      sessionData.updateMneOrDomestic("Domestic Top-up Tax")
+      sessionData.updateMneOrDomestic("Domestic Top-up Tax")(requestMneOrDomestic)
       updatedRequest.session.get(Pillar2SessionKeys.updateMneOrDomestic) shouldEqual Some("Domestic Top-up Tax")
     }
   }
