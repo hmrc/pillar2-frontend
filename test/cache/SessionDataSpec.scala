@@ -25,14 +25,24 @@ import utils.Pillar2SessionKeys
 class SessionDataSpec extends SpecBase {
   val sessionData = new SessionData();
   "SessionDataSpec" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-    "must store data into session in  Post" in {
-      implicit val request =
+    implicit val requestBusinessActivityUK: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+    "must store data into session in Post" in {
+      implicit val updatedRequest =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "no"))
           .withSession((Pillar2SessionKeys.businessActivityUKPageYesNo, "no"))
       sessionData.updateBusinessActivityUKYesNo("no")
-      request.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
+      updatedRequest.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
+    }
+
+    implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.MneOrDomesticController.onPageLoad)
+    "must store MNE or Domestic value into session in Post" in {
+      implicit val updatedRequest =
+        FakeRequest(POST, controllers.eligibility.routes.MneOrDomesticController.onSubmit.url)
+          .withFormUrlEncodedBody(("value", "Domestic Top-up Tax"))
+          .withSession((Pillar2SessionKeys.updateMneOrDomestic, "Domestic Top-up Tax"))
+      sessionData.updateMneOrDomestic("Domestic Top-up Tax")
+      updatedRequest.session.get(Pillar2SessionKeys.updateMneOrDomestic) shouldEqual Some("Domestic Top-up Tax")
     }
   }
 }
