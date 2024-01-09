@@ -37,10 +37,10 @@ class SessionDataSpec extends SpecBase {
     }
 
     implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest(controllers.eligibility.routes.MneOrDomesticController.onPageLoad)
+      FakeRequest(controllers.subscription.routes.MneOrDomesticController.onPageLoad)
     "must store MNE or Domestic value into session in Post" in {
       implicit val updatedRequest =
-        FakeRequest(POST, controllers.eligibility.routes.MneOrDomesticController.onSubmit.url)
+        FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "Domestic Top-up Tax"))
           .withSession((Pillar2SessionKeys.updateMneOrDomestic, "Domestic Top-up Tax"))
       sessionData.updateMneOrDomestic("Domestic Top-up Tax")
