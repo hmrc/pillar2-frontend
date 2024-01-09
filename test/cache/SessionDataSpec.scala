@@ -25,7 +25,8 @@ import utils.Pillar2SessionKeys
 class SessionDataSpec extends SpecBase {
   val sessionData = new SessionData();
   "SessionDataSpec" when {
-    implicit val requestBusinessActivityUK: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+    implicit val requestBusinessActivityUK: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
     "must store data into session in Post" in {
       implicit val updatedRequest =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
@@ -35,7 +36,8 @@ class SessionDataSpec extends SpecBase {
       updatedRequest.session.get(Pillar2SessionKeys.businessActivityUKPageYesNo) shouldEqual Some("no")
     }
 
-    implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.MneOrDomesticController.onPageLoad)
+    implicit val requestMneOrDomestic: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest(controllers.eligibility.routes.MneOrDomesticController.onPageLoad)
     "must store MNE or Domestic value into session in Post" in {
       implicit val updatedRequest =
         FakeRequest(POST, controllers.eligibility.routes.MneOrDomesticController.onSubmit.url)
