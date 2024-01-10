@@ -16,18 +16,8 @@
 
 package forms
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
-import javax.inject.Inject
-
-class UpeContactNameFormProvider @Inject() extends Mappings {
-
-  val max = 200
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("upe-input-business-name.error.required")
-        .verifying(maxLength(max, "upe-input-business-name.error.length"))
-        .verifying(regexp(Validation.nameRegex, "upe-input-business-name.error.invalid"))
-    )
+object Validation {
+  val nameRegex = "^[A-Za-z0-9 ,.()/&'-]*$"
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
 }

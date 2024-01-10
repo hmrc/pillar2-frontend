@@ -23,14 +23,11 @@ import play.api.data.Form
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
   val maxLength = 132
-  val emailRegex =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("nfmEmailAddress.error.required", Seq(userName))
         .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
-        .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
+        .verifying(regexp(Validation.emailRegex, "nfmEmailAddress.error.invalid"))
     )
 
 }
