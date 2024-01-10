@@ -23,8 +23,10 @@ import javax.inject.Inject
 
 class UpeContactEmailFormProvider @Inject() extends Mappings {
 
-  val max        = 132
-  val emailRegex = s"^(.{1,$max})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
+  val max = 132
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
+
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("upe-input-business-contact.email.error.required", Seq(userName))

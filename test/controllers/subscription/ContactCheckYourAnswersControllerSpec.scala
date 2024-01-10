@@ -40,6 +40,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(subSecondaryPhonePreferencePage, true)
     .setOrException(subSecondaryCapturePhonePage, "123213")
     .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+
   val subDataWithoutAddress = emptyUserAnswers
     .setOrException(subPrimaryContactNamePage, "name")
     .setOrException(subPrimaryEmailPage, "email@hello.com")

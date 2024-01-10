@@ -45,6 +45,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
     extends AnyWordSpec
+    with TestData
     with TryValues
     with OptionValues
     with ScalaFutures

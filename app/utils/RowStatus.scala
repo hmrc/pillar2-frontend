@@ -31,14 +31,26 @@ object RowStatus {
   case object NotStarted extends RowStatus {
     val value: String = this.toString
   }
+  case object CannotStartYet extends RowStatus {
+    val value: String = this.toString
+  }
+
+  case object add extends RowStatus {
+    val value: String = this.toString
+  }
+
+  case object edit extends RowStatus {
+    val value: String = this.toString
+  }
 
   implicit val format: Format[RowStatus] = new Format[RowStatus] {
     override def reads(json: JsValue): JsResult[RowStatus] =
       json.as[String] match {
-        case "Completed"  => JsSuccess[RowStatus](Completed)
-        case "InProgress" => JsSuccess[RowStatus](InProgress)
-        case "NotStarted" => JsSuccess[RowStatus](NotStarted)
-        case other        => JsError(s"Invalid Source System: $other")
+        case "Completed"      => JsSuccess[RowStatus](Completed)
+        case "InProgress"     => JsSuccess[RowStatus](InProgress)
+        case "NotStarted"     => JsSuccess[RowStatus](NotStarted)
+        case "CannotStartYet" => JsSuccess[RowStatus](CannotStartYet)
+        case other            => JsError(s"Invalid Source System: $other")
       }
 
     override def writes(sourceSystem: RowStatus): JsValue =
