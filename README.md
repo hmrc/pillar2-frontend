@@ -38,12 +38,27 @@ To run the unit tests:
 
 To check code coverage:
 
-    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport 
+    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport  
 To run Integration tests:
 
     sbt it:test
 
+### Eligibility question
 
+Eligibility questions journey start  with this url '/eligibility/group-in-multiple-territories' and there are four different questions to check eligibility.
+User does not need to be authenticated for this journey.
+
+Endpoint to start eligibility questions.
+
+    /eligibility/group-in-multiple-territories
+
+
+if all question asked in this journey answered with 'yes' then this mean you need to pay Global Minimum Tax, User will be redirected to  HMRC online services to register.
+
+
+To use testonly route locally .
+
+    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 
 
 ### License

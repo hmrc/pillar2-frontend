@@ -31,7 +31,7 @@ import scala.concurrent.Future
 class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl                                     = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
-  val connector                                  = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
+  val connector                                  = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
   "PartnershipEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createPartnershipJourney" in {

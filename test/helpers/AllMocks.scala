@@ -29,6 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
+import services.audit.AuditService
 import services.{AmendSubscriptionService, ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
@@ -71,6 +72,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockReadSubscriptionService:                    ReadSubscriptionService                    = mock[ReadSubscriptionService]
   val mockReadSubscriptionConnector:                  ReadSubscriptionConnector                  = mock[ReadSubscriptionConnector]
   val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
+  val mockAuditService:                               AuditService                               = mock[AuditService]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -90,6 +92,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockRegistrationConnector,
       mockSubscriptionConnector,
       mockEnrolmentStoreProxyConnector,
-      mockTaxEnrolmentsConnector
+      mockTaxEnrolmentsConnector,
+      mockAuditService
     ).foreach(Mockito.reset(_))
 }
