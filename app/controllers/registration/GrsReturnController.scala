@@ -28,6 +28,7 @@ import pages._
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -43,7 +44,8 @@ class GrsReturnController @Inject() (
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
-  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector
+  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
+  auditService:                                      AuditService
 )(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController
     with Logging {
@@ -61,6 +63,7 @@ class GrsReturnController @Inject() (
 
   private def upeLimited(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
     incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+      auditService.auditGrsReturnForLimitedCompany(data)
       if (data.registration.registrationStatus == Registered) {
         data.registration.registeredBusinessPartnerId
           .map { safeId =>
@@ -103,6 +106,7 @@ class GrsReturnController @Inject() (
 
   private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
     partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+      auditService.auditGrsReturnForLLP(data)
       if (data.registration.registrationStatus == Registered) {
         for {
           safeId         <- data.registration.registeredBusinessPartnerId
