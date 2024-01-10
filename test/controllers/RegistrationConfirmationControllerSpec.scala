@@ -52,11 +52,11 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
-      val userAnswers = UserAnswers("id").set(subMneOrDomesticPage, MneOrDomestic.UkAndOther)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+          .withSession("updateMneOrDomestic" -> "ukAndOther")
 
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
