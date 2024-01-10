@@ -394,6 +394,7 @@ nfmContactName.checkYourAnswersLabel = Contact name
 nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
 nfmContactName.change.hidden =  filing member contact name
+nfmContactName.error.scriptinjection = The name entered contains invalid characters. Please remove any special characters like < or >
 
 nfmEmailAddress.heading.caption = Group details
 nfmEmailAddress.title = What is the email address for {0}?
