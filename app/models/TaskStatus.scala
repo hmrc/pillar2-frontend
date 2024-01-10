@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import play.api.data.Form
+sealed trait TaskStatus
+object TaskStatus {
+  case object Completed extends TaskStatus
+  case object InProgress extends TaskStatus
+  case object NotStarted extends TaskStatus
+  case object CannotStartYet extends TaskStatus
+  case object Default extends TaskStatus
+}
 
-import javax.inject.Inject
-
-class NfmContactNameFormProvider @Inject() extends Mappings {
-  private val nameRegex = """[^<>]+"""
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmContactName.error.required")
-        .verifying(maxLength(105, "nfmContactName.error.length"))
-        .verifying(regexp(nameRegex, "nfmContactName.error.scriptinjection"))
-    )
+sealed trait TaskAction
+object TaskAction {
+  case object Edit extends TaskAction
+  case object Add extends TaskAction
+  case object Default extends TaskAction
 }

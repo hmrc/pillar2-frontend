@@ -23,11 +23,12 @@ import javax.inject.Inject
 
 class UpeContactNameFormProvider @Inject() extends Mappings {
 
-  val max = 200
-
+  val max               = 200
+  private val nameRegex = """[^<>]+"""
   def apply(): Form[String] =
     Form(
       "value" -> text("upe-input-business-name.error.required")
         .verifying(maxLength(max, "upe-input-business-name.error.length"))
+        .verifying(regexp(nameRegex, "nfmContactName.error.scriptinjection"))
     )
 }

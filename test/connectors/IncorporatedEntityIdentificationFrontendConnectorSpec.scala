@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl    = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
-  val connector = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
+  val connector = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
   "IncorporatedEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createLimitedCompanyJourney" in {

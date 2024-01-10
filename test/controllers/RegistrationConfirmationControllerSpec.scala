@@ -52,7 +52,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)

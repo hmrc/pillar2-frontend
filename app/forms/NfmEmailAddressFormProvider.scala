@@ -22,8 +22,9 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
+  val maxLength = 132
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
 
   def apply(userName: String): Form[String] =
     Form(
@@ -31,4 +32,5 @@ class NfmEmailAddressFormProvider @Inject() extends Mappings {
         .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
         .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
     )
+
 }

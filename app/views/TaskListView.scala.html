@@ -15,179 +15,121 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.{TaskStatus, TaskAction}
+@import play.api.i18n.Messages
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
-@(ultimateParentStatus:String="NotStarted", counter: Int, filingMemberStatus:String="notStarted", groupDetailStatus:String="notStarted",contactDetailsStatus:String="NotStarted", cyaStatus:String="NotStarted")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(ultimateParentInfo: TaskInfo, counter: Int, filingMemberInfo: TaskInfo, groupDetailInfo: TaskInfo, contactDetailsInfo: TaskInfo, cyaInfo: TaskInfo)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(
-    pageTitle    = titleNoForm(messages("task-list.title")),
+    pageTitle = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
+    <h1 class="govuk-heading-l">@messages("task-list.heading")</h1>
+    <p class="govuk-body govuk-!-margin-bottom-5">@messages("taskList.paragraph")</p>
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
+    <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
 
-        <h1 class="govuk-heading-l">@messages("task-list.heading")</h1>
-        <p class="govuk-body govuk-!-margin-bottom-5">@messages("taskList.paragraph")</p>
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
-
-
-        <ol class="app-task-list">
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">1. </span>
-                    @messages("taskList.task.business.heading")
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                          @if(ultimateParentStatus == "Completed"){
-                              <a href="/report-pillar2-top-up-taxes/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.business.ultimate.edit")
-                              </a>
-                            } else {
-                                <a href="/report-pillar2-top-up-taxes/business-matching/match-hmrc-records" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.business.ultimate.add")
-                                </a>
-                            }
-                        </span>
-                        @if(ultimateParentStatus == "Completed"){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(ultimateParentStatus.equals("InProgress")) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
-                        }
-                    </li>
-                    @if(ultimateParentStatus == "Completed"){
-                    <li class="app-task-list__item">
-                         <span class="app-task-list__task-name">
-                             @if(filingMemberStatus == "Completed"){
-                                <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
-                                @messages("taskList.task.business.filingMember.edit")
-                                </a>
-                            } else {
-                                <a href="/report-pillar2-top-up-taxes/business-matching/filing-member/nominate" aria-describedby="nfm-status">
-                                @messages("taskList.task.business.filingMember.add")
-                                </a>
-                            }
-                        </span>
-                        @if(filingMemberStatus == "Completed"){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"  id="submit-pay-status-co">
-                            @messages("task.status.notStarted")</span>
-                        }
-                    </li>
-                    } else{
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            @messages("taskList.task.business.filingMember")
-                        </span>
-                        @if(filingMemberStatus == "Completed"){
-                            <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "InProgress") {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else  {
-                        <span class="hmrc-status-tag" id="submit-pay-status-uc">
-                            @messages("task.status.cannotStartYet")</span>
-                        }
-                    </li>
+    <ol class="app-task-list">
+            <!-- Business Section -->
+        <li>
+            <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">1. </span>
+                @messages("taskList.task.business.heading")
+            </h2>
+            <ul class="app-task-list__items">
+                    <!-- Ultimate Parent Task -->
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                    @ultimateParentInfo.link.map { link =>
+                    <a href="@link" aria-describedby="eligibility-status">
+                    @messages(s"taskList.task.business.ultimate.${if(ultimateParentInfo.status == "Completed") "edit" else "add"}")
+                    </a>
+                    }.getOrElse {
+                        @messages("taskList.task.business.ultimate")
                     }
+                    </span>
+                    <span class="hmrc-status-tag">@messages(s"task.status.${ultimateParentInfo.status}")</span>
+                </li>
 
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                          @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-                              <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.business.sub.edit")
-                              </a>
-                            } else if (filingMemberStatus == "Completed" &&  ( groupDetailStatus=="NotStarted" ||  groupDetailStatus=="InProgress")){
-                                <a href="/report-pillar2-top-up-taxes/further-details/group-status" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.business.sub.add")
-                                </a>
-                            } else {
-                             @messages("taskList.task.business.more")
-                            }
-                        </span>
-                        @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="InProgress" ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else if(filingMemberStatus == "Completed" && groupDetailStatus=="NotStarted" ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
-                        }
-                    </li>
+                    <!-- Filing Member Task -->
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                    @filingMemberInfo.link.map { link =>
+                    <a href="@link" aria-describedby="nfm-status">
+                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status == "Completed") "edit" else if(filingMemberInfo.status == "CannotStartYet") "default" else "add"}")
+                    </a>
+                    }.getOrElse {
+                        @messages("taskList.task.business.filingMember")
+                    }
+                    </span>
+                    <span class="hmrc-status-tag">@messages(s"task.status.${filingMemberInfo.status}")</span>
+                </li>
 
-                </ul>
-            </li>
+                    <!-- Group Detail Task -->
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                    @groupDetailInfo.link.map { link =>
+                    <a href="@link" aria-describedby="eligibility-status">
+                    @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse("default")}")
+                    </a>
+                    }.getOrElse {
+                        @messages("taskList.task.business.more")
+                    }
+                    </span>
+                    <span class="hmrc-status-tag">@messages(s"task.status.${groupDetailInfo.status}")</span>
+                </li>
+            </ul>
+        </li>
 
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">2. </span>
-                    @messages("taskList.task.contact.heading")
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                          @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed"){
-                              <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.contact.edit")
-                              </a>
-                            } else if (filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && ( contactDetailsStatus=="NotStarted" ||  contactDetailsStatus=="InProgress")){
-                                <a href="/report-pillar2-top-up-taxes/contact-details/content" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.contact.add")
-                                </a>
-                            } else {
-                             @messages("taskList.task.contact")
-                            }
-                        </span>
-                        @if(filingMemberStatus == "Completed" && groupDetailStatus=="Completed" && contactDetailsStatus=="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if(filingMemberStatus == "Completed" &&  groupDetailStatus=="Completed" && contactDetailsStatus=="InProgress"   ) {
-                        <span class="hmrc-status-tag"> @messages("task.status.inProgress") </span>
-                        } else if(filingMemberStatus == "Completed" && groupDetailStatus == "Completed" && contactDetailsStatus == "NotStarted") {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
-                        }
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">3. </span>
-                    @messages("taskList.task.review.heading")
-                </h2>
-
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                          @if(cyaStatus =="NotStarted"){
-                              <a href="/report-pillar2-top-up-taxes/review-submit/check-answers" aria-describedby="eligibility-status">
-                                 @messages("taskList.task.review")
-                              </a>
-                            } else {
-                             @messages("taskList.task.review")
-                            }
-                        </span>
-                        @if( cyaStatus =="Completed" ){
-                        <span class="hmrc-status-tag" > @messages("task.status.completed") </span>
-                        } else if( cyaStatus == "NotStarted") {
-                        <span class="hmrc-status-tag"> @messages("task.status.notStarted") </span>
-                        } else  {
-                        <span class="hmrc-status-tag"> @messages("task.status.cannotStartYet") </span>
-                        }
-                    </li>
-                </ul>
-            </li>
-        </ol>
+            <!-- Contact Details Section -->
+        <li>
+            <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">2. </span>
+                @messages("taskList.task.contact.heading")
+            </h2>
+            <ul class="app-task-list__items">
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                    @contactDetailsInfo.link.map { link =>
+                    <a href="@link" aria-describedby="eligibility-status">
+                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else "add"}")
+                    </a>
+                    }.getOrElse {
+                        @messages("taskList.task.contact")
+                    }
+                    </span>
+                    <span class="hmrc-status-tag">@messages(s"task.status.${contactDetailsInfo.status}")</span>
+                </li>
+            </ul>
+        </li>
 
 
+            <!-- Review and Submit Section -->
+        <li>
+            <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">3. </span>
+                @messages("taskList.task.review.heading")
+            </h2>
+            <ul class="app-task-list__items">
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                    @cyaInfo.link.map { link =>
+                    <a href="@link" aria-describedby="eligibility-status">
+                    @messages(s"taskList.task.review.${if(cyaInfo.status == "Completed") "edit" else if(cyaInfo.status == "CannotStartYet") "default" else "add"}")
+                    </a>
+                    }.getOrElse {
+                        @messages("taskList.task.review")
+                    }
+                    </span>
+                    <span class="hmrc-status-tag">@messages(s"task.status.${cyaInfo.status}")</span>
+                </li>
+            </ul>
+        </li>
+
+    </ol>
 }

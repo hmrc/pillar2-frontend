@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package models.audit
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.JsValue
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import javax.inject.Inject
+trait AuditEvent {
+  private val auditSource: String = "pillar2-frontend"
+  val auditType:  String
+  val detailJson: JsValue
 
-class NfmContactNameFormProvider @Inject() extends Mappings {
-  private val nameRegex = """[^<>]+"""
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmContactName.error.required")
-        .verifying(maxLength(105, "nfmContactName.error.length"))
-        .verifying(regexp(nameRegex, "nfmContactName.error.scriptinjection"))
-    )
+  def extendedDataEvent: ExtendedDataEvent =
+    ExtendedDataEvent(auditSource = auditSource, auditType = auditType, detail = detailJson)
 }
