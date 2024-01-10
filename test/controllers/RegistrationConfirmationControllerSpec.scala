@@ -23,6 +23,9 @@ import play.twirl.api.HtmlFormat
 import utils.Pillar2SessionKeys
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
+import models.MneOrDomestic
+import models.UserAnswers
+import pages.subMneOrDomesticPage
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
 
@@ -49,8 +52,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers("id").set(subMneOrDomesticPage, MneOrDomestic.UkAndOther)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
