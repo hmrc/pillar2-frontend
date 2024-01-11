@@ -118,33 +118,15 @@ class TaskListControllerSpec extends SpecBase {
 
     "build filingMemberInfo with 'edit' action when ultimateParentStatus is 'Completed' and filingMemberStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, true)
-        .success
-        .value
-        .set(fmEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(fmGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-        .success
-        .value
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, true)
+        .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(fmGRSResponsePage, grsResponse)
+        .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -179,18 +161,10 @@ class TaskListControllerSpec extends SpecBase {
 
     "handle scenario when groupDetailStatus is Completed" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -207,27 +181,13 @@ class TaskListControllerSpec extends SpecBase {
 
     "handle scenario when filingMemberStatus is Completed and groupDetailStatus is InProgress" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, true)
-        .success
-        .value
-        .set(fmEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(fmGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, true)
+        .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(fmGRSResponsePage, grsResponse)
+        .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -245,27 +205,13 @@ class TaskListControllerSpec extends SpecBase {
 
     "build groupDetailInfo with 'cannotStartYet' action when either filingMemberStatus or groupDetailStatus is 'InProgress'" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(Some(userAnswers)).build()
 
       running(application) {
@@ -281,12 +227,8 @@ class TaskListControllerSpec extends SpecBase {
 
     "build groupDetailInfo with 'edit' action when groupDetailStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -303,37 +245,17 @@ class TaskListControllerSpec extends SpecBase {
 
     "build contactDetailsInfo with 'edit' action when all statuses are 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
         .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -363,37 +285,17 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo when ultimateParentStatus is 'Completed' and filingMemberStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
         .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -423,37 +325,17 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo when cyaStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
         .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(Some(userAnswers)).build()
 
       running(application) {
@@ -482,37 +364,17 @@ class TaskListControllerSpec extends SpecBase {
     "build correct TaskInfo when filingMemberStatus is 'Completed' and groupDetailStatus is 'InProgress'" in {
 
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
         .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(Some(userAnswers)).build()
 
       running(application) {
@@ -540,33 +402,15 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo when filingMemberStatus is 'Completed' and contactDetailsStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -584,7 +428,7 @@ class TaskListControllerSpec extends SpecBase {
             TaskStatus.Completed.toString,
             TaskStatus.Completed.toString,
             TaskStatus.InProgress.toString,
-            TaskStatus.NotStarted.toString.toString
+            TaskStatus.NotStarted.toString
           )
 
         contactDetailsInfo.status shouldBe TaskStatus.InProgress.toString
@@ -594,33 +438,15 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo with default values when filingMemberStatus and groupDetailStatus do not match any case" in {
       val userAnswers = emptyUserAnswers
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(subAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
-        .set(upeRegisteredInUKPage, true)
-        .success
-        .value
-        .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .success
-        .value
-        .set(upeGRSResponsePage, grsResponse)
-        .success
-        .value
-        .set(GrsUpeStatusPage, RowStatus.Completed)
-        .success
-        .value
-        .set(NominateFilingMemberPage, true)
-        .success
-        .value
-        .set(fmRegisteredInUKPage, false)
-        .success
-        .value
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
+        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(subAccountingPeriodPage, accountingPeriod)
+        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(upeGRSResponsePage, grsResponse)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(fmRegisteredInUKPage, false)
+        .setOrException(subPrimaryContactNamePage, "name")
 
       val application = applicationBuilder(Some(userAnswers)).build()
 

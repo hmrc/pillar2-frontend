@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import models.{TaskStatus, TaskAction}
 @import play.api.i18n.Messages
+@import utils.RowStatus
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
@@ -47,7 +48,7 @@
                     <span class="app-task-list__task-name">
                     @ultimateParentInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.business.ultimate.${if(ultimateParentInfo.status == "Completed") "edit" else "add"}")
+                    @messages(s"taskList.task.business.ultimate.${if(ultimateParentInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value }")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.ultimate")
@@ -61,7 +62,7 @@
                     <span class="app-task-list__task-name">
                     @filingMemberInfo.link.map { link =>
                     <a href="@link" aria-describedby="nfm-status">
-                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status == "Completed") "edit" else if(filingMemberInfo.status == "CannotStartYet") "default" else "add"}")
+                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status ==RowStatus.Completed.toString()) RowStatus.Edit.value else if(filingMemberInfo.status == RowStatus.CannotStartYet) "default" else RowStatus.Add.value }")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.filingMember")
@@ -97,7 +98,7 @@
                     <span class="app-task-list__task-name">
                     @contactDetailsInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == "Completed") "edit" else "add"}")
+                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.contact")
@@ -120,7 +121,7 @@
                     <span class="app-task-list__task-name">
                     @cyaInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.review.${if(cyaInfo.status == "Completed") "edit" else if(cyaInfo.status == "CannotStartYet") "default" else "add"}")
+                    @messages(s"taskList.task.review.${if(cyaInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else if(cyaInfo.status == RowStatus.CannotStartYet) "default" else RowStatus.Add.value}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.review")

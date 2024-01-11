@@ -35,12 +35,12 @@ object RowStatus {
     val value: String = this.toString
   }
 
-  case object add extends RowStatus {
-    val value: String = this.toString
+  case object Add extends RowStatus {
+    val value: String = this.toString.toLowerCase
   }
 
-  case object edit extends RowStatus {
-    val value: String = this.toString
+  case object Edit extends RowStatus {
+    val value: String = this.toString.toLowerCase
   }
 
   implicit val format: Format[RowStatus] = new Format[RowStatus] {
