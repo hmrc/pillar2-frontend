@@ -62,7 +62,7 @@
                     <span class="app-task-list__task-name">
                     @filingMemberInfo.link.map { link =>
                     <a href="@link" aria-describedby="nfm-status">
-                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status ==RowStatus.Completed.toString()) RowStatus.Edit.value else if(filingMemberInfo.status == RowStatus.CannotStartYet) "default" else RowStatus.Add.value }")
+                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status ==RowStatus.Completed.toString()) RowStatus.Edit.value else if(filingMemberInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value }")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.filingMember")
@@ -76,7 +76,7 @@
                     <span class="app-task-list__task-name">
                     @groupDetailInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse("default")}")
+                    @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse(TaskStatus.Default.value)}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.more")
@@ -121,7 +121,7 @@
                     <span class="app-task-list__task-name">
                     @cyaInfo.link.map { link =>
                     <a href="@link" aria-describedby="eligibility-status">
-                    @messages(s"taskList.task.review.${if(cyaInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else if(cyaInfo.status == RowStatus.CannotStartYet) "default" else RowStatus.Add.value}")
+                    @messages(s"taskList.task.review.${if(cyaInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else if(cyaInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.review")

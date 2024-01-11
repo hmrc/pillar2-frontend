@@ -22,7 +22,10 @@ object TaskStatus {
   case object InProgress extends TaskStatus
   case object NotStarted extends TaskStatus
   case object CannotStartYet extends TaskStatus
-  case object Default extends TaskStatus
+  case object Default extends TaskStatus {
+    val value = this.toString.toLowerCase
+  }
+
 }
 
 sealed trait TaskAction
