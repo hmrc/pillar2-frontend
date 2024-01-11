@@ -64,14 +64,10 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       labels = serviceName
     )
 
-    val response = httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
+    httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
       s"$apiUrl/limited-liability-partnership-journey",
       registrationRequest
     )
-    response.map { res =>
-      auditService.auditGrsForLLP(registrationRequest, res)
-    }
-    response
   }
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =

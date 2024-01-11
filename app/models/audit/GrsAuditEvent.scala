@@ -16,52 +16,104 @@
 
 package models.audit
 
-import models.grs.GrsCreateRegistrationResponse
+import models.grs.{BusinessVerificationResult, GrsCreateRegistrationResponse, GrsRegistrationResult}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import play.api.libs.json.{JsValue, Json, OFormat, OWrites}
+import play.api.libs.json.{Format, JsValue, Json, OFormat, OWrites}
 
-case class GrsAuditEvent(
-  requestData:  IncorporatedEntityCreateRegistrationRequest,
-  responseData: GrsCreateRegistrationResponse
-) extends AuditEvent {
-  override val auditType:  String  = "GrsJourneyForUkLtd"
-  override val detailJson: JsValue = Json.toJson(this)
-}
-object GrsAuditEvent {
-  implicit val format: OFormat[GrsAuditEvent] = Json.format[GrsAuditEvent]
-  implicit val writes: OWrites[GrsAuditEvent] = Json.writes[GrsAuditEvent]
-}
+import java.time.LocalDate
 
 case class GrsReturnAuditEvent(
-  responseData: IncorporatedEntityRegistrationData
+  registeredinUK:       Boolean,
+  entityType:           String,
+  companyName:          String,
+  companyNumber:        String,
+  dateOfIncorporation:  String,
+  address_line_1:       String,
+  address_line_2:       String,
+  country:              String,
+  locality:             String,
+  postal_code:          String,
+  region:               String,
+  ctutr:                String,
+  identifiersMatch:     Boolean,
+  businessVerification: Option[BusinessVerificationResult],
+  registrationStatus:   GrsRegistrationResult
 ) extends AuditEvent {
-  override val auditType:  String  = "GrsReturnJourneyForUkLtd"
+  override val auditType:  String  = "ultimateParentEntityRegistrationId"
   override val detailJson: JsValue = Json.toJson(this)
 }
+
 object GrsReturnAuditEvent {
   implicit val format: OFormat[GrsReturnAuditEvent] = Json.format[GrsReturnAuditEvent]
   implicit val writes: OWrites[GrsReturnAuditEvent] = Json.writes[GrsReturnAuditEvent]
 }
 
-case class GrsAuditEventForLLP(
-  requestData:  IncorporatedEntityCreateRegistrationRequest,
-  responseData: GrsCreateRegistrationResponse
+case class GrsReturnAuditEventForLLP(
+  registeredinUK:       Boolean,
+  entityType:           String,
+  companyName:          String,
+  companyNumber:        String,
+  dateOfIncorporation:  String,
+  address_line_1:       String,
+  address_line_2:       String,
+  country:              String,
+  locality:             String,
+  postal_code:          String,
+  region:               String,
+  sautr:                String,
+  identifiersMatch:     Boolean,
+  businessVerification: Option[BusinessVerificationResult],
+  registrationStatus:   GrsRegistrationResult
 ) extends AuditEvent {
-  override val auditType:  String  = "GrsJourneyForUkLlp"
+  override val auditType:  String  = "ultimateParentEntityRegistrationId"
   override val detailJson: JsValue = Json.toJson(this)
-}
-object GrsAuditEventForLLP {
-  implicit val format: OFormat[GrsAuditEventForLLP] = Json.format[GrsAuditEventForLLP]
-  implicit val writes: OWrites[GrsAuditEventForLLP] = Json.writes[GrsAuditEventForLLP]
 }
 
-case class GrsReturnAuditEventForLLP(
-  responseData: PartnershipEntityRegistrationData
-) extends AuditEvent {
-  override val auditType:  String  = "GrsReturnJourneyForUkLlp"
-  override val detailJson: JsValue = Json.toJson(this)
-}
 object GrsReturnAuditEventForLLP {
   implicit val format: OFormat[GrsReturnAuditEventForLLP] = Json.format[GrsReturnAuditEventForLLP]
   implicit val writes: OWrites[GrsReturnAuditEventForLLP] = Json.writes[GrsReturnAuditEventForLLP]
+}
+
+case class GrsReturnNfmAuditEvent(
+  nfmRegistration: NfmRegistration
+) extends AuditEvent {
+  override val auditType:  String  = "nominalFilingMemberRegistrationId"
+  override val detailJson: JsValue = Json.toJson(this)
+}
+
+object GrsReturnNfmAuditEvent {
+  implicit val formats: Format[GrsReturnNfmAuditEvent] = Json.format[GrsReturnNfmAuditEvent]
+}
+
+case class GrsReturnNfmAuditEventForLlp(
+  nfmRegistration: NfmRegistration
+) extends AuditEvent {
+  override val auditType:  String  = "nominalFilingMemberRegistrationId"
+  override val detailJson: JsValue = Json.toJson(this)
+}
+
+object GrsReturnNfmAuditEventForLlp {
+  implicit val formats: Format[GrsReturnNfmAuditEventForLlp] = Json.format[GrsReturnNfmAuditEventForLlp]
+}
+
+case class NfmRegistration(
+  registeredinUK:       Boolean,
+  entityType:           String,
+  companyName:          String,
+  companyNumber:        String,
+  dateOfIncorporation:  String,
+  address_line_1:       String,
+  address_line_2:       String,
+  country:              String,
+  locality:             String,
+  postal_code:          String,
+  region:               String,
+  utr:                  String,
+  identifiersMatch:     Boolean,
+  businessVerification: Option[BusinessVerificationResult],
+  registrationStatus:   GrsRegistrationResult
+)
+
+object NfmRegistration {
+  implicit val formats: Format[NfmRegistration] = Json.format[NfmRegistration]
 }
