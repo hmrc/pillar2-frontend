@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) extends Logging {
 
@@ -35,7 +36,9 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
       case Some(subscriptionSuccessResponse) =>
         logger.info(
-          s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} with reference ${subscriptionSuccessResponse.plrReference}"
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} " +
+            s"with reference ${subscriptionSuccessResponse.plrReference}"
         )
         Right(subscriptionSuccessResponse)
       case None =>

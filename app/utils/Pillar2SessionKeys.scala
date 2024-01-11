@@ -16,6 +16,8 @@
 
 package utils
 
+import uk.gov.hmrc.http.HeaderCarrier
+
 object Pillar2SessionKeys {
 
   val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
@@ -24,4 +26,6 @@ object Pillar2SessionKeys {
   val turnOverEligibilityValue    = "turnOverEligibilityValue"
   val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
   val plrId                       = "plrId"
+
+  def sessionId(hc: HeaderCarrier): String = hc.sessionId.map(_.value).getOrElse("No Session ID available")
 }
