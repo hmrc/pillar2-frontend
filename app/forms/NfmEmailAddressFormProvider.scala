@@ -17,17 +17,16 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import mapping.Constants
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength = 132
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("nfmEmailAddress.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "nfmEmailAddress.error.length"))
-        .verifying(regexp(Validation.emailRegex, "nfmEmailAddress.error.invalid"))
+        .verifying(maxLength(Constants.MAX_LENGTH_132, "nfmEmailAddress.error.length"))
+        .verifying(regexp(Validation.EMAIL_REGEX, "nfmEmailAddress.error.invalid"))
     )
 
 }

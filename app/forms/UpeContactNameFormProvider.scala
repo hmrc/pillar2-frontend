@@ -17,17 +17,15 @@
 package forms
 
 import forms.mappings.Mappings
+import mapping.Constants
 import play.api.data.Form
-
 import javax.inject.Inject
 
 class UpeContactNameFormProvider @Inject() extends Mappings {
-
-  val max = 200
   def apply(): Form[String] =
     Form(
       "value" -> text("upe-input-business-name.error.required")
-        .verifying(maxLength(max, "upe-input-business-name.error.length"))
-        .verifying(regexp(Validation.nameRegex, "upe-input-business-name.error.invalid"))
+        .verifying(maxLength(Constants.MAX_LENGTH_200, "upe-input-business-name.error.length"))
+        .verifying(regexp(Validation.NAME_REGEX, "upe-input-business-name.error.invalid"))
     )
 }
