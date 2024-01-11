@@ -65,7 +65,6 @@ upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or city
 upeRegisteredAddress.region = Region (optional)
 upeRegisteredAddress.postcode = Postal code
-upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 upeRegisteredAddress.country = Country
 upeRegisteredAddress.country.hint = Enter text and then choose from the list.
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address

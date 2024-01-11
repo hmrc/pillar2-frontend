@@ -55,9 +55,6 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) should include(
-          "For a UK address, you must enter a correctly formatted UK postcode"
-        )
       }
     }
 
@@ -81,9 +78,6 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) should include(
-          "For a UK address, you must enter a correctly formatted UK postcode"
-        )
       }
     }
 
