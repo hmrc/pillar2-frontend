@@ -118,15 +118,15 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua = emptyUserAnswers.set(upeContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
+      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
-        val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
-          "emailAddress" -> "hey"
-        )
-        val result = route(application, request).value
+        val request   = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody("emailAddress" -> "<>")
+        val boundForm = formProvider("name").bind(Map("emailAddress" -> "<>"))
+        val view      = application.injector.instanceOf[UpeContactEmailView]
+        val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
