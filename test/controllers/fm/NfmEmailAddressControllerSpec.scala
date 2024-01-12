@@ -102,15 +102,16 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val userAnswer =
-        emptyUserAnswers.set(fmContactNamePage, "alex").success.value
+      val userAnswer  = emptyUserAnswers.set(fmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", ""))
-        val result = route(application, request).value
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url).withFormUrlEncodedBody(("emailAddress", "<>"))
+        val boundForm = formProvider("name").bind(Map("emailAddress" -> "<>"))
+        val view      = application.injector.instanceOf[NfmEmailAddressView]
+        val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 

@@ -16,16 +16,8 @@
 
 package forms
 
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
-import javax.inject.Inject
-
-class UpeContactEmailFormProvider @Inject() extends Mappings {
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("upe-input-business-contact.email.error.required", Seq(userName))
-        .verifying(maxLength(Constants.MAX_LENGTH_132, "upe-input-business-contact.email.error.length"))
-        .verifying(regexp(Validation.EMAIL_REGEX, "upe-input-business-contact.email.error.invalid"))
-    )
+object Validation {
+  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
+  final val EMAIL_REGEX =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
 }
