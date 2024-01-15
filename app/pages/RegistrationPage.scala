@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-sealed trait TaskStatus
-object TaskStatus {
-  case object Completed extends TaskStatus
-  case object InProgress extends TaskStatus
-  case object NotStarted extends TaskStatus
-  case object CannotStartYet extends TaskStatus
-  case object Default extends TaskStatus {
-    val value = this.toString.toLowerCase
-  }
+import models.registration.Registration
+import play.api.libs.json.JsPath
 
-}
+case object RegistrationPage extends QuestionPage[Registration] {
 
-sealed trait TaskAction
-object TaskAction {
-  case object Edit extends TaskAction
-  case object Add extends TaskAction
-  case object Default extends TaskAction
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "Registration"
 }
