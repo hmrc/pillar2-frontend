@@ -57,7 +57,7 @@ cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up 
 
 
 
-upeRegisteredAddress.title=Where is the registered office address of {0}?
+upeRegisteredAddress.title=Where is the registered office address
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
@@ -195,7 +195,7 @@ upeNameRegistration.error.length = The name of the ultimate parent entity must b
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
-upe-input-business-email.title=What is the email address for {0}?
+upe-input-business-email.title=What is the email address
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to confirm your records
 upe-input-business-email.caption = Group details
@@ -288,7 +288,7 @@ isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is
 isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
 
 contactUPEByTelephone.heading.caption = Group details
-contactUPEByTelephone.title = Can we contact {0} by telephone?
+contactUPEByTelephone.title = Can we contact by telephone?
 contactUPEByTelephone.heading = Can we contact {0} by telephone?
 contactUPEByTelephone.hint = We will call if we have any questions about the management of Pillar 2 top-up tax for this business
 contactUPEByTelephone.yes = Yes
