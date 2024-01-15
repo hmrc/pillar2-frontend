@@ -57,15 +57,10 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       accessibilityUrl = appConfig.accessibilityStatementPath,
       labels = serviceName
     )
-    val response = httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
+    httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
       s"$apiUrl/limited-company-journey",
       registrationRequest
     )
-    response.map { res =>
-      auditService.auditGrsForLimitedCompany(registrationRequest, res)
-
-    }
-    response
   }
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =

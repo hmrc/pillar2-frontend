@@ -153,6 +153,7 @@ class GrsReturnController @Inject() (
       .map {
         case EntityType.UkLimitedCompany =>
           incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+            auditService.auditGrsReturnNfmForLimitedCompany(data)
             if (data.registration.registrationStatus == Registered) {
               data.registration.registeredBusinessPartnerId
                 .map { safeId =>
@@ -188,6 +189,7 @@ class GrsReturnController @Inject() (
           }
         case EntityType.LimitedLiabilityPartnership =>
           partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+            auditService.auditGrsReturnNfmForLLP(data)
             if (data.registration.registrationStatus == Registered) {
               data.registration.registeredBusinessPartnerId
                 .map { safeId =>
