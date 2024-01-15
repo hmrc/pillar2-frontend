@@ -54,7 +54,7 @@
                         @messages("taskList.task.business.ultimate")
                     }
                     </span>
-                    <span class="hmrc-status-tag">@messages(s"task.status.${ultimateParentInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="eligibility-status">@messages(s"task.status.${ultimateParentInfo.status}")</span>
                 </li>
 
                     <!-- Filing Member Task -->
@@ -68,21 +68,21 @@
                         @messages("taskList.task.business.filingMember")
                     }
                     </span>
-                    <span class="hmrc-status-tag">@messages(s"task.status.${filingMemberInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="nfm-status">@messages(s"task.status.${filingMemberInfo.status}")</span>
                 </li>
 
                     <!-- Group Detail Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @groupDetailInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">
+                    <a href="@link" aria-describedby="group-details">
                     @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse(TaskStatus.Default.value)}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.more")
                     }
                     </span>
-                    <span class="hmrc-status-tag">@messages(s"task.status.${groupDetailInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="group-details">@messages(s"task.status.${groupDetailInfo.status}")</span>
                 </li>
             </ul>
         </li>
@@ -97,14 +97,14 @@
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @contactDetailsInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">
+                    <a href="@link" aria-describedby="contact-details">
                     @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.contact")
                     }
                     </span>
-                    <span class="hmrc-status-tag">@messages(s"task.status.${contactDetailsInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="contact-details">@messages(s"task.status.${contactDetailsInfo.status}")</span>
                 </li>
             </ul>
         </li>
@@ -120,14 +120,14 @@
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @cyaInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">
+                    <a href="@link" aria-describedby="review-and-send">
                     @messages(s"taskList.task.review.${if(cyaInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else if(cyaInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value}")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.review")
                     }
                     </span>
-                    <span class="hmrc-status-tag">@messages(s"task.status.${cyaInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="review-and-send">@messages(s"task.status.${cyaInfo.status}")</span>
                 </li>
             </ul>
         </li>
