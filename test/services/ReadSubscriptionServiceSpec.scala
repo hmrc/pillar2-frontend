@@ -20,7 +20,7 @@ import akka.util.Timeout
 import base.SpecBase
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
+import models.{InternalServerError_, MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
@@ -104,9 +104,8 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
       val resultFuture = service.readSubscription(requestParameters)
 
-      whenReady(resultFuture.failed) { e =>
-        e            shouldBe a[RuntimeException]
-        e.getMessage shouldBe "Connection error"
+      whenReady(resultFuture) { result =>
+        result should matchPattern { case Left(InternalServerError_) => }
       }
     }
 

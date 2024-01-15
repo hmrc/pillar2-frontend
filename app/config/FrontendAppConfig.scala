@@ -101,6 +101,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
     } else { Map("english" -> Lang(ENGLISH)) }
 
   val showPaymentsSection: Boolean = configuration.get[Boolean]("features.showPaymentsSection")
+  val showErrorScreens:    Boolean = configuration.get[Boolean]("features.showErrorScreens")
 
   def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")

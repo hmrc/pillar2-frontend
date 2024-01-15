@@ -18,9 +18,9 @@ package services
 
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{ApiError, SubscriptionCreateError}
+import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,5 +35,21 @@ class ReadSubscriptionService @Inject() (
         Right(jsValue)
       case None =>
         Left(SubscriptionCreateError)
+    } recover {
+      case e @ UpstreamErrorResponse(_, statusCode, _, _) =>
+//        logger.error(s"Upstream error with status code $statusCode: ${e.getMessage}")
+        statusCode match {
+          case 400 => Left(BadRequestError)
+          case 404 => Left(NotFoundError)
+          case 409 => Left(DuplicateSubmissionError)
+          case 422 => Left(UnprocessableEntityError)
+          case 500 => Left(InternalServerError_)
+          case 503 => Left(ServiceUnavailableError)
+          case _   => Left(InternalServerError_)
+        }
+      case e =>
+//        logger.error(s"Unexpected error: ${e.getMessage}", e)
+        Left(InternalServerError_)
     }
+
 }

@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, UnprocessableEntityError}
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
@@ -50,9 +51,10 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
-    val userId       = request.userId
-    val showPayments = appConfig.showPaymentsSection
+    val plrReference     = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
+    val userId           = request.userId
+    val showPayments     = appConfig.showPaymentsSection
+    val showErrorScreens = appConfig.showErrorScreens
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     plrReference match {
@@ -89,6 +91,24 @@ class DashboardController @Inject() (
                 Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             }
 
+          case Left(error) if showErrorScreens =>
+            error match {
+              case BadRequestError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+              case NotFoundError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+              case DuplicateSubmissionError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+              case UnprocessableEntityError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+              case InternalServerError_ =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            }
           case Left(error) =>
             logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
             Future.successful(InternalServerError("Internal Server Error occurred"))
