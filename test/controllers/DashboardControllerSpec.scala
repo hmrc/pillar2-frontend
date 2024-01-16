@@ -17,15 +17,13 @@
 package controllers
 
 import base.SpecBase
-import com.typesafe.play.cachecontrol.Seconds
 import connectors.UserAnswersConnectors
 import controllers.actions.AuthenticatedIdentifierAction
 import generators.ModelGenerators
 import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionRequestParameters}
-import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.time.{Seconds, Span}
 import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
