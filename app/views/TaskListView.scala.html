@@ -47,28 +47,28 @@
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @ultimateParentInfo.link.map { link =>
-                    <a href="@link" aria-describedby="eligibility-status">
+                    <a href="@link" aria-describedby="ultimate-parent-status">
                     @messages(s"taskList.task.business.ultimate.${if(ultimateParentInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value }")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.ultimate")
                     }
                     </span>
-                    <span class="hmrc-status-tag" id="eligibility-status">@messages(s"task.status.${ultimateParentInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="ultimate-parent-status">@messages(s"task.status.${ultimateParentInfo.status}")</span>
                 </li>
 
                     <!-- Filing Member Task -->
                 <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
                     @filingMemberInfo.link.map { link =>
-                    <a href="@link" aria-describedby="nfm-status">
+                    <a href="@link" aria-describedby="filing-member-status">
                     @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status ==RowStatus.Completed.toString()) RowStatus.Edit.value else if(filingMemberInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value }")
                     </a>
                     }.getOrElse {
                         @messages("taskList.task.business.filingMember")
                     }
                     </span>
-                    <span class="hmrc-status-tag" id="nfm-status">@messages(s"task.status.${filingMemberInfo.status}")</span>
+                    <span class="hmrc-status-tag" id="filing-member-status">@messages(s"task.status.${filingMemberInfo.status}")</span>
                 </li>
 
                     <!-- Group Detail Task -->
