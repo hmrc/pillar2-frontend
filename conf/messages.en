@@ -57,7 +57,7 @@ cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up 
 
 
 
-upeRegisteredAddress.title=Where is the registered office address
+upeRegisteredAddress.title=Where is the registered office address?
 upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
@@ -195,7 +195,7 @@ upeNameRegistration.error.length = The name of the ultimate parent entity must b
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
-upe-input-business-email.title=What is the email address
+upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to confirm your records
 upe-input-business-email.caption = Group details
@@ -297,7 +297,7 @@ contactUPEByTelephone.error.required= Select yes if we can contact {0} by teleph
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden =  your response to whether we make contact by telephone
 captureTelephoneDetails.heading.caption = Group details
-captureTelephoneDetails.title = What is the telephone number for {0}?
+captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -351,7 +351,7 @@ nfmNameRegistration.error.length = The name of the nominated filing member must 
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 
 
-nfmRegisteredAddress.title = Where is the registered office address of {0}?
+nfmRegisteredAddress.title = Where is the registered office address?
 nfmRegisteredAddress.heading = Where is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
 nfmRegisteredAddress.addressLine1 = Address line 1
@@ -399,7 +399,7 @@ nfmContactName.change.hidden =  filing member contact name
 nfmContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 nfmEmailAddress.heading.caption = Group details
-nfmEmailAddress.title = What is the email address for {0}?
+nfmEmailAddress.title = What is the email address?
 nfmEmailAddress.heading = What is the email address for {0}?
 nfmEmailAddress.hint = We will use this to confirm your records
 nfmEmailAddress.checkYourAnswersLabel = Email address
@@ -436,14 +436,14 @@ groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
 groupAccountingPeriod.change.hidden =  the dates of the group''s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Group details
-contactNfmByTelephone.title = Can we contact {0} by telephone?
+contactNfmByTelephone.title = Can we contact by telephone?
 contactNfmByTelephone.heading = Can we contact {0} by telephone?
 contactNfmByTelephone.hint = We will use this to confirm your records
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
 
 nfmCaptureTelephoneDetails.heading.caption = Group details
-nfmCaptureTelephoneDetails.title = What is the telephone number for {0}?
+nfmCaptureTelephoneDetails.title = What is the telephone number?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -507,7 +507,7 @@ contactNameCompliance.error.length = The name of the contact person or team shou
 
 
 contactEmailAddress.heading.caption = Contact details
-contactEmailAddress.title = What is the email address for {0}?
+contactEmailAddress.title = What is the email address?
 contactEmailAddress.heading = What is the email address for {0}?
 contactEmailAddress.hint = We will use this to send confirmation of your Pillar 2 top-up tax compliance actions or if we have any questions about them.
 contactEmailAddress.checkYourAnswersLabel = Email address
@@ -517,14 +517,14 @@ contactEmailAddress.error.format = Enter an email address in the correct format,
 contactEmailAddress.change.hidden = the first contact email address
 
 contactByTelephone.heading.caption = Contact details
-contactByTelephone.title = Can we contact {0} by telephone?
+contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactByTelephone.change.hidden = your response to whether we can contact the first contact by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
-contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.title = What is the telephone number?
 contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 contactCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -575,8 +575,8 @@ checkYourAnswers.nfm = Nominated filing member
 
 
 
-addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.title = Is there someone else we can contact?
+addSecondaryContact.heading = Is there someone else we can contact?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
@@ -589,7 +589,7 @@ secondaryContactName.error.required = Enter name of the person of team we should
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
 
 
-secondaryContactEmail.title =What is the email address for {0}?
+secondaryContactEmail.title =What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
@@ -599,14 +599,14 @@ secondaryContactEmail.error.length = The email address should be 160 characters 
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
 
-secondaryTelephonePreference.title = Can we contact {0} by telephone?
+secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 
-secondaryTelephone.title = What is the telephone number for {0}?
+secondaryTelephone.title = What is the telephone number?
 secondaryTelephone.heading = What is the telephone number for {0}?
 secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
