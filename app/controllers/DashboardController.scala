@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, UnprocessableEntityError}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError}
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
@@ -107,6 +107,9 @@ class DashboardController @Inject() (
                 Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
               case InternalServerError_ =>
                 logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error.")
+                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+              case SubscriptionCreateError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error.")
                 Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
             }
           case Left(error) =>

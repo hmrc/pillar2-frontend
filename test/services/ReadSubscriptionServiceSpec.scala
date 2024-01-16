@@ -20,7 +20,7 @@ import akka.util.Timeout
 import base.SpecBase
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{InternalServerError_, MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, MandatoryInformationMissingError, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnauthorizedError, UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -47,8 +47,6 @@ class ReadSubscriptionServiceSpec extends SpecBase {
   val id           = "testId"
   val plrReference = "testPlrRef"
 
-  private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
-
   val transformedUserAnswers = Right(UserAnswers("someId"))
   val transformationError    = Left(MandatoryInformationMissingError("Transformation Error"))
   implicit val timeout: Timeout = Timeout(5.seconds)
@@ -57,9 +55,8 @@ class ReadSubscriptionServiceSpec extends SpecBase {
     "return UserAnswers when the connector returns valid data and transformation is successful" in {
       val validJsValue: JsValue = Json.parse("""{ "someField": "someValue" }""")
 
-      val mockReadSubscriptionConnector = mock[ReadSubscriptionConnector]
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(validJsValue.as[JsObject])))
+        .thenReturn(Future.successful(Some(validJsValue)))
 
       val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
@@ -106,6 +103,30 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
       whenReady(resultFuture) { result =>
         result should matchPattern { case Left(InternalServerError_) => }
+      }
+    }
+
+    "handle UpstreamErrorResponse thrown by the connector" in {
+      val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
+
+      val errorStatusCodes = List(400, 404, 409, 422, 500, 503)
+      for (statusCode <- errorStatusCodes) {
+        when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.failed(UpstreamErrorResponse("Upstream error", statusCode, statusCode)))
+
+        val resultFuture = service.readSubscription(requestParameters)
+
+        whenReady(resultFuture) { result =>
+          statusCode match {
+            case 400 => result should matchPattern { case Left(BadRequestError) => }
+            case 401 => result should matchPattern { case Left(UnauthorizedError) => }
+            case 404 => result should matchPattern { case Left(NotFoundError) => }
+            case 409 => result should matchPattern { case Left(DuplicateSubmissionError) => }
+            case 422 => result should matchPattern { case Left(UnprocessableEntityError) => }
+            case 500 => result should matchPattern { case Left(InternalServerError_) => }
+            case 503 => result should matchPattern { case Left(ServiceUnavailableError) => }
+          }
+        }
       }
     }
 

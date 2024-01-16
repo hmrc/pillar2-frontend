@@ -18,7 +18,8 @@ package services
 
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnauthorizedError, UnprocessableEntityError}
+import play.api.Logging
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
@@ -28,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReadSubscriptionService @Inject() (
   readSubscriptionConnector: ReadSubscriptionConnector,
   implicit val ec:           ExecutionContext
-) {
+) extends Logging {
   def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
     readSubscriptionConnector.readSubscription(parameters).map {
       case Some(jsValue) =>
@@ -37,7 +38,7 @@ class ReadSubscriptionService @Inject() (
         Left(SubscriptionCreateError)
     } recover {
       case e @ UpstreamErrorResponse(_, statusCode, _, _) =>
-//        logger.error(s"Upstream error with status code $statusCode: ${e.getMessage}")
+        logger.error(s"Upstream error with status code $statusCode: ${e.getMessage}")
         statusCode match {
           case 400 => Left(BadRequestError)
           case 404 => Left(NotFoundError)
@@ -45,10 +46,9 @@ class ReadSubscriptionService @Inject() (
           case 422 => Left(UnprocessableEntityError)
           case 500 => Left(InternalServerError_)
           case 503 => Left(ServiceUnavailableError)
-          case _   => Left(InternalServerError_)
         }
       case e =>
-//        logger.error(s"Unexpected error: ${e.getMessage}", e)
+        logger.error(s"Unexpected error: ${e.getMessage}", e)
         Left(InternalServerError_)
     }
 

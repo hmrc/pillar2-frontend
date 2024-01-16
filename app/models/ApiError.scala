@@ -16,7 +16,7 @@
 
 package models
 
-sealed trait ApiError
+sealed trait ApiError extends Throwable
 
 case object InternalServerError_ extends ApiError
 case class MandatoryInformationMissingError(value: String = "") extends ApiError
@@ -24,6 +24,7 @@ case class RegistrationWithoutIdInformationMissingError(value: String = "") exte
 case object SubscriptionCreateError extends ApiError
 case object EnrolmentExistsError extends ApiError
 case object EnrolmentCreationError extends ApiError
+case object UnauthorizedError extends ApiError
 
 case object BadRequestError extends ApiError
 case object NotFoundError extends ApiError
