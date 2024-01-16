@@ -31,16 +31,28 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
   def apply(): Form[AccountingPeriod] = Form(
     mapping(
       "startDate" -> localDate(
-        "groupAccountingPeriod.error.startDate.format",
-        "groupAccountingPeriod.error.startDate.required",
-        "",
-        ""
-      ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.minimum")),
+        invalidKey = "groupAccountingPeriod.error.startDate.format",
+        allRequiredKey = "groupAccountingPeriod.error.startDate.required.all",
+        twoRequiredKey = "groupAccountingPeriod.error.startDate.required.two",
+        requiredKey = "groupAccountingPeriod.error.startDate.required",
+        invalidDay = "groupAccountingPeriod.error.startDate.day.nan",
+        invalidDayLength = "groupAccountingPeriod.error.startDate.day.length",
+        invalidMonth = "groupAccountingPeriod.error.startDate.month.nan",
+        invalidMonthLength = "groupAccountingPeriod.error.startDate.month.length",
+        invalidYear = "groupAccountingPeriod.error.startDate.year.nan",
+        invalidYearLength = "groupAccountingPeriod.error.startDate.year.length"
+      ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.year.minimum")),
       "endDate" -> localDate(
-        "groupAccountingPeriod.error.endDate.format",
-        "groupAccountingPeriod.error.endDate.required",
-        "",
-        ""
+        invalidKey = "groupAccountingPeriod.error.endDate.format",
+        allRequiredKey = "groupAccountingPeriod.error.endDate.required.all",
+        twoRequiredKey = "groupAccountingPeriod.error.endDate.required.two",
+        requiredKey = "groupAccountingPeriod.error.endDate.required",
+        invalidDay = "groupAccountingPeriod.error.endDate.day.nan",
+        invalidDayLength = "groupAccountingPeriod.error.endDate.day.length",
+        invalidMonth = "groupAccountingPeriod.error.endDate.month.nan",
+        invalidMonthLength = "groupAccountingPeriod.error.endDate.month.length",
+        invalidYear = "groupAccountingPeriod.error.endDate.year.nan",
+        invalidYearLength = "groupAccountingPeriod.error.endDate.year.length"
       )
     )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
       Some((accountingPeriod.startDate, accountingPeriod.endDate))

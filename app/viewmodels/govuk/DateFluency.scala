@@ -43,29 +43,27 @@ trait DateFluency {
       fieldset:          Fieldset
     )(implicit messages: Messages): DateInput = {
 
-      val errorClass = if (errorMessage(field).isDefined) "govuk-input--error" else ""
-
       val items = Seq(
         InputItem(
           id = s"${field.id}.day",
           name = s"${field.name}.day",
           value = field("day").value,
           label = Some(messages("date.day")),
-          classes = s"govuk-input--width-2 $errorClass".trim
+          classes = s"govuk-input--width-2 ${getErrorClassForInputItem("day", field)}".trim
         ),
         InputItem(
           id = s"${field.id}.month",
           name = s"${field.name}.month",
           value = field("month").value,
           label = Some(messages("date.month")),
-          classes = s"govuk-input--width-2 $errorClass".trim
+          classes = s"govuk-input--width-2 ${getErrorClassForInputItem("month", field)}".trim
         ),
         InputItem(
           id = s"${field.id}.year",
           name = s"${field.name}.year",
           value = field("year").value,
           label = Some(messages("date.year")),
-          classes = s"govuk-input--width-4 $errorClass".trim
+          classes = s"govuk-input--width-4 ${getErrorClassForInputItem("year", field)}".trim
         )
       )
 
@@ -76,6 +74,21 @@ trait DateFluency {
         errorMessage = errorMessage(field)
       )
     }
+
+    private def getErrorClassForInputItem(id: String, field: Field): String =
+      field.error.fold("") { error =>
+        if (
+          error.args.contains(id) ||
+          error.message.contains("required.all") ||
+          error.message.contains("endDate.before.startDate") ||
+          error.message.toLowerCase.contains(id.toLowerCase())
+        ) {
+          "govuk-input--error"
+        } else {
+          ""
+        }
+      }
+
   }
 
   implicit class FluentDate(date: DateInput) {

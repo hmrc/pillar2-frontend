@@ -425,12 +425,36 @@ groupAccountingPeriod.startDate.hint = For example, 27 3 2026
 groupAccountingPeriod.endDate.heading = Enter end date
 groupAccountingPeriod.endDate.hint = For example, 28 3 2027
 groupAccountingPeriod.checkYourAnswersLabel = Group''s consolidated accounting period
-groupAccountingPeriod.error.startDate.minimum = You need to enter a start date on or after 31/12/2023
+groupAccountingPeriod.error.startDate.year.minimum = You need to enter a start date on or after 31/12/2023
 groupAccountingPeriod.error.endDate.before.startDate = You need to enter an end date that is after the start date
 groupAccountingPeriod.error.startDate.format = Enter a date in the correct format
-groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.startDate.required.all = You need to enter the start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.startDate.required.two = The start date must include a {0} and {1}
+groupAccountingPeriod.error.startDate.required = The start date must include a {0}
+groupAccountingPeriod.error.startDate.day.nan = Day must only include numbers
+groupAccountingPeriod.error.startDate.month.nan = Month must only include numbers
+groupAccountingPeriod.error.startDate.year.nan = Year must only include numbers
+groupAccountingPeriod.error.startDate.dayMonthYear.invalid = The start date must be a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.startDate.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.startDate.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.startDate.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.startDate.day.length = Enter a valid day
+groupAccountingPeriod.error.startDate.month.length = Enter a valid month
+groupAccountingPeriod.error.startDate.year.length = Enter a valid year
 groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
-groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.required.all = You need to enter the end date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.required.two = The end date must include a {0} and {1}
+groupAccountingPeriod.error.endDate.required = The end date must include a {0}
+groupAccountingPeriod.error.endDate.day.nan = Day must only include numbers
+groupAccountingPeriod.error.endDate.month.nan = Month must only include numbers
+groupAccountingPeriod.error.endDate.year.nan = Year must only include numbers
+groupAccountingPeriod.error.endDate.dayMonthYear.invalid = The end date must be a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.endDate.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.endDate.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.endDate.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2025</span>
+groupAccountingPeriod.error.endDate.day.length = Enter a valid day
+groupAccountingPeriod.error.endDate.month.length = Enter a valid month
+groupAccountingPeriod.error.endDate.year.length = Enter a valid year
 groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
 groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
 groupAccountingPeriod.change.hidden =  the dates of the group''s consolidated accounting period

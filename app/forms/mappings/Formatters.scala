@@ -19,8 +19,7 @@ package forms.mappings
 import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
-
-import scala.util.control.Exception.nonFatalCatch
+import scala.util.{Failure, Success, Try}
 
 trait Formatters extends Transforms with Constraints {
   private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
@@ -111,31 +110,35 @@ trait Formatters extends Transforms with Constraints {
     requiredKey:    String,
     wholeNumberKey: String,
     nonNumericKey:  String,
+    invalidLength:  String,
     args:           Seq[String] = Seq.empty
   ): Formatter[Int] =
     new Formatter[Int] {
-
-      val decimalRegexp = """^-?(\d*\.\d*)$"""
-
+      val decimalRegexp         = """^-?(\d*\.\d*)$"""
       private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]) =
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
         baseFormatter
           .bind(key, data)
-          .right
           .map(_.replace(",", ""))
-          .right
+          .map(_.replace(" ", ""))
           .flatMap {
             case s if s.matches(decimalRegexp) =>
               Left(Seq(FormError(key, wholeNumberKey, args)))
             case s =>
-              nonFatalCatch
-                .either(s.toInt)
-                .left
-                .map(_ => Seq(FormError(key, nonNumericKey, args)))
+              Try(s.toInt) match {
+                case Failure(_) => Left(Seq(FormError(key, nonNumericKey, args)))
+                case Success(number)
+                    if ((number > 31 || number < 1) && key.contains("day"))
+                      || ((number > 12 || number < 1) && key.contains("month"))
+                      || (number.toString.length > 4 && key.contains("year")) =>
+                  Left(Seq(FormError(key, invalidLength, args)))
+                case Success(number) =>
+                  Right(number)
+              }
           }
 
-      override def unbind(key: String, value: Int) =
+      override def unbind(key: String, value: Int): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
 
