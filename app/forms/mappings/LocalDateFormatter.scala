@@ -62,16 +62,16 @@ private[mappings] class LocalDateFormatter(
     val bindedYear:  Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
 
     (bindedDay, bindedMonth, bindedYear) match {
-      case (Left(dayError), Left(monthError), Left(yearError)) =>
+      case (Left(_), Left(_), Left(_)) =>
         Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonthYear.invalid", args)))
-      case (Left(dayError), Left(monthError), Right(_)) => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonth.invalid", args)))
-      case (Right(_), Left(monthError), Left(yearError)) =>
+      case (Left(_), Left(_), Right(_)) => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonth.invalid", args)))
+      case (Right(_), Left(_), Left(_)) =>
         Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.monthYear.invalid", args)))
-      case (Left(dayError), Right(_), Left(yearError)) => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayYear.invalid", args)))
-      case (Left(dayError), Right(_), Right(_))        => Left(dayError)
-      case (Right(_), Left(monthError), Right(_))      => Left(monthError)
-      case (Right(_), Right(_), Left(yearError))       => Left(yearError)
-      case (Right(day), Right(month), Right(year))     => toDate(key, day, month, year)
+      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayYear.invalid", args)))
+      case (Left(dayError), Right(_), Right(_))    => Left(dayError)
+      case (Right(_), Left(monthError), Right(_))  => Left(monthError)
+      case (Right(_), Right(_), Left(yearError))   => Left(yearError)
+      case (Right(day), Right(month), Right(year)) => toDate(key, day, month, year)
     }
   }
 
