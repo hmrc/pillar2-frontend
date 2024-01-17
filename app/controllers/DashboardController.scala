@@ -90,28 +90,24 @@ class DashboardController @Inject() (
               case None =>
                 Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             }
-
           case Left(error) if showErrorScreens =>
-            error match {
+            val errorMessage = error match {
               case BadRequestError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error."
               case NotFoundError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found."
               case DuplicateSubmissionError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected."
               case UnprocessableEntityError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
               case InternalServerError_ =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
               case SubscriptionCreateError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error.")
-                Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
             }
+            logger.error(errorMessage)
+            Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+
           case Left(error) =>
             logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
             Future.successful(InternalServerError("Internal Server Error occurred"))

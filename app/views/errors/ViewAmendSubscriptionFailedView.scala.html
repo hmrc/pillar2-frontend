@@ -22,19 +22,19 @@ layout: templates.Layout
 
 @()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("error.vieworamend.title")), showBackLink = false) {
-<h1 class="govuk-heading-xl">@messages("error.vieworamend.heading")</h1>
+@layout(pageTitle = titleNoForm(messages("error.viewAmendSubscriptionFailed.title")), showBackLink = false) {
+<h1 class="govuk-heading-xl">@messages("error.viewAmendSubscriptionFailed.heading")</h1>
 
-<p class="govuk-body">@messages("error.vieworamend.message1")</p>
+<p class="govuk-body">@messages("error.viewAmendSubscriptionFailed.message1")</p>
 
 <div class="govuk-body">
  <a class="govuk-link" href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax">
-  @messages("error.vieworamend.link")
+  @messages("error.viewAmendSubscriptionFailed.link")
  </a>
 </div>
 
-<p class="govuk-body">@messages("error.vieworamend.p2")
- <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax" >@messages("error.vieworamend.newtab")</a>
+<p class="govuk-body">@messages("error.viewAmendSubscriptionFailed.p2")
+ <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax" >@messages("error.viewAmendSubscriptionFailed.newtab")</a>
 </p>
 
 }
