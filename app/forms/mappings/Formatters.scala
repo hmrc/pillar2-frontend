@@ -120,7 +120,6 @@ trait Formatters extends Transforms with Constraints {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
         baseFormatter
           .bind(key, data)
-          .map(_.replace(",", ""))
           .map(_.replace(" ", ""))
           .flatMap {
             case s if s.matches(decimalRegexp) =>
