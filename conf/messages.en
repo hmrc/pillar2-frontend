@@ -52,11 +52,11 @@ cannotReturnAfterSubscriptionError.message= You have successfully registered to 
 cannotReturnAfterSubscriptionError.message2= You can now
 cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
 ###############################################
-error.viewAmendSubscriptionFailed.title= Sorry, there is a problem with the service
-error.viewAmendSubscriptionFailed.heading= Sorry, there is a problem with the service
-error.viewAmendSubscriptionFailed.message1= Please try again later.
-error.viewAmendSubscriptionFailed.link= Return to your account homepage to try again
-error.viewAmendSubscriptionFailed.newtab = Is this page not working properly? (opens in new tab)
+viewAmendSubscriptionFailed.title= Sorry, there is a problem with the service
+viewAmendSubscriptionFailed.heading= Sorry, there is a problem with the service
+viewAmendSubscriptionFailed.message1= Please try again later.
+viewAmendSubscriptionFailed.link= Return to your account homepage to try again
+viewAmendSubscriptionFailed.newtab = Is this page not working properly? (opens in new tab)
 ###############################################
 
 
