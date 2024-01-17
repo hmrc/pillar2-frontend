@@ -99,7 +99,7 @@ POST        /eligibility/nfm                                                    
 GET         /eligibility/service-not-suitable/not-upe-or-nfm                            controllers.eligibility.KbMnIneligibleController.onPageLoad
 
 GET         /eligibility/service-not-suitable/not-active-in-uk                          controllers.eligibility.KbUKIneligibleController.onPageLoad
-GET         /eligibility/under-750-million                                              controllers.eligibility.Kb750IneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/under-750-million                          controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
 GET         /account/sign-out-survey                                                    controllers.auth.AuthController.signOut
