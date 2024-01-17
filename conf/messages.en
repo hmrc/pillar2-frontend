@@ -643,7 +643,6 @@ subscriptionAddress.messages.error.addressLine1.invalid = The first line of the 
 subscriptionAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 subscriptionAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.country = Country
-subscriptionAddress.country.hint = Enter text and then choose from the list
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.change.hidden =  the registered contact address
 
