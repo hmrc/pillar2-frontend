@@ -146,16 +146,12 @@ grs.registration.error.header =  The details you entered did not match our recor
 grs.registration.error.line1 =  We could not match the details you entered with records held by HMRC.
 grs.registration.error.line2 =  How can I confirm my details
 grs.registration.error.p1 = You can confirm your details with the records held by HMRC by:
-grs.registration.error.b11 =  If you think you made an error when entering them you can
-grs.registration.error.b12 =  go back to select the entity type
-grs.registration.error.b13 =  and try again using different details.
-grs.registration.error.b21 =  You can
-grs.registration.error.b22 =  search Companies House for the company registration number and registered office address (opens in a new tab).
+
+grs.registration.error.b1 =  searching Companies House for the company registration number and registered office address (opens in a new tab)
+grs.registration.error.b2 =  asking for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)
 grs.registration.error.b31 =  You can
-grs.registration.error.b32 =  ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab).
-
-
-
+grs.registration.error.b32 =  go back to select the entity type
+grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -662,11 +658,11 @@ dashboard.requestPayment = Request a repayment
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
-dashboard.p1 = This service is being developed in line with UK''s implementation of the 2 pillar solution global tax reform project, developed by the G20and Organisation for Economic Cooperation and Development (OECD).
+dashboard.p1 = This service is being developed in line with the UK''s implementation of the 2 pillar solution global tax reform project, developed by the G20 and Organisation for Economic Cooperation and Development (OECD).
 dashboard.p2 = For group that met Pillar 2 top-up taxes from 2023, the first deadline to submit a return will be
 dashboard.p3 = no later than 18 months after the last day of the group''s accounting period on or after 31 December 2023.
 dashboard.p4 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR) and GloBE Information Returns (GIR) ahead of this deadline.
-dashboard.p5 = For more information, about the UK''s implementation of Pillar 2 top-up taxes, please refer to the
+dashboard.p5 = For more information about the UK''s implementation of Pillar 2 top-up taxes, please refer to the
 dashboard.link = draft guidance (opens in new tab)
 dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
 dashboard.inactive.link = draft guidance (opens in a new tab)
