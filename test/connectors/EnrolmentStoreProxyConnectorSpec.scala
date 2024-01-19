@@ -19,8 +19,8 @@ package connectors
 import base.SpecBase
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.HttpResponse
 
 class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
@@ -82,6 +82,14 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
     }
 
-  }
+    "return a Left(HttpResponse) when there is a conflict (409) response" in {
+      val plrRef                    = "xxx409"
+      val enrolmentStoreProxy409Url = s"$enrolmentStoreProxyUrl/HMRC-PILLAR2-ORG~PLRID~$plrRef/groups"
 
+      stubGet(enrolmentStoreProxy409Url, CONFLICT, "")
+
+      val result = connector.enrolmentExists(plrRef)
+      result.futureValue mustBe a[Left[HttpResponse, _]]
+    }
+  }
 }
