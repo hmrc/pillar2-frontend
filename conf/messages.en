@@ -55,7 +55,7 @@ cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up 
 alreadyRegistered.title= Your group is already registered
 alreadyRegistered.heading= Your group is already registered
 alreadyRegistered.message1= You will need to contact your administrator to give you access.
-alreadyRegistered.message2= You can email <a href="mailto:{0}">{0}</a> if you are having problems accessing the service.
+alreadyRegistered.message2= You can email {0} if you are having problems accessing the service.
 alreadyRegistered.newtab = Is this page not working properly? (opens in new tab)
 
 
