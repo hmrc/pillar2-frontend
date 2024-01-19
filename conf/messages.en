@@ -104,12 +104,12 @@ taskList.subheading.complete = Registration incomplete
 taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Group details
 
-taskList.task.business.ultimate.add = Add ultimate parent''s details
-taskList.task.business.ultimate.edit = Edit ultimate parent''s details
+taskList.task.business.ultimate.add = Add ultimate parent’s details
+taskList.task.business.ultimate.edit = Edit ultimate parent’s details
 
-taskList.task.business.filingMember = Filing member''s details
-taskList.task.business.filingMember.add = Add filing member''s details
-taskList.task.business.filingMember.edit = Edit filing member''s details
+taskList.task.business.filingMember = Filing member’s details
+taskList.task.business.filingMember.add = Add filing member’s details
+taskList.task.business.filingMember.edit = Edit filing member’s details
 
 taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
@@ -305,7 +305,7 @@ NominateFilingMemberYesNo.title = Do you want to register a nominated filing mem
 NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member for this group?
 NominateFilingMemberYesNo.heading.caption = Group details
 NominateFilingMemberYesNo.p1 = This step is optional. If you do not enter the details for a nominated filing member, the ultimate parent entity (UPE) will be used as the default.
-NominateFilingMemberYesNo.insetText = You must have permission from the UPE to nominate a company as a filing member and be able to access the information required to file   Pillar 2 top-up tax on the group''s behalf.
+NominateFilingMemberYesNo.insetText = You must have permission from the UPE to nominate a company as a filing member and be able to access the information required to file   Pillar 2 top-up tax on the group’s behalf.
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
@@ -328,7 +328,7 @@ registeringNfmForThisGroup.yes = Yes
 registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering as the nominated filing member for this group
 registeringNfmForThisGroup.caption = Check if the group needs to report
-registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group''s tax returns and keeping business records.
+registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s tax returns and keeping business records.
 
 isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
@@ -413,22 +413,22 @@ nfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 nfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
 
 groupAccountingPeriod.heading.caption = Group details
-groupAccountingPeriod.title = What are the start and end dates of the group''s consolidated accounting period?
+groupAccountingPeriod.title = What are the start and end dates of the group’s consolidated accounting period?
 groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK.
 groupAccountingPeriod.startDate.heading = Enter start date
 groupAccountingPeriod.startDate.hint = For example, 27 3 2026
 groupAccountingPeriod.endDate.heading = Enter end date
 groupAccountingPeriod.endDate.hint = For example, 28 3 2027
-groupAccountingPeriod.checkYourAnswersLabel = Group''s consolidated accounting period
+groupAccountingPeriod.checkYourAnswersLabel = Group’s consolidated accounting period
 groupAccountingPeriod.error.startDate.minimum = You need to enter a start date on or after 31/12/2023
 groupAccountingPeriod.error.endDate.before.startDate = You need to enter an end date that is after the start date
 groupAccountingPeriod.error.startDate.format = Enter a date in the correct format
-groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group''s consolidated accounting period
+groupAccountingPeriod.error.startDate.required = You need to enter the start date of the group’s consolidated accounting period
 groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
-groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group''s consolidated accounting period
+groupAccountingPeriod.error.endDate.required = You need to enter the end date of the group’s consolidated accounting period
 groupAccountingPeriod.error.required.all = Enter the groupAccountingPeriod
 groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
-groupAccountingPeriod.change.hidden =  the dates of the group''s consolidated accounting period
+groupAccountingPeriod.change.hidden =  the dates of the group’s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Group details
 contactNfmByTelephone.title = Can we contact {0} by telephone?
@@ -562,7 +562,7 @@ checkYourAnswers.nfm = Nominated filing member
 
 addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up tax
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
@@ -615,8 +615,8 @@ registrationConfirmation.p2 = You can save this ID number by making a note or ta
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
 
-subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
-subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
+subscriptionAddress.title = What address do you want to use as the filing member’s contact address?
+subscriptionAddress.heading = What address do you want to use as the filing member’s contact address?
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.addressLine1 = Address line 1
 subscriptionAddress.addressLine2 = Address line 2 (optional)
@@ -647,7 +647,7 @@ subscriptionAddress.change.hidden =  the registered contact address
 
 dashboard.title = Your Pillar 2 top-up taxes account
 dashboard.heading = Your Pillar 2 top-up taxes account
-dashboard.topTaxes = Group''s Pillar 2 top-up taxes ID:
+dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID:
 dashboard.registrationDate = Registration date:
 dashboard.upe = Ultimate parent entity:
 dashboard.payments = Payments
@@ -658,11 +658,11 @@ dashboard.requestPayment = Request a repayment
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
-dashboard.p1 = This service is being developed in line with the UK''s implementation of the 2 pillar solution global tax reform project, developed by the G20 and Organisation for Economic Cooperation and Development (OECD).
-dashboard.p2 = For group that met Pillar 2 top-up taxes from 2023, the first deadline to submit a return will be
-dashboard.p3 = no later than 18 months after the last day of the group''s accounting period on or after 31 December 2023.
-dashboard.p4 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR) and GloBE Information Returns (GIR) ahead of this deadline.
-dashboard.p5 = For more information about the UK''s implementation of Pillar 2 top-up taxes, please refer to the
+dashboard.p1 = This service is being developed in line with the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) 2 pillar solution.
+dashboard.p2 = The first deadline to submit a return is
+dashboard.p3 = 18 months after the last day of the group’s accounting period that started on or after 31 December 2023.
+dashboard.p4 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline.
+dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
 dashboard.link = draft guidance (opens in new tab)
 dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
 dashboard.inactive.link = draft guidance (opens in a new tab)
@@ -671,14 +671,14 @@ tasklist.incomplete.header= You have one or more incomplete registration tasks
 tasklist.incomplete.message= You must
 tasklist.incomplete.link= go back to register your group and complete any in progress tasks.
 
-unauthorised.org.standard.heading = Sorry, you''re unable to use this service
-unauthorised.org.standard.message = You''ve signed in with a standard organisation account.
+unauthorised.org.standard.heading = Sorry, you’re unable to use this service
+unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
-unauthorised.org.standard.message3 = You need to find someone with an administrator''s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
+unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
 unauthorised.org.standard.hyperlink = Read the draft guidance for more information on who can use this service.
 
-unauthorised.agent.heading = Sorry, you''re unable to use this service
-unauthorised.agent.message = You''ve signed in using an agent''s Government Gateway user ID. Agents cannot use this service to register or administer a group''s Pillar 2 top-up taxes.
+unauthorised.agent.heading = Sorry, you’re unable to use this service
+unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Agents cannot use this service to register or administer a group’s Pillar 2 top-up taxes.
 unauthorised.agent.message2 = If you are an agent who has been given authorisation to report Pillar 2 top-up taxes, you must
 unauthorised.agent.hyper1 = sign in via Agent Services.
 unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
@@ -686,10 +686,9 @@ unauthorised.agent.hyper2 = request authorisation via Agent services.
 unauthorised.agent.hyper3 = Read the draft guidance for more information on who can use this service.
 
 
-unauthorised.individual.heading = Sorry, you''re unable to use this service
-unauthorised.individual.message = You''ve signed in with an individual account. Only users with an organisation account can register to use this service.
+unauthorised.individual.heading = Sorry, you’re unable to use this service
+unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If you still need to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
-
