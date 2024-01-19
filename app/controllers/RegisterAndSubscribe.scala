@@ -18,7 +18,7 @@ package controllers
 
 import connectors.UserAnswersConnectors
 import models.requests.DataRequest
-import models.{EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo, MandatoryInformationMissingError}
+import models.{DuplicateSubmissionError, EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo, MandatoryInformationMissingError}
 import pages.{NominateFilingMemberPage, UpeRegInformationPage, upeRegisteredAddressPage, upeRegisteredInUKPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -157,6 +157,11 @@ trait RegisterAndSubscribe extends Logging {
               s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Encountered EnrolmentExistsError $EnrolmentExistsError. Redirecting to ErrorController."
             )
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
+          case Left(DuplicateSubmissionError) =>
+            logger.warn(
+              s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Encountered DuplicateSubmissionError $EnrolmentExistsError. Redirecting to AlreadyRegisteredController."
+            )
+            Future.successful(Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad))
         }
 
       case Left(_) =>

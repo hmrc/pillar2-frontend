@@ -57,7 +57,7 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
       val plrRef = "xxx200"
       stubGet(enrolmentStoreProxy200Url, OK, enrolmentStoreProxyResponseJson)
       val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe true
+      result.futureValue mustBe Right(true)
     }
 
     "return 204 and a enrolmentStatus response when no enrolment exists" in {
@@ -65,14 +65,14 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
       stubGet(enrolmentStoreProxy204Url, NO_CONTENT, "")
 
       val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
+      result.futureValue mustBe Right(false)
     }
 
     "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
       val plrRef = "xxx204"
       stubGet(enrolmentStoreProxy204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
       val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
+      result.futureValue mustBe Right(false)
     }
 
     "return 404 and a enrolmentStatus response when invalid or malfromed URL" in {

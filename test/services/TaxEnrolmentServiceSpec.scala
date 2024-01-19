@@ -44,7 +44,7 @@ class TaxEnrolmentServiceSpec extends SpecBase {
     val enrolmentInfo = EnrolmentInfo(crn = Some("crn"), ctUtr = Some("utr"), plrId = "plrId")
     "must create a Enrolment and call the taxEnrolmentsConnector returning with a Successful NO_CONTENT" in {
 
-      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(Right(false)))
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(Future.successful(Some(1)))
       service.checkAndCreateEnrolment(enrolmentInfo).map { res =>
         res mustBe (Right(1))
@@ -53,7 +53,7 @@ class TaxEnrolmentServiceSpec extends SpecBase {
 
     "must return none when any other Status  is received from taxEnrolments" in {
 
-      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(Right(false)))
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(Future.successful(None))
       service.checkAndCreateEnrolment(enrolmentInfo).map { res =>
         res mustBe Left(EnrolmentCreationError)
@@ -61,8 +61,12 @@ class TaxEnrolmentServiceSpec extends SpecBase {
     }
 
     "must return EnrolmentExistsError when there is already an enrolment" in {
-      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(true))
-      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(Future.successful(Some(NO_CONTENT)))
+      when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any()))
+        .thenReturn(Future.successful(Right(true)))
+
+      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any()))
+        .thenReturn(Future.successful(Some(NO_CONTENT)))
+
       service.checkAndCreateEnrolment(enrolmentInfo).map { res =>
         res mustBe Left(EnrolmentExistsError)
       }
