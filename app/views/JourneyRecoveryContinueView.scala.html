@@ -27,12 +27,7 @@
 
     <h1 class="govuk-heading-xl">@messages("journeyRecovery.continue.heading")</h1>
 
-    <p class="govuk-body">@messages("journeyRecovery.continue.guidance")</p>
-
     <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-                .asLink(continueUrl)
-        )
-    </p>
+        You must <a class="govuk-link" href="@continueUrl">
+        @messages("journeyRecovery.continue.link")</a> @messages("journeyRecovery.continue.message2")</p>
 }

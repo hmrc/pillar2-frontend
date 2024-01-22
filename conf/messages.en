@@ -261,12 +261,15 @@ nfmCheckYourAnswers.heading = Check your answers
 nfmCheckYourAnswers.heading.caption = Business details
 nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
-journeyRecovery.continue.title = Sorry, there is a problem with the service
-journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
-journeyRecovery.startAgain.title = Sorry, there is a problem with the service
-journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
-journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
+journeyRecovery.continue.title = There has been an error
+journeyRecovery.continue.heading = There has been an error
+journeyRecovery.continue.link=return to your Pillar 2 top-up taxes registration
+journeyRecovery.continue.message2 = and complete the required tasks.
+journeyRecovery.startAgain.title = There has been an error
+journeyRecovery.startAgain.heading = There has been an error
+journeyRecovery.startAgain.link=return to your Pillar 2 top-up taxes registration
+journeyRecovery.startAgain.message2 = and complete the required tasks.
+
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
