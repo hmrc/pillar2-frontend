@@ -17,9 +17,10 @@
 package mapping
 
 object Constants {
-
   final val ENGLISH         = "en"
   final val WELSH           = "cy"
   final val UK_COUNTRY_CODE = "GB"
-
+  final val MAX_LENGTH_105  = 105
+  final val MAX_LENGTH_132  = 132
+  final val MAX_LENGTH_200  = 200
 }

@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class TaxEnrolmentsConnector @Inject() (
   val config: FrontendAppConfig,
@@ -41,7 +42,9 @@ class TaxEnrolmentsConnector @Inject() (
       case responseMessage if is2xx(responseMessage.status) =>
         Some(responseMessage.status)
       case responseMessage =>
-        logger.error(s"Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
+        logger.error(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}"
+        )
         None
     }
   }

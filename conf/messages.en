@@ -94,6 +94,7 @@ upe-input-business-name.heading = What is the name of the person or team we shou
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.error.length = Name cannot be more than 200 characters
+upe-input-business-name.error.invalid = The name of the person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 upe-input-business-name.change.hidden= the name of the person or team we should contact at the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
 
@@ -200,6 +201,7 @@ upe-input-business-email.hint=We will use this to confirm your records
 upe-input-business-email.caption = Group details
 upe-input-business-contact.email.error.required = You need to enter the email address for {0}
 upe-input-business-contact.email.error.length = The email address should be 132 characters or less
+upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
 
@@ -394,7 +396,7 @@ nfmContactName.checkYourAnswersLabel = Contact name
 nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
 nfmContactName.change.hidden =  filing member contact name
-nfmContactName.error.scriptinjection = The name entered contains invalid characters. Please remove any special characters like < or >
+nfmContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 nfmEmailAddress.heading.caption = Group details
 nfmEmailAddress.title = What is the email address for {0}?
@@ -403,7 +405,7 @@ nfmEmailAddress.hint = We will use this to confirm your records
 nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = You need to enter the email address for {0}
 nfmEmailAddress.error.length = The email address should be 132 characters or less
-contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
 nfmNameRegistrationController.checkYourAnswersLabel = Name
@@ -456,15 +458,25 @@ nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we
 nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office address of the nominated filing member
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
-mneOrDomestic.title = Where does the group operate?
+
+mneOrDomestic.title = Group operations
 mneOrDomestic.heading.caption = Group details
-mneOrDomestic.heading = Where does the group operate?
+mneOrDomestic.heading = Group operations
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
+mneOrDomestic.group-operate = Where does the group operate?
 mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
+mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
+mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.l1 = Multinational top-up tax
+mneOrDomestic.l2 = Domestic top-up tax
+
+mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
+mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p5 = If group operations change, you must amend the group''s details.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -611,10 +623,16 @@ site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
-registrationConfirmation.topup = Pillar 2 top-up tax ID
+registrationConfirmation.reg-date = Registration date:
+registrationConfirmation.topup = Group''s Pillar 2 top-up taxes ID
 registrationConfirmation.whatHappensNext = What happens next
-registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
-registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
+registrationConfirmation.p1 = Your group has registered to report for {0}.
+registrationConfirmation.p2 = You will not be emailed a confirmation of this registration.
+registrationConfirmation.p3 = You must record your group''s Pillar 2 top-up taxes ID and registration date.
+registrationConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
+registrationConfirmation.next = What happens next
+registrationConfirmation.now = You can now
+registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
 

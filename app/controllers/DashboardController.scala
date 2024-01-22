@@ -28,6 +28,9 @@ import services.ReadSubscriptionService
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Pillar2SessionKeys
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -50,11 +53,13 @@ class DashboardController @Inject() (
     val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
     val userId       = request.userId
     val showPayments = appConfig.showPaymentsSection
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     plrReference match {
       case Some(ref) =>
         readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref)).flatMap {
           case Right(_) =>
+            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - readSubscription invoked")
             userAnswersConnectors.getUserAnswer(userId).flatMap {
               case Some(userAnswers) =>
                 (for {
@@ -85,7 +90,7 @@ class DashboardController @Inject() (
             }
 
           case Left(error) =>
-            logger.error(s"Error retrieving subscription: $error")
+            logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
             Future.successful(InternalServerError("Internal Server Error occurred"))
         }
 

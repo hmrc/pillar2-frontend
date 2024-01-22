@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
@@ -52,7 +53,7 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
               }
             )
         case response =>
-          logger.warn(s"Enrolment response not formed. ${response.status} response status")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Enrolment response not formed. ${response.status} response status")
           throw new IllegalStateException()
       }
 
