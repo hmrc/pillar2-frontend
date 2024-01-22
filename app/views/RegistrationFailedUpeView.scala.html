@@ -26,14 +26,13 @@
     pageTitle    = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
-
         <h1 class="govuk-heading-l">@messages("grs.registration.error.header")</h1>
         <p class="govuk-body govuk-!-margin-bottom-5">@messages("grs.registration.error.line1")</p>
         <h2 class="govuk-heading-s">@messages("grs.registration.error.line2")</h2>
         <ul>
             <li> <p class="govuk-body">
                 <a> @messages("grs.registration.error.b11") </a>
-                <a href="/report-pillar2-top-up-taxes/business-matching/ultimate-parent/uk-based/org-type" class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.error.b12")</a>
+                <a href="@controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)" class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.error.b12")</a>
                 <a> @messages("grs.registration.error.b13")</a>
             </p>
             </li>

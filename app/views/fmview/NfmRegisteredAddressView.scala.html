@@ -30,7 +30,7 @@
 
 @(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("nfmRegisteredAddress.title", UserName ))) {
+@layout(pageTitle = title(form, messages("nfmRegisteredAddress.title" ))) {
 
     @formHelper(action = controllers.fm.routes.NfmRegisteredAddressController.onSubmit(mode)) {
 
