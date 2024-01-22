@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
+@import viewmodels.LegendSize
 
 @this(
     layout: templates.Layout,
@@ -41,8 +41,8 @@
                 @govukRadios(
                     RadiosViewModel.yesNo(
                         field  = form("value"),
-                        fieldset = FieldsetViewModel(Legend(HtmlContent(headingContent)))
-                    )
+                        legend = LegendViewModel(messages("useContactPrimary.heading")).asPageHeading(LegendSize.Large)
+                    ).withHint(HintViewModel(HtmlContent(headingContent)))
                 )
 
         @govukButton(
@@ -52,8 +52,7 @@
 }
 
 @headingContent = @{
-s"""<h1 class="govuk-heading-l long-word">${messages("useContactPrimary.heading")}
-|</h1>
+s"""
 |<div class="govuk-inset-text">
 |    <ul class="govuk-list">
 |        <li>
