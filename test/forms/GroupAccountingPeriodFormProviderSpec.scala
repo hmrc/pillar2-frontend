@@ -41,7 +41,7 @@ class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "groupAccountingPeriod.error.startDate.year.minimum")
+      FormError("startDate", "groupAccountingPeriod.error.startDate.dayMonthYear.minimum")
     )
   }
 
