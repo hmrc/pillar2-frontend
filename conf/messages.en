@@ -471,8 +471,8 @@ mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
 mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
 mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
-mneOrDomestic.l1 = Multinational top-up tax
-mneOrDomestic.l2 = Domestic top-up tax
+mneOrDomestic.l1 = Domestic Top-up Tax
+mneOrDomestic.l2 = Multinational Top-up Tax
 
 mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
 mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
