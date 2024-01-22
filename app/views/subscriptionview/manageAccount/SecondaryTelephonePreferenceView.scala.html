@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title", userName))) {
+@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit, 'autoComplete -> "off") {
 
