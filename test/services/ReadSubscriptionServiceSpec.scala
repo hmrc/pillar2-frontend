@@ -20,7 +20,7 @@ import akka.util.Timeout
 import base.SpecBase
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, MandatoryInformationMissingError, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnauthorizedError, UnprocessableEntityError, UserAnswers}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, MandatoryInformationMissingError, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
@@ -28,10 +28,10 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 class ReadSubscriptionServiceSpec extends SpecBase {
@@ -46,6 +46,8 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
   val id           = "testId"
   val plrReference = "testPlrRef"
+
+  val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
 
   val transformedUserAnswers = Right(UserAnswers("someId"))
   val transformationError    = Left(MandatoryInformationMissingError("Transformation Error"))
@@ -93,40 +95,83 @@ class ReadSubscriptionServiceSpec extends SpecBase {
       result mustBe Left(SubscriptionCreateError)
     }
 
-    "handle exceptions thrown by the connector" in {
+    "handle IOException thrown by the connector" in {
       val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
 
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.failed(new RuntimeException("Connection error")))
+        .thenReturn(Future.successful(None))
 
       val resultFuture = service.readSubscription(requestParameters)
 
       whenReady(resultFuture) { result =>
-        result should matchPattern { case Left(InternalServerError_) => }
+        result should matchPattern { case Left(SubscriptionCreateError) => }
       }
     }
 
-    "handle UpstreamErrorResponse thrown by the connector" in {
-      val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
+    "handle BadRequest (400) response from the connector" in {
 
-      val errorStatusCodes = List(400, 404, 409, 422, 500, 503)
-      for (statusCode <- errorStatusCodes) {
-        when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.failed(UpstreamErrorResponse("Upstream error", statusCode, statusCode)))
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 400, "error" -> "Bad Request"))))
 
-        val resultFuture = service.readSubscription(requestParameters)
+      val resultFuture = service.readSubscription(requestParameters)
 
-        whenReady(resultFuture) { result =>
-          statusCode match {
-            case 400 => result should matchPattern { case Left(BadRequestError) => }
-            case 401 => result should matchPattern { case Left(UnauthorizedError) => }
-            case 404 => result should matchPattern { case Left(NotFoundError) => }
-            case 409 => result should matchPattern { case Left(DuplicateSubmissionError) => }
-            case 422 => result should matchPattern { case Left(UnprocessableEntityError) => }
-            case 500 => result should matchPattern { case Left(InternalServerError_) => }
-            case 503 => result should matchPattern { case Left(ServiceUnavailableError) => }
-          }
-        }
+      whenReady(resultFuture) { result =>
+        result should matchPattern { case Left(BadRequestError) => }
+      }
+    }
+
+    "handle 404 Not Found response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 404, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "404"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(NotFoundError)
+      }
+    }
+
+    "handle 409 Conflict response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 409, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "409"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(DuplicateSubmissionError)
+      }
+    }
+
+    "handle 422 Unprocessable Entity response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 422, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "422"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(UnprocessableEntityError)
+      }
+    }
+
+    "handle 500 Internal Server Error response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 500, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "500"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(InternalServerError_)
+      }
+    }
+
+    "handle 503 Service Unavailable response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 503, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "503"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(ServiceUnavailableError)
       }
     }
 

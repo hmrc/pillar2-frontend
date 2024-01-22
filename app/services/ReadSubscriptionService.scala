@@ -20,7 +20,7 @@ import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
 import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnauthorizedError, UnprocessableEntityError}
 import play.api.Logging
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import javax.inject.Inject
@@ -30,26 +30,26 @@ class ReadSubscriptionService @Inject() (
   readSubscriptionConnector: ReadSubscriptionConnector,
   implicit val ec:           ExecutionContext
 ) extends Logging {
+
   def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
     readSubscriptionConnector.readSubscription(parameters).map {
+      case Some(jsValue) if (jsValue \ "statusCode").isDefined =>
+        val statusCode = (jsValue \ "statusCode").as[Int]
+        val errorCode  = (jsValue \ "error" \ "errorDetail" \ "errorCode").asOpt[String].map(_.toInt).getOrElse(statusCode)
+        mapErrorCodeToApiError(errorCode)
       case Some(jsValue) =>
         Right(jsValue)
       case None =>
         Left(SubscriptionCreateError)
-    } recover {
-      case e @ UpstreamErrorResponse(_, statusCode, _, _) =>
-        logger.error(s"Upstream error with status code $statusCode: ${e.getMessage}")
-        statusCode match {
-          case 400 => Left(BadRequestError)
-          case 404 => Left(NotFoundError)
-          case 409 => Left(DuplicateSubmissionError)
-          case 422 => Left(UnprocessableEntityError)
-          case 500 => Left(InternalServerError_)
-          case 503 => Left(ServiceUnavailableError)
-        }
-      case e =>
-        logger.error(s"Unexpected error: ${e.getMessage}", e)
-        Left(InternalServerError_)
     }
-
+  private def mapErrorCodeToApiError(errorCode: Int): Either[ApiError, JsValue] =
+    errorCode match {
+      case 400 => Left(BadRequestError)
+      case 404 => Left(NotFoundError)
+      case 409 => Left(DuplicateSubmissionError)
+      case 422 => Left(UnprocessableEntityError)
+      case 500 => Left(InternalServerError_)
+      case 503 => Left(ServiceUnavailableError)
+      case _   => Left(InternalServerError_)
+    }
 }

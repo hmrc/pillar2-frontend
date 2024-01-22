@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.AuthenticatedIdentifierAction
 import generators.ModelGenerators
 import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionRequestParameters}
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import pages.{fmDashboardPage, subAccountStatusPage}
@@ -55,6 +55,9 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
     .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
 
+  val noDashBoardUserAnswers = emptyUserAnswers
+    .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
+
   "Dashboard Controller" should {
 
     "return OK and the correct view for a GET" in {
@@ -86,9 +89,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     }
 
     "return Internal Server Error for a GET when there's an error retrieving subscription" in {
+
       when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(InternalServerError_)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
       val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+        .configure(testConfig)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
@@ -279,6 +287,89 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
 
+      }
+    }
+
+    "redirect to JourneyRecoveryController when plrReference is None" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+        .configure(testConfig)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+          .withSession("nonExistentPlrId" -> "12345678")
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+
+      }
+    }
+
+    "redirect to JourneyRecoveryController when getUserAnswer returns None" in {
+
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(None))
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(testConfig)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+          .withSession("plrId" -> "12345678", "id" -> "12345678")
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+
+      }
+    }
+
+    "redirect to JourneyRecoveryController when fmDashboardPage is not present in userAnswers" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      val userAnswersWithoutFmDashboardPage = UserAnswers("12345678").remove(fmDashboardPage).getOrElse(UserAnswers("12345678"))
+
+      when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Some(userAnswersWithoutFmDashboardPage)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutFmDashboardPage))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+          .withSession("plrId" -> "12345678", "id" -> "12345678")
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
