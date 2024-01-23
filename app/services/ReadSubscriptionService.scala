@@ -33,23 +33,34 @@ class ReadSubscriptionService @Inject() (
 
   def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
     readSubscriptionConnector.readSubscription(parameters).map {
-      case Some(jsValue) if (jsValue \ "statusCode").isDefined =>
-        val statusCode = (jsValue \ "statusCode").as[Int]
-        val errorCode  = (jsValue \ "error" \ "errorDetail" \ "errorCode").asOpt[String].map(_.toInt).getOrElse(statusCode)
-        mapErrorCodeToApiError(errorCode)
       case Some(jsValue) =>
-        Right(jsValue)
+        (jsValue \ "statusCode").asOpt[Int] match {
+          case Some(statusCode) =>
+            Left(mapErrorCodeToApiError(statusCode, jsValue))
+          case None =>
+            (jsValue \ "error").asOpt[String] match {
+              case Some(errorString) =>
+                val statusCodePattern = "status: (\\d+)".r
+                val statusCode        = statusCodePattern.findFirstMatchIn(errorString).map(_.group(1).toInt).getOrElse(500)
+                Left(mapErrorCodeToApiError(statusCode, jsValue))
+              case None =>
+                Right(jsValue)
+            }
+        }
       case None =>
         Left(SubscriptionCreateError)
     }
-  private def mapErrorCodeToApiError(errorCode: Int): Either[ApiError, JsValue] =
+
+  private def mapErrorCodeToApiError(errorCode: Int, errorDetail: JsValue): ApiError =
     errorCode match {
-      case 400 => Left(BadRequestError)
-      case 404 => Left(NotFoundError)
-      case 409 => Left(DuplicateSubmissionError)
-      case 422 => Left(UnprocessableEntityError)
-      case 500 => Left(InternalServerError_)
-      case 503 => Left(ServiceUnavailableError)
-      case _   => Left(InternalServerError_)
+      case 400 => BadRequestError
+      case 404 => NotFoundError
+      case 409 => DuplicateSubmissionError
+      case 422 => UnprocessableEntityError
+      case 500 => InternalServerError_
+      case 503 => ServiceUnavailableError
+      case _ =>
+        logger.error(s"Unhandled error code: $errorCode with detail: ${Json.stringify(errorDetail)}")
+        InternalServerError_
     }
 }
