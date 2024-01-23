@@ -14,23 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-sealed trait TaskStatus
-object TaskStatus {
-  case object Completed extends TaskStatus
-  case object InProgress extends TaskStatus
-  case object NotStarted extends TaskStatus
-  case object CannotStartYet extends TaskStatus
-  case object Default extends TaskStatus {
-    val value = this.toString.toLowerCase
-  }
-
-}
-
-sealed trait TaskAction
-object TaskAction {
-  case object Edit extends TaskAction
-  case object Add extends TaskAction
-  case object Default extends TaskAction
+object Validation {
+  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
+  final val EMAIL_REGEX =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
 }

@@ -25,7 +25,8 @@ appConfig: FrontendAppConfig
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("task-list.title"))
+  pageTitle = titleNoForm(messages("task-list.title")),
+  showSignOut = false
 ) {
 
 <h1 class="govuk-heading-l">@messages("unauthorised.individual.heading")</h1>

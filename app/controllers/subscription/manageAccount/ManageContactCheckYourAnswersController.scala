@@ -31,6 +31,9 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Pillar2SessionKeys
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
@@ -78,10 +81,12 @@ class ManageContactCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
         userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"Redirecting to Dashboard from contact details")
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] -  Redirecting to Dashboard from contact details")
           Redirect(controllers.routes.DashboardController.onPageLoad)
         }
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

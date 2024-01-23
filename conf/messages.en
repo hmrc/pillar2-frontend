@@ -56,8 +56,9 @@ cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up 
 
 
 
-upeRegisteredAddress.title=What is the registered office address of {0}?
-upeRegisteredAddress.heading=What is the registered office address of {0}?
+
+upeRegisteredAddress.title=Where is the registered office address?
+upeRegisteredAddress.heading=Where is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
 upeRegisteredAddress.addressLine1 = Address line 1
@@ -92,6 +93,7 @@ upe-input-business-name.heading = What is the name of the person or team we shou
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
 upe-input-business-name.error.length = Name cannot be more than 200 characters
+upe-input-business-name.error.invalid = The name of the person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 upe-input-business-name.change.hidden= the name of the person or team we should contact at the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
 
@@ -192,12 +194,13 @@ upeNameRegistration.error.length = The name of the ultimate parent entity must b
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
-upe-input-business-email.title=What is the email address for {0}?
+upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to confirm your records.
 upe-input-business-email.caption = Group details
 upe-input-business-contact.email.error.required = You need to enter the email address for {0}
 upe-input-business-contact.email.error.length = The email address should be 132 characters or less
+upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
 
@@ -286,7 +289,7 @@ isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is
 isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
 
 contactUPEByTelephone.heading.caption = Group details
-contactUPEByTelephone.title = Can we contact {0} by telephone?
+contactUPEByTelephone.title = Can we contact by telephone?
 contactUPEByTelephone.heading = Can we contact {0} by telephone?
 contactUPEByTelephone.hint = We will use this to confirm your records.
 contactUPEByTelephone.yes = Yes
@@ -295,7 +298,7 @@ contactUPEByTelephone.error.required= Select yes if we can contact {0} by teleph
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden =  your response to whether we make contact by telephone
 captureTelephoneDetails.heading.caption = Group details
-captureTelephoneDetails.title = What is the telephone number for {0}?
+captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -349,8 +352,9 @@ nfmNameRegistration.error.length = The name of the nominated filing member must 
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 
 
-nfmRegisteredAddress.title = What is the registered office address of {0}?
-nfmRegisteredAddress.heading = What is the registered office address of {0}?
+
+nfmRegisteredAddress.title = Where is the registered office address?
+nfmRegisteredAddress.heading = Where is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
 nfmRegisteredAddress.addressLine1 = Address line 1
 nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
@@ -393,16 +397,16 @@ nfmContactName.checkYourAnswersLabel = Contact name
 nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
 nfmContactName.change.hidden =  filing member contact name
-nfmContactName.error.scriptinjection = The name entered contains invalid characters. Please remove any special characters like < or >
+nfmContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 nfmEmailAddress.heading.caption = Group details
-nfmEmailAddress.title = What is the email address for {0}?
+nfmEmailAddress.title = What is the email address?
 nfmEmailAddress.heading = What is the email address for {0}?
 nfmEmailAddress.hint = We will use this to confirm your records.
 nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = You need to enter the email address for {0}
 nfmEmailAddress.error.length = The email address should be 132 characters or less
-contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
+nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
 nfmNameRegistrationController.checkYourAnswersLabel = Name
@@ -433,14 +437,14 @@ groupAccountingPeriod.error.invalid = Enter a real GroupAccountingPeriod
 groupAccountingPeriod.change.hidden =  the dates of the group''s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Group details
-contactNfmByTelephone.title = Can we contact {0} by telephone?
+contactNfmByTelephone.title = Can we contact by telephone?
 contactNfmByTelephone.heading = Can we contact {0} by telephone?
 contactNfmByTelephone.hint = We will use this to confirm your records.
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
 
 nfmCaptureTelephoneDetails.heading.caption = Group details
-nfmCaptureTelephoneDetails.title = What is the telephone number for {0}?
+nfmCaptureTelephoneDetails.title = What is the telephone number?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -455,15 +459,25 @@ nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we
 nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office address of the nominated filing member
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
-mneOrDomestic.title = Where does the group operate?
+
+mneOrDomestic.title = Group operations
 mneOrDomestic.heading.caption = Group details
-mneOrDomestic.heading = Where does the group operate?
+mneOrDomestic.heading = Group operations
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
+mneOrDomestic.group-operate = Where does the group operate?
 mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
+mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
+mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.l1 = Multinational top-up tax
+mneOrDomestic.l2 = Domestic top-up tax
+
+mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
+mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p5 = If group operations change, you must amend the group''s details.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -494,7 +508,7 @@ contactNameCompliance.error.length = The name of the contact person or team shou
 
 
 contactEmailAddress.heading.caption = Contact details
-contactEmailAddress.title = What is the email address for {0}?
+contactEmailAddress.title = What is the email address?
 contactEmailAddress.heading = What is the email address for {0}?
 contactEmailAddress.hint = We will use this to send confirmation of your Pillar 2 top-up tax compliance actions or if we have any questions about them.
 contactEmailAddress.checkYourAnswersLabel = Email address
@@ -504,14 +518,14 @@ contactEmailAddress.error.format = Enter an email address in the correct format,
 contactEmailAddress.change.hidden = the first contact email address
 
 contactByTelephone.heading.caption = Contact details
-contactByTelephone.title = Can we contact {0} by telephone?
+contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactByTelephone.change.hidden = your response to whether we can contact the first contact by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
-contactCaptureTelephoneDetails.title = What is the telephone number for {0}?
+contactCaptureTelephoneDetails.title = What is the telephone number?
 contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 contactCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
@@ -562,8 +576,8 @@ checkYourAnswers.nfm = Nominated filing member
 
 
 
-addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.title = Is there someone else we can contact?
+addSecondaryContact.heading = Is there someone else we can contact?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up tax
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
@@ -576,7 +590,7 @@ secondaryContactName.error.required = Enter name of the person of team we should
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
 
 
-secondaryContactEmail.title =What is the email address for {0}?
+secondaryContactEmail.title =What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
@@ -586,14 +600,14 @@ secondaryContactEmail.error.length = The email address should be 160 characters 
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
 
-secondaryTelephonePreference.title = Can we contact {0} by telephone?
+secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 
-secondaryTelephone.title = What is the telephone number for {0}?
+secondaryTelephone.title = What is the telephone number?
 secondaryTelephone.heading = What is the telephone number for {0}?
 secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
@@ -610,10 +624,16 @@ site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
-registrationConfirmation.topup = Pillar 2 top-up tax ID
+registrationConfirmation.reg-date = Registration date:
+registrationConfirmation.topup = Group''s Pillar 2 top-up taxes ID
 registrationConfirmation.whatHappensNext = What happens next
-registrationConfirmation.p1 = You have set up an account for reporting and managing Pillar 2 top-up taxes.
-registrationConfirmation.p2 = You can save this ID number by making a note or taking a screenshot.
+registrationConfirmation.p1 = Your group has registered to report for {0}.
+registrationConfirmation.p2 = You will not be emailed a confirmation of this registration.
+registrationConfirmation.p3 = You must record your group''s Pillar 2 top-up taxes ID and registration date.
+registrationConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
+registrationConfirmation.next = What happens next
+registrationConfirmation.now = You can now
+registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
 

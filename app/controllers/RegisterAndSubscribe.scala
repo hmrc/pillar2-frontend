@@ -60,7 +60,6 @@ trait RegisterAndSubscribe extends Logging {
                   }
               }
             } else {
-              logger.info("Calling subscription with UPE as default filing member")
               createSubscription(upeSafeId)
             }
           }
@@ -96,7 +95,6 @@ trait RegisterAndSubscribe extends Logging {
                       }
                   }
                 } else {
-                  logger.info("Calling subscription with UPE as default filing member")
                   createSubscription(upeSafeId.value)
                 }
               }
@@ -119,6 +117,7 @@ trait RegisterAndSubscribe extends Logging {
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).flatMap {
       case Right(successResponse) =>
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - checkAndCreateSubscription response $successResponse")
         val enrolmentInfo = request.userAnswers
           .get(upeRegisteredInUKPage)
           .flatMap { ukBased =>
@@ -140,21 +139,28 @@ trait RegisterAndSubscribe extends Logging {
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
             userAnswersConnectors.remove(request.userId).map { _ =>
-              logger.info(s"Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}")
+              logger.info(
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to RegistrationConfirmationController for ${successResponse.plrReference}"
+              )
               Redirect(routes.RegistrationConfirmationController.onPageLoad).withSession(
                 request.session
                   + (Pillar2SessionKeys.plrId -> successResponse.plrReference)
               )
             }
           case Left(EnrolmentCreationError) =>
-            logger.warn(s"Encountered EnrolmentCreationError $EnrolmentCreationError. Redirecting to ErrorController.")
+            logger.warn(
+              s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Encountered EnrolmentCreationError $EnrolmentCreationError. Redirecting to ErrorController."
+            )
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
           case Left(EnrolmentExistsError) =>
-            logger.warn(s"Encountered EnrolmentExistsError $EnrolmentExistsError. Redirecting to ErrorController.")
+            logger.warn(
+              s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Encountered EnrolmentExistsError $EnrolmentExistsError. Redirecting to ErrorController."
+            )
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
         }
 
       case Left(_) =>
+        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation failed")
         Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
     }
 }

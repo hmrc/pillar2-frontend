@@ -30,7 +30,7 @@
 
 @(form: Form[_], mode: Mode, UserName:String, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upeRegisteredAddress.title", UserName ))) {
+@layout(pageTitle = title(form, messages("upeRegisteredAddress.title"))) {
 
     @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
 

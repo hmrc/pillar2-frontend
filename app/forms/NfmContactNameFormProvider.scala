@@ -18,15 +18,14 @@ package forms
 
 import forms.mappings.Mappings
 import play.api.data.Form
-
+import mapping.Constants
 import javax.inject.Inject
 
 class NfmContactNameFormProvider @Inject() extends Mappings {
-  private val nameRegex = """[^<>]+"""
   def apply(): Form[String] =
     Form(
       "value" -> text("nfmContactName.error.required")
-        .verifying(maxLength(105, "nfmContactName.error.length"))
-        .verifying(regexp(nameRegex, "nfmContactName.error.scriptinjection"))
+        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmContactName.error.length"))
+        .verifying(regexp(Validation.NAME_REGEX, "nfmContactName.error.invalid"))
     )
 }

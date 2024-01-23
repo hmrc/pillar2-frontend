@@ -61,13 +61,6 @@ class AuditServiceSpec extends SpecBase {
   )
 
   "AuditService" when {
-    "successful for auditGrsForLimitedCompany" in {
-      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
-        .thenReturn(Future.successful(AuditResult.Success))
-
-      val result = service.auditGrsForLimitedCompany(requestData, validGrsCreateRegistrationResponse).futureValue
-      result mustBe AuditResult.Success
-    }
 
     "successful for auditGrsReturnForLimitedCompany" in {
       when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
@@ -76,14 +69,6 @@ class AuditServiceSpec extends SpecBase {
       val result = service.auditGrsReturnForLimitedCompany(validRegisterWithIdResponse).futureValue
       result mustBe AuditResult.Success
 
-    }
-
-    "successful for auditGrsForLLP" in {
-      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
-        .thenReturn(Future.successful(AuditResult.Success))
-
-      val result = service.auditGrsForLLP(requestData, validGrsCreateRegistrationResponse).futureValue
-      result mustBe AuditResult.Success
     }
 
     "successful for auditGrsReturnForLLP" in {
@@ -95,5 +80,22 @@ class AuditServiceSpec extends SpecBase {
 
     }
 
+    "successful for auditGrsReturnNfmForLimitedCompany" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditGrsReturnNfmForLimitedCompany(validRegisterWithIdResponse).futureValue
+      result mustBe AuditResult.Success
+
+    }
+
+    "successful for auditGrsReturnNfmForLLP" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditGrsReturnNfmForLLP(validRegisterWithIdResponseForLLP).futureValue
+      result mustBe AuditResult.Success
+
+    }
   }
 }

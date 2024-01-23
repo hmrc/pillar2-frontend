@@ -19,26 +19,51 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.Pillar2SessionKeys
+import play.twirl.api.HtmlFormat
+import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
 
   "RegistrationConfirmation Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[RegistrationConfirmationView]
+        val result      = route(application, request).value
+        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+        val view        = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("N/A")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view("N/A", currentDate.toString(), "Domestic Top-up Tax")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+          .withSession("updateMneOrDomestic" -> "ukAndOther")
+
+        val result      = route(application, request).value
+        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+        val view        = application.injector.instanceOf[RegistrationConfirmationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view("N/A", currentDate.toString(), "Domestic Top-up Tax and Multinational Top-up Tax")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
   }

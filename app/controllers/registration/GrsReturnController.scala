@@ -35,6 +35,7 @@ import utils.RowStatus
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 @Singleton
 class GrsReturnController @Inject() (
@@ -152,6 +153,7 @@ class GrsReturnController @Inject() (
       .map {
         case EntityType.UkLimitedCompany =>
           incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+            auditService.auditGrsReturnNfmForLimitedCompany(data)
             if (data.registration.registrationStatus == Registered) {
               data.registration.registeredBusinessPartnerId
                 .map { safeId =>
@@ -187,6 +189,7 @@ class GrsReturnController @Inject() (
           }
         case EntityType.LimitedLiabilityPartnership =>
           partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+            auditService.auditGrsReturnNfmForLLP(data)
             if (data.registration.registrationStatus == Registered) {
               data.registration.registeredBusinessPartnerId
                 .map { safeId =>
@@ -232,19 +235,31 @@ class GrsReturnController @Inject() (
     journeyType:      JourneyType,
     journeyId:        String,
     entityType:       EntityType
-  ): Result =
+  )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
-        logger.info(s"Filing Member Business Verification failed for $entityType with journey ID $journeyId")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Filing Member Business Verification failed for $entityType with journey ID $journeyId"
+        )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
-        logger.info(s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
+        )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
       case (true, _, _, Some(_)) =>
-        logger.info(s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
+        )
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
-        logger.info(s"$journeyType registration failed for $entityType with journey ID $journeyId")
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"$journeyType registration failed for $entityType with journey ID $journeyId"
+        )
         (grsResult.failures, journeyType) match {
           case (_, JourneyType.FilingMember) =>
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)

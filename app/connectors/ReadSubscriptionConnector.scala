@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundExcept
 import java.io.IOException
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
@@ -46,10 +47,10 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
         case _: NotFoundException | _: UpstreamErrorResponse =>
           Future.successful(None)
         case e: IOException =>
-          logger.warn(s"Connection issue when calling read subscription: ${e.getMessage}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Connection issue when calling read subscription: ${e.getMessage}")
           Future.successful(None)
         case e: Exception =>
-          logger.error(s"Unexpected error when calling read subscription: ${e.getMessage}")
+          logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unexpected error when calling read subscription: ${e.getMessage}")
           Future.failed(e)
       }
 
