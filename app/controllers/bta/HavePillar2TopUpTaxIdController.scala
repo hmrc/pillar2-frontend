@@ -19,16 +19,15 @@ package controllers.bta
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{AddSecondaryContactFormProvider, HavePillar2TopUpTaxIdFormProvider}
+import forms.HavePillar2TopUpTaxIdFormProvider
 import models.Mode
-import pages.{subAddSecondaryContactPage, subHavePillar2TopUpTaxIdPage, subPrimaryContactNamePage, subPrimaryEmailPage}
+import pages.subHavePillar2TopUpTaxIdPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.bta.HavePillar2TopUpTaxIdView
-import views.html.subscriptionview.AddSecondaryContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
