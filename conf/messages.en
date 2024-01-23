@@ -584,7 +584,7 @@ secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
 
-secondaryContactEmail.title =What is the email address for {0}?
+secondaryContactEmail.title =What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
