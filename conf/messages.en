@@ -571,8 +571,8 @@ checkYourAnswers.heading.caption = Review and submit
 checkYourAnswers.upe = Ultimate parent
 checkYourAnswers.nfm = Nominated filing member
 
-addSecondaryContact.title = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+addSecondaryContact.title = Is there someone else we can contact?
+addSecondaryContact.heading = Is there someone else we can contact?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
