@@ -144,7 +144,7 @@ grs.registration.failed.line3-cont = to try again.
 
 grs.registration.error.header =  The details you entered did not match our records
 grs.registration.error.line1 =  We could not match the details you entered with records held by HMRC.
-grs.registration.error.line2 =  How can I confirm my details
+grs.registration.error.line2 =  How to confirm your details
 grs.registration.error.p1 = You can confirm your details with the records held by HMRC by:
 
 grs.registration.error.b1 =  searching Companies House for the company registration number and registered office address (opens in a new tab)
