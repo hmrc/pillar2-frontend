@@ -310,3 +310,5 @@ GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
 GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+
+GET        /bta/register                                                         controllers.NoPlrIdGuidanceController.onPageLoad
