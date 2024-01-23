@@ -766,3 +766,8 @@ bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pilla
 bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
 bta.noPlrIdGuidance.cta = Return to your Business Tax Account
 
+
+havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
+havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
