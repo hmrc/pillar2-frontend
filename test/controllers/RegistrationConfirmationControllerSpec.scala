@@ -20,12 +20,8 @@ import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.Pillar2SessionKeys
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
-import models.MneOrDomestic
-import models.UserAnswers
-import pages.subMneOrDomesticPage
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
 

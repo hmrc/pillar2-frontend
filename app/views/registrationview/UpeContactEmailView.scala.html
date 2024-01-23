@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("upe-input-business-email.title", UserName))) {
+@layout(pageTitle = title(form, messages("upe-input-business-email.title"))) {
 
     @formHelper(action = controllers.registration.routes.UpeContactEmailController.onSubmit(mode)) {
         @if(form.errors.nonEmpty) {
