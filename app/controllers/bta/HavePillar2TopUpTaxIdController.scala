@@ -48,12 +48,15 @@ class HavePillar2TopUpTaxIdController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val showDoYouHaveP2TopUpTaxId = appConfig.showDoYouHaveP2TopUpTaxId
-
+    if (showDoYouHaveP2TopUpTaxId) {
       val preparedForm = request.userAnswers.get(subHavePillar2TopUpTaxIdPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
       Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
