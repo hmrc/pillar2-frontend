@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
@@ -102,6 +102,8 @@ class DashboardController @Inject() (
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
               case InternalServerError_ =>
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
+              case ServiceUnavailableError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Service Unavailable error."
               case SubscriptionCreateError =>
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
             }
