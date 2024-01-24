@@ -715,3 +715,4 @@ havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
+
