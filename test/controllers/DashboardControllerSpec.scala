@@ -24,7 +24,9 @@ import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionReques
 import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.{fmDashboardPage, subAccountStatusPage}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
-
+import scala.reflect.runtime.universe
 class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
   val enrolmentsSet: Set[Enrolment] = Set(
@@ -58,7 +60,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
   val noDashBoardUserAnswers = emptyUserAnswers
     .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
 
-  "Dashboard Controller" should {
+  "Dashboard Controller" when {
 
     "return OK and the correct view for a GET" in {
       when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
@@ -371,6 +373,23 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
+    }
+
+    "PlrReference is present" in {
+      val application = new GuiceApplicationBuilder()
+        .build()
+
+      val controller = application.injector.instanceOf[DashboardController]
+      val enrolments = Some(Set(Enrolment("HMRC-PILLAR2-ORG", Seq(EnrolmentIdentifier("PLRID", "12345678")), "activated")))
+
+      val mirror         = universe.runtimeMirror(controller.getClass.getClassLoader)
+      val instanceMirror = mirror.reflect(controller)
+      val methodSymbol   = universe.typeOf[DashboardController].decl(universe.TermName("extractPlrReference")).asMethod
+      val method         = instanceMirror.reflectMethod(methodSymbol)
+
+      val result = method.apply(enrolments).asInstanceOf[Option[String]]
+      result shouldBe Some("12345678")
+
     }
 
   }

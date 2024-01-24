@@ -175,5 +175,50 @@ class ReadSubscriptionServiceSpec extends SpecBase {
       }
     }
 
+    "map the code to the corresponding ApiError" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred, status: 400"}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(BadRequestError)
+      }
+    }
+
+    "default to InternalServerError_" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred"}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(InternalServerError_)
+      }
+    }
+
+    "log the error and return InternalServerError_" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred", "statusCode": 999}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(InternalServerError_)
+      }
+    }
+
   }
 }
