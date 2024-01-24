@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.bta
 
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.NoPlrIdGuidanceView
+import views.html.bta.NoPlrIdGuidanceView
 
 class NoPlrIdGuidanceControllerSpec extends SpecBase {
 
   "NoPlrIdGuidance Controller" must {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET - bta feature true" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NoPlrIdGuidanceController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -40,5 +46,27 @@ class NoPlrIdGuidanceControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
+
+    "must return OK and the correct view for a GET - bta feature false" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
   }
 }

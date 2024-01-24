@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.bta
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.NoPlrIdGuidanceView
+import views.html.bta.NoPlrIdGuidanceView
 
 import javax.inject.Inject
 
@@ -34,7 +34,12 @@ class NoPlrIdGuidanceController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
+    val btaAccessEnabled: Boolean = appConfig.btaAccessEnabled
+    if (btaAccessEnabled) {
+      Ok(view())
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
 }
