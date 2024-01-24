@@ -38,4 +38,8 @@ class SessionData {
     request.session +
       (Pillar2SessionKeys.registeringNfmForThisGroup -> value)
 
+  def updateMneOrDomestic(value: String)(implicit request: Request[AnyContent]): Session =
+    request.session +
+      (Pillar2SessionKeys.updateMneOrDomestic -> value)
+
 }

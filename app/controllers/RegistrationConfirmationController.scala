@@ -18,10 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.{subMneOrDomesticPage, subPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
+import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
 
 import javax.inject.Inject
@@ -38,6 +41,12 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Ok(view(request.session.get(Pillar2SessionKeys.plrId).getOrElse("N/A")))
+    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+    val mneDomestic = request.session.data.get(Pillar2SessionKeys.updateMneOrDomestic) match {
+      case Some("ukAndOther") => appConfig.registrationControllerMne
+      case _                  => appConfig.registrationControllerDomestic
+    }
+    Ok(view(request.session.get(Pillar2SessionKeys.plrId).getOrElse("N/A"), currentDate.toString(), mneDomestic))
+
   }
 }

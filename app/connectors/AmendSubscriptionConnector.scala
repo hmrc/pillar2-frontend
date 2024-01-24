@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundExcept
 import java.io.IOException
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Pillar2SessionKeys
 
 class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
@@ -43,17 +44,17 @@ class AmendSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswe
           Some(response.json)
 
         case errorResponse =>
-          logger.warn(s"Amend Subscription failed with Status ${errorResponse.status}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Amend Subscription failed with Status ${errorResponse.status}")
           None
       }
       .recoverWith {
         case _: NotFoundException | _: UpstreamErrorResponse =>
           Future.successful(None)
         case e: IOException =>
-          logger.warn(s"Connection issue when calling amend subscription: ${e.getMessage}")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Connection issue when calling amend subscription: ${e.getMessage}")
           Future.successful(None)
         case e: Exception =>
-          logger.error(s"Unexpected error when calling amend subscription: ${e.getMessage}")
+          logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unexpected error when calling amend subscription: ${e.getMessage}")
           Future.failed(e)
       }
 

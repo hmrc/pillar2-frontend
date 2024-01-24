@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package pages
 
-import uk.gov.hmrc.http.HeaderCarrier
+import models.registration.Registration
+import play.api.libs.json.JsPath
 
-object Pillar2SessionKeys {
+case object RegistrationPage extends QuestionPage[Registration] {
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val updateMneOrDomestic         = "updateMneOrDomestic"
-  val plrId                       = "plrId"
+  override def path: JsPath = JsPath \ toString
 
-  def sessionId(hc: HeaderCarrier): String = hc.sessionId.map(_.value).getOrElse("No Session ID available")
+  override def toString: String = "Registration"
 }
