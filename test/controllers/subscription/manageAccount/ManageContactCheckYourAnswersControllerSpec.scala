@@ -20,10 +20,12 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, AmendSubscriptionRequestParameters, DashboardInfo}
-import models.{ApiError, MneOrDomestic, NonUKAddress, SubscriptionCreateError}
+import models.{ApiError, EnrolmentExistsError, InternalServerError_, MneOrDomestic, NonUKAddress, SubscriptionCreateError, UnauthorizedError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Prop.True
 import pages._
+import play.api.Configuration
 import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
@@ -170,5 +172,25 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
     }
 
+    "redirect to the JourneyRecoveryController" in {
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(testConfig)
+        .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
+        .build()
+      val uncoveredError = InternalServerError_
+
+      when(mockAmendSubscriptionService.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(uncoveredError)))
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/there-is-a-problem")
+      }
+
+    }
   }
 }
