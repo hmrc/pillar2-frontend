@@ -47,11 +47,13 @@ class HavePillar2TopUpTaxIdController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subHavePillar2TopUpTaxIdPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
-    }
-    Ok(view(preparedForm, mode))
+    val showDoYouHaveP2TopUpTaxId = appConfig.showDoYouHaveP2TopUpTaxId
+
+      val preparedForm = request.userAnswers.get(subHavePillar2TopUpTaxIdPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

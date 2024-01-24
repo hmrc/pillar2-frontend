@@ -97,6 +97,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
       )
     } else { Map("english" -> Lang(ENGLISH)) }
 
+
+  val showDoYouHaveP2TopUpTaxId: Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
