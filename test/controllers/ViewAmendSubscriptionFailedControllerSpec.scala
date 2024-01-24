@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@this(
-layout: templates.Layout
-)
+package controllers
 
+import base.SpecBase
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
+  "ViewAmendSubscriptionFailed Controller" when {
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+    "must return OK and the start again view" in {
 
-@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false) {
-<h1 class="govuk-heading-xl">@messages("viewAmendSubscriptionFailed.heading")</h1>
+      val application = applicationBuilder(userAnswers = None).build()
 
-<p class="govuk-body">@messages("viewAmendSubscriptionFailed.message1")</p>
+      running(application) {
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
 
-<div class="govuk-body">
- <a class="govuk-link" href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home">
-  @messages("viewAmendSubscriptionFailed.link")
- </a>
-</div>
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
+  }
 
 }
