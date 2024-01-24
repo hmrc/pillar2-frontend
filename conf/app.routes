@@ -311,6 +311,6 @@ GET        /business-matching/filing-member/uk-based/error/mismatching-details  
 GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
-GET        /bta/register                                                         controllers.NoPlrIdGuidanceController.onPageLoad
+GET        /bta/register                                                         controllers.bta.NoPlrIdGuidanceController.onPageLoad
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
