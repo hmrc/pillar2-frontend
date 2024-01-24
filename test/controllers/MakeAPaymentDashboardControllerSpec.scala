@@ -17,6 +17,10 @@
 package controllers
 
 import base.SpecBase
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, ResponseDefinitionBuilder}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -24,11 +28,11 @@ import utils.Pillar2SessionKeys
 import views.html.MakeAPaymentDashboardView
 
 class MakeAPaymentDashboardControllerSpec extends SpecBase {
+
+
   "Payment Dashboard Controller" should {
-
     "return OK and the correct view for a GET" in {
-
-      val enrolmentsSet: Set[Enrolment] = Set(
+      val enrolments: Set[Enrolment] = Set(
         Enrolment(
           key = "HMRC-PILLAR2-ORG",
           identifiers = Seq(
@@ -46,7 +50,9 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           state = "activated"
         )
       )
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilderWithAuth(userAnswers = None, enrolments)
+        .overrides(
+        )
         .build()
       running(application) {
 

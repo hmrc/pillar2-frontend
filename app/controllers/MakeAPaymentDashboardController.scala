@@ -49,7 +49,7 @@ class MakeAPaymentDashboardController @Inject() (
           }
       )
       .getOrElse(
-        Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       )
 
   }

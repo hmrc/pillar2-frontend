@@ -42,8 +42,4 @@ class SessionData {
     request.session +
       (Pillar2SessionKeys.updateMneOrDomestic -> value)
 
-  def updatePillar2Reference(value: String)(implicit request: Request[AnyContent]): Session =
-    request.session +
-      (Pillar2SessionKeys.plrId -> value)
-
 }

@@ -32,11 +32,12 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
-import play.api.inject.bind
+import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -120,6 +121,24 @@ trait SpecBase
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  protected def applicationBuilderWithAuth(userAnswers: Option[UserAnswers], enrolments: Set[Enrolment] = Set.empty) = {
+    def injector:    Injector        = app.injector
+    val bodyParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
+    new GuiceApplicationBuilder()
+      .configure(
+        Configuration(
+          "metrics.enabled"         -> "false",
+          "auditing.enabled"        -> false,
+          "features.grsStubEnabled" -> true
+        )
+      )
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(bodyParsers = bodyParsers, enrolments = enrolments)),
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      )
+  }
 
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
