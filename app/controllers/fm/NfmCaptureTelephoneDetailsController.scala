@@ -56,7 +56,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
       }
       Ok(view(preparedForm, mode, name))
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
@@ -75,6 +75,6 @@ class NfmCaptureTelephoneDetailsController @Inject() (
               } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

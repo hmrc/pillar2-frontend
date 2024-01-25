@@ -55,7 +55,7 @@ class NominateFilingMemberYesNoController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

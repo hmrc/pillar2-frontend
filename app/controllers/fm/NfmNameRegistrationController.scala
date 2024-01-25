@@ -60,7 +60,7 @@ class NfmNameRegistrationController @Inject() (
         _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
       } yield Ok(view(preparedForm, mode))
     } else {
-      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
+      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
     result
   }

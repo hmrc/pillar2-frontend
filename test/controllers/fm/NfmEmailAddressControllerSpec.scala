@@ -123,7 +123,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
           FakeRequest(GET, controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
     "redirect to journey recovery if no contact name is found for POST" in {
@@ -134,7 +134,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
             .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

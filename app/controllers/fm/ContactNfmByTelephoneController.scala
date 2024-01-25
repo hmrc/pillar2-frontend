@@ -56,7 +56,7 @@ class ContactNfmByTelephoneController @Inject() (
       }
       Ok(view(preparedForm, mode, name))
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
@@ -86,7 +86,7 @@ class ContactNfmByTelephoneController @Inject() (
               }
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

@@ -53,7 +53,7 @@ class NfmCheckYourAnswersController @Inject() (
       )
       Ok(view(list))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
