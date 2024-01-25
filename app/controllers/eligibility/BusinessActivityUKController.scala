@@ -19,6 +19,7 @@ package controllers.eligibility
 import cache.SessionData
 import config.FrontendAppConfig
 import forms.BusinessActivityUKFormProvider
+import pages.BusinessActivityUKPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,7 +40,7 @@ class BusinessActivityUKController @Inject() (
   val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.businessActivityUKPageYesNo) match {
+    val preparedForm = request.get(BusinessActivityUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
