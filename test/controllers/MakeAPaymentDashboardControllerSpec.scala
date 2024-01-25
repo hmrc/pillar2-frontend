@@ -37,8 +37,6 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val application = applicationBuilder(userAnswers = None, enrolments)
-        .overrides(
-        )
         .build()
       running(application) {
 
@@ -58,16 +56,19 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
     }
 
-    "redirect to general error screen page for a GET when PLR reference is missing" in {
-      val enrolmentsSet: Set[Enrolment] = Set(
-        Enrolment(
-          key = "HMRC-PILLAR2-van",
-          identifiers = Seq(
-          ),
-          state = "activated"
-        )
-      )
+    "redirect to journey recovery for a GET if pillar 2 reference is missing" in {
+      val application = applicationBuilder(userAnswers = None, Set.empty)
+        .build()
+      running(application) {
 
+        val request =
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
     }
   }
 

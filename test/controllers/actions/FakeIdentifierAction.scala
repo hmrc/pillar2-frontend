@@ -28,9 +28,6 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers, enrolments: 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
     Future.successful(Right(IdentifierRequest(request, "id", enrolments.enrolments)))
 
-
-
-
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default
 
