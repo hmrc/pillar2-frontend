@@ -55,7 +55,7 @@ class ContactEmailAddressController @Inject() (
         Ok(view(preparedForm, mode, contactName))
 
       }
-      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 

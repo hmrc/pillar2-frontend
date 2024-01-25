@@ -54,7 +54,7 @@ class NfmEmailAddressController @Inject() (
         }
         Ok(view(preparedForm, mode, name))
       }
-      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,6 +72,6 @@ class NfmEmailAddressController @Inject() (
               } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
   }
 }

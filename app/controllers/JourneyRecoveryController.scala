@@ -17,31 +17,27 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.Pillar2SessionKeys
+import views.html.JourneyRecoveryView
 
 import javax.inject.Inject
-
 class JourneyRecoveryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  continueView:             JourneyRecoveryContinueView,
-  startAgainView:           JourneyRecoveryStartAgainView
+  journeyRecoveryView:      JourneyRecoveryView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = Action { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val safeUrl: Option[String] = continueUrl.flatMap { unsafeUrl =>
@@ -54,8 +50,15 @@ class JourneyRecoveryController @Inject() (
       }
     }
 
-    safeUrl
-      .map(url => Ok(continueView(url)))
-      .getOrElse(Ok(startAgainView()))
+    val (scenario, url) = safeUrl match {
+      case Some(url)                                 => ("continue", Some(url))
+      case None if shouldPreventBookmarking(request) => ("bookmarkPrevention", None)
+      case None                                      => ("startAgain", None)
+    }
+
+    Ok(journeyRecoveryView(scenario, url))
   }
+
+  private def shouldPreventBookmarking(request: Request[_]): Boolean =
+    false
 }
