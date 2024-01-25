@@ -41,8 +41,14 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
   "Have Pillar two TopUp Tax Id  Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
+        .build()
       running(application) {
         val request = FakeRequest(GET, controllers.bta.routes.HavePillar2TopUpTaxIdController.onPageLoad(NormalMode).url)
 
@@ -59,6 +65,27 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for a GET - bta feature false" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.bta.routes.HavePillar2TopUpTaxIdController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
     "redirect to the user to EACD Frontend management page to confirm identifier/verifier page when valid data is submitted with value YES" in {
 
       val ua = emptyUserAnswers
@@ -67,6 +94,11 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
         .value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
         .build()
 
       running(application) {
@@ -86,6 +118,11 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
       val ua = emptyUserAnswers.set(subHavePillar2TopUpTaxIdPage, false).success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
         .build()
 
       running(application) {
@@ -103,7 +140,13 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(subHavePillar2TopUpTaxIdPage, true)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.bta.routes.HavePillar2TopUpTaxIdController.onPageLoad(NormalMode).url)
@@ -115,6 +158,11 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
         .build()
       running(application) {
         val request =
