@@ -17,20 +17,18 @@
 package services
 
 import base.SpecBase
-import connectors.{AmendSubscriptionConnector, SubscriptionConnector}
+import connectors.AmendSubscriptionConnector
 import models.SubscriptionCreateError
-import models.subscription.{AmendSubscriptionRequestParameters, SubscriptionResponse}
+import models.subscription.AmendSubscriptionRequestParameters
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-
-import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json._
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 class AmendSubscriptionServiceSpec extends SpecBase {
 
   val service: AmendSubscriptionService = app.injector.instanceOf[AmendSubscriptionService]

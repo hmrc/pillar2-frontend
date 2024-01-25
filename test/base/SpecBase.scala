@@ -107,7 +107,8 @@ trait SpecBase
       Future(OptionalDataRequest(request.request, request.userId, Some(testUserAnswers)))(ec)
     }
   }
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+
+  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None, enrolments: Set[Enrolment] = Set.empty): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
         Configuration(
@@ -117,28 +118,11 @@ trait SpecBase
         )
       )
       .overrides(
+        bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
-
-  protected def applicationBuilderWithAuth(userAnswers: Option[UserAnswers], enrolments: Set[Enrolment] = Set.empty) = {
-    def injector:    Injector        = app.injector
-    val bodyParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
-    new GuiceApplicationBuilder()
-      .configure(
-        Configuration(
-          "metrics.enabled"         -> "false",
-          "auditing.enabled"        -> false,
-          "features.grsStubEnabled" -> true
-        )
-      )
-      .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].toInstance(new FakeIdentifierAction(bodyParsers = bodyParsers, enrolments = enrolments)),
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
-      )
-  }
 
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
