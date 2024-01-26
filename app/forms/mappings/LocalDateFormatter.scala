@@ -17,18 +17,22 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.FormError
 import play.api.data.format.Formatter
-
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-  invalidKey:     String,
-  allRequiredKey: String,
-  twoRequiredKey: String,
-  requiredKey:    String,
-  args:           Seq[String] = Seq.empty
+  invalidKey:         String,
+  allRequiredKey:     String,
+  twoRequiredKey:     String,
+  requiredKey:        String,
+  invalidDay:         String,
+  invalidDayLength:   String,
+  invalidMonth:       String,
+  invalidMonthLength: String,
+  invalidYear:        String,
+  invalidYearLength:  String,
+  args:               Seq[String] = Seq.empty
 ) extends Formatter[LocalDate]
     with Formatters {
 
@@ -44,19 +48,31 @@ private[mappings] class LocalDateFormatter(
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val int = intFormatter(
-      requiredKey = invalidKey,
-      wholeNumberKey = invalidKey,
-      nonNumericKey = invalidKey,
-      args
-    )
+    val intDay =
+      intFormatter(requiredKey = invalidDay, wholeNumberKey = invalidDay, nonNumericKey = invalidDay, invalidLength = invalidDayLength, args)
 
-    for {
-      day   <- int.bind(s"$key.day", data).right
-      month <- int.bind(s"$key.month", data).right
-      year  <- int.bind(s"$key.year", data).right
-      date  <- toDate(key, day, month, year).right
-    } yield date
+    val intMonth =
+      intFormatter(requiredKey = invalidMonth, wholeNumberKey = invalidMonth, nonNumericKey = invalidMonth, invalidLength = invalidMonthLength, args)
+
+    val intYear =
+      intFormatter(requiredKey = invalidYear, wholeNumberKey = invalidYear, nonNumericKey = invalidYear, invalidLength = invalidYearLength, args)
+
+    val bindedDay:   Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
+    val bindedMonth: Either[Seq[FormError], Int] = intMonth.bind(s"$key.month", data)
+    val bindedYear:  Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
+
+    (bindedDay, bindedMonth, bindedYear) match {
+      case (Left(_), Left(_), Left(_)) =>
+        Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonthYear.invalid", args)))
+      case (Left(_), Left(_), Right(_)) => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonth.invalid", args)))
+      case (Right(_), Left(_), Left(_)) =>
+        Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.monthYear.invalid", args)))
+      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayYear.invalid", args)))
+      case (Left(dayError), Right(_), Right(_))    => Left(dayError)
+      case (Right(_), Left(monthError), Right(_))  => Left(monthError)
+      case (Right(_), Right(_), Left(yearError))   => Left(yearError)
+      case (Right(day), Right(month), Right(year)) => toDate(key, day, month, year)
+    }
   }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
