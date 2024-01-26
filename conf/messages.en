@@ -105,12 +105,12 @@ taskList.subheading.complete = Registration incomplete
 taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Group details
 
-taskList.task.business.ultimate.add = Add ultimate parent''s details
-taskList.task.business.ultimate.edit = Edit ultimate parent''s details
+taskList.task.business.ultimate.add = Add ultimate parent’s details
+taskList.task.business.ultimate.edit = Edit ultimate parent’s details
 
-taskList.task.business.filingMember = Filing member''s details
-taskList.task.business.filingMember.add = Add filing member''s details
-taskList.task.business.filingMember.edit = Edit filing member''s details
+taskList.task.business.filingMember = Filing member’s details
+taskList.task.business.filingMember.add = Add filing member’s details
+taskList.task.business.filingMember.edit = Edit filing member’s details
 
 taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
@@ -145,14 +145,14 @@ grs.registration.failed.line3-cont = to try again.
 
 grs.registration.error.header =  The details you entered did not match our records
 grs.registration.error.line1 =  We could not match the details you entered with records held by HMRC.
-grs.registration.error.line2 =  How can I confirm my details
-grs.registration.error.b11 =  If you think you made an error when entering them you can
-grs.registration.error.b12 =  go back to select the entity type
-grs.registration.error.b13 =  and try again using different details.
-grs.registration.error.b21 =  You can
-grs.registration.error.b22 =  search Companies House for the company registration number and registered office address (opens in a new tab).
+grs.registration.error.line2 =  How to confirm your details
+grs.registration.error.p1 = You can confirm your details with the records held by HMRC by:
+
+grs.registration.error.b1 =  searching Companies House for the company registration number and registered office address (opens in a new tab)
+grs.registration.error.b2 =  asking for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)
 grs.registration.error.b31 =  You can
-grs.registration.error.b32 =  ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab).
+grs.registration.error.b32 =  go back to select the entity type
+grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
 
 
 
@@ -310,7 +310,7 @@ NominateFilingMemberYesNo.title = Do you want to register a nominated filing mem
 NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member for this group?
 NominateFilingMemberYesNo.heading.caption = Group details
 NominateFilingMemberYesNo.p1 = This step is optional. If you do not enter the details for a nominated filing member, the ultimate parent entity (UPE) will be used as the default.
-NominateFilingMemberYesNo.insetText = You must have permission from the UPE to nominate a company as a filing member and be able to access the information required to file   Pillar 2 top-up tax on the group''s behalf.
+NominateFilingMemberYesNo.insetText = You must have permission from the UPE to nominate a company as a filing member and be able to access the information required to file   Pillar 2 top-up tax on the group’s behalf.
 NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
@@ -333,7 +333,7 @@ registeringNfmForThisGroup.yes = Yes
 registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering as the nominated filing member for this group
 registeringNfmForThisGroup.caption = Check if the group needs to report
-registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group''s tax returns and keeping business records.
+registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s tax returns and keeping business records.
 
 isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
@@ -499,7 +499,7 @@ mneOrDomestic.l2 = Domestic top-up tax
 
 mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
 mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
-mneOrDomestic.p5 = If group operations change, you must amend the group''s details.
+mneOrDomestic.p5 = If group operations change, you must amend the group’s details.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -596,7 +596,7 @@ checkYourAnswers.nfm = Nominated filing member
 
 addSecondaryContact.title = Is there someone else we can contact?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group''s management of Pillar 2 top-up taxes.
+addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
@@ -642,11 +642,11 @@ site.confirm.send = Confirm and send
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
 registrationConfirmation.reg-date = Registration date:
-registrationConfirmation.topup = Group''s Pillar 2 top-up taxes ID
+registrationConfirmation.topup = Group’s Pillar 2 top-up taxes ID
 registrationConfirmation.whatHappensNext = What happens next
 registrationConfirmation.p1 = Your group has registered to report for {0}.
 registrationConfirmation.p2 = You will not be emailed a confirmation of this registration.
-registrationConfirmation.p3 = You must record your group''s Pillar 2 top-up taxes ID and registration date.
+registrationConfirmation.p3 = You must record your group’s Pillar 2 top-up taxes ID and registration date.
 registrationConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
 registrationConfirmation.next = What happens next
 registrationConfirmation.now = You can now
@@ -654,8 +654,8 @@ registrationConfirmation.link-home =  report and manage your Pillar 2 top-up tax
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
 
-subscriptionAddress.title = What address do you want to use as the filing member''s contact address?
-subscriptionAddress.heading = What address do you want to use as the filing member''s contact address?
+subscriptionAddress.title = What address do you want to use as the filing member’s contact address?
+subscriptionAddress.heading = What address do you want to use as the filing member’s contact address?
 subscriptionAddress.checkYourAnswersLabel = Address
 subscriptionAddress.addressLine1 = Address line 1
 subscriptionAddress.addressLine2 = Address line 2 (optional)
@@ -682,7 +682,7 @@ subscriptionAddress.change.hidden =  the registered contact address
 
 dashboard.title = Your Pillar 2 top-up taxes account
 dashboard.heading = Your Pillar 2 top-up taxes account
-dashboard.topTaxes = Pillar 2 top-up taxes ID:
+dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID:
 dashboard.registrationDate = Registration date:
 dashboard.upe = Ultimate parent entity:
 dashboard.payments = Payments
@@ -693,8 +693,13 @@ dashboard.requestPayment = Request a repayment
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
-dashboard.p1 = This service is being continuously updated. You can anticipate the introduction of more features in line with the development of OECD''s policy.
-dashboard.p2 = For more information, please refer to the
+
+dashboard.p1 = This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution.
+dashboard.p2 = The first deadline to submit a return is
+dashboard.p3 = 18 months after the last day of the group’s accounting period that started on or after 31 December 2023.
+dashboard.p4 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline.
+dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
+
 dashboard.link = draft guidance (opens in new tab)
 dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
 dashboard.inactive.link = draft guidance (opens in a new tab)
@@ -703,14 +708,14 @@ tasklist.incomplete.header= You have one or more incomplete registration tasks
 tasklist.incomplete.message= You must
 tasklist.incomplete.link= go back to register your group and complete any in progress tasks.
 
-unauthorised.org.standard.heading = Sorry, you''re unable to use this service
-unauthorised.org.standard.message = You''ve signed in with a standard organisation account.
+unauthorised.org.standard.heading = Sorry, you’re unable to use this service
+unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
-unauthorised.org.standard.message3 = You need to find someone with an administrator''s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
+unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
 unauthorised.org.standard.hyperlink = Read the draft guidance for more information on who can use this service.
 
-unauthorised.agent.heading = Sorry, you''re unable to use this service
-unauthorised.agent.message = You''ve signed in using an agent''s Government Gateway user ID. Agents cannot use this service to register or administer a group''s Pillar 2 top-up taxes.
+unauthorised.agent.heading = Sorry, you’re unable to use this service
+unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Agents cannot use this service to register or administer a group’s Pillar 2 top-up taxes.
 unauthorised.agent.message2 = If you are an agent who has been given authorisation to report Pillar 2 top-up taxes, you must
 unauthorised.agent.hyper1 = sign in via Agent Services.
 unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
@@ -718,8 +723,8 @@ unauthorised.agent.hyper2 = request authorisation via Agent services.
 unauthorised.agent.hyper3 = Read the draft guidance for more information on who can use this service.
 
 
-unauthorised.individual.heading = Sorry, you''re unable to use this service
-unauthorised.individual.message = You''ve signed in with an individual account. Only users with an organisation account can register to use this service.
+unauthorised.individual.heading = Sorry, you’re unable to use this service
+unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If you still need to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
