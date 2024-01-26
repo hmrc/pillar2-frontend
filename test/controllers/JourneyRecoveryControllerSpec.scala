@@ -82,7 +82,6 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-//          val startAgainView = application.injector.instanceOf[JourneyRecoveryStartAgainView]
           val startAgainView = application.injector.instanceOf[JourneyRecoveryView]
 
           status(result) mustEqual OK
