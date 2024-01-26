@@ -330,3 +330,6 @@ GET        /bta/eacd                                                         con
 
 
 
+
+
+GET        /bta/confirmation                                                        controllers.bta.AccessConfirmationController.onPageLoad

@@ -785,3 +785,7 @@ havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
 
+
+bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
+bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
+bta.accessConfirmation.cta = Continue to Business Tax Account
