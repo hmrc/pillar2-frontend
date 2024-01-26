@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, secondaryContactName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactEmail.title", secondaryContactName))) {
+@layout(pageTitle = title(form, messages("secondaryContactEmail.title"))) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit) {
 

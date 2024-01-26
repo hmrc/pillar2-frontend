@@ -102,11 +102,9 @@ class CheckYourAnswersController @Inject() (
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
       ).flatten
     )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
@@ -119,7 +117,7 @@ class CheckYourAnswersController @Inject() (
     if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
       Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad)
     } else {
-      Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryPreference, secondaryContactList, address))
+      Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address))
     }
   }
 
