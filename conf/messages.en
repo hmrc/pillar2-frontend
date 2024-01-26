@@ -613,7 +613,7 @@ secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 secondaryContactEmail.error.required = You need to enter the email address for {0}
-secondaryContactEmail.error.length = The email address should be 160 characters or less
+secondaryContactEmail.error.length = The email address should be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
 
