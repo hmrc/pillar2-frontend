@@ -28,7 +28,7 @@ class FrontendAppConfigSpec extends SpecBase {
 
     ".btaHomePageUrl" must {
       "return bta homepage URL" in {
-        config.btaHomePageUrl mustBe "https://www.gov.uk/"
+        config.btaHomePageUrl mustBe "http://localhost:9020/account"
       }
     }
     ".howToRegisterPlr2GuidanceUrl" must {

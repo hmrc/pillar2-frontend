@@ -22,19 +22,19 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("NoPlrIdGuidance.title"))) {
+@layout(pageTitle = titleNoForm(messages("bta.noPlrIdGuidance.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("NoPlrIdGuidance.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("bta.noPlrIdGuidance.heading")</h1>
 
-    <p class="govuk-body">@messages("NoPlrIdGuidance.p1")</p>
+    <p class="govuk-body">@messages("bta.noPlrIdGuidance.p1")</p>
 
     <p class="govuk-body">
-        <a href="@appConfig.howToRegisterPlr2GuidanceUrl" class="govuk-link govuk-link--no-visited-state" target="_blank"> @messages("NoPlrIdGuidance.link")</a>
+        <a href="@appConfig.howToRegisterPlr2GuidanceUrl" class="govuk-link govuk-link--no-visited-state" target="_blank"> @messages("bta.noPlrIdGuidance.link")</a>
     </p>
 
     <p class="govuk-body">
         @govukButton(
-            ButtonViewModel(messages("NoPlrIdGuidance.cta"))
+            ButtonViewModel(messages("bta.noPlrIdGuidance.cta"))
                 .asLink(appConfig.btaHomePageUrl)
                 .asSecondaryButton()
         )
