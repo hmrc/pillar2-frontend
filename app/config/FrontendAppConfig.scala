@@ -100,8 +100,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
       )
     } else { Map("english" -> Lang(ENGLISH)) }
 
-  val showPaymentsSection: Boolean = configuration.get[Boolean]("features.showPaymentsSection")
-
+  val showPaymentsSection: Boolean     = configuration.get[Boolean]("features.showPaymentsSection")
+  val btaAccessEnabled:    Boolean     = configuration.get[Boolean]("features.btaAccessEnabled")
+  val btaHomePageUrl:      String      = configuration.get[String]("urls.btaHomePage")
   def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
   lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
