@@ -17,18 +17,17 @@
 package forms
 
 import forms.mappings.Mappings
+import mapping.Constants
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class ContactEmailAddressFormProvider @Inject() extends Mappings {
-  val maxLength  = 132
-  val emailRegex = s"^(.{1,$maxLength})@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})$$"
 
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("contactEmailAddress.error.required", Seq(userName))
-        .verifying(maxLength(maxLength, "contactEmailAddress.error.length"))
-        .verifying(regexp(emailRegex, "contactEmailAddress.error.format"))
+        .verifying(maxLength(Constants.MAX_LENGTH_132, "contactEmailAddress.error.length"))
+        .verifying(regexp(Validation.EMAIL_REGEX, "contactEmailAddress.error.format"))
     )
 }
