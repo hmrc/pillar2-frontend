@@ -17,15 +17,18 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import generators.ModelGenerators
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
 import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionRequestParameters}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{fmDashboardPage, subAccountStatusPage}
-import play.api.Configuration
+import play.api.{Configuration, inject}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ReadSubscriptionService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.DashboardView
@@ -33,8 +36,12 @@ import views.html.DashboardView
 import java.time.LocalDate
 import scala.concurrent.Future
 class DashboardControllerSpec extends SpecBase with ModelGenerators {
+  val dashBoardUserAnswers = emptyUserAnswers
+    .setOrException(fmDashboardPage, DashboardInfo("12345678", LocalDate.of(2025, 12, 31)))
+    .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
 
-  val enrolmentsSet: Set[Enrolment] = Set(
+  val validJsValue: JsValue = Json.parse("""{ "someField": "12345678" }""")
+  val enrolments: Set[Enrolment] = Set(
     Enrolment(
       key = "HMRC-PILLAR2-ORG",
       identifiers = Seq(
@@ -44,38 +51,25 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       state = "activated"
     )
   )
-  val validJsValue: JsValue = Json.parse("""{ "someField": "12345678" }""")
-  val actionBuilders = preAuthenticatedEnrolmentActionBuilders(Some(enrolmentsSet))
-
-  val dashBoardUserAnswers = emptyUserAnswers
-    .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
-    .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
-
-  val noDashBoardUserAnswers = emptyUserAnswers
-    .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
-
   "Dashboard Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val enrolments: Set[Enrolment] = Set(
-        Enrolment(
-          key = "HMRC-PILLAR2-ORG",
-          identifiers = Seq(
-            EnrolmentIdentifier("PLRID", "12345678"),
-            EnrolmentIdentifier("UTR", "ABC12345")
-          ),
-          state = "activated"
-        )
-      )
 
       when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Some(dashBoardUserAnswers)))
       when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(validJsValue)))
-      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
 
       val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
         .build()
 
       running(application) {
@@ -99,27 +93,27 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       }
     }
-    /*
+
     "return Internal Server Error for a GET when there's an error retrieving subscription" in {
 
       when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(InternalServerError_)))
 
-      val testConfig = Configuration("features.showErrorScreens" -> false)
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
       }
@@ -127,18 +121,21 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     "return SEE_OTHER and the correct view for a GET when PLR reference is missing" in {
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("id" -> "12345678")
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
@@ -152,18 +149,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -178,18 +176,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -204,18 +203,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -230,18 +230,18 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
-
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -256,18 +256,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -282,18 +283,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> true)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
 
         val result = route(application, request).value
 
@@ -308,18 +310,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> false)
 
-      val application = applicationBuilder(userAnswers = Some(dashBoardUserAnswers))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("nonExistentPlrId" -> "12345678")
 
         val result = route(application, request).value
 
@@ -339,18 +342,20 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val testConfig = Configuration("features.showErrorScreens" -> false)
 
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
       val application = applicationBuilder(userAnswers = None)
         .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          inject.bind[AuthenticatedIdentifierAction].toInstance(actionBuilders),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
+
         val result = route(application, request).value
 
         status(result) mustBe SEE_OTHER
@@ -368,7 +373,13 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Some(userAnswersWithoutFmDashboardPage)))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutFmDashboardPage))
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutFmDashboardPage), enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
@@ -377,30 +388,11 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          .withSession("plrId" -> "12345678", "id" -> "12345678")
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
-
-    "PlrReference is present" in {
-      val application = new GuiceApplicationBuilder()
-        .build()
-
-      val controller = application.injector.instanceOf[DashboardController]
-      val enrolments = Some(Set(Enrolment("HMRC-PILLAR2-ORG", Seq(EnrolmentIdentifier("PLRID", "12345678")), "activated")))
-
-      val mirror         = universe.runtimeMirror(controller.getClass.getClassLoader)
-      val instanceMirror = mirror.reflect(controller)
-      val methodSymbol   = universe.typeOf[DashboardController].decl(universe.TermName("extractPlrReference")).asMethod
-      val method         = instanceMirror.reflectMethod(methodSymbol)
-
-      val result = method.apply(enrolments).asInstanceOf[Option[String]]
-      result shouldBe Some("12345678")
-
-    }
-     */
   }
 }
