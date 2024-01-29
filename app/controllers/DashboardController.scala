@@ -124,7 +124,7 @@ class DashboardController @Inject() (
     enrolmentsOption.flatMap { enrolments =>
       enrolments
         .find(_.key.equalsIgnoreCase(appConfig.enrolmentKey))
-        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(appConfig.pillarId)))
+        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(appConfig.enrolmentIdentifier)))
         .map(_.value)
     }
 
