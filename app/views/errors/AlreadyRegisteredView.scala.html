@@ -27,7 +27,7 @@ layout: templates.Layout
 val email = "pillar2mailbox.gov.uk"
 <p class="govuk-body">@messages("alreadyRegistered.message1")</p>
 <p class="govuk-body">
-    @Html(messages("alreadyRegistered.message2", s"<a class='govuk-link' href='mailto:${appConfig.contactEmail}'>${appConfig.contactEmail}</a>"))
+    @Html(messages("alreadyRegistered.message2", s"<a class='govuk-link' href='mailto:${appConfig.contactEmail}'>${appConfig.pillar2mailbox}</a>"))
 </p>
 
 }
