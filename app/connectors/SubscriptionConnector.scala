@@ -22,14 +22,14 @@ import models.subscription.{ErrorResponse, SubscriptionRequestParameters, Subscr
 import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Pillar2SessionKeys
 
 import java.time.LocalDateTime
-
+import play.api.libs.json.JsSuccess
 class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
   val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
@@ -39,26 +39,66 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     ec:                                        ExecutionContext
   ): Future[Option[SubscriptionResponse]] =
     http
-      .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
-      .map {
-        case response if is2xx(response.status) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
-          Some(response.json.as[SuccessResponse].success)
+      .POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionParameter)
+      .map { response =>
+        logger.info(s"Response received with status ${response.status} and body: ${response.body}")
 
-        case response if is4xx(response.status) && response.status == CONFLICT =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed due to conflict with status ${response.status}")
+        response.status match {
+          case status if is2xx(status) =>
+            response.json.validate[SuccessResponse] match {
+              case JsSuccess(successResponse, _) =>
+                logger.info("Successfully deserialized response")
+                Some(successResponse.success)
+              case _ =>
+                logger.error("Failed to deserialize success response")
+                None
+            }
+
+          case CONFLICT =>
+            logger.info(s"Subscription call failed due to conflict with status $CONFLICT and body: ${response.body}")
+            Some(SubscriptionResponse("", "", LocalDateTime.now(), Some(ErrorResponse("Conflict detected during subscription"))))
+
+          case _ =>
+            logger.warn(s"Subscription call failed with status ${response.status}")
+            None
+        }
+      }
+      .recover {
+
+        case UpstreamErrorResponse(message, CONFLICT, _, _) =>
+          logger.info(s"Conflict detected with body: $message")
           Some(SubscriptionResponse("", "", LocalDateTime.now(), Some(ErrorResponse("Conflict detected during subscription"))))
 
-        case errorResponse =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
+        case e: Exception =>
+          logger.error(s"Exception occurred during subscription creation: ${e.getMessage}", e)
           None
       }
-      .recover { case e: Exception =>
-        logger.warn(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Error message ${e.printStackTrace()} has been thrown when create subscription was called"
-        )
-        None
-      }
+
+  //  def crateSubscription(subscriptionParameter: SubscriptionRequestParameters)(implicit
+//    hc:                                        HeaderCarrier,
+//    ec:                                        ExecutionContext
+//  ): Future[Option[SubscriptionResponse]] =
+//    http
+//      .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionParameter)
+//      .map {
+//        case response if is2xx(response.status) =>
+//          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
+//          Some(response.json.as[SuccessResponse].success)
+//
+//        case response if is4xx(response.status) && response.status == CONFLICT =>
+//          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed due to conflict with status ${response.status}")
+//          Some(SubscriptionResponse("", "", LocalDateTime.now(), Some(ErrorResponse("Conflict detected during subscription"))))
+//
+//        case errorResponse =>
+//          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
+//          None
+//      }
+//      .recover { case e: Exception =>
+//        logger.warn(
+//          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+//            s"Error message ${e.printStackTrace()} has been thrown when create subscription was called"
+//        )
+//        None
+//      }
 
 }
