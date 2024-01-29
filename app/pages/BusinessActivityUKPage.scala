@@ -24,5 +24,4 @@ case object BusinessActivityUKPage extends QuestionPage[Boolean] {
 
   override def toString: String = "BusinessActivityUK"
 
-
 }

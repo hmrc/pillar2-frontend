@@ -17,13 +17,74 @@
 package controllers.eligibility
 
 import base.SpecBase
+import config.FrontendAppConfig
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalActionImpl, DefaultUnauthenticatedControllerComponents, SessionIdentifierAction, UnauthenticatedControllerComponents, UnauthenticatedDataRequiredAction, UnauthenticatedDataRetrievalAction}
 import forms.BusinessActivityUKFormProvider
+import models.UserAnswers
+import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest, SessionRequest, UnauthenticatedDataRequest, UnauthenticatedOptionalDataRequest}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration}
+import play.api.i18n.{DefaultMessagesApi, MessagesApi}
+import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.UnauthenticatedDataRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-class BusinessActivityUKControllerSpec extends SpecBase {
+import java.time.temporal.ChronoUnit
+import java.time.{Clock, Instant, ZoneId}
+import scala.concurrent.Future
+
+class BusinessActivityUKControllerSpec extends SpecBase with  DefaultPlayMongoRepositorySupport[UserAnswers] with UnauthenticatedControllerComponents {
   val formProvider = new BusinessActivityUKFormProvider()
+
+  private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
+  private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
+
+  private val mockAppConfig = mock[FrontendAppConfig]
+  when(mockAppConfig.cacheTtl) thenReturn 1
+
+  protected override val repository = new UnauthenticatedDataRepository(
+    mongoComponent = mongoComponent,
+    appConfig      = mockAppConfig,
+    clock          = stubClock
+  )(ec)
+  implicit lazy val messagesApi: MessagesApi =
+    new DefaultMessagesApi(
+      messages = Map("default" -> messages),
+      langs = langs
+    )
+  override def identifyAndGetData() =
+    DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty)) andThen
+    fakeDataRequiredAction andThen
+    fakeDataRetrievalAction andThen
+    fakeDataRequiredAction
+
+  def fakeIdentifier: SessionIdentifierAction  =
+    new SessionIdentifierAction(
+    ) {
+      override def refine[A](request: Request[A]): Future[Either[Result, SessionRequest[A]]] = {
+
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+        Future.successful(Right(SessionRequest(request, "internalId")))
+      }
+    }
+
+  def fakeDataRequiredAction: UnauthenticatedDataRequiredAction = new UnauthenticatedDataRequiredAction()(ec) {
+    override protected def refine[A](request: UnauthenticatedOptionalDataRequest[A]): Future[Either[Result, UnauthenticatedDataRequest[A]]] =
+      Future.successful(Right(UnauthenticatedDataRequest(request.request, request.userId, testUserAnswers)))
+  }
+
+  def fakeDataRetrievalAction: UnauthenticatedDataRetrievalAction = new UnauthenticatedDataRetrievalAction(repository) {
+    override protected def transform[A](request: SessionRequest[A]): Future[UnauthenticatedOptionalDataRequest[A]] = {
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      Future(UnauthenticatedOptionalDataRequest(request.request, request.userId, Some(testUserAnswers)))(ec)
+    }
+  }
+
 
   def controller(): BusinessActivityUKController =
     new BusinessActivityUKController(

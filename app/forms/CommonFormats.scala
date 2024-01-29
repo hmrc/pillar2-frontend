@@ -29,7 +29,6 @@ trait CommonFormats extends Constraints {
       def unbind(key: String, value: String) = Map(key -> value)
     }
 
-
   def textWithErrorOverride(key: String): FieldMapping[String] = of[String](stringFormat(key))
   def nonEmptyTextWithErrorOverride(key: String): Mapping[String] =
     of[String](stringFormat(key))

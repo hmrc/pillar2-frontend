@@ -16,31 +16,32 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
+import controllers.actions.UnauthenticatedControllerComponents
 import forms.BusinessActivityUKFormProvider
 import pages.BusinessActivityUKPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 import views.html.BusinessActivityUKView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+
 class BusinessActivityUKController @Inject() (
   formProvider:             BusinessActivityUKFormProvider,
+  cc:                       UnauthenticatedControllerComponents,
   val controllerComponents: MessagesControllerComponents,
-  view:                     BusinessActivityUKView,
-  sessionData:              SessionData
-)(implicit appConfig:       FrontendAppConfig)
+  view:                     BusinessActivityUKView
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.get(BusinessActivityUKPage) match {
+  def onPageLoad: Action[AnyContent] = cc.identifyAndGetData { implicit request =>
+    val preparedForm = request.userAnswers.get(BusinessActivityUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -48,23 +49,24 @@ class BusinessActivityUKController @Inject() (
     Ok(view(preparedForm))
   }
 
-  def onSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def onSubmit: Action[AnyContent] = cc.identifyAndGetData.async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         value =>
           value match {
-            case "yes" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
-                  .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
-              )
-            case "no" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)
-                  .withSession((sessionData.updateBusinessActivityUKYesNo(value)))
-              )
+            case true =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessActivityUKPage, value))
+                _              <- cc.sessionRepository.set(updatedAnswers)
+              } yield Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
+            case false =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessActivityUKPage, value))
+                _              <- cc.sessionRepository.set(updatedAnswers)
+              } yield Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)
+
           }
       )
   }
