@@ -28,8 +28,8 @@ object MneOrDomestic extends Enumerable.Implicits {
   case object Uk extends WithName("uk") with MneOrDomestic
 
   val values: Seq[MneOrDomestic] = Seq(
-    UkAndOther,
-    Uk
+    Uk,
+    UkAndOther
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
