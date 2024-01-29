@@ -18,16 +18,8 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
+case class ErrorResponse(error: String)
 
-case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime, error: Option[ErrorResponse] = None)
-
-object SubscriptionResponse {
-  implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
-}
-
-case class SuccessResponse(success: SubscriptionResponse)
-
-object SuccessResponse {
-  implicit val format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
+object ErrorResponse {
+  implicit val format: OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }

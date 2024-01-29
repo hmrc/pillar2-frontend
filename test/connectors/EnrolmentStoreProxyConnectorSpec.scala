@@ -81,15 +81,5 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
       intercept[IllegalStateException](await(connector.enrolmentExists(plrRef)))
 
     }
-
-    "return a Left(HttpResponse) when there is a conflict (409) response" in {
-      val plrRef                    = "xxx409"
-      val enrolmentStoreProxy409Url = s"$enrolmentStoreProxyUrl/HMRC-PILLAR2-ORG~PLRID~$plrRef/groups"
-
-      stubGet(enrolmentStoreProxy409Url, CONFLICT, "")
-
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe a[Left[HttpResponse, _]]
-    }
   }
 }

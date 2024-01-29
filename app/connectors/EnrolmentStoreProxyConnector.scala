@@ -42,8 +42,6 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
         case response if response.status == NO_CONTENT => Right(false)
         case response if is2xx(response.status) =>
           Right(response.json.asOpt[GroupIds].exists(_.principalGroupIds.nonEmpty))
-        case response if is4xx(response.status) && response.status == CONFLICT =>
-          Left(response)
         case response =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Enrolment response not formed. ${response.status} response status")
           throw new IllegalStateException()

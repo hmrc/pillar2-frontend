@@ -42,11 +42,6 @@ class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnec
       case Right(true) =>
         Future.successful(Left(EnrolmentExistsError))
 
-      case Left(httpResponse) if httpResponse.status == CONFLICT =>
-        val conflictError: ApiError = DuplicateSubmissionError
-        logger.warn(s"Conflict encountered for enrolment with PLR ID ${enrolmentInfo.plrId}")
-        Future.successful(Left(conflictError))
-
       case Left(response) =>
         // Handle other unexpected response scenarios
         logger.error(s"Unexpected response status: ${response.status}")

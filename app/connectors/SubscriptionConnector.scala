@@ -17,14 +17,18 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
+import models.{ApiError, DuplicateSubmissionError}
+import models.subscription.{ErrorResponse, SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import play.api.Logging
-import uk.gov.hmrc.http.HttpReads.is2xx
+import play.api.http.Status.CONFLICT
+import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Pillar2SessionKeys
+
+import java.time.LocalDateTime
 
 class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
     extends Logging {
@@ -40,6 +44,10 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         case response if is2xx(response.status) =>
           logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
           Some(response.json.as[SuccessResponse].success)
+
+        case response if is4xx(response.status) && response.status == CONFLICT =>
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed due to conflict with status ${response.status}")
+          Some(SubscriptionResponse("", "", LocalDateTime.now(), Some(ErrorResponse("Conflict detected during subscription"))))
 
         case errorResponse =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
