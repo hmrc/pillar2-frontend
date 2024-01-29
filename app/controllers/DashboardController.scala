@@ -123,8 +123,8 @@ class DashboardController @Inject() (
   private def extractPlrReference(enrolmentsOption: Option[Set[Enrolment]]): Option[String] =
     enrolmentsOption.flatMap { enrolments =>
       enrolments
-        .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+        .find(_.key.equalsIgnoreCase(appConfig.enrolmentKey))
+        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(appConfig.pillarId)))
         .map(_.value)
     }
 
