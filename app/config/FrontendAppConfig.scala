@@ -107,6 +107,4 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
   lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
   lazy val excludedPaths:  Seq[String] = configuration.get[Seq[String]]("filters.allowlist.excluded")
-
-  val contactEmail: String = configuration.get[String]("features.privateBeta.contactEmail")
 }
