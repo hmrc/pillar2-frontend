@@ -17,11 +17,11 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{DuplicateSubmissionError, GroupIds}
+import models.GroupIds
 import play.api.Logging
-import play.api.http.Status.{CONFLICT, NO_CONTENT}
+import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
+import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -33,18 +33,29 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
   def enrolmentExists(plrReference: String)(implicit
     hc:                             HeaderCarrier,
     ec:                             ExecutionContext
-  ): Future[Either[HttpResponse, Boolean]] = {
+  ): Future[Boolean] = {
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     http
-      .GET[HttpResponse](submissionUrl)(rds = readRaw, hc = hc, ec = ec)
+      .GET[HttpResponse](
+        submissionUrl
+      )(rds = readRaw, hc = hc, ec = ec)
       .map {
-        case response if response.status == NO_CONTENT => Right(false)
+        case response if response.status == NO_CONTENT => false
         case response if is2xx(response.status) =>
-          Right(response.json.asOpt[GroupIds].exists(_.principalGroupIds.nonEmpty))
+          response.json
+            .asOpt[GroupIds]
+            .exists(groupIds =>
+              if (groupIds.principalGroupIds.nonEmpty) {
+                true
+              } else {
+                false
+              }
+            )
         case response =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Enrolment response not formed. ${response.status} response status")
           throw new IllegalStateException()
       }
+
   }
 }

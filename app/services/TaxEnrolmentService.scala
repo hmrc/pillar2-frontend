@@ -18,9 +18,8 @@ package services
 
 import com.google.inject.Inject
 import connectors.{EnrolmentStoreProxyConnector, TaxEnrolmentsConnector}
-import models.{ApiError, DuplicateSubmissionError, EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo}
+import models.{ApiError, EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo}
 import play.api.Logging
-import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,19 +32,12 @@ class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnec
     ec:                                      ExecutionContext
   ): Future[Either[ApiError, Int]] =
     enrolmentStoreProxyConnector.enrolmentExists(enrolmentInfo.plrId) flatMap {
-      case Right(false) =>
+      case false =>
         taxEnrolmentsConnector.createEnrolment(enrolmentInfo) map {
           case Some(value) => Right(value)
-          case None        => Left(EnrolmentCreationError)
+          case _           => Left(EnrolmentCreationError)
         }
-
-      case Right(true) =>
-        Future.successful(Left(EnrolmentExistsError))
-
-      case Left(response) =>
-        // Handle other unexpected response scenarios
-        logger.error(s"Unexpected response status: ${response.status}")
-        Future.failed(new IllegalStateException("Unexpected response status"))
-
+      case true => Future.successful(Left(EnrolmentExistsError))
     }
+
 }

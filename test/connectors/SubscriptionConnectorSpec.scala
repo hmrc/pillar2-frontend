@@ -67,7 +67,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     "return Pillar2Id for create Subscription successful" in {
       stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
 
-      val httpResponse: HttpResponse = connector.crateSubscription(validSubscriptionCreateParameter).futureValue
+      val httpResponse: HttpResponse = connector.createSubscription(validSubscriptionCreateParameter).futureValue
 
       httpResponse.status mustBe OK
 
@@ -81,7 +81,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     "return InternalServerError for create Subscription" in {
       stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
 
-      val futureResult = connector.crateSubscription(validSubscriptionCreateParameter)
+      val futureResult = connector.createSubscription(validSubscriptionCreateParameter)
 
       val httpResponse: HttpResponse = futureResult.futureValue
 
@@ -98,7 +98,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       // Ensure the body is appropriate for an error response, or leave it empty if that's the expected behavior.
       stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, "")
 
-      val futureResult = connector.crateSubscription(validSubscriptionCreateParameter)
+      val futureResult = connector.createSubscription(validSubscriptionCreateParameter)
 
       val httpResponse: HttpResponse = futureResult.futureValue
 

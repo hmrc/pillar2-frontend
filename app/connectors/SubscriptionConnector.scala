@@ -28,7 +28,7 @@ class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     extends Logging {
   val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
-  def crateSubscription(
+  def createSubscription(
     subscriptionParameter: SubscriptionRequestParameters
   )(implicit hc:           HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
     http.POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionParameter)

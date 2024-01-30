@@ -52,7 +52,7 @@ class SubscriptionServiceSpec extends SpecBase {
       val jsonResponse     = Json.toJson(response)
       val mockHttpResponse = HttpResponse(200, jsonResponse.toString)
 
-      when(mockSubscriptionConnector.crateSubscription(any())(any(), any()))
+      when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
         .thenReturn(Future.successful(mockHttpResponse))
 
       service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
@@ -63,7 +63,7 @@ class SubscriptionServiceSpec extends SpecBase {
     "must return when there is problem of creating" in {
       import scala.concurrent.Future
 
-      when(mockSubscriptionConnector.crateSubscription(any())(any(), any()))
+      when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("Simulated failure")))
 
       service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>

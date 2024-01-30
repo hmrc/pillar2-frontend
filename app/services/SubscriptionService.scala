@@ -35,7 +35,7 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     ec:                              ExecutionContext
   ): Future[Either[ApiError, SubscriptionResponse]] =
     subscriptionConnector
-      .crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId))
+      .createSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId))
       .flatMap { httpResponse =>
         httpResponse.status match {
           case status if is2xx(status) =>
