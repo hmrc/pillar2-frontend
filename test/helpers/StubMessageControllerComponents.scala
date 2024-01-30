@@ -17,13 +17,11 @@
 package helpers
 
 import akka.stream.testkit.NoMaterializer
-import controllers.actions.DefaultUnauthenticatedControllerComponents
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration, HttpConfiguration}
 import play.api.i18n.Messages.UrlMessageSource
 import play.api.i18n._
 import play.api.mvc._
 import play.api.test.Helpers._
-import repositories.UnauthenticatedDataRepository
 
 import java.util.Locale
 import scala.concurrent.ExecutionContext

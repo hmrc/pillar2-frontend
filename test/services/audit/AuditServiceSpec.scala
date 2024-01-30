@@ -30,7 +30,6 @@ import scala.concurrent.Future
 class AuditServiceSpec extends SpecBase {
   val service: AuditService = app.injector.instanceOf[AuditService]
 
-
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val validRegisterWithIdResponse        = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
   val validRegisterWithIdResponseForLLP  = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]

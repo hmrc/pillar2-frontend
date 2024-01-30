@@ -16,94 +16,53 @@
 
 package controllers.eligibility
 
+import akka.stream.testkit.NoMaterializer
 import base.SpecBase
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalActionImpl, DefaultUnauthenticatedControllerComponents, SessionIdentifierAction, UnauthenticatedControllerComponents, UnauthenticatedDataRequiredAction, UnauthenticatedDataRetrievalAction}
+import controllers.actions.{SessionIdentifierAction, UnauthenticatedControllerComponents, UnauthenticatedDataRequiredAction, UnauthenticatedDataRetrievalAction}
 import forms.BusinessActivityUKFormProvider
+import helpers.{Configs, ViewInstances}
 import models.UserAnswers
-import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest, SessionRequest, UnauthenticatedDataRequest, UnauthenticatedOptionalDataRequest}
+import models.requests.{SessionRequest, UnauthenticatedDataRequest, UnauthenticatedOptionalDataRequest}
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
+import org.scalatest.OptionValues.convertOptionToValuable
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration}
-import play.api.i18n.{DefaultMessagesApi, MessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, Request, Result}
+import org.scalatest.matchers.should.Matchers.not.include
+import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
+import play.api.i18n.Messages.UrlMessageSource
+import play.api.i18n._
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.UnauthenticatedDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import uk.gov.hmrc.play.bootstrap.controller
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
-import scala.concurrent.Future
+import java.util.Locale
+import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessActivityUKControllerSpec extends SpecBase with  DefaultPlayMongoRepositorySupport[UserAnswers] with UnauthenticatedControllerComponents {
+class BusinessActivityUKControllerSpec extends SpecBase {
   val formProvider = new BusinessActivityUKFormProvider()
 
-  private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
-  private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
+  val application = applicationBuilder(None).build()
 
-  private val mockAppConfig = mock[FrontendAppConfig]
-  when(mockAppConfig.cacheTtl) thenReturn 1
-
-  protected override val repository = new UnauthenticatedDataRepository(
-    mongoComponent = mongoComponent,
-    appConfig      = mockAppConfig,
-    clock          = stubClock
-  )(ec)
-  implicit lazy val messagesApi: MessagesApi =
-    new DefaultMessagesApi(
-      messages = Map("default" -> messages),
-      langs = langs
-    )
-  override def identifyAndGetData() =
-    DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty)) andThen
-    fakeDataRequiredAction andThen
-    fakeDataRetrievalAction andThen
-    fakeDataRequiredAction
-
-  def fakeIdentifier: SessionIdentifierAction  =
-    new SessionIdentifierAction(
-    ) {
-      override def refine[A](request: Request[A]): Future[Either[Result, SessionRequest[A]]] = {
-
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        Future.successful(Right(SessionRequest(request, "internalId")))
-      }
-    }
-
-  def fakeDataRequiredAction: UnauthenticatedDataRequiredAction = new UnauthenticatedDataRequiredAction()(ec) {
-    override protected def refine[A](request: UnauthenticatedOptionalDataRequest[A]): Future[Either[Result, UnauthenticatedDataRequest[A]]] =
-      Future.successful(Right(UnauthenticatedDataRequest(request.request, request.userId, testUserAnswers)))
-  }
-
-  def fakeDataRetrievalAction: UnauthenticatedDataRetrievalAction = new UnauthenticatedDataRetrievalAction(repository) {
-    override protected def transform[A](request: SessionRequest[A]): Future[UnauthenticatedOptionalDataRequest[A]] = {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      Future(UnauthenticatedOptionalDataRequest(request.request, request.userId, Some(testUserAnswers)))(ec)
-    }
-  }
-
-
-  def controller(): BusinessActivityUKController =
-    new BusinessActivityUKController(
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewBusinessActivityUK,
-      mockSessionData
-    )
-
-  "Trading Business Confirmation Controller" must {
-    implicit val request = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+  "Trading Business Confirmation Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
       val request =
-        FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+        FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
       contentAsString(result) should include(
         "Does the group have business operations in the UK?"
       )
@@ -114,7 +73,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with  DefaultPlayMongoRe
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "yes"))
-      val result = controller.onSubmit()()(request)
+      val result = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url
 
@@ -124,7 +83,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with  DefaultPlayMongoRe
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
           .withFormUrlEncodedBody(("value", "no"))
-      val result = controller.onSubmit()()(request)
+      val result = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url
 
@@ -133,7 +92,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with  DefaultPlayMongoRe
       val formData = Map("value" -> "")
       val request =
         FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
-      val result = controller.onSubmit()()(request)
+      val result = route(application, request).value
       status(result) shouldBe 400
     }
   }

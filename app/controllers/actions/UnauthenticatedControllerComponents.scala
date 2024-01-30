@@ -17,12 +17,8 @@
 package controllers.actions
 
 import models.requests.UnauthenticatedDataRequest
-import play.api.http.FileMimeTypes
-import play.api.i18n.{Langs, MessagesApi}
 import play.api.mvc._
 import repositories.UnauthenticatedDataRepository
-
-import javax.inject.Inject
 
 trait UnauthenticatedControllerComponents extends MessagesControllerComponents {
 
@@ -40,16 +36,16 @@ trait UnauthenticatedControllerComponents extends MessagesControllerComponents {
 
 }
 
-case class DefaultUnauthenticatedControllerComponents @Inject()(
-                                                                 messagesActionBuilder: MessagesActionBuilder,
-                                                                 actionBuilder: DefaultActionBuilder,
-                                                                 parsers: PlayBodyParsers,
-                                                                 messagesApi: MessagesApi,
-                                                                 langs: Langs,
-                                                                 fileMimeTypes: FileMimeTypes,
-                                                                 executionContext: scala.concurrent.ExecutionContext,
-                                                                 sessionRepository: UnauthenticatedDataRepository,
-                                                                 identify: SessionIdentifierAction,
-                                                                 getData: UnauthenticatedDataRetrievalAction,
-                                                                 requireData: UnauthenticatedDataRequiredAction,
-                                                               ) extends UnauthenticatedControllerComponents
+//case class DefaultUnauthenticatedControllerComponents @Inject()(
+//                                                                 messagesActionBuilder: MessagesActionBuilder,
+//                                                                 actionBuilder: DefaultActionBuilder,
+//                                                                 parsers: PlayBodyParsers,
+//                                                                 messagesApi: MessagesApi,
+//                                                                 langs: Langs,
+//                                                                 fileMimeTypes: FileMimeTypes,
+//                                                                 executionContext: scala.concurrent.ExecutionContext,
+//                                                                 sessionRepository: UnauthenticatedDataRepository,
+//                                                                 identify: SessionIdentifierAction,
+//                                                                 getData: UnauthenticatedDataRetrievalAction,
+//                                                                 requireData: UnauthenticatedDataRequiredAction,
+//                                                               ) extends UnauthenticatedControllerComponents
