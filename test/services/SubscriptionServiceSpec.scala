@@ -25,6 +25,8 @@ import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -40,21 +42,30 @@ class SubscriptionServiceSpec extends SpecBase {
     .build()
 
   "SubscriptionService" when {
+
     "must return Pillar2Id if all success" in {
       val response = SubscriptionResponse(
         plrReference = "XE1111123456789",
         formBundleNumber = "12345678",
         processingDate = LocalDate.now().atStartOfDay()
       )
-      when(mockSubscriptionConnector.crateSubscription(any())(any(), any())).thenReturn(Future.successful(Some(response)))
+      val jsonResponse     = Json.toJson(response)
+      val mockHttpResponse = HttpResponse(200, jsonResponse.toString)
+
+      when(mockSubscriptionConnector.crateSubscription(any())(any(), any()))
+        .thenReturn(Future.successful(mockHttpResponse))
+
       service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
-        res mustBe (Right(response))
+        res mustBe Right(response)
       }
     }
 
     "must return when there is problem of creating" in {
-      val response = Future.successful(None)
-      when(mockSubscriptionConnector.crateSubscription(any())(any(), any())).thenReturn(response)
+      import scala.concurrent.Future
+
+      when(mockSubscriptionConnector.crateSubscription(any())(any(), any()))
+        .thenReturn(Future.failed(new Exception("Simulated failure")))
+
       service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
         res mustBe Left(SubscriptionCreateError)
       }

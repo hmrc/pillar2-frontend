@@ -116,7 +116,7 @@ trait RegisterAndSubscribe extends Logging {
     request:                        DataRequest[AnyContent]
   ): Future[Result] =
     subscriptionService.checkAndCreateSubscription(request.userId, upeSafeId, fmSafeId).flatMap {
-      case Right(successResponse) if successResponse.error.isEmpty =>
+      case Right(successResponse) =>
         logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - checkAndCreateSubscription response $successResponse")
         val enrolmentInfo = request.userAnswers
           .get(upeRegisteredInUKPage)
@@ -159,8 +159,8 @@ trait RegisterAndSubscribe extends Logging {
             )
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
         }
-      case Right(errorResponse) if errorResponse.error.isDefined =>
-        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to: ${errorResponse.error.get.error}")
+      case Left(DuplicateSubmissionError) =>
+        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to a Duplicate Submission")
         Future.successful(Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad))
       case Left(_) =>
         logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation failed")

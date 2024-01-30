@@ -157,7 +157,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.upeRegisterationWithoutID("id", userAnswersData("id", Json.obj("Registration" -> noIDUpeData)))
-      result.futureValue mustBe Left(models.InternalServerError)
+      result.futureValue mustBe Left(models.InternalServerError_)
     }
     "return safeId for FM Registerwithout Id is successful" in {
 
@@ -186,7 +186,7 @@ class RegistrationConnectorSpec extends SpecBase {
         "id",
         userAnswersData("id", Json.obj("FilingMember" -> nfmNoID))
       )
-      result.futureValue mustBe Left(models.InternalServerError)
+      result.futureValue mustBe Left(models.InternalServerError_)
     }
   }
 

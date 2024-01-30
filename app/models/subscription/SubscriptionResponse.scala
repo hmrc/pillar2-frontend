@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
-case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime, error: Option[ErrorResponse] = None)
+case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime)
 
 object SubscriptionResponse {
   implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
