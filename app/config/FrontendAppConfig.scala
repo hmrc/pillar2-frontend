@@ -43,9 +43,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl:       String = configuration.get[String]("urls.signOut")
 
-  val enrolmentKey:        String = configuration.get[String](s"keys.enrolmentKey.pillar2")
-  val pillarId:            String = configuration.get[String](s"keys.enrolmentKey.pillarId")
-  val enrolmentIdentifier: String = configuration.get[String](s"identifiers.enrolmentIdentifier.pillarId")
+  val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
+  val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
 
   lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
 
