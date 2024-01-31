@@ -311,7 +311,7 @@ NominateFilingMemberYesNo.title = Do you want to register a nominated filing mem
 NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member to report for this group?
 NominateFilingMemberYesNo.heading.caption = Group details
 
-NominateFilingMemberYesNo.p1 = If you do not register the a nominated filing member, we will use the ultimate parent entity (UPE) as the filing member.
+NominateFilingMemberYesNo.p1 = If you do not register a nominated filing member, we will use the ultimate parent entity (UPE) as the filing member.
 NominateFilingMemberYesNo.insetText = A nominated filling member must be nominated by the UPE and must be able to access the information required to report Pillar 2 top-up taxes on the group’s behalf.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
