@@ -13,6 +13,13 @@
 .contact-details > dl:nth-child(3n), .check-answer-all dl:nth-child(13n), .manage-contact-details > dl:nth-child(5n) {
     margin-bottom:0;
 }
-.no-border-bottom{
+.no-border-bottom, no-border-bottom-account-period{
   border-bottom:none;
+}
+
+@media (min-width: 40.0625em) {
+  .group-details-check-answer .govuk-summary-list__key
+  {
+    width: 42%;
+  }
 }
