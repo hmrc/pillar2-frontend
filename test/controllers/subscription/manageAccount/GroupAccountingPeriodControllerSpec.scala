@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.GroupAccountingPeriodFormProvider
+import forms.{GroupAccountingPeriodAmendFormProvider, GroupAccountingPeriodFormProvider}
 import models.subscription.AccountingPeriod
 import models.{CheckMode, MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
-  val formProvider = new GroupAccountingPeriodFormProvider()
+  val formProvider = new GroupAccountingPeriodAmendFormProvider()
   val startDate    = LocalDate.of(2023, 12, 31)
   val endDate      = LocalDate.of(2025, 12, 31)
   "GroupAccountingPeriod Controller for View Contact details" when {

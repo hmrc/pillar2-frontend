@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.GroupAccountingPeriodFormProvider
+import forms.{GroupAccountingPeriodAmendFormProvider, GroupAccountingPeriodFormProvider}
 import models.Mode
 import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.data.Form
@@ -38,7 +38,7 @@ class GroupAccountingPeriodController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              GroupAccountingPeriodFormProvider,
+  formProvider:              GroupAccountingPeriodAmendFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupAccountingPeriodView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
