@@ -39,10 +39,9 @@
         }
         <span class="govuk-caption-l">@messages("groupTerritories.caption")</span>
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field  = form("value"),
-                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(Large),
-                items  = GroupTerritories.options
+                legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("groupTerritories.hint"))))
         )

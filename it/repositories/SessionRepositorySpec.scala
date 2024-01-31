@@ -15,7 +15,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 
-class UnauthenticatedDataRepositorySpec
+class SessionRepositorySpec
   extends  Matchers
     with DefaultPlayMongoRepositorySupport[UserAnswers]
     with ScalaFutures
@@ -31,7 +31,7 @@ class UnauthenticatedDataRepositorySpec
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1
 
-  protected override val repository = new UnauthenticatedDataRepository(
+  protected override val repository = new SessionRepository(
     mongoComponent = mongoComponent,
     appConfig      = mockAppConfig,
     clock          = stubClock

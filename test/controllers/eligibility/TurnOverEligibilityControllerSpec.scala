@@ -21,65 +21,64 @@ import forms.TurnOverEligibilityFormProvider
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.TurnOverEligibilityView
 
 class TurnOverEligibilityControllerSpec extends SpecBase {
 
   val formProvider = new TurnOverEligibilityFormProvider()
 
-  def controller(): TurnOverEligibilityController =
-    new TurnOverEligibilityController(
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewTurnOverEligibility,
-      mockSessionData
-    )
-
-  val mockFormYesData = Map("confirmForm" -> "true")
-  val mockFormNoData  = Map("confirmForm" -> "false")
-
   "Turn Over Eligibility Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val request =
-        FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
-
-      val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-      )
+      val application = applicationBuilder().build()
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
+        val view   = application.injector.instanceOf[TurnOverEligibilityView]
+        val result = route(application, request).value
+        status(result) shouldBe OK
+        contentAsString(result) mustEqual view(formProvider())(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
 
     }
 
     "must redirect to the next page when chosen Yes and submitted" in {
-
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "yes"))
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url
-
+      val application = applicationBuilder().build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url)
+            .withFormUrlEncodedBody(("value", "true"))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url
+      }
     }
 
     "must redirect to the next page when chosen No and submitted" in {
-
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "no"))
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url
-
+      val application = applicationBuilder().build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url)
+            .withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url
+      }
     }
 
-    "must show error page with 400 if no option is selected " in {
-      val formData = Map("value" -> "")
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
-      val result = controller.onSubmit()()(request)
-      status(result) shouldBe 400
+    "return bad request if invalid data is submitted" in {
+      val application = applicationBuilder().build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url).withFormUrlEncodedBody(
+          "value" -> ""
+        )
+        val result = route(application, request).value
+        status(result) shouldBe BAD_REQUEST
+      }
     }
   }
 }

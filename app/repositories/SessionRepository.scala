@@ -31,13 +31,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UnauthenticatedDataRepository @Inject() (
+class SessionRepository @Inject() (
   mongoComponent: MongoComponent,
   appConfig:      FrontendAppConfig,
   clock:          Clock
 )(implicit ec:    ExecutionContext)
     extends PlayMongoRepository[UserAnswers](
-      collectionName = "unauthenticated-user-answers",
+      collectionName = "user-answers",
       mongoComponent = mongoComponent,
       domainFormat = UserAnswers.format,
       indexes = Seq(
