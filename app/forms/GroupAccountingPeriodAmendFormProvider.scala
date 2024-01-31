@@ -20,7 +20,7 @@ import forms.mappings.Mappings
 
 import javax.inject.Inject
 
-class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
+class GroupAccountingPeriodAmendFormProvider @Inject() extends Mappings {
 
   import models.subscription.AccountingPeriod
   import play.api.data.Forms._
@@ -32,7 +32,7 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
     mapping(
       "startDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.startDate.format",
-        allRequiredKey = "groupAccountingPeriod.error.startDate.required.all",
+        allRequiredKey = "groupAccountingPeriod.amend.error.startDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.startDate.required.two",
         requiredKey = "groupAccountingPeriod.error.startDate.required",
         invalidDay = "groupAccountingPeriod.error.startDate.day.nan",
@@ -44,7 +44,7 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.dayMonthYear.minimum")),
       "endDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.endDate.format",
-        allRequiredKey = "groupAccountingPeriod.error.endDate.required.all",
+        allRequiredKey = "groupAccountingPeriod.amend.error.endDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.endDate.required.two",
         requiredKey = "groupAccountingPeriod.error.endDate.required",
         invalidDay = "groupAccountingPeriod.error.endDate.day.nan",
