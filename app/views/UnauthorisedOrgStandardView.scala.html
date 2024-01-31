@@ -24,7 +24,8 @@ govukButton: GovukButton
 
 @layout(
   pageTitle = titleNoForm(messages("task-list.title")),
-  showSignOut = false
+  showSignOut = false,
+  authorised = false
 ) {
 
 <h1 class="govuk-heading-l">@messages("unauthorised.org.standard.heading")</h1>
