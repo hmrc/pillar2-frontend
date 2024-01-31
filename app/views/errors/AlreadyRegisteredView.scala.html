@@ -23,7 +23,7 @@ layout: templates.Layout
 @()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-<h1 class="govuk-heading-xl">@messages("alreadyRegistered.heading")</h1>
+<h1 class="govuk-heading-l">@messages("alreadyRegistered.heading")</h1>
 <p class="govuk-body">@messages("alreadyRegistered.message1")</p>
 <p class="govuk-body">
     @Html(messages("alreadyRegistered.message2", s"<a class='govuk-link' href='mailto:${appConfig.pillar2mailbox}'>${appConfig.pillar2mailbox}</a>"))
