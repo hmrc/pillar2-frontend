@@ -23,7 +23,8 @@
 )
 
 
-@(pil2Id: String, currentDate:String, mneDomestic:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pil2Id: String, currentDate:String, mneDomestic:MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
@@ -51,7 +52,7 @@
     <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.next")</h2>
     <p class="govuk-body">
     @messages("registrationConfirmation.now")
-    <a class="govuk-link" href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"> @messages("registrationConfirmation.link-home")</a>.
+    <a class="govuk-link" href="@controllers.DashboardController.onPageLoad"> @messages("registrationConfirmation.link-home")</a>.
     </p>
 
     }

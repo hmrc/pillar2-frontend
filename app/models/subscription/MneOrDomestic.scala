@@ -32,6 +32,9 @@ object MneOrDomestic extends Enumerable.Implicits {
     UkAndOther
   )
 
+
+
+
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
       content = Text(messages(s"mneOrDomestic.${value.toString}")),

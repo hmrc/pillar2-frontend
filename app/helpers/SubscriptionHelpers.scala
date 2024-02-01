@@ -195,4 +195,5 @@ trait SubscriptionHelpers {
         }
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
 }

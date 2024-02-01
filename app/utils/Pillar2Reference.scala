@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package utils
 
-import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 
-case class SessionRequest[A](request: Request[A], userId: String) extends WrappedRequest[A](request)
+object Pillar2Reference {
+  def getPillar2ID(enrolments: Option[Set[Enrolment]]): Option[String] = enrolments.flatMap { enrolments =>
+    enrolments
+      .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+      .map(_.value)
+  }
+
+}
