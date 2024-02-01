@@ -308,4 +308,8 @@ GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-det
 
 GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
+
+GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+
