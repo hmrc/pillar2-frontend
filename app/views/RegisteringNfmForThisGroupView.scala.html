@@ -30,7 +30,8 @@
 
 @layout(pageTitle = title(form, messages("registeringNfmForThisGroup.title")),
     showSignOut = false,
-    timeout = false
+    timeout = false,
+    authorised = false
 ) {
 
     @formHelper(action = eligibility.routes.RegisteringNfmForThisGroupController.onSubmit, 'autoComplete -> "off") {

@@ -27,7 +27,7 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false) {
+@layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false, authorised = false) {
 
     @formHelper(action = eligibility.routes.TurnOverEligibilityController.onSubmit, 'autoComplete -> "off") {
 
