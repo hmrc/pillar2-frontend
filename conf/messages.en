@@ -57,7 +57,7 @@ cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up 
 
 
 
-upeRegisteredAddress.title=What is the registered office address of {0}?
+upeRegisteredAddress.title=What is the registered office address?
 upeRegisteredAddress.heading=What is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
@@ -383,7 +383,7 @@ nfmNameRegistration.change.hidden = What is the name of the nominated filing mem
 
 
 
-nfmRegisteredAddress.title = What is the registered office address of {0}?
+nfmRegisteredAddress.title = What is the registered office address?
 nfmRegisteredAddress.heading = What is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
 nfmRegisteredAddress.addressLine1 = Address line 1
