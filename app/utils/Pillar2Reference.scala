@@ -16,7 +16,7 @@
 
 package utils
 
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.Enrolment
 
 object Pillar2Reference {
   def getPillar2ID(enrolments: Option[Set[Enrolment]]): Option[String] = enrolments.flatMap { enrolments =>

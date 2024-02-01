@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Pillar2SessionKeys
+import utils.{Pillar2Reference, Pillar2SessionKeys}
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -50,12 +50,12 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
-    val userId       = request.userId
-    val showPayments = appConfig.showPaymentsSection
+    val optionPillar2Reference = Pillar2Reference.getPillar2ID(request.enrolments).orElse(request.session.get("plrId"))
+    val userId                 = request.userId
+    val showPayments           = appConfig.showPaymentsSection
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    plrReference match {
+    optionPillar2Reference match {
       case Some(ref) =>
         readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref)).flatMap {
           case Right(_) =>
@@ -98,13 +98,5 @@ class DashboardController @Inject() (
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
-
-  private def extractPlrReference(enrolmentsOption: Option[Set[Enrolment]]): Option[String] =
-    enrolmentsOption.flatMap { enrolments =>
-      enrolments
-        .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
-        .map(_.value)
-    }
 
 }

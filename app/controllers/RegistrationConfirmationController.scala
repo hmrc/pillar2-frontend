@@ -43,7 +43,7 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val optionPillar2Reference = Pillar2Reference.getPillar2ID(request.enrolments)
+    val optionPillar2Reference = Pillar2Reference.getPillar2ID(request.enrolments).orElse(request.session.get("plrId"))
     val currentDate            = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
@@ -53,9 +53,5 @@ class RegistrationConfirmationController @Inject() (
       } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
-//    val mneDomestic = request.session.data.get(Pillar2SessionKeys.updateMneOrDomestic) match {
-//      case Some("ukAndOther") => appConfig.registrationControllerMne "Domestic Top-up Tax and Multinational Top-up Tax"
-//      case _                  => appConfig.registrationControllerDomestic "Domestic Top-up Tax"
-//    }
 
 }

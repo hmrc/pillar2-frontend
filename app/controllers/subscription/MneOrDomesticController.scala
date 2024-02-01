@@ -76,7 +76,7 @@ class MneOrDomesticController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
-            .withSession((sessionData.updateMneOrDomestic(value.toString)))
+            .withSession(sessionData.updateMneOrDomestic(value.toString))
       )
   }
 

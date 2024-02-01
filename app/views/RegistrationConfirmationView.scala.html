@@ -23,8 +23,7 @@
 )
 
 
-@(pil2Id: String, currentDate:String, mneDomestic:MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
+@(pil2Id: String, currentDate:String, mneOrDomestic:MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
@@ -39,7 +38,7 @@
     <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.reg-date") @currentDate</h2>
 
     <p class="govuk-body">
-    @messages("registrationConfirmation.p1", mneDomestic)
+    @messages("registrationConfirmation.p1", messages(s"mneOrDom.${mneOrDomestic}"))
     </p>
     <p class="govuk-body"><strong>@messages("registrationConfirmation.p2")</strong></p>
 
@@ -52,7 +51,7 @@
     <h2 class="govuk-heading-s govuk-!-margin-top-5">@messages("registrationConfirmation.next")</h2>
     <p class="govuk-body">
     @messages("registrationConfirmation.now")
-    <a class="govuk-link" href="@controllers.DashboardController.onPageLoad"> @messages("registrationConfirmation.link-home")</a>.
+    <a class="govuk-link" href="@controllers.routes.DashboardController.onPageLoad"> @messages("registrationConfirmation.link-home")</a>.
     </p>
 
     }
