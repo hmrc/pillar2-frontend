@@ -34,7 +34,7 @@
     stylesheets: Stylesheets
 )
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
 
