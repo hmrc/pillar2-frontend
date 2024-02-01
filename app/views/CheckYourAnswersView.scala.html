@@ -23,7 +23,7 @@
 formHelper: FormWithCSRF,
 )
 
-@(listUpe: SummaryList,listNfm: SummaryList, furtherRegistrationDetailsList:SummaryList, listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listUpe: SummaryList,listNfm: SummaryList, furtherRegistrationDetailsList:SummaryList, listPrimary: SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
@@ -45,15 +45,11 @@ formHelper: FormWithCSRF,
     @govukSummaryList(listPrimary)
 
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
-    @govukSummaryList(addSecondaryContactList)
 
-    @if(listSecondary.rows.length!=0){
     @govukSummaryList(listSecondary)
-    }
-    @if(address.rows.length!=0){
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
     @govukSummaryList(address)
-    }
+
 
     <h2 class="govuk-heading-m">@messages("checkYourAnswers.submit.registration")</h2>
     <p class="govuk-body">@messages("checkYourAnswers.submit.p")</p>

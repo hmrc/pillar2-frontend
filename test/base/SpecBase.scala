@@ -38,7 +38,9 @@ import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+
 import uk.gov.hmrc.auth.core.Enrolment
+
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils

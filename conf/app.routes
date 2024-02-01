@@ -3,7 +3,7 @@
 ->          /hmrc-frontend                                                              hmrcfrontend.Routes
 
 GET         /                                                                           controllers.IndexController.onPageLoad
-GET         /task-list/register-for-global-minimum-tax                                  controllers.TaskListController.onPageLoad
+GET         /check-progress/register-your-group                                  controllers.TaskListController.onPageLoad
 
 
 GET         /assets/*file                                                               controllers.Assets.versioned(path="/public", file: Asset)
@@ -73,8 +73,8 @@ GET         /business-matching/ultimate-parent/no-id/check-answers              
 GET         /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onPageLoad
 POST        /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onSubmit
 
-GET         /eligibility/global-gross-revenue                                           controllers.eligibility.TurnOverEligibilityController.onPageLoad
-POST        /eligibility/global-gross-revenue                                           controllers.eligibility.TurnOverEligibilityController.onSubmit
+GET         /eligibility/group-consolidated-annual-revenues                                          controllers.eligibility.TurnOverEligibilityController.onPageLoad
+POST        /eligibility/group-consolidated-annual-revenues                                          controllers.eligibility.TurnOverEligibilityController.onSubmit
 
 GET         /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
 POST        /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onSubmit
@@ -99,7 +99,7 @@ POST        /eligibility/nfm                                                    
 GET         /eligibility/service-not-suitable/not-upe-or-nfm                            controllers.eligibility.KbMnIneligibleController.onPageLoad
 
 GET         /eligibility/service-not-suitable/not-active-in-uk                          controllers.eligibility.KbUKIneligibleController.onPageLoad
-GET         /eligibility/kb-750-ineligible                                              controllers.eligibility.Kb750IneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/under-750-million                          controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
 GET         /account/sign-out-survey                                                    controllers.auth.AuthController.signOut
@@ -115,10 +115,10 @@ GET         /errors/eis                                                         
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
 GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
-GET        /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/ultimate-parent/uk-based/org-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/ultimate-parent/uk-based/change-org-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/ultimate-parent/uk-based/change-entity-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/ultimate-parent/uk-based/change-entity-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
@@ -146,10 +146,10 @@ POST       /business-matching/filing-member/no-id/input-email                   
 GET        /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/uk-based/org-type                           controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/uk-based/org-type                           controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/uk-based/change-org-type                    controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/uk-based/change-org-type                    controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /business-matching/filing-member/uk-based/entity-type                          controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-matching/filing-member/uk-based/entity-type                          controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /business-matching/filing-member/uk-based/change-entity-type                   controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /business-matching/filing-member/uk-based/change-entity-type                   controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
@@ -179,17 +179,17 @@ GET         /manage-account/further-details/change-group-status                 
 POST       /manage-account/further-details/change-group-status                  controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details/content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/content                             controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details                            controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
 GET         /contact-details/chane-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/use-contact                       controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-use-contact                controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-use-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/primary-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/primary-contact                       controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-primary-contact                controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-primary-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = NormalMode)
@@ -304,10 +304,11 @@ POST      /manage-account/contact-details/address/change-input                  
 
 GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad
 
-GET        /business-matching/ultimate-parent/uk-based/error/fail                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
-GET        /business-matching/filing-member/uk-based/error/fail                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
+GET        /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
+GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
 
-GET        /business-matching/ultimate-parent/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadUpe
-GET        /business-matching/filing-member/uk-based/error/no-match                 controllers.GrsRegistrationFailedController.onPageLoadNfm
-GET        /errors/restart-error                                                  controllers.BookmarkPreventionController.onPageLoad
+GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
+GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
+GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
