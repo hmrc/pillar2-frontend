@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{GroupAccountingPeriodAmendFormProvider, GroupAccountingPeriodFormProvider}
+import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.data.Form
@@ -38,14 +38,14 @@ class GroupAccountingPeriodController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              GroupAccountingPeriodAmendFormProvider,
+  formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupAccountingPeriodView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider()
+  def form = formProvider(true)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
