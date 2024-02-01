@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{GroupAccountingPeriodAmendFormProvider, GroupAccountingPeriodFormProvider}
+import forms.GroupAccountingPeriodFormProvider
 import models.subscription.AccountingPeriod
 import models.{CheckMode, MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
-  val formProvider = new GroupAccountingPeriodAmendFormProvider()
+  val formProvider = new GroupAccountingPeriodFormProvider()
   val startDate    = LocalDate.of(2023, 12, 31)
   val endDate      = LocalDate.of(2025, 12, 31)
   "GroupAccountingPeriod Controller for View Contact details" when {
@@ -52,7 +52,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true), CheckMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -69,7 +69,11 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(date), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), CheckMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -123,7 +127,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
