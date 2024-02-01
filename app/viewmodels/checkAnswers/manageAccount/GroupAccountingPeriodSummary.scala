@@ -29,9 +29,6 @@ object GroupAccountingPeriodSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(subAccountingPeriodPage).map { answer =>
-      val startDate = HtmlFormat.escape(answer.startDate.toString)
-      val endDate   = HtmlFormat.escape(answer.endDate.toString)
-      val value     = startDate + "<br>" + endDate
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent("")),
