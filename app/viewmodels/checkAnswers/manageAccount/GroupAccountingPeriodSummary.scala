@@ -34,12 +34,12 @@ object GroupAccountingPeriodSummary {
       val value     = startDate + "<br>" + endDate
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent("")).withCssClass("account-period"),
+        value = ValueViewModel(HtmlContent("")),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )
-      ).withCssClass("no-border-bottom-account-period")
+      ).withCssClass("no-border-bottom")
 
     }
 
