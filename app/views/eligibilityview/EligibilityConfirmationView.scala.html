@@ -28,7 +28,8 @@
         pageTitle    = titleNoForm(messages("eligibilityconfirmation.title")),
         showBackLink = false,
         showSignOut = false,
-        timeout = false
+        timeout = false,
+        authorised = false
     ) {
         @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
 
