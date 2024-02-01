@@ -19,20 +19,13 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.{EnrolmentInfo, SubscriptionCreateError}
-import models.fm.JourneyType
 import models.registration.RegistrationInfo
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{FmSafeIDPage, NominateFilingMemberPage, UpeRegInformationPage, fmRegisteredInUKPage, upeRegisteredInUKPage}
-import play.api.Application
+import pages._
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
-import repositories.SessionRepository
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class SubscriptionServiceSpec extends SpecBase {
