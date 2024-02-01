@@ -163,16 +163,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           enrolmentsSet
         )
 
-        val dashboardController = new DashboardController(
-          mockUserAnswersConnectors,
-          mockDataRetrievalAction,
-          customIdentifierAction,
-          mockDataRequiredAction,
-          mockReadSubscriptionService,
-          mockControllerComponents,
-          mockDashboardView
-        )(executionContext, appConfig)
-
         when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
 
         when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))

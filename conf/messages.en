@@ -154,6 +154,34 @@ grs.registration.error.b31 =  You can
 grs.registration.error.b32 =  go back to select the entity type
 grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
 
+payment.dashboard.title= Pay your Pillar 2 top-up taxes
+payment.dashboard.header= Pay your Pillar 2 top-up taxes
+payment.dashboard.insetText= You have no payments due.
+payment.dashboard.message1= You can make a voluntary payment based on self-assessed liability.
+payment.dashboard.header2= How to make a payment
+payment.dashboard.message2= Payments can be made by bank transfer.
+payment.dashboard.message3= To make a bank transfer payment, you can visit your bank’s website, use their mobile app, or go to a branch and use HMRC’s banking details.
+payment.dashboard.timeline-summary= How long it takes
+payment.dashboard.timeline-content1= Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays.
+payment.dashboard.timeline-content2= CHAPS payments usually reach HMRC the same working day if you pay within your bank’s processing times.
+payment.dashboard.timeline-content3= Bacs payments usually take 3 working days.
+payment.dashboard.site.warning= Use {0} as your payment reference. HMRC will use this to match your payment.
+payment.dashboard.warning.message = You must use {0} as your payment reference. HMRC will use this to match your payment.
+payment.dashboard.outsideUK-summary= Make a payment from outside the UK
+payment.dashboard.table.row_11= 08 32 10
+payment.dashboard.table.row_21= 12001020
+payment.dashboard.table.row_31= HMRC Shipley
+payment.dashboard.table.row_12= Sort code
+payment.dashboard.table.row_22= Account number
+payment.dashboard.table.row_32= Account name
+payment.dashboard.table.caption= HMRC’s bank details
+payment.dashboard.table2.row_12= BARCGB22
+payment.dashboard.table2.row_11= Bank identifier code (BIC)
+payment.dashboard.table2.row_22= GB03BARC 20114783977692
+payment.dashboard.table2.row_21= Account number(IBAN)
+payment.dashboard.table2.row_32= HMRC Shipley
+payment.dashboard.table2.row_31= Account name
+payment.dashboard.table2.caption= HMRC’s overseas bank details
 
 
 
@@ -687,7 +715,7 @@ dashboard.registrationDate = Registration date:
 dashboard.upe = Ultimate parent entity:
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due
-dashboard.voluntaryPayment = Make a voluntary payment
+dashboard.voluntaryPayment = Make a payment
 dashboard.paymentHistory = View your payment history
 dashboard.requestPayment = Request a repayment
 dashboard.manageAccount = Manage your account

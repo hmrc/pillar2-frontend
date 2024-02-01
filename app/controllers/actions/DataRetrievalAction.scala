@@ -41,7 +41,7 @@ class DataRetrievalActionImpl @Inject() (
         request.request,
         request.userId,
         Some(UserAnswers(id = request.userId, data = data.getOrElse(Json.obj()).as[JsObject])),
-        Some(request.enrolments.toSet)
+        Some(request.enrolments)
       )
     }
   }
