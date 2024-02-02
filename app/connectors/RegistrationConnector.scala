@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.registration.RegistrationWithoutIDResponse
-import models.{ApiError, InternalServerError, SafeId, UserAnswers}
+import models.{ApiError, InternalServerError_, SafeId, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -57,7 +57,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
 
       case errorResponse =>
         logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - UPE register without ID call failed with status ${errorResponse.status}")
-        Left(InternalServerError)
+        Left(InternalServerError_)
     }
 
   def fmRegisterationWithoutID(id: String, userAnswers: UserAnswers)(implicit
@@ -83,6 +83,6 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         logger.warn(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Filing Member registration without ID call failed with status ${errorResponse.status}"
         )
-        Left(InternalServerError)
+        Left(InternalServerError_)
     }
 }

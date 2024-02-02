@@ -17,14 +17,16 @@
 package services
 
 import connectors.SubscriptionConnector
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
-import models.{ApiError, SubscriptionCreateError}
+import models.{ApiError, DuplicateSubmissionError, InternalServerError_}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import play.api.Logging
+import play.api.http.Status.CONFLICT
+import play.api.libs.json.JsSuccess
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.is2xx
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) extends Logging {
 
@@ -32,16 +34,32 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     hc:                              HeaderCarrier,
     ec:                              ExecutionContext
   ): Future[Either[ApiError, SubscriptionResponse]] =
-    //We may need to check Read Subscription here.
-    subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
-      case Some(subscriptionSuccessResponse) =>
-        logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} " +
-            s"with reference ${subscriptionSuccessResponse.plrReference}"
-        )
-        Right(subscriptionSuccessResponse)
-      case None =>
-        Left(SubscriptionCreateError)
-    }
+    subscriptionConnector
+      .createSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId))
+      .flatMap { httpResponse =>
+        httpResponse.status match {
+          case status if is2xx(status) =>
+            httpResponse.json.validate[SuccessResponse] match {
+              case JsSuccess(successResponse, _) =>
+                Future.successful(Right(successResponse.success: SubscriptionResponse))
+              case _ =>
+                logger.error("Failed to deserialize success response")
+                Future.successful(Left(InternalServerError_))
+
+            }
+          case CONFLICT =>
+            logger.error("Conflict error occurred")
+            Future.successful(Left(DuplicateSubmissionError))
+
+          case _ =>
+            logger.warn(s"Unhandled status received: ${httpResponse.status}")
+            Future.successful(Left(InternalServerError_))
+        }
+      }
+      .recover { case e: Exception =>
+        logger.error(s"Exception occurred during subscription creation: ${e.getMessage}", e)
+        Left(InternalServerError_)
+
+      }
+
 }
