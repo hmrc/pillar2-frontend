@@ -17,15 +17,17 @@
 package forms.rfm
 
 import forms.mappings.Mappings
+import models.Confirmation
 import play.api.data.Form
+import play.api.data.Forms.set
 
 import javax.inject.Inject
 
 class StartPageFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(errorKey: String): Form[Set[Confirmation]] =
     Form(
-      "value" -> boolean("tradingBusinessConfirmation.error.required")
+      "confirmation" -> set(enumerable[Confirmation](errorKey)).verifying(nonEmptySet(errorKey))
     )
 
 }

@@ -14,80 +14,40 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.auth.User
+@import config.FrontendAppConfig
 
-@this(mainTemplate: MainTemplate,
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
     govukCheckboxes : GovukCheckboxes,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukBackLink: GovukBackLink,
-    govukButton: GovukButton,
-    formWithCSRF: FormWithCSRF)
+    govukButton: GovukButton)
 
-@(form: Form[Boolean])(implicit messages: Messages, appConfig: AppConfig, user: User[_])
+@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@statement = {
-  @if(user.isAgent) {
-    @messages("rfm.startPage.agentStatement")
-  } else {
-    @messages("rfm.startPage.statement")
-  }
-}
+@layout(pageTitle = title(form, messages("rfm.startPage.title")), showSignOut = false, timeout = false ) {
 
-@govUkBackLink = {
-@govukBackLink(BackLink(
-content = Text(messages("common.back")),
-href = appConfig.returnDeadlinesUrl
-))
-}
+    @formHelper(action = controllers.rfm.routes.StartPageController.onSubmit, 'autoComplete -> "off") {
 
-@mainTemplate(
-    if(form.errors.nonEmpty) messages("common.error.titlePrefix",
-        messages("rfm.startPage.title")) else messages("rfm.startPage.title"),
-    appConfig = appConfig,
-    backLinkContent = Some(govUkBackLink),
-    user = Some(user)) {
-
-    @if(form.hasErrors) {
-        @govukErrorSummary(ErrorSummary(
-            title = Text(messages("error.summary.title")),
-            errorList = form.errors.map { error =>
-            ErrorLink(
-            href = Some("#checkbox"),
-            content = Text(messages(error.message))
-            )
-         }
-        ))
-    }
-
-  @formWithCSRF(action = ???){
-        @govukCheckboxes(Checkboxes(
-            fieldset = Some(Fieldset(
-            legend = Some(Legend(
-            content = Text(messages("rfm.startPage.title")),
-            classes = "govuk-fieldset__legend--l",
-            isPageHeading = true
-            ))
-        )),
-        name = "honestyDeclaration",
-        items = Seq(
-            CheckboxItem(
-                id = Some("checkbox"),
-                name = Some("checkbox"),
-                content = HtmlContent(statement),
-                value = "true",
-                checked = form("checkbox").value.contains("true")
-            )
-        ),
-        errorMessage = form.errors.headOption.map { error =>
-        ErrorMessage(content = Text(messages(error.message)))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
         }
-    ))
 
-        @govukButton(Button(
-            content = Text(messages("common.continue"))
-        ))
+        <h2 class="govuk-heading-m">@messages("rfm.startPage.legend")</h2>
 
-  }
+        @govukCheckboxes(
+            CheckboxesViewModel(
+                form  = form,
+                name = "confirmation",
+                items = Confirmation.checkboxItems("rfm.startPage.confirm"),
+                legend = LegendViewModel("")
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

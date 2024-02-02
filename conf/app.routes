@@ -311,3 +311,6 @@ GET        /business-matching/filing-member/uk-based/error/mismatching-details  
 GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+
+GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
+POST       /replace-filing-member/start                                         controllers.rfm.StartPageController.onSubmit

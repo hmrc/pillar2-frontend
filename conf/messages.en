@@ -758,3 +758,6 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
+rfm.startPage.legend = Replace a filing member
+rfm.startPage.confirm = Confirm you have read all the above and are able to act as a new filing member for this group
+rfm.startPage.error = You must select the checkbox to continue
