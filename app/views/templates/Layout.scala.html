@@ -38,28 +38,23 @@
 
 @head = {
 
-@hmrcHead(
-
-headBlock = if(timeout) { Some(
-hmrcTimeoutDialog(TimeoutDialog(
-timeout             = Some(appConfig.timeout),
-countdown           = Some(appConfig.countdown),
-keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
-keepAliveButtonText = Some(messages("timeout.keepAlive")),
-timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
-signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
-signOutButtonText   = Some(messages("timeout.signOut")),
-title               = Some(messages("timeout.title")),
-message             = Some(messages("timeout.message"))
-)))
-} else None
-)
-
-<link href="@routes.Assets.versioned("stylesheets/application.css")" media="all" rel="stylesheet" type="text/css" />
-}
-
-@additionalScripts = {
-<script src='@controllers.routes.Assets.versioned("javascripts/application.js")' @CSPNonce.attr></script>
+    @hmrcHead(
+        headBlock = if(timeout) { Some(
+            hmrcTimeoutDialog(TimeoutDialog(
+                timeout             = Some(appConfig.timeout),
+                countdown           = Some(appConfig.countdown),
+                keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
+                keepAliveButtonText = Some(messages("timeout.keepAlive")),
+                timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
+                signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
+                signOutButtonText   = Some(messages("timeout.signOut")),
+                title               = Some(messages("timeout.title")),
+                message             = Some(messages("timeout.message"))
+                )
+            ))
+        } else None
+    )
+    @stylesheets()
 }
 
 @beforeContent = {
@@ -95,7 +90,5 @@ message             = Some(messages("timeout.message"))
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
-    scriptsBlock       = Some(hmrcScripts(
-        scriptsBlock = Some(additionalScripts)
-    ))
+    scriptsBlock = Some(hmrcScripts())
 )(content)
