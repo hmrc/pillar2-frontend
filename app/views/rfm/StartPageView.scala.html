@@ -1,0 +1,93 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.auth.User
+
+@this(mainTemplate: MainTemplate,
+    govukCheckboxes : GovukCheckboxes,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukBackLink: GovukBackLink,
+    govukButton: GovukButton,
+    formWithCSRF: FormWithCSRF)
+
+@(form: Form[Boolean])(implicit messages: Messages, appConfig: AppConfig, user: User[_])
+
+@statement = {
+  @if(user.isAgent) {
+    @messages("rfm.startPage.agentStatement")
+  } else {
+    @messages("rfm.startPage.statement")
+  }
+}
+
+@govUkBackLink = {
+@govukBackLink(BackLink(
+content = Text(messages("common.back")),
+href = appConfig.returnDeadlinesUrl
+))
+}
+
+@mainTemplate(
+    if(form.errors.nonEmpty) messages("common.error.titlePrefix",
+        messages("rfm.startPage.title")) else messages("rfm.startPage.title"),
+    appConfig = appConfig,
+    backLinkContent = Some(govUkBackLink),
+    user = Some(user)) {
+
+    @if(form.hasErrors) {
+        @govukErrorSummary(ErrorSummary(
+            title = Text(messages("error.summary.title")),
+            errorList = form.errors.map { error =>
+            ErrorLink(
+            href = Some("#checkbox"),
+            content = Text(messages(error.message))
+            )
+         }
+        ))
+    }
+
+  @formWithCSRF(action = ???){
+        @govukCheckboxes(Checkboxes(
+            fieldset = Some(Fieldset(
+            legend = Some(Legend(
+            content = Text(messages("rfm.startPage.title")),
+            classes = "govuk-fieldset__legend--l",
+            isPageHeading = true
+            ))
+        )),
+        name = "honestyDeclaration",
+        items = Seq(
+            CheckboxItem(
+                id = Some("checkbox"),
+                name = Some("checkbox"),
+                content = HtmlContent(statement),
+                value = "true",
+                checked = form("checkbox").value.contains("true")
+            )
+        ),
+        errorMessage = form.errors.headOption.map { error =>
+        ErrorMessage(content = Text(messages(error.message)))
+        }
+    ))
+
+        @govukButton(Button(
+            content = Text(messages("common.continue"))
+        ))
+
+  }
+}
