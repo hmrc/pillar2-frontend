@@ -18,13 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{subMneOrDomesticPage, subPrimaryContactNamePage}
+import pages.subMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Pillar2Reference, Pillar2SessionKeys}
+import utils.Pillar2Reference
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
 
