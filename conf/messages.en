@@ -52,7 +52,10 @@ cannotReturnAfterSubscriptionError.message= You have successfully registered to 
 cannotReturnAfterSubscriptionError.message2= You can now
 cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
 
-
+alreadyRegistered.title= Your group is already registered
+alreadyRegistered.heading= Your group is already registered
+alreadyRegistered.message1= You will need to contact your administrator to give you access.
+alreadyRegistered.message2= You can email {0} if you are having problems accessing the service.
 
 
 
