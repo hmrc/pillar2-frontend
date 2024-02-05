@@ -45,7 +45,7 @@ class GroupAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider()
+  def form = formProvider(true)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {

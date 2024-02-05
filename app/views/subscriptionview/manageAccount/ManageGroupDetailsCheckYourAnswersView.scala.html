@@ -27,6 +27,7 @@
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")),showBackLink = false) {
+    <div class="group-details-check-answer">
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
         <h1 class="govuk-heading-l">@messages("manageFurtherGroupDetail.checkYourAnswers.heading")</h1>
 
@@ -40,6 +41,7 @@
 
 
     }
+    </div>
 
 }
 
