@@ -313,5 +313,11 @@ GET        /business-matching/filing-member/uk-based/error/mismatching-details  
 
 
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+
+GET        /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
+POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
+GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
+POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 

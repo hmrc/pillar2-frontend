@@ -768,3 +768,8 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
+havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
+havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
+
