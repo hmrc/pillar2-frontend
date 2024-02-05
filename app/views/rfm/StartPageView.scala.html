@@ -35,6 +35,28 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
         }
 
+        <span class="govuk-caption-l">@messages("rfm.heading.caption")</span>
+        <h1 class="govuk-heading-l">@messages("rfm.startPage.heading")</h1>
+        <p class="govuk-body">@messages("rfm.startPage.p1")</p>
+        <h2 class="govuk-heading-m">@messages("rfm.startPage.subHeading1")</h2>
+        <p class="govuk-body">@messages("rfm.startPage.p2")</p>
+        <p class="govuk-body">@messages("rfm.startPage.p3") <a class="govuk-link" href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax">
+    @messages("rfm.startPage.p3.link")</a>.</p>
+        <h2 class="govuk-heading-m">@messages("rfm.startPage.subHeading2")</h2>
+        <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+            <li>@messages("rfm.startPage.b1")</li>
+            <li>@messages("rfm.startPage.b2")</li>
+        </ul>
+        <h2 class="govuk-heading-m">@messages("rfm.startPage.subHeading3")</h2>
+        <p class="govuk-body">@messages("rfm.startPage.p4")</p>
+        <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+            <li>@messages("rfm.startPage.b3")</li>
+            <li>@messages("rfm.startPage.b4")</li>
+            <li>@messages("rfm.startPage.b5")</li>
+            <li>@messages("rfm.startPage.b6")</li>
+            <li>@messages("rfm.startPage.b7")</li>
+        </ul>
+
         <h2 class="govuk-heading-m">@messages("rfm.startPage.legend")</h2>
 
         @govukCheckboxes(
@@ -47,7 +69,7 @@
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.start"))
         )
     }
 }
