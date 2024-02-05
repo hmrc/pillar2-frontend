@@ -76,7 +76,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     if (request.userAnswers.manageContactDetailStatus) {
       Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
 

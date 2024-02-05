@@ -12,7 +12,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
 
-GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
@@ -310,9 +310,9 @@ GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-det
 
 GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
-
-
+GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+
 
 
 
