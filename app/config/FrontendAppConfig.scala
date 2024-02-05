@@ -91,6 +91,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val groupDetailLink:                String = servicesConfig.getString("urls.groupDetailLink")
   val contactDetailsLink:             String = servicesConfig.getString("urls.contactDetailsLink")
   val cyaLink:                        String = servicesConfig.getString("urls.cyaLink")
+  val serviceStartLink:               String = servicesConfig.getString("urls.serviceStartLink")
 
   def languageMap: Map[String, Lang] =
     if (languageTranslationEnabled) {
