@@ -69,7 +69,7 @@ class ContactCheckYourAnswersController @Inject() (
     if (request.userAnswers.contactDetailStatus == RowStatus.Completed) {
       Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
 }

@@ -12,7 +12,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
 
-GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
@@ -316,6 +316,7 @@ GET        /errors/return                                                       
 GET        /bta/register                                                         controllers.bta.NoPlrIdGuidanceController.onPageLoad
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+
 
 
 

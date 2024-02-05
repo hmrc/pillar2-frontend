@@ -56,7 +56,7 @@ class ContactNfmByTelephoneController @Inject() (
       }
       Ok(view(preparedForm, mode, name))
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
 
   }
 

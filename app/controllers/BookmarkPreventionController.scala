@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package controllers
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{BookmarkPreventionView, IncompleteSubscriptionDataView}
+import views.html.BookmarkPreventionView
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-class InprogressTaskListController @Inject() (val controllerComponents: MessagesControllerComponents, view: IncompleteSubscriptionDataView)(implicit
+class BookmarkPreventionController @Inject() (val controllerComponents: MessagesControllerComponents, view: BookmarkPreventionView)(implicit
   appConfig:                                                            FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {

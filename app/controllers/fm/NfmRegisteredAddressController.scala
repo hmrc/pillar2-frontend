@@ -55,7 +55,7 @@ class NfmRegisteredAddressController @Inject() (
         }
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

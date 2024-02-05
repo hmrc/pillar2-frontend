@@ -58,7 +58,7 @@ class NfmEntityTypeController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
     }
   }
 
