@@ -52,7 +52,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true), CheckMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -69,7 +69,11 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(date), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), CheckMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -81,7 +85,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
@@ -123,7 +127,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 

@@ -21,3 +21,10 @@
     padding-top:0 !important;
     font-weight: 600 !important;
 }
+
+@media (min-width: 40.0625em) {
+  .group-details-check-answer .govuk-summary-list__key
+  {
+    width: 42%;
+  }
+}
