@@ -312,9 +312,7 @@ GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
 GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
-<<<<<<< HEAD
-GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
-=======
+
 
 
 
@@ -327,4 +325,3 @@ POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2To
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
->>>>>>> main
