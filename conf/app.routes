@@ -12,7 +12,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
