@@ -54,7 +54,7 @@ class CaptureSubscriptionAddressController @Inject() (
       }
       Ok(view(preparedForm, mode, countryOptions.options()))
     } else {
-      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

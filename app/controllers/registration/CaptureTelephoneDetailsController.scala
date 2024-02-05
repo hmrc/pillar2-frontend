@@ -57,7 +57,7 @@ class CaptureTelephoneDetailsController @Inject() (
 
       Ok(view(preparedForm, mode, contactName))
     })
-      .getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
