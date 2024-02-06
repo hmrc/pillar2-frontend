@@ -132,7 +132,7 @@ class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
             .withFormUrlEncodedBody(("value", "false"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad.url
       }
     }
     "must populate the view correctly on a GET when the question has previously been answered" in {
