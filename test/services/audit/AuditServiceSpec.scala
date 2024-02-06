@@ -17,17 +17,12 @@
 package services.audit
 
 import base.SpecBase
-import connectors.SubscriptionConnector
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Helpers.await
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 import scala.concurrent.Future

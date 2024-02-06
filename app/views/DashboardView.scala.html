@@ -60,18 +60,18 @@
 
  <p class="govuk-body">@messages("dashboard.noPayment")</p>
 
- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">
+ <p class="govuk-body"><a class="govuk-link" href="@controllers.routes.MakeAPaymentDashboardController.onPageLoad">
  @messages("dashboard.voluntaryPayment")</a></p>
 
- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">
- @messages("dashboard.paymentHistory")
- </a></p>
+<!-- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">-->
+<!-- @messages("dashboard.paymentHistory")-->
+<!-- </a></p>-->
 
- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">
- @messages("dashboard.requestPayment")
- </a></p>
+<!-- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">-->
+<!-- @messages("dashboard.requestPayment")-->
+<!-- </a></p>-->
 
- <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+<!-- <hr class="govuk-section-break govuk-section-break&#45;&#45;l govuk-section-break&#45;&#45;visible">-->
 }
   <!--MANAGE YOUR TUT SECTION-->
  <h2 class="govuk-heading-m">@messages("dashboard.manageAccount")</h2>
@@ -88,8 +88,11 @@
 
  <p class="govuk-body"> @messages("dashboard.p1")</p>
 
- <p class="govuk-body">@messages("dashboard.p2")
-  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax" >@messages("dashboard.link")</a>
+ <p class="govuk-body"> @messages("dashboard.p2") <strong>@messages("dashboard.p3")</strong></p>
+ <p class="govuk-body"> @messages("dashboard.p4")</p>
+
+ <p class="govuk-body">@messages("dashboard.p5")
+  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax" >@messages("dashboard.link")</a>.
  </p>
 
 }

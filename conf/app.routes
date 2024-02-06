@@ -12,7 +12,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                                                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
@@ -108,11 +108,13 @@ GET         /account/signed-out                                                 
 
 GET         /unauthorised                                                               controllers.UnauthorisedController.onPageLoad
 GET         /unauthorised/standard-user                                                 controllers.UnauthorisedWrongRoleController.onPageLoad
-GET         /unauthorised/individual                                                     controllers.UnauthorisedIndividualAffinityController.onPageLoad
-GET         /unauthorised/agent                                                          controllers.UnauthorisedAgentAffinityController.onPageLoad
+GET         /unauthorised/individual                                                    controllers.UnauthorisedIndividualAffinityController.onPageLoad
+GET         /unauthorised/agent                                                         controllers.UnauthorisedAgentAffinityController.onPageLoad
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
+GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
+
 
 GET        /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
@@ -308,5 +310,14 @@ GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-det
 
 GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
-GET        /errors/task-not-yet-started                                                 controllers.BookmarkPreventionController.onPageLoad
+
+
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+
+GET        /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
+POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
+GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
+POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+
+GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+

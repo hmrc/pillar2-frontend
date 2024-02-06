@@ -20,7 +20,7 @@ import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl
-import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
+import views.html.JourneyRecoveryView
 
 class JourneyRecoveryControllerSpec extends SpecBase {
 
@@ -38,10 +38,14 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val continueView = application.injector.instanceOf[JourneyRecoveryContinueView]
+          val continueView = application.injector.instanceOf[JourneyRecoveryView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(request, appConfig(application), messages(application)).toString
+          contentAsString(result) mustEqual continueView("continue", Some(continueUrl.unsafeValue))(
+            request,
+            appConfig(application),
+            messages(application)
+          ).toString
         }
       }
     }
@@ -58,10 +62,11 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val startAgainView = application.injector.instanceOf[JourneyRecoveryStartAgainView]
+          val startAgainView = application.injector.instanceOf[JourneyRecoveryView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual startAgainView()(request, appConfig(application), messages(application)).toString
+          contentAsString(result) mustEqual startAgainView("startAgain", None)(request, appConfig(application), messages(application)).toString
+
         }
       }
     }
@@ -77,10 +82,10 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val startAgainView = application.injector.instanceOf[JourneyRecoveryStartAgainView]
+          val startAgainView = application.injector.instanceOf[JourneyRecoveryView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual startAgainView()(request, appConfig(application), messages(application)).toString
+          contentAsString(result) mustEqual startAgainView("startAgain", None)(request, appConfig(application), messages(application)).toString
         }
       }
     }

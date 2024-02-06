@@ -16,23 +16,17 @@
 
 @import config.FrontendAppConfig
 @this(
-    layout: templates.Layout,
-    govukButton: GovukButton
+layout: templates.Layout
 )
 
 
-@(continueUrl: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("journeyRecovery.continue.title"))) {
+@layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
+<h1 class="govuk-heading-l">@messages("alreadyRegistered.heading")</h1>
+<p class="govuk-body">@messages("alreadyRegistered.message1")</p>
+<p class="govuk-body">
+    @Html(messages("alreadyRegistered.message2", s"<a class='govuk-link' href='mailto:${appConfig.pillar2mailbox}'>${appConfig.pillar2mailbox}</a>"))
+</p>
 
-    <h1 class="govuk-heading-xl">@messages("journeyRecovery.continue.heading")</h1>
-
-    <p class="govuk-body">@messages("journeyRecovery.continue.guidance")</p>
-
-    <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-                .asLink(continueUrl)
-        )
-    </p>
 }

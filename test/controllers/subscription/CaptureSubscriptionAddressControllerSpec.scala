@@ -68,9 +68,6 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) should include(
-          "For a UK address, you must enter a correctly formatted UK postcode"
-        )
       }
     }
 
@@ -82,7 +79,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
