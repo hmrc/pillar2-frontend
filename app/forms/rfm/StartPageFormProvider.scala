@@ -25,9 +25,9 @@ import javax.inject.Inject
 
 class StartPageFormProvider @Inject() extends Mappings {
 
-  def apply(errorKey: String): Form[Set[Confirmation]] =
+  def apply(): Form[Set[Confirmation]] =
     Form(
-      "confirmation" -> set(enumerable[Confirmation](errorKey)).verifying(nonEmptySet(errorKey))
+      "confirmation" -> set(enumerable[Confirmation]("rfm.startPage.error")).verifying(nonEmptySet("rfm.startPage.error"))
     )
 
 }

@@ -36,10 +36,15 @@ class StartPageController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Set[Confirmation]] = formProvider("rfm.startPage.error")
+  val form: Form[Set[Confirmation]] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(form)))
+    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      Future.successful(Ok(view(form)))
+    } else {
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    }
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
@@ -47,7 +52,7 @@ class StartPageController @Inject() (
       .bindFromRequest()
       .fold(
         error => Future.successful(BadRequest(view(error))),
-        _ => Future.successful(Redirect(???))
+        _ => Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
       )
   }
 }
