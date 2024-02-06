@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.{AccountingPeriod, SubscriptionResponse}
@@ -131,49 +130,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(subSecondaryEmailPage, "email@hello.com")
     .setOrException(subSecondaryPhonePreferencePage, true)
     .setOrException(subSecondaryCapturePhonePage, "123213")
-  private val filingMember =
-    FilingMember(
-      isNfmRegisteredInUK = false,
-      withoutIdRegData = Some(
-        FilingMemberNonUKData(
-          registeredFmName = "Nfm name ",
-          contactName = "Ashley Smith",
-          emailAddress = "test@test.com",
-          phonePreference = true,
-          telephone = Some("122223444"),
-          registeredFmAddress = nonUkAddress
-        )
-      )
-    )
-
-  private val sampleRegistrationInfo = RegistrationInfo(
-    crn = "CRN123456",
-    utr = "UTR654321",
-    safeId = "SAFEID789012",
-    registrationDate = None,
-    filingMember = None
-  )
-
-  private val registration = Registration(
-    isUPERegisteredInUK = false,
-    withoutIdRegData = Some(
-      WithoutIdRegData(
-        upeNameRegistration = "Paddington",
-        upeContactName = "Paddington ltd",
-        contactUpeByTelephone = false,
-        emailAddress = "example@gmail.com",
-        upeRegisteredAddress = UKAddress(
-          addressLine1 = "1",
-          addressLine2 = Some("2"),
-          addressLine3 = "3",
-          addressLine4 = Some("4"),
-          postalCode = "5",
-          countryCode = "GB"
-        )
-      )
-    ),
-    registrationInfo = Some(sampleRegistrationInfo)
-  )
 
   "Check Your Answers Controller" must {
 

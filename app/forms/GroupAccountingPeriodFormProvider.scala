@@ -28,11 +28,12 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
 
   import java.time.LocalDate
 
-  def apply(): Form[AccountingPeriod] = Form(
+  def apply(amend: Boolean = false): Form[AccountingPeriod] = Form(
     mapping(
       "startDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.startDate.format",
-        allRequiredKey = "groupAccountingPeriod.error.startDate.required.all",
+        allRequiredKey =
+          if (amend) "groupAccountingPeriod.amend.error.startDate.required.all" else "groupAccountingPeriod.error.startDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.startDate.required.two",
         requiredKey = "groupAccountingPeriod.error.startDate.required",
         invalidDay = "groupAccountingPeriod.error.startDate.day.nan",
@@ -44,7 +45,7 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.dayMonthYear.minimum")),
       "endDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.endDate.format",
-        allRequiredKey = "groupAccountingPeriod.error.endDate.required.all",
+        allRequiredKey = if (amend) "groupAccountingPeriod.amend.error.endDate.required.all" else "groupAccountingPeriod.error.endDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.endDate.required.two",
         requiredKey = "groupAccountingPeriod.error.endDate.required",
         invalidDay = "groupAccountingPeriod.error.endDate.day.nan",

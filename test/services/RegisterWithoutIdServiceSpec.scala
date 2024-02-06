@@ -76,10 +76,10 @@ class RegisterWithoutIdServiceSpec extends SpecBase {
 
     "must return InternalServerError when safe id is missing" in {
       val userAnswers = emptyUserAnswers
-      val response    = Future.successful(Left(models.InternalServerError))
+      val response    = Future.successful(Left(models.InternalServerError_))
       when(mockRegistrationConnector.upeRegisterationWithoutID(any(), any())(any(), any())).thenReturn(response)
       val result = service.sendUpeRegistrationWithoutId("id", userAnswers)
-      result.futureValue mustBe Left(models.InternalServerError)
+      result.futureValue mustBe Left(models.InternalServerError_)
     }
   }
 }

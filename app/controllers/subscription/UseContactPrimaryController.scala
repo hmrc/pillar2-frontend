@@ -60,7 +60,7 @@ class UseContactPrimaryController @Inject() (
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
         case _ => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
       }
-    }).getOrElse(Redirect(controllers.routes.BookmarkPreventionController.onPageLoad))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     contactDetail(request) match {

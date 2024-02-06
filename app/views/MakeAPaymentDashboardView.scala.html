@@ -1,0 +1,142 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
+
+@this(
+    layout: templates.Layout,
+    govukButton: GovukButton,
+    govukWarningText: GovukWarningText,
+    govukInsetText : GovukInsetText,
+    govukTable : GovukTable,
+    govukDetails : GovukDetails
+)
+
+@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+
+@howItWorksInformation= {
+<p class="govuk-body" >@messages("payment.dashboard.timeline-content1")</p>
+<p class="govuk-body" >@messages("payment.dashboard.timeline-content2")</p>
+<p class="govuk-body" >@messages("payment.dashboard.timeline-content3")</p>
+}
+
+
+
+@overseasBankDetails= {        @govukTable(Table(
+rows= Seq(Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_11"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_12"))
+)
+),
+Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_21"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_22"))
+)),
+Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_31"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table2.row_32"))
+))
+),
+caption= Some(messages("payment.dashboard.table2.caption")),
+captionClasses= "govuk-table__caption--m govuk-!-margin-bottom-5",
+firstCellIsHeader = true
+))
+}
+
+
+@layout(
+    pageTitle    = titleNoForm(messages("payment.dashboard.title")),
+    showBackLink = true
+) {
+
+
+        <h1 class="govuk-heading-l">@messages("payment.dashboard.header")</h1>
+        @govukInsetText(InsetText(content = Text(messages("payment.dashboard.insetText"))))
+        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message1")</p>
+        <h2 class="govuk-heading-m">@messages("payment.dashboard.header2")</h2>
+        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message2")</p>
+        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message3")</p>
+
+        @govukDetails(Details(
+        summary = HtmlContent(messages("payment.dashboard.timeline-summary")),
+        content = HtmlContent(howItWorksInformation)
+            ))
+
+        @govukWarningText(WarningText(
+        iconFallbackText = Some(messages("payment.dashboard.site.warning", plrID)),
+        content = HtmlContent(messages("payment.dashboard.warning.message", plrID))
+        ))
+
+
+
+        @govukTable(Table(
+        rows= Seq(Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table.row_12"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table.row_11"))
+)
+),
+Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table.row_22"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table.row_21"))
+)),
+Seq(
+TableRow(
+content= Text(messages("payment.dashboard.table.row_32"))
+),
+TableRow(
+content= Text(messages("payment.dashboard.table.row_31"))
+))
+),
+caption= Some(messages("payment.dashboard.table.caption")),
+captionClasses= "govuk-table__caption--m govuk-!-margin-bottom-5",
+firstCellIsHeader = true
+))
+
+
+
+
+        @govukDetails(Details(
+        summary = HtmlContent(messages("payment.dashboard.outsideUK-summary")),
+        content = HtmlContent(overseasBankDetails)
+        ))
+
+
+
+
+
+
+
+
+
+
+}

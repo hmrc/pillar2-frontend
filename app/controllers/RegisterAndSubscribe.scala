@@ -18,7 +18,7 @@ package controllers
 
 import connectors.UserAnswersConnectors
 import models.requests.DataRequest
-import models.{EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo, MandatoryInformationMissingError}
+import models.{DuplicateSubmissionError, EnrolmentCreationError, EnrolmentExistsError, EnrolmentInfo, MandatoryInformationMissingError}
 import pages.{NominateFilingMemberPage, UpeRegInformationPage, upeRegisteredAddressPage, upeRegisteredInUKPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -136,6 +136,7 @@ trait RegisterAndSubscribe extends Logging {
             }
           }
           .getOrElse(EnrolmentInfo(plrId = successResponse.plrReference))
+
         taxEnrolmentService.checkAndCreateEnrolment(enrolmentInfo).flatMap {
           case Right(_) =>
             userAnswersConnectors.remove(request.userId).map { _ =>
@@ -158,7 +159,9 @@ trait RegisterAndSubscribe extends Logging {
             )
             Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
         }
-
+      case Left(DuplicateSubmissionError) =>
+        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to a Duplicate Submission")
+        Future.successful(Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad))
       case Left(_) =>
         logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation failed")
         Future.successful(Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad))
