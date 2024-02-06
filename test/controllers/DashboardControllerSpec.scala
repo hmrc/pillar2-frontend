@@ -22,11 +22,9 @@ import controllers.actions.AuthenticatedIdentifierAction
 import generators.ModelGenerators
 import models.SubscriptionCreateError
 import models.requests.IdentifierRequest
-import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
+import models.subscription.ReadSubscriptionRequestParameters
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subAccountStatusPage
-import play.api.mvc.ControllerHelpers.TODO.executionContext
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -162,16 +160,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           bodyParsers,
           enrolmentsSet
         )
-
-        val dashboardController = new DashboardController(
-          mockUserAnswersConnectors,
-          mockDataRetrievalAction,
-          customIdentifierAction,
-          mockDataRequiredAction,
-          mockReadSubscriptionService,
-          mockControllerComponents,
-          mockDashboardView
-        )(executionContext, appConfig)
 
         when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
 

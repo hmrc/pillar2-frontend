@@ -20,13 +20,14 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BookmarkPreventionView
+import views.html.errors.AlreadyRegisteredView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class BookmarkPreventionController @Inject() (val controllerComponents: MessagesControllerComponents, view: BookmarkPreventionView)(implicit
-  appConfig:                                                            FrontendAppConfig
+class AlreadyRegisteredController @Inject() (val controllerComponents: MessagesControllerComponents, view: AlreadyRegisteredView)(implicit
+  ec:                                                                  ExecutionContext,
+  appConfig:                                                           FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

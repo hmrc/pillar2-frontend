@@ -34,15 +34,27 @@
     stylesheets: Stylesheets
 )
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
-    @headBlock.getOrElse(Html(""))
-    @stylesheets()
-}
 
-@additionalScripts = {
-    <script src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+    @hmrcHead(
+        headBlock = if(timeout) { Some(
+            hmrcTimeoutDialog(TimeoutDialog(
+                timeout             = Some(appConfig.timeout),
+                countdown           = Some(appConfig.countdown),
+                keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
+                keepAliveButtonText = Some(messages("timeout.keepAlive")),
+                timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
+                signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
+                signOutButtonText   = Some(messages("timeout.signOut")),
+                title               = Some(messages("timeout.title")),
+                message             = Some(messages("timeout.message"))
+                )
+            ))
+        } else None
+    )
+    @stylesheets()
 }
 
 @beforeContent = {
@@ -70,7 +82,7 @@
 
 @govukLayout(
     pageTitle   = Some(pageTitle),
-    headBlock   = Some(hmrcHead(headBlock = Some(head))),
+    headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(routes.IndexController.onPageLoad.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
@@ -78,7 +90,5 @@
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
-    scriptsBlock       = Some(hmrcScripts(
-        scriptsBlock = Some(additionalScripts)
-    ))
+    scriptsBlock = Some(hmrcScripts())
 )(content)

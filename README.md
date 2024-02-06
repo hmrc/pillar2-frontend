@@ -34,7 +34,7 @@ The nominated filing member is responsible for managing the group's tax returns 
 
 To run the unit tests:
 
-    Run 'sbt test' from directory the project is stored in
+    Run 'sbt test' from directory the project is stored in 
 
 To check code coverage:
 

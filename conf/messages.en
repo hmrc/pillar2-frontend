@@ -23,9 +23,8 @@ date.year = Year
 # Page Not Available
 #
 ###############################################
-page_not_available.title=Task not yet started
-page_not_available.heading=Task not yet started
-page_not_available.message=The task you are trying to access cannot be started until the previous task has been completed.
+page_not_available.title=There has been an error
+page_not_available.heading=There has been an error
 page_not_available.link=return to your Pillar 2 top-up taxes registration
 page_not_available.message2 = and complete the required tasks.
 
@@ -52,23 +51,26 @@ cannotReturnAfterSubscriptionError.message= You have successfully registered to 
 cannotReturnAfterSubscriptionError.message2= You can now
 cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
 
+alreadyRegistered.title= Your group is already registered
+alreadyRegistered.heading= Your group is already registered
+alreadyRegistered.message1= You will need to contact your administrator to give you access.
+alreadyRegistered.message2= You can email {0} if you are having problems accessing the service.
 
 
 
 
 
-upeRegisteredAddress.title=Where is the registered office address?
-upeRegisteredAddress.heading=Where is the registered office address of {0}?
+upeRegisteredAddress.title=What is the registered office address?
+upeRegisteredAddress.heading=What is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
 upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
-upeRegisteredAddress.town_city = Town or City
+upeRegisteredAddress.town_city = Town or city
 upeRegisteredAddress.region = Region (optional)
 upeRegisteredAddress.postcode = Postal code
-upeRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 upeRegisteredAddress.country = Country
-upeRegisteredAddress.country.hint = Enter text and then choose from the list
+upeRegisteredAddress.country.hint = Enter text and then choose from the list.
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
 upeRegisteredAddress.town_city.error.required = Enter the town or city
 upeRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
@@ -154,6 +156,34 @@ grs.registration.error.b31 =  You can
 grs.registration.error.b32 =  go back to select the entity type
 grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
 
+payment.dashboard.title= Pay your Pillar 2 top-up taxes
+payment.dashboard.header= Pay your Pillar 2 top-up taxes
+payment.dashboard.insetText= You have no payments due.
+payment.dashboard.message1= You can make a voluntary payment based on self-assessed liability.
+payment.dashboard.header2= How to make a payment
+payment.dashboard.message2= Payments can be made by bank transfer.
+payment.dashboard.message3= To make a bank transfer payment, you can visit your bank’s website, use their mobile app, or go to a branch and use HMRC’s banking details.
+payment.dashboard.timeline-summary= How long it takes
+payment.dashboard.timeline-content1= Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays.
+payment.dashboard.timeline-content2= CHAPS payments usually reach HMRC the same working day if you pay within your bank’s processing times.
+payment.dashboard.timeline-content3= Bacs payments usually take 3 working days.
+payment.dashboard.site.warning= Use {0} as your payment reference. HMRC will use this to match your payment.
+payment.dashboard.warning.message = You must use {0} as your payment reference. HMRC will use this to match your payment.
+payment.dashboard.outsideUK-summary= Make a payment from outside the UK
+payment.dashboard.table.row_11= 08 32 10
+payment.dashboard.table.row_21= 12001020
+payment.dashboard.table.row_31= HMRC Shipley
+payment.dashboard.table.row_12= Sort code
+payment.dashboard.table.row_22= Account number
+payment.dashboard.table.row_32= Account name
+payment.dashboard.table.caption= HMRC’s bank details
+payment.dashboard.table2.row_12= BARCGB22
+payment.dashboard.table2.row_11= Bank identifier code (BIC)
+payment.dashboard.table2.row_22= GB03BARC 20114783977692
+payment.dashboard.table2.row_21= Account number(IBAN)
+payment.dashboard.table2.row_32= HMRC Shipley
+payment.dashboard.table2.row_31= Account name
+payment.dashboard.table2.caption= HMRC’s overseas bank details
 
 
 
@@ -197,7 +227,7 @@ upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
 upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
-upe-input-business-email.hint=We will use this to confirm your records
+upe-input-business-email.hint=We will use this to confirm your records.
 upe-input-business-email.caption = Group details
 upe-input-business-contact.email.error.required = You need to enter the email address for {0}
 upe-input-business-contact.email.error.length = The email address should be 132 characters or less
@@ -211,7 +241,7 @@ businessActivityUK.heading = Does the group have business operations in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.hint = Business operations refer to activities that businesses engage in to increase the value of the enterprise and earn profit.
+businessActivityUK.hint = Business operations refer to activities that businesses engage in to increase the value of the enterprise.
 businessActivityUK.error.required = Select yes if the group has business operations in the UK
 
 turnOverEligibility.title = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
@@ -253,8 +283,7 @@ Kb750Ineligible.link = Go back to the start page for more information
 
 eligibilityconfirmation.title = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
-eligibilityconfirmation.p1 = Sign in to HMRC online services to register.
-eligibilityconfirmation.inset-text = Please make sure that the Government Gateway ID you use to start the registration process is linked to the business that will act as the filing member. Otherwise, there is a risk of losing access to your account.
+eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filling member.
 
 
 upeCheckYourAnswers.title = Check Your Answers
@@ -266,12 +295,15 @@ nfmCheckYourAnswers.heading = Check your answers
 nfmCheckYourAnswers.heading.caption = Business details
 nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
-journeyRecovery.continue.title = Sorry, there is a problem with the service
-journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
-journeyRecovery.startAgain.title = Sorry, there is a problem with the service
-journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
-journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
+journeyRecovery.continue.title = There has been an error
+journeyRecovery.continue.heading = There has been an error
+journeyRecovery.continue.link=return to your Pillar 2 top-up taxes registration
+journeyRecovery.continue.message2 = and complete the required tasks.
+journeyRecovery.startAgain.title = There has been an error
+journeyRecovery.startAgain.heading = There has been an error
+journeyRecovery.startAgain.link=return to your Pillar 2 top-up taxes registration
+journeyRecovery.startAgain.message2 = and complete the required tasks.
+
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
@@ -290,7 +322,7 @@ isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
 contactUPEByTelephone.heading.caption = Group details
 contactUPEByTelephone.title = Can we contact by telephone?
 contactUPEByTelephone.heading = Can we contact {0} by telephone?
-contactUPEByTelephone.hint = We will call if we have any questions about the management of Pillar 2 top-up tax for this business
+contactUPEByTelephone.hint = We will use this to confirm your records.
 contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
@@ -299,19 +331,21 @@ contactUPEByTelephone.change.hidden =  your response to whether we make contact 
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
-captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
+captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Do you want to register a nominated filing member for this group?
-NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member for this group?
+NominateFilingMemberYesNo.title = Do you want to register a nominated filing member to report for this group?
+NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member to report for this group?
 NominateFilingMemberYesNo.heading.caption = Group details
-NominateFilingMemberYesNo.p1 = This step is optional. If you do not enter the details for a nominated filing member, the ultimate parent entity (UPE) will be used as the default.
-NominateFilingMemberYesNo.insetText = You must have permission from the UPE to nominate a company as a filing member and be able to access the information required to file   Pillar 2 top-up tax on the group’s behalf.
-NominateFilingMemberYesNo.error.required = Select yes if there is a nominated filing member for this group
+
+NominateFilingMemberYesNo.p1 = If you do not register a nominated filing member, we will use the ultimate parent entity (UPE) as the filing member.
+NominateFilingMemberYesNo.insetText = A nominated filing member must be nominated by the UPE and must be able to access the information required to report Pillar 2 top-up taxes on the group’s behalf.
+NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
+
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
@@ -351,17 +385,17 @@ nfmNameRegistration.error.length = The name of the nominated filing member must 
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 
 
-nfmRegisteredAddress.title = Where is the registered office address?
-nfmRegisteredAddress.heading = Where is the registered office address of {0}?
+
+nfmRegisteredAddress.title = What is the registered office address?
+nfmRegisteredAddress.heading = What is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
 nfmRegisteredAddress.addressLine1 = Address line 1
 nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
-nfmRegisteredAddress.town_city = Town or City
+nfmRegisteredAddress.town_city = Town or city
 nfmRegisteredAddress.region = Region (optional)
 nfmRegisteredAddress.postcode = Postal code (if applicable)
-nfmRegisteredAddress.postcode.hint = For a UK address, you must enter a correctly formatted UK postcode
 nfmRegisteredAddress.country = Country
-nfmRegisteredAddress.country.hint = Enter text and then choose from the list
+nfmRegisteredAddress.country.hint = Enter text and then choose from the list.
 nfmRegisteredAddress.addressLine1.error.required = Enter the first line of the address
 nfmRegisteredAddress.town_city.error.required = Enter the town or city
 nfmRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
@@ -401,7 +435,7 @@ nfmContactName.error.invalid = The name of the contact person or team must only 
 nfmEmailAddress.heading.caption = Group details
 nfmEmailAddress.title = What is the email address?
 nfmEmailAddress.heading = What is the email address for {0}?
-nfmEmailAddress.hint = We will use this to confirm your records
+nfmEmailAddress.hint = We will use this to confirm your records.
 nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = You need to enter the email address for {0}
 nfmEmailAddress.error.length = The email address should be 132 characters or less
@@ -419,16 +453,19 @@ nfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
 
 groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = What are the start and end dates of the group’s consolidated accounting period?
+groupAccountingPeriod.amend.title = What are the start and end dates of the group’s current consolidated accounting period?
 groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK, on 31 December 2023.
 groupAccountingPeriod.startDate.heading = Enter start date
 groupAccountingPeriod.startDate.hint = For example, 27 3 2026
 groupAccountingPeriod.endDate.heading = Enter end date
 groupAccountingPeriod.endDate.hint = For example, 28 3 2027
 groupAccountingPeriod.checkYourAnswersLabel = Group’s consolidated accounting period
+groupAccountingPeriod.amend.checkYourAnswersLabel = Group’s current consolidated accounting period
 groupAccountingPeriod.error.startDate.dayMonthYear.minimum = Start date must be on or after 31 December 2023
 groupAccountingPeriod.error.endDate.before.startDate = The end date must be after the start date
 groupAccountingPeriod.error.startDate.format = Enter a date in the correct format
 groupAccountingPeriod.error.startDate.required.all = Enter the start date of the group’s consolidated accounting period
+groupAccountingPeriod.amend.error.startDate.required.all = Enter the start date of the group’s current consolidated accounting period
 groupAccountingPeriod.error.startDate.required.two = Start date must include a {0} and {1}
 groupAccountingPeriod.error.startDate.required = Start date must include a {0}
 groupAccountingPeriod.error.startDate.day.nan = Start date must be a real date
@@ -444,6 +481,7 @@ groupAccountingPeriod.error.startDate.year.length = Start date must be a real da
 
 groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
 groupAccountingPeriod.error.endDate.required.all = Enter the end date of the group’s consolidated accounting period
+groupAccountingPeriod.amend.error.endDate.required.all = Enter the end date of the group’s current consolidated accounting period
 groupAccountingPeriod.error.endDate.required.two = End date must include a {0} and {1}
 groupAccountingPeriod.error.endDate.required = End date must include a {0}
 groupAccountingPeriod.error.endDate.day.nan = End date must be a real date
@@ -461,14 +499,14 @@ groupAccountingPeriod.change.hidden =  the dates of the group’s consolidated a
 contactNfmByTelephone.heading.caption = Group details
 contactNfmByTelephone.title = Can we contact by telephone?
 contactNfmByTelephone.heading = Can we contact {0} by telephone?
-contactNfmByTelephone.hint = We will use this to confirm your records
+contactNfmByTelephone.hint = We will use this to confirm your records.
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
 
 nfmCaptureTelephoneDetails.heading.caption = Group details
 nfmCaptureTelephoneDetails.title = What is the telephone number?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192.
+nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
@@ -687,7 +725,7 @@ dashboard.registrationDate = Registration date:
 dashboard.upe = Ultimate parent entity:
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due
-dashboard.voluntaryPayment = Make a voluntary payment
+dashboard.voluntaryPayment = Make a payment
 dashboard.paymentHistory = View your payment history
 dashboard.requestPayment = Request a repayment
 dashboard.manageAccount = Manage your account
@@ -733,3 +771,8 @@ manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
 bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
 bta.accessConfirmation.cta = Continue to Business Tax Account
+
+havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
+havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID

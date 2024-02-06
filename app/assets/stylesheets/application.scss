@@ -16,3 +16,13 @@
 .no-border-bottom{
   border-bottom:none;
 }
+
+@media (min-width: 40.0625em) {
+  .group-details-check-answer .govuk-summary-list__key
+  {
+    width: 42%;
+  }
+}
+
+
+
