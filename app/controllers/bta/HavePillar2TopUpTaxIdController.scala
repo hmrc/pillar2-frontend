@@ -14,64 +14,70 @@
  * limitations under the License.
  */
 
-package controllers.fm
+package controllers.bta
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.NfmEmailAddressFormProvider
+import controllers.actions._
+import forms.HavePillar2TopUpTaxIdFormProvider
 import models.Mode
-import pages.{fmContactEmailPage, fmContactNamePage}
+import pages.subHavePillar2TopUpTaxIdPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.fmview.NfmEmailAddressView
+import views.html.bta.HavePillar2TopUpTaxIdView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmEmailAddressController @Inject() (
+class HavePillar2TopUpTaxIdController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              NfmEmailAddressFormProvider,
+  formProvider:              HavePillar2TopUpTaxIdFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NfmEmailAddressView
+  view:                      HavePillar2TopUpTaxIdView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
+  val form = formProvider()
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(fmContactNamePage)
-      .map { name =>
-        val form = formProvider(name)
-        val preparedForm = request.userAnswers.get(fmContactEmailPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
-        Ok(view(preparedForm, mode, name))
+    val btaAccessEnabled = appConfig.btaAccessEnabled
+    if (btaAccessEnabled) {
+      val preparedForm = request.userAnswers.get(subHavePillar2TopUpTaxIdPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(fmContactNamePage)
-      .map { userName =>
-        formProvider(userName)
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-            value =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        value =>
+          value match {
+            case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers set (fmContactEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+
+            case false =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          }
+      )
   }
 }

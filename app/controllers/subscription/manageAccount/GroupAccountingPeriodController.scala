@@ -45,7 +45,7 @@ class GroupAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider()
+  def form = formProvider(true)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
@@ -55,7 +55,7 @@ class GroupAccountingPeriodController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

@@ -132,7 +132,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
@@ -188,7 +188,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/there-is-a-problem")
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/restart-error")
       }
 
     }
