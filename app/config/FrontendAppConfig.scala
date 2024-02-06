@@ -103,6 +103,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
+  val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
 
   def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)

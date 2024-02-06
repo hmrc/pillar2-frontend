@@ -776,6 +776,9 @@ bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pilla
 bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
 bta.noPlrIdGuidance.cta = Return to your Business Tax Account
 
+bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.p1 = screen owned by EACD
 
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
