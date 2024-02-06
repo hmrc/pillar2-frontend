@@ -17,12 +17,8 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import play.api.i18n.Messages
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.errors.AlreadyRegisteredView
 
 class AlreadyRegisteredControllerSpec extends SpecBase {
 
