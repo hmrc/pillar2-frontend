@@ -59,7 +59,7 @@ class MneOrDomesticController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.BookmarkPreventionController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
