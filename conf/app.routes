@@ -318,5 +318,6 @@ GET        /bta/pillar2-id                        controllers.bta.HavePillar2Top
 POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
 GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
 POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
