@@ -222,6 +222,8 @@ upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required = You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
+upeNameRegistration.error.invalid = The name of the person must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
@@ -383,6 +385,8 @@ nfmNameRegistration.checkYourAnswersLabel = Name
 nfmNameRegistration.error.required =  You need to enter the name of the nominated filing member
 nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
+nfmNameRegistration.error.invalid = The name of the person must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
 
 
 
@@ -563,6 +567,8 @@ contactNameCompliance.hint =  For example, ‘Tax team’ or ‘Ashley Smith’.
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
+contactNameCompliance.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
 
 
 
@@ -644,6 +650,7 @@ secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 secondaryContactEmail.title =What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?

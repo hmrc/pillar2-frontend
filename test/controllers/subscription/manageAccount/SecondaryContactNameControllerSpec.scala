@@ -95,9 +95,9 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", "<>"))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> "<>"))
 
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
