@@ -23,30 +23,29 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton
-)
+    )
 
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@layout(pageTitle = title(form, messages("havePillar2TopUpTaxId.title"))) {
 
-@layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false, authorised = false) {
-
-    @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.bta.routes.HavePillar2TopUpTaxIdController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-        }
-        <span class="govuk-caption-l">@messages("businessActivityUK.check.liable.text")</span>
+    }
+
         @govukRadios(
-            RadiosViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large),
-                items = BusinessActivityUK.options
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("havePillar2TopUpTaxId.heading")).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("businessActivityUK.hint"))))
+            .withHint(Hint(content = Text(messages("havePillar2TopUpTaxId.hint"))))
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )
     }
 }
+

@@ -788,3 +788,20 @@ rfm.startPage.b7 = a contact address for the group that we can send corresponden
 rfm.startPage.legend = Replace a filing member
 rfm.startPage.confirm = Confirm you have read all the above and are able to act as a new filing member for this group
 rfm.startPage.error = You must select the checkbox to continue
+
+bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
+bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
+bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
+bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
+bta.noPlrIdGuidance.cta = Return to your Business Tax Account
+bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.p1 = screen owned by EACD
+bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
+bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
+bta.accessConfirmation.cta = Continue to Business Tax Account
+
+havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
+havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID

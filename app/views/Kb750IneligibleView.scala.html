@@ -25,7 +25,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("Kb750Ineligible.title")), showSignOut = false, timeout = false) {
+    pageTitle    = titleNoForm(messages("Kb750Ineligible.title")), showSignOut = false, timeout = false, authorised = false) {
 
         <h1 class="govuk-heading-l">@messages("Kb750Ineligible.heading")</h1>
 
