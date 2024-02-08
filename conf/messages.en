@@ -773,3 +773,10 @@ havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
 
+rfm.heading.caption = Replace filing member
+rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
+rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
