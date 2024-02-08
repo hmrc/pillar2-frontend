@@ -321,3 +321,12 @@ POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2To
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
+
+
+
+GET         /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/security//change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/security//change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
+
+
