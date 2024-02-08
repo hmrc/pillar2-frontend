@@ -17,13 +17,14 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import mapping.Constants
 import play.api.data.FormError
 
 class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey  = "nfmNameRegistration.error.required"
   val lengthKey    = "nfmNameRegistration.error.length"
-  val maxLength    = 105
+  val maxLength    = Constants.MAX_LENGTH_105
   val regexPattern = Validation.NAME_REGEX
   val form         = new NfmNameRegistrationFormProvider()()
 
