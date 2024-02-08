@@ -222,7 +222,7 @@ upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required = You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
-upeNameRegistration.error.invalid = The name of the person must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+upeNameRegistration.error.invalid = The name of the ultimate parent entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
@@ -385,7 +385,7 @@ nfmNameRegistration.checkYourAnswersLabel = Name
 nfmNameRegistration.error.required =  You need to enter the name of the nominated filing member
 nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
-nfmNameRegistration.error.invalid = The name of the person must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 
 
