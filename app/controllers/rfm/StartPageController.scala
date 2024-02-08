@@ -36,7 +36,7 @@ class StartPageController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Set[Confirmation]] = formProvider()
+  val form: Form[Set[Confirmation]] = formProvider("rfm.startPage.error")
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
