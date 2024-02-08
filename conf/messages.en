@@ -775,8 +775,19 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
+bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
+bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
+bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
+bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
+bta.noPlrIdGuidance.cta = Return to your Business Tax Account
+bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.p1 = screen owned by EACD
+bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
+bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
+bta.accessConfirmation.cta = Continue to Business Tax Account
+
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
-
