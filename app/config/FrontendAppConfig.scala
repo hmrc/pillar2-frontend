@@ -104,7 +104,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
       )
     } else { Map("english" -> Lang(ENGLISH)) }
 
-
   val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
