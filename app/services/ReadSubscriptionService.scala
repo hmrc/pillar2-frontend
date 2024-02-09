@@ -21,6 +21,7 @@ import models.subscription.ReadSubscriptionRequestParameters
 import models.{ApiError, SubscriptionCreateError}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.FutureConverter.FutureOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,11 +30,11 @@ class ReadSubscriptionService @Inject() (
   readSubscriptionConnector: ReadSubscriptionConnector,
   implicit val ec:           ExecutionContext
 ) {
-  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
-    readSubscriptionConnector.readSubscription(parameters).map {
+  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[JsValue] =
+    readSubscriptionConnector.readSubscription(parameters).flatMap {
       case Some(jsValue) =>
-        Right(jsValue)
+        Future.successful(jsValue)
       case None =>
-        Left(SubscriptionCreateError)
+        Future.failed(SubscriptionCreateError)
     }
 }

@@ -16,32 +16,48 @@
 
 package services
 
-import connectors.SubscriptionConnector
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
-import models.{ApiError, SubscriptionCreateError}
-import play.api.Logging
+import connectors.{EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.UserAnswers
+import models.fm.JourneyType
+import models.subscription.SubscriptionRequestParameters
+import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
-class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) extends Logging {
+@Singleton
+class SubscriptionService @Inject() (
+  registrationConnector:        RegistrationConnector,
+  subscriptionConnector:        SubscriptionConnector,
+  enrolmentService:             EnrolmentService,
+  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
+)(implicit ec:                  ExecutionContext) {
 
-  def checkAndCreateSubscription(id: String, regSafeId: String, fmSafeId: Option[String])(implicit
-    hc:                              HeaderCarrier,
-    ec:                              ExecutionContext
-  ): Future[Either[ApiError, SubscriptionResponse]] =
-    //We may need to check Read Subscription here.
-    subscriptionConnector.crateSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId)) map {
-      case Some(subscriptionSuccessResponse) =>
-        logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Create subscription successful for the form ${subscriptionSuccessResponse.formBundleNumber} " +
-            s"with reference ${subscriptionSuccessResponse.plrReference}"
-        )
-        Right(subscriptionSuccessResponse)
-      case None =>
-        Left(SubscriptionCreateError)
-    }
+  def subscribe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    for {
+      upeSafeId       <- registerUpe(userAnswers)
+      fmnSafeId       <- registerNfm(userAnswers)
+      plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
+      enrolmentExists <- enrolmentStoreProxyConnector.enrolmentExists(plrRef)
+      if !enrolmentExists
+      enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
+      _ <- enrolmentService.createEnrolment(enrolmentInfo)
+    } yield plrRef
+
+  private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    userAnswers.getUpeSafeID
+      .map(Future.successful)
+      .getOrElse(registrationConnector.register(userAnswers.id, JourneyType.UltimateParent))
+
+  private def registerNfm(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[String]] =
+    userAnswers.getFmSafeID
+      .map(safeId => Future.successful(Some(safeId)))
+      .getOrElse {
+        if (userAnswers.get(NominateFilingMemberPage).contains(true)) {
+          registrationConnector.register(userAnswers.id, JourneyType.FilingMember).map(Some(_))
+        } else {
+          Future.successful(None)
+        }
+      }
 }

@@ -16,7 +16,7 @@
 
 package models
 
-sealed trait ApiError
+sealed trait ApiError extends Throwable
 
 case object NotFoundError extends ApiError
 case object InternalServerError extends ApiError

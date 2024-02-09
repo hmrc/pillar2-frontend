@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.subMneOrDomesticPage
+import pages.{plrReferencePage, subMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -43,12 +43,11 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val optionPillar2Reference = Pillar2Reference.getPillar2ID(request.enrolments).orElse(request.session.get("plrId"))
-    val currentDate            = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
-        pillar2Id  <- optionPillar2Reference
         userAnswer <- optionalUserAnswers
+        pillar2Id  <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswer.get(plrReferencePage))
         mneOrDom   <- userAnswer.get(subMneOrDomesticPage)
       } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }

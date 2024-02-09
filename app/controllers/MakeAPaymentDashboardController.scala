@@ -18,38 +18,37 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.plrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class MakeAPaymentDashboardController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     MakeAPaymentDashboardView,
   getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction
+  requireData:              DataRequiredAction,
+  sessionRepository:        SessionRepository
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.enrolments
-      .flatMap(
-        _.find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-          .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
-          .map(_.value)
-          .map { plrID =>
-            Ok(view(plrID))
-          }
-      )
-      .getOrElse(
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      )
-
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository
+      .get(request.userId)
+      .map { optionalUserAnswers =>
+        (for {
+          userAnswers <- optionalUserAnswers
+          pillar2Id   <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
+        } yield Ok(view(pillar2Id)))
+          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
   }
-
 }

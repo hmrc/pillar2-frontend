@@ -18,8 +18,8 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.{AmendSubscriptionConnector, EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import connectors._
+import controllers.actions.{DataRequiredAction, DataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -31,7 +31,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import repositories.SessionRepository
 import services.audit.AuditService
-import services.{AmendSubscriptionService, ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import services._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -52,7 +52,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
-  val mockRegisterWithoutIdService:                RegisterWithoutIdService                = mock[RegisterWithoutIdService]
+  val mockEnrolmentService:                        EnrolmentService                        = mock[EnrolmentService]
   val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
   val mockTaxEnrolmentService:                     TaxEnrolmentService                     = mock[TaxEnrolmentService]
   val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]
@@ -81,6 +81,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockAuthConnector,
       mockFrontendAppConfig,
       mockUserAnswersConnectors,
+      mockEnrolmentService,
       mockCountryOptions,
       mockNavigator,
       mockDataRetrievalAction,

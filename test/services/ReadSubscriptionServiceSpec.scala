@@ -20,7 +20,6 @@ import akka.util.Timeout
 import base.SpecBase
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
@@ -47,10 +46,6 @@ class ReadSubscriptionServiceSpec extends SpecBase {
   val id           = "testId"
   val plrReference = "testPlrRef"
 
-  private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
-
-  val transformedUserAnswers = Right(UserAnswers("someId"))
-  val transformationError    = Left(MandatoryInformationMissingError("Transformation Error"))
   implicit val timeout: Timeout = Timeout(5.seconds)
   "ReadSubscriptionService" when {
 
@@ -65,7 +60,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
       val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
-      result shouldBe Right(validJsValue)
+      result shouldBe validJsValue
     }
 
     "return the raw JSON data even if it's invalid for the application's needs" in {
@@ -81,7 +76,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
       val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
       val result = service.readSubscription(parameters).futureValue
-      result shouldBe Right(invalidJsValue)
+      result shouldBe invalidJsValue
     }
 
     "return SubscriptionCreateError when the connector returns None" in {
@@ -93,7 +88,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
       val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
-      result mustBe Left(SubscriptionCreateError)
+      result mustBe models.SubscriptionCreateError
     }
 
     "handle exceptions thrown by the connector" in {

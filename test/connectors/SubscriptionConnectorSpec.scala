@@ -17,14 +17,15 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
 import org.scalacheck.Gen
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
-import scala.collection.Seq
-
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -58,28 +59,27 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
   val businessSubscriptionMissingPlrRefJson: String =
     """
       |{
+      |"failure" : {
       |"formBundleNumber":"119000004320",
       |"processingDate":"2023-09-22"
+      |}
       |}""".stripMargin
   "SubscriptionConnector" when {
+
     "return Pillar2Id for create Subscription successful" in {
       stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe Some(validSubscriptionSuccessResponse)
+
+      val futureValue = connector.subscribe(validSubscriptionCreateParameter)
+
+      futureValue.futureValue mustEqual validSubscriptionSuccessResponse.plrReference
     }
 
     "return InternalServerError for create Subscription" in {
+      stubResponse(s"$apiUrl/subscription/create-subscription", errorCodes.sample.value, "")
 
-      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe None
-    }
-    "return InternalServerError for EIS returns Error status" in {
-      val errorStatus: Int = errorCodes.sample.value
-      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, businessSubscriptionSuccessJson)
+      val futureResult = connector.subscribe(validSubscriptionCreateParameter)
 
-      val result = connector.crateSubscription(validSubscriptionCreateParameter)
-      result.futureValue mustBe None
+      futureResult.futureValue mustEqual empty
     }
 
   }
