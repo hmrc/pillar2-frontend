@@ -17,28 +17,21 @@
 @import config.FrontendAppConfig
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
 
-
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(
-        pageTitle    = titleNoForm(messages("eligibilityconfirmation.title")),
-        showBackLink = false,
-        showSignOut = false,
-        timeout = false,
-        authorised = false
-    ) {
-        @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
+@layout(pageTitle = titleNoForm(messages("bta.eacd.title"))) {
 
-            <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
-            <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
+    <h1 class="govuk-heading-l">@messages("bta.eacd.heading")</h1>
 
-            @govukButton(
-                ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-            )
-        }
+    <p class="govuk-body">@messages("bta.eacd.p1")</p>
 
-    }
+    <p class="govuk-body">
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+                .asLink("/report-pillar2-top-up-taxes/bta/confirmation")
+        )
+    </p>
+}

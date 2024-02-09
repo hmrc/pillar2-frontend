@@ -70,13 +70,13 @@ class HavePillar2TopUpTaxIdController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(appConfig.eacdHomePageUrl)
 
             case false =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad)
           }
       )
   }
