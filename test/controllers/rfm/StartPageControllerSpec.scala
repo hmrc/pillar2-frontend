@@ -17,15 +17,14 @@
 package controllers.rfm
 
 import base.SpecBase
-import controllers.rfm
-import forms.rfm.StartPageFormProvider
+import forms.RfmStartPageFormProvider
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
 import views.html.rfm.StartPageView
 
 class StartPageControllerSpec extends SpecBase {
 
-  val formProvider = new StartPageFormProvider()("rfm.startPage.error")
+  val formProvider = new RfmStartPageFormProvider()("rfm.startPage.error")
 
   "StartPage Controller" when {
 

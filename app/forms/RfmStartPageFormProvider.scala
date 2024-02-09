@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.rfm
+package forms
 
 import forms.mappings.Mappings
 import models.Confirmation
@@ -23,7 +23,7 @@ import play.api.data.Forms.set
 
 import javax.inject.Inject
 
-class StartPageFormProvider @Inject() extends Mappings {
+class RfmStartPageFormProvider @Inject() extends Mappings {
 
   def apply(errorKey: String): Form[Set[Confirmation]] =
     Form(

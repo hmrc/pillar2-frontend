@@ -17,19 +17,19 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import models.{Confirmation, Mode}
+import forms.RfmStartPageFormProvider
+import models.Confirmation
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.Future
-import forms.rfm.StartPageFormProvider
 import play.api.data.Form
 import views.html.rfm.StartPageView
 
 class StartPageController @Inject() (
-  formProvider:             StartPageFormProvider,
+  formProvider:             RfmStartPageFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageView
 )(implicit val appConfig:   FrontendAppConfig)
