@@ -100,6 +100,7 @@ class RegistrationConnectorSpec extends SpecBase {
 
       val result = connector.register("id", JourneyType.FilingMember)
       result.failed.futureValue mustBe models.InternalServerError
+
     }
   }
 
