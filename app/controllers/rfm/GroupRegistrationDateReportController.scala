@@ -49,14 +49,15 @@ class GroupRegistrationDateReportController @Inject() (
   def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (!request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
+    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmRegistrationDatePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 

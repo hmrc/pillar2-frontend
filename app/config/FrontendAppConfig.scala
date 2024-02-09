@@ -81,10 +81,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val privateBetaEnabled:         Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
   val languageTranslationEnabled: Boolean = configuration.get[Boolean]("features.welsh-translation")
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
-  val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
-
-  lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
-  lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
+  val pillar2mailbox:               String  = configuration.get[String]("features.pillar2mailbox")
+  val rfmAccessEnabled:             Boolean = configuration.get[Boolean]("features.rfmAccessEnabled")
+  lazy val locationCanonicalList:   String  = loadConfig("location.canonical.list.all")
+  lazy val locationCanonicalListCY: String  = configuration.get[String]("location.canonical.list.allCY")
 
   val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
   val registrationControllerDomestic: String = "Domestic Top-up Tax"
