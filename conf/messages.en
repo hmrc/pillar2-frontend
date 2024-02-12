@@ -785,6 +785,31 @@ havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
 
+groupRegistrationDateReport.title = What was the group’s date of registration to the Report Pillar 2 top-up taxes service?
+groupRegistrationDateReport.heading = What was the group’s date of registration to the Report Pillar 2 top-up taxes service?
+groupRegistrationDateReport.heading.caption = Replace filing member
+groupRegistrationDateReport.hint.desc = This will be the date when your group first registered to report their pillar 2 taxes in the UK.
+groupRegistrationDateReport.registrationDate.heading = Enter registration date
+groupRegistrationDateReport.registrationDate.hint = For example, 27 3 2026
+
+
+groupRegistrationDateReport.error.startDate.format = Enter a date in the correct format
+groupRegistrationDateReport.error.startDate.required.all = Enter the registration date
+groupRegistrationDateReport.error.startDate.required.two = Registration date must include a {0} and {1}
+groupRegistrationDateReport.error.startDate.required = Registration date must include a {0}
+groupRegistrationDateReport.error.startDate.day.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.month.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.year.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonthYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonth.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.monthYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.day.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.month.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.year.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonthYear.maximum = Registration date must be in the past
+groupRegistrationDateReport.error.rfmRegistrationDate.dayMonthYear.invalid =  Registration date must be a real date
+groupRegistrationDateReport.error.rfmRegistrationDate.dayMonth.invalid  = Registration date must be a real date
 rfm.heading.caption = Replace filing member
 rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
