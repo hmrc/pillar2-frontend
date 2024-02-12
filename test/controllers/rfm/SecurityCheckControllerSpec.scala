@@ -19,7 +19,6 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmSecurityCheckFormProvider
-//import models.subscription.AccountingPeriod
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,7 +42,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
-            "features.rfmEnabled" -> true
+            "features.rfmAccessEnabled" -> true
           ): _*
         )
         .build()
@@ -66,7 +65,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
-            "features.rfmEnabled" -> false
+            "features.rfmAccessEnabled" -> false
           ): _*
         )
         .build()
@@ -88,7 +87,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
           Seq(
-            "features.rfmEnabled" -> true
+            "features.rfmAccessEnabled" -> true
           ): _*
         )
         .build()
@@ -111,7 +110,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None)
         .configure(
           Seq(
-            "features.rfmEnabled" -> true
+            "features.rfmAccessEnabled" -> true
           ): _*
         )
         .build()
