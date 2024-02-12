@@ -134,7 +134,7 @@ class CheckYourAnswersController @Inject() (
             _ <- sessionRepository.set(dataToSave)
             _ <- userAnswersConnectors.remove(request.userId)
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
-            .recover { case _: Exception =>
+            .recover { case e: Exception =>
               Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
             }
         }

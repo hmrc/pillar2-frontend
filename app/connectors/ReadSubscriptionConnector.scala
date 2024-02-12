@@ -22,7 +22,7 @@ import play.api.Logging
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException, UpstreamErrorResponse}
-
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import java.io.IOException
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -88,7 +88,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
 
       val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
 
-      result mustBe models.SubscriptionCreateError
+      result mustBe models.InternalServerError
     }
 
     "handle exceptions thrown by the connector" in {

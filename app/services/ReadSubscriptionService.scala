@@ -17,12 +17,12 @@
 package services
 
 import connectors.ReadSubscriptionConnector
-import models.SubscriptionCreateError
+import models.InternalServerError
 import models.subscription.ReadSubscriptionRequestParameters
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionService @Inject() (
@@ -34,6 +34,6 @@ class ReadSubscriptionService @Inject() (
       case Some(jsValue) =>
         Future.successful(jsValue)
       case None =>
-        Future.failed(SubscriptionCreateError)
+        Future.failed(InternalServerError)
     }
 }

@@ -81,6 +81,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockUserAnswersConnectors,
       mockCountryOptions,
       mockNavigator,
+      mockReadSubscriptionService,
       mockDataRetrievalAction,
       mockDataRequiredAction,
       mockTradingBusinessConfirmationFormProvider,

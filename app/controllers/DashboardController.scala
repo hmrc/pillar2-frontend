@@ -30,7 +30,7 @@ import services.ReadSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.{Pillar2Reference, Pillar2SessionKeys}
+import utils.Pillar2Reference
 import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
@@ -63,28 +63,30 @@ class DashboardController @Inject() (
           plrReference       <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(sessionUserAnswers.get(plrReferencePage))
         } yield readSubscriptionService
           .readSubscription(ReadSubscriptionRequestParameters(userId, plrReference))
-          .map {
-            case _: JsValue =>
-              request.userAnswers
-                .get(fmDashboardPage)
-                .map { dashboard =>
-                  val inactiveStatus = request.userAnswers
-                    .get(subAccountStatusPage)
-                    .exists { acctStatus =>
-                      acctStatus.inactive
-                    }
-                  Ok(
-                    view(
-                      dashboard.organisationName,
-                      dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                      plrReference,
-                      inactiveStatus,
-                      showPayments
-                    )
+          .map { _: JsValue =>
+            request.userAnswers
+              .get(fmDashboardPage)
+              .map { dashboard =>
+                val inactiveStatus = request.userAnswers
+                  .get(subAccountStatusPage)
+                  .exists { acctStatus =>
+                    acctStatus.inactive
+                  }
+                Ok(
+                  view(
+                    dashboard.organisationName,
+                    dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                    plrReference,
+                    inactiveStatus,
+                    showPayments
                   )
-                }
-                .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-            case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                )
+              }
+              .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+          }
+          .recover { case InternalServerError =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
           }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
       }

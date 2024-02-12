@@ -17,9 +17,9 @@
 package services
 
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.{InternalServerError, UserAnswers}
 import models.fm.JourneyType
 import models.subscription.SubscriptionRequestParameters
+import models.{InternalServerError, UserAnswers}
 import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 
