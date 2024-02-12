@@ -384,6 +384,14 @@ nfmNameRegistration.error.required =  You need to enter the name of the nominate
 nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 
+securityQuestionsCheckYourAnswers.title = Check Your Answers
+securityQuestionsCheckYourAnswers.heading = Check your answers
+securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
+rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 top-up taxes ID
+rfmSecurityCheck.change.hidden = The group’s Pillar 2 top-up taxes ID
+rfmRegistrationDate.checkYourAnswersLabel = Registration date
+rfmRegistrationDate.change.hidden = The group’s registration date
+
 
 
 nfmRegisteredAddress.title = What is the registered office address?
