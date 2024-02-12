@@ -23,4 +23,5 @@ object Constants {
   final val MAX_LENGTH_105  = 105
   final val MAX_LENGTH_132  = 132
   final val MAX_LENGTH_200  = 200
+  final val EQUAL_LENGTH_15 = 15
 }
