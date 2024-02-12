@@ -34,15 +34,15 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CorporatePositionController @Inject() (
-                                                      val userAnswersConnectors: UserAnswersConnectors,
-                                                      identify:                  IdentifierAction,
-                                                      getData:                   DataRetrievalAction,
-                                                      requireData:               DataRequiredAction,
-                                                      formProvider:              RfmCorporatePositionFormProvider,
-                                                      val controllerComponents:  MessagesControllerComponents,
-                                                      view:                      CorporatePositionView
-                                                    )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  val userAnswersConnectors: UserAnswersConnectors,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  formProvider:              RfmCorporatePositionFormProvider,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      CorporatePositionView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
@@ -51,7 +51,7 @@ class CorporatePositionController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
-        case Some(v) => form.fill(v)
+        case Some(value) => form.fill(value)
         case None        => form
       }
       Ok(view(preparedForm, mode))
@@ -71,7 +71,7 @@ class CorporatePositionController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
             case false =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
