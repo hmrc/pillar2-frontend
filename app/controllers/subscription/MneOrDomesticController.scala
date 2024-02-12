@@ -16,7 +16,6 @@
 
 package controllers.subscription
 
-import cache.SessionData
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._

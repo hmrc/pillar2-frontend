@@ -16,7 +16,6 @@
 
 package helpers
 
-import cache.SessionData
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction}
