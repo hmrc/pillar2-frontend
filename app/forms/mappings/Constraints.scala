@@ -41,6 +41,15 @@ trait Constraints {
         .find(_ != Valid)
         .getOrElse(Valid)
     }
+
+  protected def equalLength(charLength: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.length == charLength =>
+        Valid
+      case _ =>
+        Invalid(errorKey, charLength)
+    }
+
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev._

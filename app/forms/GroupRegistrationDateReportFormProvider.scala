@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
 
-  import models.subscription.AccountingPeriod
   import play.api.data.Forms._
   import play.api.data._
 

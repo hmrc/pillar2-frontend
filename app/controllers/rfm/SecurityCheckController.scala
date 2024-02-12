@@ -19,39 +19,38 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
-import models.Mode
-import pages.{rfmRegistrationDatePage, subAccountingPeriodPage, subMneOrDomesticPage}
-import play.api.data.Form
+import forms.RfmSecurityCheckFormProvider
+import models.{Mode, NormalMode}
+import pages.rfmSecurityCheckPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.GroupRegistrationDateReportView
-import views.html.subscriptionview.GroupAccountingPeriodView
+//import utils.RowStatus
+import views.html.rfm.SecurityCheckView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GroupRegistrationDateReportController @Inject() (
+class SecurityCheckController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              GroupRegistrationDateReportFormProvider,
+  formProvider:              RfmSecurityCheckFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupRegistrationDateReportView
+  view:                      SecurityCheckView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider()
+  val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmRegistrationDatePage) match {
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      val preparedForm = request.userAnswers.get(rfmSecurityCheckPage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -68,9 +67,11 @@ class GroupRegistrationDateReportController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmRegistrationDatePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            updatedAnswers <-
+              Future
+                .fromTry(request.userAnswers.set(rfmSecurityCheckPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
       )
   }
 
