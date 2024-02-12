@@ -27,7 +27,6 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-//import utils.RowStatus
 import views.html.rfm.SecurityCheckView
 
 import javax.inject.Inject
@@ -48,8 +47,8 @@ class SecurityCheckController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmSecurityCheckPage) match {
         case Some(v) => form.fill(v)
         case None    => form
