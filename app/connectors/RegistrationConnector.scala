@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
-
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

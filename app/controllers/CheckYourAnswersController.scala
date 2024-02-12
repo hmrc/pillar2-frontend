@@ -27,10 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.FutureConverter.FutureOps
-import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -55,7 +52,7 @@ class CheckYourAnswersController @Inject() (
     with Logging {
 
   // noinspection ScalaStyle
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val groupDetailList = SummaryListViewModel(
       rows = Seq(
         MneOrDomesticSummary.row(request.userAnswers),
@@ -117,27 +114,33 @@ class CheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad)
-    } else {
-      Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address))
+    sessionRepository.get(request.userId).map { optionalUserAnswer =>
+      (for {
+        userAnswer <- optionalUserAnswer
+        _          <- userAnswer.get(plrReferencePage)
+      } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
+        .getOrElse(Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address)))
     }
-  }
 
+  }
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    request.userAnswers
-      .get(subMneOrDomesticPage)
-      .map { mneOrDom =>
-        (for {
-          plr <- subscriptionService.subscribe(request.userAnswers)
-          dataToSave = UserAnswers(request.userAnswers.id).setOrException(subMneOrDomesticPage, mneOrDom).setOrException(plrReferencePage, plr)
-          _ <- sessionRepository.set(dataToSave)
-          _ <- userAnswersConnectors.remove(request.userId)
-        } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
-          .recover { case _: Exception =>
-            Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
-          }
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    if (request.userAnswers.finalStatusCheck) {
+      request.userAnswers
+        .get(subMneOrDomesticPage)
+        .map { mneOrDom =>
+          (for {
+            plr <- subscriptionService.createSubscription(request.userAnswers)
+            dataToSave = UserAnswers(request.userAnswers.id).setOrException(subMneOrDomesticPage, mneOrDom).setOrException(plrReferencePage, plr)
+            _ <- sessionRepository.set(dataToSave)
+            _ <- userAnswersConnectors.remove(request.userId)
+          } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
+            .recover { case _: Exception =>
+              Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+            }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    } else {
+      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    }
   }
 }

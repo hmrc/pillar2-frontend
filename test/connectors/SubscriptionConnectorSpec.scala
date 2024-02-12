@@ -17,13 +17,10 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import org.scalacheck.Gen
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
@@ -77,9 +74,9 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     "return InternalServerError for create Subscription" in {
       stubResponse(s"$apiUrl/subscription/create-subscription", errorCodes.sample.value, "")
 
-      val futureResult = connector.subscribe(validSubscriptionCreateParameter)
+      val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
 
-      futureResult.futureValue mustEqual empty
+      futureResult mustBe models.InternalServerError
     }
 
   }

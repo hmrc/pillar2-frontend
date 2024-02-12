@@ -17,13 +17,12 @@
 package services
 
 import connectors.ReadSubscriptionConnector
+import models.SubscriptionCreateError
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{ApiError, SubscriptionCreateError}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FutureConverter.FutureOps
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionService @Inject() (

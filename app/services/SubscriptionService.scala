@@ -16,8 +16,8 @@
 
 package services
 
-import connectors.{EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.UserAnswers
+import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.{InternalServerError, UserAnswers}
 import models.fm.JourneyType
 import models.subscription.SubscriptionRequestParameters
 import pages.NominateFilingMemberPage
@@ -30,19 +30,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionService @Inject() (
   registrationConnector:        RegistrationConnector,
   subscriptionConnector:        SubscriptionConnector,
-  enrolmentService:             EnrolmentService,
+  enrolmentConnector:           EnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
 )(implicit ec:                  ExecutionContext) {
 
-  def subscribe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     for {
       upeSafeId       <- registerUpe(userAnswers)
       fmnSafeId       <- registerNfm(userAnswers)
       plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
       enrolmentExists <- enrolmentStoreProxyConnector.enrolmentExists(plrRef)
-      if !enrolmentExists
+      _               <- if (!enrolmentExists) Future.unit else Future.failed(InternalServerError)
       enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
-      _ <- enrolmentService.createEnrolment(enrolmentInfo)
+      _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
     } yield plrRef
 
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =

@@ -86,7 +86,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
         .thenReturn(Future.successful(None))
       val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
-      val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+      val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
 
       result mustBe models.SubscriptionCreateError
     }

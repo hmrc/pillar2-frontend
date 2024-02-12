@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package connectors
 
 import akka.Done
 import config.FrontendAppConfig
@@ -24,12 +24,12 @@ import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
-
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentService @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class EnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
   val url: String = s"${config.taxEnrolmentsUrl1}HMRC-PILLAR2-ORG${config.taxEnrolmentsUrl2}"
 
   def createEnrolment(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =

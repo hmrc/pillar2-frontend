@@ -70,27 +70,28 @@ class RegistrationConnectorSpec extends SpecBase {
 
   val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-
+  private val safeID = "XE1111123456789"
   "RegistrationConnector" when {
     "return safeId for Upe Register without Id is successful" in {
 
       stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
       val result = connector.register("id", JourneyType.UltimateParent)
-      result.futureValue mustBe Some(SafeId("XE1111123456789"))
+      result.futureValue mustBe safeID
     }
 
     "return InternalServerError for EIS returns Error status" in {
+      //import uk.gov.hmrc.http.HttpReads.Implicits.readRaw is needed in the class for this tests to pass
       val errorStatus: Int = errorCodes.sample.value
       stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.register("id", JourneyType.UltimateParent)
-      result.futureValue mustBe models.InternalServerError
+      result.failed.futureValue mustBe models.InternalServerError
     }
     "return safeId for a filing member when successful" in {
 
       stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
       val result = connector.register("id", JourneyType.FilingMember)
-      result.futureValue mustBe Some(SafeId("XE1111123456789"))
+      result.futureValue mustBe safeID
     }
 
     "return InternalServerError for EIS returns Error status for FM register withoutId" in {
@@ -98,7 +99,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.register("id", JourneyType.FilingMember)
-      result.futureValue mustBe models.InternalServerError
+      result.failed.futureValue mustBe models.InternalServerError
     }
   }
 
