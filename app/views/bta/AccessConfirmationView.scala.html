@@ -15,30 +15,31 @@
  *@
 
 @import config.FrontendAppConfig
+@import java.time.LocalDate
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(
-        pageTitle    = titleNoForm(messages("eligibilityconfirmation.title")),
-        showBackLink = false,
-        showSignOut = false,
-        timeout = false,
-        authorised = false
-    ) {
-        @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
+@layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
-            <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
-            <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+            @messages("bta.accessConfirmation.heading")
+        </h1>
+    </div>
+    <p class="govuk-body">
+        @messages("bta.accessConfirmation.p1")
+    </p>
+    <p class="govuk-body">
+        @govukButton(
+            ButtonViewModel(messages("bta.accessConfirmation.cta"))
+            .asLink(appConfig.btaHomePageUrl)
+        )
+    </p>
 
-            @govukButton(
-                ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-            )
-        }
-
-    }
+}

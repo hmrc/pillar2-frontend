@@ -311,16 +311,17 @@ GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-det
 GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
 
-
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
+GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
+GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
 GET        /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
 POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
 GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
 POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
-

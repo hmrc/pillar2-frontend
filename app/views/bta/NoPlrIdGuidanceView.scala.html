@@ -17,28 +17,26 @@
 @import config.FrontendAppConfig
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
 
-
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(
-        pageTitle    = titleNoForm(messages("eligibilityconfirmation.title")),
-        showBackLink = false,
-        showSignOut = false,
-        timeout = false,
-        authorised = false
-    ) {
-        @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
+@layout(pageTitle = titleNoForm(messages("bta.noPlrIdGuidance.title"))) {
 
-            <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
-            <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
+    <h1 class="govuk-heading-l">@messages("bta.noPlrIdGuidance.heading")</h1>
 
-            @govukButton(
-                ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-            )
-        }
+    <p class="govuk-body">@messages("bta.noPlrIdGuidance.p1")</p>
 
-    }
+    <p class="govuk-body">
+        <a href="@appConfig.howToRegisterPlr2GuidanceUrl" class="govuk-link govuk-link--no-visited-state" target="_blank"> @messages("bta.noPlrIdGuidance.link")</a>
+    </p>
+
+    <p class="govuk-body">
+        @govukButton(
+            ButtonViewModel(messages("bta.noPlrIdGuidance.cta"))
+                .asLink(appConfig.btaHomePageUrl)
+                .asSecondaryButton()
+        )
+    </p>
+}
