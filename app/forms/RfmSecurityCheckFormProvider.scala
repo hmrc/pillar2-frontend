@@ -23,8 +23,6 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class RfmSecurityCheckFormProvider @Inject() extends Mappings {
-  //private val charLength   = 15
-  private val groupIdRegex = "^X[A-Z]PLR[0-9]{10}$"
 
   def apply(): Form[String] =
     Form(
