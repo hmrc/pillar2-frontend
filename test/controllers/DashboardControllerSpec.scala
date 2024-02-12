@@ -34,7 +34,21 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+class CustomIdentifierAction @Inject() (
+  authConnector: AuthConnector,
+  config:        FrontendAppConfig,
+  parser:        BodyParsers.Default,
+  enrolmentsSet: Set[Enrolment]
+)(implicit ec:   ExecutionContext)
+    extends AuthenticatedIdentifierAction(authConnector, config, parser) {
 
+  override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
+
+    val identifierRequest = IdentifierRequest(request, "some-user-id", enrolmentsSet)
+
+    Future.successful(Right(identifierRequest))
+  }
+}
 
 class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
