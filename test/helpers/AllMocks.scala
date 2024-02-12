@@ -18,8 +18,8 @@ package helpers
 
 import cache.SessionData
 import config.FrontendAppConfig
-import connectors.{AmendSubscriptionConnector, EnrolmentStoreProxyConnector, IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, ReadSubscriptionConnector, RegistrationConnector, SubscriptionConnector, TaxEnrolmentsConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import connectors._
+import controllers.actions.{DataRequiredAction, DataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -29,8 +29,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
+import repositories.SessionRepository
 import services.audit.AuditService
-import services.{AmendSubscriptionService, ReadSubscriptionService, RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import services._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -47,12 +48,11 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockCountryOptions:                          CountryOptions                          = mock[CountryOptions]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionData:                             SessionData                             = mock[SessionData]
+  val mockSessionRepository:                       SessionRepository                       = mock[SessionRepository]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
-  val mockRegisterWithoutIdService:                RegisterWithoutIdService                = mock[RegisterWithoutIdService]
   val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
-  val mockTaxEnrolmentService:                     TaxEnrolmentService                     = mock[TaxEnrolmentService]
   val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]
   val mockCheckYourAnswersView:                    CheckYourAnswersView                    = mock[CheckYourAnswersView]
   val mockDashboardView:                           DashboardView                           = mock[DashboardView]
@@ -65,13 +65,13 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
   val mockAmendSubscriptionService:                   AmendSubscriptionService                   = mock[AmendSubscriptionService]
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
-  val mockTaxEnrolmentsConnector:                     TaxEnrolmentsConnector                     = mock[TaxEnrolmentsConnector]
   val mockRegistration:                               Registration                               = mock[Registration]
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
   val mockReadSubscriptionService:                    ReadSubscriptionService                    = mock[ReadSubscriptionService]
   val mockReadSubscriptionConnector:                  ReadSubscriptionConnector                  = mock[ReadSubscriptionConnector]
   val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
   val mockAuditService:                               AuditService                               = mock[AuditService]
+  val mockEnrolmentConnector:                         EnrolmentConnector                         = mock[EnrolmentConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -81,6 +81,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockUserAnswersConnectors,
       mockCountryOptions,
       mockNavigator,
+      mockReadSubscriptionService,
       mockDataRetrievalAction,
       mockDataRequiredAction,
       mockTradingBusinessConfirmationFormProvider,
@@ -90,7 +91,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockRegistrationConnector,
       mockSubscriptionConnector,
       mockEnrolmentStoreProxyConnector,
-      mockTaxEnrolmentsConnector,
-      mockAuditService
+      mockAuditService,
+      mockEnrolmentConnector
     ).foreach(Mockito.reset(_))
 }

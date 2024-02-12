@@ -17,15 +17,14 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
+import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse}
 import org.scalacheck.Gen
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
+import scala.collection.Seq
+
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -59,51 +58,27 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
   val businessSubscriptionMissingPlrRefJson: String =
     """
       |{
+      |"failure" : {
       |"formBundleNumber":"119000004320",
       |"processingDate":"2023-09-22"
+      |}
       |}""".stripMargin
   "SubscriptionConnector" when {
 
     "return Pillar2Id for create Subscription successful" in {
       stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
 
-      val httpResponse: HttpResponse = connector.createSubscription(validSubscriptionCreateParameter).futureValue
+      val futureValue = connector.subscribe(validSubscriptionCreateParameter)
 
-      httpResponse.status mustBe OK
-
-      val jsonResponse    = Json.parse(httpResponse.body)
-      val successResponse = jsonResponse.validate[SuccessResponse].asOpt
-
-      val subscriptionResponse = successResponse.map(_.success)
-      subscriptionResponse mustBe Some(validSubscriptionSuccessResponse)
+      futureValue.futureValue mustEqual validSubscriptionSuccessResponse.plrReference
     }
 
     "return InternalServerError for create Subscription" in {
-      stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionMissingPlrRefJson)
+      stubResponse(s"$apiUrl/subscription/create-subscription", errorCodes.sample.value, "")
 
-      val futureResult = connector.createSubscription(validSubscriptionCreateParameter)
+      val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
 
-      val httpResponse: HttpResponse = futureResult.futureValue
-
-      httpResponse.status mustBe OK
-
-      val jsonResponse    = Json.parse(httpResponse.body)
-      val successResponse = jsonResponse.validate[SuccessResponse].asOpt
-
-      successResponse mustBe None
-    }
-
-    "return InternalServerError for EIS returns Error status" in {
-      val errorStatus: Int = errorCodes.sample.value
-      // Ensure the body is appropriate for an error response, or leave it empty if that's the expected behavior.
-      stubResponse(s"$apiUrl/subscription/create-subscription", errorStatus, "")
-
-      val futureResult = connector.createSubscription(validSubscriptionCreateParameter)
-
-      val httpResponse: HttpResponse = futureResult.futureValue
-
-      httpResponse.status mustBe errorStatus
-      httpResponse.body shouldBe empty
+      futureResult mustBe models.InternalServerError
     }
 
   }

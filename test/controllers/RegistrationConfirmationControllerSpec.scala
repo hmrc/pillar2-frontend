@@ -17,29 +17,51 @@
 package controllers
 
 import base.SpecBase
+import models.MneOrDomestic
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.subMneOrDomesticPage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
+
+import scala.concurrent.Future
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
 
   "RegistrationConfirmation Controller" when {
-
+    val enrolments: Set[Enrolment] = Set(
+      Enrolment(
+        key = "HMRC-PILLAR2-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier("PLRID", "12345678"),
+          EnrolmentIdentifier("UTR", "ABC12345")
+        ),
+        state = "activated"
+      )
+    )
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
-
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.Uk))))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("N/A", currentDate.toString(), "Domestic Top-up Tax")(
+        contentAsString(result) mustEqual view("12345678", currentDate.toString(), MneOrDomestic.Uk)(
           request,
           appConfig(application),
           messages(application)
@@ -48,22 +70,35 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
-          .withSession("updateMneOrDomestic" -> "ukAndOther")
-
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.UkAndOther))))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("N/A", currentDate.toString(), "Domestic Top-up Tax and Multinational Top-up Tax")(
+        contentAsString(result) mustEqual view("12345678", currentDate.toString(), MneOrDomestic.UkAndOther)(
           request,
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

@@ -16,60 +16,162 @@
 
 package services
 
+import akka.Done
 import base.SpecBase
-import connectors.SubscriptionConnector
-import models.SubscriptionCreateError
-import models.subscription.SubscriptionResponse
+import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.registration.RegistrationInfo
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.Application
+import pages._
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
+import play.api.test.Helpers.running
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class SubscriptionServiceSpec extends SpecBase {
 
   val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-    )
-    .build()
-
   "SubscriptionService" when {
-
-    "must return Pillar2Id if all success" in {
-      val response = SubscriptionResponse(
-        plrReference = "XE1111123456789",
-        formBundleNumber = "12345678",
-        processingDate = LocalDate.now().atStartOfDay()
-      )
-      val jsonResponse     = Json.toJson(response)
-      val mockHttpResponse = HttpResponse(200, jsonResponse.toString)
-
-      when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-        .thenReturn(Future.successful(mockHttpResponse))
-
-      service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
-        res mustBe Right(response)
+    "subscribe" should {
+      "return a success response with a pillar 2 reference for non uk based upe and fm" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, false)
+          .setOrException(fmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockRegistrationConnector.register(any(), any())(any())).thenReturn(Future.successful("upeID"))
+          when(mockRegistrationConnector.register(any(), any())(any())).thenReturn(Future.successful("fmID"))
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
       }
-    }
 
-    "must return when there is problem of creating" in {
-      import scala.concurrent.Future
-
-      when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-        .thenReturn(Future.failed(new Exception("Simulated failure")))
-
-      service.checkAndCreateSubscription("id", "123456789", Some("987654321")).map { res =>
-        res mustBe Left(SubscriptionCreateError)
+      "return a success response with a pillar 2 reference for uk based upe and filing member" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
       }
-    }
 
+      "throw an exception if subscription fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.InternalServerError
+        }
+      }
+
+      "throw an exception if create enrolment fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.InternalServerError
+        }
+      }
+
+      "throw an exception if enrolment proxy returns true" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(true))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.InternalServerError
+        }
+      }
+
+    }
   }
+
 }

@@ -20,17 +20,18 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{fmDashboardPage, subAccountStatusPage}
+import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.ReadSubscriptionService
-import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Pillar2SessionKeys
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Pillar2Reference
+import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -43,68 +44,52 @@ class DashboardController @Inject() (
   requireData:                 DataRequiredAction,
   val readSubscriptionService: ReadSubscriptionService,
   val controllerComponents:    MessagesControllerComponents,
-  view:                        DashboardView
+  view:                        DashboardView,
+  sessionRepository:           SessionRepository
 )(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val userId       = request.userId
     val showPayments = appConfig.showPaymentsSection
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    plrReference match {
-      case Some(ref) =>
-        readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, ref)).flatMap {
-          case Right(_) =>
-            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - readSubscription invoked")
-            userAnswersConnectors.getUserAnswer(userId).flatMap {
-              case Some(userAnswers) =>
-                (for {
-                  dashboardInfo <- userAnswers.get(fmDashboardPage)
-
-                } yield {
-                  val inactiveStatus = userAnswers
-                    .get(subAccountStatusPage)
-                    .map { acctStatus =>
-                      acctStatus.inactive
-                    }
-                    .getOrElse(false)
-                  Future.successful(
-                    Ok(
-                      view(
-                        dashboardInfo.organisationName,
-                        dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                        ref,
-                        inactiveStatus,
-                        showPayments
-                      )
-                    )
+    sessionRepository
+      .get(request.userId)
+      .flatMap { optionalUserAnswers =>
+        (for {
+          sessionUserAnswers <- optionalUserAnswers
+          plrReference       <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(sessionUserAnswers.get(plrReferencePage))
+        } yield readSubscriptionService
+          .readSubscription(ReadSubscriptionRequestParameters(userId, plrReference))
+          .map { _: JsValue =>
+            request.userAnswers
+              .get(fmDashboardPage)
+              .map { dashboard =>
+                val inactiveStatus = request.userAnswers
+                  .get(subAccountStatusPage)
+                  .exists { acctStatus =>
+                    acctStatus.inactive
+                  }
+                Ok(
+                  view(
+                    dashboard.organisationName,
+                    dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                    plrReference,
+                    inactiveStatus,
+                    showPayments
                   )
-                }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                )
+              }
+              .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-              case None =>
-                Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-            }
+          }
+          .recover { case InternalServerError =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-          case Left(error) =>
-            logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
-            Future.successful(InternalServerError("Internal Server Error occurred"))
-        }
-
-      case None =>
-        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
+      }
   }
-
-  private def extractPlrReference(enrolmentsOption: Option[Set[Enrolment]]): Option[String] =
-    enrolmentsOption.flatMap { enrolments =>
-      enrolments
-        .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
-        .map(_.value)
-    }
 
 }

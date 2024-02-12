@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import scala.concurrent.Future
 
-import javax.inject.Inject
+object FutureConverter {
 
-class BusinessActivityUKFormProvider @Inject() extends Mappings {
+  implicit class FutureOps[A](val a: A) extends AnyVal {
+    def toFuture: Future[A]         = Future.successful(a)
+    def toRight:  Right[Nothing, A] = Right(a)
+  }
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("businessActivityUK.error.required")
-    )
 }

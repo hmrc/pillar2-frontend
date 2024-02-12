@@ -691,6 +691,8 @@ registrationConfirmation.now = You can now
 registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
+mneOrDom.ukAndOther= Domestic Top-up Tax and Multinational Top-up Tax
+mneOrDom.uk= Domestic Top-up Tax
 
 subscriptionAddress.title = What address do you want to use as the filing member’s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member’s contact address?
@@ -773,14 +775,17 @@ bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
 bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
 bta.noPlrIdGuidance.cta = Return to your Business Tax Account
+
 bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.p1 = screen owned by EACD
-bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
-bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
-bta.accessConfirmation.cta = Continue to Business Tax Account
 
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
+
+
+bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
+bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
+bta.accessConfirmation.cta = Continue to Business Tax Account

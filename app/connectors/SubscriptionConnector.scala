@@ -17,20 +17,30 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.subscription.SubscriptionRequestParameters
+import models.InternalServerError
+import models.subscription.{SubscriptionRequestParameters, SuccessResponse}
 import play.api.Logging
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
-import javax.inject.Inject
+import utils.FutureConverter.FutureOps
+import utils.Pillar2SessionKeys
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-class SubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
-    extends Logging {
+
+@Singleton
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
   val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
-  def createSubscription(
-    subscriptionParameter: SubscriptionRequestParameters
-  )(implicit hc:           HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
-    http.POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionParameter)
-
+  def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
+    http
+      .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionRequestParameters)
+      .flatMap {
+        case response if is2xx(response.status) =>
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
+          response.json.as[SuccessResponse].success.plrReference.toFuture
+        case errorResponse =>
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
+          Future.failed(InternalServerError)
+      }
 }

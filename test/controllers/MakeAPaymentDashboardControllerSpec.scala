@@ -17,10 +17,17 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import views.html.MakeAPaymentDashboardView
+
+import scala.concurrent.Future
 
 class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
@@ -37,9 +44,12 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
         .build()
       running(application) {
-
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val request =
           FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 

@@ -18,62 +18,69 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.BusinessActivityUKFormProvider
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.BusinessActivityUKView
 
 class BusinessActivityUKControllerSpec extends SpecBase {
   val formProvider = new BusinessActivityUKFormProvider()
 
-  def controller(): BusinessActivityUKController =
-    new BusinessActivityUKController(
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewBusinessActivityUK,
-      mockSessionData
-    )
+  "Trading Business Confirmation Controller" when {
 
-  "Trading Business Confirmation Controller" must {
-    implicit val request = FakeRequest(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+    "must return OK and the correct view for a GET when page previously not answered" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url)
 
-    "must return OK and the correct view for a GET" in {
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[BusinessActivityUKView]
 
-      val request =
-        FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
-
-      val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "Does the group have business operations in the UK?"
-      )
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider())(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> "true"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url
 
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "yes"))
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url
-
+      }
     }
     "must redirect to the next page when valid data is submitted with no selected" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> "false"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url
 
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "no"))
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url
-
+      }
     }
-    "must show error page with 400 if no option is selected " in {
-      val formData = Map("value" -> "")
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(formData.toSeq: _*)
-      val result = controller.onSubmit()()(request)
-      status(result) shouldBe 400
+    "return  BAD_REQUEST if invalid data is submitted " in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> ""
+          )
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
     }
   }
 }

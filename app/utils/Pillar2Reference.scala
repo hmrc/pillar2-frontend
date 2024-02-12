@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import uk.gov.hmrc.auth.core.Enrolment
 
-import javax.inject.Inject
+object Pillar2Reference {
+  def getPillar2ID(enrolments: Option[Set[Enrolment]]): Option[String] = enrolments.flatMap { enrolments =>
+    enrolments
+      .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+      .map(_.value)
+  }
 
-class BusinessActivityUKFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("businessActivityUK.error.required")
-    )
 }

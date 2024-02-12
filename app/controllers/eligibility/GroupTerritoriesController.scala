@@ -16,57 +16,69 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
 import forms.GroupTerritoriesFormProvider
-import models.GroupTerritories
+import models.UserAnswers
+import pages.{BusinessActivityUKPage, UpeEqPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 import views.html.GroupTerritoriesView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class GroupTerritoriesController @Inject() (
   formProvider:             GroupTerritoriesFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
-  sessionData:              SessionData
-)(implicit appConfig:       FrontendAppConfig)
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.groupTerritoriesPageYesNo) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    val sessionID = Pillar2SessionKeys.sessionId(hc)
+    sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+      val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(UpeEqPage) match {
+        case None       => form
+        case Some(data) => form.fill(data)
+      }
+      Ok(view(preparedForm))
     }
-
-    Ok(view(preparedForm))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        value =>
-          value match {
-            case GroupTerritories.Yes.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-            case GroupTerritories.No.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-          }
-      )
+    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    val sessionID = Pillar2SessionKeys.sessionId(hc)
+    sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+      val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+          value =>
+            value match {
+              case true =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(UpeEqPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+              case false =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(UpeEqPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad)
+            }
+        )
+    }
   }
 }

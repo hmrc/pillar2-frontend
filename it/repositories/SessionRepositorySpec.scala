@@ -1,29 +1,27 @@
 package repositories
 
+import base.SpecBase
 import config.FrontendAppConfig
 import models.UserAnswers
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-import java.time.{Clock, Instant, ZoneId}
 import java.time.temporal.ChronoUnit
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.time.{Clock, Instant, ZoneId}
 
 class SessionRepositorySpec
-  extends AnyFreeSpec
-    with Matchers
+  extends  Matchers
     with DefaultPlayMongoRepositorySupport[UserAnswers]
     with ScalaFutures
     with IntegrationPatience
     with OptionValues
-    with MockitoSugar {
+    with MockitoSugar with SpecBase {
 
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
@@ -37,9 +35,9 @@ class SessionRepositorySpec
     mongoComponent = mongoComponent,
     appConfig      = mockAppConfig,
     clock          = stubClock
-  )
+  )(ec)
 
-  ".set" - {
+  ".set" should {
 
     "must set the last updated time on the supplied user answers to `now`, and save them" in {
 
@@ -53,9 +51,9 @@ class SessionRepositorySpec
     }
   }
 
-  ".get" - {
+  ".get" must {
 
-    "when there is a record for this id" - {
+    "when there is a record for this id" should {
 
       "must update the lastUpdated time and get the record" in {
 
@@ -68,7 +66,7 @@ class SessionRepositorySpec
       }
     }
 
-    "when there is no record for this id" - {
+    "when there is no record for this id" should {
 
       "must return None" in {
 
@@ -77,7 +75,7 @@ class SessionRepositorySpec
     }
   }
 
-  ".clear" - {
+  ".clear" should {
 
     "must remove a record" in {
 
@@ -96,9 +94,9 @@ class SessionRepositorySpec
     }
   }
 
-  ".keepAlive" - {
+  ".keepAlive" must {
 
-    "when there is a record for this id" - {
+    "when there is a record for this id" should {
 
       "must update its lastUpdated to `now` and return true" in {
 
@@ -114,7 +112,7 @@ class SessionRepositorySpec
       }
     }
 
-    "when there is no record for this id" - {
+    "when there is no record for this id" should {
 
       "must return true" in {
 
