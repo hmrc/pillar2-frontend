@@ -25,6 +25,6 @@ class NominateFilingMemberYesNoFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "corporatePosition" -> boolean("rfm.corporatePosition.error.required")
+      "nominateFilingMember" -> boolean("NominateFilingMemberYesNo.error.required")
     )
 }
