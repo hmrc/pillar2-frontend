@@ -23,13 +23,14 @@
   id: Option[String] = None,
   classes: Option[String] = None,
   textHidden: Option[String] = None,
-  style: Option[String] = None
+  style: Option[String] = None,
+  fullStop: Boolean = false
 )
 
 @caption = @{
   if (textHidden.exists(_.trim.nonEmpty)) {
-    Html(s"""<span aria-hidden="true">$text</span><span class="govuk-visually-hidden">${textHidden.getOrElse("")}</span></a>""")
-  } else Html(s"$text</a>")
+    Html(s"""<span aria-hidden="true">$text</span><span class="govuk-visually-hidden">${textHidden.getOrElse("")}</span>""")
+  } else Html(s"$text")
 }
 
 @idAttr = @{
@@ -56,4 +57,4 @@
 
 @* The <a> tag is split on purpose - to avoid inline-block whitespace problem *@
 <a @targetAttrs @idAttr class="@linkClasses" @linkStyles href="@call"
-  >@caption
+  >@caption</a>@{if(fullStop)(".")}
