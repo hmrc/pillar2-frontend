@@ -26,18 +26,19 @@ import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.registrationview.SecurityQuestionsCheckYourAnswersView
-import views.html.subscriptionview.SubCheckYourAnswersView
+//import views.html.registrationview.SecurityQuestionsCheckYourAnswersView
+//import views.html.subscriptionview.SubCheckYourAnswersView
 
 import scala.concurrent.Future
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
-                                                              identify:                 IdentifierAction,
-                                                              getData:                  DataRetrievalAction,
-                                                              requireData:              DataRequiredAction,
-                                                              val controllerComponents: MessagesControllerComponents,
-                                                              view:                     SecurityQuestionsCheckYourAnswersView
-                                                            )(implicit appConfig:       FrontendAppConfig)
-  extends FrontendBaseController
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     SecurityQuestionsCheckYourAnswersView
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
@@ -56,20 +57,6 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
-  }
-
-
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val userId       = request.userId
-    val securityQuestions = request.userAnswers.securityQuestionStatus
-    (securityQuestions) match {
-      case RowStatus.Completed =>
-        dashboardInfo <- userAnswers.get(fmDashboardPage)
-    val securityQuestions = request.userAnswers.rfmSecurityCheckPage
-
-    if request.userAnswers.finalStatusCheck => createRegistrationAndSubscription(upe, s)
-      case _ => Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
 

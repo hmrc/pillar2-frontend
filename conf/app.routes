@@ -323,11 +323,13 @@ GET        /bta/eacd                                                         con
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/security//change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/security//change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 

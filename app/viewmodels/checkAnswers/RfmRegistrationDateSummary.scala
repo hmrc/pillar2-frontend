@@ -35,7 +35,7 @@ object RfmRegistrationDateSummary {
         key = "rfmRegistrationDate.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(startDate)),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfmRegistrationDate.change.hidden"))
         )
       )

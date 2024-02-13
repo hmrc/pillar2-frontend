@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.{rfmSecurityCheckPage, upeNameRegistrationPage}
+import pages.rfmSecurityCheckPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -32,7 +32,7 @@ object RfmSecurityCheckSummary {
         key = "rfmSecurityCheck.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.rfm.routes.SecurityCheckController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfmSecurityCheck.change.hidden"))
         )
       )

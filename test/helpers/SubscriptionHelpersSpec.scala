@@ -699,7 +699,6 @@ class SubscriptionHelpersSpec extends SpecBase {
 
     }
 
-
   }
 
 }
