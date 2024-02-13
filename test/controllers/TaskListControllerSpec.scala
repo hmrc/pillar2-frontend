@@ -30,7 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import utils.RowStatus
-import views.html.TaskListView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -70,8 +69,6 @@ class TaskListControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[TaskListView]
 
         status(result) mustEqual OK
 

@@ -1,6 +1,6 @@
 package repositories
 
-import base.SpecBase
+
 import config.FrontendAppConfig
 import models.UserAnswers
 import org.mockito.Mockito.when
@@ -8,20 +8,22 @@ import org.mongodb.scala.model.Filters
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
+import scala.concurrent.ExecutionContext
 
 class SessionRepositorySpec
-  extends  Matchers
+  extends AnyWordSpec
     with DefaultPlayMongoRepositorySupport[UserAnswers]
     with ScalaFutures
     with IntegrationPatience
     with OptionValues
-    with MockitoSugar with SpecBase {
+    with MockitoSugar with Matchers {
 
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
@@ -30,6 +32,7 @@ class SessionRepositorySpec
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1
+  implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
 
   protected override val repository = new SessionRepository(
     mongoComponent = mongoComponent,
