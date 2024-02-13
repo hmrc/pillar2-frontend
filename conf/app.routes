@@ -323,7 +323,7 @@ GET        /bta/eacd                                                         con
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad

@@ -16,9 +16,10 @@
 
 package pages
 
+import models.rfm.CorporatePosition
 import play.api.libs.json.JsPath
 
-case object rfmCorporatePositionPage extends QuestionPage[Boolean] {
+case object rfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
 
   override def path: JsPath = JsPath \ toString
 

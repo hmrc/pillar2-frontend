@@ -16,10 +16,12 @@
 
 package controllers.rfm
 
+import cache.SessionData
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
 import forms.RfmCorporatePositionFormProvider
+import models.rfm.CorporatePosition
 import models.Mode
 import pages.rfmCorporatePositionPage
 import play.api.i18n.I18nSupport
@@ -27,7 +29,6 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.rfm.CorporatePositionView
 
 import javax.inject.Inject
@@ -40,7 +41,8 @@ class CorporatePositionController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      CorporatePositionView
+  view:                      CorporatePositionView,
+  sessionData:               SessionData
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -67,16 +69,19 @@ class CorporatePositionController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case true =>
+            case CorporatePosition.Upe =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-            case false =>
+                .withSession((sessionData.updateMneOrDomestic(value.toString)))
+
+            case CorporatePosition.NewNfm =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+                .withSession((sessionData.updateMneOrDomestic(value.toString)))
           }
       )
   }

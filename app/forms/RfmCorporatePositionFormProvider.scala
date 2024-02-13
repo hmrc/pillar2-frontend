@@ -17,14 +17,15 @@
 package forms
 
 import forms.mappings.Mappings
+import models.rfm.CorporatePosition
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class RfmCorporatePositionFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[CorporatePosition] =
     Form(
-      "corporatePosition" -> boolean("rfm.corporatePosition.error.required")
+      "value" -> enumerable[CorporatePosition]("rfm.corporatePosition.error.required")
     )
 }

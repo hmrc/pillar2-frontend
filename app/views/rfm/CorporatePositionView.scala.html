@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize
+@import models.rfm.CorporatePosition
 
 @this(
 layout: templates.Layout,
@@ -34,14 +35,15 @@ govukInsetText : GovukInsetText
 @formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(), 'autoComplete -> "off") {
 
 @if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("corporatePosition" -> "value_0")))
+@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
 }
 
 <span class="govuk-caption-l">@messages("rfm.heading.caption")</span>
 @govukRadios(
-RadiosViewModel.yesNo(
-field  = form("corporatePosition"),
-legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large)
+RadiosViewModel(
+field  = form("value"),
+legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large),
+items = CorporatePosition.options
 ).withHint(HintViewModel(HtmlContent(headingContent)))
 )
 

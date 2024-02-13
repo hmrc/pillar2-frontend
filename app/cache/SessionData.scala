@@ -42,4 +42,8 @@ class SessionData {
     request.session +
       (Pillar2SessionKeys.updateMneOrDomestic -> value)
 
+  def corporatePosition(value: String)(implicit request: Request[AnyContent]): Session =
+    request.session +
+      (Pillar2SessionKeys.corporatePosition -> value)
+
 }
