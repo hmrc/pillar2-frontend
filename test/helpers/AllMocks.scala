@@ -29,8 +29,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import repositories.SessionRepository
-import services.audit.AuditService
 import services._
+import services.audit.AuditService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -46,7 +46,6 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockUserAnswersConnectors:                   UserAnswersConnectors                   = mock[UserAnswersConnectors]
   val mockCountryOptions:                          CountryOptions                          = mock[CountryOptions]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
-  val mockSessionData:                             SessionData                             = mock[SessionData]
   val mockSessionRepository:                       SessionRepository                       = mock[SessionRepository]
   val mockNavigator:                               Navigator                               = mock[Navigator]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
