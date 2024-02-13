@@ -15,12 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton
@@ -35,7 +37,9 @@
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
-<span class="govuk-caption-l">@messages("rfm.heading.caption")</span>
+
+@sectionHeader(messages("rfm.heading.caption"))
+
 @govukInput(
 InputViewModel(
 field = form("value"),
