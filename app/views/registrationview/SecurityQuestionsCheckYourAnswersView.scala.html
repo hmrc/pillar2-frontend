@@ -15,28 +15,30 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+@import play.api.mvc.Request
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
-layout: templates.Layout,
-govukSummaryList: GovukSummaryList,
-govukButton: GovukButton
+    layout: templates.Layout,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton
 )
-
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("securityQuestionsCheckYourAnswers.title"))) {
 
-<span class="govuk-caption-l">@messages("securityQuestionsCheckYourAnswers.heading.caption")</span>
-<h1 class="govuk-heading-l">@messages("securityQuestionsCheckYourAnswers.heading")</h1>
+    <span class="govuk-caption-l">@messages("securityQuestionsCheckYourAnswers.heading.caption")</span>
+    <h1 class="govuk-heading-l">@messages("securityQuestionsCheckYourAnswers.heading")</h1>
 
-@govukSummaryList(list)
+    @govukSummaryList(list)
 
+    <br>
 
-<br>
-@govukButton(ButtonViewModel(messages("site.save-and-continue")).withAttribute("id","continue")
-)
-
-
+    @govukButton(ButtonViewModel(
+        content = Text(messages("site.save-and-continue"))
+    ))
+    
+    
 }
-
