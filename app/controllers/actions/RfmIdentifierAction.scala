@@ -58,31 +58,39 @@ class RfmAuthenticatedIdentifierAction @Inject() (
 
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
+            println("************************** 1a ****************************")
             // pillar2 id already associated with this account - role Admin (but Admin and User are the same? )
             // go to already enrolled KB page ???
             Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
           } else {
+            println("************************** 1b ****************************")
             // No pillar2 id already associated with this account.
             // go to security question 1 screen ???
-            Future.successful(Left(Redirect(???)))
+            Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
           }
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
+          println("************************** 2 ****************************")
           // redirect to standard org sign-in KB page - Role Assistant but what about role User ?
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ =>
+          println("************************** 3 ****************************")
           // redirect to individual sign-in KB page
           Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
+          println("************************** 4 ****************************")
           // redirect to Agent sign-in KB page
           Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
+          println("************************** 5 ****************************")
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
+        println("************************** 6 ****************************")
         Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
       case _: AuthorisationException =>
+        println("************************** 7 ****************************")
         Left(Redirect(routes.UnauthorisedController.onPageLoad))
     }
 

@@ -17,10 +17,11 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
+import controllers.actions.RfmIdentifierAction
 import forms.RfmStartPageFormProvider
 import models.Confirmation
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -31,7 +32,8 @@ import views.html.rfm.StartPageView
 class StartPageController @Inject() (
   formProvider:             RfmStartPageFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     StartPageView
+  view:                     StartPageView,
+  rfmIdentify:              RfmIdentifierAction
 )(implicit val appConfig:   FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -55,4 +57,15 @@ class StartPageController @Inject() (
         _ => Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
       )
   }
+
+  def rfmAuthenticate: Action[_] = rfmIdentify { implicit request =>
+    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      // redirect to
+      Redirect(???)
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
+  }
+
 }

@@ -19,24 +19,85 @@ package controllers.actions
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmAuthActionSpec extends SpecBase {
+
+  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  val identifierValue = "XCCVRUGFJG788"
+
+  val pillar2Enrolment: Enrolments =
+    Enrolments(Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", identifierValue)), "Activated", None)))
+  val noEnrolments: Enrolments =
+    Enrolments(Set.empty)
+
+  val id: String = UUID.randomUUID().toString
 
   class Harness(rfmAuthAction: RfmIdentifierAction) {
     def onPageLoad(): Action[AnyContent] = rfmAuthAction(_ => Results.Ok)
   }
 
-  "Auth Action" when {
+  "RfmAuthAction" when {
+
+    "when the user is logged in as an Organisation Admin with a Pillar2 enrolment" must {
+
+      "must succeed" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(id) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe OK
+        }
+      }
+    }
+
+    "when the user is logged in as an Organisation Admin with no Pillar2 enrolment" must {
+
+      "must fail and redirect to security question" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+
+        }
+      }
+    }
 
     "when the user hasn't logged in" must {
 

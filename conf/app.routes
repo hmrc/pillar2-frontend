@@ -315,6 +315,7 @@ GET        /errors/return                                                       
 
 GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
 POST       /replace-filing-member/start                                         controllers.rfm.StartPageController.onSubmit
+GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
