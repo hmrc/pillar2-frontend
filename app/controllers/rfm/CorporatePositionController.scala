@@ -74,14 +74,14 @@ class CorporatePositionController @Inject() (
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.updateMneOrDomestic(value.toString)))
+                .withSession((sessionData.corporatePosition(value.toString)))
 
             case CorporatePosition.NewNfm =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.updateMneOrDomestic(value.toString)))
+                .withSession((sessionData.corporatePosition(value.toString)))
           }
       )
   }

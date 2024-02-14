@@ -35,7 +35,7 @@ object CorporatePosition extends Enumerable.Implicits {
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
-      content = Text(messages(s"corporatePosition.${value.toString}")),
+      content = Text(messages(s"rfm.corporatePosition.${value.toString}")),
       value = Some(value.toString),
       id = Some(s"value_$index")
     )
