@@ -768,6 +768,27 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
+rfm.heading.caption = Replace filing member
+rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
+rfm.startPage.subHeading1 = Not yet registered to report Pillar 2 top-up taxes
+rfm.startPage.p2 = You cannot use this service until you have first registered.
+rfm.startPage.p3 = If you need to register a new Pillar 2 top-up taxes account {0}
+rfm.startPage.p3.link = go back to the service start page for more information
+rfm.startPage.subHeading2 = Who can replace a filing member
+rfm.startPage.b1 = the ultimate parent (UPE), taking over from a nominated filing member as the group’s default filing member
+rfm.startPage.b2 = a new nominated filing member, taking over from a previous filing member
+rfm.startPage.subHeading3 = Before you start
+rfm.startPage.p4 = You will need the following information to replace the filing member for your group’s account:
+rfm.startPage.b3 = the group’s Pillar 2 top-up taxes ID
+rfm.startPage.b4 = the date the group first registered to report their Pillar 2 top up taxes in the UK
+rfm.startPage.b5 = identifying information for the new nominated filing member, if applicable, this could include the company registration number (CRN) and/or unique taxpayer reference (UTR) for a UK registered business or a registered address for overseas entities
+rfm.startPage.b6 = contact preferences and details for up to 2 individuals or teams that we can use as primary contacts about Pillar 2 compliance
+rfm.startPage.b7 = a contact address for the group that we can send correspondence to
+rfm.startPage.legend = Replace a filing member
+rfm.startPage.confirm = Confirm you have read all of the above and are able to act as a new filing member for this group
+rfm.startPage.error = You must select the checkbox to continue
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
