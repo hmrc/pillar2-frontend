@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
@@ -56,44 +55,47 @@ class DashboardController @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val userId       = request.userId
     val showPayments = appConfig.showPaymentsSection
-    sessionRepository
-      .get(request.userId) //this does not exist when they start the journey
-      .flatMap { optionalUserAnswers =>
-        (for {
-          sessionUserAnswers <- optionalUserAnswers
-          plrReference       <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(sessionUserAnswers.get(plrReferencePage))
-        } yield readSubscriptionService
-          .readSubscription(ReadSubscriptionRequestParameters(userId, plrReference))
-          .map { _: JsValue =>
-            request.userAnswers
-              .get(fmDashboardPage)
-              .map { dashboard =>
-                val inactiveStatus = request.userAnswers
-                  .get(subAccountStatusPage)
-                  .exists { acctStatus =>
-                    acctStatus.inactive
-                  }
-                Ok(
-                  view(
-                    dashboard.organisationName,
-                    dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                    plrReference,
-                    inactiveStatus,
-                    showPayments
-                  )
-                )
-              }
-              .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
-          }
-          .recover { case _: Exception =>
-            logger.error(
-              s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
-            )
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-          }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
+    val futurePillar2 = sessionRepository.get(request.userId).map { optionalUserAnswers =>
+      optionalUserAnswers.flatMap { userAnswers =>
+        Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
       }
+    }
+    futurePillar2.flatMap { optionalId =>
+      optionalId
+        .map { id =>
+          readSubscriptionService
+            .readSubscription(ReadSubscriptionRequestParameters(userId, id))
+            .map { _: JsValue =>
+              request.userAnswers
+                .get(fmDashboardPage)
+                .map { dashboard =>
+                  val inactiveStatus = request.userAnswers
+                    .get(subAccountStatusPage)
+                    .exists { acctStatus =>
+                      acctStatus.inactive
+                    }
+                  Ok(
+                    view(
+                      dashboard.organisationName,
+                      dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                      id,
+                      inactiveStatus,
+                      showPayments
+                    )
+                  )
+                }
+                .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+            }
+            .recover { case _: Exception =>
+              logger.error(
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
+              )
+              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }
   }
 
 }
