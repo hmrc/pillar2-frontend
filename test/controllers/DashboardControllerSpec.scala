@@ -103,7 +103,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
 
     }
-    "redirect to journey recovery if no Js value is found from read subscription api" in {
+    "redirect to journey recovery if no valid Js value is found from read subscription api" in {
       val userAnswers = emptyUserAnswers
         .setOrException(subAccountStatusPage, AccountStatus(true))
 
@@ -118,11 +118,10 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
 
         val result = route(application, request).value
-
-        result.failed.futureValue mustEqual models.InternalServerError
+        result.failed.futureValue mustEqual models.InternalIssueError
         result.recover {
           _ mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
         }
@@ -142,7 +141,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
@@ -30,7 +31,7 @@ import services.ReadSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2Reference
+import utils.{Pillar2Reference, Pillar2SessionKeys}
 import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
@@ -56,7 +57,7 @@ class DashboardController @Inject() (
     val userId       = request.userId
     val showPayments = appConfig.showPaymentsSection
     sessionRepository
-      .get(request.userId)
+      .get(request.userId) //this does not exist when they start the journey
       .flatMap { optionalUserAnswers =>
         (for {
           sessionUserAnswers <- optionalUserAnswers
@@ -85,7 +86,10 @@ class DashboardController @Inject() (
               .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
           }
-          .recover { case InternalServerError =>
+          .recover { case _: Exception =>
+            logger.error(
+              s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
+            )
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
           }).getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 

@@ -78,7 +78,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
 
-      futureResult mustBe models.InternalServerError
+      futureResult mustBe models.InternalIssueError
     }
 
   }

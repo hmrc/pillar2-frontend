@@ -18,7 +18,7 @@ package connectors
 
 import akka.Done
 import config.FrontendAppConfig
-import models.{EnrolmentInfo, EnrolmentRequest, InternalServerError}
+import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -39,7 +39,7 @@ class EnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: Htt
         logger.error(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error with tax-enrolments call  ${failure.status} : ${failure.body}"
         )
-        Future.failed(InternalServerError)
+        Future.failed(InternalIssueError)
 
     }
 

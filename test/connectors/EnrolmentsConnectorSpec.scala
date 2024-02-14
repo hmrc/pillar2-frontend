@@ -47,14 +47,14 @@ class EnrolmentsConnectorSpec extends SpecBase {
 
       stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", BAD_REQUEST)
       val result = connector.createEnrolment(enrolmentInfo).failed.futureValue
-      result mustBe models.InternalServerError
+      result mustBe models.InternalIssueError
     }
 
     "must return status ServiceUnavailable Error" in {
 
       stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", INTERNAL_SERVER_ERROR)
       val result = connector.createEnrolment(enrolmentInfo).failed.futureValue
-      result mustBe models.InternalServerError
+      result mustBe models.InternalIssueError
     }
 
   }

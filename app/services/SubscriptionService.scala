@@ -19,7 +19,7 @@ package services
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
 import models.subscription.SubscriptionRequestParameters
-import models.{InternalServerError, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -40,7 +40,7 @@ class SubscriptionService @Inject() (
       fmnSafeId       <- registerNfm(userAnswers)
       plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
       enrolmentExists <- enrolmentStoreProxyConnector.enrolmentExists(plrRef)
-      _               <- if (!enrolmentExists) Future.unit else Future.failed(InternalServerError)
+      _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)
       enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
       _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
     } yield plrRef

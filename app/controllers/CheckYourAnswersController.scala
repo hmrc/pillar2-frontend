@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import models.{DuplicateSubmissionError, UserAnswers}
 import pages.{plrReferencePage, subMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,6 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -134,8 +135,13 @@ class CheckYourAnswersController @Inject() (
             _ <- sessionRepository.set(dataToSave)
             _ <- userAnswersConnectors.remove(request.userId)
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
-            .recover { case e: Exception =>
-              Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+            .recover {
+              case _: Exception =>
+                Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+
+              case DuplicateSubmissionError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to a Duplicate Submission")
+                Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
             }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

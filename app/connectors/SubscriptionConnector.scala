@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.InternalServerError
+import models.InternalIssueError
 import models.subscription.{SubscriptionRequestParameters, SuccessResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -41,6 +41,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           response.json.as[SuccessResponse].success.plrReference.toFuture
         case errorResponse =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
-          Future.failed(InternalServerError)
+          Future.failed(InternalIssueError)
       }
 }

@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.InternalServerError
+import models.InternalIssueError
 import models.fm.JourneyType
 import models.registration.RegistrationWithoutIDResponse
 import play.api.Logging
@@ -43,7 +43,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
         case errorResponse =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - UPE register without ID call failed with status ${errorResponse.status}")
-          Future.failed(InternalServerError)
+          Future.failed(InternalIssueError)
       }
     } else {
       http.POSTEmpty(s"$fmRegistrationUrl/$id") flatMap {
@@ -56,7 +56,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
           logger.warn(
             s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Filing Member registration without ID call failed with status ${errorResponse.status}"
           )
-          Future.failed(InternalServerError)
+          Future.failed(InternalIssueError)
       }
 
     }

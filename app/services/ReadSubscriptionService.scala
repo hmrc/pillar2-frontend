@@ -17,7 +17,7 @@
 package services
 
 import connectors.ReadSubscriptionConnector
-import models.InternalServerError
+import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,6 +34,6 @@ class ReadSubscriptionService @Inject() (
       case Some(jsValue) =>
         Future.successful(jsValue)
       case None =>
-        Future.failed(InternalServerError)
+        Future.failed(InternalIssueError)
     }
 }

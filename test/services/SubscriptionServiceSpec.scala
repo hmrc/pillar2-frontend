@@ -107,11 +107,11 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
-          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
           val result = service.createSubscription(userAnswer)
-          result.failed.futureValue mustBe models.InternalServerError
+          result.failed.futureValue mustBe models.InternalIssueError
         }
       }
 
@@ -136,10 +136,10 @@ class SubscriptionServiceSpec extends SpecBase {
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
-          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
           val result = service.createSubscription(userAnswer)
-          result.failed.futureValue mustBe models.InternalServerError
+          result.failed.futureValue mustBe models.InternalIssueError
         }
       }
 
@@ -165,9 +165,9 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(true))
-          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalServerError))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           val result = service.createSubscription(userAnswer)
-          result.failed.futureValue mustBe models.InternalServerError
+          result.failed.futureValue mustBe models.DuplicateSubmissionError
         }
       }
 

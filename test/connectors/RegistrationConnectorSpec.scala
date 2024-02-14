@@ -85,7 +85,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.register("id", JourneyType.UltimateParent)
-      result.failed.futureValue mustBe models.InternalServerError
+      result.failed.futureValue mustBe models.InternalIssueError
     }
     "return safeId for a filing member when successful" in {
 
@@ -99,7 +99,7 @@ class RegistrationConnectorSpec extends SpecBase {
       stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
       val result = connector.register("id", JourneyType.FilingMember)
-      result.failed.futureValue mustBe models.InternalServerError
+      result.failed.futureValue mustBe models.InternalIssueError
 
     }
   }

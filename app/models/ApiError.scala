@@ -18,5 +18,6 @@ package models
 
 sealed trait ApiError extends Throwable
 
-case object InternalServerError extends ApiError
+case object InternalIssueError extends ApiError
 case object SubscriptionCreateError extends ApiError
+case object DuplicateSubmissionError extends ApiError
