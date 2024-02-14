@@ -44,7 +44,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val signOutUrl:          String = configuration.get[String]("urls.signOut")
   val startPagePillar2Url: String = configuration.get[String]("urls.startPagePillar2")
 
-  val enrolmentKey:            String = configuration.get[String](s"keys.enrolmentKey.pillar2")
+  val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
+  val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
+
   lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
 
   lazy val enrolmentStoreProxyUrl: String =
@@ -102,6 +104,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
       )
     } else { Map("english" -> Lang(ENGLISH)) }
 
+  val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")

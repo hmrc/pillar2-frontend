@@ -18,8 +18,9 @@ package services
 
 import connectors.AmendSubscriptionConnector
 import models.subscription.AmendSubscriptionRequestParameters
-import models.{ApiError, SubscriptionCreateError}
-import play.api.libs.json.JsValue
+import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import play.api.Logging
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -28,12 +29,38 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendSubscriptionService @Inject() (
   amendSubscriptionConnector: AmendSubscriptionConnector,
   implicit val ec:            ExecutionContext
-) {
+) extends Logging {
+
   def amendSubscription(parameters: AmendSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Either[ApiError, JsValue]] =
     amendSubscriptionConnector.amendSubscription(parameters).map {
       case Some(jsValue) =>
-        Right(jsValue)
+        (jsValue \ "statusCode").asOpt[Int] match {
+          case Some(statusCode) =>
+            Left(mapErrorCodeToApiError(statusCode, jsValue))
+          case None =>
+            (jsValue \ "error").asOpt[String] match {
+              case Some(errorString) =>
+                val statusCodePattern = "status: (\\d+)".r
+                val statusCode        = statusCodePattern.findFirstMatchIn(errorString).map(_.group(1).toInt).getOrElse(500)
+                Left(mapErrorCodeToApiError(statusCode, jsValue))
+              case None =>
+                Right(jsValue)
+            }
+        }
       case None =>
         Left(SubscriptionCreateError)
+    }
+
+  private def mapErrorCodeToApiError(errorCode: Int, errorDetail: JsValue): ApiError =
+    errorCode match {
+      case 400 => BadRequestError
+      case 404 => NotFoundError
+      case 409 => DuplicateSubmissionError
+      case 422 => UnprocessableEntityError
+      case 500 => InternalServerError_
+      case 503 => ServiceUnavailableError
+      case _ =>
+        logger.error(s"Unhandled error code: $errorCode with detail: ${Json.stringify(errorDetail)}")
+        InternalServerError_
     }
 }
