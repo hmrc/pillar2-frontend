@@ -27,6 +27,7 @@ object Pillar2SessionKeys {
   val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
   val updateMneOrDomestic         = "updateMneOrDomestic"
   val plrId                       = "plrId"
+  val corporatePosition           = "corporatePosition"
 
   def sessionId(hc: HeaderCarrier): String = hc.sessionId.map(_.value).getOrElse("No Session ID available")
 }

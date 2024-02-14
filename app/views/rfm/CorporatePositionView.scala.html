@@ -1,0 +1,61 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import viewmodels.LegendSize
+@import models.rfm.CorporatePosition
+
+@this(
+layout: templates.Layout,
+formHelper: FormWithCSRF,
+govukErrorSummary: GovukErrorSummary,
+govukRadios: GovukRadios,
+govukButton: GovukButton,
+govukInsetText : GovukInsetText
+)
+
+
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = title(form, messages("rfm.corporatePosition.title"))) {
+
+@formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(), 'autoComplete -> "off") {
+
+@if(form.errors.nonEmpty) {
+@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+}
+
+<span class="govuk-caption-l">@messages("rfm.heading.caption")</span>
+@govukRadios(
+RadiosViewModel(
+field  = form("value"),
+legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large),
+items = CorporatePosition.options
+).withHint(HintViewModel(HtmlContent(headingContent)))
+)
+
+@govukButton(
+ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+)
+}
+}
+
+@headingContent = @{
+s"""
+|${govukInsetText(InsetText(content = Text(messages("rfm.corporatePosition.insetText"))))}
+|""".stripMargin
+}
+

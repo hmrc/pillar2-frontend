@@ -792,3 +792,20 @@ havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
+
+rfm.heading.caption = Replace filing member
+rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
+rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
+
+rfm.corporatePosition.title = What is your position in the corporate structure of the group?
+rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
+
+rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
+rfm.corporatePosition.error.required = Select an option - CHECK
+
+rfm.corporatePosition.yes = Ultimate Parent Entity (UPE)
+rfm.corporatePosition.no= New nominated filing member
