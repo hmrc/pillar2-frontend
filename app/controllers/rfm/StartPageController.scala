@@ -17,7 +17,6 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
 import forms.RfmStartPageFormProvider
 import models.Confirmation
 import play.api.i18n.I18nSupport
@@ -32,8 +31,7 @@ import views.html.rfm.StartPageView
 class StartPageController @Inject() (
   formProvider:             RfmStartPageFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     StartPageView,
-  rfmIdentify:              RfmIdentifierAction
+  view:                     StartPageView
 )(implicit val appConfig:   FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -54,18 +52,8 @@ class StartPageController @Inject() (
       .bindFromRequest()
       .fold(
         error => Future.successful(BadRequest(view(error))),
-        _ => Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
+        _ => Future.successful(Redirect(controllers.rfm.routes.AuthenticateController.rfmAuthenticate))
       )
-  }
-
-  def rfmAuthenticate: Action[_] = rfmIdentify { implicit request =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      // redirect to
-      Redirect(???)
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
 }

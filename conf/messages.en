@@ -795,6 +795,26 @@ rfm.alreadyEnrolled.p1 = The Government Gateway user ID you entered as the repla
 rfm.alreadyEnrolled.p2 = To replace the nominated filing member for this group, the new nominated filing member will need to try again with their Government Gateway user ID.
 rfm.alreadyEnrolled.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
 
+rfm.standardOrganisation.title = Sorry, you’re unable to use this service
+rfm.standardOrganisation.heading = Sorry, you’re unable to use this service
+rfm.standardOrganisation.p1 = You’ve signed in with a standard organisation account.
+rfm.standardOrganisation.p2 = Only Government Gateway accounts with an administrator role can replace their nominated filing member.
+rfm.standardOrganisation.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.individual.title = Sorry, you’re unable to use this service
+rfm.individual.heading = Sorry, you’re unable to use this service
+rfm.individual.p1 = You’ve signed in with an individual account. Only users with an organisation account can replace their nominated filing member.
+rfm.individual.p2 = If you need to replace a nominated filing member, {0}
+rfm.individual.p2.link = sign in to Government Gateway with an organisation account
+rfm.individual.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.agent.title = Sorry, you’re unable to use this service
+rfm.agent.heading = Sorry, you’re unable to use this service
+rfm.agent.p1 = You’ve signed in using an agent’s Government Gateway user ID.
+rfm.agent.p2 = Agents cannot use this service to replace a nominated filing member.
+rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
+rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.

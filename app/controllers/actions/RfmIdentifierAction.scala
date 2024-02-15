@@ -51,49 +51,39 @@ class RfmAuthenticatedIdentifierAction @Inject() (
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val enrolmentKey: String = config.enrolmentKey
-
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
 
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+          // Affinity Group: Organisation Affinity, Credential Role: User
+          // (Admin is deprecated, Admin and User are equivalent. see auth-client)
+          // https://github.com/hmrc/auth-client/blob/main/src-common/main/scala/uk/gov/hmrc/auth/core/model.scala#L143
           if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
-            println("************************** 1a ****************************")
-            // pillar2 id already associated with this account - role Admin (but Admin and User are the same? )
-            // go to already enrolled KB page ???
-            Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+            // pillar2 id already associated with this account
+            // Redirect to already enrolled KB page
+            Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {
-            println("************************** 1b ****************************")
-            // No pillar2 id already associated with this account.
-            // go to security question 1 screen ???
-            Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+            // No pillar2 id already associated with this account. Continue journey.
+            Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
           }
-
-        case _ ~ _ ~ Some(Organisation) ~ _ =>
-          println("************************** 2 ****************************")
-          // redirect to standard org sign-in KB page - Role Assistant but what about role User ?
-          Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
+        case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
+          // Affinity Group: Organisation Affinity, Credential Role: Assistant
+          // redirect to standard org sign-in KB page
+          Future.successful(Left(Redirect(controllers.rfm.routes.StandardOrganisationController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ =>
-          println("************************** 3 ****************************")
           // redirect to individual sign-in KB page
-          Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
+          Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
-          println("************************** 4 ****************************")
           // redirect to Agent sign-in KB page
-          Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
+          Future.successful(Left(Redirect(controllers.rfm.routes.AgentController.onPageLoad)))
         case _ =>
-          println("************************** 5 ****************************")
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
-        println("************************** 6 ****************************")
         Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
       case _: AuthorisationException =>
-        println("************************** 7 ****************************")
         Left(Redirect(routes.UnauthorisedController.onPageLoad))
     }
-
   }
-
 }
