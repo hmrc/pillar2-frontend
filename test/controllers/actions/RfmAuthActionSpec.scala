@@ -26,7 +26,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
@@ -53,9 +53,9 @@ class RfmAuthActionSpec extends SpecBase {
 
   "RfmAuthAction" when {
 
-    "when the user is logged in as an Organisation Admin with a Pillar2 enrolment" must {
+    "when the user is logged in as an Organisation User with a Pillar2 enrolment" must {
 
-      "must succeed" in {
+      "must fail and redirect to already enrolled screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -70,14 +70,16 @@ class RfmAuthActionSpec extends SpecBase {
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
-          status(result) mustBe OK
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.rfm.routes.AlreadyEnrolledController.onPageLoad.url
+
         }
       }
     }
 
-    "when the user is logged in as an Organisation Admin with no Pillar2 enrolment" must {
+    "when the user is logged in as an Organisation User with no Pillar2 enrolment" must {
 
-      "must fail and redirect to security question" in {
+      "must succeed and continue" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -92,8 +94,103 @@ class RfmAuthActionSpec extends SpecBase {
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
+          status(result) mustBe OK
+
+        }
+      }
+    }
+
+    "when the user is logged in as an Organisation Assistant" must {
+
+      "must fail and redirect to standard organisation screen" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.rfm.routes.StandardOrganisationController.onPageLoad.url
+
+        }
+      }
+    }
+
+    "when the user is logged in as an Individual" must {
+
+      "must fail and redirect to individual screen" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Individual) ~ Some(User)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.rfm.routes.IndividualController.onPageLoad.url
+
+        }
+      }
+    }
+
+    "when the user is logged in as an Agent" must {
+
+      "must fail and redirect to agent screen" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Agent) ~ Some(User)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.rfm.routes.AgentController.onPageLoad.url
+
+        }
+      }
+    }
+
+    "when the user is logged in and unable to retrieve a valid affinity group" must {
+
+      "must fail and redirect to unauthorised screen" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(None ~ noEnrolments ~ None ~ None))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.routes.UnauthorisedController.onPageLoad.url
 
         }
       }
