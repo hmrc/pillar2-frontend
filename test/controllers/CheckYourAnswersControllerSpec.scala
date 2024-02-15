@@ -37,7 +37,7 @@ import connectors.{EnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -267,6 +267,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
     "on submit method" should {
+      val mockHttpResponse = HttpResponse(OK, "")
       "redirect to confirmation page in case of a success response" in {
 
         val userAnswer = defaultUserAnswer
@@ -275,7 +276,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(subPrimaryEmailPage, "email@hello.com")
           .setOrException(subPrimaryPhonePreferencePage, true)
           .setOrException(subPrimaryCapturePhonePage, "123213")
-        val mockHttpResponse = HttpResponse(OK, "")
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -307,7 +307,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
-      "redirect to error page in case of a failed subscription" in {
+      "redirect to error page in case of a duplicated subscription" in {
         val userAnswer = defaultUserAnswer
           .setOrException(subAddSecondaryContactPage, false)
           .setOrException(subPrimaryContactNamePage, "name")
@@ -323,9 +323,36 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
         running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.failed(new Exception()))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
+
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.AlreadyRegisteredController.onPageLoad.url)
+        }
+      }
+
+      "redirect to subscription error page in case of a failed subscription" in {
+        val userAnswer = defaultUserAnswer
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subPrimaryContactNamePage, "name")
+          .setOrException(subPrimaryEmailPage, "email@hello.com")
+          .setOrException(subPrimaryPhonePreferencePage, true)
+          .setOrException(subPrimaryCapturePhonePage, "123213")
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+        running(application) {
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
 
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
@@ -335,6 +362,5 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
     }
-
   }
 }

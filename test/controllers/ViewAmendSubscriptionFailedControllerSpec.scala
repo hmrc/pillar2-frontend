@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package models
+package controllers
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import base.SpecBase
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
+  "ViewAmendSubscriptionFailed Controller" when {
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+    "must return OK and the start again view" in {
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+      val application = applicationBuilder(userAnswers = None).build()
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+      running(application) {
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
+  }
+
+}

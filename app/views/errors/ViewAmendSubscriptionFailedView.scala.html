@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import config.FrontendAppConfig
+@this(
+layout: templates.Layout
+)
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false) {
+<h1 class="govuk-heading-xl">@messages("viewAmendSubscriptionFailed.heading")</h1>
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+<p class="govuk-body">@messages("viewAmendSubscriptionFailed.message1")</p>
+
+<div class="govuk-body">
+ <a class="govuk-link" href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home">
+  @messages("viewAmendSubscriptionFailed.link")
+ </a>
+</div>
+
+}

@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{DuplicateSubmissionError, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.{plrReferencePage, subMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -136,7 +136,8 @@ class CheckYourAnswersController @Inject() (
             _ <- userAnswersConnectors.remove(request.userId)
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
             .recover {
-              case _: Exception =>
+              case InternalIssueError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to failed call to the backend")
                 Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
 
               case DuplicateSubmissionError =>

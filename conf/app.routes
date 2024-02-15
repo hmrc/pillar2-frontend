@@ -113,8 +113,10 @@ GET         /unauthorised/agent                                                 
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
-GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
 
+GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
+
+GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
 
 GET        /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)

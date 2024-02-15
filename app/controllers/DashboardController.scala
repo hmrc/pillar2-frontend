@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{InternalIssueError, UserAnswers}
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
@@ -51,21 +52,21 @@ class DashboardController @Inject() (
     with I18nSupport
     with Logging {
 
+  // noinspection ScalaStyle
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val userId       = request.userId
-    val showPayments = appConfig.showPaymentsSection
-    val futurePillar2 = sessionRepository.get(request.userId).map { optionalUserAnswers =>
-      optionalUserAnswers.flatMap { userAnswers =>
-        Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
+    val userId = request.userId
+
+    sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswer =>
+      val pillar2ID = optionalUserAnswer match {
+        case Some(userAnswers) => Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
+        case None              => Pillar2Reference.getPillar2ID(request.enrolments)
       }
-    }
-    futurePillar2.flatMap { optionalId =>
-      optionalId
-        .map { id =>
+      pillar2ID
+        .map { plrId =>
           readSubscriptionService
-            .readSubscription(ReadSubscriptionRequestParameters(userId, id))
-            .map { _: JsValue =>
+            .readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
+            .map { _ =>
               request.userAnswers
                 .get(fmDashboardPage)
                 .map { dashboard =>
@@ -78,24 +79,24 @@ class DashboardController @Inject() (
                     view(
                       dashboard.organisationName,
                       dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                      id,
+                      plrId,
                       inactiveStatus,
-                      showPayments
+                      appConfig.showPaymentsSection
                     )
                   )
                 }
                 .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
             }
-            .recover { case _: Exception =>
+            .recover { case InternalIssueError =>
               logger.error(
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
               )
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
             }
+
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
     }
   }
-
 }

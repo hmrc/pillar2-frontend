@@ -103,37 +103,27 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
 
     }
-    "redirect to journey recovery if no valid Js value is found from read subscription api" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subAccountStatusPage, AccountStatus(true))
-
+    "redirect to error page if no valid Js value is found from read subscription api" in {
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers), enrolments)
+        applicationBuilder(userAnswers = None, enrolments)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
-            bind[ReadSubscriptionConnector].toInstance(mockReadSubscriptionConnector)
+            bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
           )
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
 
         val result = route(application, request).value
-        result.failed.futureValue mustEqual models.InternalIssueError
-        result.recover {
-          _ mustEqual controllers.routes.JourneyRecoveryController.onPageLoad()
-        }
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+
       }
     }
 
     "redirect to Journey Recovery if no pillar 2 reference is found in session repository or enrolment data" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subAccountStatusPage, AccountStatus(true))
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = None)
           .overrides(
             bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
             bind[ReadSubscriptionConnector].toInstance(mockReadSubscriptionConnector)
@@ -148,6 +138,25 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
 
+    }
+
+    "redirect to journey recovery if read subscription has happened successfully but no dashboard info is found" in {
+      val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
+      val application = applicationBuilder(userAnswers = Some(ua), enrolments)
+        .overrides(
+          bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
+          bind[ReadSubscriptionConnector].toInstance(mockReadSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
 
   }

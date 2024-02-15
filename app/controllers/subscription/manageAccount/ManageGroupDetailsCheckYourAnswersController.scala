@@ -20,6 +20,8 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.routes
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
 import models.subscription.AmendSubscriptionRequestParameters
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -63,6 +65,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    val showErrorScreens = appConfig.showErrorScreens
 
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
       case Right(s) =>
@@ -70,6 +73,26 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
           logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from group details ")
           Redirect(controllers.routes.DashboardController.onPageLoad)
         }
+      case Left(error) if showErrorScreens =>
+        val errorMessage = error match {
+          case BadRequestError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error."
+          case NotFoundError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found."
+          case DuplicateSubmissionError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected."
+          case UnprocessableEntityError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
+          case InternalServerError_ =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
+          case ServiceUnavailableError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Service Unavailable error."
+          case SubscriptionCreateError =>
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
+        }
+        logger.error(errorMessage)
+        Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+
       case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
