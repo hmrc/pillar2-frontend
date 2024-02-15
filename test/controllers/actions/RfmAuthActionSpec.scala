@@ -17,7 +17,6 @@
 package controllers.actions
 
 import base.SpecBase
-import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
@@ -28,20 +27,22 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.auth.core.retrieve.~
 
 import java.util.UUID
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RfmAuthActionSpec extends SpecBase {
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+
+  val enrolmentKey    = "HMRC-PILLAR2-ORG"
+  val identifierName  = "PLRID"
   val identifierValue = "XCCVRUGFJG788"
+  val state           = "Activated"
 
   val pillar2Enrolment: Enrolments =
-    Enrolments(Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", identifierValue)), "Activated", None)))
+    Enrolments(Set(Enrolment(enrolmentKey, List(EnrolmentIdentifier(identifierName, identifierValue)), state, None)))
   val noEnrolments: Enrolments =
     Enrolments(Set.empty)
 
@@ -340,10 +341,3 @@ class RfmAuthActionSpec extends SpecBase {
     }
   }
 }
-
-//class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
-//  val serviceUrl: String = ""
-//
-//  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
-//    Future.failed(exceptionToReturn)
-//}
