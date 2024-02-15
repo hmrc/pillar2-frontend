@@ -19,7 +19,7 @@ package services
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
 import models.subscription.SubscriptionRequestParameters
-import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import models.{DuplicateSubmissionError, UserAnswers}
 import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 

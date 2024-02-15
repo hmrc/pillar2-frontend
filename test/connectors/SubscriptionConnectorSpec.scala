@@ -81,5 +81,11 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       futureResult mustBe models.InternalIssueError
     }
 
+    "return Duplicated submission for when trying to subscribe an entity that has already been subscribed" in {
+      stubResponse(s"$apiUrl/subscription/create-subscription", 409, "")
+      val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
+      futureResult mustBe models.DuplicateSubmissionError
+    }
+
   }
 }

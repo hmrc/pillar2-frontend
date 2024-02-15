@@ -35,12 +35,11 @@ package controllers.eligibility
 import config.FrontendAppConfig
 import forms.RegisteringNfmForThisGroupFormProvider
 import models.UserAnswers
-import pages.{BusinessActivityUKPage, NfmEqPage}
+import pages.NfmEqPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys

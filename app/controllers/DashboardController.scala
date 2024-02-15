@@ -19,12 +19,11 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{InternalIssueError, UserAnswers}
+import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.ReadSubscriptionService
@@ -64,29 +63,28 @@ class DashboardController @Inject() (
       }
       pillar2ID
         .map { plrId =>
-          readSubscriptionService
-            .readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
-            .map { _ =>
-              request.userAnswers
-                .get(fmDashboardPage)
-                .map { dashboard =>
-                  val inactiveStatus = request.userAnswers
-                    .get(subAccountStatusPage)
-                    .exists { acctStatus =>
-                      acctStatus.inactive
-                    }
-                  Ok(
-                    view(
-                      dashboard.organisationName,
-                      dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                      plrId,
-                      inactiveStatus,
-                      appConfig.showPaymentsSection
-                    )
-                  )
+          (for {
+            _ <- readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
+            _ <- userAnswersConnectors.getUserAnswer(request.userId)
+          } yield request.userAnswers
+            .get(fmDashboardPage)
+            .map { dashboard =>
+              val inactiveStatus = request.userAnswers
+                .get(subAccountStatusPage)
+                .exists { acctStatus =>
+                  acctStatus.inactive
                 }
-                .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              Ok(
+                view(
+                  dashboard.organisationName,
+                  dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                  plrId,
+                  inactiveStatus,
+                  appConfig.showPaymentsSection
+                )
+              )
             }
+            .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             .recover { case InternalIssueError =>
               logger.error(
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
