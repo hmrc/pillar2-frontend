@@ -55,29 +55,25 @@ class RfmAuthenticatedIdentifierAction @Inject() (
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
 
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          // Affinity Group: Organisation Affinity, Credential Role: User
           // (Admin is deprecated, Admin and User are equivalent. see auth-client)
           // https://github.com/hmrc/auth-client/blob/main/src-common/main/scala/uk/gov/hmrc/auth/core/model.scala#L143
           if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
-            // pillar2 id already associated with this account
-            // Redirect to already enrolled KB page
+            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Organisation:User already enrolled login attempt")
             Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {
-            // No pillar2 id already associated with this account. Continue journey.
             Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
           }
         case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
-          // Affinity Group: Organisation Affinity, Credential Role: Assistant
-          // redirect to standard org sign-in KB page
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Organisation:Assistant login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.StandardOrganisationController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ =>
-          // redirect to individual sign-in KB page
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Individual login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
-          // redirect to Agent sign-in KB page
+          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Agent login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.AgentController.onPageLoad)))
         case _ =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>

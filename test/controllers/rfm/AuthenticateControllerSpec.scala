@@ -17,14 +17,10 @@
 package controllers.rfm
 
 import base.SpecBase
-import forms.RfmStartPageFormProvider
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
-import views.html.rfm.StartPageView
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
 
 class AuthenticateControllerSpec extends SpecBase {
-
-  val formProvider = new RfmStartPageFormProvider()("rfm.startPage.error")
 
   "Authenticate Controller" when {
 

@@ -32,7 +32,7 @@ class AuthenticateController @Inject() (
   def rfmAuthenticate: Action[AnyContent] = rfmIdentify { _ =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      // redirect to security question 1 screen
+      // TODO - redirect to security question 1 screen
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
