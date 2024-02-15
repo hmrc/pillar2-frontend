@@ -20,17 +20,18 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.subscription.ReadSubscriptionRequestParameters
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
 import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
+import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -50,9 +51,10 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val plrReference = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
-    val userId       = request.userId
-    val showPayments = appConfig.showPaymentsSection
+    val plrReference     = extractPlrReference(request.enrolments).orElse(request.session.get("plrId"))
+    val userId           = request.userId
+    val showPayments     = appConfig.showPaymentsSection
+    val showErrorScreens = appConfig.showErrorScreens
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     plrReference match {
@@ -88,6 +90,25 @@ class DashboardController @Inject() (
               case None =>
                 Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             }
+          case Left(error) if showErrorScreens =>
+            val errorMessage = error match {
+              case BadRequestError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error."
+              case NotFoundError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found."
+              case DuplicateSubmissionError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected."
+              case UnprocessableEntityError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
+              case InternalServerError_ =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
+              case ServiceUnavailableError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Service Unavailable error."
+              case SubscriptionCreateError =>
+                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
+            }
+            logger.error(errorMessage)
+            Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
 
           case Left(error) =>
             logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Error retrieving subscription: $error")
@@ -102,8 +123,8 @@ class DashboardController @Inject() (
   private def extractPlrReference(enrolmentsOption: Option[Set[Enrolment]]): Option[String] =
     enrolmentsOption.flatMap { enrolments =>
       enrolments
-        .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+        .find(_.key.equalsIgnoreCase(appConfig.enrolmentKey))
+        .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(appConfig.enrolmentIdentifier)))
         .map(_.value)
     }
 

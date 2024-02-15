@@ -20,7 +20,7 @@ import akka.util.Timeout
 import base.SpecBase
 import connectors.ReadSubscriptionConnector
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{MandatoryInformationMissingError, SubscriptionCreateError, UserAnswers}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, MandatoryInformationMissingError, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
@@ -28,10 +28,10 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 class ReadSubscriptionServiceSpec extends SpecBase {
@@ -47,7 +47,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
   val id           = "testId"
   val plrReference = "testPlrRef"
 
-  private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
+  val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
 
   val transformedUserAnswers = Right(UserAnswers("someId"))
   val transformationError    = Left(MandatoryInformationMissingError("Transformation Error"))
@@ -57,9 +57,8 @@ class ReadSubscriptionServiceSpec extends SpecBase {
     "return UserAnswers when the connector returns valid data and transformation is successful" in {
       val validJsValue: JsValue = Json.parse("""{ "someField": "someValue" }""")
 
-      val mockReadSubscriptionConnector = mock[ReadSubscriptionConnector]
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(validJsValue.as[JsObject])))
+        .thenReturn(Future.successful(Some(validJsValue)))
 
       val service = new ReadSubscriptionService(mockReadSubscriptionConnector, global)
 
@@ -96,17 +95,128 @@ class ReadSubscriptionServiceSpec extends SpecBase {
       result mustBe Left(SubscriptionCreateError)
     }
 
-    "handle exceptions thrown by the connector" in {
+    "handle IOException thrown by the connector" in {
       val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
 
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.failed(new RuntimeException("Connection error")))
+        .thenReturn(Future.successful(None))
 
       val resultFuture = service.readSubscription(requestParameters)
 
-      whenReady(resultFuture.failed) { e =>
-        e            shouldBe a[RuntimeException]
-        e.getMessage shouldBe "Connection error"
+      whenReady(resultFuture) { result =>
+        result should matchPattern { case Left(SubscriptionCreateError) => }
+      }
+    }
+
+    "handle BadRequest (400) response from the connector" in {
+
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 400, "error" -> "Bad Request"))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      whenReady(resultFuture) { result =>
+        result should matchPattern { case Left(BadRequestError) => }
+      }
+    }
+
+    "handle 404 Not Found response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 404, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "404"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(NotFoundError)
+      }
+    }
+
+    "handle 409 Conflict response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 409, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "409"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(DuplicateSubmissionError)
+      }
+    }
+
+    "handle 422 Unprocessable Entity response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 422, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "422"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(UnprocessableEntityError)
+      }
+    }
+
+    "handle 500 Internal Server Error response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 500, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "500"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(InternalServerError_)
+      }
+    }
+
+    "handle 503 Service Unavailable response from the connector" in {
+      when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(Json.obj("statusCode" -> 503, "error" -> Json.obj("errorDetail" -> Json.obj("errorCode" -> "503"))))))
+
+      val resultFuture = service.readSubscription(requestParameters)
+
+      resultFuture.map { result =>
+        result shouldEqual Left(ServiceUnavailableError)
+      }
+    }
+
+    "map the code to the corresponding ApiError" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred, status: 400"}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(BadRequestError)
+      }
+    }
+
+    "default to InternalServerError_" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred"}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(InternalServerError_)
+      }
+    }
+
+    "log the error and return InternalServerError_" in {
+      val parameters = ReadSubscriptionRequestParameters("testId", "testPlrRef")
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      val errorResponse: JsValue = Json.parse("""{"error": "error occurred", "statusCode": 999}""")
+      when(mockReadSubscriptionConnector.readSubscription(eqTo(parameters))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(errorResponse)))
+
+      val resultFuture = service.readSubscription(parameters)
+
+      whenReady(resultFuture) { result =>
+        result shouldBe Left(InternalServerError_)
       }
     }
 
