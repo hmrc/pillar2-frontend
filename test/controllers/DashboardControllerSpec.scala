@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.ReadSubscriptionConnector
+import connectors.{ReadSubscriptionConnector, UserAnswersConnectors}
 import generators.ModelGenerators
 import models.subscription.{AccountStatus, DashboardInfo}
 import org.mockito.ArgumentMatchers.any
@@ -58,13 +58,18 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       val userAnswers = emptyUserAnswers.setOrException(fmDashboardPage, dashboardInfo)
       val application =
         applicationBuilder(userAnswers = Some(userAnswers), enrolments)
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[DashboardView]
 
@@ -90,13 +95,18 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers), enrolments)
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -145,14 +155,15 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       val application = applicationBuilder(userAnswers = Some(ua), enrolments)
         .overrides(
           bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
-          bind[ReadSubscriptionConnector].toInstance(mockReadSubscriptionConnector)
+          bind[ReadSubscriptionConnector].toInstance(mockReadSubscriptionConnector),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
-
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(ua)))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

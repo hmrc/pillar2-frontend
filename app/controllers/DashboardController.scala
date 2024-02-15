@@ -51,7 +51,6 @@ class DashboardController @Inject() (
     with I18nSupport
     with Logging {
 
-  // noinspection ScalaStyle
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val userId = request.userId
@@ -64,27 +63,32 @@ class DashboardController @Inject() (
       pillar2ID
         .map { plrId =>
           (for {
-            _ <- readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
-            _ <- userAnswersConnectors.getUserAnswer(request.userId)
-          } yield request.userAnswers
-            .get(fmDashboardPage)
-            .map { dashboard =>
-              val inactiveStatus = request.userAnswers
-                .get(subAccountStatusPage)
-                .exists { acctStatus =>
-                  acctStatus.inactive
+            _                   <- readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
+            optionalUserAnswers <- userAnswersConnectors.getUserAnswer(request.userId)
+          } yield optionalUserAnswers match {
+            case Some(userAnswers) =>
+              userAnswers
+                .get(fmDashboardPage)
+                .map { dashboard =>
+                  val inactiveStatus = request.userAnswers
+                    .get(subAccountStatusPage)
+                    .exists { acctStatus =>
+                      acctStatus.inactive
+                    }
+                  Ok(
+                    view(
+                      dashboard.organisationName,
+                      dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                      plrId,
+                      inactiveStatus,
+                      appConfig.showPaymentsSection
+                    )
+                  )
                 }
-              Ok(
-                view(
-                  dashboard.organisationName,
-                  dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                  plrId,
-                  inactiveStatus,
-                  appConfig.showPaymentsSection
-                )
-              )
-            }
-            .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+            case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          })
             .recover { case InternalIssueError =>
               logger.error(
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
