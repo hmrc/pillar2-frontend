@@ -38,7 +38,7 @@
 
   @paragraphBody(messages("rfm.individual.p2", link(
     text = messages("rfm.individual.p2.link"),
-    call = Call("GET", appConfig.loginUrl),
+    call = Call("GET", appConfig.loginUrl+"?continue="+appConfig.rfmLoginContinueUrl),
     fullStop = true
   )))
 
