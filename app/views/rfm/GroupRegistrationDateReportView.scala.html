@@ -16,15 +16,16 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Small
-
-
+@import views.html.components.gds.sectionHeader
+@import views.html.components.gds.heading
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukDateInput: GovukDateInput,
-    govukButton: GovukButton
+    govukButton: GovukButton, sectionHeader: sectionHeader, heading: heading,
 )
+
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
@@ -36,9 +37,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "rfmRegistrationDate.day")))
 
         }
+        @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
+        @heading(messages("groupRegistrationDateReport.heading"), "govuk-heading-l")
 
-        <span class="govuk-caption-l">@messages("groupRegistrationDateReport.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("groupRegistrationDateReport.heading")</h1>
         <p class="govuk-hint govuk-!-padding-bottom-3">@messages("groupRegistrationDateReport.hint.desc")</p>
 
         @govukDateInput(

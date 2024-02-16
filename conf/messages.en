@@ -778,6 +778,7 @@ manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
 rfm.heading.caption = Replace filing member
 rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.title = Replace the filing member for a Pillar 2 top-up taxes account
 rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
 rfm.startPage.subHeading1 = Not yet registered to report Pillar 2 top-up taxes
 rfm.startPage.p2 = You cannot use this service until you have first registered.
