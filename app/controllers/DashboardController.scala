@@ -57,8 +57,11 @@ class DashboardController @Inject() (
 
     sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswer =>
       val pillar2ID = optionalUserAnswer match {
-        case Some(userAnswers) => Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
-        case None              => Pillar2Reference.getPillar2ID(request.enrolments)
+        case Some(userAnswers) =>
+          Pillar2Reference
+            .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+            .orElse(userAnswers.get(plrReferencePage))
+        case None => Pillar2Reference.getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
       }
       pillar2ID
         .map { plrId =>

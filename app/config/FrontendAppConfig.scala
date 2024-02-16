@@ -47,8 +47,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
 
-  lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
-
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
       .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
@@ -88,12 +86,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
   lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
-  val ultimateParentLink:           String = servicesConfig.getString("urls.ultimateParentLink")
-  val filingMemberLink:             String = servicesConfig.getString("urls.filingMemberLink")
-  val groupDetailLink:              String = servicesConfig.getString("urls.groupDetailLink")
-  val contactDetailsLink:           String = servicesConfig.getString("urls.contactDetailsLink")
-  val cyaLink:                      String = servicesConfig.getString("urls.cyaLink")
+
+  val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
+  val registrationControllerDomestic: String = "Domestic Top-up Tax"
+  val ultimateParentLink:             String = servicesConfig.getString("urls.ultimateParentLink")
+  val filingMemberLink:               String = servicesConfig.getString("urls.filingMemberLink")
+  val groupDetailLink:                String = servicesConfig.getString("urls.groupDetailLink")
+  val contactDetailsLink:             String = servicesConfig.getString("urls.contactDetailsLink")
+  val cyaLink:                        String = servicesConfig.getString("urls.cyaLink")
   val serviceStartLink:               String = servicesConfig.getString("urls.serviceStartLink")
+
   def languageMap: Map[String, Lang] =
     if (languageTranslationEnabled) {
       Map(

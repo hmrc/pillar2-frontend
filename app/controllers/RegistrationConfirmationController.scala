@@ -47,8 +47,10 @@ class RegistrationConfirmationController @Inject() (
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
-        pillar2Id  <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswer.get(plrReferencePage))
-        mneOrDom   <- userAnswer.get(subMneOrDomesticPage)
+        pillar2Id <- Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswer.get(plrReferencePage))
+        mneOrDom <- userAnswer.get(subMneOrDomesticPage)
       } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }

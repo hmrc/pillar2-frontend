@@ -19,10 +19,10 @@ package utils
 import uk.gov.hmrc.auth.core.Enrolment
 
 object Pillar2Reference {
-  def getPillar2ID(enrolments: Option[Set[Enrolment]]): Option[String] = enrolments.flatMap { enrolments =>
+  def getPillar2ID(enrolments: Option[Set[Enrolment]], key: String, identifier: String): Option[String] = enrolments.flatMap { enrolments =>
     enrolments
-      .find(_.key.equalsIgnoreCase("HMRC-PILLAR2-ORG"))
-      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase("PLRID")))
+      .find(_.key.equalsIgnoreCase(key))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(identifier)))
       .map(_.value)
   }
 

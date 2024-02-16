@@ -46,7 +46,9 @@ class MakeAPaymentDashboardController @Inject() (
       .map { optionalUserAnswers =>
         (for {
           userAnswers <- optionalUserAnswers
-          pillar2Id   <- Pillar2Reference.getPillar2ID(request.enrolments).orElse(userAnswers.get(plrReferencePage))
+          pillar2Id <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswers.get(plrReferencePage))
         } yield Ok(view(pillar2Id)))
           .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
