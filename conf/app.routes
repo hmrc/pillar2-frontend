@@ -113,8 +113,10 @@ GET         /unauthorised/agent                                                 
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
-GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
 
+GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
+
+GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
 
 GET        /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
@@ -313,12 +315,21 @@ GET        /business-matching/filing-member/uk-based/error/mismatching-details  
 
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
+GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
+POST       /replace-filing-member/start                                         controllers.rfm.StartPageController.onSubmit
+GET        /replace-filing-member/authenticate                                  controllers.rfm.AuthenticateController.rfmAuthenticate
+GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
+GET        /replace-filing-member/error/standard-organisation                   controllers.rfm.StandardOrganisationController.onPageLoad
+GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
+GET        /replace-filing-member/error/agent-sign-in                           controllers.rfm.AgentController.onPageLoad
+
+
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
-GET        /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
-POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
-GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
-POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+GET        /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
+POST       /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
+GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
+POST       /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)

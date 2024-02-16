@@ -51,6 +51,14 @@ cannotReturnAfterSubscriptionError.message= You have successfully registered to 
 cannotReturnAfterSubscriptionError.message2= You can now
 cannotReturnAfterSubscriptionError.link= report and manage your pillar 2 top-up taxes.
 
+###############################################
+viewAmendSubscriptionFailed.title= Sorry, there is a problem with the service
+viewAmendSubscriptionFailed.heading= Sorry, there is a problem with the service
+viewAmendSubscriptionFailed.message1= Please try again later.
+viewAmendSubscriptionFailed.link= Return to your account homepage to try again
+###############################################
+
+
 alreadyRegistered.title= Your group is already registered
 alreadyRegistered.heading= Your group is already registered
 alreadyRegistered.message1= You will need to contact your administrator to give you access.
@@ -775,6 +783,54 @@ unauthorised.individual.message2 = If you still need to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
+
+rfm.heading.caption = Replace filing member
+rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.title = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
+rfm.startPage.subHeading1 = Not yet registered to report Pillar 2 top-up taxes
+rfm.startPage.p2 = You cannot use this service until you have first registered.
+rfm.startPage.p3 = If you need to register a new Pillar 2 top-up taxes account {0}
+rfm.startPage.p3.link = go back to the service start page for more information
+rfm.startPage.subHeading2 = Who can replace a filing member
+rfm.startPage.b1 = the ultimate parent (UPE), taking over from a nominated filing member as the group’s default filing member
+rfm.startPage.b2 = a new nominated filing member, taking over from a previous filing member
+rfm.startPage.subHeading3 = Before you start
+rfm.startPage.p4 = You will need the following information to replace the filing member for your group’s account:
+rfm.startPage.b3 = the group’s Pillar 2 top-up taxes ID
+rfm.startPage.b4 = the date the group first registered to report their Pillar 2 top up taxes in the UK
+rfm.startPage.b5 = identifying information for the new nominated filing member, if applicable, this could include the company registration number (CRN) and/or unique taxpayer reference (UTR) for a UK registered business or a registered address for overseas entities
+rfm.startPage.b6 = contact preferences and details for up to 2 individuals or teams that we can use as primary contacts about Pillar 2 compliance
+rfm.startPage.b7 = a contact address for the group that we can send correspondence to
+rfm.startPage.legend = Replace a filing member
+rfm.startPage.confirm = Confirm you have read all of the above and are able to act as a new filing member for this group
+rfm.startPage.error = You must select the checkbox to continue
+
+rfm.alreadyEnrolled.title = You cannot replace the current filing member for this group
+rfm.alreadyEnrolled.heading = You cannot replace the current filing member for this group
+rfm.alreadyEnrolled.p1 = The Government Gateway user ID you entered as the replacement is currently registered as the nominated filing member for this group.
+rfm.alreadyEnrolled.p2 = To replace the nominated filing member for this group, the new nominated filing member will need to try again with their Government Gateway user ID.
+rfm.alreadyEnrolled.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.standardOrganisation.title = Sorry, you’re unable to use this service
+rfm.standardOrganisation.heading = Sorry, you’re unable to use this service
+rfm.standardOrganisation.p1 = You’ve signed in with a standard organisation account.
+rfm.standardOrganisation.p2 = Only Government Gateway accounts with an administrator role can replace their nominated filing member.
+rfm.standardOrganisation.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.individual.title = Sorry, you’re unable to use this service
+rfm.individual.heading = Sorry, you’re unable to use this service
+rfm.individual.p1 = You’ve signed in with an individual account. Only users with an organisation account can replace their nominated filing member.
+rfm.individual.p2 = If you need to replace a nominated filing member, {0}
+rfm.individual.p2.link = sign in to Government Gateway with an organisation account
+rfm.individual.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.agent.title = Sorry, you’re unable to use this service
+rfm.agent.heading = Sorry, you’re unable to use this service
+rfm.agent.p1 = You’ve signed in using an agent’s Government Gateway user ID.
+rfm.agent.p2 = Agents cannot use this service to replace a nominated filing member.
+rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
+rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
