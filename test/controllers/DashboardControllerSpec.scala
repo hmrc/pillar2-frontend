@@ -17,167 +17,391 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import controllers.actions.AuthenticatedIdentifierAction
+import connectors.UserAnswersConnectors
 import generators.ModelGenerators
-import models.SubscriptionCreateError
-import models.requests.IdentifierRequest
-import models.subscription.ReadSubscriptionRequestParameters
+
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, SubscriptionCreateError, UnprocessableEntityError, UserAnswers}
+import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionRequestParameters}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.mvc._
+import pages.{fmDashboardPage, subAccountStatusPage}
+import play.api.{Configuration, inject}
+import play.api.libs.json.{JsValue, Json}
+//=======
+//import models.SubscriptionCreateError
+//import models.requests.IdentifierRequest
+//import models.subscription.ReadSubscriptionRequestParameters
+//import org.mockito.ArgumentMatchers.any
+//import org.mockito.Mockito.when
+//import play.api.mvc._
+//>>>>>>> main
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier}
+import services.ReadSubscriptionService
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.DashboardView
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-class CustomIdentifierAction @Inject() (
-  authConnector: AuthConnector,
-  config:        FrontendAppConfig,
-  parser:        BodyParsers.Default,
-  enrolmentsSet: Set[Enrolment]
-)(implicit ec:   ExecutionContext)
-    extends AuthenticatedIdentifierAction(authConnector, config, parser) {
-
-  override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-    val identifierRequest = IdentifierRequest(request, "some-user-id", enrolmentsSet)
-
-    Future.successful(Right(identifierRequest))
-  }
-}
-
+import java.time.LocalDate
+import scala.concurrent.Future
 class DashboardControllerSpec extends SpecBase with ModelGenerators {
+  val dashBoardUserAnswers = emptyUserAnswers
+    .setOrException(fmDashboardPage, DashboardInfo("12345678", LocalDate.of(2025, 12, 31)))
+    .setOrException(subAccountStatusPage, AccountStatus(inactive = true))
 
-  val stubbedMessagesControllerComponents = stubMessagesControllerComponents()
-  val bodyParsers                         = new BodyParsers.Default
+  val validJsValue: JsValue = Json.parse("""{ "someField": "12345678" }""")
+  val enrolments: Set[Enrolment] = Set(
+    Enrolment(
+      key = "HMRC-PILLAR2-ORG",
+      identifiers = Seq(
+        EnrolmentIdentifier("PLRID", "12345678"),
+        EnrolmentIdentifier("UTR", "ABC12345")
+      ),
+      state = "activated"
+    )
+  )
+  "Dashboard Controller" when {
 
-  "Dashboard Controller" should {
+    "return OK and the correct view for a GET" in {
 
-    "Dashboard Controller" should {
+      when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Some(dashBoardUserAnswers)))
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(validJsValue)))
 
-      "return OK and the correct view for a GET" in {
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
 
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("PLRID", "12345678"),
-              EnrolmentIdentifier("UTR", "ABC12345")
-            ),
-            state = "activated"
-          ),
-          Enrolment(
-            key = "HMRC-VAT-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("VRN", "987654321"),
-              EnrolmentIdentifier("UTR", "DEF67890")
-            ),
-            state = "activated"
-          )
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
+        .build()
 
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
 
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
+        val result = route(application, request).value
 
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val view = application.injector.instanceOf[DashboardView]
 
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
-          request,
-          { _: IdentifierRequest[AnyContent] =>
-            Future.successful(Ok)
-          }
-        )
+        val registrationDate    = "31 December 2025"
+        val plrReference        = "12345678"
+        val inactiveStatus      = true
+        val showPaymentsSection = true
 
         status(result) mustEqual OK
-      }
-
-      "return Internal Server Error for a GET when there's an error retrieving subscription" in {
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("PLRID", "12345678"),
-              EnrolmentIdentifier("UTR", "ABC12345")
-            ),
-            state = "activated"
-          ),
-          Enrolment(
-            key = "HMRC-VAT-ORG",
-            identifiers = Seq(
-              EnrolmentIdentifier("VRN", "987654321"),
-              EnrolmentIdentifier("UTR", "DEF67890")
-            ),
-            state = "activated"
-          )
-        )
-
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
-
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
-
-        when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Left(SubscriptionCreateError)))
-
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
+        contentAsString(result) mustEqual view("12345678", registrationDate, plrReference, inactiveStatus, showPaymentsSection)(
           request,
-          { _: IdentifierRequest[AnyContent] =>
-            Future.successful(InternalServerError)
-          }
+          appConfig(application),
+          messages(application)
+        ).toString
+
+      }
+    }
+
+    "return Internal Server Error for a GET when there's an error retrieving subscription" in {
+
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(InternalServerError_)))
+
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val result  = route(application, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
       }
+    }
 
-      "return SEE_OTHER and the correct view for a GET when PLR reference is missing" in {
-        val enrolmentsSet: Set[Enrolment] = Set(
-          Enrolment(
-            key = "HMRC-PILLAR2-van",
-            identifiers = Seq(
-            ),
-            state = "activated"
-          )
+    "return SEE_OTHER and the correct view for a GET when PLR reference is missing" in {
+
+      val testConfig  = Configuration("features.showErrorScreens" -> false)
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
         )
+        .build()
 
-        val customIdentifierAction = new CustomIdentifierAction(
-          mockAuthConnector,
-          mockFrontendAppConfig,
-          bodyParsers,
-          enrolmentsSet
-        )
-
-        when(mockAuthConnector.authorise[Unit](any, any)(any, any)).thenReturn(Future.successful(()))
-
-        when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Left(SubscriptionCreateError)))
-
-        val request: Request[AnyContent] = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-
-        val result: Future[Result] = customIdentifierAction.invokeBlock(
-          request,
-          { _: IdentifierRequest[AnyContent] => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) }
-        )
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
+    }
 
+    "return BadRequestError for a GET when there's an error retrieving subscription" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(BadRequestError)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "return NotFoundError for a GET when there's an error retrieving subscription" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "return DuplicateSubmissionError for a GET when there's an error retrieving subscription" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(DuplicateSubmissionError)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "return UnprocessableEntityError for a GET when there's an error retrieving subscription" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(UnprocessableEntityError)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "return InternalServerError_ for a GET when there's an error retrieving subscription when showErrorScreens is true" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(InternalServerError_)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "return SubscriptionCreateError for a GET when there's an error retrieving subscription when showErrorScreens is true" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(SubscriptionCreateError)))
+
+      val testConfig = Configuration("features.showErrorScreens" -> true)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+
+      }
+    }
+
+    "redirect to JourneyRecoveryController when plrReference is None" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+
+      }
+    }
+
+    "redirect to JourneyRecoveryController when getUserAnswer returns None" in {
+
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(None))
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+
+      }
+    }
+
+    "redirect to JourneyRecoveryController when fmDashboardPage is not present in userAnswers" in {
+      when(mockReadSubscriptionService.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(Json.obj())))
+
+      val userAnswersWithoutFmDashboardPage = UserAnswers("12345678").remove(fmDashboardPage).getOrElse(UserAnswers("12345678"))
+
+      when(mockUserAnswersConnectors.getUserAnswer(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Some(userAnswersWithoutFmDashboardPage)))
+
+      val testConfig1 = Configuration("features.showPaymentsSection" -> true)
+
+      val testConfig = Configuration("features.showErrorScreens" -> false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutFmDashboardPage), enrolments)
+        .configure(testConfig)
+        .configure(testConfig1)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
     }
   }
-
 }

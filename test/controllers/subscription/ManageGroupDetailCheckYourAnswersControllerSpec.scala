@@ -130,7 +130,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       val result  = route(application, request).value
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
     }
 
   }
