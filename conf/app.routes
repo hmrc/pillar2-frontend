@@ -317,13 +317,19 @@ GET        /errors/return                                                       
 
 GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
 POST       /replace-filing-member/start                                         controllers.rfm.StartPageController.onSubmit
+GET        /replace-filing-member/authenticate                                  controllers.rfm.AuthenticateController.rfmAuthenticate
+GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
+GET        /replace-filing-member/error/standard-organisation                   controllers.rfm.StandardOrganisationController.onPageLoad
+GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
+GET        /replace-filing-member/error/agent-sign-in                           controllers.rfm.AgentController.onPageLoad
+
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
-GET        /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
-POST       /bta/pillar2-id                        controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
-GET        /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
-POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+GET        /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
+POST       /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
+GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
+POST       /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)

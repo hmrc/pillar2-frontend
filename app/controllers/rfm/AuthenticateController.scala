@@ -17,43 +17,26 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import forms.RfmStartPageFormProvider
-import models.Confirmation
-import play.api.i18n.I18nSupport
+import controllers.actions.RfmIdentifierAction
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.Future
-import play.api.data.Form
-import views.html.rfm.StartPageView
 
-class StartPageController @Inject() (
-  formProvider:             RfmStartPageFormProvider,
+class AuthenticateController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     StartPageView
+  rfmIdentify:              RfmIdentifierAction
 )(implicit val appConfig:   FrontendAppConfig)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends FrontendBaseController {
 
-  val form: Form[Set[Confirmation]] = formProvider("rfm.startPage.error")
-
-  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+  def rfmAuthenticate: Action[AnyContent] = rfmIdentify { _ =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      Future.successful(Ok(view(form)))
+      // TODO - redirect to security question 1 screen
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
-
-  def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        error => Future.successful(BadRequest(view(error))),
-        _ => Future.successful(Redirect(controllers.rfm.routes.AuthenticateController.rfmAuthenticate))
-      )
   }
 
 }
