@@ -38,6 +38,9 @@ import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+
+import uk.gov.hmrc.auth.core.Enrolment
+
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -93,6 +96,19 @@ trait SpecBase
 
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         Future.successful(Right(IdentifierRequest(request, "internalId")))
+      }
+    }
+
+  def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
+    new AuthenticatedIdentifierAction(
+      mockAuthConnector,
+      mockFrontendAppConfig,
+      new BodyParsers.Default
+    ) {
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+        val identifierRequest = IdentifierRequest(request, "internalId", enrolments.getOrElse(Set.empty))
+        Future.successful(Right(identifierRequest))
       }
     }
 
