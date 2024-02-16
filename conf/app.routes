@@ -329,3 +329,10 @@ GET        /replace-filing-member/corporate-position                           c
 POST       /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+
+GET         /replace-filing-member/business-matching/content                                       controllers.registration.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/content                                       controllers.registration.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.registration.NFMRegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST         /replace-filing-member/business-matching/registered-in-uk                             controllers.registration.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+
+
