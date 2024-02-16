@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityCheckController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmSecurityCheckFormProvider,
@@ -46,7 +46,7 @@ class SecurityCheckController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmSecurityCheckPage) match {
@@ -59,7 +59,7 @@ class SecurityCheckController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

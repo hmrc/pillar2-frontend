@@ -77,7 +77,7 @@ class RfmAuthenticatedIdentifierAction @Inject() (
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
-        Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.rfmLoginContinueUrl))))
+        Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.rfmSecurityLoginContinueUrl))))
       case _: AuthorisationException =>
         Left(Redirect(routes.UnauthorisedController.onPageLoad))
     }
