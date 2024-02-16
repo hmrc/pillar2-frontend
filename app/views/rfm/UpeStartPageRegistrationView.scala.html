@@ -28,10 +28,9 @@ govukButton: GovukButton
 @layout(
 pageTitle    = titleNoForm(messages("startPageRegistration.title"))) {
 
-<span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
-<h1 class="govuk-heading-l">@messages("startPageRegistration.heading")</h1>
-
-<p class="govuk-body">@messages("startPageRegistration.p1")</p>
+@sectionHeader(messages("rfm.heading.caption"))
+@heading(messages("rfm.upeStartPageRegistration.heading"), "govuk-heading-l")
+@paragraphBody(messages("rfm.upeStartPageRegistration.p1"))
 
 @govukButton(
 ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.UpeNameRegistrationController.onPageLoad(mode).url)
