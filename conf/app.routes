@@ -333,6 +333,6 @@ GET        /payment/pay                                                        c
 GET         /replace-filing-member/business-matching/content                                       controllers.registration.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/content                                       controllers.registration.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.registration.NFMRegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST         /replace-filing-member/business-matching/registered-in-uk                             controllers.registration.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.registration.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
 
 
