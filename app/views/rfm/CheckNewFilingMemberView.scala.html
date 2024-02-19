@@ -36,12 +36,13 @@
     <p class="govuk-body">@messages("checkNewFilingMember.p1")</p>
 
 
-    @govukButton(Button(
-        content = Text(messages("site.continue")),
-        href = Some(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode).url),
-        classes = "govuk-button govuk-button--start",
-        isStartButton = true
-    ))
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+        .withAttribute("id", "continue")
+        .asLink(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode).url)
+    )
 
 }
+
+
 

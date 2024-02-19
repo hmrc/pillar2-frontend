@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
@@ -22,7 +22,7 @@ import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.CheckNewFilingMemberView
+import views.html.rfm.CheckNewFilingMemberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,6 +40,7 @@ class CheckNewFilingMemberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Redirect(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode)))
+//    Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
+    Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
   }
 }

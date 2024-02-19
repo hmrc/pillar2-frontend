@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("isNFMRegisteredInUK.title"))) {
 
-    @formHelper(action = controllers.registration.routes.NFMRegisteredInUKConfirmationController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import views.html.registrationview.NFMRegisteredInUKConfirmationView
+import views.html.rfm.NFMRegisteredInUKConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
