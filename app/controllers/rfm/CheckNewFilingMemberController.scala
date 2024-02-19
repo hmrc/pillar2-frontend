@@ -40,7 +40,6 @@ class CheckNewFilingMemberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
-//    Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
     Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
   }
 }

@@ -27,6 +27,7 @@ import views.html._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.fmview._
 import views.html.registrationview._
+import views.html.rfm.{CheckNewFilingMemberView, NFMRegisteredInUKConfirmationView}
 import views.html.subscriptionview._
 import views.html.templates._
 
@@ -132,11 +133,17 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewNFMRegisteredInUKConfirmation: NFMRegisteredInUKConfirmationView =
+    new NFMRegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
     new NominateFilingMemberYesNoView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton, govUkInsetText)
 
   val viewStartPageRegistration: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
+
+  val viewCheckNewFilingMember: CheckNewFilingMemberView =
+    new CheckNewFilingMemberView(pillar2layout, govukButton)
 
   val viewUPENameRegistration: UpeNameRegistrationView =
     new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
