@@ -67,22 +67,21 @@ class CorporatePositionController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case CorporatePosition.Upe =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.corporatePosition(value.toString)))
+        {
+          case value @ CorporatePosition.Upe =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              .withSession((sessionData.corporatePosition(value.toString)))
 
-            case CorporatePosition.NewNfm =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.corporatePosition(value.toString)))
-          }
+          case value @ CorporatePosition.NewNfm =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              .withSession((sessionData.corporatePosition(value.toString)))
+        }
       )
   }
 }
