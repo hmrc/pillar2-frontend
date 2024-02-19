@@ -327,3 +327,7 @@ POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2To
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+
+GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.registration.NFMRegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.registration.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+
