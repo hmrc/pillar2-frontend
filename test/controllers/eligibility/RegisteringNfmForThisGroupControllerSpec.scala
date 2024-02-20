@@ -18,9 +18,16 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.NfmEqPage
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.RegisteringNfmForThisGroupView
+
+import scala.concurrent.Future
 
 class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
   val formProvider = new RegisteringNfmForThisGroupFormProvider()
@@ -38,6 +45,27 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when page previously answered" in {
+      val application = applicationBuilder(None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(NfmEqPage, true))))
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad.url)
+
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[RegisteringNfmForThisGroupView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
           appConfig(application),
           messages(application)

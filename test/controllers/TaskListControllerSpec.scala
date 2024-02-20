@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
@@ -26,14 +27,16 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HttpResponse
 import utils.RowStatus
 
 import java.time.LocalDate
 import scala.concurrent.Future
-case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
+
 class TaskListControllerSpec extends SpecBase {
 
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
@@ -84,6 +87,27 @@ class TaskListControllerSpec extends SpecBase {
         contentAsString(result) should include(
           "Check your answers"
         )
+      }
+    }
+
+    "redirect to tasklist if pillar 2 exists from read subscription API" in {
+      val mockHttpResponse = HttpResponse(OK, "")
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(plrReferencePage, "1231")))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.TaskListController.onPageLoad.url
+
       }
     }
 

@@ -18,10 +18,17 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.TurnOverEligibilityFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.RevenueEqPage
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.TurnOverEligibilityView
+
+import scala.concurrent.Future
 
 class TurnOverEligibilityControllerSpec extends SpecBase {
 
@@ -29,7 +36,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
 
   "Turn Over Eligibility Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when page previously not answered" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =
@@ -38,6 +45,26 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) shouldBe OK
         contentAsString(result) mustEqual view(formProvider())(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+
+    }
+
+    "must return OK and the correct view for a GET when page previously answered" in {
+      val application = applicationBuilder(None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(RevenueEqPage, true))))
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
+        val view   = application.injector.instanceOf[TurnOverEligibilityView]
+        val result = route(application, request).value
+        status(result) shouldBe OK
+        contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
           appConfig(application),
           messages(application)

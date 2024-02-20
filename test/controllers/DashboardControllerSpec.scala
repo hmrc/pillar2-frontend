@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.{ReadSubscriptionConnector, UserAnswersConnectors}
 import generators.ModelGenerators
+import models.UserAnswers
 import models.subscription.{AccountStatus, DashboardInfo}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -54,8 +55,10 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
   "Dashboard Controller" should {
 
     "return OK and the correct view for a GET" in {
-
-      val userAnswers = emptyUserAnswers.setOrException(fmDashboardPage, dashboardInfo)
+      val accountStatus = AccountStatus(inactive = false)
+      val userAnswers = emptyUserAnswers
+        .setOrException(fmDashboardPage, dashboardInfo)
+        .setOrException(subAccountStatusPage, accountStatus)
       val application =
         applicationBuilder(userAnswers = Some(userAnswers), enrolments)
           .overrides(
@@ -78,7 +81,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           dashboardInfo.organisationName,
           dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           "12345678",
-          inactiveStatus = false,
+          inactiveStatus = accountStatus.inactive,
           showPaymentsSection = true
         )(
           request,
@@ -90,23 +93,17 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     }
 
     "redirect to journey recovery if no dashboard info is found" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subAccountStatusPage, AccountStatus(true))
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers), enrolments)
+        applicationBuilder(userAnswers = None, enrolments)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
-        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -164,6 +161,25 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(ua)))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirect to journey recovery if on userAnswer is found from the connector" in {
+      val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
+      val application = applicationBuilder(userAnswers = Some(ua), enrolments)
+        .overrides(
+          bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        when(mockReadSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(jsonDashboard))
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(None))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

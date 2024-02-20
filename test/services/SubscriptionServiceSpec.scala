@@ -86,6 +86,31 @@ class SubscriptionServiceSpec extends SpecBase {
           result.futureValue mustBe "ID"
         }
       }
+      "return a success response with a pillar 2 reference for uk based upe and no filing member" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, false)
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
+      }
 
       "throw an exception if subscription fails" in {
         val userAnswer = emptyUserAnswers

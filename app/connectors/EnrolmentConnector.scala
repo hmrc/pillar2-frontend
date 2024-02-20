@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  val url: String = s"${config.taxEnrolmentsUrl1}HMRC-PILLAR2-ORG${config.taxEnrolmentsUrl2}"
+  val url: String = s"${config.taxEnrolmentsUrl1}${config.enrolmentKey}${config.taxEnrolmentsUrl2}"
 
   def createEnrolment(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
     http.PUT[EnrolmentRequest, HttpResponse](url, enrolmentInfo.convertToEnrolmentRequest) flatMap {
