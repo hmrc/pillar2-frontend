@@ -67,15 +67,12 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
     }
 
-    "return OK and the correct view for a GET pillar 2 reference retrieved from session repository" in {
+    "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
       val sessionUserAnswers = UserAnswers("id").setOrException(plrReferencePage, "12345678")
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          inject.bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+      val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionUserAnswers)))
+
         val request =
           FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 

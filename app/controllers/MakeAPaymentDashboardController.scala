@@ -27,7 +27,7 @@ import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class MakeAPaymentDashboardController @Inject() (
   identify:                 IdentifierAction,
@@ -40,17 +40,14 @@ class MakeAPaymentDashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    sessionRepository
-      .get(request.userId)
-      .map { optionalUserAnswers =>
-        (for {
-          userAnswers <- optionalUserAnswers
-          pillar2Id <- Pillar2Reference
-                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                         .orElse(userAnswers.get(plrReferencePage))
-        } yield Ok(view(pillar2Id)))
-          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Pillar2Reference
+      .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+      .orElse(request.userAnswers.get(plrReferencePage))
+      .map { pillar2Id =>
+        Ok(view(pillar2Id))
       }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
   }
 }

@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
@@ -100,7 +99,7 @@ class DashboardController @Inject() (
             }
 
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        .getOrElse(Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)))
 
     }
   }
