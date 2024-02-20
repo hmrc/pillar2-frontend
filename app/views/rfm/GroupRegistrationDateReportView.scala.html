@@ -18,12 +18,16 @@
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds.sectionHeader
 @import views.html.components.gds.heading
+@import views.html.components.gds.paragraph
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukDateInput: GovukDateInput,
-    govukButton: GovukButton, sectionHeader: sectionHeader, heading: heading,
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
+    heading: heading,
+    paragraph: paragraph
 )
 
 
@@ -40,7 +44,7 @@
         @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
         @heading(messages("groupRegistrationDateReport.heading"), "govuk-heading-l")
 
-        <p class="govuk-hint govuk-!-padding-bottom-3">@messages("groupRegistrationDateReport.hint.desc")</p>
+       @paragraph(Html(messages("groupRegistrationDateReport.hint.desc")),"govuk-hint govuk-!-padding-bottom-3")
 
         @govukDateInput(
             DateViewModel(

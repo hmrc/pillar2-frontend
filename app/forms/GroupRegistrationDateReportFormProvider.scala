@@ -43,6 +43,7 @@ class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
         invalidYearLength = "groupRegistrationDateReport.error.startDate.year.length",
         messageKeyPart = "groupRegistrationDateReport"
       ).verifying(maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum"))
+        .verifying(minDate(LocalDate.of(2023, 12, 31), "groupRegistrationDateReport.error.startDate.dayMonthYear.minimum"))
     )(RegistrationDate.apply)(RegistrationDate.unapply)
   )
 }

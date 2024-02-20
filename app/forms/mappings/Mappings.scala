@@ -58,7 +58,7 @@ trait Mappings extends Formatters with Constraints {
     invalidYear:        String,
     invalidYearLength:  String,
     args:               Seq[String] = Seq.empty,
-    messageKeyPart:     String = "groupAccountingPeriod"
+    messageKeyPart:     String
   ): FieldMapping[LocalDate] =
     of(
       new LocalDateFormatter(
