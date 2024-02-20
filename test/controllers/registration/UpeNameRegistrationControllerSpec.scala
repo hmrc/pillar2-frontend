@@ -97,9 +97,9 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", "<>"))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> "<>"))
 
         val view = application.injector.instanceOf[UpeNameRegistrationView]
 
