@@ -73,7 +73,7 @@ class DashboardController @Inject() (
               userAnswers
                 .get(fmDashboardPage)
                 .map { dashboard =>
-                  val inactiveStatus = request.userAnswers
+                  val inactiveStatus = userAnswers
                     .get(subAccountStatusPage)
                     .exists { acctStatus =>
                       acctStatus.inactive
@@ -92,7 +92,7 @@ class DashboardController @Inject() (
 
             case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
           })
-            .recover { case InternalIssueError =>
+            .recover { case _ =>
               logger.error(
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
               )
