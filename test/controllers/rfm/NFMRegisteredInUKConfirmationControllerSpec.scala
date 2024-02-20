@@ -19,13 +19,20 @@ package controllers.rfm
 import base.SpecBase
 import controllers.registration.UPERegisteredInUKConfirmationController
 import forms.{NFMRegisteredInUKConfirmationFormProvider, UPERegisteredInUKConfirmationFormProvider}
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import models.grs.GrsCreateRegistrationResponse
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.libs.json.Json
+import org.mockito.{ArgumentCaptor, ArgumentMatcher}
+import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import pages.{GrsNfmStatusPage, nfmRegisteredInUKPage}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 import views.html.rfm.NFMRegisteredInUKConfirmationView
 
@@ -49,7 +56,13 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
   "Is NFM Registered in UK Confirmation Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
@@ -84,6 +97,60 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers.set(nfmRegisteredInUKPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[NFMRegisteredInUKConfirmationView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return a BadRequest and errors when invalid data is submitted" in {
+      val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody(("value", ""))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustBe BAD_REQUEST
+
+      }
+    }
+    "must redirect to the appropriate page when valid data is submitted with value NO" in {
+      val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody(("value", "false"))
+
+      when(mockUserAnswersConnectors.save(any(), any())(any()))
+        .thenReturn(Future.successful(Json.toJson(UserAnswers("id"))))
+
+      val result = controller().onSubmit(NormalMode)()(request)
+
+      status(result) mustEqual SEE_OTHER
+
     }
 
   }

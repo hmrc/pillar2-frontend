@@ -36,7 +36,12 @@ class CheckNewFilingMemberController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
-    Ok(view(mode))
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      Ok(view(mode))
+    } else {
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
