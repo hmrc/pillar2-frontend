@@ -327,3 +327,4 @@ POST       /bta/change-pillar2-id                  controllers.bta.HavePillar2To
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+GET        /replace-filing-member/knock-back/no-match                          controllers.rfm.SecurityQuestionsNoMatchController.onPageLoad
