@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
+import utils.{Pillar2SessionKeys, RowStatus}
 import views.html.TaskListView
 
 import javax.inject.Inject
@@ -145,7 +145,7 @@ class TaskListController @Inject() (
         case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
-            logger.info(s"Remove existing amend data from local database if exist")
+            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")
             Redirect(routes.TaskListController.onPageLoad)
           }
         case _ => Future.successful(Ok(view(ultimateParentInfo, count, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)))

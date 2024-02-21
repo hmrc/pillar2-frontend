@@ -36,7 +36,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
     http
-      .POST[SubscriptionRequestParameters, HttpResponse](s"$subscriptionUrl", subscriptionRequestParameters)
+      .POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionRequestParameters)
       .flatMap {
         case response if is2xx(response.status) =>
           logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
