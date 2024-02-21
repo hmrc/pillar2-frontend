@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
 import play.api.Logging
@@ -87,11 +88,11 @@ class DashboardController @Inject() (
                     )
                   )
                 }
-                .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
-            case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            case None => Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
           })
-            .recover { case _ =>
+            .recover { case InternalIssueError =>
               logger.error(
                 s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
               )
@@ -99,7 +100,7 @@ class DashboardController @Inject() (
             }
 
         }
-        .getOrElse(Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)))
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
     }
   }

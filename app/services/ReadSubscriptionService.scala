@@ -33,7 +33,7 @@ class ReadSubscriptionService @Inject() (
     readSubscriptionConnector.readSubscription(parameters).flatMap {
       case Some(jsValue) =>
         Future.successful(jsValue)
-      case None =>
+      case _ =>
         Future.failed(InternalIssueError)
     }
 }
