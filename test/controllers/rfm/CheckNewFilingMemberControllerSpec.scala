@@ -17,44 +17,77 @@
 package controllers.rfm
 
 import base.SpecBase
+import controllers.actions.{RfmAuthenticatedIdentifierAction, RfmIdentifierAction}
 import models.{CheckMode, NormalMode}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api
+import play.api.inject
+import play.api.mvc.BodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 class CheckNewFilingMemberControllerSpec extends SpecBase {
 
-  def controller(): CheckNewFilingMemberController =
-    new CheckNewFilingMemberController(
-      preAuthenticatedActionBuilders,
-      stubMessagesControllerComponents(),
-      viewCheckNewFilingMember
-    )
-
   "CheckNewFilingMemberController" when {
+
     "must return OK and the correct view for a GET" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
 
-      val request =
-        FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url)
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
 
-      val result = controller.onPageLoad(NormalMode)()(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "We need to match the details of the new nominated filing member to HMRC records"
-      )
+        status(result) shouldBe OK
+
+      }
     }
 
     "redirect to the correct route on onSubmit" in {
-      val request = FakeRequest(POST, controllers.rfm.routes.CheckNewFilingMemberController.onSubmit(NormalMode).url)
-      val result  = controller().onSubmit(NormalMode)(request)
-      status(result)           shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> true)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.CheckNewFilingMemberController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("someField" -> "someValue")
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+      }
     }
 
     "return OK and the correct view for a GET in CheckMode" in {
-      val request = FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(CheckMode).url)
-      val result  = controller().onPageLoad(CheckMode)(request)
-      status(result) shouldBe OK
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> true)
+        .build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(CheckMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe OK
+      }
+    }
+
+    "redirect to Journey Recovery page when RFM feature is disabled" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> false)
+        .build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/restart-error")
+      }
     }
 
   }

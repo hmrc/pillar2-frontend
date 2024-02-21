@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NFMRegisteredInUKConfirmationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              NFMRegisteredInUKConfirmationFormProvider,
@@ -48,7 +48,7 @@ class NFMRegisteredInUKConfirmationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       val preparedForm = request.userAnswers.get(NfmRegisteredInUKPage) match {
@@ -61,7 +61,7 @@ class NFMRegisteredInUKConfirmationController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
+import controllers.actions.{IdentifierAction, RfmIdentifierAction}
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,14 +28,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckNewFilingMemberController @Inject() (
-  identify:                 IdentifierAction,
+  rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     CheckNewFilingMemberView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = rfmIdentify { implicit request =>
     if (appConfig.rfmAccessEnabled) {
       Ok(view(mode))
     } else {
@@ -43,7 +43,7 @@ class CheckNewFilingMemberController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
     Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
   }
 }

@@ -17,6 +17,8 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
+import controllers.actions.RfmIdentifierAction
 import controllers.registration.UPERegisteredInUKConfirmationController
 import forms.{NFMRegisteredInUKConfirmationFormProvider, UPERegisteredInUKConfirmationFormProvider}
 import models.{NormalMode, UserAnswers}
@@ -27,8 +29,10 @@ import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.invocation.InvocationOnMock
 import pages.{GrsNfmStatusPage, NfmRegisteredInUKPage}
+import play.api
+import play.api.inject
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Result
+import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
@@ -41,17 +45,6 @@ import scala.concurrent.Future
 class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
 
   val formProvider = new NFMRegisteredInUKConfirmationFormProvider()
-
-  def controller(): NFMRegisteredInUKConfirmationController =
-    new NFMRegisteredInUKConfirmationController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewNFMRegisteredInUKConfirmation
-    )
 
   "Is NFM Registered in UK Confirmation Controller" must {
 
@@ -74,29 +67,46 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Entity Type page when valid data is submitted with value YES" in {
-
-      val request =
-        FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "true"))
+    "redirect to Entity Type page when form submission is YES" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> true)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
       when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
-        .thenReturn(Future(GrsCreateRegistrationResponse("/report-pillar2-top-up-taxes/under-construction")))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
+      running(application) {
 
+        val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+      }
     }
 
     "must redirect to NFM Name page when valid data is submitted with value NO" in {
-      val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody(("value", "false"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(emptyUserAnswers)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> true)
+        .overrides(
+          api.inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
-      val result = controller().onSubmit(NormalMode)(request)
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any()))
+          .thenReturn(Future.successful(Json.toJson(emptyUserAnswers)))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url
+        val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -140,17 +150,44 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       }
     }
+
     "must redirect to the appropriate page when valid data is submitted with value NO" in {
-      val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody(("value", "false"))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> true)
+        .overrides(
+          api.inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
-      when(mockUserAnswersConnectors.save(any(), any())(any()))
-        .thenReturn(Future.successful(Json.toJson(UserAnswers("id"))))
+      running(application) {
 
-      val result = controller().onSubmit(NormalMode)()(request)
+        when(mockUserAnswersConnectors.save(any[String], any[JsValue])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(Json.toJson(UserAnswers("id"))))
 
-      status(result) mustEqual SEE_OTHER
+        val request = FakeRequest(POST, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", "false"))
 
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+      }
+    }
+
+    "redirect to Journey Recovery page when RFM feature is disabled" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.rfmAccessEnabled" -> false)
+        .build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/restart-error")
+      }
     }
 
   }
