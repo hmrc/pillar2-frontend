@@ -16,12 +16,12 @@
 
 package pages
 
-import models.registration.GrsResponse
+import models.grs.EntityType
 import play.api.libs.json.JsPath
 
-case object nfmGRSResponsePage extends QuestionPage[GrsResponse] {
+case object NfmEntityTypePage extends QuestionPage[EntityType] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "nfmGRSResponse"
+  override def toString: String = "nfmEntityType"
 }

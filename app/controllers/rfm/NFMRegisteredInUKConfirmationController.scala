@@ -21,11 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
-import pages.{GrsNfmStatusPage, nfmRegisteredInUKPage}
+import models.requests.DataRequest
+import pages.{GrsNfmStatusPage, NfmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.rfm.NFMRegisteredInUKConfirmationView
@@ -48,12 +49,16 @@ class NFMRegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(nfmRegisteredInUKPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      val preparedForm = request.userAnswers.get(NfmRegisteredInUKPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -61,27 +66,32 @@ class NFMRegisteredInUKConfirmationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case true =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(nfmRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(
-                                     request.userAnswers
-                                       .get(GrsNfmStatusPage)
-                                       .map(updatedAnswers.set(GrsNfmStatusPage, _))
-                                       .getOrElse(updatedAnswers.set(GrsNfmStatusPage, RowStatus.InProgress))
-                                   )
-                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-              } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
-            case false =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(nfmRegisteredInUKPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
-
-          }
+        value => updateAnswersBasedOnValue(value, mode)
       )
   }
+
+  private def updateAnswersBasedOnValue(value: Boolean, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    value match {
+      case true  => updateForTrueValue(mode)
+      case false => updateForFalseValue(mode)
+    }
+
+  private def updateForTrueValue(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    for {
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, true))
+      updatedAnswers1 <- Future.fromTry(
+                           request.userAnswers
+                             .get(GrsNfmStatusPage)
+                             .map(updatedAnswers.set(GrsNfmStatusPage, _))
+                             .getOrElse(updatedAnswers.set(GrsNfmStatusPage, RowStatus.InProgress))
+                         )
+      _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+    } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
+
+  private def updateForFalseValue(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    for {
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, false))
+      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
 }

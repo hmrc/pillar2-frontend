@@ -16,12 +16,22 @@
 
 package pages
 
-import models.grs.EntityType
+import models.UserAnswers
 import play.api.libs.json.JsPath
 
-case object nfmEntityTypePage extends QuestionPage[EntityType] {
+import scala.util.Try
+
+case object NfmPhonePreferencePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "nfmEntityType"
+  override def toString: String = "nfmPhonePreference"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(upeCapturePhonePage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

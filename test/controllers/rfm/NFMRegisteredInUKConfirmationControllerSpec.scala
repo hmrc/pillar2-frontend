@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.invocation.InvocationOnMock
-import pages.{GrsNfmStatusPage, nfmRegisteredInUKPage}
+import pages.{GrsNfmStatusPage, NfmRegisteredInUKPage}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -100,7 +100,7 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers.set(nfmRegisteredInUKPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(NfmRegisteredInUKPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .configure(
