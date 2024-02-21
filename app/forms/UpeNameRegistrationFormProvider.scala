@@ -17,8 +17,8 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import mapping.Constants
 import play.api.data.Form
 
 class UpeNameRegistrationFormProvider @Inject() extends Mappings {
@@ -26,6 +26,7 @@ class UpeNameRegistrationFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("upeNameRegistration.error.required")
-        .verifying(maxLength(105, "upeNameRegistration.error.length"))
+        .verifying(maxLength(Constants.MAX_LENGTH_105, "upeNameRegistration.error.length"))
+        .verifying(regexp(Validation.NAME_REGEX, "upeNameRegistration.error.invalid"))
     )
 }

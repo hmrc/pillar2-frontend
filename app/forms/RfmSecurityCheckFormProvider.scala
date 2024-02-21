@@ -17,18 +17,21 @@
 package forms
 
 import forms.mappings.Mappings
+import mapping.Constants
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class RfmSecurityCheckFormProvider @Inject() extends Mappings {
-  private val charLength   = 15
-  private val groupIdRegex = "^X[A-Z]PLR[0-9]{10}$"
 
   def apply(): Form[String] =
     Form(
       "value" -> text("rfm.securityCheck.error.required")
-        .verifying(equalLength(charLength, "rfm.securityCheck.error.length"))
-        .verifying(regexp(groupIdRegex, "rfm.securityCheck.error.format"))
+        .verifying(
+          firstError(
+            equalLength(Constants.EQUAL_LENGTH_15, "rfm.securityCheck.error.length"),
+            regexp(Validation.GROUPID_REGEX, "rfm.securityCheck.error.format")
+          )
+        )
     )
 }
