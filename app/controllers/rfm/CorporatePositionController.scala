@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CorporatePositionController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
@@ -49,7 +49,7 @@ class CorporatePositionController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
@@ -62,7 +62,7 @@ class CorporatePositionController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
