@@ -16,18 +16,20 @@
 
 package forms.behaviours
 
+import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-  def fieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
+  def fieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
     s"not bind strings longer than $maxLength characters" in {
-
-      forAll(stringsLongerThan(maxLength) -> "longString") { string =>
+      val gen = generator.getOrElse(stringsLongerThan(maxLength))
+      forAll(gen -> "longString") { string =>
         val result = form.bind(Map(fieldName -> string)).apply(fieldName)
         result.errors must contain only lengthError
       }
     }
+
   def regexFieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, regex: String, lengthError: FormError, formatError: FormError): Unit =
     s"not bind strings longer than $maxLength characters" in {
 

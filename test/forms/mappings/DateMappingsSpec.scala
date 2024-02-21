@@ -39,7 +39,8 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
       invalidMonth = "error.month.nan",
       invalidMonthLength = "error.month.length",
       invalidYear = "error.year.nan",
-      invalidYearLength = "error.year.length"
+      invalidYearLength = "error.year.length",
+      messageKeyPart = "groupAccountingPeriod"
     )
   )
 
