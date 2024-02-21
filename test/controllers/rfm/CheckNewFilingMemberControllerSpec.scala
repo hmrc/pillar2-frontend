@@ -28,9 +28,9 @@ import play.api.test.Helpers._
 
 class CheckNewFilingMemberControllerSpec extends SpecBase {
 
-  "CheckNewFilingMemberController" when {
+  "CheckNewFilingMemberController" must {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
