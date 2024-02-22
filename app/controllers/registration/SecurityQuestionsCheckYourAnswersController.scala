@@ -26,10 +26,6 @@ import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.registrationview.SecurityQuestionsCheckYourAnswersView
-//import views.html.registrationview.SecurityQuestionsCheckYourAnswersView
-//import views.html.subscriptionview.SubCheckYourAnswersView
-
-import scala.concurrent.Future
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
