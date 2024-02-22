@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.rfm
 
 import base.SpecBase
 import models.UserAnswers
@@ -48,7 +48,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -65,7 +65,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -79,7 +79,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

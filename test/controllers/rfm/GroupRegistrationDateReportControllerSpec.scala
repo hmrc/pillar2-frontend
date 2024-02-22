@@ -126,7 +126,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.registration.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url
       }
 
     }

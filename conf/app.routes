@@ -344,4 +344,4 @@ POST        /replace-filing-member/security/change-registration-date        cont
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
-GET        /replace-filing-member/security/check-answers                       controllers.registration.SecurityQuestionsCheckYourAnswersController.onPageLoad
+GET        /replace-filing-member/security/check-answers                       controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad
