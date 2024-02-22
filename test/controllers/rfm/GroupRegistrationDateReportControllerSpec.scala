@@ -24,7 +24,7 @@ import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{rfmRegistrationDatePage, rfmSecurityCheckPage, subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.{RfmRegistrationDatePage, RfmSecurityCheckPage, subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -82,7 +82,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
       val date = RegistrationDate(startDate)
-      val ua   = emptyUserAnswers.setOrException(rfmRegistrationDatePage, date)
+      val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, date)
       val application = applicationBuilder(Some(ua))
         .configure(
           Seq(

@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
 import models.Mode
-import pages.{rfmRegistrationDatePage, subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.{RfmRegistrationDatePage, subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -51,7 +51,7 @@ class GroupRegistrationDateReportController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmRegistrationDatePage) match {
+      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -68,7 +68,7 @@ class GroupRegistrationDateReportController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmRegistrationDatePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )

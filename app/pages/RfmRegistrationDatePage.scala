@@ -19,7 +19,7 @@ package pages
 import models.rfm.RegistrationDate
 import play.api.libs.json.JsPath
 
-case object rfmRegistrationDatePage extends QuestionPage[RegistrationDate] {
+case object RfmRegistrationDatePage extends QuestionPage[RegistrationDate] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -22,7 +22,7 @@ import forms.RfmSecurityCheckFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmSecurityCheckPage
+import pages.RfmSecurityCheckPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
