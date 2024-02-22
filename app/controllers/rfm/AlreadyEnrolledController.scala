@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package controllers.rfm
 
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
+import config.FrontendAppConfig
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.AlreadyEnrolledView
 
 import javax.inject.Inject
 
-class ContactNameComplianceFormProvider @Inject() extends Mappings {
+class AlreadyEnrolledController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  view:                     AlreadyEnrolledView
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("contactNameCompliance.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "contactNameCompliance.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "contactNameCompliance.error.invalid"))
-    )
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(view()).withNewSession
+  }
 }

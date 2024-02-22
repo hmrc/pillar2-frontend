@@ -86,6 +86,18 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       chars  <- listOfN(length, arbitrary[Char])
     } yield chars.mkString
 
+  def nonEmptyRegexConformingStringWithMaxLength(regex: String, maxLength: Int): Gen[String] = {
+    val regexGen = RegexpGen.from(regex)
+    regexGen
+      .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
+  }
+
+  def longStringsConformingToRegex(regex: String, minLength: Int): Gen[String] =
+    RegexpGen
+      .from(regex)
+      .suchThat(_.length > minLength)
+      .map(_.padTo(minLength + 1, 'a'))
+
   def regexWithMaxLength(maxLength: Int, regex: String): Gen[String] =
     for {
       length      <- choose(1, maxLength)

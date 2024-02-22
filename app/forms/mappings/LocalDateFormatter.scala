@@ -32,7 +32,8 @@ private[mappings] class LocalDateFormatter(
   invalidMonthLength: String,
   invalidYear:        String,
   invalidYearLength:  String,
-  args:               Seq[String] = Seq.empty
+  args:               Seq[String] = Seq.empty,
+  messageKeyPart:     String = "messageKeyPart"
 ) extends Formatter[LocalDate]
     with Formatters {
 
@@ -63,11 +64,11 @@ private[mappings] class LocalDateFormatter(
 
     (bindedDay, bindedMonth, bindedYear) match {
       case (Left(_), Left(_), Left(_)) =>
-        Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonthYear.invalid", args)))
-      case (Left(_), Left(_), Right(_)) => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayMonth.invalid", args)))
+        Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonthYear.invalid", args)))
+      case (Left(_), Left(_), Right(_)) => Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonth.invalid", args)))
       case (Right(_), Left(_), Left(_)) =>
-        Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.monthYear.invalid", args)))
-      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"groupAccountingPeriod.error.$key.dayYear.invalid", args)))
+        Left(Seq(FormError(key, s"$messageKeyPart.error.$key.monthYear.invalid", args)))
+      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayYear.invalid", args)))
       case (Left(dayError), Right(_), Right(_))    => Left(dayError)
       case (Right(_), Left(monthError), Right(_))  => Left(monthError)
       case (Right(_), Right(_), Left(yearError))   => Left(yearError)

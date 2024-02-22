@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import play.twirl.api.Html
 
-import javax.inject.Inject
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
+@this()
 
-class NfmNameRegistrationFormProvider @Inject() extends Mappings {
+@(
+heading: Html,
+caption: String = "",
+classes: String = "govuk-heading-l govuk-!-margin-bottom-4 cds-wrap-content"
+)
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "nfmNameRegistration.error.invalid"))
-    )
-}
+
+<h1 class="@classes">
+ @if(caption.nonEmpty) {
+ <span class="govuk-caption-l">@caption</span>
+ }
+ @heading
+</h1>
