@@ -92,11 +92,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
   val registrationControllerDomestic: String = "Domestic Top-up Tax"
-  val ultimateParentLink:             String = servicesConfig.getString("urls.ultimateParentLink")
-  val filingMemberLink:               String = servicesConfig.getString("urls.filingMemberLink")
-  val groupDetailLink:                String = servicesConfig.getString("urls.groupDetailLink")
-  val contactDetailsLink:             String = servicesConfig.getString("urls.contactDetailsLink")
-  val cyaLink:                        String = servicesConfig.getString("urls.cyaLink")
   val serviceStartLink:               String = servicesConfig.getString("urls.serviceStartLink")
 
   def languageMap: Map[String, Lang] =
