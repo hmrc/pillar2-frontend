@@ -186,7 +186,7 @@ class NFMRegisteredInUKConfirmationControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/restart-error")
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/under-construction")
       }
     }
 
