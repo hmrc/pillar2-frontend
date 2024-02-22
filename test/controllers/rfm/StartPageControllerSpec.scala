@@ -88,7 +88,7 @@ class StartPageControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.rfm.routes.StartPageController.onPageLoad.url).withFormUrlEncodedBody(("confirmation[0]", "confirm"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url
       }
 
     }

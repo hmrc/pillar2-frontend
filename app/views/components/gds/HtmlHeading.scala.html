@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package mapping
+@import play.twirl.api.Html
 
-object Constants {
-  final val ENGLISH         = "en"
-  final val WELSH           = "cy"
-  final val UK_COUNTRY_CODE = "GB"
-  final val MAX_LENGTH_105  = 105
-  final val MAX_LENGTH_132  = 132
-  final val MAX_LENGTH_160  = 160
-  final val MAX_LENGTH_200  = 200
-  final val EQUAL_LENGTH_15 = 15
-}
+@this()
+
+@(
+heading: Html,
+caption: String = "",
+classes: String = "govuk-heading-l govuk-!-margin-bottom-4 cds-wrap-content"
+)
+
+
+<h1 class="@classes">
+ @if(caption.nonEmpty) {
+ <span class="govuk-caption-l">@caption</span>
+ }
+ @heading
+</h1>
