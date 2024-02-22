@@ -24,6 +24,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
@@ -44,7 +45,6 @@ class BusinessActivityUKController @Inject() (
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val sessionID = Pillar2SessionKeys.sessionId(hc)
     sessionRepository.get(sessionID).map { OptionalUserAnswers =>
       val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(BusinessActivityUKPage) match {
@@ -56,7 +56,6 @@ class BusinessActivityUKController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val sessionID = Pillar2SessionKeys.sessionId(hc)
     sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
       val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))

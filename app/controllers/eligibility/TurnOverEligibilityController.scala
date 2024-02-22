@@ -44,7 +44,6 @@ class TurnOverEligibilityController @Inject() (
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val sessionID = Pillar2SessionKeys.sessionId(hc)
     sessionRepository.get(sessionID).map { OptionalUserAnswers =>
       val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(RevenueEqPage) match {

@@ -60,7 +60,6 @@ class RegisteringNfmForThisGroupController @Inject() (
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val sessionID = Pillar2SessionKeys.sessionId(hc)
     sessionRepository.get(sessionID).map { OptionalUserAnswers =>
       val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(NfmEqPage) match {
@@ -72,7 +71,6 @@ class RegisteringNfmForThisGroupController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val sessionID = Pillar2SessionKeys.sessionId(hc)
     sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
       val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
