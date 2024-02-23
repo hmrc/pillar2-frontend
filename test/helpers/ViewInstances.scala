@@ -29,6 +29,7 @@ import views.html.fmview._
 import views.html.registrationview._
 import views.html.subscriptionview._
 import views.html.templates._
+import views.html.components.gds._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -79,6 +80,9 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukBackLink     = new GovukBackLink
   val govukWarningText  = new GovukWarningText
   val formWithCSRF      = new FormWithCSRF
+  val heading           = new heading
+  val paragraphBody     = new paragraphBody
+  val paragraphBodyLink = new paragraphBodyLink
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -121,11 +125,11 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new TurnOverEligibilityView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewKbUKIneligible: KbUKIneligibleView =
-    new KbUKIneligibleView(pillar2layout, formWithCSRF, govukButton)
+    new KbUKIneligibleView(pillar2layout, formWithCSRF, heading, paragraphBody, paragraphBodyLink, govukButton)
   val viewKBMneIneligible: KbMnIneligibleView =
-    new KbMnIneligibleView(pillar2layout, formWithCSRF, govukButton)
+    new KbMnIneligibleView(pillar2layout, formWithCSRF, heading, paragraphBody, paragraphBodyLink, govukButton)
   val viewKb750Ineligible: Kb750IneligibleView =
-    new Kb750IneligibleView(pillar2layout, formWithCSRF, govukButton)
+    new Kb750IneligibleView(pillar2layout, formWithCSRF, heading, paragraphBody, paragraphBodyLink, govukButton)
 
   val viewEligibilityConfirmation: EligibilityConfirmationView =
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
