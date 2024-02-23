@@ -16,9 +16,9 @@
 
 package services.audit
 
-import models.audit.{GrsReturnAuditEvent, GrsReturnAuditEventForLLP, GrsReturnNfmAuditEvent, GrsReturnNfmAuditEventForLlp, NfmRegistration}
-import models.grs.{BusinessVerificationResult, EntityType, GrsCreateRegistrationResponse, GrsRegistrationResult}
-import models.registration.{IncorporatedEntityAddress, IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.audit._
+import models.grs.EntityType
+import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}

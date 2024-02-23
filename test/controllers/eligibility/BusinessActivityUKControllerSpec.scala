@@ -52,6 +52,19 @@ class BusinessActivityUKControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to journey recovery if no session id is found for GET" in {
+      val controller: BusinessActivityUKController = new BusinessActivityUKController(
+        formProvider,
+        mockSessionRepository,
+        stubMessagesControllerComponents(),
+        viewBusinessActivityUK
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
     "must return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -108,6 +121,19 @@ class BusinessActivityUKControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
+    }
+
+    "redirect to journey recovery if no session id is found for POST" in {
+      val controller: BusinessActivityUKController = new BusinessActivityUKController(
+        formProvider,
+        mockSessionRepository,
+        stubMessagesControllerComponents(),
+        viewBusinessActivityUK
+      )
+      val request = FakeRequest(POST, controllers.eligibility.routes.BusinessActivityUKController.onSubmit.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }

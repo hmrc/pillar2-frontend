@@ -25,8 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 import views.html.TurnOverEligibilityView
 
 import javax.inject.Inject
@@ -44,39 +42,41 @@ class TurnOverEligibilityController @Inject() (
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val sessionID = Pillar2SessionKeys.sessionId(hc)
-    sessionRepository.get(sessionID).map { OptionalUserAnswers =>
-      val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(RevenueEqPage) match {
-        case None       => form
-        case Some(data) => form.fill(data)
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+          val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(RevenueEqPage)
+          val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+          Ok(view(preparedForm))
+        }
       }
-      Ok(view(preparedForm))
-    }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    val hc        = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val sessionID = Pillar2SessionKeys.sessionId(hc)
-    sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
-      val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-          value =>
-            value match {
-              case true =>
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+              earnsAboveThreshold =>
                 for {
-                  updatedAnswers <- Future.fromTry(userAnswer.set(RevenueEqPage, value))
+                  updatedAnswers <- Future.fromTry(userAnswer.set(RevenueEqPage, earnsAboveThreshold))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
-              case false =>
-                for {
-                  updatedAnswers <- Future.fromTry(userAnswer.set(RevenueEqPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)
-            }
-        )
-    }
+                } yield
+                  if (earnsAboveThreshold) {
+                    Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
+                  } else {
+                    Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)
+                  }
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

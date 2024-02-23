@@ -34,7 +34,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
 
   "Register FM for this group controller" must {
 
-    "must return OK and the correct view for a GET when page previously not answered" in {
+    "return OK and the correct view for a GET when page previously not answered" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -52,7 +52,20 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when page previously answered" in {
+    "redirect to journey recovery if no session id is found for GET" in {
+      val controller: RegisteringNfmForThisGroupController = new RegisteringNfmForThisGroupController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewRegisteringNfmForThisGroup,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad.url)
+      val result  = controller.onPageLoad()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
+    "return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -110,6 +123,19 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
+    }
+
+    "redirect to journey recovery if no session id is found for POST" in {
+      val controller: RegisteringNfmForThisGroupController = new RegisteringNfmForThisGroupController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewRegisteringNfmForThisGroup,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onSubmit.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }

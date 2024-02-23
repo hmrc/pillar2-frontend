@@ -53,7 +53,20 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
 
     }
 
-    "must return OK and the correct view for a GET when page previously answered" in {
+    "redirect to journey recovery if no session id is found" in {
+      val controller: TurnOverEligibilityController = new TurnOverEligibilityController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewTurnOverEligibility,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad.url)
+      val result  = controller.onPageLoad()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
+    "return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -70,7 +83,6 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-
     }
 
     "must redirect to the next page when chosen Yes and submitted" in {
@@ -107,5 +119,19 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
         status(result) shouldBe BAD_REQUEST
       }
     }
+
+    "redirect to journey recovery if no session id is found for POST" in {
+      val controller: TurnOverEligibilityController = new TurnOverEligibilityController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewTurnOverEligibility,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.TurnOverEligibilityController.onSubmit.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
   }
+
 }

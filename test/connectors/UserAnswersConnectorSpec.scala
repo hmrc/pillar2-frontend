@@ -17,14 +17,11 @@
 package connectors
 
 import base.SpecBase
-import models.UserAnswers
 import org.scalacheck.Gen
 import play.api.Application
-import play.api.http.Status.NOT_FOUND
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 
-import java.time.{Instant, LocalDate}
 import scala.collection.Seq
 
 class UserAnswersConnectorSpec extends SpecBase {

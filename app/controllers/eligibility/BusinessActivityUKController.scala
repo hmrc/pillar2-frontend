@@ -24,10 +24,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 import views.html.BusinessActivityUKView
 
 import javax.inject.Inject
@@ -45,38 +42,42 @@ class BusinessActivityUKController @Inject() (
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val sessionID = Pillar2SessionKeys.sessionId(hc)
-    sessionRepository.get(sessionID).map { OptionalUserAnswers =>
-      val preparedForm = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(BusinessActivityUKPage) match {
-        case None       => form
-        case Some(data) => form.fill(data)
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+          val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(BusinessActivityUKPage)
+          val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+          Ok(view(preparedForm))
+        }
       }
-      Ok(view(preparedForm))
-    }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    val sessionID = Pillar2SessionKeys.sessionId(hc)
-    sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
-      val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-          {
-            case value @ true =>
-              for {
-                updatedAnswers <- Future.fromTry(userAnswer.set(BusinessActivityUKPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
-            case value @ false =>
-              for {
-                updatedAnswers <- Future.fromTry(userAnswer.set(BusinessActivityUKPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)
-          }
-        )
-    }
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+              conductsBusinessInUK =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(BusinessActivityUKPage, conductsBusinessInUK))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield
+                  if (conductsBusinessInUK) {
+                    Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
+                  } else {
+                    Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)
+                  }
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 

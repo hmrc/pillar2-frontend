@@ -53,6 +53,19 @@ class GroupTerritoriesControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to journey recovery if no session id is found" in {
+      val controller: GroupTerritoriesController = new GroupTerritoriesController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewGroupTerritories,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
+      val result  = controller.onPageLoad()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
     "must return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -110,6 +123,19 @@ class GroupTerritoriesControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
+    }
+
+    "redirect to journey recovery if no session id is found for POST" in {
+      val controller: GroupTerritoriesController = new GroupTerritoriesController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewGroupTerritories,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }
