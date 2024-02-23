@@ -15,18 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-layout: templates.Layout
+layout: templates.Layout,
+heading: heading,
+paragraphBody: paragraphBody
 )
 
 
 @()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-<h1 class="govuk-heading-l">@messages("alreadyRegistered.heading")</h1>
-<p class="govuk-body">@messages("alreadyRegistered.message1")</p>
-<p class="govuk-body">
-    @Html(messages("alreadyRegistered.message2", s"<a class='govuk-link' href='mailto:${appConfig.pillar2mailbox}'>${appConfig.pillar2mailbox}</a>"))
-</p>
+
+@heading(messages("alreadyRegistered.heading"), "govuk-heading-l")
+@paragraphBody(messages("alreadyRegistered.message1"))
+@paragraphBody(messages("alreadyRegistered.message2"))
 
 }

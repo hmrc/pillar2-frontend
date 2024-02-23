@@ -14,16 +14,8 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
+@this()
 
-@this(link: link, appConfig: FrontendAppConfig, url: String)
+@(message: String, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link")
 
-@(id: String = "govuk-link", textKey: String = "site.backToGovUk")(implicit messages: Messages)
-
-<p class="govuk-body">
- @link(
- id = Some(id),
- text = messages(textKey),
- call = Call("GET", url)
- )
-</p>
+<p class="@classes"><a class="@linkClass" href="@linkUrl">@message</a></p>
