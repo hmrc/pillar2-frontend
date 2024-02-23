@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("rfm.securityCheck.title"))) {
 
-@formHelper(action = controllers.rfm.routes.SecurityCheckController.onSubmit()) {
+@formHelper(action = controllers.rfm.routes.SecurityCheckController.onSubmit(mode)) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
