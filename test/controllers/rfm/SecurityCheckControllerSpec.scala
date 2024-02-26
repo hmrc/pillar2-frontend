@@ -48,7 +48,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -71,7 +71,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -95,13 +95,13 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
       }
     }
 
@@ -117,7 +117,7 @@ class SecurityCheckControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

@@ -230,6 +230,8 @@ upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required = You need to enter the name of the ultimate parent entity
 upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
+upeNameRegistration.error.invalid = The name of the ultimate parent entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
@@ -391,6 +393,16 @@ nfmNameRegistration.checkYourAnswersLabel = Name
 nfmNameRegistration.error.required =  You need to enter the name of the nominated filing member
 nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
+nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
+
+securityQuestionsCheckYourAnswers.title = Check Your Answers
+securityQuestionsCheckYourAnswers.heading = Check your answers
+securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
+rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 top-up taxes ID
+rfmSecurityCheck.change.hidden = The group’s Pillar 2 top-up taxes ID
+rfmRegistrationDate.checkYourAnswersLabel = Registration date
+rfmRegistrationDate.change.hidden = The group’s registration date
 
 
 
@@ -571,6 +583,8 @@ contactNameCompliance.hint =  For example, ‘Tax team’ or ‘Ashley Smith’.
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
+contactNameCompliance.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
 
 
 
@@ -652,6 +666,7 @@ secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter name of the person of team we should contact
 secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 secondaryContactEmail.title =What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?
@@ -778,6 +793,7 @@ manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
 rfm.heading.caption = Replace filing member
 rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.title = Replace the filing member for a Pillar 2 top-up taxes account
 rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
 rfm.startPage.subHeading1 = Not yet registered to report Pillar 2 top-up taxes
 rfm.startPage.p2 = You cannot use this service until you have first registered.
@@ -797,6 +813,32 @@ rfm.startPage.legend = Replace a filing member
 rfm.startPage.confirm = Confirm you have read all of the above and are able to act as a new filing member for this group
 rfm.startPage.error = You must select the checkbox to continue
 
+rfm.alreadyEnrolled.title = You cannot replace the current filing member for this group
+rfm.alreadyEnrolled.heading = You cannot replace the current filing member for this group
+rfm.alreadyEnrolled.p1 = The Government Gateway user ID you entered as the replacement is currently registered as the nominated filing member for this group.
+rfm.alreadyEnrolled.p2 = To replace the nominated filing member for this group, the new nominated filing member will need to try again with their Government Gateway user ID.
+rfm.alreadyEnrolled.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.standardOrganisation.title = Sorry, you’re unable to use this service
+rfm.standardOrganisation.heading = Sorry, you’re unable to use this service
+rfm.standardOrganisation.p1 = You’ve signed in with a standard organisation account.
+rfm.standardOrganisation.p2 = Only Government Gateway accounts with an administrator role can replace their nominated filing member.
+rfm.standardOrganisation.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.individual.title = Sorry, you’re unable to use this service
+rfm.individual.heading = Sorry, you’re unable to use this service
+rfm.individual.p1 = You’ve signed in with an individual account. Only users with an organisation account can replace their nominated filing member.
+rfm.individual.p2 = If you need to replace a nominated filing member, {0}
+rfm.individual.p2.link = sign in to Government Gateway with an organisation account
+rfm.individual.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
+rfm.agent.title = Sorry, you’re unable to use this service
+rfm.agent.heading = Sorry, you’re unable to use this service
+rfm.agent.p1 = You’ve signed in using an agent’s Government Gateway user ID.
+rfm.agent.p2 = Agents cannot use this service to replace a nominated filing member.
+rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
+rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
@@ -814,6 +856,34 @@ havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
 
+groupRegistrationDateReport.title = What was the group’s date of registration to the Report Pillar 2 top-up taxes service?
+groupRegistrationDateReport.heading = What was the group’s date of registration to the Report Pillar 2 top-up taxes service?
+groupRegistrationDateReport.heading.caption = Replace filing member
+groupRegistrationDateReport.hint.desc = This will be the date when your group first registered to report their pillar 2 taxes in the UK.
+groupRegistrationDateReport.registrationDate.heading = Enter registration date
+groupRegistrationDateReport.registrationDate.hint = For example, 27 3 2026
+
+
+groupRegistrationDateReport.error.startDate.format = Enter a date in the correct format
+groupRegistrationDateReport.error.startDate.required.all = Enter the registration date
+groupRegistrationDateReport.error.startDate.required.two = Registration date must include a {0} and {1}
+groupRegistrationDateReport.error.startDate.required = Registration date must include a {0}
+groupRegistrationDateReport.error.startDate.day.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.month.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.year.nan = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonthYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonth.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.monthYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.day.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.month.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.year.length = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonthYear.maximum = Registration date must be in the past
+groupRegistrationDateReport.error.rfmRegistrationDate.dayMonthYear.invalid =  Registration date must be a real date
+groupRegistrationDateReport.error.rfmRegistrationDate.dayMonth.invalid  = Registration date must be a real date
+groupRegistrationDateReport.error.startDate.dayMonthYear.minimum = Registration date must be on or after 31 December 2023
+groupRegistrationDateReport.error.rfmRegistrationDate.monthYear.invalid = Registration date must be a real date
+groupRegistrationDateReport.error.rfmRegistrationDate.dayYear.invalid = Registration date must be a real date
 rfm.heading.caption = Replace filing member
 rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID

@@ -22,5 +22,7 @@ object Constants {
   final val UK_COUNTRY_CODE = "GB"
   final val MAX_LENGTH_105  = 105
   final val MAX_LENGTH_132  = 132
+  final val MAX_LENGTH_160  = 160
   final val MAX_LENGTH_200  = 200
+  final val EQUAL_LENGTH_15 = 15
 }

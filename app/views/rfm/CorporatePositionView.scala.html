@@ -15,12 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 @import viewmodels.LegendSize
 @import models.rfm.CorporatePosition
 
 @this(
 layout: templates.Layout,
 formHelper: FormWithCSRF,
+sectionHeader: sectionHeader,
 govukErrorSummary: GovukErrorSummary,
 govukRadios: GovukRadios,
 govukButton: GovukButton,
@@ -38,7 +40,8 @@ govukInsetText : GovukInsetText
 @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
 }
 
-<span class="govuk-caption-l">@messages("rfm.heading.caption")</span>
+@sectionHeader(messages("rfm.heading.caption"))
+
 @govukRadios(
 RadiosViewModel(
 field  = form("value"),

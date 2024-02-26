@@ -52,7 +52,8 @@ class StartPageController @Inject() (
       .bindFromRequest()
       .fold(
         error => Future.successful(BadRequest(view(error))),
-        _ => Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
+        _ => Future.successful(Redirect(controllers.rfm.routes.AuthenticateController.rfmAuthenticate))
       )
   }
+
 }

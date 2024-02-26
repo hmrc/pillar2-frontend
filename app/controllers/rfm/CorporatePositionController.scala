@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CorporatePositionController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
@@ -49,7 +49,7 @@ class CorporatePositionController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
@@ -62,27 +62,26 @@ class CorporatePositionController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case CorporatePosition.Upe =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.corporatePosition(value.toString)))
+        {
+          case value @ CorporatePosition.Upe =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              .withSession((sessionData.corporatePosition(value.toString)))
 
-            case CorporatePosition.NewNfm =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-                .withSession((sessionData.corporatePosition(value.toString)))
-          }
+          case value @ CorporatePosition.NewNfm =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              .withSession((sessionData.corporatePosition(value.toString)))
+        }
       )
   }
 }

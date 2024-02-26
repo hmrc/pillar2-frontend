@@ -60,6 +60,31 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and populate the view correctly when the question has been previously answered" in {
+      val userAnswers = emptyUserAnswers.setOrException(rfmCorporatePositionPage, CorporatePosition.NewNfm)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[CorporatePositionView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(CorporatePosition.NewNfm), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "must return OK and the correct view for a GET - rfm feature false" in {
 
       val ua = emptyUserAnswers
@@ -82,7 +107,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted" in {
+    "must redirect to the under construction page when valid data is submitted with UPE" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -100,6 +125,32 @@ class CorporatePositionControllerSpec extends SpecBase {
 
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.Upe.toString)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
+    "must redirect to the under construction page when valid data is submitted with New NFM" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
 
         val result = route(application, request).value
 
