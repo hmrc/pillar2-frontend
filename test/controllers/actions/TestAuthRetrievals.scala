@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package mapping
+package controllers.actions
 
-object Constants {
-  final val ENGLISH         = "en"
-  final val WELSH           = "cy"
-  final val UK_COUNTRY_CODE = "GB"
-  final val MAX_LENGTH_105  = 105
-  final val MAX_LENGTH_132  = 132
-  final val MAX_LENGTH_160  = 160
-  final val MAX_LENGTH_200  = 200
-  final val EQUAL_LENGTH_15 = 15
+import uk.gov.hmrc.auth.core.retrieve.~
+
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 }
