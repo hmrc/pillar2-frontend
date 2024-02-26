@@ -17,7 +17,6 @@
 package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.http.Fault
 import models.subscription.ReadSubscriptionRequestParameters
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -87,11 +86,12 @@ class ReadSubscriptionConnectorSpec extends SpecBase {
 
     }
 
-    "return None when there is an exception during the call" in {
+    "return None when the backend has returned a non-success status code" in {
       server.stubFor(
         get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+          .willReturn(aResponse().withStatus(404).withBody(unsuccessfulResponseJson))
       )
+
       val result = connector.readSubscription(readSubscriptionParameters).futureValue
 
       result mustBe None

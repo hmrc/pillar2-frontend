@@ -35,17 +35,17 @@ class ReferenceNumberServiceSpec extends SpecBase {
     )
     "return an optional pillar2 ID if it exists in the enrolment" in {
       val service = app.injector.instanceOf[ReferenceNumberService]
-      service.get(emptyUserAnswers, Some(enrolments)) mustBe Some("enrolmentID")
+      service.get(None, Some(enrolments)) mustBe Some("enrolmentID")
     }
     "return a pillar2 id from userAnswers if none can be found in their enrolment" in {
       val userAnswers = emptyUserAnswers.setOrException(plrReferencePage, "databaseID")
       val service     = app.injector.instanceOf[ReferenceNumberService]
-      service.get(userAnswers, None) mustBe Some("databaseID")
+      service.get(Some(userAnswers), None) mustBe Some("databaseID")
     }
     "priorities the ID received from enrolment" in {
       val userAnswers = emptyUserAnswers.setOrException(plrReferencePage, "databaseID")
       val service     = app.injector.instanceOf[ReferenceNumberService]
-      service.get(userAnswers, Some(enrolments)) mustBe Some("enrolmentID")
+      service.get(Some(userAnswers), Some(enrolments)) mustBe Some("enrolmentID")
     }
   }
 
