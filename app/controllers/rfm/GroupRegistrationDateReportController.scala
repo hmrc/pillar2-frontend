@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
-import models.{CheckMode, Mode, NormalMode}
+import models.Mode
 import pages.{rfmRegistrationDatePage, subAccountingPeriodPage, subMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -70,10 +70,7 @@ class GroupRegistrationDateReportController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmRegistrationDatePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield mode match {
-            case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
-            case _         => Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
-          }
+          } yield Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
       )
   }
 
