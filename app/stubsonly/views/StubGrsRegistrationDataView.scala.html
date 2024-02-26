@@ -16,6 +16,8 @@
 
 @import stubsonly.models.GrsStubFormData
 @import config.FrontendAppConfig
+@import views.html.helper.CSPNonce
+@import helper.CSRF
 
 @this(
         formHelper: FormWithCSRF,
@@ -28,7 +30,7 @@
 
 @(form: Form[GrsStubFormData], registrationSuccessBvDisabledJson: String, registrationSuccessBvEnabledJson: String, registrationFailedPartyTypeMismatchJson: String, registrationFailedGenericJson: String, registrationNotCalledIdentifierMismatchJson: String, registrationNotCalledBvFailedJson: String, continueUrl: String, orgType: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-<script>
+<script @{CSPNonce.attr}>
         function populateTextArea(journeyData) {
             document.getElementById("grsJourneyDataJson").value = JSON.stringify(journeyData, null, 2);
         }
@@ -39,6 +41,8 @@
         <h1 class="govuk-heading-xl">Stub GRS Journey Data</h1>
 
         @formHelper(action = stubsonly.controllers.stubs.routes.StubGrsJourneyDataController.onSubmit(continueUrl, orgType)) {
+
+            @CSRF.formField
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
