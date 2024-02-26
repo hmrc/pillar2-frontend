@@ -81,8 +81,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           dashboardInfo.organisationName,
           dashboardInfo.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           "12345678",
-          inactiveStatus = accountStatus.inactive,
-          showPaymentsSection = true
+          inactiveStatus = accountStatus.inactive
         )(
           request,
           appConfig(application),
@@ -106,7 +105,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
 
     }
@@ -128,7 +127,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "redirect to journey recovery if no pillar 2 reference is found in session repository or enrolment data" in {
+    "redirect to error page if no pillar 2 reference is found in session repository or enrolment data" in {
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
@@ -142,12 +141,12 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
 
     }
 
-    "redirect to journey recovery if read subscription has happened successfully but no dashboard info is found" in {
+    "redirect to error page if read subscription has happened successfully but no dashboard info is found" in {
       val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
       val application = applicationBuilder(userAnswers = Some(ua), enrolments)
         .overrides(
@@ -163,11 +162,11 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(ua)))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
     }
 
-    "redirect to subscription error page if no userAnswer is found from the connector" in {
+    "redirect to error page if no userAnswer is found from the connector" in {
       val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
       val application = applicationBuilder(userAnswers = Some(ua), enrolments)
         .overrides(

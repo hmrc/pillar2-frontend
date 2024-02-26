@@ -16,21 +16,20 @@
 
 package controllers
 
+import cats.data.OptionT
+import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.IdentifierAction
 import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{fmDashboardPage, plrReferencePage, subAccountStatusPage}
+import pages.{fmDashboardPage, subAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.ReadSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.{Pillar2Reference, Pillar2SessionKeys}
 import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
@@ -39,69 +38,40 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   val userAnswersConnectors:   UserAnswersConnectors,
-  getData:                     DataRetrievalAction,
   identify:                    IdentifierAction,
-  requireData:                 DataRequiredAction,
   val readSubscriptionService: ReadSubscriptionService,
   val controllerComponents:    MessagesControllerComponents,
   view:                        DashboardView,
+  referenceNumberService:      ReferenceNumberService,
   sessionRepository:           SessionRepository
 )(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val userId = request.userId
+  def onPageLoad: Action[AnyContent] = identify.async { implicit request =>
+    (for {
+      userAnswers     <- OptionT.liftF(sessionRepository.get(request.userId))
+      referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
+      _               <- OptionT.liftF(readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
+      updatedAnswers  <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
+      dashboard       <- OptionT.fromOption[Future](updatedAnswers.get(fmDashboardPage))
+    } yield {
+      val inactiveStatus = updatedAnswers.get(subAccountStatusPage).exists(_.inactive)
+      Ok(
+        view(
+          dashboard.organisationName,
+          dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          referenceNumber,
+          inactiveStatus = inactiveStatus
+        )
+      )
+    }).recover { case InternalIssueError =>
+      logger.error(
+        s"[ read subscription failed as no valid Json was returned from the controller"
+      )
+      Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+    }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
-    sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswer =>
-      val pillar2ID = optionalUserAnswer match {
-        case Some(userAnswers) =>
-          Pillar2Reference
-            .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-            .orElse(userAnswers.get(plrReferencePage))
-        case None => Pillar2Reference.getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-      }
-      pillar2ID
-        .map { plrId =>
-          (for {
-            _                   <- readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(userId, plrId))
-            optionalUserAnswers <- userAnswersConnectors.getUserAnswer(request.userId)
-          } yield optionalUserAnswers match {
-            case Some(userAnswers) =>
-              userAnswers
-                .get(fmDashboardPage)
-                .map { dashboard =>
-                  val inactiveStatus = userAnswers
-                    .get(subAccountStatusPage)
-                    .exists { acctStatus =>
-                      acctStatus.inactive
-                    }
-                  Ok(
-                    view(
-                      dashboard.organisationName,
-                      dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                      plrId,
-                      inactiveStatus,
-                      appConfig.showPaymentsSection
-                    )
-                  )
-                }
-                .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-
-            case None => Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-          })
-            .recover { case InternalIssueError =>
-              logger.error(
-                s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - read subscription failed as no valid Json was returned from the controller"
-              )
-              Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-            }
-
-        }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
-    }
   }
 }
