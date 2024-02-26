@@ -346,6 +346,11 @@ POST        /replace-filing-member/security/registration-date                con
 GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
+GET         /replace-filing-member/contact-details/content                     controllers.rfm.UpeStartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/content                     controllers.rfm.UpeStartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
 GET        /replace-filing-member/security/check-answers                       controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad

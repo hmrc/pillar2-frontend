@@ -17,22 +17,19 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
+import controllers.actions.RfmIdentifierAction
 import models.Mode
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.UpeStartPageRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UpeStartPageRegistrationController @Inject() (
-                                                  identify:                 IdentifierAction,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view:                     UpeStartPageRegistrationView
-                                                )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  rfmIdentify:              RfmIdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     UpeStartPageRegistrationView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
