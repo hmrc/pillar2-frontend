@@ -21,6 +21,7 @@
 
 @this(
     layout: templates.Layout,
+    formHelper: FormWithCSRF,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton
 )
@@ -28,6 +29,8 @@
 @(mode: Mode, list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("securityQuestionsCheckYourAnswers.title"))) {
+
+    @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(mode)) {
 
     <span class="govuk-caption-l">@messages("securityQuestionsCheckYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("securityQuestionsCheckYourAnswers.heading")</h1>
@@ -40,5 +43,6 @@
         content = Text(messages("site.save-and-continue"))
     ))
 
+  }
 
 }
