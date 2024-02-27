@@ -28,20 +28,22 @@ govukButton: GovukButton
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactNameCompliance.title"))) {
+@layout(pageTitle = title(form, messages("rfm.upeNameRegistration.title"))) {
 
-@formHelper(action = controllers.subscription.routes.ContactNameComplianceController.onSubmit(mode)) {
+@formHelper(action = controllers.rfm.routes.UpeNameRegistrationController.onSubmit(mode)) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
-<span class="govuk-caption-l">@messages("contactNameCompliance.heading.caption")</span>
+
+@sectionHeader(messages("rfm.upe.heading.caption"))
+
 @govukInput(
 InputViewModel(
 field = form("value"),
-label = LabelViewModel(messages("contactNameCompliance.heading")).asPageHeading(Large)
+label = LabelViewModel(messages("rfm.upeStartPageRegistration.heading")).asPageHeading(Large)
 )
-.withHint(Hint(content = Text(messages("contactNameCompliance.hint"))))
+.withHint(Hint(content = Text(messages("rfm.upeStartPageRegistration.hint"))))
 .withWidth(TwoThirds)
 )
 

@@ -19,6 +19,11 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.RfmIdentifierAction
 import models.Mode
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.UpeStartPageRegistrationView
 
 import javax.inject.Inject

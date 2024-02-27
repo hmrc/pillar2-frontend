@@ -18,11 +18,16 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import forms.RfmUpenameRegistrationFormProvider
+import controllers.actions._
+import forms.RfmUpeNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import pages.rfmUpeNameRegistrationPage
-import utils.RowStatus
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.UpeNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,9 +37,9 @@ class UpeNameRegistrationController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmUpenameRegistrationFormProvider,
+  formProvider:              RfmUpeNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UpeStartPageRegistrationView
+  view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,11 +55,11 @@ class UpeNameRegistrationController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad())
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -65,7 +70,7 @@ class UpeNameRegistrationController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(rfmUpeNameRegistrationPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad(NormalMode))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
 
