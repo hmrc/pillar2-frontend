@@ -16,9 +16,14 @@
 
 @import models.NormalMode
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
 layout: templates.Layout,
 formHelper: FormWithCSRF,
+heading: heading,
+sectionHeader: sectionHeader,
+paragraphBody: paragraphBody,
 govukButton: GovukButton
 )
 
@@ -33,7 +38,7 @@ pageTitle    = titleNoForm(messages("rfm.upeStartPageRegistration.title"))) {
 @paragraphBody(messages("rfm.upeStartPageRegistration.p1"))
 
 @govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.UpeNameRegistrationController.onPageLoad(mode).url)
+ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.UpeNameRegistrationController.onPageLoad().url)
 )
 
 

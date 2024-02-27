@@ -860,8 +860,10 @@ rfm.upeStartPageRegistration.heading = We need contact details for your Pillar 2
 rfm.upeStartPageRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
 
 rfm.upeNameRegistration.title = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
-rfm.upeStartPageRegistration.heading = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
-rfm.upeStartPageRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+rfm.upeNameRegistration.heading = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
+rfm.upeNameRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+rfm.upeNameRegistration.error.required = Enter name of the person or team we should contact
+rfm.upeNameRegistration.error.length = Name of the contact person or team should be 160 characters or less
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

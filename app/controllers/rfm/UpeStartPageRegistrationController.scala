@@ -37,11 +37,11 @@ class UpeStartPageRegistrationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = rfmIdentify { implicit request =>
     Ok(view(mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.UpeNameRegistrationController.onPageLoad(mode)))
+  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
+    Future.successful(Redirect(controllers.rfm.routes.UpeNameRegistrationController.onPageLoad()))
   }
 }

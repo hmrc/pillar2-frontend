@@ -18,13 +18,15 @@ package forms
 
 import forms.mappings.Mappings
 import mapping.Constants
+import play.api.data.Form
+
+import javax.inject.Inject
 
 class RfmUpeNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("rfm.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "contactNameCompliance.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "contactNameCompliance.error.invalid"))
+      "value" -> text("rfm.upeNameRegistration.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.upeNameRegistration.error.length"))
     )
 }

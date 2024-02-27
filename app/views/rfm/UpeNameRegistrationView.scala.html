@@ -15,12 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
 
 @this(
 layout: templates.Layout,
 formHelper: FormWithCSRF,
+sectionHeader: sectionHeader,
 govukErrorSummary: GovukErrorSummary,
 govukInput: GovukInput,
 govukButton: GovukButton
@@ -30,7 +32,7 @@ govukButton: GovukButton
 
 @layout(pageTitle = title(form, messages("rfm.upeNameRegistration.title"))) {
 
-@formHelper(action = controllers.rfm.routes.UpeNameRegistrationController.onSubmit(mode)) {
+@formHelper(action = controllers.rfm.routes.UpeNameRegistrationController.onSubmit()) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -41,9 +43,9 @@ govukButton: GovukButton
 @govukInput(
 InputViewModel(
 field = form("value"),
-label = LabelViewModel(messages("rfm.upeStartPageRegistration.heading")).asPageHeading(Large)
+label = LabelViewModel(messages("rfm.upeNameRegistration.heading")).asPageHeading(Large)
 )
-.withHint(Hint(content = Text(messages("rfm.upeStartPageRegistration.hint"))))
+.withHint(Hint(content = Text(messages("rfm.upeNameRegistration.hint"))))
 .withWidth(TwoThirds)
 )
 
