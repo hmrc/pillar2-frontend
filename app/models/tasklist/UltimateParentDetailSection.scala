@@ -17,15 +17,12 @@
 package models.tasklist
 import controllers.registration.routes
 import models.tasklist.SectionStatus.Completed
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import play.api.mvc.Call
 import utils.RowStatus
 
 object UltimateParentDetailSection extends Section {
-  override def toRequiredSection(ss: SectionStatus): Call = ss match {
-    case Completed => routes.StartPageRegistrationController.onPageLoad(CheckMode)
-    case _         => routes.StartPageRegistrationController.onPageLoad(NormalMode)
-  }
+  override def toRequiredSection(ss: SectionStatus): Call = routes.StartPageRegistrationController.onPageLoad(NormalMode)
 
   override def name(ss: SectionStatus): String = ss match {
     case Completed => "taskList.task.business.ultimate.edit"

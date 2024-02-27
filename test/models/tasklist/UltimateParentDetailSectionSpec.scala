@@ -28,12 +28,9 @@ class UltimateParentDetailSectionSpec extends UltimateParentDetailSectionFixture
   "toRequiredSection" should {
     "call the correct url" in {
       val normalUrl = UltimateParentDetailSection.toRequiredSection(SectionStatus.NotStarted)
-      val checkUrl  = UltimateParentDetailSection.toRequiredSection(SectionStatus.Completed)
 
       normalUrl.url mustBe "/report-pillar2-top-up-taxes/business-matching/match-hmrc-records"
-      checkUrl.url mustBe "/report-pillar2-top-up-taxes/business-matching/change-match-hmrc-records"
       normalUrl.method mustBe "GET"
-      checkUrl.method mustBe "GET"
     }
   }
 

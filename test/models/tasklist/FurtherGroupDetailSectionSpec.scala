@@ -28,12 +28,9 @@ class FurtherGroupDetailSectionSpec extends FurtherGroupDetailSectionFixture wit
   "toRequiredSection" should {
     "call the correct url" in {
       val normalUrl = FurtherGroupDetailSection.toRequiredSection(SectionStatus.NotStarted)
-      val checkUrl  = FurtherGroupDetailSection.toRequiredSection(SectionStatus.Completed)
 
       normalUrl.url mustBe "/report-pillar2-top-up-taxes/further-details/group-status"
-      checkUrl.url mustBe "/report-pillar2-top-up-taxes/further-details/change-group-status"
       normalUrl.method mustBe "GET"
-      checkUrl.method mustBe "GET"
     }
   }
 
@@ -42,10 +39,13 @@ class FurtherGroupDetailSectionSpec extends FurtherGroupDetailSectionFixture wit
       FurtherGroupDetailSection.name(SectionStatus.Completed) mustBe "taskList.task.business.sub.edit"
     }
 
-    "give correct add message given any status that is not Completed" in {
-      FurtherGroupDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.business.sub.add"
+    "give correct message given any status that is NotStarted or InProgress" in {
       FurtherGroupDetailSection.name(SectionStatus.NotStarted) mustBe "taskList.task.business.sub.add"
-      FurtherGroupDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.business.sub.add"
+      FurtherGroupDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.business.sub.add"
+    }
+
+    "give correct message given CannotStart" in {
+      FurtherGroupDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.business.more"
     }
   }
 

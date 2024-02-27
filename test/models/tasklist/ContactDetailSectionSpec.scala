@@ -28,12 +28,9 @@ class ContactDetailSectionSpec extends ContactDetailSectionFixture with Matchers
   "toRequiredSection" should {
     "call the correct url" in {
       val normalUrl = ContactDetailSection.toRequiredSection(SectionStatus.NotStarted)
-      val checkUrl  = ContactDetailSection.toRequiredSection(SectionStatus.Completed)
 
       normalUrl.url mustBe "/report-pillar2-top-up-taxes/contact-details"
-      checkUrl.url mustBe "/report-pillar2-top-up-taxes/contact-details/change-content"
       normalUrl.method mustBe "GET"
-      checkUrl.method mustBe "GET"
     }
   }
 
@@ -42,10 +39,13 @@ class ContactDetailSectionSpec extends ContactDetailSectionFixture with Matchers
       ContactDetailSection.name(SectionStatus.Completed) mustBe "taskList.task.contact.edit"
     }
 
-    "give correct add message given any status that is not Completed" in {
-      ContactDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.contact.add"
+    "give correct message given any status that is NotStarted or InProgress" in {
       ContactDetailSection.name(SectionStatus.NotStarted) mustBe "taskList.task.contact.add"
-      ContactDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.contact.add"
+      ContactDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.contact.add"
+    }
+
+    "give correct message given CannotStart" in {
+      ContactDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.contact"
     }
   }
 

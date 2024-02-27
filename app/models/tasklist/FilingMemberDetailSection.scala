@@ -15,22 +15,20 @@
  */
 
 package models.tasklist
-import models.{CheckMode, NormalMode, UserAnswers}
-import play.api.mvc.{Call, Result}
 import controllers.fm.routes
-import models.tasklist.SectionStatus.Completed
+import models.tasklist.SectionStatus._
+import models.{NormalMode, UserAnswers}
+import play.api.mvc.Call
 import utils.RowStatus
 
 object FilingMemberDetailSection extends Section {
 
-  override def toRequiredSection(ss: SectionStatus): Call = ss match {
-    case Completed => routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode)
-    case _         => routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode)
-  }
+  override def toRequiredSection(ss: SectionStatus): Call = routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode)
 
   override def name(ss: SectionStatus): String = ss match {
-    case Completed => "taskList.task.business.filingMember.edit"
-    case _         => "taskList.task.business.filingMember.add"
+    case Completed   => "taskList.task.business.filingMember.edit"
+    case CannotStart => "taskList.task.business.filingMember"
+    case _           => "taskList.task.business.filingMember.add"
   }
 
   override def progress(answers: UserAnswers): SectionStatus =

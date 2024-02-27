@@ -28,12 +28,9 @@ class FilingMemberDetailSectionSpec extends FilingMemberDetailSectionFixture wit
   "toRequiredSection" should {
     "call the correct url" in {
       val normalUrl = FilingMemberDetailSection.toRequiredSection(SectionStatus.NotStarted)
-      val checkUrl  = FilingMemberDetailSection.toRequiredSection(SectionStatus.Completed)
 
       normalUrl.url mustBe "/report-pillar2-top-up-taxes/business-matching/filing-member/nominate"
-      checkUrl.url mustBe "/report-pillar2-top-up-taxes/business-matching/filing-member/change-nominate"
       normalUrl.method mustBe "GET"
-      checkUrl.method mustBe "GET"
     }
   }
 
@@ -42,10 +39,13 @@ class FilingMemberDetailSectionSpec extends FilingMemberDetailSectionFixture wit
       FilingMemberDetailSection.name(SectionStatus.Completed) mustBe "taskList.task.business.filingMember.edit"
     }
 
-    "give correct add message given any status that is not Completed" in {
-      FilingMemberDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.business.filingMember.add"
+    "give correct message given any status that is NotStarted or InProgress" in {
       FilingMemberDetailSection.name(SectionStatus.NotStarted) mustBe "taskList.task.business.filingMember.add"
-      FilingMemberDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.business.filingMember.add"
+      FilingMemberDetailSection.name(SectionStatus.InProgress) mustBe "taskList.task.business.filingMember.add"
+    }
+
+    "give correct message given CannotStart" in {
+      FilingMemberDetailSection.name(SectionStatus.CannotStart) mustBe "taskList.task.business.filingMember"
     }
   }
 

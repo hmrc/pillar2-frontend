@@ -15,22 +15,20 @@
  */
 
 package models.tasklist
-import models.{CheckMode, NormalMode, UserAnswers}
-import play.api.mvc.Call
 import controllers.subscription.routes
-import models.tasklist.SectionStatus.Completed
+import models.tasklist.SectionStatus.{CannotStart, Completed}
+import models.{NormalMode, UserAnswers}
+import play.api.mvc.Call
 import utils.RowStatus
 
 object FurtherGroupDetailSection extends Section {
 
-  override def toRequiredSection(ss: SectionStatus): Call = ss match {
-    case Completed => routes.MneOrDomesticController.onPageLoad(CheckMode)
-    case _         => routes.MneOrDomesticController.onPageLoad(NormalMode)
-  }
+  override def toRequiredSection(ss: SectionStatus): Call = routes.MneOrDomesticController.onPageLoad(NormalMode)
 
   override def name(ss: SectionStatus): String = ss match {
-    case Completed => "taskList.task.business.sub.edit"
-    case _         => "taskList.task.business.sub.add"
+    case Completed   => "taskList.task.business.sub.edit"
+    case CannotStart => "taskList.task.business.more"
+    case _           => "taskList.task.business.sub.add"
   }
 
   override def progress(answers: UserAnswers): SectionStatus =
