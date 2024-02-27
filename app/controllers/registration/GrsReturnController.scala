@@ -238,38 +238,32 @@ class GrsReturnController @Inject() (
   )(implicit hc:      HeaderCarrier): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
-        println("************************** 1 ******************************")
         logger.info(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
             s"Filing Member Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
-        println("************************** 2 ******************************")
         logger.info(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
             s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
       case (true, _, _, Some(_)) =>
-        println("************************** 3 ******************************")
         logger.info(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
             s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
         )
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
-        println("************************** 4 ******************************")
         logger.info(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
             s"$journeyType registration failed for $entityType with journey ID $journeyId"
         )
         (grsResult.failures, journeyType) match {
           case (_, JourneyType.FilingMember) =>
-            println("************************** 5 ******************************")
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)
           case (_, JourneyType.UltimateParent) =>
-            println("************************** 6 ******************************")
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadUpe)
         }
       case _ =>
