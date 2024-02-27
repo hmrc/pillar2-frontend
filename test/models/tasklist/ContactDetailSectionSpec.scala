@@ -60,7 +60,7 @@ class ContactDetailSectionSpec extends ContactDetailSectionFixture with Matchers
   "prerequisiteSections" should {
     "have UltimateParentDetailSection and FilingMemberDetailSection as prerequisite section" in {
       ContactDetailSection
-        .prerequisiteSections(emptyUserAnswers) mustBe Set(UltimateParentDetailSection, FilingMemberDetailSection, FurtherGroupDetailSection)
+        .prerequisiteSections(emptyUserAnswers) mustBe Set(FurtherGroupDetailSection)
 
     }
   }

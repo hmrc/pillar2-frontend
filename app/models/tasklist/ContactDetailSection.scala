@@ -15,9 +15,10 @@
  */
 
 package models.tasklist
+
 import controllers.subscription.routes
 import models.tasklist.SectionStatus.{CannotStart, Completed}
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import play.api.mvc.Call
 import utils.RowStatus
 
@@ -31,13 +32,21 @@ object ContactDetailSection extends Section {
   }
 
   override def progress(answers: UserAnswers): SectionStatus =
-    answers.contactDetailStatus match {
-      case RowStatus.Completed  => SectionStatus.Completed
-      case RowStatus.NotStarted => SectionStatus.NotStarted
-      case RowStatus.InProgress => SectionStatus.InProgress
-      case _                    => SectionStatus.CannotStart
+    (answers.fmStatus, answers.groupDetailStatus, answers.contactDetailStatus) match {
+      case (RowStatus.Completed, RowStatus.Completed, RowStatus.Completed)  => SectionStatus.Completed
+      case (RowStatus.InProgress, RowStatus.Completed, RowStatus.Completed) => SectionStatus.Completed
+      case (RowStatus.Completed, RowStatus.Completed, status)               => toStatus(status)
+      case (_, _, status)                                                   => toStatus(status)
+      case _                                                                => SectionStatus.CannotStart
     }
 
   override def prerequisiteSections(answers: UserAnswers): Set[Section] =
-    Set(UltimateParentDetailSection, FilingMemberDetailSection, FurtherGroupDetailSection)
+    Set(FurtherGroupDetailSection)
+
+  private def toStatus(rowStatus: RowStatus): SectionStatus = rowStatus match {
+    case RowStatus.Completed  => SectionStatus.Completed
+    case RowStatus.InProgress => SectionStatus.InProgress
+    case RowStatus.NotStarted => SectionStatus.NotStarted
+    case _                    => SectionStatus.CannotStart
+  }
 }
