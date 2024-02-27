@@ -39,7 +39,7 @@ class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswer
     http
       .GET[HttpResponse](subscriptionUrl)
       .map {
-        case response if is2xx(response.status) =>
+        case response if response.status == 200 =>
           Some(response.json)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")

@@ -79,7 +79,7 @@ class ReadSubscriptionServiceSpec extends SpecBase {
       result shouldBe invalidJsValue
     }
 
-    "return SubscriptionCreateError when the connector returns None" in {
+    "return InternalIssueError when the connector returns None" in {
       implicit val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockReadSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
