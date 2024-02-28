@@ -17,15 +17,16 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import mapping.Constants
 import play.api.data.FormError
 
 class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "upeNameRegistration.error.required"
-  val lengthKey   = "upeNameRegistration.error.length"
-  val maxLength   = 105
-
-  val form = new UpeNameRegistrationFormProvider()()
+  val requiredKey  = "upeNameRegistration.error.required"
+  val lengthKey    = "upeNameRegistration.error.length"
+  val maxLength    = Constants.MAX_LENGTH_105
+  val regexPattern = Validation.NAME_REGEX
+  val form         = new UpeNameRegistrationFormProvider()()
 
   ".value" - {
 
@@ -34,14 +35,15 @@ class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(regexPattern, maxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(regexPattern, maxLength + 1))
     )
 
     behave like mandatoryField(

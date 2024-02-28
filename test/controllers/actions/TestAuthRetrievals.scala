@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package controllers.actions
 
-import javax.inject.Inject
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
+import uk.gov.hmrc.auth.core.retrieve.~
 
-class NfmNameRegistrationFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "nfmNameRegistration.error.invalid"))
-    )
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 }

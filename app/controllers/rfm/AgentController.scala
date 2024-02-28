@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package controllers.rfm
+
+import config.FrontendAppConfig
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.AgentView
 
 import javax.inject.Inject
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
 
-class NfmNameRegistrationFormProvider @Inject() extends Mappings {
+class AgentController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  view:                     AgentView
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "nfmNameRegistration.error.invalid"))
-    )
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(view()).withNewSession
+  }
 }

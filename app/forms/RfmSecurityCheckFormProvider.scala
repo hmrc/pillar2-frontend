@@ -16,17 +16,22 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
 
-class NfmNameRegistrationFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class RfmSecurityCheckFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("nfmNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "nfmNameRegistration.error.invalid"))
+      "value" -> text("rfm.securityCheck.error.required")
+        .verifying(
+          firstError(
+            equalLength(Constants.EQUAL_LENGTH_15, "rfm.securityCheck.error.length"),
+            regexp(Validation.GROUPID_REGEX, "rfm.securityCheck.error.format")
+          )
+        )
     )
 }

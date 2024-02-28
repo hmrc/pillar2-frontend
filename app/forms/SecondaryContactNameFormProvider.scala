@@ -17,8 +17,8 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import mapping.Constants
 import play.api.data.Form
 
 class SecondaryContactNameFormProvider @Inject() extends Mappings {
@@ -26,6 +26,7 @@ class SecondaryContactNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("secondaryContactName.error.required")
-        .verifying(maxLength(160, "secondaryContactName.error.length"))
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "secondaryContactName.error.length"))
+        .verifying(regexp(Validation.NAME_REGEX, "secondaryContactName.error.invalid"))
     )
 }
