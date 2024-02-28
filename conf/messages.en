@@ -694,7 +694,7 @@ site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
-registrationConfirmation.reg-date = Registration date:
+registrationConfirmation.reg-date = Registration date: {0}
 registrationConfirmation.topup = Group’s Pillar 2 top-up taxes ID
 registrationConfirmation.whatHappensNext = What happens next
 registrationConfirmation.p1 = Your group has registered to report for {0}.
@@ -702,10 +702,11 @@ registrationConfirmation.p2 = You will not be emailed a confirmation of this reg
 registrationConfirmation.p3 = You must record your group’s Pillar 2 top-up taxes ID and registration date.
 registrationConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
 registrationConfirmation.next = What happens next
-registrationConfirmation.now = You can now
+registrationConfirmation.now = You can now {0}
 registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
+registrationConfirmation.print = Print this page
 
 subscriptionAddress.title = What address do you want to use as the filing member’s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member’s contact address?
