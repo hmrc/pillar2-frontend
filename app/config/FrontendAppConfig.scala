@@ -39,10 +39,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl:            String = configuration.get[String]("urls.login")
-  val loginContinueUrl:    String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl:          String = configuration.get[String]("urls.signOut")
-  val startPagePillar2Url: String = configuration.get[String]("urls.startPagePillar2")
+  val loginUrl:                    String = configuration.get[String]("urls.login")
+  val loginContinueUrl:            String = configuration.get[String]("urls.loginContinue")
+  val rfmLoginContinueUrl:         String = configuration.get[String]("urls.rfmLoginContinue")
+  val rfmSecurityLoginContinueUrl: String = configuration.get[String]("urls.rfmSecurityLoginContinue")
+  val signOutUrl:                  String = configuration.get[String]("urls.signOut")
+  val startPagePillar2Url:         String = configuration.get[String]("urls.startPagePillar2")
 
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
@@ -83,8 +85,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val privateBetaEnabled:         Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
   val languageTranslationEnabled: Boolean = configuration.get[Boolean]("features.welsh-translation")
   val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
-  val pillar2mailbox:   String  = configuration.get[String]("features.pillar2mailbox")
-  val rfmAccessEnabled: Boolean = configuration.get[Boolean]("features.rfmAccessEnabled")
+  val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
 
   lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
   lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
@@ -112,6 +113,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
+  val rfmAccessEnabled:             Boolean = configuration.get[Boolean]("features.rfmAccessEnabled")
 
   def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
