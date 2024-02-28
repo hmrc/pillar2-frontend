@@ -396,6 +396,14 @@ nfmNameRegistration.change.hidden = What is the name of the nominated filing mem
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 
+securityQuestionsCheckYourAnswers.title = Check Your Answers
+securityQuestionsCheckYourAnswers.heading = Check your answers
+securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
+rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 top-up taxes ID
+rfmSecurityCheck.change.hidden = The group’s Pillar 2 top-up taxes ID
+rfmRegistrationDate.checkYourAnswersLabel = Registration date
+rfmRegistrationDate.change.hidden = The group’s registration date
+
 
 
 nfmRegisteredAddress.title = What is the registered office address?
