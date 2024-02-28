@@ -20,11 +20,12 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.TaskInfo
-import models.fm.TaskListType.{contactDetails, cya, filingMember, groupDetail, ultimateParent}
+import models.fm.TaskListType._
 import pages.plrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2SessionKeys, RowStatus}
 import views.html.TaskListView
@@ -37,6 +38,7 @@ class TaskListController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  sessionRepository:         SessionRepository,
   view:                      TaskListView,
   val userAnswersConnectors: UserAnswersConnectors
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -117,13 +119,14 @@ class TaskListController @Inject() (
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
   }
 
+  //scalastyle:off
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val upeStatus             = request.userAnswers.upeStatus
-    val fmStatus              = request.userAnswers.fmStatus
-    val groupDetailStatus     = request.userAnswers.groupDetailStatus
-    val contactDetailsStatus  = request.userAnswers.contactDetailStatus
-    val reviewAndSubmitStatus = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
-    val plrReference          = request.userAnswers.get(plrReferencePage).isDefined
+    val upeStatus                            = request.userAnswers.upeStatus
+    val fmStatus                             = request.userAnswers.fmStatus
+    val groupDetailStatus                    = request.userAnswers.groupDetailStatus
+    val contactDetailsStatus                 = request.userAnswers.contactDetailStatus
+    val reviewAndSubmitStatus                = request.userAnswers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
+    val pillar2ReferenceFromReadSubscription = request.userAnswers.get(plrReferencePage).isDefined
 
     val (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo) = buildTaskInfo(
       upeStatus.toString,
@@ -136,21 +139,18 @@ class TaskListController @Inject() (
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
       .count(_ == RowStatus.Completed)
 
-    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
-    } else {
-      if (plrReference) {
-        userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"Remove existing amend data from local database if exist")
-          Redirect(routes.TaskListController.onPageLoad)
-        }
-      } else {
-        Future.successful(
-          Ok(
-            view(ultimateParentInfo, count, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
-          )
-        )
+    sessionRepository.get(request.userId).flatMap { optionalUA =>
+      optionalUA.map(userAnswers => userAnswers.get(plrReferencePage).isDefined) match {
+
+        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case _ if pillar2ReferenceFromReadSubscription =>
+          userAnswersConnectors.remove(request.userId).map { _ =>
+            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")
+            Redirect(routes.TaskListController.onPageLoad)
+          }
+        case _ => Future.successful(Ok(view(ultimateParentInfo, count, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)))
       }
+
     }
   }
 }

@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package services
 
-import models.subscription.AccountStatus
-import play.api.libs.json.JsPath
+import config.FrontendAppConfig
+import models.UserAnswers
+import pages.plrReferencePage
+import uk.gov.hmrc.auth.core.Enrolment
+import utils.Pillar2Reference
 
-case object subAccountStatusPage extends QuestionPage[AccountStatus] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
 
-  override def toString: String = "subAccountStatus"
+  def get(userAnswers: Option[UserAnswers], enrolments: Option[Set[Enrolment]]): Option[String] =
+    Pillar2Reference
+      .getPillar2ID(enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+      .orElse(userAnswers.flatMap(_.get(plrReferencePage)))
 }

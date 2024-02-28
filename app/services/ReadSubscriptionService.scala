@@ -26,9 +26,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionService @Inject() (
-                                          readSubscriptionConnector: ReadSubscriptionConnector,
-                                          implicit val ec:           ExecutionContext
-                                        ) {
+  readSubscriptionConnector: ReadSubscriptionConnector,
+  implicit val ec:           ExecutionContext
+) {
   def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[JsValue] =
     readSubscriptionConnector.readSubscription(parameters).flatMap {
       case Some(jsValue) =>

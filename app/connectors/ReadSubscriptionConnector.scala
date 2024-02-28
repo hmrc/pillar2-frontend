@@ -27,13 +27,13 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReadSubscriptionConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)
-  extends Logging {
+    extends Logging {
 
   private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters): String =
     s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
   def readSubscription(
-                        readSubscriptionParameter: ReadSubscriptionRequestParameters
-                      )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[JsValue]] = {
+    readSubscriptionParameter: ReadSubscriptionRequestParameters
+  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[JsValue]] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter)
     http
       .GET[HttpResponse](subscriptionUrl)

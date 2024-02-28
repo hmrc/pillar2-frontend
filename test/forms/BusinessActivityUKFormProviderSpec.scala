@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.subscription.AccountStatus
-import play.api.libs.json.JsPath
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case object subAccountStatusPage extends QuestionPage[AccountStatus] {
+class BusinessActivityUKFormProviderSpec extends BooleanFieldBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  val requiredKey = "businessActivityUK.error.required"
+  val invalidKey  = "error.boolean"
 
-  override def toString: String = "subAccountStatus"
+  val form = new BusinessActivityUKFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

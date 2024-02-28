@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package utils
 
-import models.subscription.AccountStatus
-import play.api.libs.json.JsPath
+import scala.concurrent.Future
 
-case object subAccountStatusPage extends QuestionPage[AccountStatus] {
+object FutureConverter {
 
-  override def path: JsPath = JsPath \ toString
+  implicit class FutureOps[A](val a: A) extends AnyVal {
+    def toFuture: Future[A] = Future.successful(a)
+  }
 
-  override def toString: String = "subAccountStatus"
 }
