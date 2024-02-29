@@ -119,7 +119,6 @@ class TaskListController @Inject() (
     (ultimateParentInfo, filingMemberInfo, groupDetailInfo, contactDetailsInfo, cyaInfo)
   }
 
-  //scalastyle:off
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val upeStatus                            = request.userAnswers.upeStatus
     val fmStatus                             = request.userAnswers.fmStatus
@@ -140,9 +139,9 @@ class TaskListController @Inject() (
       .count(_ == RowStatus.Completed)
 
     sessionRepository.get(request.userId).flatMap { optionalUA =>
-      optionalUA.map(userAnswers => userAnswers.get(plrReferencePage).isDefined) match {
+      optionalUA.map(userAnswers => userAnswers.get(plrReferencePage)) match {
 
-        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case Some(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
             logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")

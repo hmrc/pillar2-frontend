@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
   val formProvider = new GroupRegistrationDateReportFormProvider()
-  val startDate    = LocalDate.of(2023, 12, 31)
+  val startDate: LocalDate = LocalDate.of(2023, 12, 31)
   "GroupRegistrationDateReport Controller" when {
 
     "must redirect to correct view when rfm feature false" in {
@@ -124,7 +124,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url
       }
 
     }
