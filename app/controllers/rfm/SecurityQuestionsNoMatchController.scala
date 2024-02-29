@@ -26,9 +26,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class SecurityQuestionsNoMatchController @Inject() (val controllerComponents: MessagesControllerComponents, view: SecurityQuestionsNoMatchView)(
-  implicit
-  ec:        ExecutionContext,
-  appConfig: FrontendAppConfig
+  implicit appConfig:                                                         FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

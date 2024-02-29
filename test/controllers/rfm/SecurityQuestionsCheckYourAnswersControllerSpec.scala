@@ -32,82 +32,86 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
   "Security Questions Check Your Answers Controller" must {
 
-    val plrReference = "XE1111123456789"
+    val plrReference = "XEPLR1123456789"
     val date         = LocalDate.of(2024, 12, 31)
-    "return OK and the correct view if an answer is provided to every question " in {
 
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmSecurityCheckPage, plrReference)
-        .success
-        .value
-        .set(rfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+    "onPageLoad" when {
+      "return OK and the correct view if an answer is provided to every question " in {
 
-        status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
-        contentAsString(result) must include("Pillar 2 top-up taxes ID")
+        val userAnswer = UserAnswers(userAnswersId)
+          .set(rfmSecurityCheckPage, plrReference)
+          .success
+          .value
+          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .success
+          .value
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
 
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answer")
+          contentAsString(result) must include("Pillar 2 top-up taxes ID")
+
+        }
+      }
+
+      "redirect to Journey Recovery page when security question status is not completed" in {
+        val userAnswer = UserAnswers(userAnswersId)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        }
+      }
+
+      "redirect to Under Construction page when RFM access is disabled" in {
+        val testConfig = Configuration("features.rfmAccessEnabled" -> false)
+        val application = applicationBuilder()
+          .configure(testConfig)
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        }
+      }
+
+      "redirect to Under Construction page on form submission" in {
+
+        val userAnswer = UserAnswers(userAnswersId)
+          .set(rfmSecurityCheckPage, plrReference)
+          .success
+          .value
+          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .success
+          .value
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+            .withFormUrlEncodedBody()
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        }
       }
     }
-
-    "redirect to Journey Recovery page when security question status is not completed" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+    "onSubmit" when {
+      "redirect to under construction in case of a successful read subscription and matched reg dates " in {
+        val ua = emptyUserAnswers.setOrException(rfmSecurityCheckPage, plrReference).setOrException(rfmRegistrationDatePage, RegistrationDate(date))
       }
-    }
 
-    "redirect to Under Construction page when RFM access is disabled" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> false)
-      val application = applicationBuilder()
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
-      }
-    }
-
-    "redirect to Under Construction page on form submission" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmSecurityCheckPage, plrReference)
-        .success
-        .value
-        .set(rfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody()
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
-      }
     }
 
   }

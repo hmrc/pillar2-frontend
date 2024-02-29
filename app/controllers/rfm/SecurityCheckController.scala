@@ -71,7 +71,7 @@ class SecurityCheckController @Inject() (
                 .fromTry(request.userAnswers.set(rfmSecurityCheckPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield mode match {
-            case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
+            case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad)
             case _         => Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
           }
       )

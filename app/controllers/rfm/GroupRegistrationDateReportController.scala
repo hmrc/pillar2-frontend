@@ -68,7 +68,7 @@ class GroupRegistrationDateReportController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmRegistrationDatePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
+          } yield Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad)
       )
   }
 
