@@ -34,6 +34,7 @@ object SecondaryContactEmailSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("secondaryContactEmail.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

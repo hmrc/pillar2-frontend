@@ -36,6 +36,7 @@ object NfmEmailAddressSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.fm.routes.NfmEmailAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nfmEmailAddress.checkYourAnswersLabel.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

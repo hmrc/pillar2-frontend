@@ -34,6 +34,7 @@ object NominateFilingMemberYesNoSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("NominateFilingMemberYesNo.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       ).withCssClass("contact-margin-bottom")
     }
