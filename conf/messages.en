@@ -58,16 +58,10 @@ viewAmendSubscriptionFailed.message1= Please try again later.
 viewAmendSubscriptionFailed.link= Return to your account homepage to try again
 ###############################################
 
-
-
-alreadyRegistered.title= Your group is already registered
-alreadyRegistered.heading= Your group is already registered
+alreadyRegistered.title= Your group has already registered to report Pillar 2 top-up taxes
+alreadyRegistered.heading= Your group has already registered to report Pillar 2 top-up taxes
 alreadyRegistered.message1= You can find your group’s Pillar 2 top-up taxes ID within your business tax account.
 alreadyRegistered.message2= If you need to request access to this account, your administrator can give you access using ‘Manage account’ settings within their business tax account.
-
-
-
-
 
 upeRegisteredAddress.title=What is the registered office address?
 upeRegisteredAddress.heading=What is the registered office address of {0}?
