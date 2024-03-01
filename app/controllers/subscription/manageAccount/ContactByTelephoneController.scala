@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import pages.{subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
