@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, RfmIdentifierAction}
+import controllers.actions.RfmIdentifierAction
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,6 +44,6 @@ class CheckNewFilingMemberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode)))
+    Future.successful(Redirect(controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(mode)))
   }
 }

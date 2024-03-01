@@ -17,12 +17,8 @@
 package controllers.rfm
 
 import base.SpecBase
-import controllers.actions.{RfmAuthenticatedIdentifierAction, RfmIdentifierAction}
 import models.{CheckMode, NormalMode}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api
-import play.api.inject
-import play.api.mvc.BodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -55,7 +51,7 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
       }
     }
 

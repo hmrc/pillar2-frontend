@@ -18,23 +18,21 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
-import models.requests.DataRequest
-import pages.{GrsNfmStatusPage, NfmRegisteredInUKPage}
+import pages.{NfmRegisteredInUKPage, RfmUkBasedPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.rfm.NFMRegisteredInUKConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NFMRegisteredInUKConfirmationController @Inject() (
+class UkBasedFilingMemberController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
@@ -51,7 +49,7 @@ class NFMRegisteredInUKConfirmationController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      val preparedForm = request.userAnswers.get(NfmRegisteredInUKPage) match {
+      val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -66,32 +64,12 @@ class NFMRegisteredInUKConfirmationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => updateAnswersBasedOnValue(value, mode)
+        ukBasedFilingMember =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, ukBasedFilingMember))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
-
-  private def updateAnswersBasedOnValue(value: Boolean, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
-    value match {
-      case true  => updateForTrueValue(mode)
-      case false => updateForFalseValue(mode)
-    }
-
-  private def updateForTrueValue(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
-    for {
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, true))
-      updatedAnswers1 <- Future.fromTry(
-                           request.userAnswers
-                             .get(GrsNfmStatusPage)
-                             .map(updatedAnswers.set(GrsNfmStatusPage, _))
-                             .getOrElse(updatedAnswers.set(GrsNfmStatusPage, RowStatus.InProgress))
-                         )
-      _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-    } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
-
-  private def updateForFalseValue(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
-    for {
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, false))
-      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-    } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 
 }

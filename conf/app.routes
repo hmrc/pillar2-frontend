@@ -347,10 +347,10 @@ GET         /replace-filing-member/business-matching/content                    
 POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = CheckMode)
-GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.NFMRegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.NFMRegisteredInUKConfirmationController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.NFMRegisteredInUKConfirmationController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
 
 
 

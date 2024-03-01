@@ -38,7 +38,7 @@
     @govukButton(
         ButtonViewModel(messages("site.continue"))
         .withAttribute("id", "continue")
-        .asLink(controllers.rfm.routes.NFMRegisteredInUKConfirmationController.onPageLoad(mode).url)
+        .asLink(controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(mode).url)
     )
 
 }

@@ -16,16 +16,15 @@
 
 package pages
 
-import pages.behaviours.PageBehaviours
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-class PlrReferencePageSpec extends PageBehaviours {
+import scala.util.Try
 
-  "plrReferencePage" - {
+case object RfmUkBasedPage extends QuestionPage[Boolean] {
 
-    beRetrievable[String](plrReferencePage)
+  override def path: JsPath = JsPath \ toString
 
-    beSettable[String](plrReferencePage)
+  override def toString: String = "RfmUkBased"
 
-    beRemovable[String](plrReferencePage)
-  }
 }
