@@ -107,7 +107,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted with UPE" in {
+    "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -129,7 +129,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.UpeStartPageRegistrationController.onPageLoad.url
       }
     }
 
