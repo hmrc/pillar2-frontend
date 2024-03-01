@@ -15,31 +15,30 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    paragraphWithLink: paragraphWithLink,
+    link: link
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("rfm.security.errorPage.title")),
-    showBackLink = false
+    showBackLink = false,
+    authorised = false
 ) {
 
-        <h1 class="govuk-heading-l">@messages("rfm.security.errorPage.heading")</h1>
-        <p class="govuk-body govuk-!-margin-bottom-5">@messages("rfm.security.errorPage.p1")</p>
-                    <p class="govuk-body">
-                        <a> @messages("rfm.security.errorPage.p2")</a>
-             <a href="@controllers.routes.UnderConstructionController.onPageLoad" class="govuk-link govuk-link--no-visited-state"> @messages("rfm.security.errorPage.p2.link")</a>
-
-            </p>
-
-
-
-
-
-
-
+                @heading(messages("rfm.security.errorPage.heading"), "govuk-heading-l")
+                @paragraphBody(messages("rfm.security.errorPage.p1"))
+                @paragraphWithLink(
+                text=  messages("rfm.security.errorPage.p2"),
+                call = Call("GET", controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url),
+                hyperLinkMessage= messages("rfm.security.errorPage.p2.link"))
 
 }

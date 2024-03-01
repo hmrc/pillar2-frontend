@@ -23,9 +23,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import controllers.routes
-import models.{InternalIssueError, Mode}
+import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{fmDashboardPage, plrReferencePage, rfmRegistrationDatePage, rfmSecurityCheckPage}
+import pages.{fmDashboardPage, rfmRegistrationDatePage, rfmSecurityCheckPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
