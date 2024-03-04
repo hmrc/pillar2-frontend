@@ -139,10 +139,10 @@ class TaskListController @Inject() (
     val count = List(upeStatus, fmStatus, groupDetailStatus, contactDetailsStatus)
       .count(_ == RowStatus.Completed)
 
-    sessionRepository.get(request.userId).flatMap { OptionalUA =>
-      OptionalUA.map(userAnswers => userAnswers.get(plrReferencePage)) match {
+    sessionRepository.get(request.userId).flatMap { optionalUA =>
+      optionalUA.map(UserAnswers => UserAnswers.get(plrReferencePage).isDefined) match {
 
-        case Some(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
             logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")
