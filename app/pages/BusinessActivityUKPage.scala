@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import play.api.libs.json.JsPath
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+case object BusinessActivityUKPage extends QuestionPage[Boolean] {
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+  override def path: JsPath = JsPath \ toString
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+  override def toString: String = "BusinessActivityUK"
+
+}

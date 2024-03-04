@@ -16,7 +16,6 @@
 
 package controllers.subscription
 
-import cache.SessionData
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
@@ -27,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.subscriptionview.MneOrDomesticView
@@ -39,10 +39,10 @@ class MneOrDomesticController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  sessionRepository:         SessionRepository,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      MneOrDomesticView,
-  sessionData:               SessionData
+  view:                      MneOrDomesticView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -72,8 +72,8 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(subMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
-            .withSession((sessionData.updateMneOrDomestic(value.toString)))
       )
   }
 

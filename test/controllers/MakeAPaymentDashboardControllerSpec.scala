@@ -17,15 +17,23 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.plrReferencePage
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import views.html.MakeAPaymentDashboardView
+
+import scala.concurrent.Future
 
 class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
   "Payment Dashboard Controller" should {
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET with pillar 2 reference retrieved from enrolment" in {
       val enrolments: Set[Enrolment] = Set(
         Enrolment(
           key = "HMRC-PILLAR2-ORG",
@@ -37,6 +45,31 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+        val request =
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view("12345678")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+
+    }
+
+    "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
+      val sessionUserAnswers = UserAnswers("id").setOrException(plrReferencePage, "12345678")
+      val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
         .build()
       running(application) {
 

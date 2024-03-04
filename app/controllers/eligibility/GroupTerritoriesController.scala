@@ -16,57 +16,67 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
 import forms.GroupTerritoriesFormProvider
-import models.GroupTerritories
+import models.UserAnswers
+import pages.UpeEqPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 import views.html.GroupTerritoriesView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class GroupTerritoriesController @Inject() (
   formProvider:             GroupTerritoriesFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
-  sessionData:              SessionData
-)(implicit appConfig:       FrontendAppConfig)
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.groupTerritoriesPageYesNo) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
-    Ok(view(preparedForm))
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+          val userAnswers  = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(UpeEqPage)
+          val preparedForm = userAnswers.map(form.fill).getOrElse(form)
+          Ok(view(preparedForm))
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        value =>
-          value match {
-            case GroupTerritories.Yes.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-            case GroupTerritories.No.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad)
-                  .withSession((sessionData.updateGroupTerritoriesYesNo(value)))
-              )
-          }
-      )
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+              isRegisteringUpe =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(UpeEqPage, isRegisteringUpe))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield
+                  if (isRegisteringUpe) {
+                    Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+                  } else {
+                    Redirect(controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad)
+                  }
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

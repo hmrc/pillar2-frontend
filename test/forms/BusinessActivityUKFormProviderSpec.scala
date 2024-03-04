@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+class BusinessActivityUKFormProviderSpec extends BooleanFieldBehaviours {
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+  val requiredKey = "businessActivityUK.error.required"
+  val invalidKey  = "error.boolean"
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+  val form = new BusinessActivityUKFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
+}

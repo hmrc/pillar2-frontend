@@ -16,12 +16,11 @@
 
 package connectors
 
-import models.UserAnswers
+import models.{InternalIssueError, UserAnswers}
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
-
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,11 +50,11 @@ class UserAnswersConnectors @Inject() (
     }
 
   def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
-    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
+    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) flatMap { response =>
       response.status match {
-        case OK        => Some(UserAnswers(id = id, data = response.json.as[JsObject]))
-        case NOT_FOUND => None
-        case _         => throw new HttpException(response.body, response.status)
+        case OK        => Future.successful(Some(UserAnswers(id = id, data = response.json.as[JsObject])))
+        case NOT_FOUND => Future.successful(None)
+        case _         => Future.failed(InternalIssueError)
       }
     }
 

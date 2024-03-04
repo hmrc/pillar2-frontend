@@ -706,6 +706,8 @@ registrationConfirmation.now = You can now
 registrationConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
+mneOrDom.ukAndOther= Domestic Top-up Tax and Multinational Top-up Tax
+mneOrDom.uk= Domestic Top-up Tax
 
 subscriptionAddress.title = What address do you want to use as the filing member’s contact address?
 subscriptionAddress.heading = What address do you want to use as the filing member’s contact address?

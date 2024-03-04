@@ -16,50 +16,48 @@
 
 package services
 
-import connectors.SubscriptionConnector
-import models.{ApiError, DuplicateSubmissionError, InternalServerError_}
-import models.subscription.{SubscriptionRequestParameters, SubscriptionResponse, SuccessResponse}
-import play.api.Logging
-import play.api.http.Status.CONFLICT
-import play.api.libs.json.JsSuccess
+import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.fm.JourneyType
+import models.subscription.SubscriptionRequestParameters
+import models.{DuplicateSubmissionError, UserAnswers}
+import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpReads.is2xx
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) extends Logging {
+@Singleton
+class SubscriptionService @Inject() (
+  registrationConnector:        RegistrationConnector,
+  subscriptionConnector:        SubscriptionConnector,
+  enrolmentConnector:           EnrolmentConnector,
+  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
+)(implicit ec:                  ExecutionContext) {
 
-  def checkAndCreateSubscription(id: String, regSafeId: String, fmSafeId: Option[String])(implicit
-    hc:                              HeaderCarrier,
-    ec:                              ExecutionContext
-  ): Future[Either[ApiError, SubscriptionResponse]] =
-    subscriptionConnector
-      .createSubscription(SubscriptionRequestParameters(id, regSafeId, fmSafeId))
-      .flatMap { httpResponse =>
-        httpResponse.status match {
-          case status if is2xx(status) =>
-            httpResponse.json.validate[SuccessResponse] match {
-              case JsSuccess(successResponse, _) =>
-                Future.successful(Right(successResponse.success: SubscriptionResponse))
-              case _ =>
-                logger.error("Failed to deserialize success response")
-                Future.successful(Left(InternalServerError_))
+  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    for {
+      upeSafeId       <- registerUpe(userAnswers)
+      fmnSafeId       <- registerNfm(userAnswers)
+      plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
+      enrolmentExists <- enrolmentStoreProxyConnector.enrolmentExists(plrRef)
+      _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)
+      enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
+      _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
+    } yield plrRef
 
-            }
-          case CONFLICT =>
-            logger.error("Conflict error occurred")
-            Future.successful(Left(DuplicateSubmissionError))
+  private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    userAnswers.getUpeSafeID
+      .map(Future.successful)
+      .getOrElse(registrationConnector.register(userAnswers.id, JourneyType.UltimateParent))
 
-          case _ =>
-            logger.warn(s"Unhandled status received: ${httpResponse.status}")
-            Future.successful(Left(InternalServerError_))
+  private def registerNfm(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[String]] =
+    userAnswers.getFmSafeID
+      .map(safeId => Future.successful(Some(safeId)))
+      .getOrElse {
+        if (userAnswers.get(NominateFilingMemberPage).contains(true)) {
+          registrationConnector.register(userAnswers.id, JourneyType.FilingMember).map(Some(_))
+        } else {
+          Future.successful(None)
         }
       }
-      .recover { case e: Exception =>
-        logger.error(s"Exception occurred during subscription creation: ${e.getMessage}", e)
-        Left(InternalServerError_)
-
-      }
-
 }

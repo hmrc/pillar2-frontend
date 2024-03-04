@@ -16,12 +16,13 @@
 
 package connectors
 
+import akka.Done
 import base.SpecBase
 import models.EnrolmentInfo
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class TaxEnrolmentsConnectorSpec extends SpecBase {
+class EnrolmentsConnectorSpec extends SpecBase {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -29,7 +30,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase {
     )
     .build()
 
-  lazy val connector: TaxEnrolmentsConnector = app.injector.instanceOf[TaxEnrolmentsConnector]
+  lazy val connector: EnrolmentConnector = app.injector.instanceOf[EnrolmentConnector]
 
   val apiUrl = "/report-pillar2-top-up-taxes"
 
@@ -39,21 +40,21 @@ class TaxEnrolmentsConnectorSpec extends SpecBase {
 
       stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", NO_CONTENT)
       val result = connector.createEnrolment(enrolmentInfo)
-      result.futureValue mustBe Some(NO_CONTENT)
+      result.futureValue mustBe Done
     }
 
     "must return status as 400 and BadRequest error" in {
 
       stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", BAD_REQUEST)
-      val result = connector.createEnrolment(enrolmentInfo)
-      result.futureValue mustBe None
+      val result = connector.createEnrolment(enrolmentInfo).failed.futureValue
+      result mustBe models.InternalIssueError
     }
 
     "must return status ServiceUnavailable Error" in {
 
       stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", INTERNAL_SERVER_ERROR)
-      val result = connector.createEnrolment(enrolmentInfo)
-      result.futureValue mustBe None
+      val result = connector.createEnrolment(enrolmentInfo).failed.futureValue
+      result mustBe models.InternalIssueError
     }
 
   }

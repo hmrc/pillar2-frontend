@@ -32,7 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.subPrimaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
