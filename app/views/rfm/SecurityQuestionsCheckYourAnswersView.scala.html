@@ -37,10 +37,10 @@
     @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
     @heading(messages("securityQuestionsCheckYourAnswers.heading"), "govuk-heading-l")
     @govukSummaryList(list)
-    <br>
+
     @govukButton(ButtonViewModel(
         content = Text(messages("site.save-and-continue"))
-    ))
+    ).withCssClass("govuk-!-margin-top-6"))
 
 }
 }
