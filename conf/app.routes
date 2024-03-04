@@ -348,4 +348,7 @@ POST        /replace-filing-member/security/change-registration-date        cont
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
-GET        /replace-filing-member/security/check-answers                       controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad
+GET        /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)

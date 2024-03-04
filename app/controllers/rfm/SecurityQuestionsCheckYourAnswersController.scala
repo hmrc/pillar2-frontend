@@ -18,17 +18,20 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.registrationview.SecurityQuestionsCheckYourAnswersView
+import views.html.rfm.SecurityQuestionsCheckYourAnswersView
+
+import scala.concurrent.Future
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
-  identify:                 IdentifierAction,
+  rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
@@ -37,7 +40,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       val list = SummaryListViewModel(
@@ -47,13 +50,17 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
         ).flatten
       )
       if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
-        Ok(view(list))
+        Ok(view(mode, list))
       } else {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
+  }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
   }
 
 }
