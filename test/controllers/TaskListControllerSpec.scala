@@ -17,19 +17,26 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, TaskAction, TaskStatus}
+import models.{MneOrDomestic, NonUKAddress, TaskAction, TaskStatus, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
+import play.api
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{Pillar2SessionKeys, RowStatus}
-import views.html.TaskListView
+import repositories.SessionRepository
+import uk.gov.hmrc.http.HttpResponse
+import utils.RowStatus
 
 import java.time.LocalDate
-case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
+import scala.concurrent.Future
+
 class TaskListControllerSpec extends SpecBase {
 
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
@@ -66,8 +73,6 @@ class TaskListControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TaskListView]
-
         status(result) mustEqual OK
 
         contentAsString(result) should include(
@@ -85,11 +90,38 @@ class TaskListControllerSpec extends SpecBase {
       }
     }
 
-    "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
-      val application = applicationBuilder(None).build()
+    "redirect to tasklist if pillar 2 exists from read subscription API" in {
+      val mockHttpResponse = HttpResponse(OK, "")
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(plrReferencePage, "1231")))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.TaskListController.onPageLoad.url).withSession(Pillar2SessionKeys.plrId -> "")
-        val result  = route(application, request).value
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.TaskListController.onPageLoad.url
+
+      }
+    }
+
+    "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
+      val userAnswer = UserAnswers("id").setOrException(plrReferencePage, "id")
+      val application = applicationBuilder(None)
+        .overrides(
+          api.inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TaskListController.onPageLoad.url)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad.url
       }

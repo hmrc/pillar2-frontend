@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import config.FrontendAppConfig
+import models.UserAnswers
+import pages.plrReferencePage
+import uk.gov.hmrc.auth.core.Enrolment
+import utils.Pillar2Reference
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+import javax.inject.Inject
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+  def get(userAnswers: Option[UserAnswers], enrolments: Option[Set[Enrolment]]): Option[String] =
+    Pillar2Reference
+      .getPillar2ID(enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+      .orElse(userAnswers.flatMap(_.get(plrReferencePage)))
+}

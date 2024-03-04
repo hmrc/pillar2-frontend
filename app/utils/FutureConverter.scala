@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package utils
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import scala.concurrent.Future
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+object FutureConverter {
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
+  implicit class FutureOps[A](val a: A) extends AnyVal {
+    def toFuture: Future[A] = Future.successful(a)
+  }
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+}

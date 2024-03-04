@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import play.twirl.api.Html
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+@this()
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+@(
+heading: Html,
+caption: String = "",
+classes: String = "govuk-heading-l govuk-!-margin-bottom-4 cds-wrap-content"
+)
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
 
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+<h1 class="@classes">
+ @if(caption.nonEmpty) {
+ <span class="govuk-caption-l">@caption</span>
+ }
+ @heading
+</h1>

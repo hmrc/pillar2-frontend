@@ -19,17 +19,15 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
+import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
-import pages.{rfmRegistrationDatePage, subAccountingPeriodPage, subMneOrDomesticPage}
-import play.api.data.Form
+import pages.rfmRegistrationDatePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.GroupRegistrationDateReportView
-import views.html.subscriptionview.GroupAccountingPeriodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

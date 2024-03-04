@@ -49,8 +49,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
 
-  lazy val pillar2FrontendUrl: String = configuration.get[String]("urls.pillar2-frontend")
-
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
       .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
@@ -108,6 +106,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
     } else { Map("english" -> Lang(ENGLISH)) }
 
   val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
+  val showDoYouHaveP2TopUpTaxId:    Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")

@@ -16,14 +16,15 @@
 
 package forms
 
+import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class TurnOverEligibilityFormProvider @Inject() extends CommonFormats {
+class TurnOverEligibilityFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> nonEmptyTextWithErrorOverride("turnOverEligibility.error.required")
+      "value" -> boolean("turnOverEligibility.error.required")
     )
 }

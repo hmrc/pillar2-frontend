@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package utils
 
-sealed trait ApiError extends Throwable
-case object NotFoundError extends ApiError
+import uk.gov.hmrc.auth.core.Enrolment
 
-case object InternalServerError_ extends ApiError
-case object InternalIssueError extends ApiError
+object Pillar2Reference {
+  def getPillar2ID(enrolments: Option[Set[Enrolment]], key: String, identifier: String): Option[String] = enrolments.flatMap { enrolments =>
+    enrolments
+      .find(_.key.equalsIgnoreCase(key))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(identifier)))
+      .map(_.value)
+  }
 
-case object SubscriptionCreateError extends ApiError
-case object EnrolmentExistsError extends ApiError
-case object UnauthorizedError extends ApiError
-
-case object BadRequestError extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object ServiceUnavailableError extends ApiError
+}
