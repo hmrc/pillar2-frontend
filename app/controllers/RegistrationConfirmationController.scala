@@ -18,12 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{subMneOrDomesticPage, subPrimaryContactNamePage}
+import pages.{plrReferencePage, subMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
+import utils.Pillar2Reference
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
 
@@ -34,19 +35,24 @@ class RegistrationConfirmationController @Inject() (
   getData:                  DataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
+  sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationConfirmationView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
-    val mneDomestic = request.session.data.get(Pillar2SessionKeys.updateMneOrDomestic) match {
-      case Some("ukAndOther") => appConfig.registrationControllerMne
-      case _                  => appConfig.registrationControllerDomestic
+    sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
+      (for {
+        userAnswer <- optionalUserAnswers
+        pillar2Id <- Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswer.get(plrReferencePage))
+        mneOrDom <- userAnswer.get(subMneOrDomesticPage)
+      } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
-    Ok(view(request.session.get(Pillar2SessionKeys.plrId).getOrElse("N/A"), currentDate.toString(), mneDomestic))
-
   }
+
 }

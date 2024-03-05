@@ -36,10 +36,9 @@
         }
         <span class="govuk-caption-l">@messages("turnOverEligibility.check.liable.text")</span>
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large),
-                items  = TurnOverEligibility.options
+                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("turnOverEligibility.hint"))))
         )

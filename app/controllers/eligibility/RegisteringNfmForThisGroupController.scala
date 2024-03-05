@@ -32,57 +32,67 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
 import forms.RegisteringNfmForThisGroupFormProvider
-import models.RegisteringNfmForThisGroup
+import models.UserAnswers
+import pages.NfmEqPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 import views.html.RegisteringNfmForThisGroupView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegisteringNfmForThisGroupController @Inject() (
   formProvider:             RegisteringNfmForThisGroupFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegisteringNfmForThisGroupView,
-  sessionData:              SessionData
-)(implicit appConfig:       FrontendAppConfig)
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.registeringNfmForThisGroup) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
-    Ok(view(preparedForm))
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+          val userAnswers  = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(NfmEqPage)
+          val preparedForm = userAnswers.map(form.fill).getOrElse(form)
+          Ok(view(preparedForm))
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        value =>
-          value match {
-            case RegisteringNfmForThisGroup.Yes.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
-                  .withSession((sessionData.registeringNfmForThisGroup(value)))
-              )
-            case RegisteringNfmForThisGroup.No.toString =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
-                  .withSession((sessionData.registeringNfmForThisGroup(value)))
-              )
-          }
-      )
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+              isRegisteringFilingMember =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(NfmEqPage, isRegisteringFilingMember))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield
+                  if (isRegisteringFilingMember) {
+                    Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
+                  } else {
+                    Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)
+                  }
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }
