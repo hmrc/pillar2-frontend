@@ -19,39 +19,40 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, Mode, NormalMode}
-import pages.rfmSecurityCheckPage
+import forms.RfmCorporatePositionFormProvider
+import models.rfm.CorporatePosition
+import models.Mode
+import pages.rfmCorporatePositionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.CorporatePositionView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecurityCheckController @Inject() (
+class CorporatePositionController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmSecurityCheckFormProvider,
+  formProvider:              RfmCorporatePositionFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecurityCheckView
+  view:                      CorporatePositionView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmSecurityCheckPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
+      val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
       Ok(view(preparedForm, mode))
     } else {
@@ -64,17 +65,20 @@ class SecurityCheckController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <-
-              Future
-                .fromTry(request.userAnswers.set(rfmSecurityCheckPage, value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield mode match {
-            case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
-            case _         => Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
-          }
+        {
+          case value @ CorporatePosition.Upe =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+
+          case value @ CorporatePosition.NewNfm =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+
+        }
       )
   }
-
 }

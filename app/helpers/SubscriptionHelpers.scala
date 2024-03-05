@@ -194,4 +194,14 @@ trait SubscriptionHelpers {
       }
       .getOrElse(EnrolmentInfo(plrId = plpID))
 
+  def securityQuestionStatus: RowStatus = {
+    val first  = get(rfmSecurityCheckPage).isDefined
+    val second = get(rfmRegistrationDatePage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
+
 }

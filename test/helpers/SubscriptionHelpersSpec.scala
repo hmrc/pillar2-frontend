@@ -23,7 +23,7 @@ import models.subscription.AccountingPeriod
 import models.{EnrolmentInfo, MneOrDomestic, NonUKAddress, UKAddress}
 import pages._
 import utils.RowStatus
-
+import models.rfm.RegistrationDate
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
@@ -672,6 +672,38 @@ class SubscriptionHelpersSpec extends SpecBase {
           .setOrException(upeRegisteredInUKPage, false)
         userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
       }
+    }
+
+    "SubscriptionHelpers.securityQuestionStatus" should {
+      val date = LocalDate.of(2024, 12, 31)
+      "return Completed when answers are provided to all security questions" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(rfmSecurityCheckPage, "12323212")
+          .success
+          .value
+          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .success
+          .value
+
+        userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
+      }
+
+      "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
+        val userAnswersInProgress = emptyUserAnswers
+          .set(rfmSecurityCheckPage, "Security Check Answer")
+          .success
+          .value
+
+        userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
+      }
+
+      "return NotStarted when answers are not provided to any of the security questions" in {
+        val userAnswers = emptyUserAnswers
+
+        userAnswers.securityQuestionStatus mustEqual RowStatus.NotStarted
+      }
+
     }
 
   }
