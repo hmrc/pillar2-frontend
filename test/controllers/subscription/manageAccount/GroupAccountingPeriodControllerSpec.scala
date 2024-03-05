@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.GroupAccountingPeriodFormProvider
 import models.subscription.AccountingPeriod
-import models.{CheckMode, MneOrDomestic, NormalMode}
+import models.{CheckMode, MneOrDomestic}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{subAccountingPeriodPage, subMneOrDomesticPage}

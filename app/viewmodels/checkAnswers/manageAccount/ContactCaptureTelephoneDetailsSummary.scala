@@ -32,7 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.subPrimaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
