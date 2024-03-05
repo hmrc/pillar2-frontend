@@ -20,10 +20,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import pages.{plrReferencePage, subMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{RegisterWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
@@ -34,25 +37,23 @@ import views.html.CheckYourAnswersView
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
-  override val messagesApi:              MessagesApi,
-  identify:                              IdentifierAction,
-  getData:                               DataRetrievalAction,
-  requireData:                           DataRequiredAction,
-  override val registerWithoutIdService: RegisterWithoutIdService,
-  override val subscriptionService:      SubscriptionService,
-  override val userAnswersConnectors:    UserAnswersConnectors,
-  override val taxEnrolmentService:      TaxEnrolmentService,
-  val controllerComponents:              MessagesControllerComponents,
-  view:                                  CheckYourAnswersView,
-  countryOptions:                        CountryOptions
-)(implicit ec:                           ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi: MessagesApi,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  subscriptionService:      SubscriptionService,
+  val controllerComponents: MessagesControllerComponents,
+  userAnswersConnectors:    UserAnswersConnectors,
+  sessionRepository:        SessionRepository,
+  view:                     CheckYourAnswersView,
+  countryOptions:           CountryOptions
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
-    with RegisterAndSubscribe
     with Logging {
 
   // noinspection ScalaStyle
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val groupDetailList = SummaryListViewModel(
       rows = Seq(
         MneOrDomesticSummary.row(request.userAnswers),
@@ -114,19 +115,39 @@ class CheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad)
-    } else {
-      Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address))
+    sessionRepository.get(request.userId).map { optionalUserAnswer =>
+      (for {
+        userAnswer <- optionalUserAnswer
+        _          <- userAnswer.get(plrReferencePage)
+      } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
+        .getOrElse(Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address)))
     }
-  }
 
+  }
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val upeRegInfo = request.userAnswers.getUpRegData
-    val fmSafeID   = request.userAnswers.getFmSafeID
-    (upeRegInfo, fmSafeID) match {
-      case (Right(upe), Right(s)) if request.userAnswers.finalStatusCheck => createRegistrationAndSubscription(upe, s)
-      case _ => Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    if (request.userAnswers.finalStatusCheck) {
+      request.userAnswers
+        .get(subMneOrDomesticPage)
+        .map { mneOrDom =>
+          (for {
+            plr <- subscriptionService.createSubscription(request.userAnswers)
+            dataToSave = UserAnswers(request.userAnswers.id).setOrException(subMneOrDomesticPage, mneOrDom).setOrException(plrReferencePage, plr)
+            _ <- sessionRepository.set(dataToSave)
+            _ <- userAnswersConnectors.remove(request.userId)
+          } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
+            .recover {
+              case InternalIssueError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to failed call to the backend")
+                Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+
+              case DuplicateSubmissionError =>
+                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to a Duplicate Submission")
+                Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
+            }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    } else {
+      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
 }

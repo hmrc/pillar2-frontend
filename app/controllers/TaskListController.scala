@@ -19,6 +19,8 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.TaskInfo
+import models.fm.TaskListType._
 import models.UserAnswers
 import models.tasklist.SectionStatus.Completed
 import models.tasklist._
@@ -26,6 +28,7 @@ import pages.plrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
 import views.html.TaskListView
@@ -38,6 +41,7 @@ class TaskListController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  sessionRepository:         SessionRepository,
   view:                      TaskListView,
   val userAnswersConnectors: UserAnswersConnectors
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -51,28 +55,30 @@ class TaskListController @Inject() (
     val reviewAndSubmitSection   = reviewSection(request.userAnswers)
     val countOfCompletedSections = (groupDetailSection :+ contactDetailSection :+ reviewAndSubmitSection).count(_.status == Completed)
 
-    val plrReference = request.userAnswers.get(plrReferencePage).isDefined
+    val pillar2ReferenceFromReadSubscription = request.userAnswers.get(plrReferencePage).isDefined
 
-    if (request.session.get(Pillar2SessionKeys.plrId).isDefined) {
-      Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
-    } else {
-      if (plrReference) {
-        userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"Remove existing amend data from local database if exist")
-          Redirect(routes.TaskListController.onPageLoad)
-        }
-      } else {
-        Future.successful(
-          Ok(
-            view(
-              groupSections(request.userAnswers),
-              contactSection(request.userAnswers),
-              reviewSection(request.userAnswers),
-              countOfCompletedSections
+    sessionRepository.get(request.userId).flatMap { optionalUA =>
+      optionalUA.map(UserAnswers => UserAnswers.get(plrReferencePage).isDefined) match {
+
+        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case _ if pillar2ReferenceFromReadSubscription =>
+          userAnswersConnectors.remove(request.userId).map { _ =>
+            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")
+            Redirect(routes.TaskListController.onPageLoad)
+          }
+        case _ =>
+          Future.successful(
+            Ok(
+              view(
+                groupSections(request.userAnswers),
+                contactSection(request.userAnswers),
+                reviewSection(request.userAnswers),
+                countOfCompletedSections
+              )
             )
           )
-        )
       }
+
     }
   }
 

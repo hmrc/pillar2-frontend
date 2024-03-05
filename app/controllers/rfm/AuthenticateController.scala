@@ -18,6 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.RfmIdentifierAction
+import models.NormalMode
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -32,7 +33,7 @@ class AuthenticateController @Inject() (
   def rfmAuthenticate: Action[AnyContent] = rfmIdentify { _ =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoad)
+      Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }

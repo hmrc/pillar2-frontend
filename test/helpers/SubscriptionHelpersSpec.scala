@@ -20,13 +20,15 @@ import base.SpecBase
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, UKAddress}
+import models.{EnrolmentInfo, MneOrDomestic, NonUKAddress, UKAddress}
 import pages._
 import utils.RowStatus
-
+import models.rfm.RegistrationDate
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
+
+  private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
 
   "Subscription Helper" when {
 
@@ -181,7 +183,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(FmSafeIDPage, "12323212")
           .success
           .value
-        userAnswer.getFmSafeID mustBe Right(Some("12323212"))
+        userAnswer.getFmSafeID mustBe Some("12323212")
       }
 
       "return none if fm is non-uk based" in {
@@ -192,21 +194,16 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(fmRegisteredInUKPage, false)
           .success
           .value
-        userAnswer.getFmSafeID mustBe Right(None)
+        userAnswer.getFmSafeID mustBe None
       }
 
       "return none if no filing member is nominated" in {
         val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
-        userAnswer.getFmSafeID mustBe Right(None)
-      }
-      "redirected to journey recovery if no data can be found for nominated filing member" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.getFmSafeID mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        userAnswer.getFmSafeID mustBe None
       }
     }
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
-        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
         val userAnswer = emptyUserAnswers
           .set(upeRegisteredInUKPage, true)
           .success
@@ -214,18 +211,13 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(UpeRegInformationPage, regData)
           .success
           .value
-        userAnswer.getUpRegData mustBe Right(Some("567"))
+        userAnswer.getUpeSafeID mustBe Some("567")
       }
 
       "return none if upe is non-uk based" in {
         val userAnswer = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
 
-        userAnswer.getUpRegData mustBe Right(None)
-      }
-
-      "redirected to journey recovery if no data can be found for nominated filing member" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.getUpRegData mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        userAnswer.getUpeSafeID mustBe None
       }
     }
 
@@ -241,6 +233,64 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return true if all the tasks have been completed for the subscription journey " in {
         finalStatusIsTrue.finalStatusCheck mustEqual true
       }
+    }
+    "create Enrolment information" should {
+
+      "return an EnrolmentData object with CTR and CRN numbers if the ultimate parent is registered in the UK" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegInformationPage, regData)
+          .setOrException(upeRegisteredInUKPage, true)
+        userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(crn = Some("123"), ctUtr = Some("345"), plrId = "fakeID")
+      }
+
+      "return an Enrolment Info object with the post code and country code with a fake ID" in {
+        val ukAddress = UKAddress(
+          addressLine1 = "1 drive",
+          addressLine2 = None,
+          addressLine3 = "la la land",
+          addressLine4 = None,
+          postalCode = "m19hgs",
+          countryCode = "AB"
+        )
+
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredAddressPage, ukAddress)
+          .setOrException(upeRegisteredInUKPage, false)
+
+        userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
+      }
+    }
+
+    "SubscriptionHelpers.securityQuestionStatus" should {
+      val date = LocalDate.of(2024, 12, 31)
+      "return Completed when answers are provided to all security questions" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(rfmSecurityCheckPage, "12323212")
+          .success
+          .value
+          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .success
+          .value
+
+        userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
+      }
+
+      "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
+        val userAnswersInProgress = emptyUserAnswers
+          .set(rfmSecurityCheckPage, "Security Check Answer")
+          .success
+          .value
+
+        userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
+      }
+
+      "return NotStarted when answers are not provided to any of the security questions" in {
+        val userAnswers = emptyUserAnswers
+
+        userAnswers.securityQuestionStatus mustEqual RowStatus.NotStarted
+      }
+
     }
 
   }
