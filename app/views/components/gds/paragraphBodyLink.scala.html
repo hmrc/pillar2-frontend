@@ -14,22 +14,8 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import views.html.components.gds._
+@this()
 
-@this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody
-)
+@(message: String, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link")
 
-
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
-
-@layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-
-@heading(messages("alreadyRegistered.heading"), "govuk-heading-l")
-@paragraphBody(messages("alreadyRegistered.message1"))
-@paragraphBody(messages("alreadyRegistered.message2"))
-
-}
+<p class="@classes"><a class="@linkClass" href="@linkUrl">@message</a></p>

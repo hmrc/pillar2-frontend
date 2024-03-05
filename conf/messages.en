@@ -58,15 +58,10 @@ viewAmendSubscriptionFailed.message1= Please try again later.
 viewAmendSubscriptionFailed.link= Return to your account homepage to try again
 ###############################################
 
-
-alreadyRegistered.title= Your group is already registered
-alreadyRegistered.heading= Your group is already registered
-alreadyRegistered.message1= You will need to contact your administrator to give you access.
-alreadyRegistered.message2= You can email {0} if you are having problems accessing the service.
-
-
-
-
+alreadyRegistered.title= Your group has already registered to report Pillar 2 top-up taxes
+alreadyRegistered.heading= Your group has already registered to report Pillar 2 top-up taxes
+alreadyRegistered.message1= You can find your group’s Pillar 2 top-up taxes ID within your business tax account.
+alreadyRegistered.message2= If you need to request access to this account, your administrator can give you access using ‘Manage account’ settings within their business tax account.
 
 upeRegisteredAddress.title=What is the registered office address?
 upeRegisteredAddress.heading=What is the registered office address of {0}?
@@ -272,16 +267,16 @@ groupTerritories.hint = An ultimate parent is not a subsidiary of any other comp
 GroupTerritories.error.required = Select yes if you are registering as the ultimate parent of this group
 KBMnIneligible.title = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
 KBMnIneligible.heading = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
-KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 top-up tax.
+KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 top-up taxes.
 KBMnIneligible.p2 = This group may still need to register.
-KBMnIneligible.link = Go back to the start page for more information
+KBMnIneligible.link = Find out more about who can use this service
 
 
 KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
 KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected in the UK when you have business operations here.
-KbUKIneligible.p2 = If your group only operates in other jurisdictions, you should check where any liability might apply.
-KbUKIneligible.link = Go back to the start page for more information
+KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have business activities located in the UK.
+KbUKIneligible.p2 = If your business activities are only located outside the UK, you should check where any liability may apply.
+KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
 
 
 
@@ -289,7 +284,7 @@ Kb750Ineligible.title = Based on your answers, this group does not need to repor
 Kb750Ineligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes
 Kb750Ineligible.p1 = Pillar 2 top-up taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
 Kb750Ineligible.p2 = You may need to report Pillar 2 top-up taxes if the global turnover meets the €750 million threshold in future accounting periods.
-Kb750Ineligible.link = Go back to the start page for more information
+Kb750Ineligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
 
 eligibilityconfirmation.title = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
@@ -775,22 +770,22 @@ unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
 unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
-unauthorised.org.standard.hyperlink = Read the draft guidance for more information on who can use this service.
+unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 top-up taxes
 
 unauthorised.agent.heading = Sorry, you’re unable to use this service
-unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Agents cannot use this service to register or administer a group’s Pillar 2 top-up taxes.
-unauthorised.agent.message2 = If you are an agent who has been given authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Only groups can register to use this service.
+unauthorised.agent.message2 = If you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
 unauthorised.agent.hyper1 = sign in via Agent Services.
 unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
 unauthorised.agent.hyper2 = request authorisation via Agent services.
-unauthorised.agent.hyper3 = Read the draft guidance for more information on who can use this service.
+unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 top-up taxes
 
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
-unauthorised.individual.message2 = If you still need to register,
+unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
-unauthorised.individual.hyper2 = Read the draft guidance for more information on who can use this service.
+unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
 manageFurtherGroupDetail.checkYourAnswers.heading = Group details
 
 rfm.heading.caption = Replace filing member
