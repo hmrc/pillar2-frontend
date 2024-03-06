@@ -68,7 +68,7 @@ class NfmNameRegistrationController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmNfmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad())
       )
   }
 
