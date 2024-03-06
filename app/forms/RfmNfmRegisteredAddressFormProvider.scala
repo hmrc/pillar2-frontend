@@ -23,14 +23,14 @@ import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
-class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
+class RfmNfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength    = 35
   private val addressLength = 35
   def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
         text("nfmRegisteredAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messag staes.error.addressLine1.length")),
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
           .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine2.length"))
