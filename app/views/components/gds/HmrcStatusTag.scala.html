@@ -16,7 +16,9 @@
 
 @this()
 
-@(message: String)
+@(params: Tag, id: Option[String] = None)
+@import params._
 
-<h2 class="govuk-caption-l hmrc-caption-l"><span id="section-header" class="govuk-caption-l">@message</span></h2>
-
+<span class="hmrc-status-tag" id="@id.getOrElse("")">
+@content.asHtml
+</span>

@@ -14,9 +14,21 @@
  * limitations under the License.
  *@
 
+@import models.tasklist.SectionViewModel
+
 @this()
+@(section: SectionViewModel, params: Tag, id: String = "")(implicit messages: Messages)
 
-@(message: String)
-
-<h2 class="govuk-caption-l hmrc-caption-l"><span id="section-header" class="govuk-caption-l">@message</span></h2>
+<li class="app-task-list__item">
+    <span class="app-task-list__task-name">
+        @if(section.call.isDefined) {
+            <a href="@section.call.get.url" class="govuk-link">@messages(section.name)</a>
+        } else {
+            @messages(section.name)
+        }
+    </span>
+    <span class="hmrc-status-tag">
+    @params.content.asHtml
+    </span>
+</li>
 

@@ -27,7 +27,7 @@ import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.NFMRegisteredInUKConfirmationView
+import views.html.rfm.UkBasedFilingMemberView
 
 import scala.concurrent.Future
 
@@ -43,7 +43,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
 
         running(application) {
           val request = FakeRequest(GET, controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-          val view    = application.injector.instanceOf[NFMRegisteredInUKConfirmationView]
+          val view    = application.injector.instanceOf[UkBasedFilingMemberView]
           val result  = route(application, request).value
 
           contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -58,7 +58,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
 
         running(application) {
           val request = FakeRequest(GET, controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-          val view    = application.injector.instanceOf[NFMRegisteredInUKConfirmationView]
+          val view    = application.injector.instanceOf[UkBasedFilingMemberView]
           val result  = route(application, request).value
 
           contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
@@ -95,7 +95,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
           )
           val boundForm = formProvider().bind(Map("value" -> ""))
 
-          val view = application.injector.instanceOf[NFMRegisteredInUKConfirmationView]
+          val view = application.injector.instanceOf[UkBasedFilingMemberView]
 
           val result = route(application, request).value
 

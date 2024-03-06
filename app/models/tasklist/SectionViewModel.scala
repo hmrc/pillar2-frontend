@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,11 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.tasklist
 
-@(message: String)
+import play.api.mvc.Call
 
-<h2 class="govuk-caption-l hmrc-caption-l"><span id="section-header" class="govuk-caption-l">@message</span></h2>
-
+final case class SectionViewModel(name: String, call: Option[Call], status: SectionStatus)
