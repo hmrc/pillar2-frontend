@@ -16,14 +16,15 @@
 
 package forms
 
+import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class GroupTerritoriesFormProvider @Inject() extends CommonFormats {
+class GroupTerritoriesFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> textWithErrorOverride(key = "GroupTerritories.error.required")
+      "value" -> boolean("GroupTerritories.error.required")
     )
 }

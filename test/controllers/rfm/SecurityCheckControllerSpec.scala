@@ -19,9 +19,10 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmSecurityCheckFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.RfmSecurityCheckPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -47,7 +48,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -70,7 +71,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -94,7 +95,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
 
         val result = route(application, request).value
@@ -116,7 +117,7 @@ class SecurityCheckControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -127,6 +128,73 @@ class SecurityCheckControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to the Security Questions Check Your Answers page when valid data is submitted in CheckMode" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(CheckMode).url)
+          .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode).url
+      }
+    }
+
+    "must redirect to the Group Registration Date Report page when valid data is submitted in modes other than CheckMode" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "prefill the form with an existing value from user answers on a GET request" in {
+
+      val existingValue = "someExistingValue"
+
+      val userAnswers = emptyUserAnswers.set(RfmSecurityCheckPage, existingValue).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure(Seq("features.rfmAccessEnabled" -> true): _*)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+        contentAsString(result) must include(s"""value="$existingValue"""")
       }
     }
 

@@ -16,14 +16,15 @@
 
 package forms
 
+import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class BusinessActivityUKFormProvider @Inject() extends CommonFormats {
+class BusinessActivityUKFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> nonEmptyTextWithErrorOverride("businessActivityUK.error.required")
+      "value" -> boolean("businessActivityUK.error.required")
     )
 }

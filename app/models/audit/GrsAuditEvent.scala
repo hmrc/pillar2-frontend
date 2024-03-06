@@ -16,11 +16,8 @@
 
 package models.audit
 
-import models.grs.{BusinessVerificationResult, GrsCreateRegistrationResponse, GrsRegistrationResult}
-import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import play.api.libs.json.{Format, JsValue, Json, OFormat, OWrites}
-
-import java.time.LocalDate
+import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
+import play.api.libs.json._
 
 case class GrsReturnAuditEvent(
   registeredinUK:       Boolean,

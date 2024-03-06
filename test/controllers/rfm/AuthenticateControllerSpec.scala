@@ -17,6 +17,7 @@
 package controllers.rfm
 
 import base.SpecBase
+import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
 
@@ -37,7 +38,7 @@ class AuthenticateControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.SecurityCheckController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
       }
 

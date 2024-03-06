@@ -16,10 +16,8 @@
 
 package helpers
 
-import models.UserAnswers
+import models.{EnrolmentInfo, UserAnswers}
 import pages._
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import utils.RowStatus
 
 trait SubscriptionHelpers {
@@ -156,43 +154,54 @@ trait SubscriptionHelpers {
       RowStatus.NotStarted.toString
     } else { "Cannot start yet" }
 
-  def getFmSafeID: Either[Result, Option[String]] =
-    get(NominateFilingMemberPage)
-      .map { nominated =>
-        if (nominated) {
-          get(fmRegisteredInUKPage)
-            .map { ukBased =>
-              if (ukBased) {
-                (for {
-                  safeID <- get(FmSafeIDPage)
-                } yield Right(Some(safeID))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-              } else if (!ukBased) {
-                Right(None)
-              } else {
-                Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-              }
-            }
-            .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-        } else if (!nominated) {
-          Right(None)
-        } else {
-          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def getFmSafeID: Option[String] =
+    get(NominateFilingMemberPage).flatMap(nominated =>
+      if (nominated) {
+        get(fmRegisteredInUKPage).flatMap { ukBased =>
+          if (ukBased) {
+            get(FmSafeIDPage)
+          } else {
+            None
+          }
         }
+      } else {
+        None
       }
-      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    )
 
-  def getUpRegData: Either[Result, Option[String]] =
+  def getUpeSafeID: Option[String] =
+    get(upeRegisteredInUKPage).flatMap { ukBased =>
+      if (ukBased) {
+        get(UpeRegInformationPage).map(regInfo => regInfo.safeId)
+      } else {
+        None
+      }
+    }
+
+  def createEnrolmentInfo(plpID: String): EnrolmentInfo =
     get(upeRegisteredInUKPage)
-      .map { ukBased =>
+      .flatMap { ukBased =>
         if (ukBased) {
-          (for {
-            regInfo <- get(UpeRegInformationPage)
-          } yield Right(Some(regInfo.safeId))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-        } else if (!ukBased) {
-          Right(None)
+          get(UpeRegInformationPage)
+            .map { regInfo =>
+              EnrolmentInfo(ctUtr = Some(regInfo.utr), crn = Some(regInfo.crn), plrId = plpID)
+            }
         } else {
-          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          get(upeRegisteredAddressPage).map(address =>
+            EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID)
+          )
         }
       }
-      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(EnrolmentInfo(plrId = plpID))
+
+  def securityQuestionStatus: RowStatus = {
+    val first  = get(RfmSecurityCheckPage).isDefined
+    val second = get(RfmRegistrationDatePage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
+
 }

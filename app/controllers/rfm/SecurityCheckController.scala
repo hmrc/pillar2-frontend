@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecurityCheckFormProvider
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import pages.RfmSecurityCheckPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -70,7 +70,10 @@ class SecurityCheckController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(RfmSecurityCheckPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
+          } yield mode match {
+            case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
+            case _         => Redirect(controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode))
+          }
       )
   }
 
