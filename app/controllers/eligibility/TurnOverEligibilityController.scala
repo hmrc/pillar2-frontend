@@ -16,56 +16,67 @@
 
 package controllers.eligibility
 
-import cache.SessionData
 import config.FrontendAppConfig
 import forms.TurnOverEligibilityFormProvider
+import models.UserAnswers
+import pages.RevenueEqPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 import views.html.TurnOverEligibilityView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TurnOverEligibilityController @Inject() (
   formProvider:             TurnOverEligibilityFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     TurnOverEligibilityView,
-  sessionData:              SessionData
-)(implicit appConfig:       FrontendAppConfig)
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val preparedForm = request.session.data.get(Pillar2SessionKeys.turnOverEligibilityValue) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
-    Ok(view(preparedForm))
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+          val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(RevenueEqPage)
+          val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+          Ok(view(preparedForm))
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        value =>
-          value match {
-            case "yes" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
-                  .withSession(sessionData.updateTurnOverEligibilitySessionData(value))
-              )
-            case "no" =>
-              Future.successful(
-                Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)
-                  .withSession(sessionData.updateTurnOverEligibilitySessionData(value))
-              )
-          }
-      )
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+              earnsAboveThreshold =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(RevenueEqPage, earnsAboveThreshold))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield
+                  if (earnsAboveThreshold) {
+                    Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
+                  } else {
+                    Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)
+                  }
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

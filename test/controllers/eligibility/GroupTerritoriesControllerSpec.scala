@@ -18,58 +18,124 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.GroupTerritoriesFormProvider
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.mvc.AnyContentAsEmpty
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.UpeEqPage
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
+import views.html.GroupTerritoriesView
+
+import scala.concurrent.Future
 
 class GroupTerritoriesControllerSpec extends SpecBase {
 
   val formProvider = new GroupTerritoriesFormProvider()
 
-  def controller(): GroupTerritoriesController =
-    new GroupTerritoriesController(
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewGroupTerritories,
-      mockSessionData
-    )
-
-  val mockFormYesData = Map("confirmForm" -> "yes")
-  val mockFormNoData  = Map("confirmForm" -> "no")
-
   "Group Territories Controller" when {
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad)
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when page previously not answered" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
 
-      val request =
-        FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url).withFormUrlEncodedBody(("value", "no"))
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[GroupTerritoriesView]
 
-      val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "Are you registering as the ultimate parent of this group?"
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider())(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "redirect to journey recovery if no session id is found" in {
+      val controller: GroupTerritoriesController = new GroupTerritoriesController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewGroupTerritories,
+        mockSessionRepository
       )
+      val request = FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
+      val result  = controller.onPageLoad()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
+    "must return OK and the correct view for a GET when page previously answered" in {
+      val application = applicationBuilder(None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(UpeEqPage, true))))
+        val request =
+          FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
+
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[GroupTerritoriesView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(true))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> "true"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url
 
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
-          .withFormUrlEncodedBody(("value", "yes"))
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url
-
+      }
     }
-    "Show error page when no option is selected - bad request " in {
+    "must redirect to the next page when valid data is submitted with no selected" in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> "false"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad.url
 
-      val request =
-        FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
-      val result = controller.onSubmit()()(request)
-      status(result) mustEqual BAD_REQUEST
+      }
+    }
+    "return  BAD_REQUEST if invalid data is submitted " in {
+      val application = applicationBuilder(None).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url).withFormUrlEncodedBody(
+            "value" -> ""
+          )
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
 
+    "redirect to journey recovery if no session id is found for POST" in {
+      val controller: GroupTerritoriesController = new GroupTerritoriesController(
+        formProvider,
+        stubMessagesControllerComponents(),
+        viewGroupTerritories,
+        mockSessionRepository
+      )
+      val request = FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onSubmit.url)
+      val result  = controller.onSubmit()()(request)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }

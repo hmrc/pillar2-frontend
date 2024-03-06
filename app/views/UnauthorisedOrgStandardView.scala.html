@@ -15,8 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
 layout: templates.Layout,
+heading: heading,
+paragraphBody: paragraphBody,
+paragraphBodyLink: paragraphBodyLink,
 govukButton: GovukButton
 )
 
@@ -28,20 +33,13 @@ govukButton: GovukButton
   authorised = false
 ) {
 
-<h1 class="govuk-heading-l">@messages("unauthorised.org.standard.heading")</h1>
-<p class="govuk-body govuk-!-margin-bottom-5">@messages("unauthorised.org.standard.message")</p>
-<p class="govuk-body govuk-!-margin-bottom-5" >@messages("unauthorised.org.standard.message2")</p>
-<p class="govuk-body govuk-!-margin-bottom-5" >@messages("unauthorised.org.standard.message3")</p>
+@heading(messages("unauthorised.org.standard.heading"), "govuk-heading-l")
 
-<p class="govuk-body govuk-!-margin-bottom-5">
-    <a href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax " class="govuk-link govuk-link--no-visited-state"> @messages("unauthorised.org.standard.hyperlink")</a>
-</p>
+@paragraphBody(messages("unauthorised.org.standard.message"), "govuk-body govuk-!-margin-bottom-5")
+@paragraphBody(messages("unauthorised.org.standard.message2"), "govuk-body govuk-!-margin-bottom-5")
+@paragraphBody(messages("unauthorised.org.standard.message3"), "govuk-body govuk-!-margin-bottom-5")
 
 
-
-
-
-
-
+@paragraphBodyLink(messages("unauthorised.org.standard.hyperlink"), appConfig.startPagePillar2Url, "govuk-body govuk-!-margin-bottom-5", "govuk-link govuk-link--no-visited-state")
 
 }
