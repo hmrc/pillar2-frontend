@@ -16,12 +16,14 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
+    sectionHeader: sectionHeader,
     govukButton: GovukButton
 )
 
@@ -36,7 +38,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        <span class="govuk-caption-l">@messages("isNFMRegisteredInUK.heading.caption")</span>
+        @sectionHeader(messages("isNFMRegisteredInUK.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

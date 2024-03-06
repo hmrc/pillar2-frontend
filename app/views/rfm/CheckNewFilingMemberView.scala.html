@@ -16,24 +16,24 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-@import play.api.mvc.Request
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.gds._
 
 @this(
     layout: templates.Layout,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading : heading,
+    paragraphBody: paragraphBody,
+    sectionHeader: sectionHeader
 )
 
 @(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-
 @layout(pageTitle = titleNoForm(messages("checkNewFilingMember.title"))) {
 
-    <span class="govuk-caption-l">@messages("checkNewFilingMember.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("checkNewFilingMember.heading")</h1>
 
-    <p class="govuk-body">@messages("checkNewFilingMember.p1")</p>
-
+    @sectionHeader(messages("checkNewFilingMember.heading.caption"))
+    @heading(messages("checkNewFilingMember.heading"), "govuk-heading-l")
+    @paragraphBody(messages("checkNewFilingMember.p1"))
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))

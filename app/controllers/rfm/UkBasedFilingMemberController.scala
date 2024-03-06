@@ -21,13 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
-import pages.{NfmRegisteredInUKPage, RfmUkBasedPage}
+import pages.RfmUkBasedPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.NFMRegisteredInUKConfirmationView
+import views.html.rfm.UkBasedFilingMemberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,12 +40,12 @@ class UkBasedFilingMemberController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              NFMRegisteredInUKConfirmationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NFMRegisteredInUKConfirmationView
+  view:                      UkBasedFilingMemberView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
@@ -66,7 +67,7 @@ class UkBasedFilingMemberController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         ukBasedFilingMember =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NfmRegisteredInUKPage, ukBasedFilingMember))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, ukBasedFilingMember))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
