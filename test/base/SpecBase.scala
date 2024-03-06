@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
-import helpers.{AllMocks, ViewInstances}
+import helpers.{AllMocks, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -49,7 +49,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait SpecBase
     extends AnyWordSpec
     with TestData
-    with TryValues
     with OptionValues
     with ScalaFutures
     with BeforeAndAfterEach
@@ -66,11 +65,8 @@ trait SpecBase
     with ViewInstances
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with WireMockServerHandler {
-
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-
-  val userAnswersId: String = "id"
+    with WireMockServerHandler
+    with UserAnswersFixture {
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

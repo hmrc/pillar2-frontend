@@ -185,7 +185,7 @@ POST       /manage-account/further-details/change-group-status                  
 GET         /contact-details                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details                            controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
-GET         /contact-details/chane-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+GET         /contact-details/change-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
