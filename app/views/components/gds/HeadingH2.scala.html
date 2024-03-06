@@ -14,22 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import views.html.components.gds._
+@this()
 
-@this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody
-)
+@(message: String, id: Option[String] = None, size: String = "s", extraClasses: Seq[String] = Seq.empty, caption: Option[String] = None)
 
-
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
-
-@layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-
-@heading(messages("alreadyRegistered.heading"), "govuk-heading-l")
-@paragraphBody(messages("alreadyRegistered.message1"))
-@paragraphBody(messages("alreadyRegistered.message2"))
-
-}
+<h2 class="govuk-heading-@size govuk-!-margin-top-2@if(extraClasses.nonEmpty) { @extraClasses.mkString(" ") }" @id.map{id => id="@id"}>
+  @message
+</h2>

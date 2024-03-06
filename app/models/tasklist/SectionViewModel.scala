@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import views.html.components.gds._
+package models.tasklist
 
-@this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody
-)
+import play.api.mvc.Call
 
-
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
-
-@layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-
-@heading(messages("alreadyRegistered.heading"), "govuk-heading-l")
-@paragraphBody(messages("alreadyRegistered.message1"))
-@paragraphBody(messages("alreadyRegistered.message2"))
-
-}
+final case class SectionViewModel(name: String, call: Option[Call], status: SectionStatus)

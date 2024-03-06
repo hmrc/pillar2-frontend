@@ -15,11 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import views.html.components.gds._
 
 @this(
 layout: templates.Layout,
-appConfig: FrontendAppConfig
+heading: heading,
+paragraphBody: paragraphBody,
+paragraphBodyLink: paragraphBodyLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -30,20 +32,15 @@ appConfig: FrontendAppConfig
   authorised = false
 ) {
 
-<h1 class="govuk-heading-l">@messages("unauthorised.individual.heading")</h1>
-<p class="govuk-body govuk-!-margin-bottom-5">@messages("unauthorised.individual.message")</p>
+@heading(messages("unauthorised.individual.heading"), "govuk-heading-l")
+
+@paragraphBody(messages("unauthorised.individual.message"), "govuk-body govuk-!-margin-bottom-5")
 
 <p class="govuk-body govuk-!-margin-bottom-9">
  <a> @messages("unauthorised.individual.message2")</a>
  <a href= @appConfig.loginUrl class="govuk-link govuk-link--no-visited-state"> @messages("unauthorised.individual.hyper1")</a>
 </p>
 
-<p class="govuk-body">
- <a href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax " class="govuk-link govuk-link--no-visited-state"> @messages("unauthorised.individual.hyper2")</a>
-</p>
-
-
-
-
+@paragraphBodyLink(messages("unauthorised.individual.hyper2"), appConfig.startPagePillar2Url, "govuk-body", "govuk-link govuk-link--no-visited-state")
 
 }

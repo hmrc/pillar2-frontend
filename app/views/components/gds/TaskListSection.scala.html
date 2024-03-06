@@ -14,22 +14,21 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import views.html.components.gds._
+@import models.tasklist.SectionViewModel
 
-@this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody
-)
+@this()
+@(section: SectionViewModel, params: Tag, id: String = "")(implicit messages: Messages)
 
+<li class="app-task-list__item">
+    <span class="app-task-list__task-name">
+        @if(section.call.isDefined) {
+            <a href="@section.call.get.url" class="govuk-link">@messages(section.name)</a>
+        } else {
+            @messages(section.name)
+        }
+    </span>
+    <span class="hmrc-status-tag">
+    @params.content.asHtml
+    </span>
+</li>
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
-
-@layout(pageTitle = titleNoForm(messages("alreadyRegistered.title")), showBackLink = false) {
-
-@heading(messages("alreadyRegistered.heading"), "govuk-heading-l")
-@paragraphBody(messages("alreadyRegistered.message1"))
-@paragraphBody(messages("alreadyRegistered.message2"))
-
-}

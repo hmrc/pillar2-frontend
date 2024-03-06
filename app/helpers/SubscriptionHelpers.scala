@@ -52,6 +52,7 @@ trait SubscriptionHelpers {
       }
       .getOrElse(RowStatus.NotStarted)
 
+  // TODO - refactor this
   def fmStatus: RowStatus =
     get(NominateFilingMemberPage)
       .map { nominated =>
@@ -144,15 +145,15 @@ trait SubscriptionHelpers {
     }
   }
 
-  def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus) =
+  def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (
       upe == RowStatus.Completed &
         nfm == RowStatus.Completed &
         groupDetail == RowStatus.Completed &
         contactDetail == RowStatus.Completed
     ) {
-      RowStatus.NotStarted.toString
-    } else { "Cannot start yet" }
+      RowStatus.NotStarted
+    } else { RowStatus.CannotStartYet }
 
   def getFmSafeID: Option[String] =
     get(NominateFilingMemberPage).flatMap(nominated =>
@@ -203,4 +204,5 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+
 }

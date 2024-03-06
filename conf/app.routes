@@ -185,7 +185,7 @@ POST       /manage-account/further-details/change-group-status                  
 GET         /contact-details                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details                            controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
-GET         /contact-details/chane-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+GET         /contact-details/change-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
@@ -295,10 +295,10 @@ POST       /manage-account/contact-details/change-second-input-telephone      co
 
 GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
 
-GET        /contact-details/address/input                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /contact-details/input-address                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/input-address                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-input-address                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-input-address                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /manage-account/contact-details/address/change-input                controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
@@ -334,6 +334,10 @@ GET        /bta/eacd                                                         con
 
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
+
+GET        /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
+
 GET        /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = CheckMode)
 

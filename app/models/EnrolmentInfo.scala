@@ -29,7 +29,7 @@ case class EnrolmentInfo(
   def buildVerifiers: Seq[Verifier] =
     buildOptionalVerifier(ctUtr, "CTUTR") ++
       buildOptionalVerifier(crn, "CRN") ++
-      buildOptionalVerifier(nonUkPostcode, "CRN") ++
+      buildOptionalVerifier(nonUkPostcode, "NonUKPostalCode") ++
       buildOptionalVerifier(countryCode, "CountryCode")
 
   def buildOptionalVerifier(optionalInfo: Option[String], key: String): Seq[Verifier] =

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-import uk.gov.hmrc.http.HeaderCarrier
+import forms.mappings.Mappings
+import models.rfm.CorporatePosition
+import play.api.data.Form
 
-object Pillar2SessionKeys {
+import javax.inject.Inject
 
-  val businessActivityUKPageYesNo = "businessActivityUKPageYesNo"
-  val groupTerritoriesPageYesNo   = "groupTerritoriesPageYesNo"
-  val evidenceRequestedFlag       = "evidenceRequestedFlag"
-  val turnOverEligibilityValue    = "turnOverEligibilityValue"
-  val registeringNfmForThisGroup  = "registeringNfmForThisGroup"
-  val updateMneOrDomestic         = "updateMneOrDomestic"
-  val plrId                       = "plrId"
+class RfmCorporatePositionFormProvider @Inject() extends Mappings {
 
-  def sessionId(hc: HeaderCarrier): String = hc.sessionId.map(_.value).getOrElse("No Session ID available")
+  def apply(): Form[CorporatePosition] =
+    Form(
+      "value" -> enumerable[CorporatePosition]("rfm.corporatePosition.error.required")
+    )
 }
