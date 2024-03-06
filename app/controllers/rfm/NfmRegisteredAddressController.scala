@@ -20,18 +20,19 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmNfmRegisteredAddressFormProvider
-import models.Mode
-import pages.rfmNfmRegisteredAddressPage
+import models.{Mode, NormalMode}
+import pages.{rfmNfmNameRegistrationPage, rfmNfmRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.rfm.NfmRegisteredAddressView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmRegisteredAddressController @Inject()(
+class NfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
@@ -43,8 +44,10 @@ class NfmRegisteredAddressController @Inject()(
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+
   val form = formProvider()
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
@@ -52,11 +55,13 @@ class NfmRegisteredAddressController @Inject()(
         .map { name =>
           val preparedForm = request.userAnswers.get(rfmNfmRegisteredAddressPage) match {
             case Some(value) => form.fill(value)
-            case None => form
+            case None        => form
           }
           Ok(view(preparedForm, mode, name, countryOptions.options()))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 

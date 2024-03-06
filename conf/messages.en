@@ -839,6 +839,37 @@ rfm.agent.p2 = Agents cannot use this service to replace a nominated filing memb
 rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
 rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
 
+rfm.noid.heading.caption = Group details
+rfm.nfmNameRegistration.title = What is the name of the new nominated filing member?
+rfm.nfmNameRegistration.heading = What is the name of the new nominated filing member?
+rfm.nfmNameRegistration.error.required = Enter the name of the new nominated filing member
+rfm.nfmNameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
+
+rfm.nfmRegisteredAddress.title = What is the registered office address?
+rfm.nfmRegisteredAddress.heading = What is the registered office address of {0}?
+rfm.nfmRegisteredAddress.addressLine1 = Address line 1
+rfm.nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
+rfm.nfmRegisteredAddress.town_city = Town or city
+rfm.nfmRegisteredAddress.region = Region (optional)
+rfm.nfmRegisteredAddress.postcode = Postal code
+rfm.nfmRegisteredAddress.country = Country
+rfm.nfmRegisteredAddress.country.hint = Enter text and then choose from the list.
+rfm.nfmRegisteredAddress.addressLine1.error.required = Enter first line of the address
+rfm.nfmRegisteredAddress.town_city.error.required = Enter town or city
+rfm.nfmRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
+rfm.nfmRegisteredAddress.region.error.length = The region must be 35 characters or less
+rfm.nfmRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
+rfm.nfmRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+rfm.nfmRegisteredAddress.country.error.required = Select a country
+rfm.nfmRegisteredAddress.country.error.length = The country cannot be more than 35 characters
+rfm.nfmRegisteredAddress.messages.error.addressLine1.required=Enter the first line of the address
+rfm.nfmRegisteredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+rfm.nfmRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+rfm.nfmRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+rfm.nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+rfm.nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
+
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
