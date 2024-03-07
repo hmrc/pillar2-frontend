@@ -16,14 +16,15 @@
 
 package forms
 
+import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class RegisteringNfmForThisGroupFormProvider @Inject() extends CommonFormats {
+class RegisteringNfmForThisGroupFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[Boolean] =
     Form(
-      "registeringNfmGroup" -> textWithErrorOverride(key = "registeringNfmForThisGroup.error.required")
+      "registeringNfmGroup" -> boolean("registeringNfmForThisGroup.error.required")
     )
 }

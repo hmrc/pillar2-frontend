@@ -38,20 +38,7 @@ class AlreadyRegisteredControllerSpec extends SpecBase {
         val content = contentAsString(result)
         content must include(messages(application)("alreadyRegistered.heading"))
         content must include(messages(application)("alreadyRegistered.message1"))
-        content must include(appConfig(application).pillar2mailbox)
-      }
-    }
-
-    "must include the correct email address in the response" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.AlreadyRegisteredController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        contentAsString(result) must include(appConfig(application).pillar2mailbox)
+        content must include(messages(application)("alreadyRegistered.message2"))
       }
     }
 
@@ -64,6 +51,7 @@ class AlreadyRegisteredControllerSpec extends SpecBase {
 
         val content = contentAsString(result)
         content must include(messages(application)("alreadyRegistered.message1"))
+        content must include(messages(application)("alreadyRegistered.message2"))
       }
     }
   }

@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.ContactCaptureTelephoneDetailsFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{subPrimaryCapturePhonePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}

@@ -28,12 +28,12 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.EntityTypeView
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.Pillar2SessionKeys
+import views.html.EntityTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

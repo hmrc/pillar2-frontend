@@ -26,5 +26,5 @@
     <h1 class="govuk-heading-xl">@messages(heading)</h1>
 
     <p class="govuk-body">@messages(message)</p>
-<p class="govuk-body">You must <a class="govuk-link" href="/report-pillar2-top-up-taxes/task-list/register-for-global-minimum-tax">@messages("page_not_available.link")</a> and complete the required tasks.</p>
+<p class="govuk-body">You must <a class="govuk-link" href="@routes.TaskListController.onPageLoad.url">@messages("page_not_available.link")</a> and complete the required tasks.</p>
 }
