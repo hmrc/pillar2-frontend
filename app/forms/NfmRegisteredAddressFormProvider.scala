@@ -30,7 +30,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
     mapping(
       "addressLine1" ->
         text("nfmRegisteredAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messag staes.error.addressLine1.length")),
+          .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
           .verifying(maxLength(addressLength, "nfmRegisteredAddress.messages.error.addressLine2.length"))

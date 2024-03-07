@@ -325,6 +325,8 @@ GET        /replace-filing-member/error/agent-sign-in                           
 
 GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
