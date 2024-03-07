@@ -17,45 +17,52 @@
 @import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-formHelper: FormWithCSRF,
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF,
 )
 
-@(listUpe: SummaryList,listNfm: SummaryList, furtherRegistrationDetailsList:SummaryList, listPrimary: SummaryList,listSecondary: SummaryList, address:SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listUpe: SummaryList,
+        listNfm: SummaryList,
+        furtherRegistrationDetailsList: SummaryList,
+        listPrimary: SummaryList,
+        listSecondary: SummaryList,
+        address: SummaryList)(
+        implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages
+)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
-@formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
+    @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
 
-    <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+        <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
+        <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-<h2 class="govuk-heading-m">@messages("checkYourAnswers.upe")</h2>
-    @govukSummaryList(listUpe)
+        <h2 class="govuk-heading-m">@messages("checkYourAnswers.upe")</h2>
+        @govukSummaryList(listUpe)
 
+        <h2 class="govuk-heading-m">@messages("checkYourAnswers.nfm")</h2>
+        @govukSummaryList(listNfm)
 
-    <h2 class="govuk-heading-m">@messages("checkYourAnswers.nfm")</h2>
-   @govukSummaryList(listNfm)
+        <h2 class="govuk-heading-m">@messages("checkYourAnswers.furtherRegistrationDetail")</h2>
+        @govukSummaryList(furtherRegistrationDetailsList)
 
-<h2 class="govuk-heading-m">@messages("checkYourAnswers.furtherRegistrationDetail")</h2>
-@govukSummaryList(furtherRegistrationDetailsList)
+        <h2 class="govuk-heading-m">@messages("checkYourAnswers.first")</h2>
+        @govukSummaryList(listPrimary)
 
-    <h2 class="govuk-heading-m">@messages("checkYourAnswers.first")</h2>
-    @govukSummaryList(listPrimary)
+        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+        @govukSummaryList(listSecondary)
 
-    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
+        @govukSummaryList(address)
 
-    @govukSummaryList(listSecondary)
-    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
-    @govukSummaryList(address)
-
-
-    <h2 class="govuk-heading-m">@messages("checkYourAnswers.submit.registration")</h2>
-    <p class="govuk-body">@messages("checkYourAnswers.submit.p")</p>
+        <h2 class="govuk-heading-m">@messages("checkYourAnswers.submit.registration")</h2>
+            <p class="govuk-body">@messages("checkYourAnswers.submit.p")</p>
         <br>
-    @govukButton(
-    ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit")
-    )
-}
+
+        @govukButton(
+            ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit")
+        )
+
+    }
 }
