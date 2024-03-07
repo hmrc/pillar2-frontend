@@ -53,7 +53,7 @@ class GrsReturnController @Inject() (
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeEntityTypePage)
+      .get(UpeEntityTypePage)
       .map {
         case EntityType.UkLimitedCompany            => upeLimited(request, journeyId)
         case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)

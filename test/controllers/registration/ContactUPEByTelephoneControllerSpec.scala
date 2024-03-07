@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,8 +40,8 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upeContactEmailPage, "email")
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -62,9 +62,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upeContactEmailPage, "email")
-        .setOrException(upePhonePreferencePage, true)
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeContactEmailPage, "email")
+        .setOrException(UpePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -86,7 +86,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     "redirect to capture telephone page when valid data is submitted with value YES" in {
 
       val ua = emptyUserAnswers
-        .set(upeContactNamePage, "sad")
+        .set(UpeContactNamePage, "sad")
         .success
         .value
       val application = applicationBuilder(Some(ua))
@@ -107,7 +107,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     }
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val ua = emptyUserAnswers.set(UpeContactNamePage, "sad").success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

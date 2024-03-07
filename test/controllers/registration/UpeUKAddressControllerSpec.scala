@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.upeNameRegistrationPage
+import pages.UpeNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -46,7 +46,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
       }
     }
     "return OK and the correct view for a GET with no previous answer" in {
-      val ua = emptyUserAnswers.set(upeNameRegistrationPage, "company").success.value
+      val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -59,7 +59,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page previously been answered" in {
-      val ua = emptyUserAnswers.set(upeNameRegistrationPage, "company").success.value
+      val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -82,7 +82,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -108,7 +108,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -133,7 +133,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(upeNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

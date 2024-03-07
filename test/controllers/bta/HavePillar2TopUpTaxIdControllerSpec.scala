@@ -22,7 +22,7 @@ import forms.{ContactUPEByTelephoneFormProvider, HavePillar2TopUpTaxIdFormProvid
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subHavePillar2TopUpTaxIdPage, subPrimaryContactNamePage, subPrimaryEmailPage, subSecondaryContactNamePage, upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
+import pages.{subAddSecondaryContactPage, subHavePillar2TopUpTaxIdPage, subPrimaryContactNamePage, subPrimaryEmailPage, subSecondaryContactNamePage, UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

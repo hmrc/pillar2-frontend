@@ -71,129 +71,129 @@ trait UserAnswersFixture extends TryValues {
   )
 
   val upeInProgressUserAnswer = emptyUserAnswers
-    .set(upeContactNamePage, "name")
+    .set(UpeContactNamePage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, false)
+    .set(UpePhonePreferencePage, false)
     .success
     .value
 
   val upeInProgressNoContactName = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, false)
+    .set(UpePhonePreferencePage, false)
     .success
     .value
 
   val upeNoAddressFound = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, false)
+    .set(UpePhonePreferencePage, false)
     .success
     .value
 
   val upeNoEmailFound = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upePhonePreferencePage, false)
+    .set(UpePhonePreferencePage, false)
     .success
     .value
 
   val upeNoPhonePref = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
 
   val upePhonePrefButNoPhoneNumber = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeContactNamePage, "name")
+    .set(UpeContactNamePage, "name")
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, true)
+    .set(UpePhonePreferencePage, true)
     .success
     .value
 
   val upeCompletedNoPhoneNumber = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeContactNamePage, "name")
+    .set(UpeContactNamePage, "name")
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, true)
+    .set(UpePhonePreferencePage, true)
     .success
     .value
-    .set(upeCapturePhonePage, "12312")
+    .set(UpeCapturePhonePage, "12312")
     .success
     .value
 
   val upeCompletedGrsStatus = emptyUserAnswers
-    .set(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .set(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
-    .set(upeRegisteredInUKPage, true)
+    .set(UpeRegisteredInUKPage, true)
     .success
     .value
     .set(upeGRSResponsePage, grsResponse)
@@ -207,7 +207,7 @@ trait UserAnswersFixture extends TryValues {
     .set(upeGRSResponsePage, grsResponse)
     .success
     .value
-    .set(upeRegisteredInUKPage, true)
+    .set(UpeRegisteredInUKPage, true)
     .success
     .value
     .set(GrsUpeStatusPage, RowStatus.Completed)
@@ -215,10 +215,10 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val upeNoGrsResponseType = emptyUserAnswers
-    .set(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .set(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
-    .set(upeRegisteredInUKPage, true)
+    .set(UpeRegisteredInUKPage, true)
     .success
     .value
     .set(GrsUpeStatusPage, RowStatus.Completed)
@@ -450,33 +450,33 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(subAddSecondaryContactPage, false)
     .setOrException(subRegisteredAddressPage, nonUkAddress)
     .setOrException(NominateFilingMemberPage, false)
-    .setOrException(upeRegisteredInUKPage, true)
+    .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
     .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
     .setOrException(subAccountingPeriodPage, accountingPeriod)
-    .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(upeGRSResponsePage, grsResponse)
 
   val allSectionsCompleted = emptyUserAnswers
-    .set(upeNameRegistrationPage, "name")
+    .set(UpeNameRegistrationPage, "name")
     .success
     .value
-    .set(upeRegisteredInUKPage, false)
+    .set(UpeRegisteredInUKPage, false)
     .success
     .value
-    .set(upeContactNamePage, "name")
+    .set(UpeContactNamePage, "name")
     .success
     .value
-    .set(upeRegisteredAddressPage, ukAddress)
+    .set(UpeRegisteredAddressPage, ukAddress)
     .success
     .value
-    .set(upeContactEmailPage, email)
+    .set(UpeContactEmailPage, email)
     .success
     .value
-    .set(upePhonePreferencePage, true)
+    .set(UpePhonePreferencePage, true)
     .success
     .value
-    .set(upeCapturePhonePage, "12312")
+    .set(UpeCapturePhonePage, "12312")
     .success
     .value
     .set(fmEntityTypePage, EntityType.UkLimitedCompany)

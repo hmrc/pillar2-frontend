@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import pages.{GrsUpeStatusPage, upeRegisteredInUKPage}
+import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -48,7 +48,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(upeRegisteredInUKPage) match {
+    val preparedForm = request.userAnswers.get(UpeRegisteredInUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -65,7 +65,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
                 updatedAnswers1 <- Future.fromTry(
                                      request.userAnswers
                                        .get(GrsUpeStatusPage)
@@ -76,7 +76,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
               } yield Redirect(controllers.registration.routes.EntityTypeController.onPageLoad(mode))
             case false =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode))
 

@@ -44,8 +44,8 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
     val date      = AccountingPeriod(startDate, endDate)
 
     val amendSubUserAnswers = emptyUserAnswers
-      .setOrException(upeRegisteredInUKPage, true)
-      .setOrException(upeNameRegistrationPage, "International Organisation Inc.")
+      .setOrException(UpeRegisteredInUKPage, true)
+      .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
       .setOrException(subPrimaryContactNamePage, "Name")
       .setOrException(subPrimaryEmailPage, "email@email.com")
       .setOrException(subPrimaryPhonePreferencePage, true)

@@ -131,7 +131,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET when all statuses are 'NotStarted'" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, false)
+        .set(UpeRegisteredInUKPage, false)
         .success
         .value
         .set(NominateFilingMemberPage, false)
@@ -152,8 +152,8 @@ class TaskListControllerSpec extends SpecBase {
 
     "build filingMemberInfo with 'edit' action when ultimateParentStatus is 'Completed' and filingMemberStatus is 'Completed'" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(upeGRSResponsePage, grsResponse)
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
@@ -177,7 +177,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "handle scenario when ultimateParentStatus is Completed and filingMemberStatus is NotStarted" in {
       val userAnswers = emptyUserAnswers
-        .set(upeRegisteredInUKPage, true)
+        .set(UpeRegisteredInUKPage, true)
         .success
         .value
 
@@ -195,7 +195,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "handle scenario when groupDetailStatus is Completed" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(UpeRegisteredInUKPage, true)
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(subAccountingPeriodPage, accountingPeriod)
@@ -215,7 +215,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "handle scenario when filingMemberStatus is Completed and groupDetailStatus is InProgress" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(UpeRegisteredInUKPage, true)
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(fmRegisteredInUKPage, true)
         .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
@@ -239,8 +239,8 @@ class TaskListControllerSpec extends SpecBase {
 
     "build groupDetailInfo with 'cannotStartYet' action when either filingMemberStatus or groupDetailStatus is 'InProgress'" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(upeGRSResponsePage, grsResponse)
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
@@ -281,8 +281,8 @@ class TaskListControllerSpec extends SpecBase {
       val userAnswers = emptyUserAnswers
         .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(upeGRSResponsePage, grsResponse)
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
@@ -320,8 +320,8 @@ class TaskListControllerSpec extends SpecBase {
       val userAnswers = emptyUserAnswers
         .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(upeGRSResponsePage, grsResponse)
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
@@ -357,8 +357,8 @@ class TaskListControllerSpec extends SpecBase {
       val userAnswers = emptyUserAnswers
         .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(upeGRSResponsePage, grsResponse)
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
@@ -395,10 +395,10 @@ class TaskListControllerSpec extends SpecBase {
     "build correct TaskInfo when ultimateParentStatus is 'Completed', filingMemberStatus is 'Completed'" +
       "'groupDetailStatus' is Completed and contactDetailsStatus is 'Completed'" in {
         val userAnswers = emptyUserAnswers
-          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
           .setOrException(subAccountingPeriodPage, accountingPeriod)
-          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
           .setOrException(upeGRSResponsePage, grsResponse)
           .setOrException(GrsUpeStatusPage, RowStatus.Completed)
           .setOrException(NominateFilingMemberPage, true)

@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
+import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,11 +46,11 @@ class CaptureTelephoneDetailsController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(upePhonePreferencePage)
-      contactName <- request.userAnswers.get(upeContactNamePage)
+      _           <- request.userAnswers.get(UpePhonePreferencePage)
+      contactName <- request.userAnswers.get(UpeContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(upeCapturePhonePage) match {
+      val preparedForm = request.userAnswers.get(UpeCapturePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +62,7 @@ class CaptureTelephoneDetailsController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeContactNamePage)
+      .get(UpeContactNamePage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()
@@ -71,7 +71,7 @@ class CaptureTelephoneDetailsController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(upeCapturePhonePage, value))
+                  Future.fromTry(request.userAnswers.set(UpeCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
           )

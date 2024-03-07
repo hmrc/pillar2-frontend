@@ -22,7 +22,7 @@ import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeNameRegistrationPage, upeRegisteredInUKPage}
+import pages.{UpeNameRegistrationPage, UpeRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
   "UpeNameRegistration Controller" must {
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.setOrException(upeRegisteredInUKPage, false)
+      val ua          = emptyUserAnswers.setOrException(UpeRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
@@ -59,7 +59,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
-      val userAnswer  = emptyUserAnswers.setOrException(upeNameRegistrationPage, "asd").setOrException(upeRegisteredInUKPage, false)
+      val userAnswer  = emptyUserAnswers.setOrException(UpeNameRegistrationPage, "asd").setOrException(UpeRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url)
@@ -112,7 +112,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val userAnswer = emptyUserAnswers.set(upeNameRegistrationPage, "asd").success.value
+      val userAnswer = emptyUserAnswers.set(UpeNameRegistrationPage, "asd").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

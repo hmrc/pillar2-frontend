@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
-import pages.{upeEntityTypePage, upeRegisteredInUKPage}
+import pages.{UpeEntityTypePage, UpeRegisteredInUKPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -56,8 +56,8 @@ class EntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.get(upeRegisteredInUKPage).contains(true)) {
-      val preparedForm = request.userAnswers.get(upeEntityTypePage) match {
+    if (request.userAnswers.get(UpeRegisteredInUKPage).contains(true)) {
+      val preparedForm = request.userAnswers.get(UpeEntityTypePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -68,7 +68,6 @@ class EntityTypeController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     form
       .bindFromRequest()
@@ -77,17 +76,17 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Calling UK Limited Company in EntityTypeController class")
+              logger.info("Calling UK Limited Company in EntityTypeController class")
               for {
-                updatedAnswers   <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
+                updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeEntityTypePage, value))
                 _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
-              logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Calling Limited Liability Partnership in EntityTypeController class")
+              logger.info("Calling Limited Liability Partnership in EntityTypeController class")
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(upeEntityTypePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)

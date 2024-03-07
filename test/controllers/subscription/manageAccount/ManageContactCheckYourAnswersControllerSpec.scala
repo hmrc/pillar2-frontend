@@ -85,8 +85,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
   val endDate   = LocalDate.of(2025, 12, 31)
   val date      = AccountingPeriod(startDate, endDate)
   val amendSubscription = emptyUserAnswers
-    .setOrException(upeRegisteredInUKPage, true)
-    .setOrException(upeNameRegistrationPage, "International Organisation Inc.")
+    .setOrException(UpeRegisteredInUKPage, true)
+    .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
     .setOrException(subPrimaryContactNamePage, "Name")
     .setOrException(subPrimaryEmailPage, "email@email.com")
     .setOrException(subPrimaryPhonePreferencePage, true)

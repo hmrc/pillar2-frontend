@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
 import models.Mode
-import pages.{upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,11 +46,11 @@ class ContactUPEByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(upeContactEmailPage)
-      contactName <- request.userAnswers.get(upeContactNamePage)
+      _           <- request.userAnswers.get(UpeContactEmailPage)
+      contactName <- request.userAnswers.get(UpeContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(upePhonePreferencePage) match {
+      val preparedForm = request.userAnswers.get(UpePhonePreferencePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +63,7 @@ class ContactUPEByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeContactNamePage)
+      .get(UpeContactNamePage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()
@@ -74,14 +74,14 @@ class ContactUPEByTelephoneController @Inject() (
                 case true =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(upePhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
 
                 case false =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(upePhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
               }

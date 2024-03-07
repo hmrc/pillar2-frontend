@@ -22,7 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
+import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,8 +39,8 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upePhonePreferencePage, true)
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -60,9 +60,9 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upePhonePreferencePage, true)
-        .setOrException(upeCapturePhonePage, "12321")
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, "12321")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
@@ -81,7 +81,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must redirect to checkYourAnswers when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val ua = emptyUserAnswers.set(UpeContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -102,7 +102,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     }
     "return bad request if wrong data is inputted" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val ua          = emptyUserAnswers.set(UpeContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =

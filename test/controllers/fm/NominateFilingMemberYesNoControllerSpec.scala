@@ -45,12 +45,12 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     )
   val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
   val completeUpeJourney = emptyUserAnswers
-    .setOrException(upeRegisteredInUKPage, false)
-    .setOrException(upeNameRegistrationPage, "name")
-    .setOrException(upeRegisteredAddressPage, UkAddress)
-    .setOrException(upeContactNamePage, "another name")
-    .setOrException(upeContactEmailPage, "email")
-    .setOrException(upePhonePreferencePage, false)
+    .setOrException(UpeRegisteredInUKPage, false)
+    .setOrException(UpeNameRegistrationPage, "name")
+    .setOrException(UpeRegisteredAddressPage, UkAddress)
+    .setOrException(UpeContactNamePage, "another name")
+    .setOrException(UpeContactEmailPage, "email")
+    .setOrException(UpePhonePreferencePage, false)
 
   "Nominate filing member Controller" must {
 

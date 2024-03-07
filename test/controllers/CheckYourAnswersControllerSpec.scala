@@ -97,7 +97,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   )
   private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
   private val defaultUserAnswer = emptyUserAnswers
-    .setOrException(upeRegisteredInUKPage, true)
+    .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(upeGRSResponsePage, grsResponse)
     .setOrException(UpeRegInformationPage, regData)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
@@ -105,7 +105,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(NominateFilingMemberPage, false)
     .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
     .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
-    .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
 
   private val nfmNoID = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
@@ -122,16 +122,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(fmGRSResponsePage, grsResponse)
   private val upNoID = emptyUserAnswers
-    .setOrException(upeNameRegistrationPage, "name")
-    .setOrException(upeRegisteredInUKPage, false)
-    .setOrException(upeRegisteredAddressPage, ukAddress)
-    .setOrException(upeContactNamePage, "contactName")
-    .setOrException(upeContactEmailPage, "some@email.com")
-    .setOrException(upePhonePreferencePage, true)
-    .setOrException(upeCapturePhonePage, "12312321")
+    .setOrException(UpeNameRegistrationPage, "name")
+    .setOrException(UpeRegisteredInUKPage, false)
+    .setOrException(UpeRegisteredAddressPage, ukAddress)
+    .setOrException(UpeContactNamePage, "contactName")
+    .setOrException(UpeContactEmailPage, "some@email.com")
+    .setOrException(UpePhonePreferencePage, true)
+    .setOrException(UpeCapturePhonePage, "12312321")
   private val upId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
-    .setOrException(upeRegisteredInUKPage, true)
+    .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(fmGRSResponsePage, grsResponse)
 

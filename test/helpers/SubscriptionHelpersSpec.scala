@@ -35,7 +35,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "getUpe status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
-        val userAnswer = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
         userAnswer.upeStatus mustEqual RowStatus.NotStarted
       }
       "return in progress if user is not registered in uk but no name reg can be found" in {
@@ -205,7 +205,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
         val userAnswer = emptyUserAnswers
-          .set(upeRegisteredInUKPage, true)
+          .set(UpeRegisteredInUKPage, true)
           .success
           .value
           .set(UpeRegInformationPage, regData)
@@ -215,7 +215,7 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
 
       "return none if upe is non-uk based" in {
-        val userAnswer = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
+        val userAnswer = emptyUserAnswers.set(UpeRegisteredInUKPage, false).success.value
 
         userAnswer.getUpeSafeID mustBe None
       }
@@ -239,7 +239,7 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return an EnrolmentData object with CTR and CRN numbers if the ultimate parent is registered in the UK" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegInformationPage, regData)
-          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(UpeRegisteredInUKPage, true)
         userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(crn = Some("123"), ctUtr = Some("345"), plrId = "fakeID")
       }
 
@@ -254,8 +254,8 @@ class SubscriptionHelpersSpec extends SpecBase {
         )
 
         val userAnswer = emptyUserAnswers
-          .setOrException(upeRegisteredAddressPage, ukAddress)
-          .setOrException(upeRegisteredInUKPage, false)
+          .setOrException(UpeRegisteredAddressPage, ukAddress)
+          .setOrException(UpeRegisteredInUKPage, false)
 
         userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
       }

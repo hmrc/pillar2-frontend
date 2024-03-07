@@ -38,7 +38,7 @@ import forms.UpeContactEmailFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeContactEmailPage, upeContactNamePage}
+import pages.{UpeContactEmailPage, UpeContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -55,7 +55,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
   "UpeContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url)
@@ -75,10 +75,10 @@ class UpeContactEmailControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .set(upeContactNamePage, "name")
+        .set(UpeContactNamePage, "name")
         .success
         .value
-        .set(upeContactEmailPage, "hello@bye.com")
+        .set(UpeContactEmailPage, "hello@bye.com")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
@@ -100,7 +100,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val ua = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -118,7 +118,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request   = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody("emailAddress" -> "<>")

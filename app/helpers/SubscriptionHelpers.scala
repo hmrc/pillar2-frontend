@@ -25,17 +25,17 @@ trait SubscriptionHelpers {
   self: UserAnswers =>
 
   def upeStatus: RowStatus =
-    get(upeRegisteredInUKPage)
+    get(UpeRegisteredInUKPage)
       .map { ukBased =>
         if (!ukBased) {
           (for {
-            nameReg      <- get(upeNameRegistrationPage)
-            address      <- get(upeRegisteredAddressPage)
-            contactName  <- get(upeContactNamePage)
-            contactEmail <- get(upeContactEmailPage)
-            telPref      <- get(upePhonePreferencePage)
+            nameReg      <- get(UpeNameRegistrationPage)
+            address      <- get(UpeRegisteredAddressPage)
+            contactName  <- get(UpeContactNamePage)
+            contactEmail <- get(UpeContactEmailPage)
+            telPref      <- get(UpePhonePreferencePage)
           } yield {
-            val telephone = get(upeCapturePhonePage).isDefined
+            val telephone = get(UpeCapturePhonePage).isDefined
             if ((telPref & telephone) | !telPref) {
               RowStatus.Completed
             } else {
@@ -44,7 +44,7 @@ trait SubscriptionHelpers {
           }).getOrElse(RowStatus.InProgress)
         } else {
           (for {
-            entityType <- get(upeEntityTypePage)
+            entityType <- get(UpeEntityTypePage)
             grsData    <- get(upeGRSResponsePage)
             grsStatus  <- get(GrsUpeStatusPage)
           } yield grsStatus).getOrElse(RowStatus.InProgress)
@@ -171,7 +171,7 @@ trait SubscriptionHelpers {
     )
 
   def getUpeSafeID: Option[String] =
-    get(upeRegisteredInUKPage).flatMap { ukBased =>
+    get(UpeRegisteredInUKPage).flatMap { ukBased =>
       if (ukBased) {
         get(UpeRegInformationPage).map(regInfo => regInfo.safeId)
       } else {
@@ -180,7 +180,7 @@ trait SubscriptionHelpers {
     }
 
   def createEnrolmentInfo(plpID: String): EnrolmentInfo =
-    get(upeRegisteredInUKPage)
+    get(UpeRegisteredInUKPage)
       .flatMap { ukBased =>
         if (ukBased) {
           get(UpeRegInformationPage)
@@ -188,7 +188,7 @@ trait SubscriptionHelpers {
               EnrolmentInfo(ctUtr = Some(regInfo.utr), crn = Some(regInfo.crn), plrId = plpID)
             }
         } else {
-          get(upeRegisteredAddressPage).map(address =>
+          get(UpeRegisteredAddressPage).map(address =>
             EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID)
           )
         }

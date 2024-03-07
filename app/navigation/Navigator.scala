@@ -26,8 +26,35 @@ import models._
 @Singleton
 class Navigator @Inject() () {
 
-  private val normalRoutes: Page => UserAnswers => Call = { case _ =>
-    _ => routes.IndexController.onPageLoad
+  private val normalRoutes: Page => UserAnswers => Call = {
+    case UpeRegisteredInUKPage => domesticOrNotRoute
+    case UpeNameRegistrationPage => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
+    case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
+    case UpeContactNamePage => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
+    case UpeContactEmailPage => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
+    case UpePhonePreferencePage => telephonePreferenceLogic
+    case UpeCapturePhonePage => _ => controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+    case _ => _ => routes.IndexController.onPageLoad
+  }
+
+  private def domesticOrNotRoute(userAnswers: UserAnswers): Call ={
+    userAnswers.get(UpeRegisteredInUKPage).map{ ukBased=>
+      if (ukBased) {
+        controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
+      }else{
+        controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)
+      }
+    }.getOrElse(routes.JourneyRecoveryController.onPageLoad())
+  }
+
+  private def telephonePreferenceLogic(userAnswers: UserAnswers): Call ={
+    userAnswers.get(UpePhonePreferencePage).map{ provided=>
+      if (provided) {
+        controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
+      }else{
+        controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+      }
+    }.getOrElse(routes.JourneyRecoveryController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = { case _ =>
