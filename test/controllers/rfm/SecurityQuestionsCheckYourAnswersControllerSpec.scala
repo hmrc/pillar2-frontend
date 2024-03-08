@@ -46,12 +46,9 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       "return OK and the correct view if an answer is provided to every question " in {
 
         val userAnswer = UserAnswers(userAnswersId)
-          .set(rfmSecurityCheckPage, plrReference)
-          .success
-          .value
-          .set(rfmRegistrationDatePage, RegistrationDate(date))
-          .success
-          .value
+          .setOrException(RfmSecurityCheckPage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
+
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .build()
         running(application) {
@@ -96,8 +93,8 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
     "onSubmit" must {
       "redirect to under construction in case of a successful read subscription and matched reg dates " in {
         val ua = emptyUserAnswers
-          .setOrException(rfmSecurityCheckPage, plrReference)
-          .setOrException(rfmRegistrationDatePage, RegistrationDate(date))
+          .setOrException(RfmSecurityCheckPage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
           .setOrException(fmDashboardPage, dashboardInfo)
         val application = applicationBuilder(Some(ua))
           .overrides(
@@ -117,8 +114,8 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
       "redirect to error page if input dates do not match" in {
         val ua = emptyUserAnswers
-          .setOrException(rfmSecurityCheckPage, plrReference)
-          .setOrException(rfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          .setOrException(RfmSecurityCheckPage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
           .setOrException(fmDashboardPage, dashboardInfo)
         val application = applicationBuilder(Some(ua))
           .overrides(
@@ -139,8 +136,8 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
     "redirect to error page if subscription service returns a non-success response" in {
       val ua = emptyUserAnswers
-        .setOrException(rfmSecurityCheckPage, plrReference)
-        .setOrException(rfmRegistrationDatePage, RegistrationDate(date))
+        .setOrException(RfmSecurityCheckPage, plrReference)
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
         .setOrException(fmDashboardPage, dashboardInfo)
       val application = applicationBuilder(Some(ua))
         .overrides(
@@ -160,7 +157,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
     "redirect to journey recovery if no input pillar 2 id is found" in {
       val ua = emptyUserAnswers
-        .setOrException(rfmRegistrationDatePage, RegistrationDate(date))
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
         .setOrException(fmDashboardPage, dashboardInfo)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -173,7 +170,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
     "redirect to journey recovery if no input registration date is found" in {
       val ua = emptyUserAnswers
-        .setOrException(rfmSecurityCheckPage, plrReference)
+        .setOrException(RfmSecurityCheckPage, plrReference)
         .setOrException(fmDashboardPage, dashboardInfo)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -185,8 +182,8 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
     }
     "redirect to journey recovery if no dashboard info is found" in {
       val ua = emptyUserAnswers
-        .setOrException(rfmSecurityCheckPage, plrReference)
-        .setOrException(rfmRegistrationDatePage, RegistrationDate(date))
+        .setOrException(RfmSecurityCheckPage, plrReference)
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
       val application = applicationBuilder(Some(ua))
         .overrides(
           inject.bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),

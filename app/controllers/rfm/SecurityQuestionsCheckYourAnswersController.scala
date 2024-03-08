@@ -25,7 +25,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import controllers.routes
 import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{fmDashboardPage, rfmRegistrationDatePage, rfmSecurityCheckPage}
+import pages.{RfmRegistrationDatePage, RfmSecurityCheckPage, fmDashboardPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
@@ -58,11 +58,11 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
           RfmRegistrationDateSummary.row(request.userAnswers)
         ).flatten
       )
-      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
-        Ok(view(list))
-      } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+//      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
+      Ok(view(list))
+//      } else {
+//        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+//      }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -70,8 +70,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     (for {
-      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(rfmSecurityCheckPage))
-      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(rfmRegistrationDatePage))
+      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmSecurityCheckPage))
+      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
       _              <- OptionT.liftF(readSubscription.readSubscription(ReadSubscriptionRequestParameters(request.userId, inputPillar2Reference)))
       updatedAnswers <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
       dashboard      <- OptionT.fromOption[Future](updatedAnswers.get(fmDashboardPage))
