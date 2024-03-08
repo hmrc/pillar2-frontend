@@ -232,7 +232,7 @@ upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
 checkNewFilingMember.title = We need to match the details of the new nominated filing member to HMRC records
 checkNewFilingMember.heading = We need to match the details of the new nominated filing member to HMRC records
-checkNewFilingMember.p1 = We will ask you for several pieces of identifying information about the new nominated filing member for this group so that we can best match them to our records.
+checkNewFilingMember.p1 = We will ask you for several pieces of identifying information about the new nominated filing member so that we can best match them to our records.
 checkNewFilingMember.heading.caption = Group details
 
 
