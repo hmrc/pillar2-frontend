@@ -17,9 +17,12 @@
 package connectors
 
 import base.SpecBase
+import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+
+import scala.collection.Seq
 
 class UserAnswersConnectorSpec extends SpecBase {
 
@@ -33,6 +36,7 @@ class UserAnswersConnectorSpec extends SpecBase {
 
   val apiUrl   = "/report-pillar2-top-up-taxes"
   val testData = Json.parse("""{"test": "data"}""".stripMargin)
+  private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   "UserAnswersConnectors" when {
     "save should be successful" in {
@@ -47,6 +51,18 @@ class UserAnswersConnectorSpec extends SpecBase {
       stubGet(s"$apiUrl/user-cache/registration-subscription/id", OK, testData.toString())
       val result = connector.get("id")
       result.futureValue mustBe Some(testData)
+    }
+    "getUserAnswers" should {
+      "return none if no record is found" in {
+        stubGet(s"$apiUrl/user-cache/registration-subscription/id", NOT_FOUND, testData.toString())
+        val result = connector.getUserAnswer("id")
+        result.futureValue mustBe None
+      }
+      "return a future failed error in case of any response else than 200 or 404" in {
+        stubGet(s"$apiUrl/user-cache/registration-subscription/id", errorCodes.sample.value, testData.toString())
+        val result = connector.getUserAnswer("id")
+        result.failed.futureValue mustBe models.InternalIssueError
+      }
     }
 
   }

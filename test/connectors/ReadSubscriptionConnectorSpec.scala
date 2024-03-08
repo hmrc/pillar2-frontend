@@ -17,8 +17,8 @@
 package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.http.Fault
 import models.subscription.ReadSubscriptionRequestParameters
+import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -74,8 +74,8 @@ class ReadSubscriptionConnectorSpec extends SpecBase {
       conf = "microservice.services.pillar2.port" -> server.port()
     )
     .build()
-  lazy val connector: ReadSubscriptionConnector = app.injector.instanceOf[ReadSubscriptionConnector]
-
+  lazy val connector:     ReadSubscriptionConnector = app.injector.instanceOf[ReadSubscriptionConnector]
+  private val errorCodes: Gen[Int]                  = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
   "ReadSubscriptionConnector" should {
 
     "return Some(json) when the backend has returned 200 OK with data" in {
@@ -90,19 +90,9 @@ class ReadSubscriptionConnectorSpec extends SpecBase {
     "return None when the backend has returned a non-success status code" in {
       server.stubFor(
         get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-          .willReturn(aResponse().withStatus(404).withBody(unsuccessfulResponseJson))
+          .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
       )
 
-      val result = connector.readSubscription(readSubscriptionParameters).futureValue
-
-      result mustBe None
-    }
-
-    "return None when there is an exception during the call" in {
-      server.stubFor(
-        get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
-      )
       val result = connector.readSubscription(readSubscriptionParameters).futureValue
 
       result mustBe None

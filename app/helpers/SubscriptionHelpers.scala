@@ -16,10 +16,8 @@
 
 package helpers
 
-import models.UserAnswers
+import models.{EnrolmentInfo, UserAnswers}
 import pages._
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import utils.RowStatus
 
 trait SubscriptionHelpers {
@@ -54,6 +52,7 @@ trait SubscriptionHelpers {
       }
       .getOrElse(RowStatus.NotStarted)
 
+  // TODO - refactor this
   def fmStatus: RowStatus =
     get(NominateFilingMemberPage)
       .map { nominated =>
@@ -146,53 +145,64 @@ trait SubscriptionHelpers {
     }
   }
 
-  def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus) =
+  def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (
       upe == RowStatus.Completed &
         nfm == RowStatus.Completed &
         groupDetail == RowStatus.Completed &
         contactDetail == RowStatus.Completed
     ) {
-      RowStatus.NotStarted.toString
-    } else { "Cannot start yet" }
+      RowStatus.NotStarted
+    } else { RowStatus.CannotStartYet }
 
-  def getFmSafeID: Either[Result, Option[String]] =
-    get(NominateFilingMemberPage)
-      .map { nominated =>
-        if (nominated) {
-          get(fmRegisteredInUKPage)
-            .map { ukBased =>
-              if (ukBased) {
-                (for {
-                  safeID <- get(FmSafeIDPage)
-                } yield Right(Some(safeID))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-              } else if (!ukBased) {
-                Right(None)
-              } else {
-                Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-              }
-            }
-            .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-        } else if (!nominated) {
-          Right(None)
-        } else {
-          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def getFmSafeID: Option[String] =
+    get(NominateFilingMemberPage).flatMap(nominated =>
+      if (nominated) {
+        get(fmRegisteredInUKPage).flatMap { ukBased =>
+          if (ukBased) {
+            get(FmSafeIDPage)
+          } else {
+            None
+          }
         }
+      } else {
+        None
       }
-      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    )
 
-  def getUpRegData: Either[Result, Option[String]] =
+  def getUpeSafeID: Option[String] =
+    get(upeRegisteredInUKPage).flatMap { ukBased =>
+      if (ukBased) {
+        get(UpeRegInformationPage).map(regInfo => regInfo.safeId)
+      } else {
+        None
+      }
+    }
+
+  def createEnrolmentInfo(plpID: String): EnrolmentInfo =
     get(upeRegisteredInUKPage)
-      .map { ukBased =>
+      .flatMap { ukBased =>
         if (ukBased) {
-          (for {
-            regInfo <- get(UpeRegInformationPage)
-          } yield Right(Some(regInfo.safeId))).getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-        } else if (!ukBased) {
-          Right(None)
+          get(UpeRegInformationPage)
+            .map { regInfo =>
+              EnrolmentInfo(ctUtr = Some(regInfo.utr), crn = Some(regInfo.crn), plrId = plpID)
+            }
         } else {
-          Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          get(upeRegisteredAddressPage).map(address =>
+            EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID)
+          )
         }
       }
-      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(EnrolmentInfo(plrId = plpID))
+
+  def securityQuestionStatus: RowStatus = {
+    val first  = get(rfmSecurityCheckPage).isDefined
+    val second = get(rfmRegistrationDatePage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
+
 }

@@ -30,7 +30,7 @@
 )
 
 
-@(pil2Id: String, currentDate:String, mneDomestic:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pil2Id: String, currentDate:String, mneOrDomestic:MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
@@ -54,7 +54,7 @@
 
     @paragraphBody(messages("registrationConfirmation.now", link(
       text = messages("registrationConfirmation.link-home"),
-      call = Call("GET", "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"),
+      call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
       fullStop = true
     )))
 
