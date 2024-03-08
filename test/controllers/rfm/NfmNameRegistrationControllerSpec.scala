@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.rfmNfmNameRegistrationPage
+import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -42,11 +43,6 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -58,6 +54,27 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val pageAnswer = emptyUserAnswers.setOrException(rfmNfmNameRegistrationPage, "alex")
+
+      val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.NfmNameRegistrationController.onPageLoad().url)
+
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -84,12 +101,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     "must redirect to the next page when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
@@ -108,11 +120,6 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {

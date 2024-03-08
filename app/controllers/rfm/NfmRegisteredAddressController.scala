@@ -59,7 +59,7 @@ class NfmRegisteredAddressController @Inject() (
           }
           Ok(view(preparedForm, mode, name, countryOptions.options()))
         }
-        .getOrElse(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -81,7 +81,7 @@ class NfmRegisteredAddressController @Inject() (
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }
