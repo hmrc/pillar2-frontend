@@ -41,11 +41,6 @@ class CorporatePositionControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -64,11 +59,6 @@ class CorporatePositionControllerSpec extends SpecBase {
       val userAnswers = emptyUserAnswers.setOrException(rfmCorporatePositionPage, CorporatePosition.NewNfm)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -113,11 +103,6 @@ class CorporatePositionControllerSpec extends SpecBase {
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -133,16 +118,11 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted with New NFM" in {
+    "must redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
-        )
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
         )
         .build()
 
@@ -155,18 +135,13 @@ class CorporatePositionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {

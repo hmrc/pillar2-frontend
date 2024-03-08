@@ -334,7 +334,7 @@ isNFMRegisteredInUK.heading.caption = Group details
 isNFMRegisteredInUK.heading = Is the new nominated filing member registered in the UK?
 isNFMRegisteredInUK.yes = Yes
 isNFMRegisteredInUK.no = No
-isNFMRegisteredInUK.error.required = Select yes if the new nominated filing member registered in the UK
+isNFMRegisteredInUK.error.required = Select yes if the new nominated filing member is registered in the UK
 isNFMRegisteredInUK.title = Is the new nominated filing member registered in the UK?
 
 

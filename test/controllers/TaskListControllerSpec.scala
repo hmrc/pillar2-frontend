@@ -22,8 +22,7 @@ import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
 import models.tasklist.SectionStatus
-import models.{MneOrDomestic, NonUKAddress}
-import models.{MneOrDomestic, NonUKAddress, TaskAction, TaskStatus, UserAnswers}
+import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
