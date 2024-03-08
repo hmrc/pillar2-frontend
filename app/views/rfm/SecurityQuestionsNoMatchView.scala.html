@@ -23,6 +23,7 @@
     heading: heading,
     paragraphBody: paragraphBody,
     paragraphWithLink: paragraphWithLink,
+    sectionHeader: sectionHeader,
     link: link
 )
 
@@ -30,10 +31,10 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("rfm.security.errorPage.title")),
-    showBackLink = false,
+    showBackLink = true,
     authorised = false
 ) {
-
+                @sectionHeader(messages("rfm.heading.caption"))
                 @heading(messages("rfm.security.errorPage.heading"), "govuk-heading-l")
                 @paragraphBody(messages("rfm.security.errorPage.p1"))
                 @paragraphWithLink(
