@@ -42,7 +42,7 @@
 
     @heading(messages("registrationConfirmation.reg-date", currentDate), "govuk-heading-s govuk-!-margin-top-5", "h2")
 
-    @paragraphBody(messages("registrationConfirmation.p1", mneDomestic))
+    @paragraphBody(messages("registrationConfirmation.p1", messages(s"mneOrDom.${mneOrDomestic}")))
 
     @paragraphBody(messages("registrationConfirmation.p2"), "govuk-heading-s")
 
