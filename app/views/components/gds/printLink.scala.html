@@ -16,6 +16,6 @@
 
 @this()
 
-@(message: String, classes: String = "govuk-heading-xl", tier: String = "h1")
+@(message: String)
 
-<@tier class="@classes">@message</@tier>
+<p id="print-this-page" class="govuk-body"><a href="#" class="govuk-link hmrc-!-js-visible" data-module="hmrc-print-link">@message</a></p>
