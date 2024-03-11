@@ -58,7 +58,6 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
       .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
       .setOrException(subAccountingPeriodPage, date)
-      .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
       .setOrException(NominateFilingMemberPage, false)
 
     "return OK and the correct view if an answer is provided to every question " in {

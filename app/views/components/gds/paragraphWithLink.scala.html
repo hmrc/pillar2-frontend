@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@this()
 
-import models.rfm.RegistrationDate
-import play.api.libs.json.JsPath
+@(text: String,  call: Call, hyperLinkMessage: String, classes: String = "govuk-link govuk-link--no-visited-state", id: Option[String] = None)
 
-case object rfmRegistrationDatePage extends QuestionPage[RegistrationDate] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "rfmRegistrationDatePage"
-}
+<p class="govuk-body">
+<a> @text</a> <a href="@call" class="@classes" @id.map{id => id="@id"}> @hyperLinkMessage</a>
+</p>

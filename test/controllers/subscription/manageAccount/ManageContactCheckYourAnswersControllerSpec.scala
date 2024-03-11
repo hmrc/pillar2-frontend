@@ -20,10 +20,9 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, AmendSubscriptionRequestParameters, DashboardInfo}
-import models.{ApiError, EnrolmentExistsError, InternalServerError_, MneOrDomestic, NonUKAddress, SubscriptionCreateError, UnauthorizedError}
+import models.{ApiError, InternalServerError_, MneOrDomestic, NonUKAddress, SubscriptionCreateError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalacheck.Prop.True
 import pages._
 import play.api.Configuration
 import play.api.inject.bind

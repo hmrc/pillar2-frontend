@@ -18,22 +18,20 @@ package controllers.bta
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{ContactUPEByTelephoneFormProvider, HavePillar2TopUpTaxIdFormProvider}
+import forms.HavePillar2TopUpTaxIdFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subHavePillar2TopUpTaxIdPage, subPrimaryContactNamePage, subPrimaryEmailPage, subSecondaryContactNamePage, upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
+import pages.subHavePillar2TopUpTaxIdPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.bta.HavePillar2TopUpTaxIdView
-import views.html.registrationview.ContactUPEByTelephoneView
-import views.html.subscriptionview.{AddSecondaryContactView, SecondaryTelephonePreferenceView}
 
 import scala.concurrent.Future
 
-class HavePillar2TopUpTaxIdControllerontrollerSpec extends SpecBase {
+class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
 
   val form         = new HavePillar2TopUpTaxIdFormProvider()
   val formProvider = form()

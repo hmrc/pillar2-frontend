@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.{rfmRegistrationDatePage, subAccountingPeriodPage}
+import pages.{RfmRegistrationDatePage, subAccountingPeriodPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,7 +29,7 @@ import viewmodels.implicits._
 object RfmRegistrationDateSummary {
   val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(rfmRegistrationDatePage).map { answer =>
+    answers.get(RfmRegistrationDatePage).map { answer =>
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.rfmRegistrationDate))
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",

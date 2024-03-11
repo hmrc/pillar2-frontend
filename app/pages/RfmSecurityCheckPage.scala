@@ -18,7 +18,7 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object rfmSecurityCheckPage extends QuestionPage[String] {
+case object RfmSecurityCheckPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 

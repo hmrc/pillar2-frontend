@@ -22,7 +22,6 @@ import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.upeNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json

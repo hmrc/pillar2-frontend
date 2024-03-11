@@ -18,19 +18,17 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
+import forms.GroupRegistrationDateReportFormProvider
+import models.NormalMode
 import models.rfm.RegistrationDate
-import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{rfmRegistrationDatePage, rfmSecurityCheckPage, subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.RfmRegistrationDatePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.GroupRegistrationDateReportView
-import views.html.subscriptionview.GroupAccountingPeriodView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -38,7 +36,7 @@ import scala.concurrent.Future
 class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
   val formProvider = new GroupRegistrationDateReportFormProvider()
-  val startDate    = LocalDate.of(2023, 12, 31)
+  val startDate: LocalDate = LocalDate.of(2023, 12, 31)
   "GroupRegistrationDateReport Controller" when {
 
     "must redirect to correct view when rfm feature false" in {
@@ -82,7 +80,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
       val date = RegistrationDate(startDate)
-      val ua   = emptyUserAnswers.setOrException(rfmRegistrationDatePage, date)
+      val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, date)
       val application = applicationBuilder(Some(ua))
         .configure(
           Seq(
@@ -126,7 +124,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad.url
       }
 
     }

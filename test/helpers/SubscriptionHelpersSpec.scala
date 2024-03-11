@@ -17,13 +17,12 @@
 package helpers
 
 import base.SpecBase
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.AccountingPeriod
-import models.{EnrolmentInfo, MneOrDomestic, NonUKAddress, UKAddress}
+import models.rfm.RegistrationDate
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-import models.rfm.RegistrationDate
+
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
@@ -266,10 +265,10 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "12323212")
+          .set(RfmSecurityCheckPage, "12323212")
           .success
           .value
-          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .set(RfmRegistrationDatePage, RegistrationDate(date))
           .success
           .value
 
@@ -278,7 +277,7 @@ class SubscriptionHelpersSpec extends SpecBase {
 
       "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
         val userAnswersInProgress = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "Security Check Answer")
+          .set(RfmSecurityCheckPage, "Security Check Answer")
           .success
           .value
 
