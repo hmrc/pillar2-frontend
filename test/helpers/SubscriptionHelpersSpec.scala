@@ -293,6 +293,39 @@ class SubscriptionHelpersSpec extends SpecBase {
 
     }
 
+    "SubscriptionHelpers.rfmNoIdQuestionStatus" should {
+      val name = "nfm name"
+      val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
+      "return Completed when answers are provided to all security questions" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(rfmNfmNameRegistrationPage, name)
+          .success
+          .value
+          .set(rfmNfmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
+
+        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.Completed
+      }
+
+      "return InProgress when an answer is provided to rfmNfmNameRegistrationPage and not to rfmNfmRegisteredAddressPage" in {
+        val userAnswersInProgress = emptyUserAnswers
+          .set(rfmNfmNameRegistrationPage, name)
+          .success
+          .value
+
+        userAnswersInProgress.rfmNoIdQuestionStatus mustEqual RowStatus.InProgress
+      }
+
+      "return NotStarted when answers are not provided to any of the rfm NoId questions" in {
+        val userAnswers = emptyUserAnswers
+
+        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.NotStarted
+      }
+
+    }
+
   }
 
 }

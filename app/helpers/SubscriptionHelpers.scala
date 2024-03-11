@@ -205,4 +205,13 @@ trait SubscriptionHelpers {
     }
   }
 
+  def rfmNoIdQuestionStatus: RowStatus = {
+    val first  = get(rfmNfmNameRegistrationPage).isDefined
+    val second = get(rfmNfmRegisteredAddressPage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
 }
