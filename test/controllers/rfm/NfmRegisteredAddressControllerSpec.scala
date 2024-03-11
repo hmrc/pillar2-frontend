@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.rfmNfmNameRegistrationPage
+import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -41,11 +42,6 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
       val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -55,6 +51,41 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[NfmRegisteredAddressView]
         status(result) mustEqual OK
+      }
+    }
+
+    "must return OK and the correct view for a GET if RFM access is enabled and page previously has been answered" in {
+      val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad().url).withFormUrlEncodedBody(
+            ("addressLine1", "27 house"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Newcastle"),
+            ("addressLine4", "North east"),
+            ("postalCode", "NE3 2TR"),
+            ("countryCode", "GB")
+          )
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+      }
+    }
+
+    "redirect to JourneyRecoveryController if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
@@ -80,13 +111,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the UnderConstructionController page when valid data is submitted" in {
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
+      val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
@@ -113,11 +140,6 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -142,11 +164,6 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
