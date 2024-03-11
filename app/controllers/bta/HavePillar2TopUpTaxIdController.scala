@@ -55,7 +55,7 @@ class HavePillar2TopUpTaxIdController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Redirect(controllers.routes.ErrorController.pageNotFoundLoad)
     }
   }
 
