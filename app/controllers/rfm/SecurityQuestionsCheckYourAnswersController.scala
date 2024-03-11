@@ -72,9 +72,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     (for {
       inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmSecurityCheckPage))
       inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
-      _              <- OptionT.liftF(readSubscription.readSubscription(ReadSubscriptionRequestParameters(request.userId, inputPillar2Reference)))
-      updatedAnswers <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
-      dashboard      <- OptionT.fromOption[Future](updatedAnswers.get(fmDashboardPage))
+      _         <- OptionT.liftF(readSubscription.readSubscription(ReadSubscriptionRequestParameters(request.userId, inputPillar2Reference)))
+      dashboard <- OptionT.fromOption[Future](request.userAnswers.get(fmDashboardPage))
     } yield
       if (dashboard.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
