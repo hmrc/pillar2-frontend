@@ -28,15 +28,3 @@ label[for="confirmation_0"] {
     width: 42%;
   }
 }
-
-@media print {
-  #print-this-page, .hmrc-sign-out-nav, .govuk-footer  {
-    display: none !important;
-  }
-  .govuk-grid-column-two-thirds {
-    width:100%;
-  }
-  a[href]:after {
-    content: none !important;
-  }
-}
