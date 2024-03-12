@@ -17,13 +17,12 @@
 package helpers
 
 import base.SpecBase
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.AccountingPeriod
-import models.{EnrolmentInfo, MneOrDomestic, NonUKAddress, UKAddress}
+import models.rfm.RegistrationDate
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-import models.rfm.RegistrationDate
+
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {

@@ -16,7 +16,6 @@
 
 package pages
 
-import models.grs.EntityType
 import pages.behaviours.PageBehaviours
 
 class PlrReferencePageSpec extends PageBehaviours {

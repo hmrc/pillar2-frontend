@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
 import models.Mode
-import navigation.Navigator
-import pages.{UpeCapturePhonePage, UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import navigation.UltimateParentNavigator
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -40,7 +40,7 @@ class ContactUPEByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              ContactUPEByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  navigator :                Navigator,
+  navigator:                 UltimateParentNavigator,
   view:                      ContactUPEByTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -71,13 +71,12 @@ class ContactUPEByTelephoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominated => {
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, nominated))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(UpePhonePreferencePage, mode, request.userAnswers))
-              }
+            nominated =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, nominated))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(UpePhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

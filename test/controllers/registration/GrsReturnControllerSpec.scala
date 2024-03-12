@@ -22,7 +22,7 @@ import models.grs.EntityType
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmEntityTypePage, UpeEntityTypePage}
+import pages.{UpeEntityTypePage, fmEntityTypePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

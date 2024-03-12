@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.UltimateParentNavigator
 import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -38,7 +38,7 @@ class UpeContactNameController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeContactNameFormProvider,
-  navigator :                Navigator,
+  navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -49,11 +49,7 @@ class UpeContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(UpeRegisteredAddressPage)) {
-      val preparedForm = request.userAnswers.get(UpeContactNamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
+      val preparedForm = request.userAnswers.get(UpeContactNamePage).map(contactName => form.fill(contactName)).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
@@ -73,7 +69,7 @@ class UpeContactNameController @Inject() (
                   .set(UpeContactNamePage, value)
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(UpeContactNamePage, mode, updatedAnswers))
       )
   }
 

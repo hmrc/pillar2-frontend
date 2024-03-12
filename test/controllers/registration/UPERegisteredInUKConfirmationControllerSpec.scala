@@ -19,30 +19,14 @@ package controllers.registration
 import base.SpecBase
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
-import models.grs.GrsCreateRegistrationResponse
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.libs.json.Json
+import pages.UpeRegisteredInUKPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
-import scala.concurrent.Future
-
 class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
   val formProvider = new UPERegisteredInUKConfirmationFormProvider()
-
-  def controller(): UPERegisteredInUKConfirmationController =
-    new UPERegisteredInUKConfirmationController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewUPERegisteredInUKConfirmation
-    )
 
   "Is UPE Registered in UK Confirmation Controller" must {
 
@@ -58,30 +42,17 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustBe OK
       }
     }
+    "must return ok with a correct view if page previously answered" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true))).build()
 
-    "must redirect to Entity Type page when valid data is submitted with value YES" in {
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[UPERegisteredInUKConfirmationView]
+        val result  = route(application, request).value
 
-      val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "true"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
-        .thenReturn(Future(GrsCreateRegistrationResponse("/report-pillar2-top-up-taxes/under-construction")))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
-
-    }
-
-    "must redirect to UPE Name page when valid data is submitted with value NO" in {
-
-      val request =
-        FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "false"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+        status(result) mustBe OK
+      }
 
     }
   }

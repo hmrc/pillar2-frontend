@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.UltimateParentNavigator
 import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -39,7 +39,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  navigator:                 Navigator,
+  navigator:                 UltimateParentNavigator,
   formProvider:              UPERegisteredInUKConfirmationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UPERegisteredInUKConfirmationView
@@ -63,26 +63,25 @@ class UPERegisteredInUKConfirmationController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case true =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(
-                                     request.userAnswers
-                                       .get(GrsUpeStatusPage)
-                                       .map(updatedAnswers.set(GrsUpeStatusPage, _))
-                                       .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
-                                   )
-                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-              } yield Redirect(navigator.nextPage(UpeRegisteredInUKPage, mode, request.userAnswers))
-            case false =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(UpeRegisteredInUKPage, mode, request.userAnswers))
+        {
+          case value @ true =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
+              updatedAnswers1 <- Future.fromTry(
+                                   request.userAnswers
+                                     .get(GrsUpeStatusPage)
+                                     .map(updatedAnswers.set(GrsUpeStatusPage, _))
+                                     .getOrElse(updatedAnswers.set(GrsUpeStatusPage, RowStatus.InProgress))
+                                 )
+              _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+            } yield Redirect(navigator.nextPage(UpeRegisteredInUKPage, mode, updatedAnswers1))
+          case value @ false =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(navigator.nextPage(UpeRegisteredInUKPage, mode, updatedAnswers))
 
-          }
+        }
       )
   }
 

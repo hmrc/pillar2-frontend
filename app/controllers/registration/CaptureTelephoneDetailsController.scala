@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
-import navigation.Navigator
-import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage, UpeRegisteredAddressPage}
+import navigation.UltimateParentNavigator
+import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -40,7 +40,7 @@ class CaptureTelephoneDetailsController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  navigator :                Navigator,
+  navigator:                 UltimateParentNavigator,
   view:                      CaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -75,7 +75,7 @@ class CaptureTelephoneDetailsController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(UpeCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(UpeCapturePhonePage, mode, request.userAnswers))
+              } yield Redirect(navigator.nextPage(UpeCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

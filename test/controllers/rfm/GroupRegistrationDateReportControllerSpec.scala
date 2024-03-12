@@ -18,19 +18,17 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{GroupAccountingPeriodFormProvider, GroupRegistrationDateReportFormProvider}
+import forms.GroupRegistrationDateReportFormProvider
+import models.NormalMode
 import models.rfm.RegistrationDate
-import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{rfmRegistrationDatePage, rfmSecurityCheckPage, subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.rfmRegistrationDatePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.GroupRegistrationDateReportView
-import views.html.subscriptionview.GroupAccountingPeriodView
 
 import java.time.LocalDate
 import scala.concurrent.Future
