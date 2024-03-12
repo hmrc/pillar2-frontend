@@ -39,7 +39,7 @@
     @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
 
         @govukRadios(
