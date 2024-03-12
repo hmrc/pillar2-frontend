@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{fmCapturePhonePage, fmContactNamePage, fmPhonePreferencePage}
+import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,11 +46,11 @@ class NfmCaptureTelephoneDetailsController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _    <- request.userAnswers.get(fmPhonePreferencePage)
-      name <- request.userAnswers.get(fmContactNamePage)
+      _    <- request.userAnswers.get(FmPhonePreferencePage)
+      name <- request.userAnswers.get(FmContactNamePage)
     } yield {
       val form = formProvider(name)
-      val preparedForm = request.userAnswers.get(fmCapturePhonePage) match {
+      val preparedForm = request.userAnswers.get(FmCapturePhonePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -62,7 +62,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(fmContactNamePage)
+      .get(FmContactNamePage)
       .map { userName =>
         formProvider(userName)
           .bindFromRequest()
@@ -70,7 +70,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmCapturePhonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
           )

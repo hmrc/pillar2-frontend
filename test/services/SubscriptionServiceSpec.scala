@@ -37,7 +37,7 @@ class SubscriptionServiceSpec extends SpecBase {
       "return a success response with a pillar 2 reference for non uk based upe and fm" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
-          .setOrException(fmRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
           .setOrException(NominateFilingMemberPage, true)
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
@@ -62,7 +62,7 @@ class SubscriptionServiceSpec extends SpecBase {
       "return a success response with a pillar 2 reference for uk based upe and filing member" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmSafeIDPage, "fmSafeID")
           .setOrException(
@@ -115,7 +115,7 @@ class SubscriptionServiceSpec extends SpecBase {
       "throw an exception if subscription fails" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmSafeIDPage, "fmSafeID")
           .setOrException(
@@ -143,7 +143,7 @@ class SubscriptionServiceSpec extends SpecBase {
       "throw an exception if create enrolment fails" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmSafeIDPage, "fmSafeID")
           .setOrException(
@@ -171,7 +171,7 @@ class SubscriptionServiceSpec extends SpecBase {
       "throw an exception if enrolment proxy returns true" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmSafeIDPage, "fmSafeID")
           .setOrException(

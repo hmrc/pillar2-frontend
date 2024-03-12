@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.fmCapturePhonePage
+import pages.FmCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,7 +27,7 @@ import viewmodels.implicits._
 object NfmContactTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(fmCapturePhonePage).map { answer =>
+    answers.get(FmCapturePhonePage).map { answer =>
       SummaryListRowViewModel(
         key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),

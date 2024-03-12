@@ -226,127 +226,127 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val fmNoNameReg = emptyUserAnswers
-    .set(fmContactNamePage, "name")
+    .set(FmContactNamePage, "name")
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredAddressPage, nonUkAddress)
+    .set(FmRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(fmContactEmailPage, email)
+    .set(FmContactEmailPage, email)
     .success
     .value
-    .set(fmPhonePreferencePage, false)
+    .set(FmPhonePreferencePage, false)
     .success
     .value
 
   val fmNoContactName = emptyUserAnswers
-    .set(fmNameRegistrationPage, "name")
+    .set(FmNameRegistrationPage, "name")
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
-    .set(fmRegisteredAddressPage, nonUkAddress)
+    .set(FmRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(fmContactEmailPage, email)
+    .set(FmContactEmailPage, email)
     .success
     .value
-    .set(fmPhonePreferencePage, false)
+    .set(FmPhonePreferencePage, false)
     .success
     .value
 
   val fmNoAddress = emptyUserAnswers
-    .set(fmNameRegistrationPage, "name")
+    .set(FmNameRegistrationPage, "name")
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmContactEmailPage, email)
+    .set(FmContactEmailPage, email)
     .success
     .value
-    .set(fmPhonePreferencePage, false)
+    .set(FmPhonePreferencePage, false)
     .success
     .value
 
   val fmNoEmail = emptyUserAnswers
-    .set(fmNameRegistrationPage, "name")
+    .set(FmNameRegistrationPage, "name")
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredAddressPage, nonUkAddress)
+    .set(FmRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(fmPhonePreferencePage, false)
+    .set(FmPhonePreferencePage, false)
     .success
     .value
 
   val fmNoPhonePref = emptyUserAnswers
-    .set(fmNameRegistrationPage, "name")
+    .set(FmNameRegistrationPage, "name")
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredAddressPage, nonUkAddress)
+    .set(FmRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(fmContactEmailPage, email)
+    .set(FmContactEmailPage, email)
     .success
     .value
 
   val fmPhonePrefNoPhoneNum = emptyUserAnswers
-    .set(fmNameRegistrationPage, "name")
+    .set(FmNameRegistrationPage, "name")
     .success
     .value
-    .set(fmRegisteredInUKPage, false)
+    .set(FmRegisteredInUKPage, false)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmContactNamePage, "name")
+    .set(FmContactNamePage, "name")
     .success
     .value
-    .set(fmRegisteredAddressPage, nonUkAddress)
+    .set(FmRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(fmContactEmailPage, email)
+    .set(FmContactEmailPage, email)
     .success
     .value
-    .set(fmPhonePreferencePage, true)
+    .set(FmPhonePreferencePage, true)
     .success
     .value
 
   val fmCompletedGrsResponse = emptyUserAnswers
-    .set(fmEntityTypePage, EntityType.UkLimitedCompany)
+    .set(FmEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
-    .set(fmRegisteredInUKPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
-    .set(fmGRSResponsePage, grsResponse)
+    .set(FmGRSResponsePage, grsResponse)
     .success
     .value
     .set(NominateFilingMemberPage, true)
@@ -357,13 +357,13 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val fmNoEntityType = emptyUserAnswers
-    .set(fmGRSResponsePage, grsResponse)
+    .set(FmGRSResponsePage, grsResponse)
     .success
     .value
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredInUKPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
     .set(GrsUpeStatusPage, RowStatus.Completed)
@@ -371,7 +371,7 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val fmNoGrsResponse = emptyUserAnswers
-    .set(fmEntityTypePage, EntityType.UkLimitedCompany)
+    .set(FmEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
     .set(GrsFilingMemberStatusPage, RowStatus.Completed)
@@ -380,60 +380,60 @@ trait UserAnswersFixture extends TryValues {
     .set(NominateFilingMemberPage, true)
     .success
     .value
-    .set(fmRegisteredInUKPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
 
   val groupDetailCompleted = emptyUserAnswers
-    .set(subMneOrDomesticPage, MneOrDomestic.Uk)
+    .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
     .success
     .value
-    .set(subAccountingPeriodPage, accountingPeriod)
+    .set(SubAccountingPeriodPage, accountingPeriod)
     .success
     .value
 
-  val groupDetailInProgress = emptyUserAnswers.set(subMneOrDomesticPage, MneOrDomestic.Uk).success.value
+  val groupDetailInProgress = emptyUserAnswers.set(SubMneOrDomesticPage, MneOrDomestic.Uk).success.value
 
   val contactDetailCompleted = emptyUserAnswers
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryEmailPage, "email@hello.com")
+    .set(SubPrimaryEmailPage, "email@hello.com")
     .success
     .value
-    .set(subPrimaryPhonePreferencePage, true)
+    .set(SubPrimaryPhonePreferencePage, true)
     .success
     .value
-    .set(subPrimaryCapturePhonePage, "123213")
+    .set(SubPrimaryCapturePhonePage, "123213")
     .success
     .value
-    .set(subAddSecondaryContactPage, false)
+    .set(SubAddSecondaryContactPage, false)
     .success
     .value
     .set(subUsePrimaryContactPage, true)
     .success
     .value
-    .set(subRegisteredAddressPage, nonUkAddress)
+    .set(SubRegisteredAddressPage, nonUkAddress)
     .success
     .value
 
   val contactDetailInProgress = emptyUserAnswers
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryEmailPage, "email@hello.com")
+    .set(SubPrimaryEmailPage, "email@hello.com")
     .success
     .value
-    .set(subPrimaryPhonePreferencePage, true)
+    .set(SubPrimaryPhonePreferencePage, true)
     .success
     .value
-    .set(subAddSecondaryContactPage, false)
+    .set(SubAddSecondaryContactPage, false)
     .success
     .value
     .set(subUsePrimaryContactPage, true)
@@ -441,19 +441,19 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val groupStatusIsTrue = emptyUserAnswers
-    .setOrException(subPrimaryPhonePreferencePage, false)
-    .setOrException(subAddSecondaryContactPage, false)
-    .setOrException(subRegisteredAddressPage, nonUkAddress)
+    .setOrException(SubPrimaryPhonePreferencePage, false)
+    .setOrException(SubAddSecondaryContactPage, false)
+    .setOrException(SubRegisteredAddressPage, nonUkAddress)
 
   val finalStatusIsTrue = emptyUserAnswers
-    .setOrException(subPrimaryPhonePreferencePage, false)
-    .setOrException(subAddSecondaryContactPage, false)
-    .setOrException(subRegisteredAddressPage, nonUkAddress)
+    .setOrException(SubPrimaryPhonePreferencePage, false)
+    .setOrException(SubAddSecondaryContactPage, false)
+    .setOrException(SubRegisteredAddressPage, nonUkAddress)
     .setOrException(NominateFilingMemberPage, false)
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-    .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-    .setOrException(subAccountingPeriodPage, accountingPeriod)
+    .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+    .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(upeGRSResponsePage, grsResponse)
 
@@ -479,13 +479,13 @@ trait UserAnswersFixture extends TryValues {
     .set(UpeCapturePhonePage, "12312")
     .success
     .value
-    .set(fmEntityTypePage, EntityType.UkLimitedCompany)
+    .set(FmEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
-    .set(fmRegisteredInUKPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
-    .set(fmGRSResponsePage, grsResponse)
+    .set(FmGRSResponsePage, grsResponse)
     .success
     .value
     .set(NominateFilingMemberPage, true)
@@ -494,34 +494,34 @@ trait UserAnswersFixture extends TryValues {
     .set(GrsFilingMemberStatusPage, RowStatus.Completed)
     .success
     .value
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryContactNamePage, "name")
+    .set(SubPrimaryContactNamePage, "name")
     .success
     .value
-    .set(subPrimaryEmailPage, "email@hello.com")
+    .set(SubPrimaryEmailPage, "email@hello.com")
     .success
     .value
-    .set(subPrimaryPhonePreferencePage, true)
+    .set(SubPrimaryPhonePreferencePage, true)
     .success
     .value
-    .set(subPrimaryCapturePhonePage, "123213")
+    .set(SubPrimaryCapturePhonePage, "123213")
     .success
     .value
-    .set(subAddSecondaryContactPage, false)
+    .set(SubAddSecondaryContactPage, false)
     .success
     .value
     .set(subUsePrimaryContactPage, true)
     .success
     .value
-    .set(subRegisteredAddressPage, nonUkAddress)
+    .set(SubRegisteredAddressPage, nonUkAddress)
     .success
     .value
-    .set(subMneOrDomesticPage, MneOrDomestic.Uk)
+    .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
     .success
     .value
-    .set(subAccountingPeriodPage, accountingPeriod)
+    .set(SubAccountingPeriodPage, accountingPeriod)
     .success
     .value
 

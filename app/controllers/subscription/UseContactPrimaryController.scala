@@ -52,9 +52,9 @@ class UseContactPrimaryController @Inject() (
     (for {
       nfmNominated     <- request.userAnswers.get(NominateFilingMemberPage)
       upeMneOrDomestic <- request.userAnswers.get(UpeRegisteredInUKPage)
-      _                <- request.userAnswers.get(subAccountingPeriodPage)
+      _                <- request.userAnswers.get(SubAccountingPeriodPage)
     } yield {
-      val nfmMneOrDom = request.userAnswers.get(fmRegisteredInUKPage)
+      val nfmMneOrDom = request.userAnswers.get(FmRegisteredInUKPage)
       (nfmNominated, upeMneOrDomestic, nfmMneOrDom) match {
         case (true, _, Some(false))                        => fmNoID(mode)
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
@@ -76,12 +76,12 @@ class UseContactPrimaryController @Inject() (
                 case true =>
                   for {
                     updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
-                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.ContactEmail))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
                     updatedAnswers4 <-
                       Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                     _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
                 case false =>
@@ -100,13 +100,13 @@ class UseContactPrimaryController @Inject() (
       .get(NominateFilingMemberPage)
       .flatMap { registered =>
         if (registered) {
-          request.userAnswers.get(fmRegisteredInUKPage).map { ukBased =>
+          request.userAnswers.get(FmRegisteredInUKPage).map { ukBased =>
             if (!ukBased) {
               (for {
-                contactName  <- request.userAnswers.get(fmContactNamePage)
-                contactEmail <- request.userAnswers.get(fmContactEmailPage)
-                phonePref    <- request.userAnswers.get(fmPhonePreferencePage)
-              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(fmCapturePhonePage))))
+                contactName  <- request.userAnswers.get(FmContactNamePage)
+                contactEmail <- request.userAnswers.get(FmContactEmailPage)
+                phonePref    <- request.userAnswers.get(FmPhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(FmCapturePhonePage))))
                 .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               (for {
@@ -129,11 +129,11 @@ class UseContactPrimaryController @Inject() (
 
   private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
-      contactName  <- request.userAnswers.get(fmContactNamePage)
-      contactEmail <- request.userAnswers.get(fmContactEmailPage)
-      telPref      <- request.userAnswers.get(fmPhonePreferencePage)
+      contactName  <- request.userAnswers.get(FmContactNamePage)
+      contactEmail <- request.userAnswers.get(FmContactEmailPage)
+      telPref      <- request.userAnswers.get(FmPhonePreferencePage)
     } yield {
-      val contactTel = request.userAnswers.get(fmCapturePhonePage)
+      val contactTel = request.userAnswers.get(FmCapturePhonePage)
       request.userAnswers.get(subUsePrimaryContactPage) match {
         case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
         case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))

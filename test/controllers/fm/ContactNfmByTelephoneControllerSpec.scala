@@ -22,7 +22,7 @@ import forms.ContactNfmByTelephoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmContactEmailPage, fmContactNamePage, fmPhonePreferencePage}
+import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,8 +40,8 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val ua = emptyUserAnswers
-        .setOrException(fmContactNamePage, "TestName")
-        .setOrException(fmContactEmailPage, "email")
+        .setOrException(FmContactNamePage, "TestName")
+        .setOrException(FmContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -62,9 +62,9 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
-        .setOrException(fmPhonePreferencePage, true)
-        .setOrException(fmContactNamePage, "TestName")
-        .setOrException(fmContactEmailPage, "email")
+        .setOrException(FmPhonePreferencePage, true)
+        .setOrException(FmContactNamePage, "TestName")
+        .setOrException(FmContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -86,7 +86,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua          = emptyUserAnswers.set(fmContactNamePage, "TestName").success.value
+      val ua          = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -99,7 +99,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(fmContactNamePage, "TestName").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -119,7 +119,7 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
     }
 
     " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(fmContactNamePage, "TestName").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

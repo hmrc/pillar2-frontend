@@ -16,11 +16,13 @@
 
 package pages
 
+import models.subscription.DashboardInfo
 import play.api.libs.json.JsPath
 
-case object fmContactEmailPage extends QuestionPage[String] {
+case object FmDashboardPage extends QuestionPage[DashboardInfo] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "fmContactEmail"
+  override def toString: String = "fmDashboard"
+
 }

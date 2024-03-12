@@ -22,7 +22,7 @@ import forms.SecondaryTelephoneFormProvider
 import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, subSecondaryPhonePreferencePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -41,7 +41,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if no previous data is found" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(subSecondaryPhonePreferencePage, true)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -59,9 +59,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(subSecondaryPhonePreferencePage, true)
-        .setOrException(subSecondaryCapturePhonePage, "1234567")
+        .setOrException(SubSecondaryCapturePhonePage, "1234567")
 
       val application = applicationBuilder(Some(ua)).build()
 
@@ -83,7 +83,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
       val bigString   = "123" * 100
       running(application) {
@@ -131,7 +131,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "redirect to a page to capture their address if valid data is submitted" in {
       val ua = emptyUserAnswers
-        .set(subSecondaryContactNamePage, "name")
+        .set(SubSecondaryContactNamePage, "name")
         .success
         .value
 

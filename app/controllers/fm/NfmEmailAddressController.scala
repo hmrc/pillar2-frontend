@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmEmailAddressFormProvider
 import models.Mode
-import pages.{fmContactEmailPage, fmContactNamePage}
+import pages.{FmContactEmailPage, FmContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,10 +45,10 @@ class NfmEmailAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(fmContactNamePage)
+      .get(FmContactNamePage)
       .map { name =>
         val form = formProvider(name)
-        val preparedForm = request.userAnswers.get(fmContactEmailPage) match {
+        val preparedForm = request.userAnswers.get(FmContactEmailPage) match {
           case Some(value) => form.fill(value)
           case None        => form
         }
@@ -59,7 +59,7 @@ class NfmEmailAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(fmContactNamePage)
+      .get(FmContactNamePage)
       .map { userName =>
         formProvider(userName)
           .bindFromRequest()
@@ -67,7 +67,7 @@ class NfmEmailAddressController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers set (fmContactEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers set (FmContactEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
           )

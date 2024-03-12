@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNfmByTelephoneFormProvider
 import models.Mode
-import pages.{fmContactEmailPage, fmContactNamePage, fmPhonePreferencePage}
+import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,11 +46,11 @@ class ContactNfmByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _    <- request.userAnswers.get(fmContactEmailPage)
-      name <- request.userAnswers.get(fmContactNamePage)
+      _    <- request.userAnswers.get(FmContactEmailPage)
+      name <- request.userAnswers.get(FmContactNamePage)
     } yield {
       val form = formProvider(name)
-      val preparedForm = request.userAnswers.get(fmPhonePreferencePage) match {
+      val preparedForm = request.userAnswers.get(FmPhonePreferencePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -62,7 +62,7 @@ class ContactNfmByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(fmContactNamePage)
+      .get(FmContactNamePage)
       .map { userName =>
         formProvider(userName)
           .bindFromRequest()
@@ -73,14 +73,14 @@ class ContactNfmByTelephoneController @Inject() (
                 case true =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(FmPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(mode))
 
                 case false =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(fmPhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(FmPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
               }

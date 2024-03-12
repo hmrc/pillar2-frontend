@@ -22,7 +22,7 @@ import forms.NfmContactNameFormProvider
 import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmContactNamePage, fmRegisteredAddressPage}
+import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,7 +37,7 @@ class NfmContactNameControllerSpec extends SpecBase {
   "NFMContactName Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredAddressPage, nonUkAddress)
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredAddressPage, nonUkAddress)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -59,8 +59,8 @@ class NfmContactNameControllerSpec extends SpecBase {
     }
     "must return OK and the correct view for a GET if page previously answered" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(fmRegisteredAddressPage, nonUkAddress)
-        .setOrException(fmContactNamePage, "name")
+        .setOrException(FmRegisteredAddressPage, nonUkAddress)
+        .setOrException(FmContactNamePage, "name")
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

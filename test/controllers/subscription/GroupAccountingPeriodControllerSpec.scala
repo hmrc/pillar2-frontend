@@ -23,7 +23,7 @@ import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,7 +40,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   "GroupAccountingPeriod Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+      val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(ua)).build()
 
@@ -58,7 +58,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
       val date        = AccountingPeriod(startDate, endDate)
-      val ua          = emptyUserAnswers.setOrException(subAccountingPeriodPage, date).setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+      val ua          = emptyUserAnswers.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {

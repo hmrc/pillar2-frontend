@@ -16,12 +16,12 @@
 
 package pages
 
-import models.subscription.AccountStatus
 import play.api.libs.json.JsPath
 
-case object subAccountStatusPage extends QuestionPage[AccountStatus] {
+case object SubPrimaryCapturePhonePage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subAccountStatus"
+  override def toString: String = "subPrimaryCapturePhone"
+
 }

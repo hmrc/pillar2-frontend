@@ -16,12 +16,12 @@
 
 package pages
 
-import models.subscription.FilingMemberDetails
+import models.MneOrDomestic
 import play.api.libs.json.JsPath
 
-case object subFillingMemberDetailsPage extends QuestionPage[FilingMemberDetails] {
+case object SubMneOrDomesticPage extends QuestionPage[MneOrDomestic] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subFillingMemberDetails"
+  override def toString: String = "subMneOrDomestic"
 }

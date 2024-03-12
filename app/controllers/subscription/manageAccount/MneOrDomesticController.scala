@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
-import pages.subMneOrDomesticPage
+import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,7 +47,7 @@ class MneOrDomesticController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subMneOrDomesticPage) match {
+    val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
       case Some(value) => form.fill(value)
       case None        => form
     }
@@ -63,7 +63,7 @@ class MneOrDomesticController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(subMneOrDomesticPage, value))
+                .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad)
       )

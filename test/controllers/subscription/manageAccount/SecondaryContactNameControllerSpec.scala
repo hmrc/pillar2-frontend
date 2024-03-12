@@ -22,7 +22,7 @@ import forms.SecondaryContactNameFormProvider
 import models.CheckMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true).setOrException(subPrimaryContactNamePage, "asd")
+      val ua          = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -55,9 +55,9 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subAddSecondaryContactPage, true)
-        .setOrException(subPrimaryContactNamePage, "asd")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {

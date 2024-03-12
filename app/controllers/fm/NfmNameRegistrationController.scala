@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import pages.{fmEntityTypePage, fmNameRegistrationPage, fmRegisteredInUKPage}
+import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,16 +47,16 @@ class NfmNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
+    val preparedForm = request.userAnswers.get(FmNameRegistrationPage) match {
       case Some(value) => form.fill(value)
       case None        => form
     }
-    val result: Future[Result] = if (request.userAnswers.get(fmRegisteredInUKPage).contains(false)) {
+    val result: Future[Result] = if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
       Future.successful(Ok(view(preparedForm, mode)))
-    } else if (request.userAnswers.get(fmRegisteredInUKPage).contains(true) & request.userAnswers.get(fmEntityTypePage).isEmpty) {
+    } else if (request.userAnswers.get(FmRegisteredInUKPage).contains(true) & request.userAnswers.get(FmEntityTypePage).isEmpty) {
       for {
         updatedAnswers <-
-          Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, false))
+          Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
         _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
       } yield Ok(view(preparedForm, mode))
     } else {
@@ -72,7 +72,7 @@ class NfmNameRegistrationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(fmNameRegistrationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(FmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
       )

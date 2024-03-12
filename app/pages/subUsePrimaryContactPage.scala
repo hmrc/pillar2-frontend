@@ -31,11 +31,11 @@ case object subUsePrimaryContactPage extends QuestionPage[Boolean] {
     userAnswers.get(subUsePrimaryContactPage) match {
       case originalOption @ Some(_) if originalOption != value =>
         userAnswers
-          .remove(subPrimaryContactNamePage)
+          .remove(SubPrimaryContactNamePage)
           .flatMap(
-            _.remove(subPrimaryEmailPage).flatMap(
-              _.remove(subPrimaryPhonePreferencePage).flatMap(
-                _.remove(subPrimaryCapturePhonePage)
+            _.remove(SubPrimaryEmailPage).flatMap(
+              _.remove(SubPrimaryPhonePreferencePage).flatMap(
+                _.remove(SubPrimaryCapturePhonePage)
               )
             )
           )

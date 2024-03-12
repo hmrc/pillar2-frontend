@@ -30,7 +30,7 @@ case object subSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(subSecondaryCapturePhonePage)
+        .remove(SubSecondaryCapturePhonePage)
     } else {
       super.cleanup(value, userAnswers)
     }

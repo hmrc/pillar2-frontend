@@ -22,7 +22,7 @@ import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subPrimaryContactNamePage
+import pages.SubPrimaryContactNamePage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -55,7 +55,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when previous data is found" in {
 
-      val ua          = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {

@@ -16,15 +16,11 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object subHavePillar2TopUpTaxIdPage extends QuestionPage[Boolean] {
+case object SubSecondaryEmailPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subHavePillar2TopUpTaxId"
-
+  override def toString: String = "subSecondaryEmail"
 }

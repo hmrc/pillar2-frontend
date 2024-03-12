@@ -20,7 +20,7 @@ import base.SpecBase
 import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subMneOrDomesticPage
+import pages.SubMneOrDomesticPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -55,7 +55,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.Uk))))
+          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk))))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RegistrationConfirmationView]
@@ -78,7 +78,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(subMneOrDomesticPage, MneOrDomestic.UkAndOther))))
+          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther))))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RegistrationConfirmationView]

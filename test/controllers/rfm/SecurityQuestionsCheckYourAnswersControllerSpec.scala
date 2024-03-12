@@ -38,10 +38,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmSecurityCheckPage, plrReference)
+        .set(RfmPillar2ReferencePage, plrReference)
         .success
         .value
-        .set(rfmRegistrationDatePage, RegistrationDate(date))
+        .set(RfmRegistrationDatePage, RegistrationDate(date))
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
@@ -90,10 +90,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
     "redirect to Under Construction page on form submission" in {
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmSecurityCheckPage, plrReference)
+        .set(RfmPillar2ReferencePage, plrReference)
         .success
         .value
-        .set(rfmRegistrationDatePage, RegistrationDate(date))
+        .set(RfmRegistrationDatePage, RegistrationDate(date))
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))

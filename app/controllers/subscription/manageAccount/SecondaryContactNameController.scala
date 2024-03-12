@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
 import models.Mode
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -48,10 +48,10 @@ class SecondaryContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _ <- request.userAnswers.get(subAddSecondaryContactPage)
-      _ <- request.userAnswers.get(subPrimaryContactNamePage)
+      _ <- request.userAnswers.get(SubAddSecondaryContactPage)
+      _ <- request.userAnswers.get(SubPrimaryContactNamePage)
     } yield {
-      val preparedForm = request.userAnswers.get(subSecondaryContactNamePage) match {
+      val preparedForm = request.userAnswers.get(SubSecondaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -66,7 +66,7 @@ class SecondaryContactNameController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryContactNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad)
       )

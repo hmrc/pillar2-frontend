@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.subSecondaryEmailPage
+import pages.SubSecondaryEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,7 +27,7 @@ import viewmodels.implicits._
 object SecondaryContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subSecondaryEmailPage).map { answer =>
+    answers.get(SubSecondaryEmailPage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactEmail.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),

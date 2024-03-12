@@ -22,7 +22,7 @@ import forms.NfmEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmContactEmailPage, fmContactNamePage}
+import pages.{FmContactEmailPage, FmContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
   "NfmContactEmail Controller" when {
 
     "return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(fmContactNamePage, "Ashley Smith")
+      val ua = emptyUserAnswers.setOrException(FmContactNamePage, "Ashley Smith")
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -60,8 +60,8 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .setOrException(fmContactNamePage, "Ashley Smith")
-        .setOrException(fmContactEmailPage, "hello@goodbye.com")
+        .setOrException(FmContactNamePage, "Ashley Smith")
+        .setOrException(FmContactEmailPage, "hello@goodbye.com")
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -83,7 +83,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
       val userAnswer =
-        emptyUserAnswers.setOrException(fmContactNamePage, "alex")
+        emptyUserAnswers.setOrException(FmContactNamePage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -102,7 +102,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val userAnswer  = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+      val userAnswer  = emptyUserAnswers.set(FmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
         val request =

@@ -16,12 +16,29 @@
 
 package pages
 
-import models.rfm.CorporatePosition
+import models.UserAnswers
 import play.api.libs.json.JsPath
 
-case object rfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
+import scala.util.Try
+
+case object SubAddSecondaryContactPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "rfmCorporatePosition"
+  override def toString: String = "subAddSecondaryContact"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(SubSecondaryCapturePhonePage)
+        .flatMap(
+          _.remove(subSecondaryPhonePreferencePage).flatMap(
+            _.remove(SubSecondaryContactNamePage).flatMap(
+              _.remove(SubSecondaryEmailPage)
+            )
+          )
+        )
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

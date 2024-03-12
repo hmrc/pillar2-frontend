@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
-import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, subSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,8 +46,8 @@ class SecondaryTelephonePreferenceController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(subSecondaryEmailPage)
-      contactName <- request.userAnswers.get(subSecondaryContactNamePage)
+      _           <- request.userAnswers.get(SubSecondaryEmailPage)
+      contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
     } yield {
       val form = formProvider(contactName)
       val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
@@ -63,7 +63,7 @@ class SecondaryTelephonePreferenceController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form

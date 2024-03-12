@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
-import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,10 +46,10 @@ class SecondaryContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subSecondaryEmailPage) match {
+        val preparedForm = request.userAnswers.get(SubSecondaryEmailPage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -62,7 +62,7 @@ class SecondaryContactEmailController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -71,7 +71,7 @@ class SecondaryContactEmailController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
           )

@@ -18,7 +18,7 @@ package services
 
 import config.FrontendAppConfig
 import models.UserAnswers
-import pages.plrReferencePage
+import pages.PlrReferencePage
 import uk.gov.hmrc.auth.core.Enrolment
 import utils.Pillar2Reference
 
@@ -29,5 +29,5 @@ class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
   def get(userAnswers: Option[UserAnswers], enrolments: Option[Set[Enrolment]]): Option[String] =
     Pillar2Reference
       .getPillar2ID(enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-      .orElse(userAnswers.flatMap(_.get(plrReferencePage)))
+      .orElse(userAnswers.flatMap(_.get(PlrReferencePage)))
 }

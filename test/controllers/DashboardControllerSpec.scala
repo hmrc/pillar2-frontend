@@ -23,7 +23,7 @@ import models.UserAnswers
 import models.subscription.{AccountStatus, DashboardInfo}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmDashboardPage, subAccountStatusPage}
+import pages.{FmDashboardPage, SubAccountStatusPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -57,8 +57,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     "return OK and the correct view for a GET" in {
       val accountStatus = AccountStatus(inactive = false)
       val userAnswers = emptyUserAnswers
-        .setOrException(fmDashboardPage, dashboardInfo)
-        .setOrException(subAccountStatusPage, accountStatus)
+        .setOrException(FmDashboardPage, dashboardInfo)
+        .setOrException(SubAccountStatusPage, accountStatus)
       val application =
         applicationBuilder(userAnswers = Some(userAnswers), enrolments)
           .overrides(
@@ -150,7 +150,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     }
 
     "redirect to error page if read subscription has happened successfully but no dashboard info is found" in {
-      val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
+      val ua = emptyUserAnswers.setOrException(SubAccountStatusPage, AccountStatus(true))
       val application = applicationBuilder(userAnswers = Some(ua), enrolments)
         .overrides(
           bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),
@@ -170,7 +170,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     }
 
     "redirect to error page if no userAnswer is found from the connector" in {
-      val ua = emptyUserAnswers.setOrException(subAccountStatusPage, AccountStatus(true))
+      val ua = emptyUserAnswers.setOrException(SubAccountStatusPage, AccountStatus(true))
       val application = applicationBuilder(userAnswers = Some(ua), enrolments)
         .overrides(
           bind[ReadSubscriptionService].toInstance(mockReadSubscriptionService),

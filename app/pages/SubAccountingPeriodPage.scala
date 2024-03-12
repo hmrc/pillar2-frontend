@@ -16,12 +16,12 @@
 
 package pages
 
+import models.subscription.AccountingPeriod
 import play.api.libs.json.JsPath
-import utils.RowStatus
 
-case object SubscriptionStatusPage extends QuestionPage[RowStatus] {
+case object SubAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "SubscriptionStatus"
+  override def toString: String = "subAccountingPeriod"
 }

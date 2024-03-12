@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.subAddSecondaryContactPage
+import pages.SubAddSecondaryContactPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,7 +37,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller for View Contact details" when {
 
     "redirect to contact CYA when valid data is submitted" in {
-      val ua = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true)
+      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -58,7 +58,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       }
     }
     "must return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true)
+      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

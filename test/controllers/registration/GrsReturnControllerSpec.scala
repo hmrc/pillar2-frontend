@@ -22,7 +22,7 @@ import models.grs.EntityType
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeEntityTypePage, fmEntityTypePage}
+import pages.{UpeEntityTypePage, FmEntityTypePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -90,7 +90,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "must return 303 redirect to the next page with UK Limited company for Filing Member" in {
-      val ua = emptyUserAnswers.set(fmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -113,7 +113,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "must return 303 redirect to the next page with Limited Liability Partnership for Filing Member" in {
-      val ua = emptyUserAnswers.set(fmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -160,7 +160,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "must redirect to registration not called controller for nfm if GRS fails to identify the entity" in {
-      val ua = emptyUserAnswers.set(fmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -184,7 +184,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration failed controller if grs registration fails in the fm journey " in {
-      val ua = emptyUserAnswers.set(fmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))

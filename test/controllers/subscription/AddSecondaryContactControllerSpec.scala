@@ -22,7 +22,7 @@ import forms.AddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subPrimaryEmailPage}
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,8 +39,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subPrimaryEmailPage, "asda")
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubPrimaryEmailPage, "asda")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -59,9 +59,9 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subPrimaryEmailPage, "asda")
-        .setOrException(subAddSecondaryContactPage, true)
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubPrimaryEmailPage, "asda")
+        .setOrException(SubAddSecondaryContactPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,7 +83,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
+        .set(SubPrimaryContactNamePage, "name")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -106,10 +106,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must redirect to secondary contact name if they answer yes " in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
+        .set(SubPrimaryContactNamePage, "name")
         .success
         .value
-        .set(subAddSecondaryContactPage, true)
+        .set(SubAddSecondaryContactPage, true)
         .success
         .value
 
@@ -131,7 +131,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     }
     "must redirect to the page where we capture their address if they answer no " in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
+        .set(SubPrimaryContactNamePage, "name")
         .success
         .value
 

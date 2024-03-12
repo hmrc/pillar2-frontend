@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
-import pages.{subAccountingPeriodPage, subMneOrDomesticPage}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -48,8 +48,8 @@ class GroupAccountingPeriodController @Inject() (
   def form = formProvider(true)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(subMneOrDomesticPage)) {
-      val preparedForm = request.userAnswers.get(subAccountingPeriodPage) match {
+    if (request.userAnswers.isPageDefined(SubMneOrDomesticPage)) {
+      val preparedForm = request.userAnswers.get(SubAccountingPeriodPage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -68,7 +68,7 @@ class GroupAccountingPeriodController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(subAccountingPeriodPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
       )

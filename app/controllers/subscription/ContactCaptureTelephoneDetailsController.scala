@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactCaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{subPrimaryCapturePhonePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,11 +46,11 @@ class ContactCaptureTelephoneDetailsController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(subPrimaryPhonePreferencePage)
-      contactName <- request.userAnswers.get(subPrimaryContactNamePage)
+      _           <- request.userAnswers.get(SubPrimaryPhonePreferencePage)
+      contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subPrimaryCapturePhonePage) match {
+      val preparedForm = request.userAnswers.get(SubPrimaryCapturePhonePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -63,7 +63,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -73,7 +73,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(subPrimaryCapturePhonePage, value))
+                  Future.fromTry(request.userAnswers.set(SubPrimaryCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
           )

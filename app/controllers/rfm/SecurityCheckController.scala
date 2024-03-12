@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecurityCheckFormProvider
 import models.{CheckMode, Mode, NormalMode}
-import pages.rfmSecurityCheckPage
+import pages.RfmPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,7 +49,7 @@ class SecurityCheckController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmSecurityCheckPage) match {
+      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -68,7 +68,7 @@ class SecurityCheckController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(rfmSecurityCheckPage, value))
+                .fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield mode match {
             case CheckMode => Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))

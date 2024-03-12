@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import pages.{subAddSecondaryContactPage, subRegisteredAddressPage}
+import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,8 +47,8 @@ class CaptureSubscriptionAddressController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(subAddSecondaryContactPage)) {
-      val preparedForm = request.userAnswers.get(subRegisteredAddressPage) match {
+    if (request.userAnswers.isPageDefined(SubAddSecondaryContactPage)) {
+      val preparedForm = request.userAnswers.get(SubRegisteredAddressPage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -66,7 +66,7 @@ class CaptureSubscriptionAddressController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(subRegisteredAddressPage, value))
+              Future.fromTry(request.userAnswers.set(SubRegisteredAddressPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
       )

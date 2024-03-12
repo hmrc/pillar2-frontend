@@ -16,12 +16,11 @@
 
 package pages
 
-import models.MneOrDomestic
 import play.api.libs.json.JsPath
 
-case object subMneOrDomesticPage extends QuestionPage[MneOrDomestic] {
+case object RfmPillar2ReferencePage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subMneOrDomestic"
+  override def toString: String = "rfmPillar2Reference"
 }

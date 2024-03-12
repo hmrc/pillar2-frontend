@@ -16,12 +16,12 @@
 
 package pages
 
-import models.NonUKAddress
+import models.rfm.CorporatePosition
 import play.api.libs.json.JsPath
 
-case object fmRegisteredAddressPage extends QuestionPage[NonUKAddress] {
+case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "fmRegisteredAddress"
+  override def toString: String = "rfmCorporatePosition"
 }

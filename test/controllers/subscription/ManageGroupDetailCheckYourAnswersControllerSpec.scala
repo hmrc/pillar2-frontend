@@ -46,27 +46,27 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
     val amendSubUserAnswers = emptyUserAnswers
       .setOrException(UpeRegisteredInUKPage, true)
       .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
-      .setOrException(subPrimaryContactNamePage, "Name")
-      .setOrException(subPrimaryEmailPage, "email@email.com")
-      .setOrException(subPrimaryPhonePreferencePage, true)
-      .setOrException(subPrimaryCapturePhonePage, "123456789")
-      .setOrException(subAddSecondaryContactPage, true)
-      .setOrException(subSecondaryContactNamePage, "second contact name")
-      .setOrException(subSecondaryEmailPage, "second@email.com")
+      .setOrException(SubPrimaryContactNamePage, "Name")
+      .setOrException(SubPrimaryEmailPage, "email@email.com")
+      .setOrException(SubPrimaryPhonePreferencePage, true)
+      .setOrException(SubPrimaryCapturePhonePage, "123456789")
+      .setOrException(SubAddSecondaryContactPage, true)
+      .setOrException(SubSecondaryContactNamePage, "second contact name")
+      .setOrException(SubSecondaryEmailPage, "second@email.com")
       .setOrException(subSecondaryPhonePreferencePage, true)
-      .setOrException(subSecondaryCapturePhonePage, "123456789")
-      .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-      .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-      .setOrException(subAccountingPeriodPage, date)
-      .setOrException(fmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
+      .setOrException(SubSecondaryCapturePhonePage, "123456789")
+      .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+      .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      .setOrException(SubAccountingPeriodPage, date)
+      .setOrException(FmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
       .setOrException(NominateFilingMemberPage, false)
 
     "return OK and the correct view if an answer is provided to every question " in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
-        .set(subAccountingPeriodPage, date)
+        .set(SubAccountingPeriodPage, date)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
@@ -81,10 +81,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
     "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
         .success
         .value
-        .set(subAccountingPeriodPage, date)
+        .set(SubAccountingPeriodPage, date)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()

@@ -18,9 +18,10 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object rfmSecurityCheckPage extends QuestionPage[String] {
+case object BtaPillar2ReferencePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "rfmSecurityCheck"
+  override def toString: String = "BtaPillar2Reference"
+
 }

@@ -22,7 +22,7 @@ import forms.ContactEmailAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subPrimaryContactNamePage, subPrimaryEmailPage}
+import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,7 +40,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page previously  not answered" in {
 
       val userAnswersSubContactEmail =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -64,7 +64,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page previously has been answered" in {
 
       val userAnswersSubContactEmail =
-        emptyUserAnswers.setOrException(subPrimaryContactNamePage, "name").setOrException(subPrimaryEmailPage, "hello@goodbye.com")
+        emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -87,7 +87,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
       val userAnswersSubContactEmail =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -106,7 +106,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val ua          = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =

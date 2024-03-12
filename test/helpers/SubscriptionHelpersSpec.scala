@@ -79,7 +79,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "NFM status" should {
 
       "return Not Started if no answer can be found to fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.set(FmContactNamePage, "name").success.value
         userAnswer.fmStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
@@ -108,7 +108,7 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
         val userAnswer = fmPhonePrefNoPhoneNum
-          .set(fmCapturePhonePage, "12312")
+          .set(FmCapturePhonePage, "12312")
           .success
           .value
         userAnswer.fmStatus mustEqual RowStatus.Completed
@@ -176,7 +176,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(NominateFilingMemberPage, true)
           .success
           .value
-          .set(fmRegisteredInUKPage, true)
+          .set(FmRegisteredInUKPage, true)
           .success
           .value
           .set(FmSafeIDPage, "12323212")
@@ -190,7 +190,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .set(NominateFilingMemberPage, true)
           .success
           .value
-          .set(fmRegisteredInUKPage, false)
+          .set(FmRegisteredInUKPage, false)
           .success
           .value
         userAnswer.getFmSafeID mustBe None
@@ -265,10 +265,10 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "12323212")
+          .set(RfmPillar2ReferencePage, "12323212")
           .success
           .value
-          .set(rfmRegistrationDatePage, RegistrationDate(date))
+          .set(RfmRegistrationDatePage, RegistrationDate(date))
           .success
           .value
 
@@ -277,7 +277,7 @@ class SubscriptionHelpersSpec extends SpecBase {
 
       "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
         val userAnswersInProgress = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "Security Check Answer")
+          .set(RfmPillar2ReferencePage, "Security Check Answer")
           .success
           .value
 

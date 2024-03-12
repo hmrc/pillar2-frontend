@@ -22,7 +22,7 @@ import forms.MneOrDomesticFormProvider
 import models.{CheckMode, MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subMneOrDomesticPage
+import pages.SubMneOrDomesticPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
 

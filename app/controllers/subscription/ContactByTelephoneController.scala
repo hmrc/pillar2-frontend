@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
-import pages.{subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,10 +46,10 @@ class ContactByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subPrimaryPhonePreferencePage) match {
+        val preparedForm = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -62,7 +62,7 @@ class ContactByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -74,13 +74,13 @@ class ContactByTelephoneController @Inject() (
                 case true =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode))
                 case false =>
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, value))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
               }

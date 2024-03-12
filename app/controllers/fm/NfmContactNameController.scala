@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmContactNameFormProvider
 import models.Mode
-import pages.{fmContactNamePage, fmRegisteredAddressPage}
+import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,8 +46,8 @@ class NfmContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(fmRegisteredAddressPage)) {
-      val preparedForm = request.userAnswers.get(fmContactNamePage) match {
+    if (request.userAnswers.isPageDefined(FmRegisteredAddressPage)) {
+      val preparedForm = request.userAnswers.get(FmContactNamePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -67,7 +67,7 @@ class NfmContactNameController @Inject() (
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(fmContactNamePage, value)
+                  .set(FmContactNamePage, value)
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.fm.routes.NfmEmailAddressController.onPageLoad(mode))

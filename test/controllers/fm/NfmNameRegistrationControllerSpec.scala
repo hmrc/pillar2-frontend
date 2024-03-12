@@ -22,7 +22,7 @@ import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmNameRegistrationPage, fmRegisteredInUKPage}
+import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
   "NfmNameRegistrationController Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false)
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -54,7 +54,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val pageAnswer = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false).setOrException(fmNameRegistrationPage, "alex")
+      val pageAnswer = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false).setOrException(FmNameRegistrationPage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
@@ -87,7 +87,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val pageAnswer = emptyUserAnswers.set(fmNameRegistrationPage, "alex").success.value
+      val pageAnswer = emptyUserAnswers.set(FmNameRegistrationPage, "alex").success.value
       val application = applicationBuilder(userAnswers = Some(pageAnswer))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

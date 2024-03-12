@@ -23,7 +23,7 @@ import models.NormalMode
 import models.rfm.CorporatePosition
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmCorporatePositionPage
+import pages.RfmCorporatePositionPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -61,7 +61,7 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(rfmCorporatePositionPage, CorporatePosition.NewNfm)
+      val userAnswers = emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .configure(

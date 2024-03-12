@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.{Mode, NormalMode}
-import pages.subPrimaryContactNamePage
+import pages.SubPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -48,7 +48,7 @@ class ContactNameComplianceController @Inject() (
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
-      val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
+      val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -67,7 +67,7 @@ class ContactNameComplianceController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(subPrimaryContactNamePage, value))
+                .fromTry(request.userAnswers.set(SubPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode))
       )

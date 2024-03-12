@@ -23,7 +23,7 @@ import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage, SubPrimaryContactNamePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -41,8 +41,8 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -60,9 +60,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET when previous data is found" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {

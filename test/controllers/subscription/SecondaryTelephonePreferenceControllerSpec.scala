@@ -22,7 +22,7 @@ import forms.SecondaryTelephonePreferenceFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, subSecondaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,8 +39,8 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryEmailPage, "he@a.com")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryEmailPage, "he@a.com")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -58,8 +58,8 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryEmailPage, "he@a.com")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryEmailPage, "he@a.com")
         .setOrException(subSecondaryPhonePreferencePage, true)
 
       val application = applicationBuilder(Some(ua)).build()
@@ -82,7 +82,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -102,7 +102,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     }
 
     "must redirect to telephone contact page if they answer yes " in {
-      val ua = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -120,7 +120,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
       }
     }
     "must redirect to address page if they answer no " in {
-      val ua = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
