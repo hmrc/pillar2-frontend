@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object subHavePillar2TopUpTaxIdPage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class NFMRegisteredInUKConfirmationFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "subHavePillar2TopUpTaxId"
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("isNFMRegisteredInUK.error.required")
+    )
 }

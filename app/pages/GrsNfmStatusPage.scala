@@ -17,11 +17,11 @@
 package pages
 
 import play.api.libs.json.JsPath
+import utils.RowStatus
 
-case object subHavePillar2TopUpTaxIdPage extends QuestionPage[Boolean] {
+case object GrsNfmStatusPage extends QuestionPage[RowStatus] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subHavePillar2TopUpTaxId"
-
+  override def toString: String = "GrsNfmStatus"
 }

@@ -18,7 +18,7 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

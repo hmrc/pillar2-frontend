@@ -16,12 +16,12 @@
 
 package pages
 
+import models.grs.EntityType
 import play.api.libs.json.JsPath
 
-case object subHavePillar2TopUpTaxIdPage extends QuestionPage[Boolean] {
+case object NfmEntityTypePage extends QuestionPage[EntityType] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subHavePillar2TopUpTaxId"
-
+  override def toString: String = "nfmEntityType"
 }

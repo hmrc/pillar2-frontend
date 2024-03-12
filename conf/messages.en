@@ -224,6 +224,12 @@ upeNameRegistration.error.invalid = The name of the ultimate parent entity must 
 upeNameRegistration.checkYourAnswersLabel= Name
 upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
+checkNewFilingMember.title = We need to match the details of the new nominated filing member to HMRC records
+checkNewFilingMember.heading = We need to match the details of the new nominated filing member to HMRC records
+checkNewFilingMember.p1 = We will ask you for several pieces of identifying information about the new nominated filing member so that we can best match them to our records.
+checkNewFilingMember.heading.caption = Group details
+
+
 upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to confirm your records.
@@ -313,6 +319,14 @@ isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
 isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is registered in the UK
 isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
+
+isNFMRegisteredInUK.heading.caption = Group details
+isNFMRegisteredInUK.heading = Is the new nominated filing member registered in the UK?
+isNFMRegisteredInUK.yes = Yes
+isNFMRegisteredInUK.no = No
+isNFMRegisteredInUK.error.required = Select yes if the new nominated filing member is registered in the UK
+isNFMRegisteredInUK.title = Is the new nominated filing member registered in the UK?
+
 
 contactUPEByTelephone.heading.caption = Group details
 contactUPEByTelephone.title = Can we contact by telephone?
