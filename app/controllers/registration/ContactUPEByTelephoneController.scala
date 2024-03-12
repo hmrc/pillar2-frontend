@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactUPEByTelephoneFormProvider
 import models.Mode
-import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import navigation.Navigator
+import pages.{UpeCapturePhonePage, UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -39,6 +40,7 @@ class ContactUPEByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              ContactUPEByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  navigator :                Navigator,
   view:                      ContactUPEByTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -69,21 +71,12 @@ class ContactUPEByTelephoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              value match {
-                case true =>
+            nominated => {
                   for {
                     updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, value))
+                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, nominated))
                     _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(mode))
-
-                case false =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad)
+                  } yield Redirect(navigator.nextPage(UpePhonePreferencePage, mode, request.userAnswers))
               }
           )
       }

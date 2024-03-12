@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
 import models.{Mode, UKAddress}
+import navigation.Navigator
 import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,6 +41,7 @@ class UpeRegisteredAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
+  navigator :                Navigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -75,7 +77,7 @@ class UpeRegisteredAddressController @Inject() (
                       .set(UpeRegisteredAddressPage, value)
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(UpeRegisteredAddressPage, mode, request.userAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

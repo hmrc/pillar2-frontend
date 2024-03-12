@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -37,6 +38,7 @@ class UpeContactNameController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeContactNameFormProvider,
+  navigator :                Navigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)

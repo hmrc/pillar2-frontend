@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.{UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -37,6 +38,7 @@ class UpeNameRegistrationController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
+  navigator :                Navigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -74,7 +76,7 @@ class UpeNameRegistrationController @Inject() (
             updatedAnswers <-
               Future.fromTry(request.userAnswers.set(UpeNameRegistrationPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(UpeNameRegistrationPage, mode, request.userAnswers))
       )
   }
 

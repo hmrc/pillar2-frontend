@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.{UpeContactEmailPage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -38,6 +39,7 @@ class UpeContactEmailController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  navigator :                Navigator,
   view:                      UpeContactEmailView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
