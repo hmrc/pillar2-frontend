@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
 import models.Mode
+import navigation.NominatedFilingMemberNavigator
 import pages.{FmNameRegistrationPage, FmRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -40,6 +41,7 @@ class NfmRegisteredAddressController @Inject() (
   formProvider:              NfmRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
+  navigator:                 NominatedFilingMemberNavigator,
   view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -49,10 +51,7 @@ class NfmRegisteredAddressController @Inject() (
     request.userAnswers
       .get(FmNameRegistrationPage)
       .map { name =>
-        val preparedForm = request.userAnswers.get(FmRegisteredAddressPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
+        val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -71,7 +70,7 @@ class NfmRegisteredAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(FmRegisteredAddressPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(FmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

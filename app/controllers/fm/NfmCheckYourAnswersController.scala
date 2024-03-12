@@ -19,6 +19,7 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import navigation.NominatedFilingMemberNavigator
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

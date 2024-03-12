@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage}
+import navigation.NominatedFilingMemberNavigator
+import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage, NominateFilingMemberPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -37,6 +38,7 @@ class NfmNameRegistrationController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmNameRegistrationView
@@ -47,10 +49,7 @@ class NfmNameRegistrationController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val preparedForm = request.userAnswers.get(FmNameRegistrationPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
-    }
+    val preparedForm = request.userAnswers.get(FmNameRegistrationPage).map(nominated => form.fill(nominated)).getOrElse(form)
     val result: Future[Result] = if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
       Future.successful(Ok(view(preparedForm, mode)))
     } else if (request.userAnswers.get(FmRegisteredInUKPage).contains(true) & request.userAnswers.get(FmEntityTypePage).isEmpty) {
@@ -74,7 +73,7 @@ class NfmNameRegistrationController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(FmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(FmNameRegistrationPage, mode, updatedAnswers))
       )
   }
 

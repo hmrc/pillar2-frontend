@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.Mode
+import navigation.NominatedFilingMemberNavigator
 import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -37,6 +38,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmCaptureTelephoneDetailsView
@@ -72,7 +74,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(FmCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad)
+              } yield Redirect(navigator.nextPage(FmCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

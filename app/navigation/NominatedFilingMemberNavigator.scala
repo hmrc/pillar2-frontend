@@ -27,54 +27,65 @@ import javax.inject.{Inject, Singleton}
 class NominatedFilingMemberNavigator @Inject() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case NominateFilingMemberPage    => _ => controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
-    case UpeRegisteredInUKPage    => domesticOrNotRoute
-    case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
-    case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
-    case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
-    case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
-    case UpePhonePreferencePage   => telephonePreferenceLogic
-    case UpeCapturePhonePage      => _ => controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+    case NominateFilingMemberPage => nfmLogic
+    case FmRegisteredInUKPage     => domesticOrNotRoute
+    case FmNameRegistrationPage   => _ => controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode)
+    case FmRegisteredAddressPage  => _ => controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode)
+    case FmContactNamePage        => _ => controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode)
+    case FmContactEmailPage       => _ => controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode)
+    case FmPhonePreferencePage    => telephonePreferenceLogic
+    case FmCapturePhonePage       => _ => controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
     case _                        => _ => routes.IndexController.onPageLoad
   }
 
+  private def nfmLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(NominateFilingMemberPage)
+      .map { fmNominated =>
+        if (fmNominated) {
+          controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
+        } else {
+          routes.TaskListController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
   private def domesticOrNotRoute(userAnswers: UserAnswers): Call =
     userAnswers
-      .get(UpeRegisteredInUKPage)
+      .get(FmRegisteredInUKPage)
       .map { ukBased =>
         if (ukBased) {
-          controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)
+          controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode)
         } else {
-          controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
+          controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
     userAnswers
-      .get(UpePhonePreferencePage)
+      .get(FmPhonePreferencePage)
       .map { provided =>
         if (provided) {
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode)
         } else {
-          controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case UpePhonePreferencePage => telephoneCheckRouteLogic
-    case _                      => _ => controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+    case FmPhonePreferencePage => telephoneCheckRouteLogic
+    case _                     => _ => controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
   }
 
   private def telephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
-      .get(UpePhonePreferencePage)
+      .get(FmPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber) {
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
         } else {
-          controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmEmailAddressFormProvider
 import models.Mode
+import navigation.NominatedFilingMemberNavigator
 import pages.{FmContactEmailPage, FmContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -36,6 +37,7 @@ class NfmEmailAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NfmEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmEmailAddressView
@@ -69,7 +71,7 @@ class NfmEmailAddressController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers set (FmContactEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(FmContactEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

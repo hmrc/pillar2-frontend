@@ -74,6 +74,10 @@ class UltimateParentNavigatorSpec extends SpecBase {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, false)) mustBe
           controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
       }
+      "go to CYA page from a page where they enter their phone details" in {
+        navigator.nextPage(UpeCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(UpeCapturePhonePage, "12321321")) mustBe
+          controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+      }
     }
 
     "in Check mode" must {

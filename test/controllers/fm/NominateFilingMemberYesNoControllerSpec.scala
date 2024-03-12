@@ -33,16 +33,6 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
   val formProvider = new NominateFilingMemberYesNoFormProvider()
 
-  def controller(): NominateFilingMemberYesNoController =
-    new NominateFilingMemberYesNoController(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      viewNominateFilingMemberYesNo
-    )
   val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
   val completeUpeJourney = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, false)
@@ -80,37 +70,16 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to FM UK based? page when valid data is submitted with value YES" in {
-
-      val request =
-        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "true"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url
-
-    }
-
-    "must redirect to task list page when valid data is submitted with value NO" in {
-
-      val request =
-        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("nominateFilingMember", "false"))
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
-
-    }
     "Bad request if no option  is selected" in {
+      val application = applicationBuilder().build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
 
-      val request =
-        FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-      val result = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual BAD_REQUEST
-
+      }
     }
   }
 }
