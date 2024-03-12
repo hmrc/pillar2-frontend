@@ -15,11 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds.{heading, paragraphBody}
 
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
+        heading: heading,
+        paragraphBody: paragraphBody,
         formHelper: FormWithCSRF,
 )
 
@@ -36,28 +39,28 @@
     @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
 
         <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+        @heading(messages("checkYourAnswers.heading"), "govuk-heading-l")
 
-        <h2 class="govuk-heading-m">@messages("checkYourAnswers.upe")</h2>
+        @heading(messages("checkYourAnswers.upe"), "govuk-heading-m")
         @govukSummaryList(listUpe)
 
-        <h2 class="govuk-heading-m">@messages("checkYourAnswers.nfm")</h2>
+        @heading(messages("checkYourAnswers.nfm"), "govuk-heading-m")
         @govukSummaryList(listNfm)
 
-        <h2 class="govuk-heading-m">@messages("checkYourAnswers.furtherRegistrationDetail")</h2>
+        @heading(messages("checkYourAnswers.furtherRegistrationDetail"), "govuk-heading-m")
         @govukSummaryList(furtherRegistrationDetailsList)
 
-        <h2 class="govuk-heading-m">@messages("checkYourAnswers.first")</h2>
+        @heading(messages("checkYourAnswers.first"), "govuk-heading-m")
         @govukSummaryList(listPrimary)
 
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+        @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m")
         @govukSummaryList(listSecondary)
 
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
+        @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m")
         @govukSummaryList(address)
 
-        <h2 class="govuk-heading-m">@messages("checkYourAnswers.submit.registration")</h2>
-            <p class="govuk-body">@messages("checkYourAnswers.submit.p")</p>
+        @heading(messages("checkYourAnswers.submit.registration"), "govuk-heading-m")
+        @paragraphBody(messages("checkYourAnswers.submit.p"), "govuk-body")
         <br>
 
         @govukButton(
