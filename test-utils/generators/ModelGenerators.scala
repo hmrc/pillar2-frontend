@@ -17,13 +17,18 @@
 package generators
 
 import models._
-import models.grs.EntityType
+import models.grs.{EntityType, RfmEntityType}
 import models.subscription.DashboardInfo
 import org.scalacheck.{Arbitrary, Gen}
 
 import java.time.LocalDate
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryRfmEntityTypeController: Arbitrary[RfmEntityType] =
+    Arbitrary {
+      Gen.oneOf(RfmEntityType.values.toSeq)
+    }
 
   implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
     Arbitrary {

@@ -14,49 +14,44 @@
  * limitations under the License.
  */
 
-package models
+package models.grs
 
-import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
 import play.api.mvc.JavascriptLiteral
 
-sealed trait UserType extends Product with Serializable
+sealed trait JourneyType extends Product with Serializable
 
-object UserType {
-  case object Upe extends UserType {
+object JourneyType {
+  case object Reg extends JourneyType {
     val value: String = this.toString
   }
-  case object Fm extends UserType {
-    val value: String = this.toString
-  }
-
-  case object Rfm extends UserType {
+  case object Rfm extends JourneyType {
     val value: String = this.toString
   }
 
-  implicit val format: Format[UserType] = new Format[UserType] {
-    override def reads(json: JsValue): JsResult[UserType] =
+  implicit val format: Format[JourneyType] = new Format[JourneyType] {
+    override def reads(json: JsValue): JsResult[JourneyType] =
       json.as[String] match {
-        case "Upe" => JsSuccess[UserType](Upe)
-        case "Fm"  => JsSuccess[UserType](Fm)
-        case "Rfm" => JsSuccess[UserType](Rfm)
+        case "Upe" => JsSuccess[JourneyType](Reg)
+        case "Rfm" => JsSuccess[JourneyType](Rfm)
 
         case other => JsError(s"Invalid Source System: $other")
       }
 
-    override def writes(sourceSystem: UserType): JsValue =
+    override def writes(sourceSystem: JourneyType): JsValue =
       sourceSystem match {
-        case Upe => JsString("Upe")
-        case Fm  => JsString("Fm")
+        case Reg => JsString("Reg")
         case Rfm => JsString("Rfm")
+
       }
   }
 
-  implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
-    override def to(value: UserType): String =
+  implicit val jsLiteral: JavascriptLiteral[JourneyType] = new JavascriptLiteral[JourneyType] {
+    override def to(value: JourneyType): String =
       value match {
-        case Upe => "Upe"
-        case Fm  => "Fm"
-        case Fm  => "Rfm"
+        case Reg => "Reg"
+        case Rfm => "Rfm"
+
       }
   }
 

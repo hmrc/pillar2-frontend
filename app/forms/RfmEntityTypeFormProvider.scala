@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package forms
 
-@(message: String, classes: String = "govuk-heading-xl", tier: String = "h1")
+import javax.inject.Inject
 
-<@tier class="@classes">@message</@tier>
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.grs.RfmEntityType
+
+class RfmEntityTypeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[RfmEntityType] =
+    Form(
+      "value" -> enumerable[RfmEntityType]("rfmEntityType.error.required")
+    )
+}

@@ -1,5 +1,5 @@
 service.name = Report Pillar 2 top-up taxes
-
+rfm.service.name = Report Pillar 2 top-up taxes
 site.back = Back
 site.remove = Remove
 site.change = Change
@@ -894,3 +894,15 @@ rfm.corporatePosition.upe = Ultimate parent entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
 rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
+
+rfmEntityType.title = What entity type is the new nominated filing member?
+rfmEntityType.heading = What entity type is the new nominated filing member?
+rfmEntityType.ukLimitedCompany = UK limited company
+rfmEntityType.ukLimitedCompany.hint = This includes public limited companies.
+rfmEntityType.limitedLiabilityPartnership = Limited liability partnership
+rfmEntityType.entityTypeNotListed = Entity type not listed
+rfmEntityType.entityTypeNotListed.hint = Select to create a HMRC record.
+rfmEntityType.checkYourAnswersLabel = Org Type
+rfmEntityType.error.required = Select what type of entity the new filing member is
+rfmEntityType.change.hidden = What entity type is the new nominated filing member?
+rfmEntityType.caption = Group details

@@ -145,4 +145,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewStartPageRegistration: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
 
+  val viewRfmEntityTypeController: RfmEntityTypeView =
+    new RfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 }

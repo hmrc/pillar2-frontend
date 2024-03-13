@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package pages
 
-@(message: String, classes: String = "govuk-heading-xl", tier: String = "h1")
+import models.registration.GrsResponse
+import play.api.libs.json.JsPath
 
-<@tier class="@classes">@message</@tier>
+case object RfmGRSResponsePage extends QuestionPage[GrsResponse] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "rfmGRSResponse"
+}

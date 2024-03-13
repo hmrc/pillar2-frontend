@@ -82,9 +82,11 @@ POST        /eligibility/confirmation                                           
 
 GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
 GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
+GET         /grs-return/normalmode/rfm                                                   controllers.registration.GrsReturnController.continueRfm(journeyId)
 
 GET         /grs-return/checkmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
 GET         /grs-return/checkmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
+GET         /grs-return/checkmode/rfm                                                   controllers.registration.GrsReturnController.continueRfm(journeyId)
 
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
@@ -309,9 +311,12 @@ GET        /pillar2-top-up-tax-home                                             
 
 GET        /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
+GET        /replace-filing-member/business-matching/filing-member/uk-based/error/fail                  controllers.GrsRegistrationNotCalledController.onPageLoadRfm
+
 
 GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
+GET        /replace-filing-member/business-matching/filing-member/uk-based/error/no-match      controllers.GrsRegistrationFailedController.onPageLoadRfm
 
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
@@ -352,3 +357,8 @@ GET        /replace-filing-member/security/check-answers                    cont
 POST       /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
