@@ -413,7 +413,7 @@ trait UserAnswersFixture extends TryValues {
     .set(SubAddSecondaryContactPage, false)
     .success
     .value
-    .set(subUsePrimaryContactPage, true)
+    .set(SubUsePrimaryContactPage, true)
     .success
     .value
     .set(SubRegisteredAddressPage, nonUkAddress)
@@ -436,7 +436,7 @@ trait UserAnswersFixture extends TryValues {
     .set(SubAddSecondaryContactPage, false)
     .success
     .value
-    .set(subUsePrimaryContactPage, true)
+    .set(SubUsePrimaryContactPage, true)
     .success
     .value
 
@@ -512,7 +512,7 @@ trait UserAnswersFixture extends TryValues {
     .set(SubAddSecondaryContactPage, false)
     .success
     .value
-    .set(subUsePrimaryContactPage, true)
+    .set(SubUsePrimaryContactPage, true)
     .success
     .value
     .set(SubRegisteredAddressPage, nonUkAddress)

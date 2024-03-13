@@ -22,7 +22,7 @@ import forms.SecondaryTelephoneFormProvider
 import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -42,7 +42,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryPhonePreferencePage, true)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
@@ -60,7 +60,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryPhonePreferencePage, true)
         .setOrException(SubSecondaryCapturePhonePage, "1234567")
 
       val application = applicationBuilder(Some(ua)).build()

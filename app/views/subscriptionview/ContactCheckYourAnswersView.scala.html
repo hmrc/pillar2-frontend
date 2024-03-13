@@ -19,13 +19,15 @@
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF
 )
 
 
 @(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
+@formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
 <div class="contact-details">
     <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
     <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
@@ -36,14 +38,14 @@
          @govukSummaryList(listSecondary)
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)
+</div>
 
-    <br>
     @govukButton(
     ButtonViewModel(messages("site.save-and-continue"))
-    .withAttribute("id","continue")
-    .asLink(controllers.routes.TaskListController.onPageLoad.url)
-)
+    .withAttribute("id","continue").withCssClass("govuk-!-margin-top-6"))
 
-</div>
+}
+
+
 }
 

@@ -37,7 +37,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(SubAddSecondaryContactPage, true)
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
 
@@ -48,7 +48,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(SubPrimaryCapturePhonePage, "123213")
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   "Contact Check Your Answers Controller" must {

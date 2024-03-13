@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
-import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -50,7 +50,7 @@ class SecondaryTelephonePreferenceController @Inject() (
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
+      val preparedForm = request.userAnswers.get(SubSecondaryPhonePreferencePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -74,12 +74,12 @@ class SecondaryTelephonePreferenceController @Inject() (
               value match {
                 case true =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad)
                 case false =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
               }

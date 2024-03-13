@@ -114,7 +114,7 @@ trait SubscriptionHelpers {
     get(SubPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(SubPrimaryCapturePhonePage).isEmpty) false else true)
 
   val secondaryTelephone: Boolean =
-    get(subSecondaryPhonePreferencePage).exists(nominated => if (nominated & get(SubSecondaryCapturePhonePage).isEmpty) false else true)
+    get(SubSecondaryPhonePreferencePage).exists(nominated => if (nominated & get(SubSecondaryCapturePhonePage).isEmpty) false else true)
 
   def groupDetailStatusChecker: Boolean =
     if (
@@ -136,7 +136,7 @@ trait SubscriptionHelpers {
     val p4  = get(SubAddSecondaryContactPage).getOrElse(false)
     val s1  = get(SubSecondaryContactNamePage).isDefined
     val s2  = get(SubSecondaryEmailPage).isDefined
-    val s3  = get(subSecondaryPhonePreferencePage).isDefined
+    val s3  = get(SubSecondaryPhonePreferencePage).isDefined
     val ad1 = get(SubRegisteredAddressPage).isDefined
     (p1, p2, p3, p4, s1, s2, s3, ad1) match {
       case (true, true, true, true, true, true, true, true) => true

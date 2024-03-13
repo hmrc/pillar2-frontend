@@ -16,22 +16,11 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object subSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
+case object CheckYourAnswersLogicPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "subSecondaryPhonePreference"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(SubSecondaryCapturePhonePage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+  override def toString: String = "CheckYourAnswersLogic"
 }

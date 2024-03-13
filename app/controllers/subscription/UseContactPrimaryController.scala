@@ -23,6 +23,7 @@ import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
 import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
+import navigation.SubscriptionNavigator
 import pages._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -40,6 +41,7 @@ class UseContactPrimaryController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              UseContactPrimaryFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UseContactPrimaryView
@@ -75,7 +77,7 @@ class UseContactPrimaryController @Inject() (
               value match {
                 case true =>
                   for {
-                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
                     updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
                     updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.ContactEmail))
                     updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
@@ -83,12 +85,12 @@ class UseContactPrimaryController @Inject() (
                       Future
                         .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                     _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers4))
                 case false =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode))
+                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers))
               }
           )
       case Left(result) => Future.successful(result)
@@ -134,7 +136,7 @@ class UseContactPrimaryController @Inject() (
       telPref      <- request.userAnswers.get(FmPhonePreferencePage)
     } yield {
       val contactTel = request.userAnswers.get(FmCapturePhonePage)
-      request.userAnswers.get(subUsePrimaryContactPage) match {
+      request.userAnswers.get(SubUsePrimaryContactPage) match {
         case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
         case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
         case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
@@ -149,7 +151,7 @@ class UseContactPrimaryController @Inject() (
       telPref      <- request.userAnswers.get(UpePhonePreferencePage)
     } yield {
       val contactTel = request.userAnswers.get(UpeCapturePhonePage)
-      request.userAnswers.get(subUsePrimaryContactPage) match {
+      request.userAnswers.get(SubUsePrimaryContactPage) match {
         case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
         case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
         case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))

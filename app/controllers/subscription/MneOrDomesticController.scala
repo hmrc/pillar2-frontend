@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
+import navigation.SubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -40,6 +41,7 @@ class MneOrDomesticController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   sessionRepository:         SessionRepository,
+  navigator:                 SubscriptionNavigator,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
@@ -73,7 +75,7 @@ class MneOrDomesticController @Inject() (
                 .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
       )
   }
 

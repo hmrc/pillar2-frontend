@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
+import navigation.SubscriptionNavigator
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -38,6 +39,7 @@ class GroupAccountingPeriodController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupAccountingPeriodView
@@ -70,7 +72,7 @@ class GroupAccountingPeriodController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, mode, updatedAnswers))
       )
   }
 

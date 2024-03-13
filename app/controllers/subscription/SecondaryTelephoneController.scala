@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
-import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import navigation.SubscriptionNavigator
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -37,6 +38,7 @@ class SecondaryTelephoneController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryTelephoneView
@@ -47,7 +49,7 @@ class SecondaryTelephoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
-      _           <- request.userAnswers.get(subSecondaryPhonePreferencePage)
+      _           <- request.userAnswers.get(SubSecondaryPhonePreferencePage)
     } yield {
       val form = formProvider(contactName)
       val preparedForm = request.userAnswers.get(SubSecondaryCapturePhonePage) match {
@@ -74,7 +76,7 @@ class SecondaryTelephoneController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
-import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,7 +47,7 @@ class SecondaryTelephoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
-      _           <- request.userAnswers.get(subSecondaryPhonePreferencePage)
+      _           <- request.userAnswers.get(SubSecondaryPhonePreferencePage)
     } yield {
       val form = formProvider(contactName)
       val preparedForm = request.userAnswers.get(SubSecondaryCapturePhonePage) match {

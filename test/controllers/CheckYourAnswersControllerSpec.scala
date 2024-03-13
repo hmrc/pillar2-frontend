@@ -142,7 +142,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(SubPrimaryCapturePhonePage, "123213")
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   "Check Your Answers Controller" must {

@@ -53,7 +53,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       .setOrException(SubAddSecondaryContactPage, true)
       .setOrException(SubSecondaryContactNamePage, "second contact name")
       .setOrException(SubSecondaryEmailPage, "second@email.com")
-      .setOrException(subSecondaryPhonePreferencePage, true)
+      .setOrException(SubSecondaryPhonePreferencePage, true)
       .setOrException(SubSecondaryCapturePhonePage, "123456789")
       .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
       .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)

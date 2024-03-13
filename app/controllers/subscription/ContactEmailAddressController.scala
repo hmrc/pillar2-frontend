@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactEmailAddressFormProvider
 import models.Mode
+import navigation.SubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -36,6 +37,7 @@ class ContactEmailAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactEmailAddressView
@@ -73,7 +75,7 @@ class ContactEmailAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers set (SubPrimaryEmailPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

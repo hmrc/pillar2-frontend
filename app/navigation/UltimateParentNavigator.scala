@@ -25,7 +25,8 @@ import models._
 
 @Singleton
 class UltimateParentNavigator @Inject() {
-
+  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private val normalRoutes: Page => UserAnswers => Call = {
     case UpeRegisteredInUKPage    => domesticOrNotRoute
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
@@ -33,7 +34,7 @@ class UltimateParentNavigator @Inject() {
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
     case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
     case UpePhonePreferencePage   => telephonePreferenceLogic
-    case UpeCapturePhonePage      => _ => controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+    case UpeCapturePhonePage      => _ => upeCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
   }
 
@@ -56,24 +57,33 @@ class UltimateParentNavigator @Inject() {
         if (provided) {
           controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
         } else {
-          controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+          upeCheckYourAnswers
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case UpePhonePreferencePage => telephoneCheckRouteLogic
-    case _                      => _ => controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+    case _                      => whichCheckYourAnswerPageContact
   }
+
+  private def whichCheckYourAnswerPageContact(userAnswers: UserAnswers): Call =
+    if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+      reviewAndSubmitCheckYourAnswers
+    } else {
+      upeCheckYourAnswers
+    }
 
   private def telephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(UpePhonePreferencePage)
       .map { nominatedPhoneNumber =>
-        if (nominatedPhoneNumber) {
+        if (nominatedPhoneNumber & userAnswers.get(UpeCapturePhonePage).isEmpty) {
           controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode)
+        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+          reviewAndSubmitCheckYourAnswers
         } else {
-          controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+          upeCheckYourAnswers
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

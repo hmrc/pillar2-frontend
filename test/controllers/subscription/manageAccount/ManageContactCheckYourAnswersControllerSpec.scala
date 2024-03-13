@@ -44,7 +44,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubPrimaryCapturePhonePage, "123213")
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
   val subDataWithoutAddress = emptyUserAnswers
@@ -54,7 +54,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubPrimaryCapturePhonePage, "123213")
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   val nonUkAddress = NonUKAddress(
@@ -93,7 +93,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubAddSecondaryContactPage, true)
     .setOrException(SubSecondaryContactNamePage, "second contact name")
     .setOrException(SubSecondaryEmailPage, "second@email.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123456789")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
     .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)

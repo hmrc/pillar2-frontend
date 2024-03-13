@@ -101,7 +101,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .setOrException(FmContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(FmPhonePreferencePage, false)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -128,7 +128,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(FmPhonePreferencePage, true)
         .setOrException(FmCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -206,7 +206,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, false)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -233,7 +233,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
         .setOrException(UpeCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -399,7 +399,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
         .setOrException(UpeCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)

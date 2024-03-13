@@ -221,6 +221,7 @@ POST        /manage-account/account-details/summary               controllers.su
 
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
 
 
