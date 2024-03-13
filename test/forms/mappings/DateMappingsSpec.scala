@@ -50,12 +50,6 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
   )
 
   val invalidField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
-  def numberStringInRangeGen(min: Int, max: Int): Gen[String] =
-    Gen.chooseNum(min, max).map(_.toString)
-//  val invalidMonth: Gen[Int] = intsAboveValue(12)
-  val invalidDay:   Gen[String] = numberStringInRangeGen(32, 100)
-  val invalidMonth: Gen[String] = numberStringInRangeGen(12, 30)
-  val invalidYear:  Gen[String] = numberStringInRangeGen(20, 3000)
 
   val missingField: Gen[Option[String]] = Gen.option(Gen.const(""))
 
