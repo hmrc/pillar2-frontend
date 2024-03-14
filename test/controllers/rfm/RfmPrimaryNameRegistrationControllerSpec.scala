@@ -18,25 +18,24 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmCorporatePositionFormProvider
-import models.NormalMode
-import models.rfm.CorporatePosition
+import forms.RfmPrimaryNameRegistrationFormProvider
+import models.{Mode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmCorporatePositionPage
+import pages.rfmPrimaryNameRegistrationPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.CorporatePositionView
+import views.html.rfm.RfmPrimaryNameRegistrationView
 
 import scala.concurrent.Future
 
-class CorporatePositionControllerSpec extends SpecBase {
+class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
 
-  val formProvider = new RfmCorporatePositionFormProvider()
+  val formProvider = new RfmPrimaryNameRegistrationFormProvider()
 
-  "RFM Corporate Position controller" when {
+  "RFM UPE Name Registration controller" when {
 
     "must return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
@@ -44,11 +43,11 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CorporatePositionView]
+        val view = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -56,18 +55,18 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(rfmCorporatePositionPage, CorporatePosition.NewNfm)
+      val userAnswers = emptyUserAnswers.setOrException(rfmPrimaryNameRegistrationPage, "name")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[CorporatePositionView]
+        val view    = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(CorporatePosition.NewNfm), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -75,7 +74,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET - rfm feature false" in {
+    "must redirect to the under construction page when rfm feature is set to false" in {
 
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -87,7 +86,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -97,7 +96,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
+    "must redirect to the under construction page when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -108,34 +107,13 @@ class CorporatePositionControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
-          .withFormUrlEncodedBody("value" -> CorporatePosition.Upe.toString)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url
-      }
-    }
-
-    "must redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
-        )
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
-          .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
@@ -146,7 +124,7 @@ class CorporatePositionControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value

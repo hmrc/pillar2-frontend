@@ -826,6 +826,32 @@ rfm.agent.p2 = Agents cannot use this service to replace a nominated filing memb
 rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
 rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
 
+rfm.heading.caption = Replace filing member
+rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
+rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
+rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
+
+rfm.corporatePosition.title = What is your position in the corporate structure of the group?
+rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
+rfm.corporatePosition.upe = Ultimate parent entity (UPE)
+rfm.corporatePosition.newNfm = New nominated filing member
+rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
+rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
+
+rfm.contact.heading.caption = Contact details
+rfm.contactDetailsRegistration.title = We need contact details for your Pillar 2 top-up taxes account
+rfm.contactDetailsRegistration.heading = We need contact details for your Pillar 2 top-up taxes account
+rfm.contactDetailsRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
+
+rfm.primaryNameRegistration.title = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
+rfm.primaryNameRegistration.heading = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
+rfm.primaryNameRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+rfm.primaryNameRegistration.error.required = Enter name of the person or team we should contact
+rfm.primaryNameRegistration.error.length = Name of the contact person or team should be 160 characters or less
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
@@ -870,17 +896,3 @@ groupRegistrationDateReport.error.rfmRegistrationDate.dayMonth.invalid  = Regist
 groupRegistrationDateReport.error.startDate.dayMonthYear.minimum = Registration date must be on or after 31 December 2023
 groupRegistrationDateReport.error.rfmRegistrationDate.monthYear.invalid = Registration date must be a real date
 groupRegistrationDateReport.error.rfmRegistrationDate.dayYear.invalid = Registration date must be a real date
-rfm.heading.caption = Replace filing member
-rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
-rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
-rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
-
-rfm.corporatePosition.title = What is your position in the corporate structure of the group?
-rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
-rfm.corporatePosition.upe = Ultimate parent entity (UPE)
-rfm.corporatePosition.newNfm = New nominated filing member
-rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
-rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
