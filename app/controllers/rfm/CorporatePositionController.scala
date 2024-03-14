@@ -70,7 +70,7 @@ class CorporatePositionController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.rfm.routes.UpeStartPageRegistrationController.onPageLoad)
+            } yield Redirect(controllers.rfm.routes.RfmUpeStartPageRegistrationController.onPageLoad)
 
           case value @ CorporatePosition.NewNfm =>
             for {

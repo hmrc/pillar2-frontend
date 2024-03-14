@@ -27,11 +27,11 @@ import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.UpeNameRegistrationView
+import views.html.rfm.RfmUpeNameRegistrationView
 
 import scala.concurrent.Future
 
-class UpeNameRegistrationControllerSpec extends SpecBase {
+class RfmUpeNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new RfmUpeNameRegistrationFormProvider()
 
@@ -43,11 +43,11 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.UpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[UpeNameRegistrationView]
+        val view = application.injector.instanceOf[RfmUpeNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -61,9 +61,9 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.UpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[UpeNameRegistrationView]
+        val view    = application.injector.instanceOf[RfmUpeNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
@@ -86,7 +86,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.UpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -107,7 +107,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.UpeNameRegistrationController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmUpeNameRegistrationController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
@@ -124,7 +124,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.UpeNameRegistrationController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value

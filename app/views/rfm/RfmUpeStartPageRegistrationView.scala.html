@@ -14,43 +14,33 @@
  * limitations under the License.
  *@
 
+@import models.NormalMode
 @import config.FrontendAppConfig
 @import views.html.components.gds._
-@import viewmodels.InputWidth._
-@import viewmodels.LabelSize.Large
 
 @this(
 layout: templates.Layout,
 formHelper: FormWithCSRF,
+heading: heading,
 sectionHeader: sectionHeader,
-govukErrorSummary: GovukErrorSummary,
-govukInput: GovukInput,
+paragraphBody: paragraphBody,
 govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.upeNameRegistration.title"))) {
+@(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@formHelper(action = controllers.rfm.routes.UpeNameRegistrationController.onSubmit()) {
-
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+@layout(
+pageTitle    = titleNoForm(messages("rfm.upeStartPageRegistration.title"))) {
 
 @sectionHeader(messages("rfm.upe.heading.caption"))
-
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("rfm.upeNameRegistration.heading")).asPageHeading(Large)
-)
-.withHint(Hint(content = Text(messages("rfm.upeNameRegistration.hint"))))
-.withWidth(TwoThirds)
-)
+@heading(messages("rfm.upeStartPageRegistration.heading"), "govuk-heading-l")
+@paragraphBody(messages("rfm.upeStartPageRegistration.p1"))
 
 @govukButton(
-ButtonViewModel(messages("site.continue"))
+ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
 )
-}
+
+
+
 }

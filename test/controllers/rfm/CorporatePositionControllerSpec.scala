@@ -129,7 +129,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.UpeStartPageRegistrationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmUpeStartPageRegistrationController.onPageLoad.url
       }
     }
 
