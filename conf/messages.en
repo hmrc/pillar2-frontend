@@ -302,13 +302,15 @@ eligibilityconfirmation.title = You need to register this group to report Pillar
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filling member.
 
+furtherGroupCheckYourAnswers.title = Check your answers for further group details
+furtherGroupCheckYourAnswers.heading = Check your answers for further group details
 
-upeCheckYourAnswers.title = Check Your Answers
-upeCheckYourAnswers.heading = Check your answers
+upeCheckYourAnswers.title = Check your answers for ultimate parent details
+upeCheckYourAnswers.heading = Check your answers for ultimate parent details
 upeCheckYourAnswers.heading.caption = Group details
 
-nfmCheckYourAnswers.title = Check Your Answers
-nfmCheckYourAnswers.heading = Check your answers
+nfmCheckYourAnswers.title = Check your answers for filing member details
+nfmCheckYourAnswers.heading = Check your answers for filing member details
 nfmCheckYourAnswers.heading.caption = Business details
 nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
@@ -650,12 +652,14 @@ secondaryTelephonePreference.change.hidden = your response to whether we can con
 secondaryTelephone.change.hidden = the telephone number for the second contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
+
 contactCheckYourAnswers.first = First contact
-contactCheckYourAnswers.heading = Check your answers
-contactCheckYourAnswers.title = Check your answers
+contactCheckYourAnswers.heading = Check your answers for contact details
+contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
+
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
