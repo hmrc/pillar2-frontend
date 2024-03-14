@@ -80,27 +80,6 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to checkYourAnswers when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(UpeContactNamePage, "sad").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("telephoneNumber", "123456789")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
-      }
-
-    }
     "return bad request if wrong data is inputted" in {
       val ua          = emptyUserAnswers.set(UpeContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()

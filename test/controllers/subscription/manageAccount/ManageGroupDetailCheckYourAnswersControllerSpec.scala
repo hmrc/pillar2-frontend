@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.UserAnswersConnectors

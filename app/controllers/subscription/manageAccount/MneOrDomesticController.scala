@@ -15,19 +15,21 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.MneOrDomesticView
+import utils.RowStatus
+import views.html.subscriptionview.MneOrDomesticView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +39,8 @@ class MneOrDomesticController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  sessionRepository:         SessionRepository,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
@@ -47,11 +51,15 @@ class MneOrDomesticController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
+    if (request.userAnswers.fmStatus == RowStatus.Completed) {
+      val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -65,7 +73,8 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad)
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
       )
   }
 

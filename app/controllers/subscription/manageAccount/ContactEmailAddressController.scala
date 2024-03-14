@@ -15,18 +15,18 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactEmailAddressFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.ContactEmailAddressView
+import views.html.subscriptionview.ContactEmailAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +36,7 @@ class ContactEmailAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactEmailAddressView
@@ -73,7 +74,7 @@ class ContactEmailAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers set (SubPrimaryEmailPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad)
+              } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

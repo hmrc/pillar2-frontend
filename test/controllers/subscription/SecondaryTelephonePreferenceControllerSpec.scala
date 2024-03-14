@@ -17,19 +17,12 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryTelephonePreferenceView
-
-import scala.concurrent.Future
 
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
@@ -98,43 +91,6 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must redirect to telephone contact page if they answer yes " in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "true")
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url
-
-      }
-    }
-    "must redirect to address page if they answer no " in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "false")
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url
-
       }
     }
     "redirect to bookmark page if previous page not answered" in {

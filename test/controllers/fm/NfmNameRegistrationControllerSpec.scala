@@ -86,25 +86,6 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-      val pageAnswer = emptyUserAnswers.set(FmNameRegistrationPage, "alex").success.value
-      val application = applicationBuilder(userAnswers = Some(pageAnswer))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "John F"))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url
-
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

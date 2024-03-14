@@ -425,7 +425,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-//        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 
@@ -613,53 +612,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
 
-      }
-    }
-    "must redirect to add secondary contact detail page when Yes is selected" in {
-      val ua = emptyUserAnswers
-        .setOrException(NominateFilingMemberPage, false)
-        .setOrException(UpeContactNamePage, name)
-        .setOrException(UpeContactEmailPage, email)
-        .setOrException(UpePhonePreferencePage, false)
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to add primary contact name page when no is selected" in {
-      val ua = emptyUserAnswers
-        .setOrException(NominateFilingMemberPage, false)
-        .setOrException(UpeContactNamePage, name)
-        .setOrException(UpeContactEmailPage, email)
-        .setOrException(UpePhonePreferencePage, false)
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
       }
     }
 

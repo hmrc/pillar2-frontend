@@ -87,24 +87,6 @@ class UpeContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "name")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url
-      }
-    }
-
     "return bad request when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)

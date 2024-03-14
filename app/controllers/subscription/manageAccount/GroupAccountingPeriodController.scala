@@ -15,12 +15,12 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
+import views.html.subscriptionview.GroupAccountingPeriodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +38,7 @@ class GroupAccountingPeriodController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupAccountingPeriodView
@@ -45,7 +46,7 @@ class GroupAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider(true)
+  def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(SubMneOrDomesticPage)) {
@@ -70,7 +71,7 @@ class GroupAccountingPeriodController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, mode, updatedAnswers))
       )
   }
 

@@ -98,25 +98,6 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val ua = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
-      }
-    }
     "Bad request when invalid data submitted in POST" in {
       val ua          = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()

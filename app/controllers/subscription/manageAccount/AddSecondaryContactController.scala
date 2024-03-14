@@ -21,13 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.AddSecondaryContactView
+import views.html.subscriptionview.AddSecondaryContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +38,7 @@ class AddSecondaryContactController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              AddSecondaryContactFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      AddSecondaryContactView
@@ -68,20 +70,11 @@ class AddSecondaryContactController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad)
-
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
-              }
+            wantsToNominateSecondaryContact =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

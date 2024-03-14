@@ -126,7 +126,7 @@ class SubscriptionNavigator @Inject() {
     } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
       reviewAndSubmitCheckYourAnswers
     } else {
-      groupDetailCheckYourAnswerRoute
+      contactDetailCheckYourAnswersRoute
     }
 
   private def secondaryContactEmailRoute(userAnswers: UserAnswers): Call =
@@ -135,7 +135,7 @@ class SubscriptionNavigator @Inject() {
     } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
       reviewAndSubmitCheckYourAnswers
     } else {
-      groupDetailCheckYourAnswerRoute
+      contactDetailCheckYourAnswersRoute
     }
 
   private def addSecondaryContactCheckRoute(userAnswers: UserAnswers): Call =

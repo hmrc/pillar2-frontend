@@ -21,13 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import views.html.subscriptionview.manageAccount.CaptureSubscriptionAddressView
+import views.html.subscriptionview.CaptureSubscriptionAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +38,7 @@ class CaptureSubscriptionAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              CaptureSubscriptionAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
@@ -44,14 +46,12 @@ class CaptureSubscriptionAddressController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(SubAddSecondaryContactPage)) {
-      val preparedForm = request.userAnswers.get(SubRegisteredAddressPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
+      val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
       Ok(view(preparedForm, mode, countryOptions.options()))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
@@ -68,7 +68,7 @@ class CaptureSubscriptionAddressController @Inject() (
             updatedAnswers <-
               Future.fromTry(request.userAnswers.set(SubRegisteredAddressPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubRegisteredAddressPage, mode, updatedAnswers))
       )
   }
 

@@ -79,7 +79,6 @@ class NominatedFilingMemberNavigator @Inject() {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case FmPhonePreferencePage    => telephoneCheckRouteLogic
     case NominateFilingMemberPage => nominatedFilingMemberCheckRoute
-    case FmRegisteredInUKPage     => nominatedFilingMemberCheckRoute
     case _                        => whichCheckYourAnswerPageContact
   }
   private def nominatedFilingMemberCheckRoute(userAnswers: UserAnswers): Call =
@@ -87,7 +86,6 @@ class NominatedFilingMemberNavigator @Inject() {
       .get(NominateFilingMemberPage)
       .map(nominated =>
         if (nominated & userAnswers.fmStatus != RowStatus.Completed) {
-          // ask about this because we already have a logic to check if they have answered all the right questions
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers

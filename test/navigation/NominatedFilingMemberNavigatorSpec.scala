@@ -33,6 +33,9 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
     countryCode = "AB"
   )
 
+  private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+
   "Navigator" when {
 
     "in Normal mode" must {
@@ -80,11 +83,11 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
       "go to CYA page from a page where they enter their phone details" in {
         navigator.nextPage(FmCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(FmCapturePhonePage, "12321321")) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
     }
 
@@ -93,24 +96,24 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe nfmCYA
       }
 
       "go to CYA page from name fm page" in {
         navigator.nextPage(FmNameRegistrationPage, CheckMode, emptyUserAnswers.setOrException(FmNameRegistrationPage, "s")) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
       "go to CYA page from address page" in {
         navigator.nextPage(FmRegisteredAddressPage, CheckMode, emptyUserAnswers.setOrException(FmRegisteredAddressPage, nonUKAddress)) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
       "go to CYA page from contact name page" in {
         navigator.nextPage(FmContactNamePage, CheckMode, emptyUserAnswers.setOrException(FmContactNamePage, "Paddington")) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
       "go to CYA page from contact email page" in {
         navigator.nextPage(FmContactEmailPage, CheckMode, emptyUserAnswers.setOrException(FmContactEmailPage, "something@something.com")) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
@@ -118,7 +121,43 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe
-          controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+          nfmCYA
+      }
+      "go to is nfm uk based if they decide to nominate a filing member from final review page and complete the journey in normal mode" in {
+        val ua = emptyUserAnswers.setOrException(NominateFilingMemberPage, true).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(NominateFilingMemberPage, CheckMode, ua) mustBe
+          controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
+      }
+
+      "go to submit and review CYA page from name fm page if they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmNameRegistrationPage, "s").setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmNameRegistrationPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from address page if they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmRegisteredAddressPage, nonUKAddress).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmRegisteredAddressPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from contact name page if they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmContactNamePage, "Paddington").setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmContactNamePage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from contact email page if they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmContactEmailPage, "something@something.com").setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmContactEmailPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to capture telephone page if they have chosen to nominate one even if they have have answered all other mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
+          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+      }
+      "go to submit and review CYA page if no to nominating a contact number if they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, false).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
+          submitAndReview
       }
 
     }

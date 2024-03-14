@@ -15,19 +15,19 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.SecondaryContactNameView
+import views.html.subscriptionview.SecondaryContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +37,7 @@ class SecondaryContactNameController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactNameView
@@ -68,7 +69,7 @@ class SecondaryContactNameController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, mode, updatedAnswers))
       )
   }
 

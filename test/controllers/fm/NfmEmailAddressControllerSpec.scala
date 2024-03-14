@@ -81,26 +81,6 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-      val userAnswer =
-        emptyUserAnswers.setOrException(FmContactNamePage, "alex")
-
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url
-      }
-    }
     "must return a Bad Request when invalid data is submitted" in {
       val userAnswer  = emptyUserAnswers.set(FmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()

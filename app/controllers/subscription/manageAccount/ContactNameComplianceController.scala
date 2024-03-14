@@ -15,19 +15,20 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.{Mode, NormalMode}
+import navigation.AmendSubscriptionNavigator
 import pages.SubPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.ContactNameComplianceView
+import utils.RowStatus
+import views.html.subscriptionview.ContactNameComplianceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +38,7 @@ class ContactNameComplianceController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactNameComplianceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactNameComplianceView
@@ -46,11 +48,15 @@ class ContactNameComplianceController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
+    if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
+      val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
+      }
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -64,7 +70,7 @@ class ContactNameComplianceController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubPrimaryContactNamePage, mode, updatedAnswers))
       )
   }
 

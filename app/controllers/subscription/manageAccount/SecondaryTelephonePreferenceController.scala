@@ -21,13 +21,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.SecondaryTelephonePreferenceView
+import views.html.subscriptionview.SecondaryTelephonePreferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,6 +40,7 @@ class SecondaryTelephonePreferenceController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              SecondaryTelephonePreferenceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  navigator:                 AmendSubscriptionNavigator,
   view:                      SecondaryTelephonePreferenceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -70,19 +72,11 @@ class SecondaryTelephonePreferenceController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad)
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
-              }
+            nominatedSecondaryContactNumber =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

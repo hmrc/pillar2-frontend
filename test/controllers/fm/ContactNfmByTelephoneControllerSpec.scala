@@ -98,47 +98,6 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url
-      }
-    }
-
-    " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url
-      }
-
-    }
-
     "redirect to book mark page if no contact name or contact email is found for GET" in {
       val application = applicationBuilder(userAnswers = None)
         .build()

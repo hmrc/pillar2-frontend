@@ -15,19 +15,19 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.SecondaryContactEmailView
+import views.html.subscriptionview.SecondaryContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +37,7 @@ class SecondaryContactEmailController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactEmailView
@@ -73,7 +74,7 @@ class SecondaryContactEmailController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad)
+              } yield Redirect(navigator.nextPage(SubSecondaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

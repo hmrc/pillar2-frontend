@@ -104,24 +104,6 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to telephone preference for second contact once they answered with a valid response" in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("emailAddress" -> "something@gmail.com")
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
-
-      }
-    }
-
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
