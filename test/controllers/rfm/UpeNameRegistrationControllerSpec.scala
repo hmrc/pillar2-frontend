@@ -40,11 +40,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -63,11 +58,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       val userAnswers = emptyUserAnswers.setOrException(rfmUpeNameRegistrationPage, "name")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -112,11 +102,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -135,11 +120,6 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
