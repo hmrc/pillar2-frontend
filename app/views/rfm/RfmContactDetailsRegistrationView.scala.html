@@ -31,14 +31,14 @@ govukButton: GovukButton
 @(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("rfm.upeStartPageRegistration.title"))) {
+pageTitle    = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
 
-@sectionHeader(messages("rfm.upe.heading.caption"))
-@heading(messages("rfm.upeStartPageRegistration.heading"), "govuk-heading-l")
-@paragraphBody(messages("rfm.upeStartPageRegistration.p1"))
+@sectionHeader(messages("rfm.contact.heading.caption"))
+@heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
+@paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
 
 @govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
+ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
 )
 
 

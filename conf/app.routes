@@ -346,10 +346,10 @@ POST        /replace-filing-member/security/registration-date                con
 GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
-GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmUpeStartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/content                     controllers.rfm.RfmUpeStartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmUpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmUpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad

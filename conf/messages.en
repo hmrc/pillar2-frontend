@@ -851,16 +851,16 @@ rfm.corporatePosition.newNfm = New nominated filing member
 rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
 
-rfm.upe.heading.caption = Contact details
-rfm.upeStartPageRegistration.title = We need contact details for your Pillar 2 top-up taxes account
-rfm.upeStartPageRegistration.heading = We need contact details for your Pillar 2 top-up taxes account
-rfm.upeStartPageRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
+rfm.contact.heading.caption = Contact details
+rfm.contactDetailsRegistration.title = We need contact details for your Pillar 2 top-up taxes account
+rfm.contactDetailsRegistration.heading = We need contact details for your Pillar 2 top-up taxes account
+rfm.contactDetailsRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
 
-rfm.upeNameRegistration.title = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
-rfm.upeNameRegistration.heading = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
-rfm.upeNameRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-rfm.upeNameRegistration.error.required = Enter name of the person or team we should contact
-rfm.upeNameRegistration.error.length = Name of the contact person or team should be 160 characters or less
+rfm.primaryNameRegistration.title = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
+rfm.primaryNameRegistration.heading = What is the name of the person or team we should contact about Pillar 2 top-up taxes?
+rfm.primaryNameRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+rfm.primaryNameRegistration.error.required = Enter name of the person or team we should contact
+rfm.primaryNameRegistration.error.length = Name of the contact person or team should be 160 characters or less
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

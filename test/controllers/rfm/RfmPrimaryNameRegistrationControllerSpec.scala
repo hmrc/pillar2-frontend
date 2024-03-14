@@ -18,22 +18,22 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmUpeNameRegistrationFormProvider
+import forms.RfmPrimaryNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmUpeNameRegistrationPage
+import pages.rfmPrimaryNameRegistrationPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmUpeNameRegistrationView
+import views.html.rfm.RfmPrimaryNameRegistrationView
 
 import scala.concurrent.Future
 
-class RfmUpeNameRegistrationControllerSpec extends SpecBase {
+class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
 
-  val formProvider = new RfmUpeNameRegistrationFormProvider()
+  val formProvider = new RfmPrimaryNameRegistrationFormProvider()
 
   "RFM UPE Name Registration controller" when {
 
@@ -43,11 +43,11 @@ class RfmUpeNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmUpeNameRegistrationView]
+        val view = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -55,15 +55,15 @@ class RfmUpeNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(rfmUpeNameRegistrationPage, "name")
+      val userAnswers = emptyUserAnswers.setOrException(rfmPrimaryNameRegistrationPage, "name")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[RfmUpeNameRegistrationView]
+        val view    = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
@@ -86,7 +86,7 @@ class RfmUpeNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -107,7 +107,7 @@ class RfmUpeNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmUpeNameRegistrationController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
@@ -124,7 +124,7 @@ class RfmUpeNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value

@@ -24,15 +24,15 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmUpeStartPageRegistrationView
+import views.html.rfm.RfmContactDetailsRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmUpeStartPageRegistrationController @Inject() (
+class RfmContactDetailsRegistrationController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RfmUpeStartPageRegistrationView
+  view:                     RfmContactDetailsRegistrationView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -42,6 +42,6 @@ class RfmUpeStartPageRegistrationController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.RfmUpeNameRegistrationController.onPageLoad()))
+    Future.successful(Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()))
   }
 }

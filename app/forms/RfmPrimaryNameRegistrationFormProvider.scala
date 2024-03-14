@@ -22,11 +22,11 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-class RfmUpeNameRegistrationFormProvider @Inject() extends Mappings {
+class RfmPrimaryNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("rfm.upeNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.upeNameRegistration.error.length"))
+      "value" -> text("rfm.primaryNameRegistration.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.primaryNameRegistration.error.length"))
     )
 }
