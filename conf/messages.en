@@ -380,8 +380,10 @@ entityType.caption = Group details
 entityType.title = What entity type is the ultimate parent?
 entityType.heading = What entity type is the ultimate parent?
 entityType.ukLimitedCompany = UK limited company
+entityType.hint.ukLimitedCompany = This includes public limited companies.
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.companyTypeNotListed = Entity type not listed
+entityType.hint.companyTypeNotListed = Select to create a HMRC record.
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 
