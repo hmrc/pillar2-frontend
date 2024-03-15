@@ -21,8 +21,6 @@ import models.grs.{EntityType, RfmEntityType}
 import models.subscription.DashboardInfo
 import org.scalacheck.{Arbitrary, Gen}
 
-import java.time.LocalDate
-
 trait ModelGenerators {
 
   implicit lazy val arbitraryRfmEntityTypeController: Arbitrary[RfmEntityType] =

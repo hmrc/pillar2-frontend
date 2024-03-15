@@ -19,18 +19,17 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
-import controllers.routes
 import forms.RfmEntityTypeFormProvider
 import models.{Mode, UserType}
 import models.grs.{EntityType, RfmEntityType}
-import pages.{RfmEntityTypePage, fmEntityTypePage}
+import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RfmEntityTypeView
+import views.html.rfm.RfmEntityTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,14 +51,15 @@ class RfmEntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    //TODO
-    // if (request.userAnswers.get(fmRegisteredInUKPage).contains(true)) {
-    val preparedForm = request.userAnswers.get(RfmEntityTypePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    if (request.userAnswers.get(RfmUkBasedPage).contains(true)) {
+      val preparedForm = request.userAnswers.get(RfmEntityTypePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
+    } else {
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-
-    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -92,11 +92,6 @@ class RfmEntityTypeController @Inject() (
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           }
-
-        /*          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)*/
       )
   }
 }

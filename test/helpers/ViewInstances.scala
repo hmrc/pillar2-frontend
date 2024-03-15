@@ -18,18 +18,19 @@ package helpers
 
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
-import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, AssetsConfig, ContactFrontendConfig, TrackingConsentConfig, TudorCrownConfig}
+import uk.gov.hmrc.hmrcfrontend.config._
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html._
+import views.html.components.gds._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.fmview._
 import views.html.registrationview._
+import views.html.rfm.RfmEntityTypeView
 import views.html.subscriptionview._
 import views.html.templates._
-import views.html.components.gds._
 
 trait ViewInstances extends Configs with StubMessageControllerComponents {
 
@@ -139,6 +140,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
   val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
     new NominateFilingMemberYesNoView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton, govUkInsetText)
 
@@ -147,4 +149,30 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewRfmEntityTypeController: RfmEntityTypeView =
     new RfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewUPENameRegistration: UpeNameRegistrationView =
+    new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewUpeContactName: UpeContactNameView =
+    new UpeContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewUpeContactEmail: UpeContactEmailView =
+    new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewUpeRegisteredAddress: UpeRegisteredAddressView =
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+  val viewNfmRegisteredAddress: NfmRegisteredAddressView =
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+
+  val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
+    new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+  val viewContactByTelephoneView: ContactByTelephoneView =
+    new ContactByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+
+  val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
+    new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+  val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
+    new FilingMemberCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+  val viewCheckYourAnswersSub: SubCheckYourAnswersView =
+    new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+
+  val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
+
 }

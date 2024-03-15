@@ -17,14 +17,20 @@
 package controllers.rfm
 
 import base.SpecBase
-import controllers.routes
+import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.RfmEntityTypeFormProvider
-import models.{NormalMode, UserAnswers}
-import models.grs.{EntityType, RfmEntityType}
-import pages.{RfmEntityTypePage, fmEntityTypePage, fmRegisteredInUKPage}
+import models.NormalMode
+import models.grs.{GrsCreateRegistrationResponse, RfmEntityType}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{RfmEntityTypePage, RfmUkBasedPage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.RfmEntityTypeView
+import views.html.rfm.RfmEntityTypeView
+
+import scala.concurrent.Future
 
 class RfmEntityTypeControllerSpec extends SpecBase {
 
@@ -33,8 +39,8 @@ class RfmEntityTypeControllerSpec extends SpecBase {
   "RfmEntityTypeController Controller" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -48,33 +54,24 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
+    "must return Journey Recovery for view for a GET" in {
+      val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, false)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RfmEntityTypeView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(RfmEntityTypePage, RfmEntityType.values.head).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
-
-        val view = application.injector.instanceOf[RfmEntityTypeView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(RfmEntityType.values.head), NormalMode)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been not answered" in {
-
-      val ua = UserAnswers(userAnswersId).set(RfmEntityTypePage, RfmEntityType.values.head).success.value
-      val userAnswers =
-        ua.setOrException(RfmEntityTypePage, RfmEntityType.UkLimitedCompany)
+      val ua          = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+      val userAnswers = ua.set(RfmEntityTypePage, RfmEntityType.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -93,6 +90,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -111,6 +109,81 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
+    }
+
+    "must redirect to GRS for UK Limited company" in {
+
+      val ua =
+        emptyUserAnswers
+          .set(RfmEntityTypePage, RfmEntityType.UkLimitedCompany)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+          .thenReturn(
+            Future(
+              GrsCreateRegistrationResponse(
+                "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+              )
+            )
+          )
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", RfmEntityType.UkLimitedCompany.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(
+          result
+        ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
+      }
+
+    }
+
+    "must redirect to GRS for Limited Liability Partnership" in {
+
+      val ua =
+        emptyUserAnswers
+          .set(RfmEntityTypePage, RfmEntityType.LimitedLiabilityPartnership)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+          .thenReturn(
+            Future(
+              GrsCreateRegistrationResponse(
+                "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+              )
+            )
+          )
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", RfmEntityType.LimitedLiabilityPartnership.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(
+          result
+        ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
+      }
+
     }
 
   }

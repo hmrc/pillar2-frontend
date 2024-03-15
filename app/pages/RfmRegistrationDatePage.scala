@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.helper.CSPNonce
+package pages
 
-@this()
+import models.rfm.RegistrationDate
+import play.api.libs.json.JsPath
 
-@()(implicit request: Request[_])
-<link @{CSPNonce.attr} href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
-<script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
-<script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+case object RfmRegistrationDatePage extends QuestionPage[RegistrationDate] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "rfmRegistrationDatePage"
+}
