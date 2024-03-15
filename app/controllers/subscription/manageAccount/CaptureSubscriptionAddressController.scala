@@ -21,13 +21,13 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
+import pages.SubRegisteredAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import views.html.subscriptionview.CaptureSubscriptionAddressView
+import views.html.subscriptionview.manageAccount.CaptureSubscriptionAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

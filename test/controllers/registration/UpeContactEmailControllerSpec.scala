@@ -33,19 +33,12 @@
 package controllers.registration
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.UpeContactEmailFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{UpeContactEmailPage, UpeContactNamePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.UpeContactEmailView
-
-import scala.concurrent.Future
 
 class UpeContactEmailControllerSpec extends SpecBase {
 

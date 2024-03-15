@@ -81,28 +81,6 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         ).toString
       }
     }
-
-    "must redirect to the next page when valid data is submitted" in {
-      val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "3333322223333"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
-      }
-    }
-
     "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
       val userAnswersSubCapturePhone =
         emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value

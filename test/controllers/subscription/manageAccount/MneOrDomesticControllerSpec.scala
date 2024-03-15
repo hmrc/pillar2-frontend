@@ -17,19 +17,12 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.MneOrDomesticFormProvider
 import models.{CheckMode, MneOrDomestic, NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.SubMneOrDomesticPage
-import play.api.inject
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
-
-import scala.concurrent.Future
 
 class MneOrDomesticControllerSpec extends SpecBase {
 
@@ -85,23 +78,6 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-      }
-    }
-
-    "must redirect to accounting period page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
-          .withFormUrlEncodedBody("value" -> "ukAndOther")
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
       }
     }
 

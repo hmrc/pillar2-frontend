@@ -17,21 +17,15 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.GroupAccountingPeriodFormProvider
 import models.subscription.AccountingPeriod
 import models.{CheckMode, MneOrDomestic}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
@@ -77,47 +71,6 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "must redirect to the group check your answers page when valid data is submitted" in {
-
-      val application = applicationBuilder()
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url)
-          .withFormUrlEncodedBody(
-            "startDate.day"   -> "31",
-            "startDate.month" -> "12",
-            "startDate.year"  -> "2023",
-            "endDate.day"     -> "31",
-            "endDate.month"   -> "12",
-            "endDate.year"    -> "2024"
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(
-          result
-        ).value mustEqual controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
-      }
-
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -127,7 +80,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
-        val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 

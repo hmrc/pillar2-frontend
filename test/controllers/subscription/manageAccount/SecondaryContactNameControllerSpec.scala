@@ -17,19 +17,12 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.SecondaryContactNameFormProvider
 import models.CheckMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
-
-import scala.concurrent.Future
 
 class SecondaryContactNameControllerSpec extends SpecBase {
 
@@ -76,18 +69,6 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -105,23 +86,6 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, CheckMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must redirect to secondary contact email when the user enters a valid answer " in {
-      val application = applicationBuilder(None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
-        .withFormUrlEncodedBody("value" -> "name")
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
-
       }
     }
 

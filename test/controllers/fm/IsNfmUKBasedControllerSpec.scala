@@ -17,19 +17,12 @@
 package controllers.fm
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{FmRegisteredInUKPage, NominateFilingMemberPage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.IsNFMUKBasedView
-
-import scala.concurrent.Future
 
 class IsNfmUKBasedControllerSpec extends SpecBase {
 

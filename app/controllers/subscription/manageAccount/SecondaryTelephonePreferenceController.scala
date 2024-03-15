@@ -27,7 +27,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.SecondaryTelephonePreferenceView
+import views.html.subscriptionview.manageAccount.SecondaryTelephonePreferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,6 @@ class SecondaryTelephonePreferenceController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(SubSecondaryEmailPage)
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
     } yield {
       val form = formProvider(contactName)

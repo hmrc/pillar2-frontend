@@ -27,7 +27,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.AddSecondaryContactView
+import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

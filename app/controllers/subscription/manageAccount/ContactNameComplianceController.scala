@@ -26,8 +26,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.subscriptionview.ContactNameComplianceView
+import views.html.subscriptionview.manageAccount.ContactNameComplianceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,15 +45,11 @@ class ContactNameComplianceController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
-      val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

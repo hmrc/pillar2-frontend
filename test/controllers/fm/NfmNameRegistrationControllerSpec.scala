@@ -17,19 +17,12 @@
 package controllers.fm
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmNameRegistrationView
-
-import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 

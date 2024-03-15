@@ -26,8 +26,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
-import views.html.subscriptionview.MneOrDomesticView
+import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,15 +46,11 @@ class MneOrDomesticController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.fmStatus == RowStatus.Completed) {
-      val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
     }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

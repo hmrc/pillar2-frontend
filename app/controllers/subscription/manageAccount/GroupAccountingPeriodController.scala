@@ -21,14 +21,14 @@ import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import models.subscription.AccountingPeriod
-import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.SubAccountingPeriodPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.GroupAccountingPeriodView
+import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,15 +48,11 @@ class GroupAccountingPeriodController @Inject() (
   def form: Form[AccountingPeriod] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(SubMneOrDomesticPage)) {
-      val preparedForm = request.userAnswers.get(SubAccountingPeriodPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    val preparedForm = request.userAnswers.get(SubAccountingPeriodPage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
     }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
