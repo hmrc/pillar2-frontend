@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.SubRegisteredAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -37,6 +38,7 @@ class CaptureSubscriptionAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              CaptureSubscriptionAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,

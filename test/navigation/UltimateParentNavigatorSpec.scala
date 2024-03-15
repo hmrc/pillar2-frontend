@@ -109,6 +109,11 @@ class UltimateParentNavigatorSpec extends SpecBase {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
           controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode)
       }
+      "go to UPE CYA page if they have chosen to nominate a phone number but have provided on already" in {
+        val ua = emptyUserAnswers.setOrException(UpePhonePreferencePage, true).setOrException(UpeCapturePhonePage, "1231")
+        navigator.nextPage(UpePhonePreferencePage, CheckMode, ua) mustBe
+          upeCYA
+      }
       "go to UPE CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, false)) mustBe
           upeCYA
@@ -133,6 +138,14 @@ class UltimateParentNavigatorSpec extends SpecBase {
       "go to submit and review CYA page if they have chosen not to nominate a contact number  if all mandatory questions have been answered" in {
         val ua = emptyUserAnswers.setOrException(UpePhonePreferencePage, false).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(UpePhonePreferencePage, CheckMode, ua) mustBe submitAndReview
+      }
+      "go to submit and review  CYA page if they have chosen to nominate a phone number but have provided on already" in {
+        val ua = emptyUserAnswers
+          .setOrException(UpePhonePreferencePage, true)
+          .setOrException(UpeCapturePhonePage, "1231")
+          .setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(UpePhonePreferencePage, CheckMode, ua) mustBe submitAndReview
+
       }
     }
   }

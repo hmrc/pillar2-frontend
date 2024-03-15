@@ -20,6 +20,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -36,6 +37,7 @@ class ContactByTelephoneController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactByTelephoneView
@@ -73,7 +75,7 @@ class ContactByTelephoneController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
+              } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

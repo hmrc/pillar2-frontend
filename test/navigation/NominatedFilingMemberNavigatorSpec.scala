@@ -119,6 +119,11 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
           controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
       }
+      "go to CYA page if they chose yes to nominate a phone number and have provided one already" in {
+        val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(FmCapturePhonePage, "1321")
+        navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
+          nfmCYA
+      }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe
           nfmCYA
@@ -156,6 +161,14 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to submit and review CYA page if no to nominating a contact number if they have have answered all mandatory questions on the tasklist" in {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, false).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page if yes to nominating a contact number and they have have answered all mandatory questions on the tasklist" in {
+        val ua = emptyUserAnswers
+          .setOrException(FmPhonePreferencePage, true)
+          .setOrException(CheckYourAnswersLogicPage, true)
+          .setOrException(FmCapturePhonePage, "13213")
         navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
           submitAndReview
       }

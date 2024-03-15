@@ -20,6 +20,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.SubSecondaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -36,6 +37,7 @@ class SecondaryContactNameController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactNameView
@@ -62,7 +64,7 @@ class SecondaryContactNameController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, mode, updatedAnswers))
       )
   }
 

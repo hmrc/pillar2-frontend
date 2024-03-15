@@ -20,6 +20,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -36,6 +37,7 @@ class MneOrDomesticController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
@@ -64,7 +66,7 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
       )
   }
 

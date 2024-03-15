@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
+import navigation.AmendSubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -38,6 +39,7 @@ class AddSecondaryContactController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              AddSecondaryContactFormProvider,
+  navigator:                 AmendSubscriptionNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      AddSecondaryContactView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -72,7 +74,7 @@ class AddSecondaryContactController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
+              } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
