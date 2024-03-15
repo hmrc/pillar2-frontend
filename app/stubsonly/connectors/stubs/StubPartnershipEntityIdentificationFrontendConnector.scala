@@ -17,9 +17,9 @@
 package stubsonly.connectors.stubs
 
 import connectors.PartnershipIdentificationFrontendConnector
-import models.{Mode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.registration.PartnershipEntityRegistrationData
+import models.{Mode, UserType}
 import play.api.libs.json.Json
 import stubsonly.utils.Base64Utils
 import uk.gov.hmrc.http.HeaderCarrier

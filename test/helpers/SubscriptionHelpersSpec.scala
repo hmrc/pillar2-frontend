@@ -83,7 +83,7 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswer.fmStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
         userAnswer.fmStatus mustEqual RowStatus.Completed
       }
       "return in progress if fm is not registered in uk and no name reg can be found" in {
@@ -197,7 +197,7 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
 
       "return none if no filing member is nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
         userAnswer.getFmSafeID mustBe None
       }
     }

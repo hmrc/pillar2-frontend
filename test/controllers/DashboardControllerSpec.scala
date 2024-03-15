@@ -19,7 +19,6 @@ package controllers
 import base.SpecBase
 import connectors.{ReadSubscriptionConnector, UserAnswersConnectors}
 import generators.ModelGenerators
-import models.UserAnswers
 import models.subscription.{AccountStatus, DashboardInfo}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

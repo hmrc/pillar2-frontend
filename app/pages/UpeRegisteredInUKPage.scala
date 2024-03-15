@@ -47,7 +47,7 @@ case object UpeRegisteredInUKPage extends QuestionPage[Boolean] {
         .remove(GrsUpeStatusPage)
         .flatMap(
           _.remove(UpeEntityTypePage).flatMap(
-            _.remove(upeGRSResponsePage)
+            _.remove(UpeGRSResponsePage)
           )
         )
     } else {

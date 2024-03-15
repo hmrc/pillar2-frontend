@@ -18,7 +18,6 @@ package controllers.actions
 
 import models.UserAnswers
 import models.requests.{IdentifierRequest, OptionalDataRequest}
-import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.{ExecutionContext, Future}
 

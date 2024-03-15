@@ -98,7 +98,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
   private val defaultUserAnswer = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, true)
-    .setOrException(upeGRSResponsePage, grsResponse)
+    .setOrException(UpeGRSResponsePage, grsResponse)
     .setOrException(UpeRegInformationPage, regData)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
     .setOrException(SubRegisteredAddressPage, nonUkAddress)

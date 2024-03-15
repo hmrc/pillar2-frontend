@@ -76,7 +76,7 @@ class GrsReturnController @Inject() (
               filingMember = None
             )
             for {
-              userAnswers <- Future.fromTry(request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
+              userAnswers <- Future.fromTry(request.userAnswers.set(UpeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
               userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
               userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
               -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
@@ -118,7 +118,7 @@ class GrsReturnController @Inject() (
           val registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId, registrationDate = None, filingMember = None)
           for {
             userAnswers <- Future.fromTry(
-                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
+                             request.userAnswers.set(UpeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
                            )
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
             userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))

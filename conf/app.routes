@@ -347,9 +347,29 @@ POST        /replace-filing-member/security/registration-date                con
 GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
+GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+
+
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
 GET        /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+
+GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
+
+
+
+
+

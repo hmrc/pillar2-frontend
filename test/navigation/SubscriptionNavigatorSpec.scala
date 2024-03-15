@@ -62,7 +62,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
   private val completedJourney = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, true)
-    .setOrException(upeGRSResponsePage, grsResponse)
+    .setOrException(UpeGRSResponsePage, grsResponse)
     .setOrException(UpeRegInformationPage, regData)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
     .setOrException(NominateFilingMemberPage, false)

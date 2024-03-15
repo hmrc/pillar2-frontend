@@ -45,7 +45,7 @@ trait SubscriptionHelpers {
         } else {
           (for {
             entityType <- get(UpeEntityTypePage)
-            grsData    <- get(upeGRSResponsePage)
+            grsData    <- get(UpeGRSResponsePage)
             grsStatus  <- get(GrsUpeStatusPage)
           } yield grsStatus).getOrElse(RowStatus.InProgress)
         }

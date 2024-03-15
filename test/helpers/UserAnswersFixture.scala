@@ -196,7 +196,7 @@ trait UserAnswersFixture extends TryValues {
     .set(UpeRegisteredInUKPage, true)
     .success
     .value
-    .set(upeGRSResponsePage, grsResponse)
+    .set(UpeGRSResponsePage, grsResponse)
     .success
     .value
     .set(GrsUpeStatusPage, RowStatus.Completed)
@@ -204,7 +204,7 @@ trait UserAnswersFixture extends TryValues {
     .value
 
   val upeNoEntityType = emptyUserAnswers
-    .set(upeGRSResponsePage, grsResponse)
+    .set(UpeGRSResponsePage, grsResponse)
     .success
     .value
     .set(UpeRegisteredInUKPage, true)
@@ -455,7 +455,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(upeGRSResponsePage, grsResponse)
+    .setOrException(UpeGRSResponsePage, grsResponse)
 
   val allSectionsCompleted = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
