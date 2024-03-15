@@ -58,19 +58,6 @@ object EntityType extends Enumerable.Implicits {
       )
     )
 
-//
-//    values.filterNot(_ == Other).zipWithIndex.map { case (value, index) =>
-//      RadioItem(
-//        content = Text(messages(s"entityType.${value.toString}")),
-//        value = Some(value.toString),
-//        id = Some(s"value_$index")
-//      )
-//    } :+ RadioItem(
-//      content = Text(messages(s"entityType.${Other.toString}")),
-//      value = Some(Other.toString),
-//      id = Some(s"value_3")
-//    )
-
   implicit val enumerable: Enumerable[EntityType] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }
