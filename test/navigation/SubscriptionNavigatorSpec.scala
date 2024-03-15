@@ -79,6 +79,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
 
   private lazy val contactCYA      = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
   private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
+  private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
   "Navigator" when {
 
@@ -101,6 +102,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubUsePrimaryContactPage, NormalMode, emptyUserAnswers.setOrException(SubUsePrimaryContactPage, true)) mustBe
           controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
       }
+      "go to journey recovery if no answer for SubUsePrimaryContact page can be found" in {
+        navigator.nextPage(SubUsePrimaryContactPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go from UsePrimaryContact page to primary contact name page if they choose no " in {
         navigator.nextPage(SubUsePrimaryContactPage, NormalMode, emptyUserAnswers.setOrException(SubUsePrimaryContactPage, false)) mustBe
           controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode)
@@ -117,6 +122,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true)) mustBe
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode)
       }
+      "go to journey recovery if no answer for SubPrimaryPhonePreference page can be found" in {
+        navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to AddSecondaryContact page if they do not choose to nominate a primary contact number" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, false)) mustBe
           controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
@@ -129,6 +138,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubAddSecondaryContactPage, NormalMode, emptyUserAnswers.setOrException(SubAddSecondaryContactPage, false)) mustBe
           controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
       }
+      "go to journey recovery if no answer for SubAddSecondaryContact page can be found" in {
+        navigator.nextPage(SubAddSecondaryContactPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to secondary contact email page from secondary contact name page" in {
         navigator.nextPage(SubSecondaryContactNamePage, NormalMode, emptyUserAnswers.setOrException(SubSecondaryContactNamePage, "someone")) mustBe
           controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode)
@@ -140,6 +153,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
       "go to secondary telephone page if they choose to nominate a secondary contact number" in {
         navigator.nextPage(SubSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubSecondaryPhonePreferencePage, true)) mustBe
           controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for SubSecondaryPhonePreference page can be found" in {
+        navigator.nextPage(SubSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to subscription address page if they choose not to nominate a secondary contact number" in {
         navigator.nextPage(
@@ -184,6 +201,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true)) mustBe
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
       }
+      "go to journey recovery if no answer for SubPrimaryPhonePreference page can be found" in {
+        navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to CYA page if they have chosen not to nominate a  primary contact number" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, false)) mustBe
           contactCYA
@@ -201,11 +222,14 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
           controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(CheckMode)
       }
+      "go to journey recovery if no answer for SubSecondaryPhonePreference page can be found" in {
+        navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to CYA page if they have chosen not to nominate a  secondary contact number" in {
         navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, completedJourney) mustBe
           contactCYA
       }
-      /////
       "go back to review and submit CYA page from mne or domestic page if they have finished every task " in {
         val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubMneOrDomesticPage, CheckMode, ua) mustBe

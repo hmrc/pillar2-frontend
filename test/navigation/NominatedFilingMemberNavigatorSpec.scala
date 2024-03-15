@@ -35,7 +35,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
 
   private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
-
+  private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {
 
     "in Normal mode" must {
@@ -53,6 +53,10 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(NominateFilingMemberPage, NormalMode, emptyUserAnswers.setOrException(NominateFilingMemberPage, false)) mustBe
           controllers.routes.TaskListController.onPageLoad
       }
+      "go to journey recovery if no answer for nominated filing member page can be found" in {
+        navigator.nextPage(NominateFilingMemberPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to entity type page if they are a uk based entity" in {
         navigator.nextPage(FmRegisteredInUKPage, NormalMode, emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)) mustBe
           controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode)
@@ -60,6 +64,10 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       "go to name fm page if they are a non-uk entity" in {
         navigator.nextPage(FmRegisteredInUKPage, NormalMode, emptyUserAnswers.setOrException(FmRegisteredInUKPage, false)) mustBe
           controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for is nfm uk based can be found" in {
+        navigator.nextPage(FmRegisteredInUKPage, NormalMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to address page from name fm page" in {
         navigator.nextPage(FmNameRegistrationPage, NormalMode, emptyUserAnswers.setOrException(FmNameRegistrationPage, "s")) mustBe
@@ -85,6 +93,10 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe
           nfmCYA
       }
+      "go to journey recovery if no answer for nfm phone preference can be found" in {
+        navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to CYA page from a page where they enter their phone details" in {
         navigator.nextPage(FmCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(FmCapturePhonePage, "12321321")) mustBe
           nfmCYA
@@ -99,6 +111,10 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe nfmCYA
       }
 
+      "go to journey recovery if no answer for nfm preference can be found" in {
+        navigator.nextPage(NominateFilingMemberPage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to CYA page from name fm page" in {
         navigator.nextPage(FmNameRegistrationPage, CheckMode, emptyUserAnswers.setOrException(FmNameRegistrationPage, "s")) mustBe
           nfmCYA
@@ -123,6 +139,10 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(FmCapturePhonePage, "1321")
         navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
           nfmCYA
+      }
+      "go to journey recovery if no answer for nfm phone preference can be found" in {
+        navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe

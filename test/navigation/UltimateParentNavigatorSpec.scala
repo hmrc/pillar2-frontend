@@ -34,6 +34,7 @@ class UltimateParentNavigatorSpec extends SpecBase {
   )
   private lazy val upeCYA          = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {
 
     "in Normal mode" must {
@@ -50,6 +51,10 @@ class UltimateParentNavigatorSpec extends SpecBase {
       "go to name registration page if they are a non-uk entity" in {
         navigator.nextPage(UpeRegisteredInUKPage, NormalMode, emptyUserAnswers.setOrException(UpeRegisteredInUKPage, false)) mustBe
           controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for UpeRegisteredInUK page can be found" in {
+        navigator.nextPage(UpeRegisteredInUKPage, NormalMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to address page from name registration page" in {
         navigator.nextPage(UpeNameRegistrationPage, NormalMode, emptyUserAnswers.setOrException(UpeNameRegistrationPage, "s")) mustBe
@@ -70,6 +75,10 @@ class UltimateParentNavigatorSpec extends SpecBase {
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
           controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for UpePhonePreference page can be found" in {
+        navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, false)) mustBe upeCYA
@@ -113,6 +122,10 @@ class UltimateParentNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers.setOrException(UpePhonePreferencePage, true).setOrException(UpeCapturePhonePage, "1231")
         navigator.nextPage(UpePhonePreferencePage, CheckMode, ua) mustBe
           upeCYA
+      }
+      "go to journey recovery if no answer for UpePhonePreference page can be found" in {
+        navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers) mustBe
+          jr
       }
       "go to UPE CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, false)) mustBe
