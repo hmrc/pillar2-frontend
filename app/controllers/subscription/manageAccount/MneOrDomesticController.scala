@@ -20,13 +20,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
-import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.subscriptionview.MneOrDomesticView
@@ -39,8 +37,6 @@ class MneOrDomesticController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  sessionRepository:         SessionRepository,
-  navigator:                 AmendSubscriptionNavigator,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
@@ -73,8 +69,7 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
+          } yield Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad)
       )
   }
 

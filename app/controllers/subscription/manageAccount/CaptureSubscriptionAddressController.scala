@@ -21,7 +21,6 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import navigation.AmendSubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -38,7 +37,6 @@ class CaptureSubscriptionAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
   formProvider:              CaptureSubscriptionAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
@@ -50,12 +48,9 @@ class CaptureSubscriptionAddressController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(SubAddSecondaryContactPage)) {
-      val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
-      Ok(view(preparedForm, mode, countryOptions.options()))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+    val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
+    Ok(view(preparedForm, mode, countryOptions.options()))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -68,7 +63,7 @@ class CaptureSubscriptionAddressController @Inject() (
             updatedAnswers <-
               Future.fromTry(request.userAnswers.set(SubRegisteredAddressPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(SubRegisteredAddressPage, mode, updatedAnswers))
+          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
       )
   }
 
