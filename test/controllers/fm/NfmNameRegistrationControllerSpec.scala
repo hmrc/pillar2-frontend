@@ -17,12 +17,19 @@
 package controllers.fm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmNameRegistrationView
+
+import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 
@@ -37,6 +44,24 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
 
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if they hit this page through entity not listed button" in {
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj("fmRegisteredInUK" -> "false")))
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[NfmNameRegistrationView]

@@ -55,5 +55,25 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
 
     }
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "<>"))
+
+        val boundForm = formProvider().bind(Map("value" -> "<>"))
+
+        val view = application.injector.instanceOf[UPERegisteredInUKConfirmationView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
   }
 }

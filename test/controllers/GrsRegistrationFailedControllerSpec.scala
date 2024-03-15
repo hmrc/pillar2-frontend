@@ -14,40 +14,46 @@
  * limitations under the License.
  */
 
-package controllers.eligibility
+package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import views.html.eligibilityview.EligibilityConfirmationView
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import views.html.{RegistrationFailedNfmView, RegistrationFailedUpeView}
 
-class EligibilityConfirmationControllerSpec extends SpecBase {
+class GrsRegistrationFailedControllerSpec extends SpecBase {
 
-  "Eligibility Confirmation Controller" when {
-    "must return OK and the correct view for a GET" in {
+  "GrsRegistrationFailed  Controller" when {
+
+    "must return OK and the correct view for a GET for UPE" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.GrsRegistrationFailedController.onPageLoadUpe.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[EligibilityConfirmationView]
+        val view = application.injector.instanceOf[RegistrationFailedUpeView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
-
       }
     }
-    "must redirect to the taskList" in {
+
+    "must return OK and the correct view for a GET for NFM" in {
+
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.eligibility.routes.EligibilityConfirmationController.onSubmit.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+        val request = FakeRequest(GET, controllers.routes.GrsRegistrationFailedController.onPageLoadNfm.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RegistrationFailedNfmView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }
