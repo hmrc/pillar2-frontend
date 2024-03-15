@@ -74,9 +74,7 @@ class EntityTypeController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          println(s"KSJKJDKSJDKJSJD ----- $value")
-
+        value =>
           value match {
             case EntityType.UkLimitedCompany =>
               logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Calling UK Limited Company in EntityTypeController class")
@@ -99,7 +97,6 @@ class EntityTypeController @Inject() (
               logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Calling UpeNameRegistrationController class")
               Future successful Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode))
           }
-        }
       )
   }
 

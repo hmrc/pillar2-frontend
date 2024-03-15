@@ -365,12 +365,12 @@ captureTelephoneDetails.messages.error.format = Enter a telephone number in the 
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Do you want to register a nominated filing member to report for this group?
-NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member to report for this group?
+NominateFilingMemberYesNo.title = Nominate a filing member
+NominateFilingMemberYesNo.heading = Nominate a filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-
-NominateFilingMemberYesNo.p1 = If you do not register a nominated filing member, we will use the ultimate parent entity (UPE) as the filing member.
-NominateFilingMemberYesNo.insetText = A nominated filing member must be nominated by the UPE and must be able to access the information required to report Pillar 2 top-up taxes on the group’s behalf.
+NominateFilingMemberYesNo.subheading = Do you want to register a nominated filing member to report for this group?
+NominateFilingMemberYesNo.p1 = A nominated filing member must be nominated by the UPE and must have access to information required to report Pillar 2 top-up taxes.
+NominateFilingMemberYesNo.p2 = If you select 'No', we will use the ultimate parent entity (UPE) as the filing member.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
 NominateFilingMemberYesNo.yes = Yes
@@ -586,13 +586,18 @@ content.heading = We need contact details for the filing member
 content.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your compliance with Pillar 2 top-up taxes.
 content.p2 = These may be different to any contact details you have already provided during registration, which were used to match your business with our records.
 
+
 useContactPrimary.no = No
 useContactPrimary.yes = Yes
 
-useContactPrimary.title = Do you want to use this as your primary contact?
-useContactPrimary.heading = Do you want to use this as your primary contact?
+useContactPrimary.title = Saved contact
+useContactPrimary.heading = Saved contact
 useContactPrimary.heading.caption = Contact details
+useContactPrimary.h2 = Do you want to use this as your primary contact?
 useContactPrimary.error.required = Select yes if you want to use this as your primary contact
+useContactPrimary.name = Name
+useContactPrimary.email = Email
+useContactPrimary.telephone = Telephone
 
 contactNameCompliance.heading.caption = Contact details
 
