@@ -351,6 +351,11 @@ POST        /replace-filing-member/contact-details/content                     c
 GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+
+
+
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
