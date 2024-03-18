@@ -1,0 +1,56 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
+@import viewmodels.govuk.hint
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode, secondaryContactName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = title(form, messages("secondaryContactEmail.title"))) {
+
+    @formHelper(action = controllers.subscription.routes.SecondaryContactEmailController.onSubmit(mode)) {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+        <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
+
+        @govukInput(
+            InputViewModel(
+                field = form("emailAddress"),
+                label = LabelViewModel(messages("secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
+                .withCssClass("long-word")
+            )
+            .withHint(Hint(content = Text(messages("secondaryContactEmail.hint"))))
+            .withWidth(TwoThirds)
+            .asEmail()
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}
