@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage, NominateFilingMemberPage}
+import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

@@ -151,10 +151,12 @@ class UseContactPrimaryController @Inject() (
     } yield {
       val contactTel = request.userAnswers.get(FmCapturePhonePage)
       request.userAnswers.get(SubUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+        case Some(value) if telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
@@ -166,10 +168,10 @@ class UseContactPrimaryController @Inject() (
     } yield {
       val contactTel = request.userAnswers.get(UpeCapturePhonePage)
       request.userAnswers.get(SubUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 }
