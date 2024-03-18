@@ -16,10 +16,6 @@
 
 @this()
 
-@(message: String)(implicit messages: Messages, request: Request[_])
+@(message: String, classes: String = "govuk-caption-l")
 
-<p id="print-this-page" class="govuk-list govuk-link print-link hmrc-!-js-visible govuk-!-display-none-print">
- <a href="#" class="govuk-link hmrc-!-js-visible" data-module="hmrc-print-link">
-  @message
- </a>
-</p>
+<span class=@classes>@message</span>

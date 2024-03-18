@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package pages
 
-@(message: String)(implicit messages: Messages, request: Request[_])
+import play.api.libs.json.JsPath
 
-<p id="print-this-page" class="govuk-list govuk-link print-link hmrc-!-js-visible govuk-!-display-none-print">
- <a href="#" class="govuk-link hmrc-!-js-visible" data-module="hmrc-print-link">
-  @message
- </a>
-</p>
+case object rfmPrimaryNameRegistrationPage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "rfmPrimaryNameRegistration"
+}
