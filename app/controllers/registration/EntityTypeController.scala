@@ -21,7 +21,7 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.EntityTypeFormProvider
 import models.grs.EntityType
-import models.{Mode, UserType}
+import models.{Mode, NormalMode, UserType}
 import pages.{upeEntityTypePage, upeRegisteredInUKPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -92,6 +92,10 @@ class EntityTypeController @Inject() (
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+
+            case EntityType.Other =>
+              logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Calling UpeNameRegistrationController class")
+              Future successful Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode))
           }
       )
   }

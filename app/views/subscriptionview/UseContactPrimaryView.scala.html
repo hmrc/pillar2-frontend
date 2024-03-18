@@ -15,20 +15,24 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        h1: heading,
+        h2: HeadingH2,
+        span: Span,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukInsetText: GovukInsetText
+        govukInsetText: GovukInsetText,
+        govukSummaryList: GovukSummaryList
+
 )
 
-@(form: Form[_], mode: Mode, name: String, email: String, tel: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
@@ -40,35 +44,23 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
+        @h1(messages("useContactPrimary.heading"), classes = "govuk-heading-l")
+
+        @govukSummaryList(list)
+
+        @h2(messages("useContactPrimary.h2"), size = "m")
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("useContactPrimary.heading")).asPageHeading(LegendSize.Large)
-            ).withHint(HintViewModel(HtmlContent(headingContent)))
+                fieldset = Fieldset.defaultObject
+            )
         )
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
     }
-}
-
-@headingContent = @{
-    s"""
-|<div class="govuk-inset-text">
-|    <ul class="govuk-list">
-|        <li>
-|            $name
-|        </li>
-|        <li>
-|            $email
-|        </li>
-|        <li>
-|           ${tel.getOrElse("")}
-|        </li>
-|    </ul>
-|</div>
-|""".stripMargin
 }
 
 

@@ -84,9 +84,11 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukWarningText  = new GovukWarningText
   val formWithCSRF      = new FormWithCSRF
   val heading           = new heading
+  val h2                = new HeadingH2
   val sectionHeader     = new sectionHeader
   val paragraphBody     = new paragraphBody
   val paragraphBodyLink = new paragraphBodyLink
+  val span              = new Span
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -142,7 +144,19 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
 
   val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
-    new NominateFilingMemberYesNoView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton, govUkInsetText)
+    new NominateFilingMemberYesNoView(
+      pillar2layout,
+      formWithCSRF,
+      sectionHeader,
+      govukErrorSummary,
+      govukRadios,
+      govukButton,
+      govUkInsetText,
+      paragraphBody,
+      heading,
+      h2,
+      span
+    )
 
   val viewStartPageRegistration: StartPageRegistrationView =
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
