@@ -65,15 +65,25 @@ private[mappings] class LocalDateFormatter(
     (bindedDay, bindedMonth, bindedYear) match {
       case (Left(_), Left(_), Left(_)) =>
         Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonthYear.invalid", args)))
-      case (Left(_), Left(_), Right(_)) => Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonth.invalid", args)))
+      case (Left(_), Left(_), Right(_)) =>
+        Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonth.invalid", args)))
       case (Right(_), Left(_), Left(_)) =>
         Left(Seq(FormError(key, s"$messageKeyPart.error.$key.monthYear.invalid", args)))
-      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayYear.invalid", args)))
-      case (Left(dayError), Right(_), Right(_))    => Left(dayError)
-      case (Right(_), Left(monthError), Right(_))  => Left(monthError)
-      case (Right(_), Right(_), Left(yearError))   => Left(yearError)
-      case (Right(day), Right(month), Right(year)) => toDate(key, day, month, year)
+      case (Left(_), Right(_), Left(_)) =>
+        Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayYear.invalid", args)))
+      case (Left(dayError), Right(_), Right(_))   => Left(dayError)
+      case (Right(_), Left(monthError), Right(_)) => Left(monthError)
+      case (Right(_), Right(_), Left(yearError))  => Left(yearError)
+      case (Right(day), Right(month), Right(year)) if isRealDate(day, month, year) =>
+        toDate(key, day, month, year)
+      case (Right(_), Right(_), Right(_)) =>
+        Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayMonthYear.invalid", args)))
     }
+  }
+
+  private def isRealDate(day: Int, month: Int, year: Int): Boolean = {
+    val dateStr = s"""${"%04d".format(year)}-${"%02d".format(month)}-${"%02d".format(day)}"""
+    Try(LocalDate.parse(dateStr)).isSuccess
   }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {

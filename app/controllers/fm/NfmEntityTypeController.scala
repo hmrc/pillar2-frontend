@@ -21,7 +21,7 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
-import models.{Mode, UserType}
+import models.{Mode,NormalMode, UserType}
 import pages.{FmEntityTypePage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -83,6 +83,8 @@ class NfmEntityTypeController @Inject() (
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+            case EntityType.Other =>
+              Future successful Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
           }
       )
   }

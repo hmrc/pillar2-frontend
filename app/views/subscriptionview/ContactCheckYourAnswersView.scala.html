@@ -24,7 +24,7 @@
 )
 
 
-@(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 @formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
@@ -34,7 +34,6 @@
 <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
     @govukSummaryList(listPrimary)
     <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
-        @govukSummaryList(addSecondaryContactList)
          @govukSummaryList(listSecondary)
         <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
         @govukSummaryList(address)

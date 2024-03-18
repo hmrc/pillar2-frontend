@@ -54,11 +54,9 @@ class ContactCheckYourAnswersController @Inject() (
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
       ).flatten
     )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
@@ -69,7 +67,7 @@ class ContactCheckYourAnswersController @Inject() (
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
     if (request.userAnswers.contactDetailStatus == RowStatus.Completed) {
-      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+      Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
