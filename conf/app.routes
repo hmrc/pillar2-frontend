@@ -351,6 +351,24 @@ POST        /replace-filing-member/contact-details/content                     c
 GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onSubmit(mode: Mode = NormalMode)
 
+GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+
+
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
