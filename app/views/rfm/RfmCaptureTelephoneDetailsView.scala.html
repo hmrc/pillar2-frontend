@@ -15,9 +15,9 @@
  *@
 
 @import viewmodels.InputWidth._
-@import config.FrontendAppConfig
 @import viewmodels.LabelSize.Large
-@import viewmodels.govuk.hint
+@import config.FrontendAppConfig
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -29,24 +29,22 @@
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm-input-business-email.title"))) {
+@layout(pageTitle = title(form, messages("rfmCaptureTelephoneDetails.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onSubmit(mode)) {
+
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("rfm-input-business-email.caption")</span>
+        <span class="govuk-caption-l">@messages("rfmCaptureTelephoneDetails.heading.caption")</span>
+
         @govukInput(
             InputViewModel(
-                field = form("emailAddress"),
-                label = LabelViewModel(messages("rfm-input-business-email.heading", UserName)).asPageHeading(Large)
-                .withCssClass("long-word")
-
+                field = form("telephoneNumber"),
+                label = LabelViewModel(messages("rfmCaptureTelephoneDetails.heading",UserName)).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("rfm-input-business-email.hint"))))
             .withWidth(TwoThirds)
-            .asEmail()
-
+            .withHint(Hint(content = Text(messages("rfmCaptureTelephoneDetails.hint"))))
         )
 
 

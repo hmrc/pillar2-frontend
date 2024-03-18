@@ -14,44 +14,37 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
 @import config.FrontendAppConfig
-@import viewmodels.LabelSize.Large
-@import viewmodels.govuk.hint
+@import viewmodels.LegendSize.Large
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm-input-business-email.title"))) {
+@layout(pageTitle = title(form, messages("rfmContactByTelephone.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
+
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("rfm-input-business-email.caption")</span>
-        @govukInput(
-            InputViewModel(
-                field = form("emailAddress"),
-                label = LabelViewModel(messages("rfm-input-business-email.heading", UserName)).asPageHeading(Large)
-                .withCssClass("long-word")
-
+        <span class="govuk-caption-l">@messages("rfmContactByTelephone.heading.caption")</span>
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field  = form("value"),
+                legend = LegendViewModel(messages("rfmContactByTelephone.heading",UserName)).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("rfm-input-business-email.hint"))))
-            .withWidth(TwoThirds)
-            .asEmail()
-
         )
 
-
         @govukButton(
-            ButtonViewModel(messages("site.save-and-continue"))
+            ButtonViewModel(messages("site.save-and-continue")).withAttribute("id", "submit")
         )
     }
 }
