@@ -232,9 +232,9 @@ checkNewFilingMember.heading.caption = Group details
 
 upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
-upe-input-business-email.hint=We will use this to confirm your records.
+upe-input-business-email.hint = We will use this to confirm your records.
 upe-input-business-email.caption = Group details
-upe-input-business-contact.email.error.required = You need to enter the email address for {0}
+upe-input-business-contact.email.error.required = Enter email address for {0}
 upe-input-business-contact.email.error.length = The email address should be 132 characters or less
 upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 upe-input-business-email.change.hidden=  the contact email address
@@ -243,8 +243,8 @@ upe-input-business-email.checkYourAnswersLabel = Email address
 
 rfm-input-business-email.title=What is the email address?
 rfm-input-business-email.heading=What is the email address for {0}?
-rfm-input-business-email.hint=We will use this to confirm your records.
-rfm-input-business-email.caption = Group details
+rfm-input-business-email.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = You need to enter the email address for {0}
 rfm-input-business-contact.email.error.length = The email address should be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com

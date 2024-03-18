@@ -70,7 +70,7 @@ class RfmPrimaryNameRegistrationController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(rfmPrimaryNameRegistrationPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad)
+          } yield Redirect(controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(mode))
       )
   }
 

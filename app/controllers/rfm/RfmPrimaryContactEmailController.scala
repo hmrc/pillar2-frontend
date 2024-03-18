@@ -44,17 +44,22 @@ class RfmPrimaryContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(rfmPrimaryNameRegistrationPage)
-      .map { username =>
-        val form = formProvider(username)
-        val preparedForm = request.userAnswers.get(rfmPrimaryContactEmailPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      request.userAnswers
+        .get(rfmPrimaryNameRegistrationPage)
+        .map { username =>
+          val form = formProvider(username)
+          val preparedForm = request.userAnswers.get(rfmPrimaryContactEmailPage) match {
+            case Some(value) => form.fill(value)
+            case None        => form
+          }
+          Ok(view(preparedForm, mode, username))
         }
-        Ok(view(preparedForm, mode, username))
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
@@ -72,7 +77,7 @@ class RfmPrimaryContactEmailController @Inject() (
                     request.userAnswers.set(rfmPrimaryContactEmailPage, value)
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad.url)
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

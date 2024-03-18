@@ -35,31 +35,35 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.{RfmPrimaryContactEmailFormProvider, UpeContactEmailFormProvider}
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{rfmPrimaryNameRegistrationPage, upeContactEmailPage, upeContactNamePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{rfmPrimaryContactEmailPage, rfmPrimaryNameRegistrationPage, upeContactEmailPage, upeContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.UpeContactEmailView
 import views.html.rfm.RfmPrimaryContactEmailView
 
 import scala.concurrent.Future
-
+import play.api.inject.bind
+import play.api.libs.json.Json
 class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
-  def getUpeContactEmailFormProvider: RfmPrimaryContactEmailFormProvider = new RfmPrimaryContactEmailFormProvider()
   val formProvider = new RfmPrimaryContactEmailFormProvider()
 
-  "RfmPrimaryContactEmail Controller" when {
+  "Rfm Primary ContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -76,15 +80,21 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .set(upeContactNamePage, "name")
+        .set(rfmPrimaryNameRegistrationPage, "name")
         .success
         .value
-        .set(upeContactEmailPage, "hello@bye.com")
+        .set(rfmPrimaryContactEmailPage, "hello@bye.com")
         .success
         .value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -101,29 +111,40 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit.url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
       running(application) {
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit.url).withFormUrlEncodedBody("emailAddress" -> "<>")
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("emailAddress" -> "<>")
         val boundForm = formProvider("name").bind(Map("emailAddress" -> "<>"))
         val view      = application.injector.instanceOf[RfmPrimaryContactEmailView]
         val result    = route(application, request).value
@@ -132,22 +153,55 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
+    "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
+      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad.url)
+        val longEmail =
+          "aaaaaaaaafsdfsdfsdfsdfsdfsfdsdfsdfsdfsdfsdfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaal@gmail.com"
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("emailAddress" -> longEmail)
+        val boundForm = formProvider("name").bind(Map("emailAddress" -> longEmail))
+        val view      = application.injector.instanceOf[RfmPrimaryContactEmailView]
+        val result    = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
 
-        val result = route(application, request).value
+    "redirect to bookmark page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None)
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
 
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
     "Journey Recovery when no data found for contact name in POST" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit.url).withFormUrlEncodedBody(
-        "emailAddress" -> "al@gmail.com"
+      val application = applicationBuilder(userAnswers = None)
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+      val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+        "emailAddress" -> "alll@gmail.com"
       )
       running(application) {
         val result = route(application, request).value

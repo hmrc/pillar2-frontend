@@ -353,6 +353,8 @@ POST        /replace-filing-member/contact-details/input-name                  c
 
 GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 
 
