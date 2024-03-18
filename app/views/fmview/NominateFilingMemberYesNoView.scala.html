@@ -15,8 +15,6 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize
-@import views.html.components.gds.sectionHeader
 @import components.gds._
 
 @this(
@@ -37,10 +35,10 @@
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
 
+
     @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
-
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
