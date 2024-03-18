@@ -302,13 +302,15 @@ eligibilityconfirmation.title = You need to register this group to report Pillar
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filling member.
 
+furtherGroupCheckYourAnswers.title = Check your answers for further group details
+furtherGroupCheckYourAnswers.heading = Check your answers for further group details
 
-upeCheckYourAnswers.title = Check Your Answers
-upeCheckYourAnswers.heading = Check your answers
+upeCheckYourAnswers.title = Check your answers for ultimate parent details
+upeCheckYourAnswers.heading = Check your answers for ultimate parent details
 upeCheckYourAnswers.heading.caption = Group details
 
-nfmCheckYourAnswers.title = Check Your Answers
-nfmCheckYourAnswers.heading = Check your answers
+nfmCheckYourAnswers.title = Check your answers for filing member details
+nfmCheckYourAnswers.heading = Check your answers for filing member details
 nfmCheckYourAnswers.heading.caption = Business details
 nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption= Group details
@@ -363,12 +365,12 @@ captureTelephoneDetails.messages.error.format = Enter a telephone number in the 
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Do you want to register a nominated filing member to report for this group?
-NominateFilingMemberYesNo.heading = Do you want to register a nominated filing member to report for this group?
+NominateFilingMemberYesNo.title = Nominate a filing member
+NominateFilingMemberYesNo.heading = Nominate a filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-
-NominateFilingMemberYesNo.p1 = If you do not register a nominated filing member, we will use the ultimate parent entity (UPE) as the filing member.
-NominateFilingMemberYesNo.insetText = A nominated filing member must be nominated by the UPE and must be able to access the information required to report Pillar 2 top-up taxes on the group’s behalf.
+NominateFilingMemberYesNo.subheading = Do you want to register a nominated filing member to report for this group?
+NominateFilingMemberYesNo.p1 = A nominated filing member must be nominated by the UPE and must have access to information required to report Pillar 2 top-up taxes.
+NominateFilingMemberYesNo.p2 = If you select ‘No’, we will use the ultimate parent entity (UPE) as the filing member.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
 NominateFilingMemberYesNo.yes = Yes
@@ -380,8 +382,10 @@ entityType.caption = Group details
 entityType.title = What entity type is the ultimate parent?
 entityType.heading = What entity type is the ultimate parent?
 entityType.ukLimitedCompany = UK limited company
+entityType.hint.ukLimitedCompany = This includes public limited companies.
 entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.companyTypeNotListed = Entity type not listed
+entityType.hint.companyTypeNotListed = Select to create a HMRC record.
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 
@@ -582,13 +586,18 @@ content.heading = We need contact details for the filing member
 content.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your compliance with Pillar 2 top-up taxes.
 content.p2 = These may be different to any contact details you have already provided during registration, which were used to match your business with our records.
 
+
 useContactPrimary.no = No
 useContactPrimary.yes = Yes
 
-useContactPrimary.title = Do you want to use this as your primary contact?
-useContactPrimary.heading = Do you want to use this as your primary contact?
+useContactPrimary.title = Saved contact
+useContactPrimary.heading = Saved contact
 useContactPrimary.heading.caption = Contact details
+useContactPrimary.h2 = Do you want to use this as your primary contact?
 useContactPrimary.error.required = Select yes if you want to use this as your primary contact
+useContactPrimary.name = Name
+useContactPrimary.email = Email
+useContactPrimary.telephone = Telephone
 
 contactNameCompliance.heading.caption = Contact details
 
@@ -648,12 +657,14 @@ secondaryTelephonePreference.change.hidden = your response to whether we can con
 secondaryTelephone.change.hidden = the telephone number for the second contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
+
 contactCheckYourAnswers.first = First contact
-contactCheckYourAnswers.heading = Check your answers
-contactCheckYourAnswers.title = Check your answers
+contactCheckYourAnswers.heading = Check your answers for contact details
+contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
+
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number

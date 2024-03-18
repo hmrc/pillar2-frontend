@@ -43,13 +43,13 @@
 
     @paragraphBody(messages("registrationConfirmation.p1", messages(s"mneOrDom.${mneOrDomestic}")))
 
-    @paragraphBody(messages("registrationConfirmation.p2"), "govuk-heading-s")
+    @paragraphBody(messages("registrationConfirmation.p2"), isBold = true)
 
     @paragraphBody(messages("registrationConfirmation.p3"))
 
     @paragraphBody(messages("registrationConfirmation.p4"))
 
-    @heading(messages("registrationConfirmation.next"), "govuk-heading-s govuk-!-margin-top-5", "h2")
+    @heading(messages("registrationConfirmation.next"), "govuk-heading-m govuk-!-margin-top-5", "h2")
 
     @paragraphBody(messages("registrationConfirmation.now", link(
         text = messages("registrationConfirmation.link-home"),
