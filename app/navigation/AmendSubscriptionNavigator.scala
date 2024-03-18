@@ -25,6 +25,8 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AmendSubscriptionNavigator @Inject() {
+
+  def nextPage(page: Page, mode: Mode = CheckMode, userAnswers: UserAnswers): Call = checkRouteMap(page)(userAnswers)
   private lazy val groupDetailCheckYourAnswerRoute: Call =
     controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
   private lazy val contactDetailCheckYourAnswersRoute =
@@ -105,7 +107,5 @@ class AmendSubscriptionNavigator @Inject() {
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
-
-  def nextPage(page: Page, mode: Mode = CheckMode, userAnswers: UserAnswers): Call = checkRouteMap(page)(userAnswers)
 
 }

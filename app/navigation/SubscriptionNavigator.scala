@@ -25,6 +25,13 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class SubscriptionNavigator @Inject() {
+
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+    case NormalMode =>
+      normalRoutes(page)(userAnswers)
+    case CheckMode =>
+      checkRouteMap(page)(userAnswers)
+  }
   private lazy val groupDetailCheckYourAnswerRoute: Call = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
   private lazy val contactDetailCheckYourAnswersRoute = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
   private lazy val reviewAndSubmitCheckYourAnswers    = controllers.routes.CheckYourAnswersController.onPageLoad
@@ -180,10 +187,4 @@ class SubscriptionNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
-  }
 }

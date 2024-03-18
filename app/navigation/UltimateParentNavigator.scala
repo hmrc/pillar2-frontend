@@ -25,6 +25,13 @@ import models._
 
 @Singleton
 class UltimateParentNavigator @Inject() {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+    case NormalMode =>
+      normalRoutes(page)(userAnswers)
+    case CheckMode =>
+      checkRouteMap(page)(userAnswers)
+  }
+
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private val normalRoutes: Page => UserAnswers => Call = {
@@ -88,10 +95,4 @@ class UltimateParentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
-  }
 }

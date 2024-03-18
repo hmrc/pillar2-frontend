@@ -26,6 +26,13 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NominatedFilingMemberNavigator @Inject() {
+
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+    case NormalMode =>
+      normalRoutes(page)(userAnswers)
+    case CheckMode =>
+      checkRouteMap(page)(userAnswers)
+  }
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
 
@@ -115,10 +122,4 @@ class NominatedFilingMemberNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
-  }
 }
