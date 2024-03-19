@@ -19,7 +19,7 @@ package controllers.fm
 import base.SpecBase
 import forms.NfmCaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.{fmCapturePhonePage, fmContactNamePage, fmPhonePreferencePage}
+import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmCaptureTelephoneDetailsView
@@ -33,8 +33,8 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val ua = emptyUserAnswers
-        .setOrException(fmContactNamePage, "name")
-        .setOrException(fmPhonePreferencePage, true)
+        .setOrException(FmContactNamePage, "name")
+        .setOrException(FmPhonePreferencePage, true)
 
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -56,9 +56,9 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
-        .setOrException(fmCapturePhonePage, "12312323")
-        .setOrException(fmContactNamePage, "name")
-        .setOrException(fmPhonePreferencePage, true)
+        .setOrException(FmCapturePhonePage, "12312323")
+        .setOrException(FmContactNamePage, "name")
+        .setOrException(FmPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -78,7 +78,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {

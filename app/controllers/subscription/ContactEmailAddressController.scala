@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.ContactEmailAddressFormProvider
 import models.Mode
-import pages.{subPrimaryContactNamePage, subPrimaryEmailPage}
+import navigation.SubscriptionNavigator
+import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,6 +37,7 @@ class ContactEmailAddressController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactEmailAddressView
@@ -45,10 +47,10 @@ class ContactEmailAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subPrimaryEmailPage) match {
+        val preparedForm = request.userAnswers.get(SubPrimaryEmailPage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -61,7 +63,7 @@ class ContactEmailAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -71,9 +73,9 @@ class ContactEmailAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers set (subPrimaryEmailPage, value))
+                  Future.fromTry(request.userAnswers set (SubPrimaryEmailPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.ContactByTelephoneController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

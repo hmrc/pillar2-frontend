@@ -17,19 +17,12 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.ContactByTelephoneFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContactByTelephoneView
-
-import scala.concurrent.Future
 
 class ContactByTelephoneControllerSpec extends SpecBase {
 
@@ -40,7 +33,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET" in {
       val ua =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -63,10 +56,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
     "return OK and the correct view for a GET if page has previously been answered" in {
       val ua =
         emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
+          .set(SubPrimaryContactNamePage, "name")
           .success
           .value
-          .set(subPrimaryPhonePreferencePage, true)
+          .set(SubPrimaryPhonePreferencePage, true)
           .success
           .value
 
@@ -88,55 +81,8 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value YES" in {
-      val userAnswersSubCaptureNoPhone =
-        emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "true")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "redirect to Add secondary contact page when valid data is submitted with value No" in {
-      val userAnswersSubCaptureNoPhone =
-        emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCaptureNoPhone))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "false")
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
-      }
-    }
-
     "must return bad request when invalid data is submitted" in {
-      val userAnswer  = emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+      val userAnswer  = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.routes.ContactByTelephoneController.onSubmit(NormalMode).url)

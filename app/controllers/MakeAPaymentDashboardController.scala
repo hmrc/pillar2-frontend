@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.plrReferencePage
+import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -43,7 +43,7 @@ class MakeAPaymentDashboardController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     Pillar2Reference
       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-      .orElse(request.userAnswers.get(plrReferencePage))
+      .orElse(request.userAnswers.get(PlrReferencePage))
       .map { pillar2Id =>
         Ok(view(pillar2Id))
       }

@@ -17,19 +17,12 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.AddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subPrimaryEmailPage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.AddSecondaryContactView
-
-import scala.concurrent.Future
 
 class AddSecondaryContactControllerSpec extends SpecBase {
 
@@ -39,8 +32,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subPrimaryEmailPage, "asda")
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubPrimaryEmailPage, "asda")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -59,9 +52,9 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subPrimaryEmailPage, "asda")
-        .setOrException(subAddSecondaryContactPage, true)
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubPrimaryEmailPage, "asda")
+        .setOrException(SubAddSecondaryContactPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,7 +76,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
+        .set(SubPrimaryContactNamePage, "name")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -101,54 +94,6 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must redirect to secondary contact name if they answer yes " in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
-        .set(subAddSecondaryContactPage, true)
-        .success
-        .value
-
-      val application = applicationBuilder(Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "true")
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url
-
-      }
-    }
-    "must redirect to the page where we capture their address if they answer no " in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(subPrimaryContactNamePage, "name")
-        .success
-        .value
-
-      val application = applicationBuilder(Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "false")
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url
-
       }
     }
 

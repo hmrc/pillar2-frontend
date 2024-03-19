@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subPrimaryEmailPage}
+import navigation.AmendSubscriptionNavigator
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -38,6 +39,7 @@ class AddSecondaryContactController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              AddSecondaryContactFormProvider,
+  navigator:                 AmendSubscriptionNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      AddSecondaryContactView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -48,10 +50,10 @@ class AddSecondaryContactController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(subPrimaryEmailPage)
-      contactName <- request.userAnswers.get(subPrimaryContactNamePage)
+      _           <- request.userAnswers.get(SubPrimaryEmailPage)
+      contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
     } yield {
-      val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
+      val preparedForm = request.userAnswers.get(SubAddSecondaryContactPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -62,26 +64,17 @@ class AddSecondaryContactController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         form
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad)
-
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
-              }
+            wantsToNominateSecondaryContact =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

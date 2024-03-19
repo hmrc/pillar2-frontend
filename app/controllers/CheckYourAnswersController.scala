@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{plrReferencePage, subMneOrDomesticPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,7 +59,7 @@ class CheckYourAnswersController @Inject() (
     sessionRepository.get(request.userId).map { optionalUserAnswer =>
       (for {
         userAnswer <- optionalUserAnswer
-        _          <- userAnswer.get(plrReferencePage)
+        _          <- userAnswer.get(PlrReferencePage)
       } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
         .getOrElse(
           Ok(view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList))
@@ -70,11 +70,11 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
       request.userAnswers
-        .get(subMneOrDomesticPage)
+        .get(SubMneOrDomesticPage)
         .map { mneOrDom =>
           (for {
             plr <- subscriptionService.createSubscription(request.userAnswers)
-            dataToSave = UserAnswers(request.userAnswers.id).setOrException(subMneOrDomesticPage, mneOrDom).setOrException(plrReferencePage, plr)
+            dataToSave = UserAnswers(request.userAnswers.id).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
             _ <- sessionRepository.set(dataToSave)
             _ <- userAnswersConnectors.remove(request.userId)
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))

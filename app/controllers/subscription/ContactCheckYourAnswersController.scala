@@ -20,7 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.{CheckYourAnswersLogicPage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -29,7 +31,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ContactCheckYourAnswersController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -69,5 +71,13 @@ class ContactCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    for {
+      updatedAnswers <-
+        Future.fromTry(request.userAnswers.set(CheckYourAnswersLogicPage, true))
+      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield Redirect(controllers.routes.TaskListController.onPageLoad)
   }
 }

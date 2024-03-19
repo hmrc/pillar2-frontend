@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.upeGRSResponsePage
+import pages.UpeGRSResponsePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object EntityTypePartnershipCompanyNameUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(upeGRSResponsePage)
+      .get(UpeGRSResponsePage)
       .flatMap { GRS =>
         GRS.partnershipEntityRegistrationData.flatMap { PartnershipEntity =>
           PartnershipEntity.companyProfile.map(company =>
