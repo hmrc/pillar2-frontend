@@ -17,239 +17,61 @@
 package helpers
 
 import base.SpecBase
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, UKAddress}
+import models.rfm.RegistrationDate
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-import models.rfm.RegistrationDate
+
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
-  private val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
-  private val email            = "hello@darkness.myoldFriend"
-  private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
 
-  private val grsResponse = GrsResponse(
-    Some(
-      IncorporatedEntityRegistrationData(
-        companyProfile = CompanyProfile(
-          companyName = "ABC Limited",
-          companyNumber = "1234",
-          dateOfIncorporation = LocalDate.now(),
-          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-        ),
-        ctutr = "1234567890",
-        identifiersMatch = true,
-        businessVerification = None,
-        registration = GrsRegistrationResult(
-          registrationStatus = RegistrationStatus.Registered,
-          registeredBusinessPartnerId = Some("XB0000000000001"),
-          failures = None
-        )
-      )
-    )
-  )
+  private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+
   "Subscription Helper" when {
 
     "getUpe status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
-        val userAnswer = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.setOrException(upeContactNamePage, "name")
         userAnswer.upeStatus mustEqual RowStatus.NotStarted
       }
       "return in progress if user is not registered in uk but no name reg can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeContactNamePage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
-          .set(upePhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeInProgressUserAnswer.upeStatus mustEqual RowStatus.InProgress
       }
-      "return in progress if user is not registered in uk but no contact name can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
-          .set(upePhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
-      }
-      "return in progress if user is not registered in uk but no address can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
-          .set(upePhonePreferencePage, false)
-          .success
-          .value
 
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+      "return in progress if user is not registered in uk but no contact name can be found" in {
+        upeInProgressNoContactName.upeStatus mustEqual RowStatus.InProgress
       }
+
+      "return in progress if user is not registered in uk but no address can be found" in {
+        upeNoAddressFound.upeStatus mustEqual RowStatus.InProgress
+      }
+
       "return in progress if user is not registered in uk but no email can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upePhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeNoEmailFound.upeStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
+        upeNoPhonePref.upeStatus mustEqual RowStatus.InProgress
+      }
 
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
-      }
       "return in progress if user is not registered answered yes to phone preference page and no phone number can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeContactNamePage, "name")
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
-          .set(upePhonePreferencePage, true)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+        upePhonePrefButNoPhoneNumber.upeStatus mustEqual RowStatus.InProgress
       }
+
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeNameRegistrationPage, "name")
-          .success
-          .value
-          .set(upeRegisteredInUKPage, false)
-          .success
-          .value
-          .set(upeContactNamePage, "name")
-          .success
-          .value
-          .set(upeRegisteredAddressPage, ukAddress)
-          .success
-          .value
-          .set(upeContactEmailPage, email)
-          .success
-          .value
-          .set(upePhonePreferencePage, true)
-          .success
-          .value
-          .set(upeCapturePhonePage, "12312")
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.Completed
+        upeCompletedNoPhoneNumber.upeStatus mustEqual RowStatus.Completed
       }
+
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-          .success
-          .value
-          .set(upeRegisteredInUKPage, true)
-          .success
-          .value
-          .set(upeGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(GrsUpeStatusPage, RowStatus.Completed)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.Completed
+        upeCompletedGrsStatus.upeStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(upeRegisteredInUKPage, true)
-          .success
-          .value
-          .set(GrsUpeStatusPage, RowStatus.Completed)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeNoEntityType.upeStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        val userAnswer = emptyUserAnswers
-          .set(upeEntityTypePage, EntityType.UkLimitedCompany)
-          .success
-          .value
-          .set(upeRegisteredInUKPage, true)
-          .success
-          .value
-          .set(GrsUpeStatusPage, RowStatus.Completed)
-          .success
-          .value
-        userAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeNoGrsResponseType.upeStatus mustEqual RowStatus.InProgress
       }
 
     }
@@ -257,165 +79,35 @@ class SubscriptionHelpersSpec extends SpecBase {
     "NFM status" should {
 
       "return Not Started if no answer can be found to fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.setOrException(fmContactNamePage, "name")
         userAnswer.fmStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
         userAnswer.fmStatus mustEqual RowStatus.Completed
       }
       "return in progress if fm is not registered in uk and no name reg can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmContactNamePage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-          .set(fmPhonePreferencePage, false)
-          .success
-          .value
-
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoNameReg.fmStatus mustEqual RowStatus.InProgress
       }
+
       "return in progress if user is not registered in uk but no contact name can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-          .set(fmPhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoContactName.fmStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no address can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-          .set(fmPhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no email can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmPhonePreferencePage, false)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoEmail.fmStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoPhonePref.fmStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmContactNamePage, "name")
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-          .set(fmPhonePreferencePage, true)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmPhonePrefNoPhoneNum.fmStatus mustEqual RowStatus.InProgress
       }
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmContactNamePage, "name")
-          .success
-          .value
-          .set(fmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(fmContactEmailPage, email)
-          .success
-          .value
-          .set(fmPhonePreferencePage, true)
-          .success
-          .value
+        val userAnswer = fmPhonePrefNoPhoneNum
           .set(fmCapturePhonePage, "12312")
           .success
           .value
@@ -423,140 +115,42 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
 
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
-          .set(fmGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-          .success
-          .value
-
-        userAnswer.fmStatus mustEqual RowStatus.Completed
+        fmCompletedGrsResponse.fmStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
-          .set(GrsUpeStatusPage, RowStatus.Completed)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoEntityType.fmStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        val userAnswer = emptyUserAnswers
-          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
-          .success
-          .value
-          .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-          .success
-          .value
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
-        userAnswer.fmStatus mustEqual RowStatus.InProgress
+        fmNoGrsResponse.fmStatus mustEqual RowStatus.InProgress
       }
 
     }
 
     "group detail status" should {
       "return completed if an answer is provided both pages" in {
-        val userAnswer = emptyUserAnswers
-          .set(subMneOrDomesticPage, MneOrDomestic.Uk)
-          .success
-          .value
-          .set(subAccountingPeriodPage, accountingPeriod)
-          .success
-          .value
-        userAnswer.groupDetailStatus mustEqual RowStatus.Completed
+        groupDetailCompleted.groupDetailStatus mustEqual RowStatus.Completed
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        val userAnswer = emptyUserAnswers.set(subMneOrDomesticPage, MneOrDomestic.Uk).success.value
-        userAnswer.groupDetailStatus mustEqual RowStatus.InProgress
+        groupDetailInProgress.groupDetailStatus mustEqual RowStatus.InProgress
       }
 
       "return Not start if no answer is provided to either of the pages" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.groupDetailStatus mustEqual RowStatus.NotStarted
+        emptyUserAnswers.groupDetailStatus mustEqual RowStatus.NotStarted
       }
     }
 
     "contact detail status" should {
       "return completed if an answer is provided to the right combination of pages" in {
-        val userAnswer = emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subPrimaryEmailPage, "email@hello.com")
-          .success
-          .value
-          .set(subPrimaryPhonePreferencePage, true)
-          .success
-          .value
-          .set(subPrimaryCapturePhonePage, "123213")
-          .success
-          .value
-          .set(subAddSecondaryContactPage, false)
-          .success
-          .value
-          .set(subUsePrimaryContactPage, true)
-          .success
-          .value
-          .set(subRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-        userAnswer.contactDetailStatus mustEqual RowStatus.Completed
+        contactDetailCompleted.contactDetailStatus mustEqual RowStatus.Completed
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        val userAnswer = emptyUserAnswers
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subPrimaryContactNamePage, "name")
-          .success
-          .value
-          .set(subPrimaryEmailPage, "email@hello.com")
-          .success
-          .value
-          .set(subPrimaryPhonePreferencePage, true)
-          .success
-          .value
-          .set(subAddSecondaryContactPage, false)
-          .success
-          .value
-          .set(subUsePrimaryContactPage, true)
-          .success
-          .value
-
-        userAnswer.contactDetailStatus mustEqual RowStatus.InProgress
+        contactDetailInProgress.contactDetailStatus mustEqual RowStatus.InProgress
       }
 
       "return Not start if no answer is provided to either of the pages" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.contactDetailStatus mustEqual RowStatus.NotStarted
+        emptyUserAnswers.contactDetailStatus mustEqual RowStatus.NotStarted
       }
     }
 
@@ -565,105 +159,93 @@ class SubscriptionHelpersSpec extends SpecBase {
         val userAnswer = emptyUserAnswers
         val status     = RowStatus.Completed
 
-        userAnswer.finalCYAStatus(status, status, status, status) mustEqual RowStatus.NotStarted.toString
+        userAnswer.finalCYAStatus(status, status, status, status) mustEqual RowStatus.NotStarted
       }
 
       "return cannot start yet if upe status is not completed " in {
         val userAnswer = emptyUserAnswers
         val status     = RowStatus.Completed
 
-        userAnswer.finalCYAStatus(status, status, status, RowStatus.InProgress) mustEqual "Cannot start yet"
+        userAnswer.finalCYAStatus(status, status, status, RowStatus.InProgress) mustEqual RowStatus.CannotStartYet
       }
     }
 
     "getFmSafeId" should {
       "return the safe id retrieved from GRS if the nfm is registered in the UK" in {
         val userAnswer = emptyUserAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
-          .set(FmSafeIDPage, "12323212")
-          .success
-          .value
-        userAnswer.getFmSafeID mustBe Right(Some("12323212"))
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmSafeIDPage, "12323212")
+
+        userAnswer.getFmSafeID mustBe Some("12323212")
       }
 
       "return none if fm is non-uk based" in {
         val userAnswer = emptyUserAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
-        userAnswer.getFmSafeID mustBe Right(None)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(fmRegisteredInUKPage, false)
+
+        userAnswer.getFmSafeID mustBe None
       }
 
       "return none if no filing member is nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
-        userAnswer.getFmSafeID mustBe Right(None)
-      }
-      "redirected to journey recovery if no data can be found for nominated filing member" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.getFmSafeID mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
+        userAnswer.getFmSafeID mustBe None
       }
     }
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
-        val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
         val userAnswer = emptyUserAnswers
-          .set(upeRegisteredInUKPage, true)
-          .success
-          .value
-          .set(UpeRegInformationPage, regData)
-          .success
-          .value
-        userAnswer.getUpRegData mustBe Right(Some("567"))
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(UpeRegInformationPage, regData)
+
+        userAnswer.getUpeSafeID mustBe Some("567")
       }
 
       "return none if upe is non-uk based" in {
-        val userAnswer = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(upeRegisteredInUKPage, false)
 
-        userAnswer.getUpRegData mustBe Right(None)
-      }
-
-      "redirected to journey recovery if no data can be found for nominated filing member" in {
-        val userAnswer = emptyUserAnswers
-        userAnswer.getUpRegData mustBe Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        userAnswer.getUpeSafeID mustBe None
       }
     }
 
     "groupDetails status checker" should {
 
       "return true if right combination of the contact details and the subscription address have been answered " in {
-        val userAnswers = emptyUserAnswers
-          .setOrException(subPrimaryPhonePreferencePage, false)
-          .setOrException(subAddSecondaryContactPage, false)
-          .setOrException(subRegisteredAddressPage, nonUkAddress)
-        userAnswers.groupDetailStatusChecker mustEqual true
+        groupStatusIsTrue.groupDetailStatusChecker mustEqual true
       }
     }
 
     "final status checker" should {
 
       "return true if all the tasks have been completed for the subscription journey " in {
-        val date = LocalDate.now()
-        val userAnswers = emptyUserAnswers
-          .setOrException(subPrimaryPhonePreferencePage, false)
-          .setOrException(subAddSecondaryContactPage, false)
-          .setOrException(subRegisteredAddressPage, nonUkAddress)
-          .setOrException(NominateFilingMemberPage, false)
-          .setOrException(upeRegisteredInUKPage, true)
-          .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-          .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-          .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
-          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
-          .setOrException(upeGRSResponsePage, grsResponse)
+        finalStatusIsTrue.finalStatusCheck mustEqual true
+      }
+    }
+    "create Enrolment information" should {
 
-        userAnswers.finalStatusCheck mustEqual true
+      "return an EnrolmentData object with CTR and CRN numbers if the ultimate parent is registered in the UK" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegInformationPage, regData)
+          .setOrException(upeRegisteredInUKPage, true)
+        userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(crn = Some("123"), ctUtr = Some("345"), plrId = "fakeID")
+      }
+
+      "return an Enrolment Info object with the post code and country code with a fake ID" in {
+        val ukAddress = UKAddress(
+          addressLine1 = "1 drive",
+          addressLine2 = None,
+          addressLine3 = "la la land",
+          addressLine4 = None,
+          postalCode = "m19hgs",
+          countryCode = "AB"
+        )
+
+        val userAnswer = emptyUserAnswers
+          .setOrException(upeRegisteredAddressPage, ukAddress)
+          .setOrException(upeRegisteredInUKPage, false)
+
+        userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
       }
     }
 
@@ -672,21 +254,15 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "12323212")
-          .success
-          .value
-          .set(rfmRegistrationDatePage, RegistrationDate(date))
-          .success
-          .value
+          .setOrException(RfmSecurityCheckPage, "12323212")
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
 
         userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
       }
 
       "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
         val userAnswersInProgress = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "Security Check Answer")
-          .success
-          .value
+          .setOrException(RfmSecurityCheckPage, "Security Check Answer")
 
         userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
       }

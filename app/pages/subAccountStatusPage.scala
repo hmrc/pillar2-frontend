@@ -16,7 +16,7 @@
 
 package pages
 
-import models.subscription.{AccountStatus, AccountingPeriod}
+import models.subscription.AccountStatus
 import play.api.libs.json.JsPath
 
 case object subAccountStatusPage extends QuestionPage[AccountStatus] {

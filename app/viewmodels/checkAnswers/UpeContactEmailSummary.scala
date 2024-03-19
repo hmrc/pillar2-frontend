@@ -36,6 +36,7 @@ object UpeContactEmailSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

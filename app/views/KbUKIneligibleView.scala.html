@@ -15,9 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    paragraphBodyLink: paragraphBodyLink,
     govukButton: GovukButton
 )
 
@@ -27,15 +32,11 @@
 @layout(
     pageTitle    = titleNoForm(messages("KbUKIneligible.title")), showSignOut = false, timeout = false, authorised = false) {
 
-      <h1 class="govuk-heading-l">@messages("KbUKIneligible.heading")</h1>
+        @heading(messages("KbUKIneligible.heading"), "govuk-heading-l")
 
-      <p class="govuk-body">@messages("KbUKIneligible.p1")</p>
+        @paragraphBody(messages("KbUKIneligible.p1"))
+        @paragraphBody(messages("KbUKIneligible.p2"))
 
-      <p class="govuk-body">@messages("KbUKIneligible.p2")</p>
-
-
-      <p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax/multinational-top-up-tax-uk-adoption-of-organisation-for-economic-co-operation-and-development-pillar-2">@messages("KbUKIneligible.link")</a></p>
-
-
+        @paragraphBodyLink(messages("KbUKIneligible.link"), appConfig.startPagePillar2Url)
 
 }

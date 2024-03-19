@@ -18,11 +18,11 @@ package base
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, post, put, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
-import helpers.{AllMocks, ViewInstances}
+import helpers.{AllMocks, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -32,15 +32,13 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
-import play.api.inject.{Injector, bind}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
-
-import uk.gov.hmrc.auth.core.Enrolment
-
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -50,7 +48,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait SpecBase
     extends AnyWordSpec
     with TestData
-    with TryValues
     with OptionValues
     with ScalaFutures
     with BeforeAndAfterEach
@@ -67,11 +64,8 @@ trait SpecBase
     with ViewInstances
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with WireMockServerHandler {
-
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-
-  val userAnswersId: String = "id"
+    with WireMockServerHandler
+    with UserAnswersFixture {
 
   def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
@@ -158,6 +152,16 @@ trait SpecBase
           aResponse()
             .withStatus(expectedStatus)
             .withBody(expectedBody)
+        )
+    )
+
+  protected def stubGetUserAnswerConnector(expectedEndpoint: String, expectedStatus: Int, expectedBody: JsValue): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody.toString())
         )
     )
 

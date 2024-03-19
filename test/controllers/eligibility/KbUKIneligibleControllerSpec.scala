@@ -37,7 +37,7 @@ class KbUKIneligibleControllerSpec extends SpecBase {
 
       val result = controller.onPageLoad()()(request)
       status(result)        shouldBe OK
-      contentAsString(result) should include("Pillar 2 top-up taxes may be collected in the UK when you have business operations here.")
+      contentAsString(result) should include("Pillar 2 top-up taxes may be collected when you have business activities located in the UK.")
 
     }
 

@@ -18,10 +18,7 @@ package generators
 
 import models._
 import models.grs.EntityType
-import models.subscription.DashboardInfo
 import org.scalacheck.{Arbitrary, Gen}
-
-import java.time.LocalDate
 
 trait ModelGenerators {
 

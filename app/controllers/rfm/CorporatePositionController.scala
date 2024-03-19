@@ -16,13 +16,12 @@
 
 package controllers.rfm
 
-import cache.SessionData
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmCorporatePositionFormProvider
 import models.rfm.CorporatePosition
-import models.Mode
+import models.{Mode, NormalMode}
 import pages.rfmCorporatePositionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -41,8 +40,7 @@ class CorporatePositionController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      CorporatePositionView,
-  sessionData:               SessionData
+  view:                      CorporatePositionView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -72,15 +70,14 @@ class CorporatePositionController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-              .withSession((sessionData.corporatePosition(value.toString)))
+            } yield Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
 
           case value @ CorporatePosition.NewNfm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-              .withSession((sessionData.corporatePosition(value.toString)))
+            } yield Redirect(controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(mode))
+
         }
       )
   }

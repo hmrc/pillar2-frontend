@@ -34,6 +34,7 @@ object SecondaryTelephoneSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("secondaryTelephone.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

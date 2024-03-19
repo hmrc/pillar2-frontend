@@ -362,7 +362,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     val result = form.bind(data)
 
     result.errors must contain(
-      FormError("value", "error.invalid", List.empty)
+      FormError("value", "groupAccountingPeriod.error.value.dayMonthYear.invalid", List.empty)
     )
   }
 

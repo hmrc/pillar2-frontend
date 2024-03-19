@@ -185,7 +185,7 @@ POST       /manage-account/further-details/change-group-status                  
 GET         /contact-details                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details                            controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
-GET         /contact-details/chane-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+GET         /contact-details/change-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
@@ -295,10 +295,10 @@ POST       /manage-account/contact-details/change-second-input-telephone      co
 
 GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
 
-GET        /contact-details/address/input                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/address/input                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/address/change-input                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/address/change-input                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /contact-details/input-address                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details/input-address                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /contact-details/change-input-address                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /contact-details/change-input-address                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /manage-account/contact-details/address/change-input                controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
@@ -350,6 +350,29 @@ POST        /replace-filing-member/security/registration-date                con
 GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
+GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+
+
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
-GET        /replace-filing-member/security/check-answers                       controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad
+GET        /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+
+GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
+
+
+
+
+

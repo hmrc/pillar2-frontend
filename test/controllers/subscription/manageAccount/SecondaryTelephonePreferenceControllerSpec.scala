@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.SecondaryTelephonePreferenceFormProvider
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}

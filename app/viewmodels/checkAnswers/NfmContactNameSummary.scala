@@ -36,6 +36,7 @@ object NfmContactNameSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.fm.routes.NfmContactNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nfmContactName.checkYourAnswersLabel.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

@@ -21,7 +21,7 @@
         govukButton: GovukButton
 )
 
-@(organisationName: String, registrationDate: String, plrReference: String, inactiveStatus: Boolean, showPaymentsSection: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, plrReference: String, inactiveStatus: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("dashboard.title")), showBackLink = false) {
 
@@ -55,7 +55,7 @@
  <br>
 
   <!--PAY YOUR TUT SECTION-->
-@if(showPaymentsSection) {
+@if( appConfig.showPaymentsSection) {
  <h2 class="govuk-heading-m">@messages("dashboard.payments")</h2>
 
  <p class="govuk-body">@messages("dashboard.noPayment")</p>

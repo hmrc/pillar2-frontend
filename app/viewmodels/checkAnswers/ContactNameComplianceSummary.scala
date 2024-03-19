@@ -36,6 +36,7 @@ object ContactNameComplianceSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.ContactNameComplianceController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

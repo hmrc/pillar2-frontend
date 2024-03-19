@@ -34,7 +34,8 @@
     stylesheets: Stylesheets
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @head = {
 
@@ -68,7 +69,7 @@
     }
 
     @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible"))
+        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print"))
     }
 }
 

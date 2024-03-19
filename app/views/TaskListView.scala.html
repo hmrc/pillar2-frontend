@@ -15,120 +15,64 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.{TaskStatus, TaskAction}
 @import play.api.i18n.Messages
-@import utils.RowStatus
+@import components.gds._
+@import models.tasklist.SectionViewModel
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        heading: heading,
+        h2: HeadingH2,
+        para: paragraphBody,
+        statusTag: HmrcStatusTag,
+        taskListSection: TaskListSection
 )
 
-@(ultimateParentInfo: TaskInfo, counter: Int, filingMemberInfo: TaskInfo, groupDetailInfo: TaskInfo, contactDetailsInfo: TaskInfo, cyaInfo: TaskInfo)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(groupSections: Seq[SectionViewModel], contactSection: SectionViewModel,
+        reviewSection: SectionViewModel, counter: Int)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(
     pageTitle = titleNoForm(messages("task-list.title")),
     showBackLink = false
 ) {
-    <h1 class="govuk-heading-l">@messages("task-list.heading")</h1>
-    <p class="govuk-body govuk-!-margin-bottom-5">@messages("taskList.paragraph")</p>
-    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("taskList.subheading.complete")</h2>
-    <p class="govuk-body govuk-!-margin-bottom-7">@messages("taskList.completedSections", counter)</p>
+    @heading(messages("task-list.heading"), classes = "govuk-heading-l")
+    @para(messages("taskList.paragraph"))
+    @h2(messages("taskList.subheading.complete"), size = "m")
+    @para(messages("taskList.completedSections", counter), classes = "govuk-body govuk-!-margin-bottom-7")
+
 
     <ol class="app-task-list">
-            <!-- Business Section -->
-        <li>
+        <li> <!-- Group details -->
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">1. </span>
                 @messages("taskList.task.business.heading")
             </h2>
             <ul class="app-task-list__items">
-                    <!-- Ultimate Parent Task -->
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                    @ultimateParentInfo.link.map { link =>
-                    <a href="@link" aria-describedby="ultimate-parent-status">
-                    @messages(s"taskList.task.business.ultimate.${if(ultimateParentInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value }")
-                    </a>
-                    }.getOrElse {
-                        @messages("taskList.task.business.ultimate")
-                    }
-                    </span>
-                    <span class="hmrc-status-tag" id="ultimate-parent-status">@messages(s"task.status.${ultimateParentInfo.status}")</span>
-                </li>
-
-                    <!-- Filing Member Task -->
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                    @filingMemberInfo.link.map { link =>
-                    <a href="@link" aria-describedby="filing-member-status">
-                    @messages(s"taskList.task.business.filingMember.${if(filingMemberInfo.status ==RowStatus.Completed.toString()) RowStatus.Edit.value else if(filingMemberInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value }")
-                    </a>
-                    }.getOrElse {
-                        @messages("taskList.task.business.filingMember")
-                    }
-                    </span>
-                    <span class="hmrc-status-tag" id="filing-member-status">@messages(s"task.status.${filingMemberInfo.status}")</span>
-                </li>
-
-                    <!-- Group Detail Task -->
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                    @groupDetailInfo.link.map { link =>
-                    <a href="@link" aria-describedby="group-details">
-                    @messages(s"taskList.task.business.sub.${groupDetailInfo.action.getOrElse(TaskStatus.Default.value)}")
-                    </a>
-                    }.getOrElse {
-                        @messages("taskList.task.business.more")
-                    }
-                    </span>
-                    <span class="hmrc-status-tag" id="group-details">@messages(s"task.status.${groupDetailInfo.status}")</span>
-                </li>
+            @groupSections.map { section =>
+                @taskListSection(section, section.status.tag)
+            }
             </ul>
         </li>
 
-            <!-- Contact Details Section -->
-        <li>
+        <li> <!-- Contact Details Section -->
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2. </span>
                 @messages("taskList.task.contact.heading")
             </h2>
             <ul class="app-task-list__items">
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                    @contactDetailsInfo.link.map { link =>
-                    <a href="@link" aria-describedby="contact-details">
-                    @messages(s"taskList.task.contact.${if(contactDetailsInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else RowStatus.Add.value}")
-                    </a>
-                    }.getOrElse {
-                        @messages("taskList.task.contact")
-                    }
-                    </span>
-                    <span class="hmrc-status-tag" id="contact-details">@messages(s"task.status.${contactDetailsInfo.status}")</span>
-                </li>
+                @taskListSection(contactSection, contactSection.status.tag)
             </ul>
         </li>
 
-
-            <!-- Review and Submit Section -->
-        <li>
+        <li> <!-- Review and Submit Section -->
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">3. </span>
                 @messages("taskList.task.review.heading")
             </h2>
             <ul class="app-task-list__items">
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                    @cyaInfo.link.map { link =>
-                    <a href="@link" aria-describedby="review-and-send">
-                    @messages(s"taskList.task.review.${if(cyaInfo.status == RowStatus.Completed.toString()) RowStatus.Edit.value else if(cyaInfo.status == RowStatus.CannotStartYet) TaskStatus.Default.value else RowStatus.Add.value}")
-                    </a>
-                    }.getOrElse {
-                        @messages("taskList.task.review")
-                    }
-                    </span>
-                    <span class="hmrc-status-tag" id="review-and-send">@messages(s"task.status.${cyaInfo.status}")</span>
-                </li>
+                @taskListSection(reviewSection, reviewSection.status.tag)
             </ul>
         </li>
 

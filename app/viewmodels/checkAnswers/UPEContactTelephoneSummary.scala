@@ -36,6 +36,7 @@ object UPEContactTelephoneSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

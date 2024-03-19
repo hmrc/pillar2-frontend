@@ -17,19 +17,27 @@
 package controllers
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, TaskAction, TaskStatus}
+import models.tasklist.SectionStatus
+import models.{MneOrDomestic, NonUKAddress, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
+import play.api
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{Pillar2SessionKeys, RowStatus}
-import views.html.TaskListView
+import repositories.SessionRepository
+import uk.gov.hmrc.http.HttpResponse
+import utils.RowStatus
 
 import java.time.LocalDate
-case class TaskInfo(name: String, status: String, link: Option[String], action: Option[String])
+import scala.concurrent.Future
+
 class TaskListControllerSpec extends SpecBase {
 
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
@@ -66,8 +74,6 @@ class TaskListControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TaskListView]
-
         status(result) mustEqual OK
 
         contentAsString(result) should include(
@@ -85,11 +91,38 @@ class TaskListControllerSpec extends SpecBase {
       }
     }
 
-    "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
-      val application = applicationBuilder(None).build()
+    "redirect to tasklist if pillar 2 exists from read subscription API" in {
+      val mockHttpResponse = HttpResponse(OK, "")
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(plrReferencePage, "1231")))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.TaskListController.onPageLoad.url).withSession(Pillar2SessionKeys.plrId -> "")
-        val result  = route(application, request).value
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.TaskListController.onPageLoad.url
+
+      }
+    }
+
+    "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
+      val userAnswer = UserAnswers("id").setOrException(plrReferencePage, "id")
+      val application = applicationBuilder(None)
+        .overrides(
+          api.inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TaskListController.onPageLoad.url)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad.url
       }
@@ -198,8 +231,8 @@ class TaskListControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val responseContent = contentAsString(result)
 
-        responseContent should include("In progress<")
-        responseContent should include(" Add further group details")
+        responseContent should include("In progress")
+        responseContent should include("Add further group details")
       }
     }
 
@@ -266,20 +299,19 @@ class TaskListControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        val controller = application.injector.instanceOf[TaskListController]
-        val (ultimateParentInfo, filingMemberInfo, _, _, _) =
-          controller.buildTaskInfo(
-            TaskStatus.Completed.toString,
-            TaskStatus.Completed.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString
-          )
+        val controller             = application.injector.instanceOf[TaskListController]
+        val groupDetailSection     = controller.groupSections(userAnswers)
+        val contactDetailSection   = controller.contactSection(userAnswers)
+        val reviewAndSubmitSection = controller.reviewSection(userAnswers)
 
-        ultimateParentInfo.status shouldBe TaskStatus.Completed.toString
-        ultimateParentInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
-        filingMemberInfo.status   shouldBe TaskStatus.Completed.toString
-        filingMemberInfo.action   shouldBe Some(TaskAction.Edit.toString.toLowerCase())
+        groupDetailSection.map(_.status) should contain theSameElementsAs Seq(
+          SectionStatus.Completed,
+          SectionStatus.InProgress,
+          SectionStatus.Completed
+        )
+        contactDetailSection.status   shouldBe SectionStatus.InProgress
+        contactDetailSection.name     shouldBe "taskList.task.contact.add"
+        reviewAndSubmitSection.status shouldBe SectionStatus.CannotStart
       }
     }
 
@@ -293,8 +325,11 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(GrsUpeStatusPage, RowStatus.Completed)
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+        .setOrException(fmNameRegistrationPage, "name")
+        .setOrException(fmRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+        .setOrException(fmContactNamePage, "name")
+        .setOrException(fmContactEmailPage, "test@test.com")
+        .setOrException(fmPhonePreferencePage, false)
         .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(userAnswers)).build()
@@ -306,59 +341,14 @@ class TaskListControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        val controller = application.injector.instanceOf[TaskListController]
-        val (ultimateParentInfo, filingMemberInfo, _, _, _) =
-          controller.buildTaskInfo(
-            TaskStatus.Completed.toString,
-            TaskStatus.Completed.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString
-          )
+        val controller             = application.injector.instanceOf[TaskListController]
+        val groupDetailSection     = controller.groupSections(userAnswers)
+        val reviewAndSubmitSection = controller.reviewSection(userAnswers)
 
-        ultimateParentInfo.status shouldBe TaskStatus.Completed.toString
-        ultimateParentInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
-        filingMemberInfo.status   shouldBe TaskStatus.Completed.toString
-        filingMemberInfo.action   shouldBe Some(TaskAction.Edit.toString.toLowerCase())
+        groupDetailSection.map(_.status).head shouldBe SectionStatus.Completed
+        groupDetailSection.map(_.status)(1)   shouldBe SectionStatus.Completed
+        reviewAndSubmitSection.status         shouldBe SectionStatus.CannotStart
       }
-    }
-
-    "build correct TaskInfo when cyaStatus is 'Completed'" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .setOrException(upeGRSResponsePage, grsResponse)
-        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-        .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-      val application = applicationBuilder(Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val controller = application.injector.instanceOf[TaskListController]
-        val (_, _, _, _, cyaInfo) =
-          controller.buildTaskInfo(
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.Completed.toString
-          )
-
-        cyaInfo.status shouldBe TaskStatus.Completed.toString
-        cyaInfo.action shouldBe Some(TaskAction.Edit.toString.toLowerCase())
-      }
-
     }
 
     "build correct TaskInfo when filingMemberStatus is 'Completed' and groupDetailStatus is 'InProgress'" in {
@@ -373,44 +363,12 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(fmRegisteredInUKPage, false)
         .setOrException(subPrimaryContactNamePage, "name")
+        .setOrException(fmNameRegistrationPage, "name")
+        .setOrException(fmRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+        .setOrException(subUsePrimaryContactPage, true)
+        .setOrException(subPrimaryEmailPage, "test@test.com")
+        .setOrException(subPrimaryPhonePreferencePage, false)
         .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-      val application = applicationBuilder(Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val controller = application.injector.instanceOf[TaskListController]
-        val (_, _, groupDetailInfo, _, _) =
-          controller.buildTaskInfo(
-            TaskStatus.Completed.toString,
-            TaskStatus.Completed.toString,
-            TaskStatus.InProgress.toString,
-            TaskStatus.NotStarted.toString,
-            TaskStatus.NotStarted.toString
-          )
-
-        groupDetailInfo.status shouldBe TaskStatus.InProgress.toString
-        groupDetailInfo.action shouldBe Some(TaskAction.Add.toString.toLowerCase())
-      }
-
-    }
-
-    "build correct TaskInfo when filingMemberStatus is 'Completed' and contactDetailsStatus is 'Completed'" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .setOrException(upeGRSResponsePage, grsResponse)
-        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-        .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(subPrimaryContactNamePage, "name")
 
       val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -421,58 +379,66 @@ class TaskListControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        val controller = application.injector.instanceOf[TaskListController]
-        val (_, _, _, contactDetailsInfo, _) =
-          controller.buildTaskInfo(
-            TaskStatus.Completed.toString,
-            TaskStatus.Completed.toString,
-            TaskStatus.Completed.toString,
-            TaskStatus.InProgress.toString,
-            TaskStatus.NotStarted.toString
-          )
+        val controller         = application.injector.instanceOf[TaskListController]
+        val groupDetailSection = controller.groupSections(userAnswers)
 
-        contactDetailsInfo.status shouldBe TaskStatus.InProgress.toString
-        contactDetailsInfo.action shouldBe Some(TaskAction.Add.toString.toLowerCase())
+        groupDetailSection.map(_.status) should contain theSameElementsAs Seq(
+          SectionStatus.Completed,
+          SectionStatus.Completed,
+          SectionStatus.InProgress
+        )
       }
+
     }
 
-    "build correct TaskInfo with default values when filingMemberStatus and groupDetailStatus do not match any case" in {
-      val userAnswers = emptyUserAnswers
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, accountingPeriod)
-        .setOrException(upeRegisteredInUKPage, true)
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .setOrException(upeGRSResponsePage, grsResponse)
-        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-        .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(subPrimaryContactNamePage, "name")
+    "build correct TaskInfo when ultimateParentStatus is 'Completed', filingMemberStatus is 'Completed'" +
+      "'groupDetailStatus' is Completed and contactDetailsStatus is 'Completed'" in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
+          .setOrException(subAccountingPeriodPage, accountingPeriod)
+          .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(upeGRSResponsePage, grsResponse)
+          .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(fmRegisteredInUKPage, false)
+          .setOrException(subPrimaryContactNamePage, "name")
+          .setOrException(fmNameRegistrationPage, "name")
+          .setOrException(fmRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+          .setOrException(subUsePrimaryContactPage, true)
+          .setOrException(subPrimaryEmailPage, "test@test.com")
+          .setOrException(subPrimaryPhonePreferencePage, false)
+          .setOrException(subAddSecondaryContactPage, false)
+          .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+          .setOrException(fmContactNamePage, "name")
+          .setOrException(fmContactEmailPage, "test@test.com")
+          .setOrException(fmPhonePreferencePage, false)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+        val application = applicationBuilder(Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
+        running(application) {
+          val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
+          status(result) mustEqual OK
 
-        val controller = application.injector.instanceOf[TaskListController]
-        val (_, _, groupDetailInfo, _, _) =
-          controller.buildTaskInfo(
-            TaskStatus.Default.toString,
-            TaskStatus.Default.toString,
-            TaskStatus.Default.toString,
-            TaskStatus.Default.toString,
-            TaskStatus.Default.toString
+          val controller             = application.injector.instanceOf[TaskListController]
+          val groupDetailSection     = controller.groupSections(userAnswers)
+          val contactDetailSection   = controller.contactSection(userAnswers)
+          val reviewAndSubmitSection = controller.reviewSection(userAnswers)
+
+          groupDetailSection.map(_.status) should contain theSameElementsAs Seq(
+            SectionStatus.Completed,
+            SectionStatus.Completed,
+            SectionStatus.Completed
           )
 
-        groupDetailInfo.name   shouldBe "groupDetail"
-        groupDetailInfo.status shouldBe TaskStatus.CannotStartYet.toString
-        groupDetailInfo.link   shouldBe None
-        groupDetailInfo.action shouldBe None
+          contactDetailSection.status shouldBe SectionStatus.Completed
+
+          reviewAndSubmitSection.status shouldBe SectionStatus.NotStarted
+        }
       }
-    }
 
   }
 }

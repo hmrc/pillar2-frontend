@@ -34,6 +34,7 @@ object SecondaryContactNameSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.SecondaryContactNameController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

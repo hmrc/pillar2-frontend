@@ -40,6 +40,7 @@ object MneOrDomesticSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

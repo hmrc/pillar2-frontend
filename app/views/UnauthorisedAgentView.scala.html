@@ -15,8 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
 layout: templates.Layout,
+heading: heading,
+paragraphBody: paragraphBody,
+paragraphBodyLink: paragraphBodyLink,
 govukButton: GovukButton
 )
 
@@ -28,8 +33,10 @@ govukButton: GovukButton
   authorised = false
 ) {
 
-<h1 class="govuk-heading-l">@messages("unauthorised.agent.heading")</h1>
-<p class="govuk-body govuk-!-margin-bottom-5">@messages("unauthorised.agent.message")</p>
+@heading(messages("unauthorised.agent.heading"), "govuk-heading-l")
+
+@paragraphBody(messages("unauthorised.agent.message"), "govuk-body govuk-!-margin-bottom-5")
+
 <ul>
  <li>
   <p class="govuk-body" >
@@ -46,15 +53,7 @@ govukButton: GovukButton
  </li>
 </ul>
 
-<p class="govuk-body">
-    <a href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax" class="govuk-link govuk-link--no-visited-state"> @messages("unauthorised.agent.hyper3")</a>
-</p>
-
-
-
-
-
-
+@paragraphBodyLink(messages("unauthorised.agent.hyper3"), appConfig.startPagePillar2Url, "govuk-body", "govuk-link govuk-link--no-visited-state")
 
 
 }
