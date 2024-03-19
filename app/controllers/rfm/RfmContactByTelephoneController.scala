@@ -19,16 +19,15 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{ContactByTelephoneFormProvider, RfmContactByTelephoneFormProvider}
+import forms.RfmContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
-import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactByTelephoneView
-import views.html.subscriptionview.ContactByTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -18,10 +18,10 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
-import forms.{CaptureTelephoneDetailsFormProvider, RfmCaptureTelephoneDetailsFormProvider}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
+import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
