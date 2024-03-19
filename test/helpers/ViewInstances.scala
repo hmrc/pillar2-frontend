@@ -141,7 +141,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
-    new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
     new NominateFilingMemberYesNoView(
@@ -168,7 +168,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewUpeContactEmail: UpeContactEmailView =
     new UpeContactEmailView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
-    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton, govukSelect)
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
     new NfmRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton, govukSelect)
 
