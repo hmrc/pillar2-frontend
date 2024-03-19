@@ -44,11 +44,6 @@
                 items  = EntityType.options
             )
         )
-        <p class="govuk-body">
-            <a class="govuk-link"  href="@controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)">
-                @messages("entityType.companyTypeNotListed")
-            </a>
-        </p>
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

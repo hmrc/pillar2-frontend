@@ -18,6 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import models.NormalMode
 import models.subscription.AccountingPeriod
@@ -59,7 +60,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -85,7 +86,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -111,7 +116,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, None)
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -138,7 +147,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -164,7 +177,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -190,7 +203,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -216,7 +233,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, None)
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -243,7 +264,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -383,7 +408,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -409,7 +434,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -468,7 +497,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -502,7 +531,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)

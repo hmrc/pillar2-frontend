@@ -30,7 +30,7 @@ case object RfmPrimaryPhonePreferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(rfmPrimaryCapturePhonePage)
+        .remove(RfmPrimaryCapturePhonePage)
     } else {
       super.cleanup(value, userAnswers)
     }

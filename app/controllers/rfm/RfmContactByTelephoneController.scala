@@ -46,18 +46,22 @@ class RfmContactByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmPrimaryPhonePreferencePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      request.userAnswers
+        .get(RfmPrimaryNameRegistrationPage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmPrimaryPhonePreferencePage) match {
+            case Some(v) => form.fill(v)
+            case None    => form
+          }
+          Ok(view(preparedForm, mode, contactName))
         }
-        Ok(view(preparedForm, mode, contactName))
-
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
 
   }
 

@@ -25,10 +25,10 @@
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("furtherGroupCheckYourAnswers.title"))) {
 
     <span class="govuk-caption-l">@messages("checkYourAnswers.nfm.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("furtherGroupCheckYourAnswers.title")</h1>
 
     @govukSummaryList(list)
 

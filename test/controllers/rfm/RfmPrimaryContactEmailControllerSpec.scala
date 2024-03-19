@@ -130,7 +130,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url
       }
     }
     "Bad request when invalid data submitted in POST" in {

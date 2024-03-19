@@ -22,12 +22,13 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
+import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.CaptureTelephoneDetailsView
+import views.html.rfm.RfmCaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
@@ -35,19 +36,19 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 
-  "Capture Telephone Details Controller" when {
+  "Rfm Capture Telephone Details Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upePhonePreferencePage, true)
+        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
+        .setOrException(RfmPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[RfmCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("sad"), NormalMode, "sad")(
@@ -60,16 +61,16 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upePhonePreferencePage, true)
-        .setOrException(upeCapturePhonePage, "12321")
+        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
+        .setOrException(RfmPrimaryPhonePreferencePage, true)
+        .setOrException(RfmPrimaryCapturePhonePage, "12321")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[RfmCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("sad").fill("12321"), NormalMode, "sad")(
@@ -80,8 +81,8 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to checkYourAnswers when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -89,7 +90,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("telephoneNumber", "123456789")
             )
@@ -97,16 +98,16 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
 
     }
     "return bad request if wrong data is inputted" in {
-      val ua          = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("value" -> "adsasd")
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -116,7 +117,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "redirect to book mark prevention page" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -126,7 +127,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "redirect to journey recovery if no contact name is found for POST" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
