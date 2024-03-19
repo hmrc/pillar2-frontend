@@ -16,19 +16,25 @@
 
 package controllers.subscription
 
+import cats.syntax.option._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
+import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
 import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
 import pages._
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
@@ -70,7 +76,15 @@ class UseContactPrimaryController @Inject() (
           .fold(
             formWithErrors =>
               Future
-                .successful(BadRequest(view(formWithErrors, mode, contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel))),
+                .successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      mode,
+                      contactSummaryList(contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel)
+                    )
+                  )
+                ),
             value =>
               value match {
                 case true =>
@@ -135,10 +149,12 @@ class UseContactPrimaryController @Inject() (
     } yield {
       val contactTel = request.userAnswers.get(fmCapturePhonePage)
       request.userAnswers.get(subUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+        case Some(value) if telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
@@ -150,11 +166,23 @@ class UseContactPrimaryController @Inject() (
     } yield {
       val contactTel = request.userAnswers.get(upeCapturePhonePage)
       request.userAnswers.get(subUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+}
 
+object UseContactPrimaryController {
+  private[controllers] def contactSummaryList(contactName: String, contactEmail: String, contactTel: Option[String])(implicit
+    messages:                                              Messages
+  ): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(key = "useContactPrimary.name", value = ValueViewModel(HtmlFormat.escape(contactName).toString)).some,
+        SummaryListRowViewModel(key = "useContactPrimary.email", value = ValueViewModel(HtmlFormat.escape(contactEmail).toString)).some,
+        contactTel.map(tel => SummaryListRowViewModel(key = "useContactPrimary.telephone", value = ValueViewModel(HtmlFormat.escape(tel).toString)))
+      ).flatten
+    )
 }
