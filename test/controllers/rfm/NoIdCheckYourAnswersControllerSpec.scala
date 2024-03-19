@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import models.{NonUKAddress, NormalMode, UserAnswers}
-import pages.{rfmNfmNameRegistrationPage, rfmNfmRegisteredAddressPage, rfmRegistrationDatePage, rfmSecurityCheckPage}
+import pages.{rfmNfmNameRegistrationPage, rfmNfmRegisteredAddressPage}
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}

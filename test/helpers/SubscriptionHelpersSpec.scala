@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import models.registration._
 import models.rfm.RegistrationDate
-import models.{EnrolmentInfo, UKAddress}
+import models.{EnrolmentInfo, NonUKAddress, UKAddress}
 import pages._
 import utils.RowStatus
 
