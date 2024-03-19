@@ -19,11 +19,11 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmNfmRegisteredAddressFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NonUKAddress, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.rfmNfmNameRegistrationPage
+import pages.{rfmNfmNameRegistrationPage, rfmNfmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
@@ -38,6 +38,8 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new RfmNfmRegisteredAddressFormProvider()
 
   "RFM NFM Registered Address Controller" must {
+
+    val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "UK")
 
     "must return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
       val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
@@ -55,23 +57,25 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if RFM access is enabled and page previously has been answered" in {
-      val ua = emptyUserAnswers.set(rfmNfmNameRegistrationPage, "adios").success.value
+      val ua = emptyUserAnswers
+        .set(rfmNfmNameRegistrationPage, "adios")
+        .success
+        .value
+        .set(rfmNfmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad().url).withFormUrlEncodedBody(
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
+          FakeRequest(GET, controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad().url)
 
         val result = route(application, request).value
         status(result) mustEqual OK
+        contentAsString(result) must include("Name")
+        contentAsString(result) must include("Address")
       }
     }
 
