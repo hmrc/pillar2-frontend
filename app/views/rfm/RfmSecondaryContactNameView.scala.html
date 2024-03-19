@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("secondaryContactName.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

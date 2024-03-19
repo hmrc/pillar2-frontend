@@ -25,7 +25,8 @@ import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSeco
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryTelephoneView
 
@@ -39,31 +40,35 @@ class RfmSecondaryTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmSecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryTelephoneView
+  view:                      RfmSecondaryTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      contactName <- request.userAnswers.get(subSecondaryContactNamePage)
-      _           <- request.userAnswers.get(subSecondaryPhonePreferencePage)
-    } yield {
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subSecondaryCapturePhonePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode, contactName))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      (for {
+        contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
+        _           <- request.userAnswers.get(RfmSecondaryPhonePreferencePage)
+      } yield {
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmSecondaryCapturePhonePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode, contactName))
 
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(RfmSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -72,9 +77,9 @@ class RfmSecondaryTelephoneController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

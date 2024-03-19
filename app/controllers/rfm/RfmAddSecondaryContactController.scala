@@ -26,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmAddSecondaryContactView
 
@@ -58,7 +59,7 @@ class RfmAddSecondaryContactController @Inject() (
           case None        => form
         }
         Ok(view(preparedForm, contactName, mode))
-      })
+      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -78,7 +79,7 @@ class RfmAddSecondaryContactController @Inject() (
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmAddSecondaryContactPage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(mode))
+                  } yield Redirect(controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad())
 
                 case false =>
                   for {

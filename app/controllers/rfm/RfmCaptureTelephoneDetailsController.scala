@@ -73,7 +73,7 @@ class RfmCaptureTelephoneDetailsController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(rfmPrimaryCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad())
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

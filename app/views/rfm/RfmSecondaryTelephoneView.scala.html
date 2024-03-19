@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("secondaryTelephone.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

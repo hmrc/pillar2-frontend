@@ -47,21 +47,17 @@ class AddSecondaryContactController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      (for {
-        _           <- request.userAnswers.get(subPrimaryEmailPage)
-        contactName <- request.userAnswers.get(subPrimaryContactNamePage)
-      } yield {
-        val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
-        Ok(view(preparedForm, contactName, mode))
-      })
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+    (for {
+      _           <- request.userAnswers.get(subPrimaryEmailPage)
+      contactName <- request.userAnswers.get(subPrimaryContactNamePage)
+    } yield {
+      val preparedForm = request.userAnswers.get(subAddSecondaryContactPage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      Ok(view(preparedForm, contactName, mode))
+    })
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

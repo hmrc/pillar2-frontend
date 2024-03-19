@@ -25,7 +25,8 @@ import pages.{RfmAddSecondaryContactPage, RfmPrimaryNameRegistrationPage, RfmSec
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryContactNameView
 
@@ -58,7 +59,7 @@ class RfmSecondaryContactNameController @Inject() (
           case None    => form
         }
         Ok(view(preparedForm, mode))
-      })
+      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -73,7 +74,7 @@ class RfmSecondaryContactNameController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(mode))
+          } yield Redirect(controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad())
       )
   }
 

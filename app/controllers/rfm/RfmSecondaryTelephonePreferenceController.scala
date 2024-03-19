@@ -25,7 +25,8 @@ import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPh
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
@@ -64,9 +65,9 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(RfmSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -79,12 +80,12 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(mode))
+                  } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad())
                 case false =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
               }
           )
       }
