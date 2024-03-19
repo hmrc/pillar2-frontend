@@ -38,6 +38,7 @@ object GroupAccountingPeriodSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       ).withCssClass("no-border-bottom")
 

@@ -38,6 +38,7 @@ object ContactCorrespondenceAddressSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

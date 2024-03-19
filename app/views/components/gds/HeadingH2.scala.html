@@ -16,8 +16,8 @@
 
 @this()
 
-@(message: String, id: Option[String] = None, size: String = "s", extraClasses: Seq[String] = Seq.empty, caption: Option[String] = None)
+@(message: String, id: Option[String] = None, size: String = "s", extraClasses: Seq[String] = Seq("govuk-!-margin-top-2"), caption: Option[String] = None)
 
-<h2 class="govuk-heading-@size govuk-!-margin-top-2@if(extraClasses.nonEmpty) { @extraClasses.mkString(" ") }" @id.map{id => id="@id"}>
+<h2 class="govuk-heading-@size @if(extraClasses.nonEmpty) { @extraClasses.mkString(" ") }" @id.map{id => id="@id"}>
   @message
 </h2>

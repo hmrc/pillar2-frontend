@@ -56,6 +56,7 @@ object ContactEmailAddressSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.ContactEmailAddressController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactEmailAddress.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

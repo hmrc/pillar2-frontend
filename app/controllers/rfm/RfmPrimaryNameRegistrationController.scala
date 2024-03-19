@@ -19,40 +19,39 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmCorporatePositionFormProvider
-import models.rfm.CorporatePosition
+import forms.RfmPrimaryNameRegistrationFormProvider
 import models.{Mode, NormalMode}
-import pages.rfmCorporatePositionPage
+import pages.rfmPrimaryNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.CorporatePositionView
+import views.html.rfm.RfmPrimaryNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CorporatePositionController @Inject() (
+class RfmPrimaryNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmCorporatePositionFormProvider,
+  formProvider:              RfmPrimaryNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      CorporatePositionView
+  view:                      RfmPrimaryNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+      val preparedForm = request.userAnswers.get(rfmPrimaryNameRegistrationPage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
       }
       Ok(view(preparedForm, mode))
     } else {
@@ -65,20 +64,14 @@ class CorporatePositionController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        {
-          case value @ CorporatePosition.Upe =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
-
-          case value @ CorporatePosition.NewNfm =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
-              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(mode))
-
-        }
+        value =>
+          for {
+            updatedAnswers <-
+              Future
+                .fromTry(request.userAnswers.set(rfmPrimaryNameRegistrationPage, value))
+            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
+
 }

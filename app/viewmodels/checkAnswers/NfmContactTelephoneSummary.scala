@@ -34,6 +34,7 @@ object NfmContactTelephoneSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

@@ -38,6 +38,7 @@ object EntityTypePartnershipCompanyNameUpeSummary {
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("entityType.Upe.change.hidden"))
+                  .withCssClass("govuk-!-display-none-print")
               )
             )
           )

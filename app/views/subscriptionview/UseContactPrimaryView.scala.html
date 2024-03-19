@@ -15,58 +15,48 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize
+@import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    govukInsetText : GovukInsetText
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        h1: heading,
+        h2: HeadingH2,
+        span: Span,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
+        govukSummaryList: GovukSummaryList
+
 )
 
-@(form: Form[_], mode: Mode, name: String ,email:String, tel:Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode, list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
     @formHelper(action = controllers.subscription.routes.UseContactPrimaryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("useContactPrimary.heading.caption")</span>
 
+        @span(messages("useContactPrimary.heading.caption"))
+        @h1(messages("useContactPrimary.heading"), classes = "govuk-heading-l")
+        @govukSummaryList(list)
 
-                @govukRadios(
-                    RadiosViewModel.yesNo(
-                        field  = form("value"),
-                        legend = LegendViewModel(messages("useContactPrimary.heading")).asPageHeading(LegendSize.Large)
-                    ).withHint(HintViewModel(HtmlContent(headingContent)))
-                )
+        @h2(messages("useContactPrimary.h2"), size = "m")
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                fieldset = Fieldset.defaultObject
+            )
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
     }
-}
-
-@headingContent = @{
-s"""
-|<div class="govuk-inset-text">
-|    <ul class="govuk-list">
-|        <li>
-|            $name
-|        </li>
-|        <li>
-|            $email
-|        </li>
-|        <li>
-|           ${tel.getOrElse("")}
-|        </li>
-|    </ul>
-|</div>
-|""".stripMargin
 }
 
 

@@ -34,6 +34,7 @@ object AddSecondaryContactSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.AddSecondaryContactController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       ).withCssClass("contact-margin-bottom")
     }
