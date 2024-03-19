@@ -17,7 +17,7 @@
 package models.registration
 
 import models.UserAnswers
-import pages.{upeCapturePhonePage, upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
+import pages.{UpeCapturePhonePage, UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 
 case class upeContactInformation(
   upeContactName:  Option[String],
@@ -28,10 +28,10 @@ case class upeContactInformation(
 object upeContactInformation {
   def buildNonUkUpeContactInfo(answers: UserAnswers) =
     upeContactInformation(
-      answers.get(upeContactNamePage),
-      answers.get(upeContactEmailPage),
-      answers.get(upePhonePreferencePage) match {
-        case Some(true) => answers.get(upeCapturePhonePage)
+      answers.get(UpeContactNamePage),
+      answers.get(UpeContactEmailPage),
+      answers.get(UpePhonePreferencePage) match {
+        case Some(true) => answers.get(UpeCapturePhonePage)
         case _          => None
       }
     )

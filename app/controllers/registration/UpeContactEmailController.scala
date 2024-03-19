@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactEmailFormProvider
 import models.Mode
-import pages.{upeContactEmailPage, upeContactNamePage}
+import navigation.UltimateParentNavigator
+import pages.{UpeContactEmailPage, UpeContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,6 +39,7 @@ class UpeContactEmailController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
+  navigator:                 UltimateParentNavigator,
   view:                      UpeContactEmailView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -45,13 +47,10 @@ class UpeContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(upeContactNamePage)
+      .get(UpeContactNamePage)
       .map { username =>
-        val form = formProvider(username)
-        val preparedForm = request.userAnswers.get(upeContactEmailPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
+        val form         = formProvider(username)
+        val preparedForm = request.userAnswers.get(UpeContactEmailPage).map(email => form.fill(email)).getOrElse(form)
         Ok(view(preparedForm, mode, username))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -59,7 +58,7 @@ class UpeContactEmailController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeContactNamePage)
+      .get(UpeContactNamePage)
       .map { name =>
         formProvider(name)
           .bindFromRequest()
@@ -69,10 +68,10 @@ class UpeContactEmailController @Inject() (
               for {
                 updatedAnswers <-
                   Future.fromTry(
-                    request.userAnswers.set(upeContactEmailPage, value)
+                    request.userAnswers.set(UpeContactEmailPage, value)
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(UpeContactEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

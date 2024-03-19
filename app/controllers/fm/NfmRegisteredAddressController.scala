@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
 import models.Mode
-import pages.{fmNameRegistrationPage, fmRegisteredAddressPage}
+import navigation.NominatedFilingMemberNavigator
+import pages.{FmNameRegistrationPage, FmRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,6 +41,7 @@ class NfmRegisteredAddressController @Inject() (
   formProvider:              NfmRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
+  navigator:                 NominatedFilingMemberNavigator,
   view:                      NfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -47,12 +49,9 @@ class NfmRegisteredAddressController @Inject() (
   val form = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(fmNameRegistrationPage)
+      .get(FmNameRegistrationPage)
       .map { name =>
-        val preparedForm = request.userAnswers.get(fmRegisteredAddressPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
-        }
+        val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -60,7 +59,7 @@ class NfmRegisteredAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(fmNameRegistrationPage)
+      .get(FmNameRegistrationPage)
       .map { name =>
         form
           .bindFromRequest()
@@ -69,9 +68,9 @@ class NfmRegisteredAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmRegisteredAddressPage, value))
+                  Future.fromTry(request.userAnswers.set(FmRegisteredAddressPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmContactNameController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(FmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

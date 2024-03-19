@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
-import navigation.Navigator
+import navigation.UltimateParentNavigator
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -47,7 +47,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockCountryOptions:                          CountryOptions                          = mock[CountryOptions]
   val mockMessagesApi:                             MessagesApi                             = mock[MessagesApi]
   val mockSessionRepository:                       SessionRepository                       = mock[SessionRepository]
-  val mockNavigator:                               Navigator                               = mock[Navigator]
+  val mockNavigator:                               UltimateParentNavigator                 = mock[UltimateParentNavigator]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
   val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]

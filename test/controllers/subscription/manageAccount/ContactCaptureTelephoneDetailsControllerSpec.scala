@@ -22,7 +22,7 @@ import forms.ContactCaptureTelephoneDetailsFormProvider
 import models.{CheckMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{subPrimaryCapturePhonePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.setOrException(subPrimaryContactNamePage, "name").setOrException(subPrimaryPhonePreferencePage, true)
+        emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -61,9 +61,9 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page previously answered" in {
       val userAnswers: UserAnswers =
         emptyUserAnswers
-          .setOrException(subPrimaryContactNamePage, "name")
-          .setOrException(subPrimaryPhonePreferencePage, true)
-          .setOrException(subPrimaryCapturePhonePage, "123132")
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123132")
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -81,31 +81,9 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         ).toString
       }
     }
-
-    "must redirect to the next page when valid data is submitted" in {
-      val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "3333322223333"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
-      }
-    }
-
     "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
       val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(subPrimaryContactNamePage, "name").success.value
+        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

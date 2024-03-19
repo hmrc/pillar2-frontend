@@ -33,7 +33,7 @@
 package viewmodels.checkAnswers.manageAccount
 
 import models.UserAnswers
-import pages.subPrimaryCapturePhonePage
+import pages.SubPrimaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -44,7 +44,7 @@ import viewmodels.implicits._
 object ContactCaptureTelephoneDetailsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subPrimaryCapturePhonePage).map { answer =>
+    answers.get(SubPrimaryCapturePhonePage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
           HtmlFormat.escape(answer)

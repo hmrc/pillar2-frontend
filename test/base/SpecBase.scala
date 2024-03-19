@@ -28,7 +28,7 @@ import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}

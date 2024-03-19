@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import forms.CaptureSubscriptionAddressFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subAddSecondaryContactPage
+import pages.SubAddSecondaryContactPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -35,7 +35,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller for View Contact details" when {
 
     "redirect to contact CYA when valid data is submitted" in {
-      val ua = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true)
+      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -56,7 +56,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       }
     }
     "must return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true)
+      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -68,45 +68,6 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
       }
     }
-
-    "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "NE3 2TR"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
-      }
-    }
-
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

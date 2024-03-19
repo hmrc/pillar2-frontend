@@ -30,26 +30,26 @@ import scala.concurrent.Future
 
 class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   val subDataWithAddress = emptyUserAnswers
-    .setOrException(subPrimaryContactNamePage, "name")
-    .setOrException(subPrimaryEmailPage, "email@hello.com")
-    .setOrException(subPrimaryPhonePreferencePage, true)
-    .setOrException(subPrimaryCapturePhonePage, "123213")
-    .setOrException(subAddSecondaryContactPage, true)
-    .setOrException(subSecondaryContactNamePage, "name")
-    .setOrException(subSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
-    .setOrException(subSecondaryCapturePhonePage, "123213")
-    .setOrException(subRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+    .setOrException(SubPrimaryContactNamePage, "name")
+    .setOrException(SubPrimaryEmailPage, "email@hello.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubAddSecondaryContactPage, true)
+    .setOrException(SubSecondaryContactNamePage, "name")
+    .setOrException(SubSecondaryEmailPage, "email@hello.com")
+    .setOrException(SubSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryCapturePhonePage, "123213")
+    .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
 
   val subDataWithoutAddress = emptyUserAnswers
-    .setOrException(subPrimaryContactNamePage, "name")
-    .setOrException(subPrimaryEmailPage, "email@hello.com")
-    .setOrException(subPrimaryPhonePreferencePage, true)
-    .setOrException(subPrimaryCapturePhonePage, "123213")
-    .setOrException(subSecondaryContactNamePage, "name")
-    .setOrException(subSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
-    .setOrException(subSecondaryCapturePhonePage, "123213")
+    .setOrException(SubPrimaryContactNamePage, "name")
+    .setOrException(SubPrimaryEmailPage, "email@hello.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubSecondaryContactNamePage, "name")
+    .setOrException(SubSecondaryEmailPage, "email@hello.com")
+    .setOrException(SubSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   "Contact Check Your Answers Controller" must {
 

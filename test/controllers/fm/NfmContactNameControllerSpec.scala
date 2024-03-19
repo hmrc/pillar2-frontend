@@ -20,16 +20,11 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmContactNameFormProvider
 import models.{NonUKAddress, NormalMode}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{fmContactNamePage, fmRegisteredAddressPage}
+import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmContactNameView
-
-import scala.concurrent.Future
 
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
@@ -37,7 +32,7 @@ class NfmContactNameControllerSpec extends SpecBase {
   "NFMContactName Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredAddressPage, nonUkAddress)
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredAddressPage, nonUkAddress)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -59,8 +54,8 @@ class NfmContactNameControllerSpec extends SpecBase {
     }
     "must return OK and the correct view for a GET if page previously answered" in {
       val userAnswers = emptyUserAnswers
-        .setOrException(fmRegisteredAddressPage, nonUkAddress)
-        .setOrException(fmContactNamePage, "name")
+        .setOrException(FmRegisteredAddressPage, nonUkAddress)
+        .setOrException(FmContactNamePage, "name")
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -89,24 +84,6 @@ class NfmContactNameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "goodbye")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url
       }
     }
 

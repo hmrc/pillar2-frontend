@@ -17,10 +17,10 @@
 package controllers.rfm
 
 import base.SpecBase
+import models.{NormalMode, UserAnswers}
 import models.rfm.RegistrationDate
 import models.rfm.RegistrationDate._
-import models.{NormalMode, UserAnswers}
-import pages.{RfmRegistrationDatePage, RfmSecurityCheckPage}
+import pages._
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,9 +38,12 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
-        .setOrException(RfmSecurityCheckPage, plrReference)
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
-
+        .set(RfmPillar2ReferencePage, plrReference)
+        .success
+        .value
+        .set(RfmRegistrationDatePage, RegistrationDate(date))
+        .success
+        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()
@@ -87,8 +90,12 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
     "redirect to Under Construction page on form submission" in {
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
-        .setOrException(RfmSecurityCheckPage, plrReference)
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
+        .set(RfmPillar2ReferencePage, plrReference)
+        .success
+        .value
+        .set(RfmRegistrationDatePage, RegistrationDate(date))
+        .success
+        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()
