@@ -18,6 +18,7 @@ package controllers.registration
 
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.NormalMode
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -337,8 +338,7 @@ class GrsReturnController @Inject() (
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
             s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
         )
-        //Direct to contact page later
-        Redirect(controllers.routes.TaskListController.onPageLoad)
+        Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
 
       case (true, _, _, Some(_)) =>
         logger.info(
