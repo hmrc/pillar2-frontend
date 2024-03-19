@@ -16,10 +16,12 @@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds.{heading, paragraphBody}
+@import views.html.components.gds.sectionHeader
 
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
+        sectionHeader: sectionHeader,
         govukButton: GovukButton,
         heading: heading,
         paragraphBody: paragraphBody,
@@ -36,9 +38,11 @@
 )
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
+    @sectionHeader(messages("checkYourAnswers.heading.caption"))
+
     @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
 
-        <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
         @heading(messages("checkYourAnswers.heading"), "govuk-heading-l")
 
         @heading(messages("checkYourAnswers.upe"), "govuk-heading-m", "h2")

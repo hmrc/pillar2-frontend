@@ -16,22 +16,21 @@
 
 @import config.FrontendAppConfig
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
-        <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
+    <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
 
 
-
-        @govukButton(
-            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-        )
+    @govukButton(
+        ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+    )
 
 }

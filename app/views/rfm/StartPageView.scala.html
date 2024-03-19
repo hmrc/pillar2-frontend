@@ -18,28 +18,28 @@
 @import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    heading: heading,
-    sectionHeader: sectionHeader,
-    paragraphBody: paragraphBody,
-    link: link,
-    bulletList: bulletList,
-    govukCheckboxes : GovukCheckboxes,
-    govukErrorSummary: GovukErrorSummary,
-    govukButton: GovukButton)
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        sectionHeader: sectionHeader,
+        paragraphBody: paragraphBody,
+        link: link,
+        bulletList: bulletList,
+        govukCheckboxes: GovukCheckboxes,
+        govukErrorSummary: GovukErrorSummary,
+        govukButton: GovukButton)
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.startPage.title")), showSignOut = false, timeout = false ) {
+@layout(pageTitle = title(form, messages("rfm.startPage.title")), showSignOut = false, timeout = false) {
+
+    @sectionHeader(messages("rfm.heading.caption"))
 
     @formHelper(action = controllers.rfm.routes.StartPageController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
         }
-
-        @sectionHeader(messages("rfm.heading.caption"))
 
         @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
 
@@ -78,7 +78,7 @@
 
         @govukCheckboxes(
             CheckboxesViewModel(
-                form  = form,
+                form = form,
                 name = "confirmation",
                 items = Confirmation.checkboxItems("rfm.startPage.confirm"),
                 legend = LegendViewModel("")

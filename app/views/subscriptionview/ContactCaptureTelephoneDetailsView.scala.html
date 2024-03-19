@@ -17,34 +17,38 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import views.html.components.gds.sectionHeader
+
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 
-@(form: Form[_], mode: Mode, userName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactCaptureTelephoneDetails.title"))) {
+
+    @sectionHeader(messages("contactCaptureTelephoneDetails.heading.caption"))
 
     @formHelper(action = controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("contactCaptureTelephoneDetails.heading.caption")</span>
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
                 label = LabelViewModel(messages("contactCaptureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
-                    .withWidth(TwoThirds)
-                    .withHint(Hint(content = Text(messages("contactCaptureTelephoneDetails.hint"))))
+            .withWidth(TwoThirds)
+            .withHint(Hint(content = Text(messages("contactCaptureTelephoneDetails.hint"))))
         )
 
         @govukButton(

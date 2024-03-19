@@ -16,26 +16,30 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
-    )
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        sectionHeader: sectionHeader,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
+)
 
 
-@(form: Form[_], mode: Mode, userName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
+
+    @sectionHeader(messages("contactByTelephone.heading.caption"))
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-    }
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
         <span class="govuk-caption-l">@messages("contactByTelephone.heading.caption")</span>
 
         @govukRadios(
@@ -43,7 +47,7 @@
                 field = form("value"),
                 legend = LegendViewModel(messages("contactByTelephone.heading", userName)).asPageHeading(Large)
             )
-            )
+        )
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )

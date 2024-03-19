@@ -15,11 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        sectionHeader: sectionHeader,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton
 )
 
 
@@ -27,18 +29,17 @@
 
 @layout(pageTitle = titleNoForm(messages("nfmCheckYourAnswers.title"))) {
 
-    <span class="govuk-caption-l">@messages("nfmCheckYourAnswers.nfm.heading.caption")</span>
+    @sectionHeader(messages("nfmCheckYourAnswers.nfm.heading.caption"))
+
     <h1 class="govuk-heading-l">@messages("nfmCheckYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
 
-
-    <br>
     @govukButton(
-    ButtonViewModel(messages("site.save-and-continue"))
-    .withAttribute("id","continue")
-    .asLink(controllers.routes.TaskListController.onPageLoad.url)
-)
+        ButtonViewModel(messages("site.save-and-continue"))
+        .withAttribute("id", "continue")
+        .asLink(controllers.routes.TaskListController.onPageLoad.url)
+    )
 
 
 }

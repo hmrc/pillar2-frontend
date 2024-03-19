@@ -15,38 +15,42 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
 @import models.grs.EntityType
+@import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("entityType.title"))) {
+
+    @sectionHeader(messages("entityType.heading.caption"))
 
     @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("entityType.caption")</span>
+
         @govukRadios(
             RadiosViewModel(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("entityType.heading")).asPageHeading(Large),
-                items  = EntityType.options
+                items = EntityType.options
             )
         )
         <p class="govuk-body">
-            <a class="govuk-link"  href="@controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)">
-                @messages("entityType.companyTypeNotListed")
+            <a class="govuk-link" href="@controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)">
+            @messages("entityType.companyTypeNotListed")
             </a>
         </p>
 

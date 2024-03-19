@@ -16,13 +16,15 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
@@ -30,15 +32,17 @@
 
 @layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false, authorised = false) {
 
+    @sectionHeader(messages("businessActivityUK.heading.caption"))
+
     @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("businessActivityUK.check.liable.text")</span>
+
         @govukRadios(
-                RadiosViewModel.yesNo(
-                field  = form("value"),
+            RadiosViewModel.yesNo(
+                field = form("value"),
                 legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("businessActivityUK.hint"))))

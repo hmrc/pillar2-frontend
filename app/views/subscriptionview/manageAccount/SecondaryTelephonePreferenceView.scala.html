@@ -16,25 +16,28 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
-    )
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
+)
 
 @(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
 
+    @sectionHeader(messages("secondaryContactEmail.heading.caption"))
     @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-    }
-        <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),

@@ -15,20 +15,20 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Small
-@import views.html.components.gds.sectionHeader
-@import views.html.components.gds.HtmlHeading
-@import views.html.components.gds.paragraph
 @import play.twirl.api.Html
+@import viewmodels.LegendSize.Small
+@import views.html.components.gds.{HtmlHeading, paragraph, sectionHeader}
+
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukDateInput: GovukDateInput,
-    govukButton: GovukButton,
-    sectionHeader: sectionHeader,
-    heading: HtmlHeading,
-    paragraph: paragraph
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton,
+        sectionHeader: sectionHeader,
+        heading: HtmlHeading,
+        paragraph: paragraph
 )
 
 
@@ -38,21 +38,22 @@
 
 @layout(pageTitle = title(form, messages("groupRegistrationDateReport.title"))) {
 
+    @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
+
     @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "rfmRegistrationDate.day")))
 
         }
-        @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
+
         @heading(Html(messages("groupRegistrationDateReport.heading")))
 
-
-       @paragraph(Html(messages("groupRegistrationDateReport.hint.desc")),"govuk-hint govuk-!-padding-bottom-3")
+        @paragraph(Html(messages("groupRegistrationDateReport.hint.desc")), "govuk-hint govuk-!-padding-bottom-3")
 
         @govukDateInput(
             DateViewModel(
-                field  = form("rfmRegistrationDate"),
+                field = form("rfmRegistrationDate"),
                 legend = LegendViewModel(messages("groupRegistrationDateReport.registrationDate.heading")).asPageHeading(Small)
             )
             .withHint(HintViewModel(messages("groupRegistrationDateReport.registrationDate.hint")))

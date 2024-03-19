@@ -15,42 +15,43 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import views.html.components.gds._
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-sectionHeader: sectionHeader,
-govukErrorSummary: GovukErrorSummary,
-govukInput: GovukInput,
-govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfm.primaryNameRegistration.title"))) {
 
-@formHelper(action = controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit()) {
+    @sectionHeader(messages("rfm.contact.heading.caption"))
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+    @formHelper(action = controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit()) {
 
-@sectionHeader(messages("rfm.contact.heading.caption"))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("rfm.primaryNameRegistration.heading")).asPageHeading(Large)
-)
-.withHint(Hint(content = Text(messages("rfm.primaryNameRegistration.hint"))))
-.withWidth(TwoThirds)
-)
 
-@govukButton(
-ButtonViewModel(messages("site.continue"))
-)
-}
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("rfm.primaryNameRegistration.heading")).asPageHeading(Large)
+            )
+            .withHint(Hint(content = Text(messages("rfm.primaryNameRegistration.hint"))))
+            .withWidth(TwoThirds)
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

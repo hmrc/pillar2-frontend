@@ -17,38 +17,40 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
-
-@(form: Form[_], mode: Mode, userName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("nfmCaptureTelephoneDetails.title"))) {
+
+    @sectionHeader(messages("nfmCaptureTelephoneDetails.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("nfmCaptureTelephoneDetails.heading.caption")</span>
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
                 label = LabelViewModel(messages("nfmCaptureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
-                    .withWidth(TwoThirds)
-                    .withHint(Hint(content = Text(messages("nfmCaptureTelephoneDetails.hint"))))
+            .withWidth(TwoThirds)
+            .withHint(Hint(content = Text(messages("nfmCaptureTelephoneDetails.hint"))))
         )
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
     }
-}
+}@import sun.jvm.hotspot.debugger.win32.coff.SectionHeader

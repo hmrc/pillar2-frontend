@@ -17,9 +17,9 @@
 @import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton
 )
 
 
@@ -32,13 +32,11 @@
 
     @govukSummaryList(list)
 
-
-    <br>
     @govukButton(
-    ButtonViewModel(messages("site.save-and-continue"))
-    .withAttribute("id","continue")
-    .asLink(controllers.routes.TaskListController.onPageLoad.url)
-)
+        ButtonViewModel(messages("site.save-and-continue"))
+        .withAttribute("id", "continue")
+        .asLink(controllers.routes.TaskListController.onPageLoad.url)
+    )
 
 
 }

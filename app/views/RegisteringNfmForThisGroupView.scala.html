@@ -16,10 +16,12 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton
@@ -34,15 +36,17 @@
     authorised = false
 ) {
 
+    @sectionHeader(messages("registeringNfmForThisGroup.heading.caption"))
+
     @formHelper(action = eligibility.routes.RegisteringNfmForThisGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("registeringNfmForThisGroup.caption")</span>
+
         @govukRadios(
             RadiosViewModel.yesNo(
-                field  = form("registeringNfmGroup"),
+                field = form("registeringNfmGroup"),
                 legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("registeringNfmForThisGroup.hint"))))

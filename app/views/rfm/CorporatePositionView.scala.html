@@ -20,13 +20,13 @@
 @import models.rfm.CorporatePosition
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-sectionHeader: sectionHeader,
-govukErrorSummary: GovukErrorSummary,
-govukRadios: GovukRadios,
-govukButton: GovukButton,
-govukInsetText : GovukInsetText
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText
 )
 
 
@@ -34,30 +34,30 @@ govukInsetText : GovukInsetText
 
 @layout(pageTitle = title(form, messages("rfm.corporatePosition.title"))) {
 
-@formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(), 'autoComplete -> "off") {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-}
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
 
-@sectionHeader(messages("rfm.heading.caption"))
+        @sectionHeader(messages("rfm.heading.caption"))
 
-@govukRadios(
-RadiosViewModel(
-field  = form("value"),
-legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large),
-items = CorporatePosition.options
-).withHint(HintViewModel(HtmlContent(headingContent)))
-)
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large),
+                items = CorporatePosition.options
+            ).withHint(HintViewModel(HtmlContent(headingContent)))
+        )
 
-@govukButton(
-ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
-)
-}
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+        )
+    }
 }
 
 @headingContent = @{
-s"""
+    s"""
 |${govukInsetText(InsetText(content = Text(messages("rfm.corporatePosition.insetText"))))}
 |""".stripMargin
 }

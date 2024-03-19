@@ -18,22 +18,22 @@
 @import models.{Mode, NormalMode}
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("content.title"))) {
+    pageTitle = titleNoForm(messages("content.title"))) {
 
-<span class="govuk-caption-l">@messages("content.heading.caption")</span>
-<h1 class="govuk-heading-l">@messages("content.heading")</h1>
+    <span class="govuk-caption-l">@messages("content.heading.caption")</span>
+    <h1 class="govuk-heading-l">@messages("content.heading")</h1>
 
-<p class="govuk-body">@messages("content.p1")</p>
-<p class="govuk-body">@messages("content.p2")</p>
-@govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
-)
+    <p class="govuk-body">@messages("content.p1")</p>
+    <p class="govuk-body">@messages("content.p2")</p>
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+    )
 }

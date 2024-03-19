@@ -16,32 +16,34 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
-@(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactUPEByTelephone.title"))) {
+
+    @sectionHeader(messages("contactUPEByTelephone.heading.caption"))
 
     @formHelper(action = controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-
-        <span class="govuk-caption-l">@messages("contactUPEByTelephone.heading.caption")</span>
-
+      
         @govukRadios(
             RadiosViewModel.yesNo(
-                field  = form("value"),
-                legend = LegendViewModel(messages("contactUPEByTelephone.heading",UserName)).asPageHeading(Large)
+                field = form("value"),
+                legend = LegendViewModel(messages("contactUPEByTelephone.heading", UserName)).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("contactUPEByTelephone.hint"))))
         )
@@ -49,4 +51,4 @@
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )
     }
-}
+}@import sun.jvm.hotspot.debugger.win32.coff.SectionHeader

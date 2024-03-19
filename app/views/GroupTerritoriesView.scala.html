@@ -16,12 +16,15 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
@@ -33,15 +36,17 @@
     authorised = false
 ) {
 
+    @sectionHeader(messages("groupTerritories.heading.caption"))
+
     @formHelper(action = eligibility.routes.GroupTerritoriesController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("groupTerritories.caption")</span>
+
         @govukRadios(
             RadiosViewModel.yesNo(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("groupTerritories.heading")).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("groupTerritories.hint"))))

@@ -17,37 +17,40 @@
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
 @import models.grs.EntityType
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("nfmEntityType.title"))) {
+
+    @sectionHeader(messages("nfmEntityType.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.NfmEntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("nfmEntityType.caption")</span>
         @govukRadios(
             RadiosViewModel(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("nfmEntityType.heading")).asPageHeading(Large),
-                items  = EntityType.options
+                items = EntityType.options
             )
         )
 
         <p class="govuk-body">
             <a class="govuk-link" href="/report-pillar2-top-up-taxes/business-matching/filing-member/no-id/input-name">
-                @messages("nfmEntityType.companyTypeNotListed")
+            @messages("nfmEntityType.companyTypeNotListed")
             </a>
         </p>
 
