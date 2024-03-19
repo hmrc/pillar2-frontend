@@ -16,6 +16,8 @@
 
 package pages
 
+import play.api.libs.json.JsPath
+
 case object RfmSecondaryEmailPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString

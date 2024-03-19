@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmPrimaryEmailPage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -32,7 +32,7 @@ import views.html.rfm.RfmAddSecondaryContactView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmAddSecondaryContactController @Inject()(
+class RfmAddSecondaryContactController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
@@ -47,22 +47,26 @@ class RfmAddSecondaryContactController @Inject()(
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    (for {
-      _           <- request.userAnswers.get(RfmPrimaryEmailPage)
-      contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
-    } yield {
-      val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      Ok(view(preparedForm, contactName, mode))
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      (for {
+        _           <- request.userAnswers.get(RfmPrimaryContactEmailPage)
+        contactName <- request.userAnswers.get(RfmPrimaryNameRegistrationPage)
+      } yield {
+        val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, contactName, mode))
+      })
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryContactNamePage)
+      .get(RfmPrimaryNameRegistrationPage)
       .map { contactName =>
         form
           .bindFromRequest()

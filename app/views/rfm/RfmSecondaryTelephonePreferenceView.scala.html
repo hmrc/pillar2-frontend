@@ -29,7 +29,7 @@
 
 @layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
 
-    @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

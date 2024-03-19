@@ -19,43 +19,52 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.SecondaryContactEmailFormProvider
+import forms.RfmSecondaryContactEmailFormProvider
 import models.Mode
-import pages.{subSecondaryContactNamePage, subSecondaryEmailPage}
+import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.RfmSecondaryContactEmailView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmSecondaryContactEmailController @Inject()(
+class RfmSecondaryContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              SecondaryContactEmailFormProvider,
+  formProvider:              RfmSecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryContactEmailView
+  view:                      RfmSecondaryContactEmailView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(subSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subSecondaryEmailPage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      request.userAnswers
+        .get(RfmSecondaryContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmSecondaryEmailPage) match {
+            case Some(v) => form.fill(v)
+            case None    => form
+          }
+          Ok(view(preparedForm, mode, contactName))
         }
-        Ok(view(preparedForm, mode, contactName))
-
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(RfmSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -64,9 +73,9 @@ class RfmSecondaryContactEmailController @Inject()(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(mode))
+              } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(mode))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

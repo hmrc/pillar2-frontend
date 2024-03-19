@@ -386,6 +386,17 @@ POST        /replace-filing-member/business-matching/registered-in-uk           
 GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
 
+GET        /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/contact-details/second-input-name                     controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/contact-details/second-input-name                     controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/contact-details/second-input-email                    controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/contact-details/second-input-email                    controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/contact-details/second-telephone                      controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/contact-details/second-telephone                      controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/contact-details/second-input-telephone               	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/contact-details/second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+
 
 
 

@@ -17,6 +17,7 @@
 package pages
 
 import models.UserAnswers
+import play.api.libs.json.JsPath
 
 import scala.util.Try
 
@@ -29,7 +30,7 @@ case object RfmSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(subSecondaryCapturePhonePage)
+        .remove(RfmSecondaryCapturePhonePage)
     } else {
       super.cleanup(value, userAnswers)
     }

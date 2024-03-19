@@ -19,39 +19,49 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.SecondaryTelephonePreferenceFormProvider
+import forms.RfmSecondaryTelephonePreferenceFormProvider
 import models.Mode
-import pages.{subSecondaryContactNamePage, subSecondaryEmailPage, subSecondaryPhonePreferencePage}
+import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmSecondaryTelephonePreferenceController @Inject()(
+class RfmSecondaryTelephonePreferenceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              SecondaryTelephonePreferenceFormProvider,
+  formProvider:              RfmSecondaryTelephonePreferenceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryTelephonePreferenceView
+  view:                      RfmSecondaryTelephonePreferenceView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      _           <- request.userAnswers.get(subSecondaryEmailPage)
-      contactName <- request.userAnswers.get(subSecondaryContactNamePage)
-    } yield {
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subSecondaryPhonePreferencePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode, contactName))
-
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      (for {
+        _           <- request.userAnswers.get(RfmSecondaryEmailPage)
+        contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
+      } yield {
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode, contactName))
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -67,18 +77,17 @@ class RfmSecondaryTelephonePreferenceController @Inject()(
               value match {
                 case true =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(mode))
+                  } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(mode))
                 case false =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
+                  } yield Redirect(controllers.rfm.routes.CaptureSubscriptionAddressController.onPageLoad(mode))
               }
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

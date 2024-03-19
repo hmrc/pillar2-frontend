@@ -22,7 +22,7 @@ import forms.RfmPrimaryNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmPrimaryNameRegistrationPage
+import pages.RfmPrimaryNameRegistrationPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -55,7 +55,7 @@ class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(rfmPrimaryNameRegistrationPage, "name")
+      val userAnswers = emptyUserAnswers.setOrException(RfmPrimaryNameRegistrationPage, "name")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .build()

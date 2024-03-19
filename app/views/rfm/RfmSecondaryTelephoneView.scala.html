@@ -30,13 +30,13 @@
 
 @layout(pageTitle = title(form, messages("secondaryTelephone.title"))) {
 
-    @formHelper(action = controllers.subscription.routes.SecondaryTelephoneController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
-
+git st
         @govukInput(
             InputViewModel(
                 field = form("value"),

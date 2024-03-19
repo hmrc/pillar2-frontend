@@ -19,18 +19,25 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.SecondaryTelephoneFormProvider
+import forms.RfmSecondaryTelephoneFormProvider
 import models.Mode
-import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.rfm.RfmSecondaryTelephoneView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmSecondaryTelephoneController @Inject()(
+class RfmSecondaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
+  rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              SecondaryTelephoneFormProvider,
+  formProvider:              RfmSecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
