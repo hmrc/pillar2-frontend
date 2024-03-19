@@ -30,7 +30,7 @@ case object NfmPhonePreferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(upeCapturePhonePage)
+        .remove(UpeCapturePhonePage)
     } else {
       super.cleanup(value, userAnswers)
     }

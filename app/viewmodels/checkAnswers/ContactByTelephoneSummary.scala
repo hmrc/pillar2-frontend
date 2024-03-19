@@ -33,7 +33,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.subPrimaryPhonePreferencePage
+import pages.SubPrimaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -42,7 +42,7 @@ import viewmodels.implicits._
 object ContactByTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subPrimaryPhonePreferencePage).map { answer =>
+    answers.get(SubPrimaryPhonePreferencePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
@@ -51,6 +51,7 @@ object ContactByTelephoneSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.ContactByTelephoneController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

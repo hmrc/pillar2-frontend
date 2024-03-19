@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.TaskListView
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
 class IndexControllerSpec extends SpecBase {
 
   "Index Controller" must {
 
-    "must return 303 and the correct view for a GET" in {
+    "must redirect to the tasklist if no pillar 2 reference is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -34,9 +34,31 @@ class IndexControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TaskListView]
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe controllers.routes.TaskListController.onPageLoad.url
+      }
+    }
+
+    "must redirect to Dashboard controller if a pillar 2 reference is found" in {
+      val enrolments: Set[Enrolment] = Set(
+        Enrolment(
+          key = "HMRC-PILLAR2-ORG",
+          identifiers = Seq(
+            EnrolmentIdentifier("PLRID", "12345678"),
+            EnrolmentIdentifier("UTR", "ABC12345")
+          ),
+          state = "activated"
+        )
+      )
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
 
       }
     }

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
-import pages.{fmEntityTypePage, fmRegisteredInUKPage}
+import pages.{FmEntityTypePage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -51,8 +51,8 @@ class NfmEntityTypeController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.get(fmRegisteredInUKPage).contains(true)) {
-      val preparedForm = request.userAnswers.get(fmEntityTypePage) match {
+    if (request.userAnswers.get(FmRegisteredInUKPage).contains(true)) {
+      val preparedForm = request.userAnswers.get(FmEntityTypePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -72,13 +72,13 @@ class NfmEntityTypeController @Inject() (
             case EntityType.UkLimitedCompany =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmEntityTypePage, value))
+                  Future.fromTry(request.userAnswers.set(FmEntityTypePage, value))
                 _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Fm, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
             case EntityType.LimitedLiabilityPartnership =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmEntityTypePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)

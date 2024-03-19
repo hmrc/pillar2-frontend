@@ -15,13 +15,13 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.{Mode, NormalMode}
-import pages.subPrimaryContactNamePage
+import navigation.AmendSubscriptionNavigator
+import pages.SubPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -37,6 +37,7 @@ class ContactNameComplianceController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactNameComplianceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactNameComplianceView
@@ -46,7 +47,7 @@ class ContactNameComplianceController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(subPrimaryContactNamePage) match {
+    val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
       case Some(v) => form.fill(v)
       case None    => form
     }
@@ -62,9 +63,9 @@ class ContactNameComplianceController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(subPrimaryContactNamePage, value))
+                .fromTry(request.userAnswers.set(SubPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad)
+          } yield Redirect(navigator.nextPage(SubPrimaryContactNamePage, mode, updatedAnswers))
       )
   }
 

@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{plrReferencePage, subMneOrDomesticPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -49,8 +49,8 @@ class RegistrationConfirmationController @Inject() (
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                       .orElse(userAnswer.get(plrReferencePage))
-        mneOrDom <- userAnswer.get(subMneOrDomesticPage)
+                       .orElse(userAnswer.get(PlrReferencePage))
+        mneOrDom <- userAnswer.get(SubMneOrDomesticPage)
       } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }

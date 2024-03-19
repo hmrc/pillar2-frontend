@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{NormalMode, UserAnswers}
-import pages.fmGRSResponsePage
+import pages.FmGRSResponsePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,7 +29,7 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(fmGRSResponsePage)
+      .get(FmGRSResponsePage)
       .flatMap { GRS =>
         GRS.incorporatedEntityRegistrationData.map { answer =>
           val value = HtmlFormat.escape(answer.companyProfile.companyName).toString
@@ -39,6 +39,7 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
             actions = Seq(
               ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
                 .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
+                .withCssClass("govuk-!-display-none-print")
             )
           )
         }

@@ -13,6 +13,7 @@ site.govuk = GOV.UK
 site.save-and-continue = Save and continue
 site.manage.save-and-continue =  Save and return to homepage
 site.address.country.select = Select a country
+site.print = Print this page
 
 date.day = Day
 date.month = Month
@@ -374,7 +375,6 @@ isNFMRegisteredInUK.yes = Yes
 isNFMRegisteredInUK.no = No
 isNFMRegisteredInUK.error.required = Select yes if the new nominated filing member is registered in the UK
 isNFMRegisteredInUK.title = Is the new nominated filing member registered in the UK?
-
 
 contactUPEByTelephone.heading.caption = Group details
 contactUPEByTelephone.title = Can we contact by telephone?
@@ -749,7 +749,7 @@ secondaryTelephone.error.required = You need to enter the telephone for {0}
 secondaryTelephone.error.length = The telephone number should be 24 characters or less
 secondaryTelephone.error.format = Enter a telephone number in the correct format
 
-checkYourAnswers.furtherRegistrationDetail = Further registration details
+checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
 checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 site.confirm.send = Confirm and send

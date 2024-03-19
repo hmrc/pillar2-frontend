@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.UserAnswers
-import pages.fmGRSResponsePage
+import pages.FmGRSResponsePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object EntityTypePartnershipCompanyRegNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(fmGRSResponsePage)
+      .get(FmGRSResponsePage)
       .flatMap { GRS =>
         GRS.partnershipEntityRegistrationData.flatMap { PartnershipEntity =>
           PartnershipEntity.companyProfile.map(company =>

@@ -17,7 +17,6 @@
 package connectors
 
 import base.SpecBase
-import models.SafeId
 import models.fm.JourneyType
 import org.scalacheck.Gen
 import play.api.Application

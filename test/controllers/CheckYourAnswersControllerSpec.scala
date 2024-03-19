@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package controllers
 
 import base.SpecBase
@@ -97,53 +81,53 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   )
   private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
   private val defaultUserAnswer = emptyUserAnswers
-    .setOrException(upeRegisteredInUKPage, true)
-    .setOrException(upeGRSResponsePage, grsResponse)
+    .setOrException(UpeRegisteredInUKPage, true)
+    .setOrException(UpeGRSResponsePage, grsResponse)
     .setOrException(UpeRegInformationPage, regData)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-    .setOrException(subRegisteredAddressPage, nonUkAddress)
+    .setOrException(SubRegisteredAddressPage, nonUkAddress)
     .setOrException(NominateFilingMemberPage, false)
-    .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-    .setOrException(subAccountingPeriodPage, AccountingPeriod(date, date))
-    .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+    .setOrException(SubAccountingPeriodPage, AccountingPeriod(date, date))
+    .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
 
   private val nfmNoID = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
-    .setOrException(fmRegisteredInUKPage, false)
-    .setOrException(fmNameRegistrationPage, "name")
-    .setOrException(fmRegisteredAddressPage, nonUkAddress)
-    .setOrException(fmContactNamePage, "contactName")
-    .setOrException(fmContactEmailPage, "some@email.com")
-    .setOrException(fmPhonePreferencePage, true)
-    .setOrException(fmCapturePhonePage, "12312321")
+    .setOrException(FmRegisteredInUKPage, false)
+    .setOrException(FmNameRegistrationPage, "name")
+    .setOrException(FmRegisteredAddressPage, nonUkAddress)
+    .setOrException(FmContactNamePage, "contactName")
+    .setOrException(FmContactEmailPage, "some@email.com")
+    .setOrException(FmPhonePreferencePage, true)
+    .setOrException(FmCapturePhonePage, "12312321")
   private val nfmId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
-    .setOrException(fmRegisteredInUKPage, true)
-    .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(fmGRSResponsePage, grsResponse)
+    .setOrException(FmRegisteredInUKPage, true)
+    .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(FmGRSResponsePage, grsResponse)
   private val upNoID = emptyUserAnswers
-    .setOrException(upeNameRegistrationPage, "name")
-    .setOrException(upeRegisteredInUKPage, false)
-    .setOrException(upeRegisteredAddressPage, ukAddress)
-    .setOrException(upeContactNamePage, "contactName")
-    .setOrException(upeContactEmailPage, "some@email.com")
-    .setOrException(upePhonePreferencePage, true)
-    .setOrException(upeCapturePhonePage, "12312321")
+    .setOrException(UpeNameRegistrationPage, "name")
+    .setOrException(UpeRegisteredInUKPage, false)
+    .setOrException(UpeRegisteredAddressPage, ukAddress)
+    .setOrException(UpeContactNamePage, "contactName")
+    .setOrException(UpeContactEmailPage, "some@email.com")
+    .setOrException(UpePhonePreferencePage, true)
+    .setOrException(UpeCapturePhonePage, "12312321")
   private val upId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
-    .setOrException(upeRegisteredInUKPage, true)
-    .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(fmGRSResponsePage, grsResponse)
+    .setOrException(UpeRegisteredInUKPage, true)
+    .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(FmGRSResponsePage, grsResponse)
 
   private val subData = emptyUserAnswers
-    .setOrException(subPrimaryContactNamePage, "name")
-    .setOrException(subPrimaryEmailPage, "email@hello.com")
-    .setOrException(subPrimaryPhonePreferencePage, true)
-    .setOrException(subPrimaryCapturePhonePage, "123213")
-    .setOrException(subSecondaryContactNamePage, "name")
-    .setOrException(subSecondaryEmailPage, "email@hello.com")
-    .setOrException(subSecondaryPhonePreferencePage, true)
-    .setOrException(subSecondaryCapturePhonePage, "123213")
+    .setOrException(SubPrimaryContactNamePage, "name")
+    .setOrException(SubPrimaryEmailPage, "email@hello.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubSecondaryContactNamePage, "name")
+    .setOrException(SubSecondaryEmailPage, "email@hello.com")
+    .setOrException(SubSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   "Check Your Answers Controller" must {
     "on page load method " should {
@@ -220,7 +204,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             "First contact"
           )
           contentAsString(result) must include(
-            "Further registration details"
+            "Further group details"
           )
         }
       }
@@ -245,13 +229,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             "First contact"
           )
           contentAsString(result) must include(
-            "Further registration details"
+            "Further group details"
           )
         }
       }
 
       "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
-        val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(plrReferencePage, "someID")
+        val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
         val application = applicationBuilder(None)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -271,11 +255,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       "redirect to confirmation page in case of a success response" in {
 
         val userAnswer = defaultUserAnswer
-          .setOrException(subAddSecondaryContactPage, false)
-          .setOrException(subPrimaryContactNamePage, "name")
-          .setOrException(subPrimaryEmailPage, "email@hello.com")
-          .setOrException(subPrimaryPhonePreferencePage, true)
-          .setOrException(subPrimaryCapturePhonePage, "123213")
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -309,11 +293,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "redirect to error page in case of a duplicated subscription" in {
         val userAnswer = defaultUserAnswer
-          .setOrException(subAddSecondaryContactPage, false)
-          .setOrException(subPrimaryContactNamePage, "name")
-          .setOrException(subPrimaryEmailPage, "email@hello.com")
-          .setOrException(subPrimaryPhonePreferencePage, true)
-          .setOrException(subPrimaryCapturePhonePage, "123213")
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -336,11 +320,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "redirect to subscription error page in case of a failed subscription" in {
         val userAnswer = defaultUserAnswer
-          .setOrException(subAddSecondaryContactPage, false)
-          .setOrException(subPrimaryContactNamePage, "name")
-          .setOrException(subPrimaryEmailPage, "email@hello.com")
-          .setOrException(subPrimaryPhonePreferencePage, true)
-          .setOrException(subPrimaryCapturePhonePage, "123213")
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
