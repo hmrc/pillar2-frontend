@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
 import forms.{CaptureTelephoneDetailsFormProvider, RfmCaptureTelephoneDetailsFormProvider}
 import models.Mode
-import pages.{RfmPrimaryPhonePreferencePage, rfmPrimaryCapturePhonePage, rfmPrimaryNameRegistrationPage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
+import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,24 +45,30 @@ class RfmCaptureTelephoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    (for {
-      _           <- request.userAnswers.get(RfmPrimaryPhonePreferencePage)
-      contactName <- request.userAnswers.get(rfmPrimaryNameRegistrationPage)
-    } yield {
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(rfmPrimaryCapturePhonePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      (for {
+        _           <- request.userAnswers.get(RfmPrimaryPhonePreferencePage)
+        contactName <- request.userAnswers.get(RfmPrimaryNameRegistrationPage)
+      } yield {
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmPrimaryCapturePhonePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
-      Ok(view(preparedForm, mode, contactName))
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        Ok(view(preparedForm, mode, contactName))
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(rfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryNameRegistrationPage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()
@@ -71,7 +77,7 @@ class RfmCaptureTelephoneDetailsController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(rfmPrimaryCapturePhonePage, value))
+                  Future.fromTry(request.userAnswers.set(RfmPrimaryCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
           )

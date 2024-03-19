@@ -38,7 +38,7 @@ import forms.{RfmPrimaryContactEmailFormProvider, UpeContactEmailFormProvider}
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{rfmPrimaryContactEmailPage, rfmPrimaryNameRegistrationPage, upeContactEmailPage, upeContactNamePage}
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage, upeContactEmailPage, upeContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmPrimaryContactEmailView
@@ -53,7 +53,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
   "Rfm Primary ContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
@@ -80,10 +80,10 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .set(rfmPrimaryNameRegistrationPage, "name")
+        .set(RfmPrimaryNameRegistrationPage, "name")
         .success
         .value
-        .set(rfmPrimaryContactEmailPage, "hello@bye.com")
+        .set(RfmPrimaryContactEmailPage, "hello@bye.com")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -111,7 +111,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
@@ -130,11 +130,11 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
@@ -154,7 +154,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
 
     "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
-      val ua = emptyUserAnswers.set(rfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
