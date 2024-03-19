@@ -17,26 +17,26 @@
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
 @import config.FrontendAppConfig
-
+@import views.html.components.gds.sectionHeader
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
 )
 
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfmCaptureTelephoneDetails.title"))) {
-
+    @sectionHeader(messages("rfmCaptureTelephoneDetails.heading.caption"))
     @formHelper(action = controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("rfmCaptureTelephoneDetails.heading.caption")</span>
 
         @govukInput(
             InputViewModel(

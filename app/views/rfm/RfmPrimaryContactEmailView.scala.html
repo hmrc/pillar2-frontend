@@ -17,25 +17,25 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import viewmodels.LabelSize.Large
-@import viewmodels.govuk.hint
+@import views.html.components.gds.sectionHeader
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+     sectionHeader: sectionHeader,
 )
 
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfm-input-business-email.title"))) {
-
+    @sectionHeader(messages("rfm-input-business-email.caption"))
     @formHelper(action = controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(mode)) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("rfm-input-business-email.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),

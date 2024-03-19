@@ -16,26 +16,26 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
-
+@import views.html.components.gds.sectionHeader
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
 )
 
 
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfmContactByTelephone.title"))) {
-
+    @sectionHeader(messages("rfmContactByTelephone.heading.caption"))
     @formHelper(action = controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("rfmContactByTelephone.heading.caption")</span>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field  = form("value"),
