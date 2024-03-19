@@ -17,13 +17,12 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
-@import viewmodels.govuk.hint
-
-
+@import views.html.components.gds.sectionHeader
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton
@@ -33,12 +32,13 @@
 
 @layout(pageTitle = title(form, messages("contactEmailAddress.title"))) {
 
+    @sectionHeader(messages("contactEmailAddress.heading.caption"))
+
     @formHelper(action = controllers.subscription.routes.ContactEmailAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("contactEmailAddress.heading.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
