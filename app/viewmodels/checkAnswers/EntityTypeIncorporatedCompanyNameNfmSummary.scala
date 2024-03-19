@@ -39,6 +39,7 @@ object EntityTypeIncorporatedCompanyNameNfmSummary {
             actions = Seq(
               ActionItemViewModel("site.change", controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url)
                 .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
+                .withCssClass("govuk-!-display-none-print")
             )
           )
         }

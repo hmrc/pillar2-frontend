@@ -34,6 +34,7 @@ object UpeTelephonePreferenceSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

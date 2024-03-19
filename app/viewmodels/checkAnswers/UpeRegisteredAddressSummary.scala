@@ -36,6 +36,7 @@ object UpeRegisteredAddressSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("upeRegisteredAddress.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

@@ -34,6 +34,7 @@ object NfmNameRegistrationSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.fm.routes.NfmNameRegistrationController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("nfmNameRegistration.checkYourAnswersLabel.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

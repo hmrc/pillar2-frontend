@@ -38,6 +38,7 @@ object EntityTypePartnershipCompanyNameNfmSummary {
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
+                  .withCssClass("govuk-!-display-none-print")
               )
             )
           )

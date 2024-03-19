@@ -1,41 +1,34 @@
 @*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2024 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import config.FrontendAppConfig
-@import views.html.components.gds.{heading, paragraphBody}
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         sectionHeader: sectionHeader,
         govukButton: GovukButton,
-        heading: heading,
-        paragraphBody: paragraphBody,
+        printLink: printLink,
         formHelper: FormWithCSRF,
+        heading: heading,
+        h2: HeadingH2,
+        para: paragraphBody
 )
 
-@(listUpe: SummaryList,
-        listNfm: SummaryList,
-        furtherRegistrationDetailsList: SummaryList,
-        listPrimary: SummaryList,
-        listSecondary: SummaryList,
-        address: SummaryList)(
-        implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages
-)
+@(listUpe: SummaryList, listNfm: SummaryList, furtherRegistrationDetailsList: SummaryList, listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -43,32 +36,34 @@
 
     @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
 
-        @heading(messages("checkYourAnswers.heading"), "govuk-heading-l")
+        @heading(messages("checkYourAnswers.heading"), classes = "govuk-heading-l")
 
-        @heading(messages("checkYourAnswers.upe"), "govuk-heading-m", "h2")
+        @h2(messages("checkYourAnswers.upe"), size = "m")
         @govukSummaryList(listUpe)
 
-        @heading(messages("checkYourAnswers.nfm"), "govuk-heading-m", "h2")
+        @h2(messages("checkYourAnswers.nfm"), size = "m")
         @govukSummaryList(listNfm)
 
-        @heading(messages("checkYourAnswers.furtherRegistrationDetail"), "govuk-heading-m", "h2")
+        @h2(messages("checkYourAnswers.furtherRegistrationDetail"), size = "m")
         @govukSummaryList(furtherRegistrationDetailsList)
 
-        @heading(messages("checkYourAnswers.first"), "govuk-heading-m", "h2")
+        @h2(messages("checkYourAnswers.first"), size = "m")
         @govukSummaryList(listPrimary)
 
-        @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", "h2")
+        @h2(messages("contactCheckYourAnswers.second"), size = "m")
         @govukSummaryList(listSecondary)
 
-        @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
+        @h2(messages("contactCheckYourAnswers.address"), size = "m")
         @govukSummaryList(address)
 
-        @heading(messages("checkYourAnswers.submit.registration"), "govuk-heading-m", "h2")
-        @paragraphBody(messages("checkYourAnswers.submit.p"), "govuk-body")
+        @printLink(messages("site.print"))
+
+        @h2(messages("checkYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
+        @para(messages("checkYourAnswers.submit.p"))
 
         @govukButton(
-            ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit").withCssClass("govuk-!-display-none-print")
         )
-
     }
+
 }
