@@ -72,11 +72,8 @@ class RfmPrimaryContactEmailController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
             value =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(RfmPrimaryContactEmailPage, value)
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryContactEmailPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(mode).url)
           )
       }

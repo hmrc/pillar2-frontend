@@ -77,15 +77,13 @@ class RfmContactByTelephoneController @Inject() (
               value match {
                 case true =>
                   for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode))
                 case false =>
                   for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
+                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                   } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad.url)
               }
           )
