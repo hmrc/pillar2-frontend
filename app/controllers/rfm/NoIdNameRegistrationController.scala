@@ -19,28 +19,28 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmNfmNameRegistrationFormProvider
+import forms.RfmNoIdNameRegistrationFormProvider
 import models.{Mode, NormalMode}
-import pages.rfmNfmNameRegistrationPage
+import pages.RfmNoIdNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.NfmNameRegistrationView
+import views.html.rfm.NoIdNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmNameRegistrationController @Inject() (
+class NoIdNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmNfmNameRegistrationFormProvider,
+  formProvider:              RfmNoIdNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NfmNameRegistrationView
+  view:                      NoIdNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,7 +50,7 @@ class NfmNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmNfmNameRegistrationPage) match {
+      val preparedForm = request.userAnswers.get(RfmNoIdNameRegistrationPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -67,9 +67,9 @@ class NfmNameRegistrationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmNfmNameRegistrationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmNoIdNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad())
+          } yield Redirect(controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad())
       )
   }
 

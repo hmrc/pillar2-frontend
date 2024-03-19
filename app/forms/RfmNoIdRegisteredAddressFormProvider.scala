@@ -24,7 +24,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 import javax.inject.Inject
 
-class RfmNfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
+class RfmNoIdRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
 
   def apply(): Form[NonUKAddress] = Form(
     mapping(

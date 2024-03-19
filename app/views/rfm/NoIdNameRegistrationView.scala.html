@@ -30,20 +30,20 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.nfmNameRegistration.title"))) {
+@layout(pageTitle = title(form, messages("rfm.noIdNameRegistration.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.NfmNameRegistrationController.onSubmit()) {
+    @formHelper(action = controllers.rfm.routes.NoIdNameRegistrationController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("rfm.noid.heading.caption"))
+        @sectionHeader(messages("rfm.noId.heading.caption"))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("rfm.nfmNameRegistration.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm.noIdNameRegistration.heading")).asPageHeading(Large)
             ).withWidth(TwoThirds)
         )
 
