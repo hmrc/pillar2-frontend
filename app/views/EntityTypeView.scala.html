@@ -32,7 +32,7 @@ govukButton: GovukButton
 
 @layout(pageTitle = title(form, messages("entityType.title"))) {
 
-    @sectionHeader(messages("entityType.heading.caption"))
+    @sectionHeader(messages("entityType.caption"))
 
     @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
