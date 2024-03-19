@@ -15,7 +15,6 @@
  *@
 
 @import config.FrontendAppConfig
-@import java.time.LocalDate
 @import views.html.components.gds._
 
 @this(
@@ -26,36 +25,36 @@
         link: link,
         printLink: printLink,
         govukButton: GovukButton,
-        govukPanel : GovukPanel
+        govukPanel: GovukPanel
 )
 
 
-@(pil2Id: String, currentDate:String, mneOrDomestic:MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pil2Id: String, currentDate: String, mneOrDomestic: MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
     @govukPanel(Panel(
-      title = Text(messages("registrationConfirmation.registrationComplete")),
-      content = HtmlContent(s"""${messages("registrationConfirmation.topup")}<br><strong>$pil2Id</strong>"""),
-      attributes = Map("id" -> "plr2-banner")
+        title = Text(messages("registrationConfirmation.registrationComplete")),
+        content = HtmlContent(s"""${messages("registrationConfirmation.topup")}<br><strong>$pil2Id</strong>"""),
+        attributes = Map("id" -> "plr2-banner")
     ))
 
     @heading(messages("registrationConfirmation.reg-date", currentDate), "govuk-heading-s govuk-!-margin-top-5", "h2")
 
     @paragraphBody(messages("registrationConfirmation.p1", messages(s"mneOrDom.${mneOrDomestic}")))
 
-    @paragraphBody(messages("registrationConfirmation.p2"), "govuk-heading-s")
+    @paragraphBody(messages("registrationConfirmation.p2"), isBold = true)
 
     @paragraphBody(messages("registrationConfirmation.p3"))
 
     @paragraphBody(messages("registrationConfirmation.p4"))
 
-    @heading(messages("registrationConfirmation.next"), "govuk-heading-s govuk-!-margin-top-5", "h2")
+    @heading(messages("registrationConfirmation.next"), "govuk-heading-m govuk-!-margin-top-5", "h2")
 
     @paragraphBody(messages("registrationConfirmation.now", link(
-      text = messages("registrationConfirmation.link-home"),
-      call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
-      fullStop = true
+        text = messages("registrationConfirmation.link-home"),
+        call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
+        fullStop = true
     )))
 
     @printLink(messages("registrationConfirmation.print"))

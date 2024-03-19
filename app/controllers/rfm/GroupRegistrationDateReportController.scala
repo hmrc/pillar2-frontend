@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
-import pages.rfmRegistrationDatePage
+import pages.RfmRegistrationDatePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,7 +49,7 @@ class GroupRegistrationDateReportController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmRegistrationDatePage) match {
+      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -66,7 +66,7 @@ class GroupRegistrationDateReportController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmRegistrationDatePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode))
       )

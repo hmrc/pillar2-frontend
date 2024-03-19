@@ -19,10 +19,10 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmSecurityCheckPage
+import pages.RfmSecurityCheckPage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -181,7 +181,7 @@ class SecurityCheckControllerSpec extends SpecBase {
 
       val existingValue = "someExistingValue"
 
-      val userAnswers = emptyUserAnswers.set(rfmSecurityCheckPage, existingValue).success.value
+      val userAnswers = emptyUserAnswers.set(RfmSecurityCheckPage, existingValue).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .configure(Seq("features.rfmAccessEnabled" -> true): _*)

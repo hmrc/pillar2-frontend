@@ -19,8 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.TaskInfo
-import models.fm.TaskListType._
 import models.UserAnswers
 import models.tasklist.SectionStatus.Completed
 import models.tasklist._

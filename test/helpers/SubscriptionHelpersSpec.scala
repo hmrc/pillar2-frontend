@@ -17,13 +17,12 @@
 package helpers
 
 import base.SpecBase
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
-import models.subscription.AccountingPeriod
-import models.{EnrolmentInfo, MneOrDomestic, NonUKAddress, UKAddress}
+import models.rfm.RegistrationDate
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-import models.rfm.RegistrationDate
+
 import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
@@ -35,7 +34,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "getUpe status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
-        val userAnswer = emptyUserAnswers.set(upeContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.setOrException(upeContactNamePage, "name")
         userAnswer.upeStatus mustEqual RowStatus.NotStarted
       }
       "return in progress if user is not registered in uk but no name reg can be found" in {
@@ -80,11 +79,11 @@ class SubscriptionHelpersSpec extends SpecBase {
     "NFM status" should {
 
       "return Not Started if no answer can be found to fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(fmContactNamePage, "name").success.value
+        val userAnswer = emptyUserAnswers.setOrException(fmContactNamePage, "name")
         userAnswer.fmStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
         userAnswer.fmStatus mustEqual RowStatus.Completed
       }
       "return in progress if fm is not registered in uk and no name reg can be found" in {
@@ -174,48 +173,37 @@ class SubscriptionHelpersSpec extends SpecBase {
     "getFmSafeId" should {
       "return the safe id retrieved from GRS if the nfm is registered in the UK" in {
         val userAnswer = emptyUserAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, true)
-          .success
-          .value
-          .set(FmSafeIDPage, "12323212")
-          .success
-          .value
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmSafeIDPage, "12323212")
+
         userAnswer.getFmSafeID mustBe Some("12323212")
       }
 
       "return none if fm is non-uk based" in {
         val userAnswer = emptyUserAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(fmRegisteredInUKPage, false)
-          .success
-          .value
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(fmRegisteredInUKPage, false)
+
         userAnswer.getFmSafeID mustBe None
       }
 
       "return none if no filing member is nominated" in {
-        val userAnswer = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
         userAnswer.getFmSafeID mustBe None
       }
     }
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
         val userAnswer = emptyUserAnswers
-          .set(upeRegisteredInUKPage, true)
-          .success
-          .value
-          .set(UpeRegInformationPage, regData)
-          .success
-          .value
+          .setOrException(upeRegisteredInUKPage, true)
+          .setOrException(UpeRegInformationPage, regData)
+
         userAnswer.getUpeSafeID mustBe Some("567")
       }
 
       "return none if upe is non-uk based" in {
-        val userAnswer = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
+        val userAnswer = emptyUserAnswers.setOrException(upeRegisteredInUKPage, false)
 
         userAnswer.getUpeSafeID mustBe None
       }
@@ -266,21 +254,15 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "12323212")
-          .success
-          .value
-          .set(rfmRegistrationDatePage, RegistrationDate(date))
-          .success
-          .value
+          .setOrException(RfmSecurityCheckPage, "12323212")
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
 
         userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
       }
 
       "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
         val userAnswersInProgress = emptyUserAnswers
-          .set(rfmSecurityCheckPage, "Security Check Answer")
-          .success
-          .value
+          .setOrException(RfmSecurityCheckPage, "Security Check Answer")
 
         userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
       }
