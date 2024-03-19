@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("upe-input-business-email.title"))) {
 
-    @sectionHeader(messages("upe-input-business-email.heading.caption"))
+    @sectionHeader(messages("upe-input-business-email.caption"))
 
     @formHelper(action = controllers.registration.routes.UpeContactEmailController.onSubmit(mode)) {
         @if(form.errors.nonEmpty) {
