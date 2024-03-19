@@ -87,7 +87,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val h2                = new HeadingH2
   val sectionHeader     = new sectionHeader
   val h2                = new HeadingH2
-  val sectionHeader     = new sectionHeader
   val paragraphBody     = new paragraphBody
   val paragraphBodyLink = new paragraphBodyLink
   val span              = new Span
@@ -149,7 +148,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new NominateFilingMemberYesNoView(
       pillar2layout,
       formWithCSRF,
-     sectionHeader, govukErrorSummary,
+      sectionHeader,
+      govukErrorSummary,
       govukRadios,
       govukButton,
       govUkInsetText,
