@@ -165,7 +165,7 @@ class SubscriptionNavigator @Inject() {
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
-        } else if (userAnswers.finalStatusCheck) {
+        } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {
           contactDetailCheckYourAnswersRoute
