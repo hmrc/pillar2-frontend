@@ -30,17 +30,17 @@ case object NominateFilingMemberPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(fmRegisteredInUKPage)
+        .remove(FmRegisteredInUKPage)
         .flatMap(
-          _.remove(fmNameRegistrationPage).flatMap(
-            _.remove(fmRegisteredAddressPage).flatMap(
-              _.remove(fmContactNamePage).flatMap(
-                _.remove(fmContactEmailPage).flatMap(
-                  _.remove(fmPhonePreferencePage).flatMap(
-                    _.remove(fmCapturePhonePage).flatMap(
+          _.remove(FmNameRegistrationPage).flatMap(
+            _.remove(FmRegisteredAddressPage).flatMap(
+              _.remove(FmContactNamePage).flatMap(
+                _.remove(FmContactEmailPage).flatMap(
+                  _.remove(FmPhonePreferencePage).flatMap(
+                    _.remove(FmCapturePhonePage).flatMap(
                       _.remove(GrsFilingMemberStatusPage).flatMap(
-                        _.remove(fmEntityTypePage).flatMap(
-                          _.remove(fmGRSResponsePage)
+                        _.remove(FmEntityTypePage).flatMap(
+                          _.remove(FmGRSResponsePage)
                         )
                       )
                     )

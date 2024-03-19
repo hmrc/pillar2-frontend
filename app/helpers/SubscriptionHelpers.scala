@@ -25,17 +25,17 @@ trait SubscriptionHelpers {
   self: UserAnswers =>
 
   def upeStatus: RowStatus =
-    get(upeRegisteredInUKPage)
+    get(UpeRegisteredInUKPage)
       .map { ukBased =>
         if (!ukBased) {
           (for {
-            nameReg      <- get(upeNameRegistrationPage)
-            address      <- get(upeRegisteredAddressPage)
-            contactName  <- get(upeContactNamePage)
-            contactEmail <- get(upeContactEmailPage)
-            telPref      <- get(upePhonePreferencePage)
+            nameReg      <- get(UpeNameRegistrationPage)
+            address      <- get(UpeRegisteredAddressPage)
+            contactName  <- get(UpeContactNamePage)
+            contactEmail <- get(UpeContactEmailPage)
+            telPref      <- get(UpePhonePreferencePage)
           } yield {
-            val telephone = get(upeCapturePhonePage).isDefined
+            val telephone = get(UpeCapturePhonePage).isDefined
             if ((telPref & telephone) | !telPref) {
               RowStatus.Completed
             } else {
@@ -44,8 +44,8 @@ trait SubscriptionHelpers {
           }).getOrElse(RowStatus.InProgress)
         } else {
           (for {
-            entityType <- get(upeEntityTypePage)
-            grsData    <- get(upeGRSResponsePage)
+            entityType <- get(UpeEntityTypePage)
+            grsData    <- get(UpeGRSResponsePage)
             grsStatus  <- get(GrsUpeStatusPage)
           } yield grsStatus).getOrElse(RowStatus.InProgress)
         }
@@ -57,17 +57,17 @@ trait SubscriptionHelpers {
     get(NominateFilingMemberPage)
       .map { nominated =>
         if (nominated) {
-          get(fmRegisteredInUKPage)
+          get(FmRegisteredInUKPage)
             .map { ukBased =>
               if (!ukBased) {
                 (for {
-                  nameReg      <- get(fmNameRegistrationPage)
-                  address      <- get(fmRegisteredAddressPage)
-                  contactName  <- get(fmContactNamePage)
-                  contactEmail <- get(fmContactEmailPage)
-                  telPref      <- get(fmPhonePreferencePage)
+                  nameReg      <- get(FmNameRegistrationPage)
+                  address      <- get(FmRegisteredAddressPage)
+                  contactName  <- get(FmContactNamePage)
+                  contactEmail <- get(FmContactEmailPage)
+                  telPref      <- get(FmPhonePreferencePage)
                 } yield {
-                  val telephone = get(fmCapturePhonePage).isDefined
+                  val telephone = get(FmCapturePhonePage).isDefined
                   if ((telPref & telephone) | !telPref) {
                     RowStatus.Completed
                   } else {
@@ -76,8 +76,8 @@ trait SubscriptionHelpers {
                 }).getOrElse(RowStatus.InProgress)
               } else if (ukBased) {
                 (for {
-                  entityType <- get(fmEntityTypePage)
-                  grsData    <- get(fmGRSResponsePage)
+                  entityType <- get(FmEntityTypePage)
+                  grsData    <- get(FmGRSResponsePage)
                   grsStatus  <- get(GrsFilingMemberStatusPage)
                 } yield grsStatus).getOrElse(RowStatus.InProgress)
               } else {
@@ -94,8 +94,8 @@ trait SubscriptionHelpers {
       .getOrElse(RowStatus.NotStarted)
 
   def groupDetailStatus: RowStatus = {
-    val first  = get(subMneOrDomesticPage).isDefined
-    val second = get(subAccountingPeriodPage).isDefined
+    val first  = get(SubMneOrDomesticPage).isDefined
+    val second = get(SubAccountingPeriodPage).isDefined
     (first, second) match {
       case (true, true)  => RowStatus.Completed
       case (true, false) => RowStatus.InProgress
@@ -104,23 +104,23 @@ trait SubscriptionHelpers {
   }
 
   def contactDetailStatus: RowStatus =
-    get(subPrimaryContactNamePage) match {
+    get(SubPrimaryContactNamePage) match {
       case Some(_) if groupDetailStatusChecker => RowStatus.Completed
       case None                                => RowStatus.NotStarted
       case _                                   => RowStatus.InProgress
     }
 
   val primaryTelephone: Boolean =
-    get(subPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(subPrimaryCapturePhonePage).isEmpty) false else true)
+    get(SubPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(SubPrimaryCapturePhonePage).isEmpty) false else true)
 
   val secondaryTelephone: Boolean =
-    get(subSecondaryPhonePreferencePage).exists(nominated => if (nominated & get(subSecondaryCapturePhonePage).isEmpty) false else true)
+    get(SubSecondaryPhonePreferencePage).exists(nominated => if (nominated & get(SubSecondaryCapturePhonePage).isEmpty) false else true)
 
   def groupDetailStatusChecker: Boolean =
     if (
       primaryTelephone &
-        ((get(subAddSecondaryContactPage).contains(true) & secondaryTelephone) | get(subAddSecondaryContactPage).contains(false))
-        & get(subRegisteredAddressPage).isDefined
+        ((get(SubAddSecondaryContactPage).contains(true) & secondaryTelephone) | get(SubAddSecondaryContactPage).contains(false))
+        & get(SubRegisteredAddressPage).isDefined
     ) true
     else false
 
@@ -130,14 +130,14 @@ trait SubscriptionHelpers {
     else false
 
   def manageContactDetailStatus: Boolean = {
-    val p1  = get(subPrimaryContactNamePage).isDefined
-    val p2  = get(subPrimaryEmailPage).isDefined
-    val p3  = get(subPrimaryPhonePreferencePage).isDefined
-    val p4  = get(subAddSecondaryContactPage).getOrElse(false)
-    val s1  = get(subSecondaryContactNamePage).isDefined
-    val s2  = get(subSecondaryEmailPage).isDefined
-    val s3  = get(subSecondaryPhonePreferencePage).isDefined
-    val ad1 = get(subRegisteredAddressPage).isDefined
+    val p1  = get(SubPrimaryContactNamePage).isDefined
+    val p2  = get(SubPrimaryEmailPage).isDefined
+    val p3  = get(SubPrimaryPhonePreferencePage).isDefined
+    val p4  = get(SubAddSecondaryContactPage).getOrElse(false)
+    val s1  = get(SubSecondaryContactNamePage).isDefined
+    val s2  = get(SubSecondaryEmailPage).isDefined
+    val s3  = get(SubSecondaryPhonePreferencePage).isDefined
+    val ad1 = get(SubRegisteredAddressPage).isDefined
     (p1, p2, p3, p4, s1, s2, s3, ad1) match {
       case (true, true, true, true, true, true, true, true) => true
       case (true, true, true, false, _, _, _, true)         => true
@@ -158,7 +158,7 @@ trait SubscriptionHelpers {
   def getFmSafeID: Option[String] =
     get(NominateFilingMemberPage).flatMap(nominated =>
       if (nominated) {
-        get(fmRegisteredInUKPage).flatMap { ukBased =>
+        get(FmRegisteredInUKPage).flatMap { ukBased =>
           if (ukBased) {
             get(FmSafeIDPage)
           } else {
@@ -171,7 +171,7 @@ trait SubscriptionHelpers {
     )
 
   def getUpeSafeID: Option[String] =
-    get(upeRegisteredInUKPage).flatMap { ukBased =>
+    get(UpeRegisteredInUKPage).flatMap { ukBased =>
       if (ukBased) {
         get(UpeRegInformationPage).map(regInfo => regInfo.safeId)
       } else {
@@ -180,7 +180,7 @@ trait SubscriptionHelpers {
     }
 
   def createEnrolmentInfo(plpID: String): EnrolmentInfo =
-    get(upeRegisteredInUKPage)
+    get(UpeRegisteredInUKPage)
       .flatMap { ukBased =>
         if (ukBased) {
           get(UpeRegInformationPage)
@@ -188,7 +188,7 @@ trait SubscriptionHelpers {
               EnrolmentInfo(ctUtr = Some(regInfo.utr), crn = Some(regInfo.crn), plrId = plpID)
             }
         } else {
-          get(upeRegisteredAddressPage).map(address =>
+          get(UpeRegisteredAddressPage).map(address =>
             EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID)
           )
         }
@@ -196,7 +196,7 @@ trait SubscriptionHelpers {
       .getOrElse(EnrolmentInfo(plrId = plpID))
 
   def securityQuestionStatus: RowStatus = {
-    val first  = get(RfmSecurityCheckPage).isDefined
+    val first  = get(RfmPillar2ReferencePage).isDefined
     val second = get(RfmRegistrationDatePage).isDefined
     (first, second) match {
       case (true, true)  => RowStatus.Completed

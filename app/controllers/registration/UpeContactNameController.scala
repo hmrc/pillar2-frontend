@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeContactNameFormProvider
 import models.Mode
-import pages.{upeContactNamePage, upeRegisteredAddressPage}
+import navigation.UltimateParentNavigator
+import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,6 +38,7 @@ class UpeContactNameController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeContactNameFormProvider,
+  navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -46,12 +48,8 @@ class UpeContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(upeRegisteredAddressPage)) {
-      val preparedForm = request.userAnswers.get(upeContactNamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
+    if (request.userAnswers.isPageDefined(UpeRegisteredAddressPage)) {
+      val preparedForm = request.userAnswers.get(UpeContactNamePage).map(contactName => form.fill(contactName)).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
@@ -68,10 +66,10 @@ class UpeContactNameController @Inject() (
             updatedAnswers <-
               Future.fromTry(
                 request.userAnswers
-                  .set(upeContactNamePage, value)
+                  .set(UpeContactNamePage, value)
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeContactEmailController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(UpeContactNamePage, mode, updatedAnswers))
       )
   }
 

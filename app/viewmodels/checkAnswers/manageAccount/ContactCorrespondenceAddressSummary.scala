@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.manageAccount
 
 import models.UserAnswers
-import pages.subRegisteredAddressPage
+import pages.SubRegisteredAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -29,7 +29,7 @@ object ContactCorrespondenceAddressSummary {
 
   def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(subRegisteredAddressPage)
+      .get(SubRegisteredAddressPage)
       .map { answer =>
         val country = countryOptions.getCountryNameFromCode(answer.countryCode)
         SummaryListRowViewModel(

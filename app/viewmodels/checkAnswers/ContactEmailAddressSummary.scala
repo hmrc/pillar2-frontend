@@ -33,7 +33,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.subPrimaryEmailPage
+import pages.SubPrimaryEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -44,7 +44,7 @@ import viewmodels.implicits._
 object ContactEmailAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subPrimaryEmailPage).map { answer =>
+    answers.get(SubPrimaryEmailPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
           HtmlFormat.escape(answer)

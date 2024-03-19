@@ -17,19 +17,12 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.SecondaryContactNameFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{subAddSecondaryContactPage, subPrimaryContactNamePage, subSecondaryContactNamePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryContactNameView
-
-import scala.concurrent.Future
 
 class SecondaryContactNameControllerSpec extends SpecBase {
 
@@ -38,7 +31,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.setOrException(subAddSecondaryContactPage, true).setOrException(subPrimaryContactNamePage, "asd")
+      val ua          = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -55,9 +48,9 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subAddSecondaryContactPage, true)
-        .setOrException(subPrimaryContactNamePage, "asd")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
@@ -75,19 +68,6 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         ).toString
       }
     }
-
-    "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.SecondaryContactNameController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -105,23 +85,6 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
-      }
-    }
-
-    "must redirect to secondary contact email when the user enters a valid answer " in {
-      val application = applicationBuilder(None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "name")
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result =
-          route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode).url
-
       }
     }
 
