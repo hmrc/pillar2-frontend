@@ -18,50 +18,50 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmNoIdRegisteredAddressFormProvider
+import forms.RfmRegisteredAddressFormProvider
 import models.{NonUKAddress, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.{RfmNoIdNameRegistrationPage, RfmNoIdRegisteredAddressPage}
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.NoIdRegisteredAddressView
+import views.html.rfm.RfmRegisteredAddressView
 import utils.countryOptions.CountryOptions
 
 import scala.concurrent.Future
 
-class NfmRegisteredAddressControllerSpec extends SpecBase {
-  val formProvider = new RfmNoIdRegisteredAddressFormProvider()
+class RfmRegisteredAddressControllerSpec extends SpecBase {
+  val formProvider = new RfmRegisteredAddressFormProvider()
 
   "RFM NFM Registered Address Controller" must {
 
     val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "UK")
 
     "must return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
-      val ua = emptyUserAnswers.set(RfmNoIdNameRegistrationPage, "adios").success.value
+      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NoIdRegisteredAddressView]
+        val view = application.injector.instanceOf[RfmRegisteredAddressView]
         status(result) mustEqual OK
       }
     }
 
     "must return OK and the correct view for a GET if RFM access is enabled and page previously has been answered" in {
       val ua = emptyUserAnswers
-        .set(RfmNoIdNameRegistrationPage, "adios")
+        .set(RfmNameRegistrationPage, "adios")
         .success
         .value
-        .set(RfmNoIdRegisteredAddressPage, nonUkAddress)
+        .set(RfmRegisteredAddressPage, nonUkAddress)
         .success
         .value
 
@@ -70,7 +70,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url)
+          FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
 
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -84,7 +84,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -104,7 +104,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -115,7 +115,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to the UnderConstructionController page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(RfmNoIdNameRegistrationPage, "adios").success.value
+      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -123,7 +123,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),
@@ -142,13 +142,13 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(RfmNoIdNameRegistrationPage, "adios").success.value
+      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
             .withFormUrlEncodedBody(
               ("addressLine1", ""),
               ("addressLine2", "Drive"),
@@ -166,7 +166,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid address length is used" in {
 
-      val ua = emptyUserAnswers.set(RfmNoIdNameRegistrationPage, "adios").success.value
+      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -174,7 +174,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         val longChars =
           "27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house"
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",

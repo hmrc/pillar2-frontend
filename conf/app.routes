@@ -323,10 +323,10 @@ GET        /replace-filing-member/error/standard-organisation                   
 GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
 GET        /replace-filing-member/error/agent-sign-in                           controllers.rfm.AgentController.onPageLoad
 
-GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.NoIdNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.NoIdNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.NoIdRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.NoIdRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad

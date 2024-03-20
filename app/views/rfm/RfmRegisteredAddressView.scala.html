@@ -32,21 +32,21 @@
 
 @(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.noIdRegisteredAddress.title" ))) {
+@layout(pageTitle = title(form, messages("rfm.registeredAddress.title" ))) {
 
-@formHelper(action = controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit()) {
+@formHelper(action = controllers.rfm.routes.RfmRegisteredAddressController.onSubmit()) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
 
-@sectionHeader(messages("rfm.noid.heading.caption"))
-<h1 class="govuk-heading-l long-word">@messages("rfm.noIdRegisteredAddress.heading", UserName)</h1>
+@sectionHeader(messages("rfm.registration.heading.caption"))
+<h1 class="govuk-heading-l long-word">@messages("rfm.registeredAddress.heading", UserName)</h1>
 
 @govukInput(
 InputViewModel(
 field = form("addressLine1"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine1"))
+label = LabelViewModel(messages("rfm.registeredAddress.addressLine1"))
 )
 .withWidth(TwoThirds)
 .withAutocomplete("address-line1")
@@ -54,7 +54,7 @@ label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine1"))
 @govukInput(
 InputViewModel(
 field = form("addressLine2"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine2"))
+label = LabelViewModel(messages("rfm.registeredAddress.addressLine2"))
 )
 .withWidth(TwoThirds)
 .withAutocomplete("address-line2")
@@ -62,7 +62,7 @@ label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine2"))
 @govukInput(
 InputViewModel(
 field = form("addressLine3"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.town_city"))
+label = LabelViewModel(messages("rfm.registeredAddress.town_city"))
 )
 .withWidth(TwoThirds)
 .withAutocomplete("address-level2")
@@ -70,7 +70,7 @@ label = LabelViewModel(messages("rfm.noIdRegisteredAddress.town_city"))
 @govukInput(
 InputViewModel(
 field = form("addressLine4"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.region"))
+label = LabelViewModel(messages("rfm.registeredAddress.region"))
 )
 .withWidth(TwoThirds)
 .withAutocomplete("address-level1")
@@ -78,7 +78,7 @@ label = LabelViewModel(messages("rfm.noIdRegisteredAddress.region"))
 @govukInput(
 InputViewModel(
 field = form("postalCode"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.postcode"))
+label = LabelViewModel(messages("rfm.registeredAddress.postcode"))
 )
 .withWidth(Fixed10)
 .withAutocomplete("postal-code")
@@ -92,9 +92,9 @@ name = form("countryCode").name,
 label = Label(
 isPageHeading = true,
 classes = "govuk-heading-l",
-content = Text(messages("rfm.noIdRegisteredAddress.country"))
+content = Text(messages("rfm.registeredAddress.country"))
 ),
-hint = Some(Hint(content = Text(messages("rfm.noIdRegisteredAddress.country.hint")))),
+hint = Some(Hint(content = Text(messages("rfm.registeredAddress.country.hint")))),
 items = Seq(
 SelectItem(
 value = Some(""),
