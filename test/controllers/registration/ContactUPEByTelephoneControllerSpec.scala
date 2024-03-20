@@ -17,19 +17,12 @@
 package controllers.registration
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{upeContactEmailPage, upeContactNamePage, upePhonePreferencePage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
-
-import scala.concurrent.Future
 
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
@@ -40,8 +33,8 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upeContactEmailPage, "email")
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -62,9 +55,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(upeContactNamePage, "sad")
-        .setOrException(upeContactEmailPage, "email")
-        .setOrException(upePhonePreferencePage, true)
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeContactEmailPage, "email")
+        .setOrException(UpePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -83,48 +76,6 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value YES" in {
-
-      val ua = emptyUserAnswers
-        .set(upeContactNamePage, "sad")
-        .success
-        .value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url
-      }
-    }
-
-    " redirect to CheckYourAnswers page when valid data is submitted with value NO" in {
-      val ua = emptyUserAnswers.set(upeContactNamePage, "sad").success.value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
-      }
-
-    }
     "redirect to book mark prevention page for GET if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {

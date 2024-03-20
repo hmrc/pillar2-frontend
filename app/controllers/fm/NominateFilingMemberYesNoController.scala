@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
+import navigation.NominatedFilingMemberNavigator
 import pages.NominateFilingMemberPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -38,6 +39,7 @@ class NominateFilingMemberYesNoController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NominateFilingMemberYesNoFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NominateFilingMemberYesNoView
@@ -64,19 +66,11 @@ class NominateFilingMemberYesNoController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case true =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.IsNfmUKBasedController.onPageLoad(mode))
-            case false =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.TaskListController.onPageLoad)
-          }
+        nominatedFilingMember =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NominateFilingMemberPage, nominatedFilingMember))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(navigator.nextPage(NominateFilingMemberPage, mode, updatedAnswers))
       )
   }
 }

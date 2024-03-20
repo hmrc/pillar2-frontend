@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.upeCapturePhonePage
+import pages.UpeCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object UPEContactTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(upeCapturePhonePage)
+      .get(UpeCapturePhonePage)
       .map { answer =>
         SummaryListRowViewModel(
           key = "captureTelephoneDetails.checkYourAnswersLabel",
@@ -36,6 +36,7 @@ object UPEContactTelephoneSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

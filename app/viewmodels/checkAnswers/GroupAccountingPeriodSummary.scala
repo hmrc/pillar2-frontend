@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.subAccountingPeriodPage
+import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,7 +28,7 @@ import viewmodels.implicits._
 object GroupAccountingPeriodSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subAccountingPeriodPage).map { answer =>
+    answers.get(SubAccountingPeriodPage).map { answer =>
       val startDate = HtmlFormat.escape(answer.startDate.toString)
       val endDate   = HtmlFormat.escape(answer.endDate.toString)
       val value     = startDate + "<br>" + endDate
@@ -38,6 +38,7 @@ object GroupAccountingPeriodSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       ).withCssClass("no-border-bottom")
 

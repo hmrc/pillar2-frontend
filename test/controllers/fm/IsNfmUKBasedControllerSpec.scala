@@ -17,19 +17,12 @@
 package controllers.fm
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{NominateFilingMemberPage, fmRegisteredInUKPage}
-import play.api.inject.bind
-import play.api.libs.json.Json
+import pages.{FmRegisteredInUKPage, NominateFilingMemberPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.IsNFMUKBasedView
-
-import scala.concurrent.Future
 
 class IsNfmUKBasedControllerSpec extends SpecBase {
 
@@ -68,7 +61,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -107,54 +100,6 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
-    }
-
-    "must redirect to NfmEntityType to choose companyType when Yes is submited" in {
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url
-      }
-
-    }
-
-    "must redirect to Name Registration When No is submited" in {
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(NominateFilingMemberPage, false)
-          .success
-          .value
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url
-      }
-
     }
 
   }

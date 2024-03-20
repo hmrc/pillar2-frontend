@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.UserAnswers
-import pages.upeGRSResponsePage
+import pages.UpeGRSResponsePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,7 +29,7 @@ object EntityTypeIncorporatedCompanyUtrUpeSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(upeGRSResponsePage)
+      .get(UpeGRSResponsePage)
       .flatMap { GRS =>
         GRS.incorporatedEntityRegistrationData.map { answer =>
           val value = HtmlFormat.escape(answer.ctutr).toString

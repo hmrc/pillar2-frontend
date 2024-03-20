@@ -21,9 +21,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{plrReferencePage, subMneOrDomesticPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
@@ -54,84 +54,27 @@ class CheckYourAnswersController @Inject() (
 
   // noinspection ScalaStyle
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val groupDetailList = SummaryListViewModel(
-      rows = Seq(
-        MneOrDomesticSummary.row(request.userAnswers),
-        GroupAccountingPeriodSummary.row(request.userAnswers),
-        GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
-        GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val upeSummaryList = SummaryListViewModel(
-      rows = Seq(
-        UpeNameRegistrationSummary.row(request.userAnswers),
-        UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
-        UpeContactNameSummary.row(request.userAnswers),
-        UpeContactEmailSummary.row(request.userAnswers),
-        UpeTelephonePreferenceSummary.row(request.userAnswers),
-        UPEContactTelephoneSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyNameUpeSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyRegUpeSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyUtrUpeSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyNameUpeSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyRegUpeSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyUtrUpeSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val nfmSummaryList = SummaryListViewModel(
-      rows = Seq(
-        NominateFilingMemberYesNoSummary.row(request.userAnswers),
-        NfmNameRegistrationSummary.row(request.userAnswers),
-        NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
-        NfmContactNameSummary.row(request.userAnswers),
-        NfmEmailAddressSummary.row(request.userAnswers),
-        NfmTelephonePreferenceSummary.row(request.userAnswers),
-        NfmContactTelephoneSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyNameNfmSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyRegNfmSummary.row(request.userAnswers),
-        EntityTypeIncorporatedCompanyUtrNfmSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyNameNfmSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyRegNfmSummary.row(request.userAnswers),
-        EntityTypePartnershipCompanyUtrNfmSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val primaryContactList = SummaryListViewModel(
-      rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val secondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        AddSecondaryContactSummary.row(request.userAnswers),
-        SecondaryContactNameSummary.row(request.userAnswers),
-        SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val address = SummaryListViewModel(
-      rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
-    )
+    implicit val userAnswers: UserAnswers = request.userAnswers
+
     sessionRepository.get(request.userId).map { optionalUserAnswer =>
       (for {
         userAnswer <- optionalUserAnswer
-        _          <- userAnswer.get(plrReferencePage)
+        _          <- userAnswer.get(PlrReferencePage)
       } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
-        .getOrElse(Ok(view(upeSummaryList, nfmSummaryList, groupDetailList, primaryContactList, secondaryContactList, address)))
+        .getOrElse(
+          Ok(view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList))
+        )
     }
-
   }
+
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
       request.userAnswers
-        .get(subMneOrDomesticPage)
+        .get(SubMneOrDomesticPage)
         .map { mneOrDom =>
           (for {
             plr <- subscriptionService.createSubscription(request.userAnswers)
-            dataToSave = UserAnswers(request.userAnswers.id).setOrException(subMneOrDomesticPage, mneOrDom).setOrException(plrReferencePage, plr)
+            dataToSave = UserAnswers(request.userAnswers.id).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
             _ <- sessionRepository.set(dataToSave)
             _ <- userAnswersConnectors.remove(request.userId)
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
@@ -150,4 +93,78 @@ class CheckYourAnswersController @Inject() (
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
+
+  private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(ContactCorrespondenceAddressSummary.row(userAnswers, countryOptions)).flatten
+    ).withCssClass("govuk-!-margin-bottom-6")
+
+  private def secondaryContactSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+        AddSecondaryContactSummary.row(userAnswers),
+        SecondaryContactNameSummary.row(userAnswers),
+        SecondaryContactEmailSummary.row(userAnswers),
+        SecondaryTelephonePreferenceSummary.row(userAnswers),
+        SecondaryTelephoneSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def primaryContactSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+        ContactNameComplianceSummary.row(userAnswers),
+        ContactEmailAddressSummary.row(userAnswers),
+        ContactByTelephoneSummary.row(userAnswers),
+        ContactCaptureTelephoneDetailsSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def nfmSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+        NominateFilingMemberYesNoSummary.row(userAnswers),
+        NfmNameRegistrationSummary.row(userAnswers),
+        NfmRegisteredAddressSummary.row(userAnswers, countryOptions),
+        NfmContactNameSummary.row(userAnswers),
+        NfmEmailAddressSummary.row(userAnswers),
+        NfmTelephonePreferenceSummary.row(userAnswers),
+        NfmContactTelephoneSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyNameNfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyRegNfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyUtrNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyNameNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyRegNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyUtrNfmSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def upeSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+        UpeNameRegistrationSummary.row(userAnswers),
+        UpeRegisteredAddressSummary.row(userAnswers, countryOptions),
+        UpeContactNameSummary.row(userAnswers),
+        UpeContactEmailSummary.row(userAnswers),
+        UpeTelephonePreferenceSummary.row(userAnswers),
+        UPEContactTelephoneSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyNameUpeSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyRegUpeSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyUtrUpeSummary.row(userAnswers),
+        EntityTypePartnershipCompanyNameUpeSummary.row(userAnswers),
+        EntityTypePartnershipCompanyRegUpeSummary.row(userAnswers),
+        EntityTypePartnershipCompanyUtrUpeSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def groupDetailSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+        MneOrDomesticSummary.row(userAnswers),
+        GroupAccountingPeriodSummary.row(userAnswers),
+        GroupAccountingPeriodStartDateSummary.row(userAnswers),
+        GroupAccountingPeriodEndDateSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
+
 }

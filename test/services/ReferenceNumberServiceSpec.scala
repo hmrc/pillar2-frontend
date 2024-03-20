@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import pages.plrReferencePage
+import pages.PlrReferencePage
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
 class ReferenceNumberServiceSpec extends SpecBase {
@@ -38,12 +38,12 @@ class ReferenceNumberServiceSpec extends SpecBase {
       service.get(None, Some(enrolments)) mustBe Some("enrolmentID")
     }
     "return a pillar2 id from userAnswers if none can be found in their enrolment" in {
-      val userAnswers = emptyUserAnswers.setOrException(plrReferencePage, "databaseID")
+      val userAnswers = emptyUserAnswers.setOrException(PlrReferencePage, "databaseID")
       val service     = app.injector.instanceOf[ReferenceNumberService]
       service.get(Some(userAnswers), None) mustBe Some("databaseID")
     }
     "priorities the ID received from enrolment" in {
-      val userAnswers = emptyUserAnswers.setOrException(plrReferencePage, "databaseID")
+      val userAnswers = emptyUserAnswers.setOrException(PlrReferencePage, "databaseID")
       val service     = app.injector.instanceOf[ReferenceNumberService]
       service.get(Some(userAnswers), Some(enrolments)) mustBe Some("enrolmentID")
     }

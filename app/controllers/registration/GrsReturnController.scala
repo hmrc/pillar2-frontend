@@ -53,7 +53,7 @@ class GrsReturnController @Inject() (
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeEntityTypePage)
+      .get(UpeEntityTypePage)
       .map {
         case EntityType.UkLimitedCompany            => upeLimited(request, journeyId)
         case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
@@ -76,7 +76,7 @@ class GrsReturnController @Inject() (
               filingMember = None
             )
             for {
-              userAnswers <- Future.fromTry(request.userAnswers.set(upeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
+              userAnswers <- Future.fromTry(request.userAnswers.set(UpeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
               userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
               userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
               -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
@@ -118,7 +118,7 @@ class GrsReturnController @Inject() (
           val registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId, registrationDate = None, filingMember = None)
           for {
             userAnswers <- Future.fromTry(
-                             request.userAnswers.set(upeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
+                             request.userAnswers.set(UpeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
                            )
             userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
             userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
@@ -149,7 +149,7 @@ class GrsReturnController @Inject() (
 
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(fmEntityTypePage)
+      .get(FmEntityTypePage)
       .map {
         case EntityType.UkLimitedCompany =>
           incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
@@ -159,7 +159,7 @@ class GrsReturnController @Inject() (
                 .map { safeId =>
                   for {
                     userAnswers <-
-                      Future.fromTry(request.userAnswers.set(fmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
+                      Future.fromTry(request.userAnswers.set(FmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
                     userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, RowStatus.Completed))
                     userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
                     -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
@@ -195,7 +195,7 @@ class GrsReturnController @Inject() (
                 .map { safeId =>
                   for {
                     userAnswers <-
-                      Future.fromTry(request.userAnswers.set(fmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data))))
+                      Future.fromTry(request.userAnswers.set(FmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data))))
                     userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, RowStatus.Completed))
                     userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
                     -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
