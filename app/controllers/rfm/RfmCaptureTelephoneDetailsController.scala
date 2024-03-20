@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
-import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage}
+import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,7 +49,7 @@ class RfmCaptureTelephoneDetailsController @Inject() (
     if (rfmAccessEnabled) {
       (for {
         _           <- request.userAnswers.get(RfmPrimaryPhonePreferencePage)
-        contactName <- request.userAnswers.get(RfmPrimaryNameRegistrationPage)
+        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
       } yield {
         val form = formProvider(contactName)
         val preparedForm = request.userAnswers.get(RfmPrimaryCapturePhonePage) match {
@@ -68,7 +68,7 @@ class RfmCaptureTelephoneDetailsController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryContactNamePage)
       .map { contactName =>
         formProvider(contactName)
           .bindFromRequest()

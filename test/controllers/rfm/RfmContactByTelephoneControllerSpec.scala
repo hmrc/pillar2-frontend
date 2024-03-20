@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage}
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,8 +40,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
-        .setOrException(RfmPrimaryContactEmailPage, "email")
+        .setOrException(RfmPrimaryContactNamePage, "sad")
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
@@ -68,8 +67,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
-        .setOrException(RfmPrimaryContactEmailPage, "email")
+        .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -98,7 +96,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
     "redirect to capture telephone page when valid data is submitted with value YES" in {
 
       val ua = emptyUserAnswers
-        .set(RfmPrimaryNameRegistrationPage, "sad")
+        .set(RfmPrimaryContactNamePage, "sad")
         .success
         .value
       val application = applicationBuilder(Some(ua))
@@ -125,7 +123,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
 
     " redirect to next page when valid data is submitted with value NO" in {
       val ua = emptyUserAnswers
-        .set(RfmPrimaryNameRegistrationPage, "sad")
+        .set(RfmPrimaryContactNamePage, "sad")
         .success
         .value
       val application = applicationBuilder(Some(ua))

@@ -22,7 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage}
+import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
+        .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -60,7 +60,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
+        .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmPrimaryPhonePreferencePage, true)
         .setOrException(RfmPrimaryCapturePhonePage, "12321")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
@@ -81,7 +81,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must redirect to next page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "sad").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -102,7 +102,7 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     }
     "return bad request if wrong data is inputted" in {
-      val ua          = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "sad").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =

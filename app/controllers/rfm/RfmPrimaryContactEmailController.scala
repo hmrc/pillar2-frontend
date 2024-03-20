@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage}
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,7 +47,7 @@ class RfmPrimaryContactEmailController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
-        .get(RfmPrimaryNameRegistrationPage)
+        .get(RfmPrimaryContactNamePage)
         .map { username =>
           val form = formProvider(username)
           val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
@@ -64,7 +64,7 @@ class RfmPrimaryContactEmailController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryContactNamePage)
       .map { name =>
         formProvider(name)
           .bindFromRequest()
