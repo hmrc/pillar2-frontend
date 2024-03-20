@@ -65,6 +65,44 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
+    "send  to recovery page if no name is provided" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+    }
+
+    "must redirect to correct view when rfm feature false" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmPrimaryContactNamePage, "sad")
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
@@ -118,6 +156,32 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "Show error when no option is selected " in {
+
+      val ua = emptyUserAnswers
+        .set(RfmPrimaryContactNamePage, "sad")
+        .success
+        .value
+      val application = applicationBuilder(Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
       }
     }
 

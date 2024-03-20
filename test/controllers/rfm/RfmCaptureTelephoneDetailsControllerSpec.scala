@@ -58,6 +58,25 @@ class RfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to correct view when rfm feature false" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmPrimaryContactNamePage, "sad")
+        .setOrException(RfmPrimaryPhonePreferencePage, true)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
