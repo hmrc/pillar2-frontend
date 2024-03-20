@@ -42,11 +42,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -68,11 +63,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
     "send  to recovery page if no name is provided" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -108,11 +98,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -139,11 +124,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         .value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -167,11 +147,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         .value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -192,11 +167,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         .value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -223,11 +193,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
     }
     "redirect to journey recovery when no contact name is found for POST" in {
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)

@@ -55,11 +55,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -87,11 +82,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
@@ -114,11 +104,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -136,11 +121,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     "Bad request when invalid data submitted in POST" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
@@ -156,11 +136,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val longEmail =
@@ -177,11 +152,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -194,11 +164,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     "Journey Recovery when no data found for contact name in POST" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "alll@gmail.com"
