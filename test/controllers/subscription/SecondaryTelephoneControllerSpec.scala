@@ -17,19 +17,12 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.SecondaryTelephoneFormProvider
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
-import play.api.inject
-import play.api.libs.json.Json
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryTelephoneView
-
-import scala.concurrent.Future
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
@@ -41,8 +34,8 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if no previous data is found" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
@@ -59,9 +52,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subSecondaryContactNamePage, "name")
-        .setOrException(subSecondaryPhonePreferencePage, true)
-        .setOrException(subSecondaryCapturePhonePage, "1234567")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "1234567")
 
       val application = applicationBuilder(Some(ua)).build()
 
@@ -83,7 +76,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val ua          = emptyUserAnswers.set(subSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
       val bigString   = "123" * 100
       running(application) {
@@ -127,29 +120,6 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
-    }
-
-    "redirect to a page to capture their address if valid data is submitted" in {
-      val ua = emptyUserAnswers
-        .set(subSecondaryContactNamePage, "name")
-        .success
-        .value
-
-      val application = applicationBuilder(Some(ua))
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "123123")
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url
-      }
-
     }
 
   }

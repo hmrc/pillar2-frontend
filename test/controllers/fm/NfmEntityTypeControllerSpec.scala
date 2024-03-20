@@ -23,7 +23,7 @@ import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmEntityTypePage, fmRegisteredInUKPage}
+import pages.{FmEntityTypePage, FmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
   "NfmEntityType Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredInUKPage, true)
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -57,8 +57,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua =
         emptyUserAnswers
-          .setOrException(fmEntityTypePage, EntityType.UkLimitedCompany)
-          .setOrException(fmRegisteredInUKPage, true)
+          .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(FmRegisteredInUKPage, true)
 
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -112,7 +112,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
       val ua =
         emptyUserAnswers
-          .set(fmEntityTypePage, EntityType.UkLimitedCompany)
+          .set(FmEntityTypePage, EntityType.UkLimitedCompany)
           .success
           .value
 
@@ -150,7 +150,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
       val ua =
         emptyUserAnswers
-          .set(fmEntityTypePage, EntityType.LimitedLiabilityPartnership)
+          .set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership)
           .success
           .value
 

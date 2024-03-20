@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.UserAnswers
 import models.tasklist.SectionStatus.Completed
 import models.tasklist._
-import pages.plrReferencePage
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,10 +53,10 @@ class TaskListController @Inject() (
     val reviewAndSubmitSection   = reviewSection(request.userAnswers)
     val countOfCompletedSections = (groupDetailSection :+ contactDetailSection :+ reviewAndSubmitSection).count(_.status == Completed)
 
-    val pillar2ReferenceFromReadSubscription = request.userAnswers.get(plrReferencePage).isDefined
+    val pillar2ReferenceFromReadSubscription = request.userAnswers.get(PlrReferencePage).isDefined
 
     sessionRepository.get(request.userId).flatMap { optionalUA =>
-      optionalUA.map(UserAnswers => UserAnswers.get(plrReferencePage).isDefined) match {
+      optionalUA.map(UserAnswers => UserAnswers.get(PlrReferencePage).isDefined) match {
 
         case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>

@@ -17,7 +17,7 @@
 package models.fm
 
 import models.UserAnswers
-import pages.{fmCapturePhonePage, fmContactEmailPage, fmContactNamePage, fmPhonePreferencePage}
+import pages.{FmCapturePhonePage, FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 
 case class FilingMemberContactInformation(
   fmContactName:   Option[String],
@@ -28,10 +28,10 @@ case class FilingMemberContactInformation(
 object FilingMemberContactInformation {
   def buildNonUkFmContactInfo(answers: UserAnswers) =
     FilingMemberContactInformation(
-      answers.get(fmContactNamePage).orElse(None),
-      answers.get(fmContactEmailPage).orElse(None),
-      answers.get(fmPhonePreferencePage) match {
-        case Some(true) => answers.get(fmCapturePhonePage)
+      answers.get(FmContactNamePage).orElse(None),
+      answers.get(FmContactEmailPage).orElse(None),
+      answers.get(FmPhonePreferencePage) match {
+        case Some(true) => answers.get(FmCapturePhonePage)
         case _          => None
       }
     )

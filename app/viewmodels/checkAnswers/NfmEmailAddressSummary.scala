@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.fmContactEmailPage
+import pages.FmContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object NfmEmailAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(fmContactEmailPage)
+      .get(FmContactEmailPage)
       .map { answer =>
         SummaryListRowViewModel(
           key = "nfmEmailAddress.checkYourAnswersLabel",
@@ -36,6 +36,7 @@ object NfmEmailAddressSummary {
           actions = Seq(
             ActionItemViewModel("site.change", controllers.fm.routes.NfmEmailAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nfmEmailAddress.checkYourAnswersLabel.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
         )
       }

@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.fmGRSResponsePage
+import pages.FmGRSResponsePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object EntityTypePartnershipCompanyNameNfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(fmGRSResponsePage)
+      .get(FmGRSResponsePage)
       .flatMap { GRS =>
         GRS.partnershipEntityRegistrationData.flatMap { PartnershipEntity =>
           PartnershipEntity.companyProfile.map(company =>
@@ -38,6 +38,7 @@ object EntityTypePartnershipCompanyNameNfmSummary {
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.fm.routes.NfmEntityTypeController.onPageLoad(CheckMode).url)
                   .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
+                  .withCssClass("govuk-!-display-none-print")
               )
             )
           )

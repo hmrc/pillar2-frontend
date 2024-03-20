@@ -17,31 +17,38 @@
 package controllers.eligibility
 
 import base.SpecBase
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationControllerSpec extends SpecBase {
-
-  def controller(): EligibilityConfirmationController =
-    new EligibilityConfirmationController(
-      stubMessagesControllerComponents(),
-      viewEligibilityConfirmation
-    )
 
   "Eligibility Confirmation Controller" when {
     "must return OK and the correct view for a GET" in {
 
-      val request =
-        FakeRequest(GET, controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url)
+      val application = applicationBuilder(userAnswers = None).build()
 
-      val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
-      contentAsString(result) should include(
-        "You need to register this group to report Pillar 2 top-up taxes"
-      )
+      running(application) {
+        val request = FakeRequest(GET, controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad.url)
 
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[EligibilityConfirmationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+
+      }
     }
+    "must redirect to the taskList" in {
+      val application = applicationBuilder(userAnswers = None).build()
 
+      running(application) {
+        val request = FakeRequest(POST, controllers.eligibility.routes.EligibilityConfirmationController.onSubmit.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+      }
+    }
   }
 }

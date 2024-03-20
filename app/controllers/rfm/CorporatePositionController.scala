@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmCorporatePositionFormProvider
 import models.rfm.CorporatePosition
-import models.{Mode, NormalMode}
-import pages.rfmCorporatePositionPage
+import models.Mode
+import pages.RfmCorporatePositionPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -50,7 +50,7 @@ class CorporatePositionController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(rfmCorporatePositionPage) match {
+      val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -68,13 +68,13 @@ class CorporatePositionController @Inject() (
         {
           case value @ CorporatePosition.Upe =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
             } yield Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
 
           case value @ CorporatePosition.NewNfm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(rfmCorporatePositionPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
             } yield Redirect(controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(mode))
 

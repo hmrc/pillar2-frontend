@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.HavePillar2TopUpTaxIdFormProvider
 import models.Mode
-import pages.subHavePillar2TopUpTaxIdPage
+import pages.BtaPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,13 +49,13 @@ class HavePillar2TopUpTaxIdController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val btaAccessEnabled = appConfig.btaAccessEnabled
     if (btaAccessEnabled) {
-      val preparedForm = request.userAnswers.get(subHavePillar2TopUpTaxIdPage) match {
+      val preparedForm = request.userAnswers.get(BtaPillar2ReferencePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Redirect(controllers.routes.ErrorController.pageNotFoundLoad)
     }
   }
 
@@ -68,13 +68,13 @@ class HavePillar2TopUpTaxIdController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BtaPillar2ReferencePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(appConfig.eacdHomePageUrl)
 
             case false =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subHavePillar2TopUpTaxIdPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BtaPillar2ReferencePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad)
           }
