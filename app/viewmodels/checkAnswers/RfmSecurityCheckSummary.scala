@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RfmSecurityCheckPage
+import pages.RfmPillar2ReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,7 +27,7 @@ import viewmodels.implicits._
 object RfmSecurityCheckSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RfmSecurityCheckPage).map { answer =>
+    answers.get(RfmPillar2ReferencePage).map { answer =>
       SummaryListRowViewModel(
         key = "rfmSecurityCheck.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),

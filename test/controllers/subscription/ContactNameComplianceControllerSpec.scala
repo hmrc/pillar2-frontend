@@ -17,21 +17,15 @@
 package controllers.subscription
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import forms.ContactNameComplianceFormProvider
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NormalMode}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{subAccountingPeriodPage, subMneOrDomesticPage, subPrimaryContactNamePage}
-import play.api.inject
-import play.api.libs.json.Json
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage, SubPrimaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContactNameComplianceView
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class ContactNameComplianceControllerSpec extends SpecBase {
 
@@ -41,8 +35,8 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
       val ua = emptyUserAnswers
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -60,9 +54,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET when previous data is found" in {
 
       val ua = emptyUserAnswers
-        .setOrException(subPrimaryContactNamePage, "name")
-        .setOrException(subMneOrDomesticPage, MneOrDomestic.Uk)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(SubPrimaryContactNamePage, "name")
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -110,25 +104,6 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
-    }
-
-    "must redirect to primary email page when a valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> "name")
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url
-      }
-
     }
 
   }

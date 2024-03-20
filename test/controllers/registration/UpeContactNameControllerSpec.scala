@@ -22,7 +22,7 @@ import forms.UpeContactNameFormProvider
 import models.{NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeContactNamePage, upeRegisteredAddressPage}
+import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +38,7 @@ class UpeContactNameControllerSpec extends SpecBase {
   "UpeContactName Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.setOrException(upeRegisteredAddressPage, UkAddress)
+      val ua          = emptyUserAnswers.setOrException(UpeRegisteredAddressPage, UkAddress)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
@@ -57,7 +57,7 @@ class UpeContactNameControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
-      val ua          = emptyUserAnswers.setOrException(upeContactNamePage, "name").setOrException(upeRegisteredAddressPage, UkAddress)
+      val ua          = emptyUserAnswers.setOrException(UpeContactNamePage, "name").setOrException(UpeRegisteredAddressPage, UkAddress)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
@@ -84,24 +84,6 @@ class UpeContactNameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "name")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode).url
       }
     }
 

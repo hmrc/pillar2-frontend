@@ -35,10 +35,10 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
     "return OK and the correct view if an answer is provided to every question " in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.Uk)
+        .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
-        .set(subAccountingPeriodPage, date)
+        .set(SubAccountingPeriodPage, date)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
@@ -53,10 +53,10 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
     "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
       val userAnswer = UserAnswers(userAnswersId)
-        .set(subMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
         .success
         .value
-        .set(subAccountingPeriodPage, date)
+        .set(SubAccountingPeriodPage, date)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()

@@ -15,13 +15,13 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
 import models.Mode
-import pages.{subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import navigation.AmendSubscriptionNavigator
+import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -37,6 +37,7 @@ class ContactByTelephoneController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactByTelephoneView
@@ -46,10 +47,10 @@ class ContactByTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(subPrimaryPhonePreferencePage) match {
+        val preparedForm = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -62,28 +63,19 @@ class ContactByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subPrimaryContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad)
-                case false =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(subPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad)
-              }
+            nominatePrimaryContactNumber =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

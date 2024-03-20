@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.IsNFMUKBasedFormProvider
 import models.Mode
-import pages.{GrsFilingMemberStatusPage, NominateFilingMemberPage, fmRegisteredInUKPage}
+import navigation.NominatedFilingMemberNavigator
+import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -38,6 +39,7 @@ class IsNfmUKBasedController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              IsNFMUKBasedFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      IsNFMUKBasedView
@@ -49,7 +51,7 @@ class IsNfmUKBasedController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(NominateFilingMemberPage)) {
-      val preparedForm = request.userAnswers.get(fmRegisteredInUKPage) match {
+      val preparedForm = request.userAnswers.get(FmRegisteredInUKPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -68,7 +70,7 @@ class IsNfmUKBasedController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
                 updatedAnswers1 <- Future.fromTry(
                                      request.userAnswers
                                        .get(GrsFilingMemberStatusPage)
@@ -76,14 +78,14 @@ class IsNfmUKBasedController @Inject() (
                                        .getOrElse(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
                                    )
                 _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-              } yield Redirect(controllers.fm.routes.NfmEntityTypeController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers1))
 
             case false =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, value))
+                  Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers))
           }
       )
   }

@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
 import models.{Mode, UKAddress}
-import pages.{upeNameRegistrationPage, upeRegisteredAddressPage}
+import navigation.UltimateParentNavigator
+import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -40,6 +41,7 @@ class UpeRegisteredAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              UpeRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
+  navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -48,9 +50,9 @@ class UpeRegisteredAddressController @Inject() (
   val form: Form[UKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(upeNameRegistrationPage)
+      .get(UpeNameRegistrationPage)
       .map { name =>
-        val preparedForm = request.userAnswers.get(upeRegisteredAddressPage) match {
+        val preparedForm = request.userAnswers.get(UpeRegisteredAddressPage) match {
           case Some(value) => form.fill(value)
           case None        => form
         }
@@ -61,7 +63,7 @@ class UpeRegisteredAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(upeNameRegistrationPage)
+      .get(UpeNameRegistrationPage)
       .map { name =>
         form
           .bindFromRequest()
@@ -72,10 +74,10 @@ class UpeRegisteredAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(
                     request.userAnswers
-                      .set(upeRegisteredAddressPage, value)
+                      .set(UpeRegisteredAddressPage, value)
                   )
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.registration.routes.UpeContactNameController.onPageLoad(mode))
+              } yield Redirect(navigator.nextPage(UpeRegisteredAddressPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

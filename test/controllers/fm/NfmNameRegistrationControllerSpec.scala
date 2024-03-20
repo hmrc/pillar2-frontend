@@ -22,8 +22,8 @@ import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{fmNameRegistrationPage, fmRegisteredInUKPage}
-import play.api.inject.bind
+import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,7 +38,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
   "NfmNameRegistrationController Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswers = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false)
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -53,8 +53,26 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for a GET if they hit this page through entity not listed button" in {
+      val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj("fmRegisteredInUK" -> "false")))
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[NfmNameRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val pageAnswer = emptyUserAnswers.setOrException(fmRegisteredInUKPage, false).setOrException(fmNameRegistrationPage, "alex")
+      val pageAnswer = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false).setOrException(FmNameRegistrationPage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
@@ -83,25 +101,6 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-      val pageAnswer = emptyUserAnswers.set(fmNameRegistrationPage, "alex").success.value
-      val application = applicationBuilder(userAnswers = Some(pageAnswer))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "John F"))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url
-
       }
     }
 

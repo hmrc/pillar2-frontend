@@ -113,6 +113,7 @@ GET         /unauthorised/agent                                                 
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
+GET         /error/page-not-found                                                       controllers.ErrorController.pageNotFoundLoad
 
 GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
@@ -176,7 +177,7 @@ GET         /further-details/change-group-status                 controllers.sub
 POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+GET         /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST        /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 GET         /manage-account/further-details/change-group-status                 controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
 POST       /manage-account/further-details/change-group-status                  controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
@@ -221,6 +222,7 @@ POST        /manage-account/account-details/summary               controllers.su
 
 
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
 
 
