@@ -924,6 +924,8 @@ rfm.rfmPrimaryContactName.heading = What is the name of the person or team we sh
 rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team should be 160 characters or less
+rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
+
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
