@@ -34,7 +34,7 @@
 
 @layout(pageTitle = title(form, messages("rfm.registeredAddress.title" ))) {
 
-@formHelper(action = controllers.rfm.routes.RfmRegisteredAddressController.onSubmit()) {
+@formHelper(action = controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(mode)) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))

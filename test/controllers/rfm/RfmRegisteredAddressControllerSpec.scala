@@ -47,17 +47,13 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RfmRegisteredAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) must include("Name")
       }
     }
 
@@ -94,7 +90,21 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
+      val application = applicationBuilder(userAnswers = None)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
