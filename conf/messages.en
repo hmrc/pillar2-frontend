@@ -847,43 +847,6 @@ rfm.agent.p2 = Agents cannot use this service to replace a nominated filing memb
 rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
 rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
 
-rfm.noid.heading.caption = Group details
-rfm.nfmNameRegistration.title = What is the name of the new nominated filing member?
-rfm.nfmNameRegistration.heading = What is the name of the new nominated filing member?
-rfm.nfmNameRegistration.error.required = Enter the name of the new nominated filing member
-rfm.nfmNameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
-
-rfm.nfmRegisteredAddress.title = What is the registered office address?
-rfm.nfmRegisteredAddress.heading = What is the registered office address of {0}?
-rfm.nfmRegisteredAddress.addressLine1 = Address line 1
-rfm.nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
-rfm.nfmRegisteredAddress.town_city = Town or city
-rfm.nfmRegisteredAddress.region = Region (optional)
-rfm.nfmRegisteredAddress.postcode = Postal code
-rfm.nfmRegisteredAddress.country = Country
-rfm.nfmRegisteredAddress.country.hint = Enter text and then choose from the list.
-rfm.nfmRegisteredAddress.town_city.error.required = Enter town or city
-rfm.nfmRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
-rfm.nfmRegisteredAddress.region.error.length = The region must be 35 characters or less
-rfm.nfmRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
-rfm.nfmRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code
-rfm.nfmRegisteredAddress.country.error.required = Select a country
-rfm.nfmRegisteredAddress.country.error.length = The country cannot be more than 35 characters
-rfm.nfmRegisteredAddress.messages.error.addressLine1.required= Enter first line of the address
-rfm.nfmRegisteredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
-rfm.nfmRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
-rfm.nfmRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
-rfm.nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
-rfm.nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
-
-rfm.noIdCheckYourAnswers.title = Check Your Answers
-rfm.noIdCheckYourAnswers.heading = Check your answers
-rfm.noIdCheckYourAnswers.heading.caption = Group details
-rfm.nfmNameRegistration.checkYourAnswersLabel = Name
-rfm.nfmNameRegistration.change.hidden =  the name of the new nominated filing member
-rfm.nfmRegisteredAddress.checkYourAnswersLabel = Address
-rfm.nfmRegisteredAddress.change.hidden =  the registered office address
-
 rfm.heading.caption = Replace filing member
 rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
@@ -909,6 +872,43 @@ rfm.primaryNameRegistration.heading = What is the name of the person or team we 
 rfm.primaryNameRegistration.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 rfm.primaryNameRegistration.error.required = Enter name of the person or team we should contact
 rfm.primaryNameRegistration.error.length = Name of the contact person or team should be 160 characters or less
+
+rfm.noIdCheckYourAnswers.title = Check Your Answers
+rfm.noIdCheckYourAnswers.heading = Check your answers
+rfm.noIdCheckYourAnswers.heading.caption = Group details
+rfm.nfmNameRegistration.checkYourAnswersLabel = Name
+rfm.nfmNameRegistration.change.hidden =  the name of the new nominated filing member
+rfm.nfmRegisteredAddress.checkYourAnswersLabel = Address
+rfm.nfmRegisteredAddress.change.hidden =  the registered office address
+
+rfm.noId.heading.caption = Group details
+rfm.noIdNameRegistration.title = What is the name of the new nominated filing member?
+rfm.noIdNameRegistration.heading = What is the name of the new nominated filing member?
+rfm.noIdNameRegistration.error.required = Enter the name of the new nominated filing member
+rfm.noIdNameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
+
+rfm.noIdRegisteredAddress.title = What is the registered office address?
+rfm.noIdRegisteredAddress.heading = What is the registered office address of {0}?
+rfm.noIdRegisteredAddress.addressLine1 = Address line 1
+rfm.noIdRegisteredAddress.addressLine2 = Address line 2 (optional)
+rfm.noIdRegisteredAddress.town_city = Town or city
+rfm.noIdRegisteredAddress.region = Region (optional)
+rfm.noIdRegisteredAddress.postcode = Postal code
+rfm.noIdRegisteredAddress.country = Country
+rfm.noIdRegisteredAddress.country.hint = Enter text and then choose from the list.
+rfm.noIdRegisteredAddress.town_city.error.required = Enter town or city
+rfm.noIdRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
+rfm.noIdRegisteredAddress.region.error.length = The region must be 35 characters or less
+rfm.noIdRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
+rfm.noIdRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code
+rfm.noIdRegisteredAddress.country.error.required = Select a country
+rfm.noIdRegisteredAddress.country.error.length = The country cannot be more than 35 characters
+rfm.noIdRegisteredAddress.messages.error.addressLine1.required= Enter first line of the address
+rfm.noIdRegisteredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+rfm.noIdRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+rfm.noIdRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+rfm.noIdRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+rfm.noIdRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

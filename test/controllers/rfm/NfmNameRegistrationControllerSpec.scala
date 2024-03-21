@@ -18,24 +18,24 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmNfmNameRegistrationFormProvider
+import forms.RfmNoIdNameRegistrationFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.rfmNfmNameRegistrationPage
+import pages.RfmNoIdNameRegistrationPage
 import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 
 import play.api.test.Helpers._
-import views.html.rfm.NfmNameRegistrationView
+import views.html.rfm.NoIdNameRegistrationView
 
 import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 
-  val formProvider = new RfmNfmNameRegistrationFormProvider()
+  val formProvider = new RfmNoIdNameRegistrationFormProvider()
 
   "RFM NfmNameRegistrationController Controller" when {
 
@@ -46,11 +46,11 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmNameRegistrationView]
+        val view = application.injector.instanceOf[NoIdNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -58,14 +58,14 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val pageAnswer = emptyUserAnswers.setOrException(rfmNfmNameRegistrationPage, "alex")
+      val pageAnswer = emptyUserAnswers.setOrException(RfmNoIdNameRegistrationPage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
 
-        val view = application.injector.instanceOf[NfmNameRegistrationView]
+        val view = application.injector.instanceOf[NoIdNameRegistrationView]
 
         val result = route(application, request).value
 
@@ -89,7 +89,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -107,12 +107,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NfmNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit().url)
             .withFormUrlEncodedBody(("value", "John F"))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.NfmRegisteredAddressController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url
 
       }
     }
@@ -124,12 +124,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NfmNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit().url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[NfmNameRegistrationView]
+        val view = application.injector.instanceOf[NoIdNameRegistrationView]
 
         val result = route(application, request).value
 
