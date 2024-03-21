@@ -51,7 +51,7 @@ class DashboardController @Inject() (
     (for {
       userAnswers     <- OptionT.liftF(sessionRepository.get(request.userId))
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
-      successResult <- OptionT.liftF(readSubscriptionService.readSubscription(referenceNumber))
+      successResult   <- OptionT.liftF(readSubscriptionService.readSubscription(referenceNumber))
     } yield {
       val inactiveStatus = successResult.accountStatus.exists(_.inactive)
       Ok(
