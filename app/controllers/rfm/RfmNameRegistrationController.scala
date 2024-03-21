@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.RfmNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import pages.RfmNameRegistrationPage
+import navigation.ReplaceFilingMemberNavigator
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -38,6 +39,7 @@ class RfmNameRegistrationController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmNameRegistrationView
@@ -69,7 +71,7 @@ class RfmNameRegistrationController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad())
+          } yield Redirect(navigator.nextPage(RfmNameRegistrationPage, mode, updatedAnswers))
       )
   }
 

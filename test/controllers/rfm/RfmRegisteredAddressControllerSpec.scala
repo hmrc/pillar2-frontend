@@ -53,6 +53,11 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[RfmRegisteredAddressView]
         status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -70,7 +75,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
+          FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -84,12 +89,12 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(NormalMode).url)
       }
     }
 
@@ -104,7 +109,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -123,7 +128,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),
@@ -148,7 +153,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("addressLine1", ""),
               ("addressLine2", "Drive"),
@@ -174,7 +179,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val longChars =
           "27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house"
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",

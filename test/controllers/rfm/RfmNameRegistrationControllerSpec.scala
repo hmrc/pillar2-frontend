@@ -27,7 +27,6 @@ import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-
 import play.api.test.Helpers._
 import views.html.rfm.RfmNameRegistrationView
 
@@ -46,7 +45,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -63,7 +62,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[RfmNameRegistrationView]
 
@@ -89,7 +88,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -107,7 +106,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "John F"))
 
         val result = route(application, request).value
@@ -124,7 +123,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

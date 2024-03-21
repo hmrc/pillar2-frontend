@@ -327,8 +327,14 @@ GET        /replace-filing-member/error/agent-sign-in                           
 
 GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
 GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad

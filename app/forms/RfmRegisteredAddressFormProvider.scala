@@ -30,18 +30,18 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
     mapping(
       "addressLine1" ->
         text("rfm.RegisteredAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(Constants.MAX_LENGTH_35, "rfm.RegisteredAddress.messages.error.addressLine1.length")),
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(Constants.MAX_LENGTH_35, "rfm.RegisteredAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
         text("rfm.RegisteredAddress.town_city.error.required")
-          .verifying(maxLength(Constants.MAX_LENGTH_35, "rfm.RegisteredAddress.town_city.error.length")),
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(Constants.MAX_LENGTH_35, "rfm.RegisteredAddress.region.error.length"))
+            .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.region.error.length"))
         ),
       "postalCode" ->
         optionalPostcode(
@@ -52,7 +52,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
         ),
       "countryCode" ->
         text("rfm.RegisteredAddress.country.error.required")
-          .verifying(maxLength(Constants.MAX_LENGTH_35, "rfm.RegisteredAddress.country.error.length"))
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.country.error.length"))
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

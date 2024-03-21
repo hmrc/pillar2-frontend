@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.Mode
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import navigation.ReplaceFilingMemberNavigator
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,6 +38,7 @@ class RfmRegisteredAddressController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
@@ -78,7 +80,7 @@ class RfmRegisteredAddressController @Inject() (
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(RfmRegisteredAddressPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(navigator.nextPage(RfmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
