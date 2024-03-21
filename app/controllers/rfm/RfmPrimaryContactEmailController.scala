@@ -65,7 +65,6 @@ class RfmPrimaryContactEmailController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    println("*******************************************************888" + mode)
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { name =>
