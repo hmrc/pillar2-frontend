@@ -298,10 +298,10 @@ class SubscriptionHelpersSpec extends SpecBase {
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
-          .set(rfmNfmNameRegistrationPage, name)
+          .set(RfmNoIdNameRegistrationPage, name)
           .success
           .value
-          .set(rfmNfmRegisteredAddressPage, nonUkAddress)
+          .set(RfmNoIdRegisteredAddressPage, nonUkAddress)
           .success
           .value
 
@@ -310,7 +310,7 @@ class SubscriptionHelpersSpec extends SpecBase {
 
       "return InProgress when an answer is provided to rfmNfmNameRegistrationPage and not to rfmNfmRegisteredAddressPage" in {
         val userAnswersInProgress = emptyUserAnswers
-          .set(rfmNfmNameRegistrationPage, name)
+          .set(RfmNoIdNameRegistrationPage, name)
           .success
           .value
 

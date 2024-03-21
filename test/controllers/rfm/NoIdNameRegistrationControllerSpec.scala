@@ -33,7 +33,7 @@ import views.html.rfm.NoIdNameRegistrationView
 
 import scala.concurrent.Future
 
-class NfmNameRegistrationControllerSpec extends SpecBase {
+class NoIdNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new RfmNoIdNameRegistrationFormProvider()
 
@@ -46,7 +46,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -63,7 +63,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[NoIdNameRegistrationView]
 
@@ -89,7 +89,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -107,12 +107,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "John F"))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad(NormalMode).url
 
       }
     }
@@ -124,7 +124,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit().url)
+          FakeRequest(POST, controllers.rfm.routes.NoIdNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

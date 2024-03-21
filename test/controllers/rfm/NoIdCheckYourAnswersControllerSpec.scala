@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import models.{NonUKAddress, NormalMode, UserAnswers}
-import pages.{rfmNfmNameRegistrationPage, rfmNfmRegisteredAddressPage}
+import pages.{RfmNoIdNameRegistrationPage, RfmNoIdRegisteredAddressPage}
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
@@ -30,16 +30,16 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
     val name = "nfm name"
     val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
-    "return OK and the correct view if an answer is provided to every question " in {
+    val userAnswer = UserAnswers(userAnswersId)
+      .set(RfmNoIdNameRegistrationPage, name)
+      .success
+      .value
+      .set(RfmNoIdRegisteredAddressPage, nonUkAddress)
+      .success
+      .value
 
+    "return OK and the correct view if an answer is provided to every question " in {
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmNfmNameRegistrationPage, name)
-        .success
-        .value
-        .set(rfmNfmRegisteredAddressPage, nonUkAddress)
-        .success
-        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()
@@ -85,13 +85,6 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
     "redirect to Under Construction page on form submission" in {
       val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(rfmNfmNameRegistrationPage, name)
-        .success
-        .value
-        .set(rfmNfmRegisteredAddressPage, nonUkAddress)
-        .success
-        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()

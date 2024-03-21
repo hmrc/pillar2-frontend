@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.rfmNfmNameRegistrationPage
+import pages.RfmNoIdNameRegistrationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,13 +27,13 @@ import viewmodels.implicits._
 object RfmNameRegistrationSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(rfmNfmNameRegistrationPage).map { answer =>
+    answers.get(RfmNoIdNameRegistrationPage).map { answer =>
       SummaryListRowViewModel(
-        key = "rfm.nfmNameRegistration.checkYourAnswersLabel",
+        key = "rfm.noIdNameRegistration.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.rfm.routes.NfmNameRegistrationController.onPageLoad().url)
-            .withVisuallyHiddenText(messages("rfm.nfmNameRegistration.change.hidden"))
+          ActionItemViewModel("site.change", controllers.rfm.routes.NoIdNameRegistrationController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("rfm.noIdNameRegistration.change.hidden"))
         )
       )
     }

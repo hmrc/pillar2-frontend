@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("rfm.noIdNameRegistration.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.NoIdNameRegistrationController.onSubmit()) {
+    @formHelper(action = controllers.rfm.routes.NoIdNameRegistrationController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

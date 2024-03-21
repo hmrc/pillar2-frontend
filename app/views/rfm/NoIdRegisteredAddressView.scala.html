@@ -34,88 +34,91 @@
 
 @layout(pageTitle = title(form, messages("rfm.noIdRegisteredAddress.title" ))) {
 
-@formHelper(action = controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit()) {
+    @formHelper(action = controllers.rfm.routes.NoIdRegisteredAddressController.onSubmit(mode)) {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-@sectionHeader(messages("rfm.noid.heading.caption"))
-<h1 class="govuk-heading-l long-word">@messages("rfm.noIdRegisteredAddress.heading", UserName)</h1>
+        @sectionHeader(messages("rfm.noId.heading.caption"))
+        <h1 class="govuk-heading-l long-word">@messages("rfm.noIdRegisteredAddress.heading", UserName)</h1>
 
-@govukInput(
-InputViewModel(
-field = form("addressLine1"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine1"))
-)
-.withWidth(TwoThirds)
-.withAutocomplete("address-line1")
-)
-@govukInput(
-InputViewModel(
-field = form("addressLine2"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine2"))
-)
-.withWidth(TwoThirds)
-.withAutocomplete("address-line2")
-)
-@govukInput(
-InputViewModel(
-field = form("addressLine3"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.town_city"))
-)
-.withWidth(TwoThirds)
-.withAutocomplete("address-level2")
-)
-@govukInput(
-InputViewModel(
-field = form("addressLine4"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.region"))
-)
-.withWidth(TwoThirds)
-.withAutocomplete("address-level1")
-)
-@govukInput(
-InputViewModel(
-field = form("postalCode"),
-label = LabelViewModel(messages("rfm.noIdRegisteredAddress.postcode"))
-)
-.withWidth(Fixed10)
-.withAutocomplete("postal-code")
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine1"),
+                label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine1"))
+            )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-line1")
+        )
 
-)
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine2"),
+                label = LabelViewModel(messages("rfm.noIdRegisteredAddress.addressLine2"))
+            )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-line2")
+        )
 
-@govukSelect(
-Select(
-id = form("countryCode").id,
-name = form("countryCode").name,
-label = Label(
-isPageHeading = true,
-classes = "govuk-heading-l",
-content = Text(messages("rfm.noIdRegisteredAddress.country"))
-),
-hint = Some(Hint(content = Text(messages("rfm.noIdRegisteredAddress.country.hint")))),
-items = Seq(
-SelectItem(
-value = Some(""),
-text = messages("site.address.country.select")
-)
-) ++
-countryOptions.map(valueOption =>
-SelectItem(
-value = Some(valueOption.value),
-text = valueOption.label,
-selected = form("countryCode").value.contains(valueOption.value)
-)
-),
-formGroupClasses = "autocomplete-wrapper",
-attributes = Map("data-non-uk-countries" -> ""),
-errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
-)
-)
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine3"),
+                label = LabelViewModel(messages("rfm.noIdRegisteredAddress.town_city"))
+            )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level2")
+        )
 
-@govukButton(
-ButtonViewModel(messages("site.continue"))
-)
-}
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine4"),
+                label = LabelViewModel(messages("rfm.noIdRegisteredAddress.region"))
+            )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level1")
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("postalCode"),
+                label = LabelViewModel(messages("rfm.noIdRegisteredAddress.postcode"))
+            )
+            .withWidth(Fixed10)
+            .withAutocomplete("postal-code")
+        )
+
+        @govukSelect(
+            Select(
+                id = form("countryCode").id,
+                name = form("countryCode").name,
+                label = Label(
+                    isPageHeading = true,
+                    classes = "govuk-heading-l",
+                    content = Text(messages("rfm.noIdRegisteredAddress.country"))
+                ),
+                hint = Some(Hint(content = Text(messages("rfm.noIdRegisteredAddress.country.hint")))),
+                items = Seq(
+                    SelectItem(
+                        value = Some(""),
+                        text = messages("site.address.country.select")
+                    )
+                ) ++
+                countryOptions.map(valueOption =>
+                    SelectItem(
+                        value = Some(valueOption.value),
+                        text = valueOption.label,
+                        selected = form("countryCode").value.contains(valueOption.value)
+                    )
+                ),
+                formGroupClasses = "autocomplete-wrapper",
+                attributes = Map("data-non-uk-countries" -> ""),
+                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

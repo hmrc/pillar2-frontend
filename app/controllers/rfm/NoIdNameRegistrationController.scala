@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmNoIdNameRegistrationFormProvider
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
+import navigation.ReplaceFilingMemberNavigator
 import pages.RfmNoIdNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -39,6 +40,7 @@ class NoIdNameRegistrationController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmNoIdNameRegistrationFormProvider,
+  navigator:                 ReplaceFilingMemberNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NoIdNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -69,8 +71,7 @@ class NoIdNameRegistrationController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmNoIdNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad())
+          } yield Redirect(navigator.nextPage(RfmNoIdNameRegistrationPage, mode, updatedAnswers))
       )
   }
-
 }
