@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReadSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
@@ -38,6 +39,7 @@ class AddSecondaryContactController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
   formProvider:              AddSecondaryContactFormProvider,
   navigator:                 AmendSubscriptionNavigator,
   val controllerComponents:  MessagesControllerComponents,

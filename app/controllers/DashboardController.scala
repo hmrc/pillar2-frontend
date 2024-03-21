@@ -22,8 +22,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.IdentifierAction
 import models.InternalIssueError
-import models.subscription.ReadSubscriptionRequestParameters
-import pages.{FmDashboardPage, SubAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,24 +48,21 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = identify.async { implicit request =>
-    val x = for {
+    (for {
       userAnswers     <- OptionT.liftF(sessionRepository.get(request.userId))
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
-      _               <- OptionT.liftF(readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
-      updatedAnswers  <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
-      dashboard       <- OptionT.fromOption[Future](updatedAnswers.get(FmDashboardPage))
+      successResult <- OptionT.liftF(readSubscriptionService.readSubscription(referenceNumber))
     } yield {
-      val inactiveStatus = updatedAnswers.get(SubAccountStatusPage).exists(_.inactive)
+      val inactiveStatus = successResult.accountStatus.exists(_.inactive)
       Ok(
         view(
-          dashboard.organisationName,
-          dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          successResult.upeDetails.organisationName,
+          successResult.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           referenceNumber,
           inactiveStatus = inactiveStatus
         )
       )
-    }
-    x.recover { case InternalIssueError =>
+    }).recover { case InternalIssueError =>
       logger.error(
         s"[ read subscription failed as no valid Json was returned from the controller"
       )
