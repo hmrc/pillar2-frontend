@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
+import navigation.RfmContactDetailsNavigator
 import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -39,7 +40,8 @@ class RfmCaptureTelephoneDetailsController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmCaptureTelephoneDetailsView
+  view:                      RfmCaptureTelephoneDetailsView,
+  navigator:                 RfmContactDetailsNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -78,7 +80,7 @@ class RfmCaptureTelephoneDetailsController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(navigator.nextPage(RfmPrimaryCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
