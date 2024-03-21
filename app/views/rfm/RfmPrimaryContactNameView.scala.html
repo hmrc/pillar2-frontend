@@ -32,7 +32,7 @@ govukButton: GovukButton
 
 @layout(pageTitle = title(form, messages("rfm.rfmPrimaryContactName.title"))) {
 
-@formHelper(action = controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit()) {
+@formHelper(action = controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(mode)) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))

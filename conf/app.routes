@@ -351,6 +351,10 @@ GET         /replace-filing-member/contact-details/content                     c
 POST        /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-namee          controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = CheckMode)
+
+
 
 GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)

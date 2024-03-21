@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
-import pages.RfmPrimaryContactNamePage
+import navigation.RfmContactDetailsNavigator
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -39,7 +40,8 @@ class RfmPrimaryContactNameController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmPrimaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryContactNameView
+  view:                      RfmPrimaryContactNameView,
+  navigator:                 RfmContactDetailsNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -70,7 +72,7 @@ class RfmPrimaryContactNameController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(RfmPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(RfmPrimaryContactNamePage, mode, updatedAnswers))
       )
   }
 

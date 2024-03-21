@@ -43,7 +43,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -61,7 +61,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RfmPrimaryContactNameView]
 
@@ -86,7 +86,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -107,7 +107,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
@@ -124,7 +124,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value

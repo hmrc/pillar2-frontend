@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import navigation.RfmContactDetailsNavigator
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +39,8 @@ class RfmPrimaryContactEmailController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmPrimaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryContactEmailView
+  view:                      RfmPrimaryContactEmailView,
+  navigator:                 RfmContactDetailsNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -63,6 +65,7 @@ class RfmPrimaryContactEmailController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    println("*******************************************************888" + mode)
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { name =>
@@ -74,7 +77,7 @@ class RfmPrimaryContactEmailController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryContactEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(mode).url)
+              } yield Redirect(navigator.nextPage(RfmPrimaryContactEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

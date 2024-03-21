@@ -21,13 +21,15 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
-import pages.{RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import navigation.RfmContactDetailsNavigator
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactByTelephoneView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +40,8 @@ class RfmContactByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmContactByTelephoneView
+  view:                      RfmContactByTelephoneView,
+  navigator:                 RfmContactDetailsNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -79,12 +82,12 @@ class RfmContactByTelephoneController @Inject() (
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode))
+                  } yield Redirect(navigator.nextPage(RfmPrimaryPhonePreferencePage, mode, updatedAnswers))
                 case false =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad.url)
+                  } yield Redirect(navigator.nextPage(RfmPrimaryPhonePreferencePage, mode, updatedAnswers))
               }
           )
       }
