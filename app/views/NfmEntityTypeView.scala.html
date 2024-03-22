@@ -33,7 +33,7 @@
 
 @layout(pageTitle = title(form, messages("nfmEntityType.title"))) {
 
-    @sectionHeader(messages("nfmEntityType.heading.caption"))
+    @sectionHeader(messages("nfmEntityType.caption"))
 
     @formHelper(action = controllers.fm.routes.NfmEntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 

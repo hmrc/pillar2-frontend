@@ -162,7 +162,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
 
   val viewUPENameRegistration: UpeNameRegistrationView =
-    new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new UpeNameRegistrationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeContactName: UpeContactNameView =
     new UpeContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, sectionHeader, govukInput, govukButton)
   val viewUpeContactEmail: UpeContactEmailView =
