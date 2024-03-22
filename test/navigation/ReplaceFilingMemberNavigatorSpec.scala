@@ -54,15 +54,15 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
       }
-      "go to a page where we capture primary telephone number" in {
+      "if user select yes on contact by telephone page  then go to a page where we capture primary telephone number" in {
         navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)) mustBe
           controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
       }
-      "go to journey recovery if no answer for UpePhonePreference page can be found" in {
+      "go to journey recovery if no answer for contact by telephone page can be found" in {
         navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe
           jr
       }
-      "go to CYA page if they have chosen not to nominate a contact number" in {
+      "if user select no  on contact by telephone page then go to under construction page " in {
         navigator.nextPage(
           RfmContactByTelephonePage,
           NormalMode,
@@ -70,7 +70,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe controllers.routes.UnderConstructionController.onPageLoad
 
       }
-      "go to CYA page from a page where they enter their phone details" in {
+      "go to Under construction page from a page where they enter their phone details" in {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
           NormalMode,
@@ -78,7 +78,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.routes.UnderConstructionController.onPageLoad
       }
-      // add unit test for check mode later
+      // add unit test for check mode later and update discription
     }
 
   }
