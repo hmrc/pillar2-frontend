@@ -21,27 +21,27 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
-import navigation.RfmContactDetailsNavigator
-import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmCapturePrimaryTelephonePage, RfmContactByTelephonePage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmCaptureTelephoneDetailsView
+import views.html.rfm.RfmCapturePrimaryTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmCaptureTelephoneDetailsController @Inject() (
+class RfmCapturePrimaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmCaptureTelephoneDetailsView,
-  navigator:                 RfmContactDetailsNavigator
+  view:                      RfmCapturePrimaryTelephoneView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,11 +50,11 @@ class RfmCaptureTelephoneDetailsController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       (for {
-        _           <- request.userAnswers.get(RfmPrimaryPhonePreferencePage)
+        _           <- request.userAnswers.get(RfmContactByTelephonePage)
         contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
       } yield {
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmPrimaryCapturePhonePage) match {
+        val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -78,9 +78,9 @@ class RfmCaptureTelephoneDetailsController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryCapturePhonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCapturePrimaryTelephonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(RfmPrimaryCapturePhonePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(RfmCapturePrimaryTelephonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

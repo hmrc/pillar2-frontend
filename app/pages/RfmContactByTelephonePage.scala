@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object RfmPrimaryPhonePreferencePage extends QuestionPage[Boolean] {
+case object RfmContactByTelephonePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -30,7 +30,7 @@ case object RfmPrimaryPhonePreferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     if (value.contains(false)) {
       userAnswers
-        .remove(RfmPrimaryCapturePhonePage)
+        .remove(RfmCapturePrimaryTelephonePage)
     } else {
       super.cleanup(value, userAnswers)
     }

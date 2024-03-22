@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
-import navigation.RfmContactDetailsNavigator
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -41,7 +41,7 @@ class RfmContactByTelephoneController @Inject() (
   formProvider:              RfmContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmContactByTelephoneView,
-  navigator:                 RfmContactDetailsNavigator
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -53,7 +53,7 @@ class RfmContactByTelephoneController @Inject() (
         .get(RfmPrimaryContactNamePage)
         .map { contactName =>
           val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmPrimaryPhonePreferencePage) match {
+          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
             case Some(v) => form.fill(v)
             case None    => form
           }
@@ -80,14 +80,14 @@ class RfmContactByTelephoneController @Inject() (
               value match {
                 case true =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(RfmPrimaryPhonePreferencePage, mode, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
                 case false =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(RfmPrimaryPhonePreferencePage, mode, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
               }
           )
       }

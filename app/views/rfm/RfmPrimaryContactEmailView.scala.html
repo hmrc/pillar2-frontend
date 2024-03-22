@@ -31,11 +31,12 @@
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfm-input-business-email.title"))) {
-    @sectionHeader(messages("rfm-input-business-email.caption"))
+
     @formHelper(action = controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(mode)) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+        @sectionHeader(messages("rfm-input-business-email.caption"))
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),

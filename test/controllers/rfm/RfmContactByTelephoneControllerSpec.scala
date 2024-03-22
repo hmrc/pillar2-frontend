@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -96,7 +96,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
-        .setOrException(RfmPrimaryPhonePreferencePage, true)
+        .setOrException(RfmContactByTelephonePage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -135,7 +135,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode).url
       }
     }
 
@@ -185,7 +185,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
     "redirect to book mark prevention page for GET if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -195,7 +195,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None)
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

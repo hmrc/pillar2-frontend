@@ -21,9 +21,9 @@ import controllers.routes
 import models._
 import pages._
 
-class RfmContactDetailsNavigatorSpec extends SpecBase {
+class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
-  val navigator = new RfmContactDetailsNavigator
+  val navigator = new ReplaceFilingMemberNavigator
   private val ukAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
@@ -31,14 +31,11 @@ class RfmContactDetailsNavigatorSpec extends SpecBase {
     addressLine4 = None,
     postalCode = "m19hgs",
     countryCode = "AB"
-  ) //replace with RFN checkanswer page
-  private lazy val rfmCYA          = controllers.routes.UnderConstructionController.onPageLoad
-  private lazy val submitAndReview = controllers.routes.UnderConstructionController.onPageLoad
-  private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
+  )
+  private lazy val jr = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {
 
     "in Normal mode" must {
-
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
@@ -58,26 +55,29 @@ class RfmContactDetailsNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
       }
       "go to a page where we capture their telephone number" in {
-        navigator.nextPage(RfmPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmPrimaryPhonePreferencePage, true)) mustBe
-          controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode)
+        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)) mustBe
+          controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
       }
       "go to journey recovery if no answer for UpePhonePreference page can be found" in {
-        navigator.nextPage(RfmPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe
           jr
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(
-          RfmPrimaryPhonePreferencePage,
+          RfmContactByTelephonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmPrimaryPhonePreferencePage, false)
-        ) mustBe rfmCYA
+          emptyUserAnswers.setOrException(RfmContactByTelephonePage, false)
+        ) mustBe controllers.routes.UnderConstructionController.onPageLoad
 
       }
       "go to CYA page from a page where they enter their phone details" in {
-        navigator.nextPage(RfmPrimaryCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(RfmPrimaryCapturePhonePage, "12321321")) mustBe
-          rfmCYA
+        navigator.nextPage(
+          RfmCapturePrimaryTelephonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "12321321")
+        ) mustBe
+          controllers.routes.UnderConstructionController.onPageLoad
       }
-
       // add unit test for check mode later
     }
 

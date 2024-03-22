@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
-import navigation.RfmContactDetailsNavigator
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.RfmPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -41,7 +41,7 @@ class RfmPrimaryContactNameController @Inject() (
   formProvider:              RfmPrimaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmPrimaryContactNameView,
-  navigator:                 RfmContactDetailsNavigator
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

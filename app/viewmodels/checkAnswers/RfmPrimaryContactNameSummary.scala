@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.UpeContactNamePage
+import pages.{RfmPrimaryContactNamePage, UpeContactNamePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object RfmPrimaryContactNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(UpeContactNamePage)
+      .get(RfmPrimaryContactNamePage)
       .map { answer =>
         SummaryListRowViewModel(
           key = "rfm.rfmPrimaryContactName.checkYourAnswersLabel",

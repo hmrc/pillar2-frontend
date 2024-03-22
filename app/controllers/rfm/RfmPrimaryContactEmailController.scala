@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
-import navigation.RfmContactDetailsNavigator
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,7 +40,7 @@ class RfmPrimaryContactEmailController @Inject() (
   formProvider:              RfmPrimaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmPrimaryContactEmailView,
-  navigator:                 RfmContactDetailsNavigator
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

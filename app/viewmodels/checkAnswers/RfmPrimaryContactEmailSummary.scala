@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.UpeContactEmailPage
+import pages.{RfmPrimaryContactEmailPage, UpeContactEmailPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ object RfmPrimaryContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(UpeContactEmailPage)
+      .get(RfmPrimaryContactEmailPage)
       .map { answer =>
         SummaryListRowViewModel(
           key = "rfm-input-business-email.checkYourAnswersLabel",

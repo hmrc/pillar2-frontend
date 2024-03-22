@@ -17,24 +17,24 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.UpeCapturePhonePage
+import pages.{RfmCapturePrimaryTelephonePage, UpeCapturePhonePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RfmCaptureTelephoneDetailsSummary {
+object RfmCapturePrimaryTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(UpeCapturePhonePage)
+      .get(RfmCapturePrimaryTelephonePage)
       .map { answer =>
         SummaryListRowViewModel(
           key = "rfmCaptureTelephoneDetails.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("rfmCaptureTelephoneDetails.change.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
