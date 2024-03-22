@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmNameRegistrationFormProvider
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import pages.RfmNameRegistrationPage
 import navigation.ReplaceFilingMemberNavigator
 import play.api.i18n.I18nSupport

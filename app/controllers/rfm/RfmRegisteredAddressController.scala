@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
-import models.Mode
+import models.{Mode, NonUKAddress}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import navigation.ReplaceFilingMemberNavigator
 import play.api.i18n.I18nSupport
@@ -47,7 +47,7 @@ class RfmRegisteredAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NonUKAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled

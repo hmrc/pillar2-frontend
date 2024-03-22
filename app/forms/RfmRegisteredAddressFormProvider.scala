@@ -29,30 +29,30 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
   def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("rfm.RegisteredAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.messages.error.addressLine1.length")),
+        text("rfm.registeredAddress.messages.error.addressLine1.required")
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.registeredAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.registeredAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
-        text("rfm.RegisteredAddress.town_city.error.required")
-          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.town_city.error.length")),
+        text("rfm.registeredAddress.town_city.error.required")
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.registeredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.region.error.length"))
+            .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.registeredAddress.region.error.length"))
         ),
       "postalCode" ->
         optionalPostcode(
-          Some("rfm.RegisteredAddress.postcode.error.invalid"),
-          "rfm.RegisteredAddress.postcode.error.invalid",
-          "rfm.RegisteredAddress.postcode.error.length",
+          Some("rfm.registeredAddress.postcode.error.invalid"),
+          "rfm.registeredAddress.postcode.error.invalid",
+          "rfm.registeredAddress.postcode.error.length",
           "countryCode"
         ),
       "countryCode" ->
-        text("rfm.RegisteredAddress.country.error.required")
-          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.RegisteredAddress.country.error.length"))
+        text("rfm.registeredAddress.country.error.required")
+          .verifying(maxLength(Constants.RFM_ADDRESS_MAX_LENGTH, "rfm.registeredAddress.country.error.length"))
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

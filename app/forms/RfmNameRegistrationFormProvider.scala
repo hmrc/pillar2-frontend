@@ -25,7 +25,7 @@ class RfmNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("rfm.NameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "rfm.NameRegistration.error.length"))
+      "value" -> text("rfm.nameRegistration.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_105, "rfm.nameRegistration.error.length"))
     )
 }
