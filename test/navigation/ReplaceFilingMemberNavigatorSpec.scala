@@ -54,7 +54,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
       }
-      "go to a page where we capture their telephone number" in {
+      "go to a page where we capture primary telephone number" in {
         navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)) mustBe
           controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
       }
