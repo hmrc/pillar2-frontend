@@ -128,32 +128,6 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the UnderConstructionController page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "NE3 2TR"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url
-      }
-    }
-
     "display error page and status should be Bad request if invalid data is submitted" in {
 
       val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value

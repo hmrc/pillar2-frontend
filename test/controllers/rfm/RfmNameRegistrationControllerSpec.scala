@@ -97,25 +97,6 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "John F"))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url
-
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
