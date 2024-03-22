@@ -74,5 +74,4 @@ class RfmNameRegistrationController @Inject() (
           } yield Redirect(navigator.nextPage(RfmNameRegistrationPage, mode, updatedAnswers))
       )
   }
-
 }

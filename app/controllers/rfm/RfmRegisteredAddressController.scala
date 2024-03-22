@@ -23,6 +23,7 @@ import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import navigation.ReplaceFilingMemberNavigator
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -25,7 +25,6 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.inject.bind
-import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -151,7 +150,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url
       }
     }
 
