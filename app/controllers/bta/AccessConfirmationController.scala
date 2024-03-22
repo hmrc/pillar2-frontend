@@ -38,7 +38,7 @@ class AccessConfirmationController @Inject() (
     if (btaAccessEnabled) {
       Ok(view())
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Redirect(controllers.routes.ErrorController.pageNotFoundLoad)
     }
   }
 }
