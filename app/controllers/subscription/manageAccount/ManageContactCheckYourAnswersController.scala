@@ -23,10 +23,12 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.subscription.AmendSubscriptionRequestParameters
 import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendSubscriptionService
+import services.{AmendSubscriptionService, ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
@@ -40,6 +42,8 @@ class ManageContactCheckYourAnswersController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageContactCheckYourAnswersView,
   countryOptions:            CountryOptions,
@@ -49,35 +53,37 @@ class ManageContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+
+
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData)  { implicit request =>
     val primaryContactList = SummaryListViewModel(
-      rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
-    val secondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        SecondaryContactNameSummary.row(request.userAnswers),
-        SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    )
-    val address = SummaryListViewModel(
-      rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
-    )
-    if (request.userAnswers.manageContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+    rows = Seq(
+      ContactNameComplianceSummary.row(request.userAnswers),
+      ContactEmailAddressSummary.row(request.userAnswers),
+      ContactByTelephoneSummary.row(request.userAnswers),
+      ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+    ).flatten
+  )
+  val secondaryPreference = SummaryListViewModel(
+    rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
+  )
+  val secondaryContactList = SummaryListViewModel(
+    rows = Seq(
+      SecondaryContactNameSummary.row(request.userAnswers),
+      SecondaryContactEmailSummary.row(request.userAnswers),
+      SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+      SecondaryTelephoneSummary.row(request.userAnswers)
+    ).flatten
+  )
+  val address = SummaryListViewModel(
+    rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
+  )
+  if (request.userAnswers.manageContactDetailStatus) {
+    Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+  } else {
+    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
   }
+}
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val showErrorScreens = appConfig.showErrorScreens

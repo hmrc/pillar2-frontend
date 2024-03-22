@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.SubAddSecondaryContactPage
+import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -55,32 +55,37 @@ class AddSecondaryContactController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     (for {
       plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
-      subData <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
     } yield {
-      val secondaryContactNominated = subData.secondaryContactDetails.isDefined
-      val preparedForm = if (secondaryContactNominated) form.fill(true) else form.fill(false)
-      val primaryContactName = subData.primaryContactDetails.name
+      val preparedForm = request.userAnswers
+        .get(SubAddSecondaryContactPage)
+        .map(addSecondaryContact => form.fill(addSecondaryContact))
+        .getOrElse(if (subData.secondaryContactDetails.isDefined) form.fill(true) else form.fill(false))
+      val primaryContactName = request.userAnswers.get(SubPrimaryContactNamePage).getOrElse(subData.primaryContactDetails.name)
       Ok(view(preparedForm, primaryContactName, mode))
     })
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    referenceNumberService.get(None, request.enrolments).map { plrReference =>
-      readSubscriptionService.readSubscription(plrReference).flatMap { subData =>
-        val primaryContactName = subData.primaryContactDetails.name
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, primaryContactName, mode))),
-            wantsToNominateSecondaryContact =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
-          )
+    referenceNumberService
+      .get(None, request.enrolments)
+      .map { plrReference =>
+        readSubscriptionService.readSubscription(plrReference).flatMap { subData =>
+          val primaryContactName = request.userAnswers.get(SubPrimaryContactNamePage).getOrElse(subData.primaryContactDetails.name)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, primaryContactName, mode))),
+              wantsToNominateSecondaryContact =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                  _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
+            )
+        }
       }
-    }.getOrElse(Future.successful(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 }

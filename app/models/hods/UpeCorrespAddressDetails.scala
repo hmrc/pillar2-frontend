@@ -16,6 +16,7 @@
 
 package models.hods
 
+import models.NonUKAddress
 import play.api.libs.json.{Json, OFormat}
 
 final case class UpeCorrespAddressDetails(
@@ -29,4 +30,12 @@ final case class UpeCorrespAddressDetails(
 
 object UpeCorrespAddressDetails {
   implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
+  def makeSubscriptionAddress(upeCorrespAddressDetails: UpeCorrespAddressDetails) = NonUKAddress(
+    addressLine1 = upeCorrespAddressDetails.addressLine1,
+    addressLine2 = upeCorrespAddressDetails.addressLine2,
+    addressLine3 = upeCorrespAddressDetails.addressLine3.getOrElse(""),
+    addressLine4 = upeCorrespAddressDetails.addressLine4,
+    postalCode = upeCorrespAddressDetails.postCode,
+    countryCode = upeCorrespAddressDetails.countryCode
+  )
 }

@@ -15,17 +15,19 @@
  */
 
 package controllers.subscription.manageAccount
+import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import pages.{SubAddSecondaryContactPage, SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactEmailView
 
@@ -37,6 +39,8 @@ class SecondaryContactEmailController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   navigator:                 AmendSubscriptionNavigator,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
   requireData:               DataRequiredAction,
   formProvider:              SecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -45,20 +49,24 @@ class SecondaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(SubSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(SubSecondaryEmailPage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode, contactName))
-
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      secondaryContactPreference <- OptionT.fromOption[Future](request.userAnswers.get(SubAddSecondaryContactPage))
+    } yield {
+      if (secondaryContactPreference) {
+           subData.secondaryContactDetails.map { secondContact =>
+            val secondaryContactName = request.userAnswers.get(SubSecondaryContactNamePage).getOrElse(secondContact.name)
+            val form = formProvider(secondaryContactName)
+            val preparedForm = request.userAnswers.get(SubSecondaryEmailPage).map(form.fill).getOrElse(form.fill(secondContact.emailAddress))
+            Ok(view(preparedForm, mode, secondaryContactName))
+          }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }else if (secondaryContactPreference & request.userAnswers.isPageDefined(SubSecondaryEmailPage)){
+      Ok(view(form()))
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

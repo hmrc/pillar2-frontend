@@ -15,17 +15,19 @@
  */
 
 package controllers.subscription.manageAccount
+import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
-import models.Mode
+import models.{MneOrDomestic, Mode}
 import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
@@ -33,26 +35,32 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class MneOrDomesticController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              MneOrDomesticFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      MneOrDomesticView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
+  navigator:                   AmendSubscriptionNavigator,
+  formProvider:                MneOrDomesticFormProvider,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        MneOrDomesticView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
-    }
-    Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+    } yield {
+      val mneOrDomestic = if (subData.upeDetails.domesticOnly) form.fill(MneOrDomestic.Uk) else form.fill(MneOrDomestic.UkAndOther)
+      val preparedForm  = request.userAnswers.get(SubMneOrDomesticPage).map(form.fill).getOrElse(mneOrDomestic)
+      Ok(view(preparedForm, mode))
+    })
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

@@ -16,7 +16,7 @@
 
 package models.hods
 
-import models.subscription.AccountStatus
+import models.subscription.{AccountStatus, AccountingPeriod}
 import play.api.libs.json.{Json, OFormat}
 
 case class ReadSubscriptionResponse(
