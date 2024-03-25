@@ -77,18 +77,10 @@ class RfmContactByTelephoneController @Inject() (
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
-              }
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
