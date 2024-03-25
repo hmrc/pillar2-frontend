@@ -325,6 +325,15 @@ GET        /replace-filing-member/error/standard-organisation                   
 GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
 GET        /replace-filing-member/error/agent-sign-in                           controllers.rfm.AgentController.onPageLoad
 
+GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
 GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
@@ -370,14 +379,17 @@ POST        /replace-filing-member/contact-details/input-telephone              
 GET         /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-
-
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
 GET        /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.NoIdCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.NoIdCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.NoIdCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.NoIdCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
@@ -398,8 +410,4 @@ GET        /replace-filing-member/contact-details/second-telephone              
 POST       /replace-filing-member/contact-details/second-telephone                      controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/contact-details/second-input-telephone               	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/contact-details/second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-
-
-
-
 
