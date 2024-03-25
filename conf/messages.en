@@ -565,24 +565,24 @@ nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office addre
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
 
-mneOrDomestic.title = Group operations
+mneOrDomestic.title = Entity locations
 mneOrDomestic.heading.caption = Group details
-mneOrDomestic.heading = Group operations
+mneOrDomestic.heading = Entity locations
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
-mneOrDomestic.group-operate = Where does the group operate?
-mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
+mneOrDomestic.group-operate = Where are the entities in your group located?
+mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
-mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
-mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
+mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
+mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
 mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
-
-mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
-mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
-mneOrDomestic.p5 = If group operations change, you must amend the group’s details.
+mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
+mneOrDomestic.p5 = Groups with entities that are located in the UK and other jurisdictions will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
