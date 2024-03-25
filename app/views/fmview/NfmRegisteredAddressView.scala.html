@@ -17,6 +17,8 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import utils.InputOption
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
 
 @this(
     layout: templates.Layout,
@@ -106,10 +108,11 @@
                                 selected = form("countryCode").value.contains(valueOption.value)
                             )
                         ),
-                formGroupClasses = "autocomplete-wrapper",
-                attributes = Map("data-non-uk-countries" -> ""),
                 errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
             )
+            .withFormGroupClasses("govuk-!-width-two-thirds")
+            .withAttribute("autocomplete" -> "country-name")
+            .asAccessibleAutocomplete(Some(AccessibleAutocomplete(defaultValue = Some(""), showAllValues = true, autoSelect = true)))
         )
 
         @govukButton(
