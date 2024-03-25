@@ -52,20 +52,15 @@ class SecondaryTelephoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     (for {
       plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
-      subData <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      secondaryContactName <- OptionT.fromOption[Future](request.userAnswers.get(SubSecondaryContactNamePage)) orElse
+        OptionT.fromOption[Future](subData.secondaryContactDetails.map(_.name))
     } yield {
-       subData.secondaryContactDetails.map { secondaryContact =>
-        val secondaryContactName = request.userAnswers.get(SubSecondaryContactNamePage).getOrElse(secondaryContact.name)
-        val form = formProvider(secondaryContactName)
-        val preparedForm = request.userAnswers.get(SubSecondaryCapturePhonePage).map(form.fill).getOrElse(
-          //what do you do here? also there is a chance that the form is empty but there is no solid way for me to check)
-          form.fill(secondaryContact.telephone.get))
-         Ok(view(preparedForm,mode, secondaryContactName))
-        }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
-    )
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+      val form           = formProvider(secondaryContactName)
+      val existingAnswer = request.userAnswers.get(SubSecondaryCapturePhonePage) orElse subData.secondaryContactDetails.flatMap(_.telephone)
+      val preparedForm   = existingAnswer.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode, secondaryContactName))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
