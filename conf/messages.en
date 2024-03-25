@@ -260,12 +260,12 @@ upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
 
 under_construction.heading = Under Construction
-businessActivityUK.title = Does the group have business operations in the UK?
-businessActivityUK.heading = Does the group have business operations in the UK?
+businessActivityUK.title = Does the group have an entity located in the UK?
+businessActivityUK.heading = Does the group have an entity located in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.hint = Business operations refer to activities that businesses engage in to increase the value of the enterprise.
+businessActivityUK.p1 = Pillar 2 top-up taxes may be collected when your group has an entity located in the UK.
 businessActivityUK.error.required = Select yes if the group has business operations in the UK
 
 turnOverEligibility.title = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
