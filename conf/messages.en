@@ -293,8 +293,8 @@ KBMnIneligible.link = Find out more about who can use this service
 
 KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
 KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have business activities located in the UK.
-KbUKIneligible.p2 = If your business activities are only located outside the UK, you should check where any liability may apply.
+KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have an entity located in the UK.
+KbUKIneligible.p2 = If your group members are only located outside the UK, you should check where any liability may apply.
 KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
 
 
@@ -578,8 +578,8 @@ mneOrDomestic.ukAndOther = In the UK and other countries
 mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
 mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
 mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
-mneOrDomestic.l1 = Domestic Top-up Tax
-mneOrDomestic.l2 = Multinational Top-up Tax
+mneOrDomestic.l1 = Domestic top-up tax
+mneOrDomestic.l2 = Multinational top-up tax
 mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
 mneOrDomestic.p5 = Groups with entities that are located in the UK and other jurisdictions will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
 mneOrDomestic.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
@@ -797,7 +797,7 @@ dashboard.p4 = This service will allow groups to access other features such as t
 dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
 
 dashboard.link = draft guidance (opens in new tab)
-dashboard.inactive.message = HMRC has a received a Below Threshold Notification for this account. Please contact the
+dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
 dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
 dashboard.inactive.message2 = if your circumstances change.
 
