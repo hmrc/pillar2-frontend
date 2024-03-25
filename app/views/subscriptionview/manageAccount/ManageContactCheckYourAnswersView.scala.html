@@ -41,7 +41,9 @@
             @govukSummaryList(address)
 
             @govukButton(
-                ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit")
+                ButtonViewModel(messages("site.manage.save-and-continue"))
+                .withAttribute("id", "submit")
+                .withCssClass("govuk-!-margin-top-4")
             )
 
         </div>
