@@ -115,6 +115,7 @@ GET         /unauthorised/agent                                                 
 GET         /display-error                                                              controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
+GET         /error/page-not-found                                                       controllers.ErrorController.pageNotFoundLoad
 
 GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
 

@@ -65,6 +65,13 @@ viewAmendSubscriptionFailed.link= Return to your account homepage to try again
 ###############################################
 pillar2.screen-reader.section = This section is
 
+###############################################
+error.pageNotFound.title = Page not found
+error.pageNotFound.heading = Page not found
+error.pageNotFound.p1 = If you typed the web address, check it is correct.
+error.pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
+###############################################
+
 alreadyRegistered.title= Your group has already registered to report Pillar 2 top-up taxes
 alreadyRegistered.heading= Your group has already registered to report Pillar 2 top-up taxes
 alreadyRegistered.message1= You can find your group’s Pillar 2 top-up taxes ID within your business tax account.
