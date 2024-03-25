@@ -15,9 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        heading: heading,
         govukButton: GovukButton
 )
 
@@ -26,8 +29,8 @@
 
 @layout(
     pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
-    <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
 
+    @heading(messages("under_construction.heading"))
 
     @govukButton(
         ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")

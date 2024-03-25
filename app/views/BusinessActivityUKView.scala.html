@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false, authorised = false) {
 
-    @sectionHeader(messages("businessActivityUK.heading"))
+    @sectionHeader(messages("businessActivityUK.check.liable.text"))
 
     @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
 

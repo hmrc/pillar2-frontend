@@ -17,12 +17,13 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import utils.InputOption
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
@@ -41,7 +42,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l long-word">@messages("nfmRegisteredAddress.heading", UserName)</h1>
+        @heading(messages("nfmRegisteredAddress.heading", UserName), "govuk-heading-l long-word")
 
         @govukInput(
             InputViewModel(

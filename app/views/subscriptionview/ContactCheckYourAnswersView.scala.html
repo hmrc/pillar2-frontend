@@ -15,12 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukButton: GovukButton,
         formHelper: FormWithCSRF
 )
@@ -33,12 +34,15 @@
 
     @formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
         <div class="contact-details">
-            <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
-            <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
+            @heading(messages("contactCheckYourAnswers.heading"), "govuk-heading-l")
+            @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", " h2")
+
             @govukSummaryList(listPrimary)
-            <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
+            @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", " h2")
+
             @govukSummaryList(listSecondary)
-            <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
+            @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", " h2")
+
             @govukSummaryList(address)
         </div>
         @govukButton(

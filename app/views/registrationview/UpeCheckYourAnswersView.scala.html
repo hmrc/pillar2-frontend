@@ -15,11 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton
 )
@@ -30,7 +31,8 @@
 @layout(pageTitle = titleNoForm(messages("upeCheckYourAnswers.title"))) {
 
     @sectionHeader(messages("upeCheckYourAnswers.heading.caption"))
-    <h1 class="govuk-heading-l">@messages("upeCheckYourAnswers.heading")</h1>
+
+    @heading(messages("upeCheckYourAnswers.heading"), "govuk-heading-l")
 
     @govukSummaryList(list)
 

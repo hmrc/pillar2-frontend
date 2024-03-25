@@ -159,7 +159,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     )
 
   val viewStartPageRegistration: StartPageRegistrationView =
-    new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
+    new StartPageRegistrationView(pillar2layout, sectionHeader, heading, paragraphBody, formWithCSRF, govukButton)
 
   val viewUPENameRegistration: UpeNameRegistrationView =
     new UpeNameRegistrationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
@@ -168,9 +168,9 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewUpeContactEmail: UpeContactEmailView =
     new UpeContactEmailView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
-    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
-    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
@@ -179,11 +179,12 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
     new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
-  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, sectionHeader, govukSummaryList, govukButton)
+  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView =
+    new UpeCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
-    new FilingMemberCheckYourAnswersView(pillar2layout, sectionHeader, govukSummaryList, govukButton)
+    new FilingMemberCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
-    new SubCheckYourAnswersView(pillar2layout, sectionHeader, govukSummaryList, govukButton)
+    new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
   val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
 

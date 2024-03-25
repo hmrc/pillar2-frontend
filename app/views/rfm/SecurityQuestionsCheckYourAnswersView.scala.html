@@ -18,12 +18,13 @@
 @import play.api.mvc.Request
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton
 )
@@ -36,11 +37,9 @@
 
     @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(mode)) {
 
-        <h1 class="govuk-heading-l">@messages("securityQuestionsCheckYourAnswers.heading")</h1>
+        @heading(messages("securityQuestionsCheckYourAnswers.heading"), "govuk-heading-l")
 
         @govukSummaryList(list)
-
-        <br>
 
         @govukButton(ButtonViewModel(
             content = Text(messages("site.save-and-continue"))

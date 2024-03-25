@@ -16,13 +16,14 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Small
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
         govukButton: GovukButton
@@ -41,7 +42,7 @@
 
         }
 
-        <h1 class="govuk-heading-l">@messages("groupAccountingPeriod.amend.title")</h1>
+        @heading(messages("groupAccountingPeriod.amend.title"), "govuk-heading-l")
 
         @govukDateInput(
             DateViewModel(

@@ -16,13 +16,15 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Small
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        heading: heading,
+        paragraphBody: paragraphBody,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
         govukButton: GovukButton
@@ -39,8 +41,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day", "endDate" -> "endDate.day")))
         }
 
-        <h1 class="govuk-heading-l">@messages("groupAccountingPeriod.title")</h1>
-        <p class="govuk-hint govuk-!-padding-bottom-3">@messages("groupAccountingPeriod.title.desc")</p>
+        @heading(messages("groupAccountingPeriod.title"), "govuk-heading-l")
+        @paragraphBody(messages("groupAccountingPeriod.title.desc"), "govuk-hint govuk-!-padding-bottom-3")
 
         @govukDateInput(
             DateViewModel(

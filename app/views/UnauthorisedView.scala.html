@@ -15,8 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-        layout: templates.Layout
+        layout: templates.Layout,
+        paragraphBody: paragraphBody,
+        heading: heading
 )
 
 
@@ -28,7 +32,7 @@
     authorised = false
 ) {
 
-    <h1 class="govuk-heading-xl">@messages("unauthorised.heading")</h1>
+    @heading(messages("unauthorised.heading"))
+    @paragraphBody(messages("unauthorised.guidance"))
 
-    <p class="govuk-body">@messages("unauthorised.guidance")</p>
 }

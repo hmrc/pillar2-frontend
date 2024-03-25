@@ -15,11 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.sectionHeader
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         sectionHeader: sectionHeader,
+        heading: heading,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton
 )
@@ -31,7 +32,7 @@
 
     @sectionHeader(messages("checkYourAnswers.nfm.heading.caption"))
 
-    <h1 class="govuk-heading-l">@messages("furtherGroupCheckYourAnswers.title")</h1>
+    @heading(messages("furtherGroupCheckYourAnswers.title"), "govuk-heading-l")
 
     @govukSummaryList(list)
 
