@@ -35,13 +35,13 @@
     @formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
         <div class="contact-details">
             @heading(messages("contactCheckYourAnswers.heading"), "govuk-heading-l")
-            @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", " h2")
+            @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", "h2")
 
             @govukSummaryList(listPrimary)
-            @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", " h2")
+            @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", "h2")
 
             @govukSummaryList(listSecondary)
-            @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", " h2")
+            @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
 
             @govukSummaryList(address)
         </div>
