@@ -294,8 +294,8 @@ KBMnIneligible.link = Find out more about who can use this service
 
 KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
 KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have business activities located in the UK.
-KbUKIneligible.p2 = If your business activities are only located outside the UK, you should check where any liability may apply.
+KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have an entity located in the UK.
+KbUKIneligible.p2 = If your group members are only located outside the UK, you should check where any liability may apply.
 KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
 
 
