@@ -24,6 +24,7 @@
         sectionHeader: sectionHeader,
         heading: heading,
         paragraphBody: paragraphBody,
+        bulletList: bulletList,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton
@@ -44,10 +45,10 @@
         @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
         @paragraphBody(messages("mneOrDomestic.p1"))
         @paragraphBody(messages("mneOrDomestic.p2"))
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("mneOrDomestic.l1")</li>
-            <li>@messages("mneOrDomestic.l2")</li>
-        </ul>
+        @bulletList(items = List(
+            Html(messages("mneOrDomestic.l1")),
+            Html(messages("mneOrDomestic.l2"))
+        ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
         @paragraphBody(messages("mneOrDomestic.p3"))
         @paragraphBody(messages("mneOrDomestic.p4"))
         @paragraphBody(messages("mneOrDomestic.p5"))
