@@ -36,17 +36,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EntityTypeController @Inject() (
-                                       val userAnswersConnectors:                         UserAnswersConnectors,
-                                       incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
-                                       partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
-                                       identify:                                          IdentifierAction,
-                                       getData:                                           DataRetrievalAction,
-                                       requireData:                                       DataRequiredAction,
-                                       formProvider:                                      EntityTypeFormProvider,
-                                       val controllerComponents:                          MessagesControllerComponents,
-                                       view:                                              EntityTypeView
-                                     )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  val userAnswersConnectors:                         UserAnswersConnectors,
+  incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
+  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
+  identify:                                          IdentifierAction,
+  getData:                                           DataRetrievalAction,
+  requireData:                                       DataRequiredAction,
+  formProvider:                                      EntityTypeFormProvider,
+  val controllerComponents:                          MessagesControllerComponents,
+  view:                                              EntityTypeView
+)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
@@ -74,7 +74,6 @@ class EntityTypeController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-
     form
       .bindFromRequest()
       .fold(
@@ -82,7 +81,7 @@ class EntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
-              logger.info("Initialising GRS journey with entity type chosen as UK Limited Company")
+              logger.info("UPE- Initialising GRS journey with entity type chosen as UK Limited Company")
               for {
                 updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
                 updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
@@ -91,7 +90,7 @@ class EntityTypeController @Inject() (
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.LimitedLiabilityPartnership =>
-              logger.info("Initialising GRS journey with entity type chosen as Limited Liability Partnership")
+              logger.info("UPE- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
               for {
                 updatedAnswers  <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
                 updatedAnswers1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
@@ -101,7 +100,7 @@ class EntityTypeController @Inject() (
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
             case EntityType.Other =>
-              logger.info("Redirecting to the no ID journey as entity type not listed chosen")
+              logger.info("UPE- Redirecting to the no ID journey as entity type not listed chosen")
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, false))
                 updatedAnswer1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))

@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{FmEntityTypePage, FmRegisteredInUKPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NfmEntityTypeView
@@ -36,9 +36,9 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new NfmEntityTypeFormProvider()
 
-  "NfmEntityType Controller" when {
+  "NfmEntityType Controller" must {
 
-    "must return OK and the correct view for a GET if page previously not answered" in {
+    " return OK and populate view with an empty form if page previously not answered" in {
       val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -54,7 +54,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    " populate the view correctly on a GET when page has been previously answered" in {
       val ua =
         emptyUserAnswers
           .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
@@ -77,6 +77,35 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         ).toString
       }
     }
+    "if chosen, populate view with entity type not listed and set fm as a uk based entity to delete all no ID data" in {
+      val ua =
+        emptyUserAnswers
+          .setOrException(FmEntityTypePage, EntityType.Other)
+          .setOrException(FmRegisteredInUKPage, true)
+      val jsUserAnswers: JsValue = Json.toJson(ua)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+
+        val view = application.injector.instanceOf[NfmEntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.Other), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -89,7 +118,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    " return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -108,7 +137,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
-    "must redirect to GRS for UK Limited company" in {
+    " redirect to GRS for UK Limited company" in {
 
       val ua =
         emptyUserAnswers
@@ -146,7 +175,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to GRS for Limited Liability Partnership" in {
+    " redirect to GRS for Limited Liability Partnership" in {
 
       val ua =
         emptyUserAnswers
@@ -181,6 +210,27 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
       }
 
+    }
+    "redirect to name registration page if entity type not listed is chosen and set fm as non uk based" in {
+      val jsonTobeReturned = Json.toJson(
+        emptyUserAnswers
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(FmEntityTypePage, EntityType.Other)
+      )
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.Other.toString))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url
+      }
     }
   }
 }
