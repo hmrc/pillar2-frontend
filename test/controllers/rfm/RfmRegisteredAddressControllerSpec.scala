@@ -50,7 +50,6 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmRegisteredAddressView]
         status(result) mustEqual OK
         contentAsString(result) must include("Name")
       }
@@ -98,7 +97,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
 
         val result = route(application, request).value
 
