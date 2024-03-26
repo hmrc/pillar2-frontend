@@ -18,11 +18,11 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{RfmContactAddressFormProvider, UpeRegisteredAddressFormProvider}
+import forms.RfmContactAddressFormProvider
 import models.{NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactAddressPage, RfmPrimaryNameRegistrationPage, UpeNameRegistrationPage}
+import pages.{RfmContactAddressPage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,7 +39,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
   "RfmContactAddress Controller" when {
 
     "return OK and the correct view for a GET with no previous answer" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "Name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -52,7 +52,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
     }
     "must redirect to correct view when rfm feature false" in {
       val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryNameRegistrationPage, "sad")
+        .setOrException(RfmPrimaryContactNamePage, "sad")
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
@@ -101,7 +101,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
     }
 
     "display next  page and status should be ok if valid data is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -127,7 +127,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -152,7 +152,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "Alex").success.value
+      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
