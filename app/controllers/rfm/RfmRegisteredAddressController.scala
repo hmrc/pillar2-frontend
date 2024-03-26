@@ -19,31 +19,31 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmNoIdRegisteredAddressFormProvider
+import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmNoIdNameRegistrationPage, RfmNoIdRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import views.html.rfm.NoIdRegisteredAddressView
+import views.html.rfm.RfmRegisteredAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NoIdRegisteredAddressController @Inject() (
+class RfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmNoIdRegisteredAddressFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmRegisteredAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NoIdRegisteredAddressView
+  view:                      RfmRegisteredAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -54,9 +54,9 @@ class NoIdRegisteredAddressController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
-        .get(RfmNoIdNameRegistrationPage)
+        .get(RfmNameRegistrationPage)
         .map { name =>
-          val preparedForm = request.userAnswers.get(RfmNoIdRegisteredAddressPage) match {
+          val preparedForm = request.userAnswers.get(RfmRegisteredAddressPage) match {
             case Some(value) => form.fill(value)
             case None        => form
           }
@@ -70,7 +70,7 @@ class NoIdRegisteredAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmNoIdNameRegistrationPage)
+      .get(RfmNameRegistrationPage)
       .map { name =>
         form
           .bindFromRequest()
@@ -79,9 +79,9 @@ class NoIdRegisteredAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(RfmNoIdRegisteredAddressPage, value))
+                  Future.fromTry(request.userAnswers.set(RfmRegisteredAddressPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(RfmNoIdRegisteredAddressPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(RfmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

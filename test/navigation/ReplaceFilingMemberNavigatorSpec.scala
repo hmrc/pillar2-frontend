@@ -62,14 +62,14 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
       }
       "go to registered address page from name registration page" in {
-        navigator.nextPage(RfmNoIdNameRegistrationPage, NormalMode, emptyUserAnswers.setOrException(RfmNoIdNameRegistrationPage, "first last")) mustBe
-          controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad(NormalMode)
+        navigator.nextPage(RfmNameRegistrationPage, NormalMode, emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")) mustBe
+          controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
       }
       "go to no id CYA page from registered address page" in {
         navigator.nextPage(
-          RfmNoIdRegisteredAddressPage,
+          RfmRegisteredAddressPage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmNoIdRegisteredAddressPage, nonUKAddress)
+          emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
           controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
       }
@@ -99,17 +99,17 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to no id CYA page from name registration page" in {
         navigator.nextPage(
-          RfmNoIdNameRegistrationPage,
+          RfmNameRegistrationPage,
           CheckMode,
-          emptyUserAnswers.setOrException(RfmNoIdNameRegistrationPage, "first last")
+          emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")
         ) mustBe
           noIdQuestionsCYA
       }
       "go to no id CYA page from registered address page" in {
         navigator.nextPage(
-          RfmNoIdRegisteredAddressPage,
+          RfmRegisteredAddressPage,
           CheckMode,
-          emptyUserAnswers.setOrException(RfmNoIdRegisteredAddressPage, nonUKAddress)
+          emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
           noIdQuestionsCYA
       }

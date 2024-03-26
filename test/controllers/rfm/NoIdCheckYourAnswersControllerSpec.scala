@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import models.{NonUKAddress, NormalMode, UserAnswers}
-import pages.{RfmNoIdNameRegistrationPage, RfmNoIdRegisteredAddressPage}
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
@@ -31,10 +31,10 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     val name = "nfm name"
     val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
     val userAnswer = UserAnswers(userAnswersId)
-      .set(RfmNoIdNameRegistrationPage, name)
+      .set(RfmNameRegistrationPage, name)
       .success
       .value
-      .set(RfmNoIdRegisteredAddressPage, nonUkAddress)
+      .set(RfmRegisteredAddressPage, nonUkAddress)
       .success
       .value
 

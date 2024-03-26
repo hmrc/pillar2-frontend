@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.NonUKAddress
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
+import javax.inject.Inject
 
-case object RfmNoIdRegisteredAddressPage extends QuestionPage[NonUKAddress] {
+class RfmNameRegistrationFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "rfmNfmRegisteredAddress"
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("rfm.nameRegistration.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_105, "rfm.nameRegistration.error.length"))
+    )
 }

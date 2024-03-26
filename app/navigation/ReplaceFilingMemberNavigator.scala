@@ -36,19 +36,19 @@ class ReplaceFilingMemberNavigator @Inject() {
   private lazy val noIdCheckYourAnswers              = controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case RfmPillar2ReferencePage      => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage      => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmNoIdNameRegistrationPage  => _ => controllers.rfm.routes.NoIdRegisteredAddressController.onPageLoad(NormalMode)
-    case RfmNoIdRegisteredAddressPage => _ => controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
-    case _                            => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case RfmPillar2ReferencePage  => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage  => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmNameRegistrationPage  => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
+    case RfmRegisteredAddressPage => _ => controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
+    case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case RfmPillar2ReferencePage      => whichCheckYourAnswerPageSecurityQuestions
-    case RfmRegistrationDatePage      => whichCheckYourAnswerPageSecurityQuestions
-    case RfmNoIdNameRegistrationPage  => whichCheckYourAnswerPageNoIdQuestions
-    case RfmNoIdRegisteredAddressPage => whichCheckYourAnswerPageNoIdQuestions
-    case _                            => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case RfmPillar2ReferencePage  => whichCheckYourAnswerPageSecurityQuestions
+    case RfmRegistrationDatePage  => whichCheckYourAnswerPageSecurityQuestions
+    case RfmNameRegistrationPage  => whichCheckYourAnswerPageNoIdQuestions
+    case RfmRegisteredAddressPage => whichCheckYourAnswerPageNoIdQuestions
+    case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private def whichCheckYourAnswerPageSecurityQuestions(userAnswers: UserAnswers): Call =

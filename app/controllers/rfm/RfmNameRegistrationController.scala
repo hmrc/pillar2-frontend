@@ -19,30 +19,30 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmNoIdNameRegistrationFormProvider
+import forms.RfmNameRegistrationFormProvider
 import models.{CheckMode, Mode, NormalMode}
+import pages.RfmNameRegistrationPage
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmNoIdNameRegistrationPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.NoIdNameRegistrationView
+import views.html.rfm.RfmNameRegistrationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NoIdNameRegistrationController @Inject() (
+class RfmNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmNoIdNameRegistrationFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NoIdNameRegistrationView
+  view:                      RfmNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -52,7 +52,7 @@ class NoIdNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmNoIdNameRegistrationPage) match {
+      val preparedForm = request.userAnswers.get(RfmNameRegistrationPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -69,9 +69,9 @@ class NoIdNameRegistrationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmNoIdNameRegistrationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmNoIdNameRegistrationPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(RfmNameRegistrationPage, mode, updatedAnswers))
       )
   }
 }

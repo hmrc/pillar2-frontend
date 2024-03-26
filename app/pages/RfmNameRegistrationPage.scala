@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
-import javax.inject.Inject
+import play.api.libs.json.JsPath
 
-class RfmNoIdNameRegistrationFormProvider @Inject() extends Mappings {
+case object RfmNameRegistrationPage extends QuestionPage[String] {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("rfm.noIdNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "rfm.noIdNameRegistration.error.length"))
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmNameRegistration"
 }
