@@ -46,6 +46,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
       }
+
       "go to registration date page from pillar 2 reference page" in {
         navigator.nextPage(
           RfmPillar2ReferencePage,
@@ -54,6 +55,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
       }
+
       "go to security questions CYA page from registration date page" in {
         navigator.nextPage(
           RfmRegistrationDatePage,
@@ -95,6 +97,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
+
       "go to Add Secondary Contact details page where they enter their phone details" in {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
@@ -102,6 +105,15 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "12321321")
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
+      }
+
+      "go to registered address page from name registration page" in {
+        navigator.nextPage(
+          RfmNameRegistrationPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmNameRegistrationPage, "alex")
+        ) mustBe
+          controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
       }
 
       "go to no id CYA page from registered address page" in {
@@ -141,6 +153,15 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       "go to RfmSecondaryTelephonePreference page if they choose to nominate a secondary contact number" in {
         navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)) mustBe
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
+      }
+
+      "go to UnderConstruction page from Rfm Secondary Telephone Controller" in {
+        navigator.nextPage(
+          RfmSecondaryCapturePhonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmSecondaryCapturePhonePage, "1232132100")
+        ) mustBe
+          controllers.routes.UnderConstructionController.onPageLoad
       }
 
       "go to JourneyRecovery if no answer for RfmSecondaryPhonePreference page can be found" in {

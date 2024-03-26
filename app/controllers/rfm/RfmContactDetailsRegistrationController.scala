@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.RfmIdentifierAction
-import models.Mode
+import models.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,6 +40,6 @@ class RfmContactDetailsRegistrationController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()))
+    Future.successful(Redirect(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode)))
   }
 }
