@@ -21,13 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecondaryTelephoneFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.api.mvc.Result
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryTelephoneView
 
 import javax.inject.Inject
@@ -38,6 +33,7 @@ class RfmSecondaryTelephoneController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmSecondaryTelephoneView
@@ -79,7 +75,7 @@ class RfmSecondaryTelephoneController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              } yield Redirect(navigator.nextPage(RfmSecondaryCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -25,8 +25,8 @@ class RfmSecondaryTelephoneFormProvider @Inject() extends Mappings {
   val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
   def apply(userName: String): Form[String] =
     Form(
-      "value" -> text("secondaryTelephone.error.required", Seq(userName))
-        .verifying(maxLength(phoneNumberLength, "secondaryTelephone.error.length"))
-        .verifying(regexp(phoneRegex, "secondaryTelephone.error.format"))
+      "value" -> text("rfm.secondaryTelephone.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "rfm.secondaryTelephone.error.length"))
+        .verifying(regexp(phoneRegex, "rfm.secondaryTelephone.error.format"))
     )
 }

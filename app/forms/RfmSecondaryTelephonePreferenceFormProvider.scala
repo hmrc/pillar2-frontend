@@ -25,6 +25,6 @@ class RfmSecondaryTelephonePreferenceFormProvider @Inject() extends Mappings {
 
   def apply(userName: String): Form[Boolean] =
     Form(
-      "value" -> boolean("secondaryTelephonePreference.error.required", args = Seq(userName))
+      "value" -> boolean("rfm.secondaryTelephonePreference.error.required", args = Seq(userName))
     )
 }

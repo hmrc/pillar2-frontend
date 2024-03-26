@@ -28,21 +28,23 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactName.title"))) {
+@layout(pageTitle = title(form, messages("rfm.secondaryContactName.title"))) {
+
+    @sectionHeader(messages("taskList.task.contact.heading"))
 
     @formHelper(action = controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("taskList.task.contact.heading")</span>
+        <!-- <span class="govuk-caption-l">@messages("taskList.task.contact.heading")</span> -->
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondaryContactName.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm.secondaryContactName.heading")).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("secondaryContactName.hint"))))
+            .withHint(Hint(content = Text(messages("rfm.secondaryContactName.hint"))))
             .withWidth(TwoThirds)
         )
 

@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecondaryContactEmailFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -38,6 +39,7 @@ class RfmSecondaryContactEmailController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmSecondaryContactEmailView
@@ -77,7 +79,7 @@ class RfmSecondaryContactEmailController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad())
+              } yield Redirect(navigator.nextPage(RfmSecondaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

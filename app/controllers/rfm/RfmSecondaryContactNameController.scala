@@ -21,13 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecondaryContactNameFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryNameRegistrationPage, RfmSecondaryContactNamePage}
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.api.mvc.Result
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryContactNameView
 
 import javax.inject.Inject
@@ -38,6 +33,7 @@ class RfmSecondaryContactNameController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmSecondaryContactNameView
@@ -74,7 +70,7 @@ class RfmSecondaryContactNameController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad())
+          } yield Redirect(navigator.nextPage(RfmSecondaryContactNamePage, mode, updatedAnswers))
       )
   }
 

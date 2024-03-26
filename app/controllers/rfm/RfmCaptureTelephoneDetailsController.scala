@@ -21,11 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
 import forms.{CaptureTelephoneDetailsFormProvider, RfmCaptureTelephoneDetailsFormProvider}
 import models.Mode
-<<<<<<< HEAD
-import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, rfmPrimaryCapturePhonePage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
-=======
 import pages.{RfmPrimaryCapturePhonePage, RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, upeCapturePhonePage, upeContactNamePage, upePhonePreferencePage}
->>>>>>> PIL-748
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

@@ -21,13 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecondaryTelephonePreferenceFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage}
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.api.mvc.Result
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
 import javax.inject.Inject
@@ -38,6 +33,7 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryTelephonePreferenceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmSecondaryTelephonePreferenceView
@@ -74,19 +70,11 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad())
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-              }
+            nominatedSecondaryContactNumber =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmSecondaryPhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

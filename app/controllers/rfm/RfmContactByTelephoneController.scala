@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.{ContactByTelephoneFormProvider, RfmContactByTelephoneFormProvider}
 import models.{Mode, NormalMode}
-import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, subPrimaryContactNamePage, subPrimaryPhonePreferencePage}
+import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

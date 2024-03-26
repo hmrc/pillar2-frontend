@@ -73,6 +73,50 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
       }
+
+      "go to RfmSecondaryContactName page if they select Yes on RfmAddSecondaryContact page" in {
+        navigator.nextPage(RfmAddSecondaryContactPage, NormalMode, emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, true)) mustBe
+          controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
+      }
+
+      "go to UnderConstructionController if they select No on RfmAddSecondaryContact page" in {
+        navigator.nextPage(RfmAddSecondaryContactPage, NormalMode, emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)) mustBe
+          controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+
+      "go to JourneyRecovery if no answer for RfmAddSecondaryContact page can be found" in {
+        navigator.nextPage(RfmAddSecondaryContactPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+
+      "go to RfmSecondaryContactEmail page from RfmSecondaryContactName page" in {
+        navigator.nextPage(RfmSecondaryContactNamePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryContactNamePage, "someone")) mustBe
+          controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
+      }
+
+      "go to RfmSecondartyTelephonePreference page from RfmSecondaryTelephonePreference page" in {
+        navigator.nextPage(RfmSecondaryEmailPage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "someone@unknown.com")) mustBe
+          controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
+      }
+
+      "go to RfmSecondaryTelephonePreference page if they choose to nominate a secondary contact number" in {
+        navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)) mustBe
+          controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
+      }
+
+      "go to JourneyRecovery if no answer for RfmSecondaryPhonePreference page can be found" in {
+        navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+
+      "go to Under Construction Controller if they choose not to nominate a secondary contact number" in {
+        navigator.nextPage(
+          RfmSecondaryPhonePreferencePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, false)
+        ) mustBe
+          controllers.routes.UnderConstructionController.onPageLoad.url
+      }
     }
 
     "in Check mode" must {

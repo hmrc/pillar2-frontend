@@ -25,8 +25,8 @@ class RfmSecondaryContactNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("secondaryContactName.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "secondaryContactName.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "secondaryContactName.error.invalid"))
+      "value" -> text("rfm.secondaryContactName.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.secondaryContactName.error.length"))
+        .verifying(regexp(Validation.NAME_REGEX, "rfm.secondaryContactName.error.invalid"))
     )
 }

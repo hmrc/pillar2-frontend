@@ -27,7 +27,7 @@
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
+@layout(pageTitle = title(form, messages("rfm.addSecondaryContact.title"))) {
 
     @formHelper(action = controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(), 'autoComplete -> "off") {
 
@@ -39,9 +39,9 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("addSecondaryContact.heading", contactName)).asPageHeading(Large)
+                legend = LegendViewModel(messages("rfm.addSecondaryContact.heading", contactName)).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("addSecondaryContact.hint"))))
+            .withHint(Hint(content = Text(messages("rfm.addSecondaryContact.hint"))))
         )
 
         @govukButton(

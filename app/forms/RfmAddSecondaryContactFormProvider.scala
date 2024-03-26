@@ -25,6 +25,6 @@ class RfmAddSecondaryContactFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("addSecondaryContact.error.required")
+      "value" -> boolean("rfm.addSecondaryContact.error.required")
     )
 }

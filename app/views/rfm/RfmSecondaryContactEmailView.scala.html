@@ -29,22 +29,24 @@
 
 @(form: Form[_], mode: Mode, secondaryContactName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactEmail.title"))) {
+@layout(pageTitle = title(form, messages("rfm.secondaryContactEmail.title"))) {
+
+    @sectionHeader(messages("rfm.secondaryContactEmail.heading.caption"))
 
     @formHelper(action = controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
+        <!-- <span class="govuk-caption-l">@messages("rfm.secondaryContactEmail.heading.caption")</span> -->
 
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
-                label = LabelViewModel(messages("secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm.secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
                 .withCssClass("long-word")
             )
-            .withHint(Hint(content = Text(messages("secondaryContactEmail.hint"))))
+            .withHint(Hint(content = Text(messages("rfm.secondaryContactEmail.hint"))))
             .withWidth(TwoThirds)
             .asEmail()
         )

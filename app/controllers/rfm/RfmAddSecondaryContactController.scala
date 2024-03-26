@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -38,6 +39,7 @@ class RfmAddSecondaryContactController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmAddSecondaryContactFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmAddSecondaryContactView
@@ -73,23 +75,13 @@ class RfmAddSecondaryContactController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad())
-
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmAddSecondaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-              }
+            wantsToNominateRfmSecondaryContact =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmAddSecondaryContactPage, wantsToNominateRfmSecondaryContact))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

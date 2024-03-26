@@ -27,20 +27,22 @@
 
 @(form: Form[_], mode: Mode, userName: String= "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
+@layout(pageTitle = title(form, messages("rfm.secondaryTelephonePreference.title"))) {
+
+    @sectionHeader(messages("rfm.secondaryContactEmail.heading.caption"))
 
     @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
     }
-        <span class="govuk-caption-l">@messages("secondaryContactEmail.heading.caption")</span>
+        <!-- <span class="govuk-caption-l">@messages("rfm.secondaryContactEmail.heading.caption")</span> -->
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("secondaryTelephonePreference.heading", userName)).asPageHeading(Large)
+                legend = LegendViewModel(messages("rfm.secondaryTelephonePreference.heading", userName)).asPageHeading(Large)
             )
-            .withHint(Hint(content = Text(messages("secondaryTelephonePreference.hint"))))
+            .withHint(Hint(content = Text(messages("rfm.secondaryTelephonePreference.hint"))))
         )
 
         @govukButton(
