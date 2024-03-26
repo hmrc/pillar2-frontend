@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package generators
+@this()
 
-import models._
-import models.grs.EntityType
-import models.subscription.DashboardInfo
-import org.scalacheck.{Arbitrary, Gen}
+@(message1: Option[String] = None, linkMessage: String, message2: Option[String] = None, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link")
 
-trait ModelGenerators {
-
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
-}
+<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl">@linkMessage</a> @message2.map{message => @Html(message)}</p>

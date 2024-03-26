@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
 import models.grs.EntityType
-import models.subscription.DashboardInfo
-import org.scalacheck.{Arbitrary, Gen}
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class RfmEntityTypePageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
+  "RfmEntityTypePage" - {
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
+    beRetrievable[EntityType](RfmEntityTypePage)
 
+    beSettable[EntityType](RfmEntityTypePage)
+
+    beRemovable[EntityType](RfmEntityTypePage)
+  }
 }

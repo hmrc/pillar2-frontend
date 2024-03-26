@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
+import javax.inject.Inject
+
+import forms.mappings.Mappings
+import play.api.data.Form
 import models.grs.EntityType
-import models.subscription.DashboardInfo
-import org.scalacheck.{Arbitrary, Gen}
 
-trait ModelGenerators {
+class RfmEntityTypeFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
+  def apply(): Form[EntityType] =
+    Form(
+      "value" -> enumerable[EntityType]("rfmEntityType.error.required")
+    )
 }

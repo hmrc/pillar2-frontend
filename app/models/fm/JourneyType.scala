@@ -23,6 +23,8 @@ object JourneyType {
 
   case object UltimateParent extends JourneyType
 
+  case object ReplaceFilingMember extends JourneyType
+
 }
 
 sealed trait TaskListType

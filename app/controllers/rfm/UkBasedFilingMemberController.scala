@@ -69,7 +69,7 @@ class UkBasedFilingMemberController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, ukBasedFilingMember))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(controllers.rfm.routes.RfmEntityTypeController.onPageLoad(mode))
       )
   }
 
