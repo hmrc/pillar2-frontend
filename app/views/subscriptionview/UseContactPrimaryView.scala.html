@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds._
+@import viewmodels.LegendSize
 
 @this(
         layout: templates.Layout,
@@ -49,12 +50,10 @@
 
         @govukSummaryList(list)
 
-        @h2(messages("useContactPrimary.h2"), size = "m")
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                fieldset = Fieldset.defaultObject
+                legend = LegendViewModel(messages("useContactPrimary.h2")).asPageHeading(LegendSize.Medium)
             )
         )
 
