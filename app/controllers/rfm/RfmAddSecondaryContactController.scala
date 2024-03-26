@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -54,7 +54,7 @@ class RfmAddSecondaryContactController @Inject() (
     if (rfmAccessEnabled) {
       (for {
         _           <- request.userAnswers.get(RfmPrimaryContactEmailPage)
-        contactName <- request.userAnswers.get(RfmPrimaryNameRegistrationPage)
+        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
       } yield {
         val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) match {
           case Some(value) => form.fill(value)
@@ -69,7 +69,7 @@ class RfmAddSecondaryContactController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryContactNamePage)
       .map { contactName =>
         form
           .bindFromRequest()

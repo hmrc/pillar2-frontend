@@ -80,7 +80,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -91,7 +91,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
 
-        val view      = application.injector.instanceOf[SecondaryContactEmailView]
+        val view      = application.injector.instanceOf[RfmSecondaryContactEmailView]
         val boundForm = formProvider.bind(Map("emailAddress" -> "12345"))
         val result    = route(application, request).value
 

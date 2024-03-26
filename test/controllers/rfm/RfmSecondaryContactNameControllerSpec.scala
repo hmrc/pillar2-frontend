@@ -22,7 +22,7 @@ import models.NormalMode
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmSecondaryaryContactNameView
+import views.html.rfm.RfmSecondaryContactNameView
 
 class RfmSecondaryContactNameControllerSpec extends SpecBase {
 
@@ -35,7 +35,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -54,7 +54,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[RfmSecondaryContactNameView]
 
@@ -74,7 +74,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmSecondaryaryContactNameController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))

@@ -19,7 +19,7 @@ package controllers.subscription
 import base.SpecBase
 import forms.RfmAddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmPrimaryEmailPage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmAddSecondaryContactView
@@ -33,7 +33,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
-        .setOrException(RfmPrimaryEmailPage, "asda")
+        .setOrException(RfmPrimaryContactEmailPage, "asda")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -53,7 +53,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
-        .setOrException(RfmPrimaryEmailPage, "asda")
+        .setOrException(RfmPrimaryContactEmailPage, "asda")
         .setOrException(RfmAddSecondaryContactPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

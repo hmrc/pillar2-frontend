@@ -15,11 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 @import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton
@@ -31,7 +33,7 @@
 
     @sectionHeader(messages("rfm.secondaryContactEmail.heading.caption"))
 
-    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

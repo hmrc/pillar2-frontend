@@ -16,13 +16,14 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
-
+@import views.html.components.gds.sectionHeader
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
 )
 
 
@@ -35,7 +36,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("rfmContactByTelephone.heading.caption")</span>
+        @sectionHeader(messages("rfmContactByTelephone.heading.caption"))
         @govukRadios(
             RadiosViewModel.yesNo(
                 field  = form("value"),

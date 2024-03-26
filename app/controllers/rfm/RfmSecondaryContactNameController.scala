@@ -22,7 +22,12 @@ import controllers.actions._
 import forms.RfmSecondaryContactNameFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryNameRegistrationPage, RfmSecondaryContactNamePage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryContactNameView
 
 import javax.inject.Inject
@@ -48,7 +53,7 @@ class RfmSecondaryContactNameController @Inject() (
     if (rfmAccessEnabled) {
       (for {
         _ <- request.userAnswers.get(RfmAddSecondaryContactPage)
-        _ <- request.userAnswers.get(RfmPrimaryNameRegistrationPage)
+        _ <- request.userAnswers.get(RfmPrimaryContactNamePage)
       } yield {
         val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage) match {
           case Some(v) => form.fill(v)

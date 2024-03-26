@@ -21,7 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +39,8 @@ class RfmPrimaryContactEmailController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmPrimaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryContactEmailView
+  view:                      RfmPrimaryContactEmailView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -47,7 +49,7 @@ class RfmPrimaryContactEmailController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
-        .get(RfmPrimaryNameRegistrationPage)
+        .get(RfmPrimaryContactNamePage)
         .map { username =>
           val form = formProvider(username)
           val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
@@ -64,7 +66,7 @@ class RfmPrimaryContactEmailController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryContactNamePage)
       .map { name =>
         formProvider(name)
           .bindFromRequest()
@@ -72,12 +74,9 @@ class RfmPrimaryContactEmailController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
             value =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(
-                    request.userAnswers.set(RfmPrimaryContactEmailPage, value)
-                  )
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(mode).url)
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryContactEmailPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmPrimaryContactEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -19,16 +19,16 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.{ContactByTelephoneFormProvider, RfmContactByTelephoneFormProvider}
+import forms.RfmContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
-import pages.{RfmPrimaryNameRegistrationPage, RfmPrimaryPhonePreferencePage, RfmPrimaryContactNamePage, RfmPrimaryPhonePreferencePage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactByTelephoneView
-import views.html.subscriptionview.ContactByTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,8 @@ class RfmContactByTelephoneController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmContactByTelephoneView
+  view:                      RfmContactByTelephoneView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -49,10 +50,10 @@ class RfmContactByTelephoneController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
-        .get(RfmPrimaryNameRegistrationPage)
+        .get(RfmPrimaryContactNamePage)
         .map { contactName =>
           val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmPrimaryPhonePreferencePage) match {
+          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
             case Some(v) => form.fill(v)
             case None    => form
           }
@@ -67,7 +68,7 @@ class RfmContactByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryNameRegistrationPage)
+      .get(RfmPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -75,20 +76,10 @@ class RfmContactByTelephoneController @Inject() (
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.rfm.routes.RfmCaptureTelephoneDetailsController.onPageLoad(NormalMode))
-                case false =>
-                  for {
-                    updatedAnswers <-
-                      Future.fromTry(request.userAnswers.set(RfmPrimaryPhonePreferencePage, value))
-                    _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad.url)
-              }
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -34,11 +34,11 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{RfmPrimaryContactEmailFormProvider, UpeContactEmailFormProvider}
+import forms.RfmPrimaryContactEmailFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmPrimaryContactEmailPage, RfmPrimaryNameRegistrationPage, upeContactEmailPage, upeContactNamePage}
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmPrimaryContactEmailView
@@ -53,13 +53,8 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
   "Rfm Primary ContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -80,18 +75,13 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
-        .set(RfmPrimaryNameRegistrationPage, "name")
+        .set(RfmPrimaryContactNamePage, "name")
         .success
         .value
         .set(RfmPrimaryContactEmailPage, "hello@bye.com")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
@@ -111,14 +101,9 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -134,13 +119,8 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
@@ -154,13 +134,8 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
 
     "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryNameRegistrationPage, "name").success.value
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val longEmail =
@@ -174,14 +149,27 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
+    "must redirect to correct view when rfm feature false" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmPrimaryContactNamePage, "sad")
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
 
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -194,11 +182,6 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     "Journey Recovery when no data found for contact name in POST" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "alll@gmail.com"
