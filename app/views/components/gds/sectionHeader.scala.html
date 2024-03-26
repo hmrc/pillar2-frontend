@@ -16,7 +16,7 @@
 
 @this()
 
-@(message: String)
+@(message: String)(implicit messages: Messages)
 
-<h2 class="govuk-caption-l hmrc-caption-l"><span class="govuk-visually-hidden">messages("section.heading.visually.hidden")</span>@message</h2>
+<h2 class="govuk-caption-l hmrc-caption-l"><span class="govuk-visually-hidden">@messages("section.heading.visually.hidden")</span>@message</h2>
 
