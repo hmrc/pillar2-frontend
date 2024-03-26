@@ -148,6 +148,8 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter first line of the address")
+        contentAsString(result) must include("Enter a valid UK postal code")
       }
     }
 
@@ -177,6 +179,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("The first line of the address must be 35 characters or less")
       }
     }
   }
