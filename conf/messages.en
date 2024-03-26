@@ -955,11 +955,11 @@ rfm.secondaryContactEmail.change.hidden = the second contact email address
 rfm.secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact by telephone
 rfm.secondaryTelephone.change.hidden = the telephone number for the second contact
 
-rfm.addsecondaryContact.title = Is there someone else we can contact?
-rfm.addsecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-rfm.addsecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
-rfm.addsecondaryContact.error.required = Select yes if there is someone else we can contact
-rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addSecondaryContact.title = Is there someone else we can contact?
+rfm.addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+rfm.addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact
+rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 rfm.secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 rfm.secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
@@ -986,11 +986,11 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
+rfm.secondaryTelephone.hint = For international numbers include the country code
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
+rfm.secondaryTelephone.error.required = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
-rfm.secondaryTelephone.error.format = Enter a telephone number in the correct format
+rfm.secondaryTelephone.error.format = The telephone number must include only letters a to z, numbers, brackets, hyphens, forward slashes, asterisks, hashtags and plus signs
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

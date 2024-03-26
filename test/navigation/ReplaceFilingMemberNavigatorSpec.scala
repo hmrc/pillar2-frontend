@@ -87,13 +87,13 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           jr
       }
 
-      "if user select no  on contact by telephone page then go to under construction page " in {
+      "if user select no  on contact by telephone page then go to RfmAddSecondaryContact page " in {
         navigator.nextPage(
           RfmContactByTelephonePage,
           NormalMode,
           emptyUserAnswers.setOrException(RfmContactByTelephonePage, false)
-        ) mustBe controllers.routes.UnderConstructionController.onPageLoad
-
+        ) mustBe
+          controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
       "go to Add Secondary Contact details page where they enter their phone details" in {
         navigator.nextPage(

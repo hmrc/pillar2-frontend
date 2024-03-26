@@ -47,7 +47,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
-    case SubSecondaryCapturePhonePage    => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmSecondaryCapturePhonePage    => _ => controllers.routes.UnderConstructionController.onPageLoad
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
     case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
@@ -80,7 +80,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (provided) {
           controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
