@@ -16,8 +16,6 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubSecondaryContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,13 +24,13 @@ import viewmodels.implicits._
 
 object SecondaryContactNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubSecondaryContactNamePage).map { answer =>
+  def row(answer: Option[String])(implicit messages: Messages): Option[SummaryListRow] =
+    answer.map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactName.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
+          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url)
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )
       )

@@ -16,8 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubMneOrDomesticPage
+import models.MneOrDomestic
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,20 +26,19 @@ import viewmodels.implicits._
 
 object MneOrDomesticSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubMneOrDomesticPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(messages(s"mneOrDomestic.${answer.toString}"))
-        )
+  def row(answer: MneOrDomestic)(implicit messages: Messages): SummaryListRow = {
+    val value = ValueViewModel(
+      HtmlContent(
+        HtmlFormat.escape(messages(s"mneOrDomestic.${answer.toString}"))
       )
-      SummaryListRowViewModel(
-        key = "mneOrDomestic.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
-            .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
-        )
+    )
+    SummaryListRowViewModel(
+      key = "mneOrDomestic.checkYourAnswersLabel",
+      value = value,
+      actions = Seq(
+        ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
+          .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
       )
-    }
+    )
+  }
 }

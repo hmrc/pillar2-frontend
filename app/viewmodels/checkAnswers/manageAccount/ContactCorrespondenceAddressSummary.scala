@@ -16,8 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubRegisteredAddressPage
+import models.NonUKAddress
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,22 +26,19 @@ import viewmodels.implicits._
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
-    answers
-      .get(SubRegisteredAddressPage)
-      .map { answer =>
-        val country = countryOptions.getCountryNameFromCode(answer.countryCode)
-        SummaryListRowViewModel(
-          key = "subscriptionAddress.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.fullAddress ++ country)),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
-            )
-              .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
-          )
+  def row(address: NonUKAddress, countryOptions: CountryOptions)(implicit messages: Messages): SummaryListRow = {
+    val country = countryOptions.getCountryNameFromCode(address.countryCode)
+    SummaryListRowViewModel(
+      key = "subscriptionAddress.checkYourAnswersLabel",
+      value = ValueViewModel(HtmlContent(address.fullAddress ++ country)),
+      actions = Seq(
+        ActionItemViewModel(
+          "site.change",
+          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url
         )
-      }
+          .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
+      )
+    )
+  }
 
 }

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -35,17 +35,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryTelephoneController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  navigator:                   AmendSubscriptionNavigator,
   val readSubscriptionService: ReadSubscriptionService,
   referenceNumberService:      ReferenceNumberService,
-  formProvider:              SecondaryTelephoneFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryTelephoneView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  formProvider:                SecondaryTelephoneFormProvider,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        SecondaryTelephoneView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -54,7 +54,7 @@ class SecondaryTelephoneController @Inject() (
       plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
       subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
       secondaryContactName <- OptionT.fromOption[Future](request.userAnswers.get(SubSecondaryContactNamePage)) orElse
-        OptionT.fromOption[Future](subData.secondaryContactDetails.map(_.name))
+                                OptionT.fromOption[Future](subData.secondaryContactDetails.map(_.name))
     } yield {
       val form           = formProvider(secondaryContactName)
       val existingAnswer = request.userAnswers.get(SubSecondaryCapturePhonePage) orElse subData.secondaryContactDetails.flatMap(_.telephone)
@@ -64,22 +64,31 @@ class SecondaryTelephoneController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(SubSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryCapturePhonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
-          )
+    referenceNumberService
+      .get(None, request.enrolments)
+      .map { plrReference =>
+        readSubscriptionService.readSubscription(plrReference).flatMap { subData =>
+          request.userAnswers
+            .get(SubSecondaryContactNamePage)
+            .orElse(subData.secondaryContactDetails.map(_.name))
+            .map { secondaryContactName =>
+              val form = formProvider(secondaryContactName)
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, secondaryContactName))),
+                  value =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryCapturePhonePage, value))
+                      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
+                )
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
   }
 
 }

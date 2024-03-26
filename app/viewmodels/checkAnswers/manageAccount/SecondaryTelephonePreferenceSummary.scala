@@ -16,8 +16,6 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubSecondaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -25,8 +23,8 @@ import viewmodels.implicits._
 
 object SecondaryTelephonePreferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubSecondaryPhonePreferencePage).map { answer =>
+  def row(telephonePreference: Option[Boolean])(implicit messages: Messages): Option[SummaryListRow] =
+    telephonePreference.map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "secondaryTelephonePreference.checkYourAnswersLabel",
@@ -34,7 +32,7 @@ object SecondaryTelephonePreferenceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("secondaryTelephonePreference.change.hidden"))
         )

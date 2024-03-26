@@ -32,8 +32,6 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubPrimaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -41,17 +39,15 @@ import viewmodels.implicits._
 
 object ContactByTelephoneSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubPrimaryPhonePreferencePage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
-
-      SummaryListRowViewModel(
-        key = "contactByTelephone.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
-            .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
-        )
+  def row(answer: Boolean)(implicit messages: Messages): SummaryListRow = {
+    val value = if (answer) "site.yes" else "site.no"
+    SummaryListRowViewModel(
+      key = "contactByTelephone.checkYourAnswersLabel",
+      value = ValueViewModel(value),
+      actions = Seq(
+        ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url)
+          .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
       )
-    }
+    )
+  }
 }

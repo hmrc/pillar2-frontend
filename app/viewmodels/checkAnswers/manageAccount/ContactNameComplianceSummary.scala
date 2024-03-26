@@ -16,8 +16,6 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
-import pages.SubPrimaryContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,16 +25,15 @@ import viewmodels.implicits._
 
 object ContactNameComplianceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubPrimaryContactNamePage).map { answer =>
-      val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
-      SummaryListRowViewModel(
-        key = "contactNameCompliance.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
-            .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
-        )
+  def row(name: String)(implicit messages: Messages): SummaryListRow = {
+    val value = ValueViewModel(HtmlContent(HtmlFormat.escape(name)))
+    SummaryListRowViewModel(
+      key = "contactNameCompliance.checkYourAnswersLabel",
+      value = value,
+      actions = Seq(
+        ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
+          .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
       )
-    }
+    )
+  }
 }

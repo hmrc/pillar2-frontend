@@ -16,11 +16,13 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
+import models.hods.UpeCorrespAddressDetails.makeSubscriptionAddress
 import models.subscription.AmendSubscriptionRequestParameters
 import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
 import pages._
@@ -38,52 +40,86 @@ import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersVi
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
   val readSubscriptionService: ReadSubscriptionService,
   referenceNumberService:      ReferenceNumberService,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageContactCheckYourAnswersView,
-  countryOptions:            CountryOptions,
-  amendSubscriptionService:  AmendSubscriptionService
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        ManageContactCheckYourAnswersView,
+  countryOptions:              CountryOptions,
+  amendSubscriptionService:    AmendSubscriptionService
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
+  //scalastyle:off
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      primaryTelPref = request.userAnswers
+                         .get(SubPrimaryPhonePreferencePage)
+                         .getOrElse(if (subData.primaryContactDetails.telephone.isDefined) true else false)
+      secondaryContactNominated =
+        request.userAnswers.get(SubAddSecondaryContactPage).getOrElse(if (subData.secondaryContactDetails.isDefined) true else false)
+      secondaryPhonePref = request.userAnswers
+                             .get(SubSecondaryPhonePreferencePage)
+                             .getOrElse(if (subData.secondaryContactDetails.flatMap(_.telephone).isDefined) true else false)
+      updatedAnswers  <- OptionT.liftF(Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, primaryTelPref)))
+      updatedAnswers1 <- OptionT.liftF(Future.fromTry(updatedAnswers.set(SubSecondaryPhonePreferencePage, secondaryPhonePref)))
+      updatedAnswers2 <- OptionT.liftF(Future.fromTry(updatedAnswers1.set(SubAddSecondaryContactPage, secondaryContactNominated)))
+      _               <- OptionT.liftF(userAnswersConnectors.save(updatedAnswers2.id, Json.toJson(updatedAnswers2.data)))
+    } yield {
 
+      val primaryPhoneSummary = if (request.userAnswers.get(SubPrimaryPhonePreferencePage).contains(true)) {
+        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers.get(SubPrimaryCapturePhonePage) orElse subData.primaryContactDetails.telephone)
+      } else {
+        None
+      }
+      val primaryContactList = SummaryListViewModel(
+        List(
+          Some(ContactNameComplianceSummary.row(request.userAnswers.get(SubPrimaryContactNamePage).getOrElse(subData.primaryContactDetails.name))),
+          Some(ContactEmailAddressSummary.row(request.userAnswers.get(SubPrimaryEmailPage).getOrElse(subData.primaryContactDetails.emailAddress))),
+          Some(ContactByTelephoneSummary.row(request.userAnswers.get(SubPrimaryPhonePreferencePage).getOrElse(primaryTelPref))),
+          primaryPhoneSummary
+        ).flatten
+      )
 
+      val secondaryPreference = SummaryListViewModel(
+        rows = Seq(AddSecondaryContactSummary.row(request.userAnswers.get(SubAddSecondaryContactPage).getOrElse(secondaryContactNominated)))
+      )
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData)  { implicit request =>
-    val primaryContactList = SummaryListViewModel(
-    rows = Seq(
-      ContactNameComplianceSummary.row(request.userAnswers),
-      ContactEmailAddressSummary.row(request.userAnswers),
-      ContactByTelephoneSummary.row(request.userAnswers),
-      ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
-    ).flatten
-  )
-  val secondaryPreference = SummaryListViewModel(
-    rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-  )
-  val secondaryContactList = SummaryListViewModel(
-    rows = Seq(
-      SecondaryContactNameSummary.row(request.userAnswers),
-      SecondaryContactEmailSummary.row(request.userAnswers),
-      SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-      SecondaryTelephoneSummary.row(request.userAnswers)
-    ).flatten
-  )
-  val address = SummaryListViewModel(
-    rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
-  )
-  if (request.userAnswers.manageContactDetailStatus) {
-    Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
-  } else {
-    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      val secondaryTelephoneSummary =
+        if (request.userAnswers.get(SubSecondaryPhonePreferencePage).contains(true)) {
+          SecondaryTelephoneSummary.row(
+            request.userAnswers.get(SubSecondaryCapturePhonePage) orElse subData.secondaryContactDetails.flatMap(_.telephone)
+          )
+        } else {
+          None
+        }
+      val secondaryContactList = SummaryListViewModel(
+        rows = Seq(
+          SecondaryContactNameSummary.row(request.userAnswers.get(SubSecondaryContactNamePage) orElse subData.secondaryContactDetails.map(_.name)),
+          SecondaryContactEmailSummary.row(request.userAnswers.get(SubSecondaryEmailPage) orElse subData.secondaryContactDetails.map(_.emailAddress)),
+          SecondaryTelephonePreferenceSummary.row(request.userAnswers.get(SubSecondaryPhonePreferencePage)),
+          secondaryTelephoneSummary
+        ).flatten
+      )
+      val address = SummaryListViewModel(
+        rows = Seq(
+          ContactCorrespondenceAddressSummary.row(
+            request.userAnswers
+              .get(SubRegisteredAddressPage)
+              .getOrElse(makeSubscriptionAddress(subData.upeCorrespAddressDetails)),
+            countryOptions
+          )
+        )
+      )
+      Ok(view(primaryContactList, secondaryPreference, secondaryContactNominated, secondaryContactList, address))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-}
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val showErrorScreens = appConfig.showErrorScreens

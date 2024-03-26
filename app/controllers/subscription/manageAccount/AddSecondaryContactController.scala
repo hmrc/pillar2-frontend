@@ -57,10 +57,9 @@ class AddSecondaryContactController @Inject() (
       plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
       subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
     } yield {
-      val preparedForm = request.userAnswers
-        .get(SubAddSecondaryContactPage)
-        .map(addSecondaryContact => form.fill(addSecondaryContact))
-        .getOrElse(if (subData.secondaryContactDetails.isDefined) form.fill(true) else form.fill(false))
+      val existingAnswer =
+        request.userAnswers.get(SubAddSecondaryContactPage) orElse (if (subData.secondaryContactDetails.isDefined) Some(true) else Some(false))
+      val preparedForm       = existingAnswer.map(form.fill).getOrElse(form)
       val primaryContactName = request.userAnswers.get(SubPrimaryContactNamePage).getOrElse(subData.primaryContactDetails.name)
       Ok(view(preparedForm, primaryContactName, mode))
     })

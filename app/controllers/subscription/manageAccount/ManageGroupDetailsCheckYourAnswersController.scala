@@ -16,17 +16,19 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.subscription.AmendSubscriptionRequestParameters
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, MneOrDomestic, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendSubscriptionService
+import services.{AmendSubscriptionService, ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -37,30 +39,38 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageGroupDetailsCheckYourAnswersView,
-  amendSubscriptionService:  AmendSubscriptionService,
-  val userAnswersConnectors: UserAnswersConnectors
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  val controllerComponents:    MessagesControllerComponents,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
+  view:                        ManageGroupDetailsCheckYourAnswersView,
+  amendSubscriptionService:    AmendSubscriptionService,
+  val userAnswersConnectors:   UserAnswersConnectors
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val list = SummaryListViewModel(
-      rows = Seq(
-        MneOrDomesticSummary.row(request.userAnswers),
-        GroupAccountingPeriodSummary.row(request.userAnswers),
-        GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
-        GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
-      ).flatten
-    )
-    Ok(view(list))
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+    } yield {
+      val booleanToModel   = if (subData.upeDetails.domesticOnly) MneOrDomestic.Uk else MneOrDomestic.UkAndOther
+      val accountingPeriod = request.userAnswers.get(SubAccountingPeriodPage).getOrElse(subData.accountingPeriod)
+      val list = SummaryListViewModel(
+        rows = Seq(
+          MneOrDomesticSummary.row(request.userAnswers.get(SubMneOrDomesticPage) getOrElse booleanToModel),
+          GroupAccountingPeriodSummary.row(),
+          GroupAccountingPeriodStartDateSummary.row(accountingPeriod),
+          GroupAccountingPeriodEndDateSummary.row(accountingPeriod)
+        )
+      )
+      Ok(view(list))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val showErrorScreens = appConfig.showErrorScreens

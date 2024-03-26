@@ -16,17 +16,19 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryTelephonePreferenceView
 
@@ -34,28 +36,32 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryTelephonePreferenceController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              SecondaryTelephonePreferenceFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryTelephonePreferenceView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
+  navigator:                   AmendSubscriptionNavigator,
+  formProvider:                SecondaryTelephonePreferenceFormProvider,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        SecondaryTelephonePreferenceView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     (for {
-      contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      secondaryContactName <- OptionT.fromOption[Future](request.userAnswers.get(SubSecondaryContactNamePage)) orElse
+                                OptionT.fromOption[Future](subData.secondaryContactDetails.map(_.name))
     } yield {
-      val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(SubSecondaryPhonePreferencePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode, contactName))
+      val form = formProvider(secondaryContactName)
+      val existingAnswer = request.userAnswers.get(SubSecondaryPhonePreferencePage) orElse
+        (if (subData.secondaryContactDetails.flatMap(_.telephone).isDefined) Some(true) else None)
+      val preparedForm = existingAnswer.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode, secondaryContactName))
 
     })
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -63,22 +69,29 @@ class SecondaryTelephonePreferenceController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(SubSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominatedSecondaryContactNumber =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
-          )
+    referenceNumberService
+      .get(None, request.enrolments)
+      .map { plrReference =>
+        readSubscriptionService.readSubscription(plrReference).flatMap { subData =>
+          request.userAnswers
+            .get(SubSecondaryContactNamePage)
+            .orElse(subData.secondaryContactDetails.map(_.name))
+            .map { secondaryContactName =>
+              val form = formProvider(secondaryContactName)
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, secondaryContactName))),
+                  nominatedSecondaryContactNumber =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
+                      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
+                )
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

@@ -15,6 +15,7 @@
  */
 
 package controllers.subscription.manageAccount
+import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
@@ -26,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ReadSubscriptionService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
 
@@ -33,28 +35,32 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactNameController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              SecondaryContactNameFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  val readSubscriptionService: ReadSubscriptionService,
+  referenceNumberService:      ReferenceNumberService,
+  navigator:                   AmendSubscriptionNavigator,
+  formProvider:                SecondaryContactNameFormProvider,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        SecondaryContactNameView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubSecondaryContactNamePage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
-    }
-    Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+    } yield {
+      val existingAnswer = request.userAnswers.get(SubSecondaryContactNamePage) orElse subData.secondaryContactDetails.map(_.name)
+      val preparedForm   = existingAnswer.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubAddSecondaryContactPage, SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -35,57 +35,58 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactEmailController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  navigator:                 AmendSubscriptionNavigator,
+  val userAnswersConnectors:   UserAnswersConnectors,
+  identify:                    IdentifierAction,
+  getData:                     DataRetrievalAction,
+  navigator:                   AmendSubscriptionNavigator,
   val readSubscriptionService: ReadSubscriptionService,
   referenceNumberService:      ReferenceNumberService,
-  requireData:               DataRequiredAction,
-  formProvider:              SecondaryContactEmailFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryContactEmailView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  requireData:                 DataRequiredAction,
+  formProvider:                SecondaryContactEmailFormProvider,
+  val controllerComponents:    MessagesControllerComponents,
+  view:                        SecondaryContactEmailView
+)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     (for {
       plrReference <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
-      subData <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
-      secondaryContactPreference <- OptionT.fromOption[Future](request.userAnswers.get(SubAddSecondaryContactPage))
+      subData      <- OptionT.liftF(readSubscriptionService.readSubscription(plrReference))
+      secondaryContactName <- OptionT.fromOption[Future](request.userAnswers.get(SubSecondaryContactNamePage)) orElse
+                                OptionT.fromOption[Future](subData.secondaryContactDetails.map(_.name))
     } yield {
-      if (secondaryContactPreference) {
-           subData.secondaryContactDetails.map { secondContact =>
-            val secondaryContactName = request.userAnswers.get(SubSecondaryContactNamePage).getOrElse(secondContact.name)
-            val form = formProvider(secondaryContactName)
-            val preparedForm = request.userAnswers.get(SubSecondaryEmailPage).map(form.fill).getOrElse(form.fill(secondContact.emailAddress))
-            Ok(view(preparedForm, mode, secondaryContactName))
-          }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }else if (secondaryContactPreference & request.userAnswers.isPageDefined(SubSecondaryEmailPage)){
-      Ok(view(form()))
-      }
-
+      val form            = formProvider(secondaryContactName)
+      val existingAnswers = request.userAnswers.get(SubSecondaryEmailPage) orElse subData.secondaryContactDetails.map(_.emailAddress)
+      val preparedForm    = existingAnswers.map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode, secondaryContactName))
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
-      .get(SubSecondaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryEmailPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(SubSecondaryEmailPage, mode, updatedAnswers))
-          )
+    referenceNumberService
+      .get(None, request.enrolments)
+      .map { plrReference =>
+        readSubscriptionService.readSubscription(plrReference).flatMap { subData =>
+          request.userAnswers
+            .get(SubSecondaryContactNamePage)
+            .orElse(subData.secondaryContactDetails.map(_.name))
+            .map { secondaryContactName =>
+              val form = formProvider(secondaryContactName)
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, secondaryContactName))),
+                  value =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryEmailPage, value))
+                      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                    } yield Redirect(navigator.nextPage(SubSecondaryEmailPage, mode, updatedAnswers))
+                )
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }
