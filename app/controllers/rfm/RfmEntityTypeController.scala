@@ -21,7 +21,7 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import controllers.actions._
 import forms.RfmEntityTypeFormProvider
 import models.{Mode, UserType}
-import models.grs.{EntityType, RfmEntityType}
+import models.grs.EntityType
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
-  identify:                                          IdentifierAction,
+  rfmIdentify:                                       RfmIdentifierAction,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,
@@ -50,33 +50,38 @@ class RfmEntityTypeController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.get(RfmUkBasedPage).contains(true)) {
-      val preparedForm = request.userAnswers.get(RfmEntityTypePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      if (request.userAnswers.get(RfmUkBasedPage).contains(true)) {
+        val preparedForm = request.userAnswers.get(RfmEntityTypePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        Ok(view(preparedForm, mode))
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
-      Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           value match {
-            case RfmEntityType.UkLimitedCompany =>
+            case EntityType.UkLimitedCompany =>
               for {
                 updatedAnswers <-
                   Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
                 _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Rfm, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-            case RfmEntityType.LimitedLiabilityPartnership =>
+            case EntityType.LimitedLiabilityPartnership =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -84,7 +89,7 @@ class RfmEntityTypeController @Inject() (
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Rfm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
-            case RfmEntityType.EntityTypeNotListed =>
+            case EntityType.Other =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))

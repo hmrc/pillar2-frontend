@@ -16,10 +16,10 @@
 
 package pages
 
-import models.grs.RfmEntityType
+import models.grs.EntityType
 import play.api.libs.json.JsPath
 
-case object RfmEntityTypePage extends QuestionPage[RfmEntityType] {
+case object RfmEntityTypePage extends QuestionPage[EntityType] {
 
   override def path: JsPath = JsPath \ toString
 

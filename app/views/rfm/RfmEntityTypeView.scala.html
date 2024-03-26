@@ -16,14 +16,17 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
-@import models.grs.RfmEntityType
+@import models.grs.EntityType
+@import views.html.components.gds._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
+
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
@@ -35,12 +38,12 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("rfmEntityType.caption")</span>
+        @sectionHeader(messages("rfmEntityType.caption"))
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("rfmEntityType.heading")).asPageHeading(Large),
-                items  = RfmEntityType.options
+                items  = EntityType.options
             )
         )
 

@@ -66,29 +66,31 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val languageUtils = new LanguageUtils(new DefaultLangs(), configuration)
 
-  val govukHint         = new GovukHint
-  val govukRadios       = new GovukRadios(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
-  val govukInput        = new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel)
-  val govukDateInput    = new GovukDateInput(new GovukErrorMessage, new GovukHint, new GovukFieldset, govukInput)
-  val govukCheckboxes   = new GovukCheckboxes(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
-  val govukLabel        = new GovukLabel()
-  val govukDetails      = new GovukDetails
-  val govukPanel        = new GovukPanel
-  val govukTable        = new GovukTable
-  val govukButton       = new GovukButton
-  val govukFieldSet     = new GovukFieldset
-  val govukErrorSummary = new GovukErrorSummary
-  val govukErrorMessage = new GovukErrorMessage
-  val govukSummaryList  = new GovukSummaryList
-  val govukSelect       = new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel)
-  val govukBackLink     = new GovukBackLink
-  val govukWarningText  = new GovukWarningText
-  val formWithCSRF      = new FormWithCSRF
-  val heading           = new heading
-  val h2                = new HeadingH2
-  val paragraphBody     = new paragraphBody
-  val paragraphBodyLink = new paragraphBodyLink
-  val span              = new Span
+  val govukHint                = new GovukHint
+  val govukRadios              = new GovukRadios(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
+  val govukInput               = new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel)
+  val govukDateInput           = new GovukDateInput(new GovukErrorMessage, new GovukHint, new GovukFieldset, govukInput)
+  val govukCheckboxes          = new GovukCheckboxes(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
+  val govukLabel               = new GovukLabel()
+  val govukDetails             = new GovukDetails
+  val govukPanel               = new GovukPanel
+  val govukTable               = new GovukTable
+  val govukButton              = new GovukButton
+  val govukFieldSet            = new GovukFieldset
+  val govukErrorSummary        = new GovukErrorSummary
+  val govukErrorMessage        = new GovukErrorMessage
+  val govukSummaryList         = new GovukSummaryList
+  val govukSelect              = new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel)
+  val govukBackLink            = new GovukBackLink
+  val govukWarningText         = new GovukWarningText
+  val formWithCSRF             = new FormWithCSRF
+  val heading                  = new heading
+  val h2                       = new HeadingH2
+  val paragraphBody            = new paragraphBody
+  val paragraphBodyLink        = new paragraphBodyLink
+  val span                     = new Span
+  val paragraphMessageWithLink = new ParagraphMessageWithLink
+  val sectionHeader            = new sectionHeader
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -161,7 +163,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
 
   val viewRfmEntityTypeController: RfmEntityTypeView =
-    new RfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new RfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton, sectionHeader)
   val viewUPENameRegistration: UpeNameRegistrationView =
     new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
   val viewUpeContactName: UpeContactNameView =

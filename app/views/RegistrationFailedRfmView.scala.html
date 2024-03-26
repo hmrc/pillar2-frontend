@@ -15,9 +15,17 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-layout: templates.Layout,
-govukButton: GovukButton
+        layout: templates.Layout,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        headingH2:  HeadingH2,
+        bulletList: bulletList,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        hmrcNewTabLink: HmrcNewTabLink,
+        govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -26,22 +34,23 @@ govukButton: GovukButton
 pageTitle    = titleNoForm(messages("grs.registration.error.header")),
 showBackLink = false
 ) {
-<h1 class="govuk-heading-l">@messages("grs.registration.error.header")</h1>
-<p class="govuk-body govuk-!-margin-bottom-5">@messages("grs.registration.error.line1")</p>
-<h2 class="govuk-heading-m">@messages("grs.registration.error.line2")</h2>
-<p class="govuk-body">@messages("grs.registration.error.p1")</p>
-<ul>
-    <li> <p class="govuk-body">
-        <a href="https://find-and-update.company-information.service.gov.uk/" class="govuk-link" rel="noreferrer noopener" target="_blank"> @messages("grs.registration.error.b1")</a>.
-    </li>
-    <li> <p class="govuk-body">
-        <a href="https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr" class="govuk-link" rel="noreferrer noopener" target="_blank"> @messages("grs.registration.error.b2")</a>.
-    </li>
-</ul>
-<p class="govuk-body">
-    @messages("grs.registration.error.b31")
-    <a href="@controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)" class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.error.b32")</a>
-    @messages("grs.registration.error.b33")
-</p>
+    @heading(messages("grs.registration.error.header"), "govuk-heading-l")
+    @paragraphBody(messages("grs.registration.error.line1"))
+    @headingH2(messages("grs.registration.error.line2"), size = "m")
+    @paragraphBody(messages("grs.registration.error.p1"))
+
+    @bulletList(items = List(
+    hmrcNewTabLink(NewTabLink(
+        text = messages("grs.registration.error.b1"),
+        href = Some("https://find-and-update.company-information.service.gov.uk/"),
+    )),
+    hmrcNewTabLink(NewTabLink(
+        text = messages("grs.registration.error.b2"),
+        href = Some("https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"),
+    ))
+    ), additionalListClasses = Some("govuk-list--spaced"))
+
+    @paragraphMessageWithLink(message1 = Some(messages("grs.registration.error.b31")), linkMessage = messages("grs.registration.error.b32"), message2 = Some(messages("grs.registration.error.b33")), linkUrl = "/report-pillar2-top-up-taxes/replace-filing-member/business-matching/filing-member/uk-based/org-type", linkClass = "govuk-link govuk-link--no-visited-state" )
+
 
 }

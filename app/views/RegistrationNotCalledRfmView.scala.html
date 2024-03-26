@@ -15,8 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
     govukButton: GovukButton
 )
 
@@ -26,21 +31,9 @@
     pageTitle    = titleNoForm(messages("grs.registration.failed.header")),
     showBackLink = false
 ) {
-
-        <h1 class="govuk-heading-l">@messages("grs.registration.failed.header")</h1>
-        <p class="govuk-body govuk-!-margin-bottom-5">@messages("grs.registration.failed.line1")</p>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("grs.registration.failed.line2")</p>
-
-            <p class="govuk-body">
-            <a href="@controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode) " class="govuk-link govuk-link--no-visited-state"> @messages("grs.registration.failed.line3-hyperlink")</a>
-             <a> @messages("grs.registration.failed.line3-cont")</a>
-            </p>
-
-
-
-
-
-
-
+    @heading(messages("grs.registration.failed.header"), "govuk-heading-l")
+    @paragraphBody(messages("grs.registration.failed.line1"))
+    @paragraphBody(messages("grs.registration.failed.line2"))
+    @paragraphMessageWithLink(linkMessage = messages("grs.registration.failed.line3-hyperlink"), message2 = Some(messages("grs.registration.failed.line3-cont")), linkUrl = "/report-pillar2-top-up-taxes/replace-filing-member/business-matching/filing-member/uk-based/org-type", linkClass = "govuk-link govuk-link--no-visited-state" )
 
 }

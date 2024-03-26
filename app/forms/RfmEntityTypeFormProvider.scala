@@ -20,12 +20,12 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.grs.RfmEntityType
+import models.grs.EntityType
 
 class RfmEntityTypeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[RfmEntityType] =
+  def apply(): Form[EntityType] =
     Form(
-      "value" -> enumerable[RfmEntityType]("rfmEntityType.error.required")
+      "value" -> enumerable[EntityType]("rfmEntityType.error.required")
     )
 }

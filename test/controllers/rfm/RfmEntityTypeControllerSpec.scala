@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.RfmEntityTypeFormProvider
 import models.NormalMode
-import models.grs.{GrsCreateRegistrationResponse, RfmEntityType}
+import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
@@ -71,7 +71,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
     }
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua          = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
-      val userAnswers = ua.set(RfmEntityTypePage, RfmEntityType.values.head).success.value
+      val userAnswers = ua.set(RfmEntityTypePage, EntityType.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,7 +83,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(RfmEntityType.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.values.head), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -115,7 +115,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
       val ua =
         emptyUserAnswers
-          .set(RfmEntityTypePage, RfmEntityType.UkLimitedCompany)
+          .set(RfmEntityTypePage, EntityType.UkLimitedCompany)
           .success
           .value
 
@@ -137,7 +137,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
           )
 
         val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", RfmEntityType.UkLimitedCompany.toString))
+          .withFormUrlEncodedBody(("value", EntityType.UkLimitedCompany.toString))
 
         val result = route(application, request).value
 
@@ -153,7 +153,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
       val ua =
         emptyUserAnswers
-          .set(RfmEntityTypePage, RfmEntityType.LimitedLiabilityPartnership)
+          .set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership)
           .success
           .value
 
@@ -174,7 +174,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
           )
 
         val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", RfmEntityType.LimitedLiabilityPartnership.toString))
+          .withFormUrlEncodedBody(("value", EntityType.LimitedLiabilityPartnership.toString))
 
         val result = route(application, request).value
 
