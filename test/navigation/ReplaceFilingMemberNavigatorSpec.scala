@@ -36,7 +36,9 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
   )
 
   private lazy val securityQuestionsCYA = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
-  private lazy val noIdQuestionsCYA     = controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmQuestionsCYA      = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val submitAndReview =
+    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
   "Replace Filing Member Navigator" when {
 
     "in Normal mode" must {
@@ -65,13 +67,13 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(RfmNameRegistrationPage, NormalMode, emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")) mustBe
           controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
       }
-      "go to no id CYA page from registered address page" in {
+      "go to rfm CYA page from registered address page" in {
         navigator.nextPage(
           RfmRegisteredAddressPage,
           NormalMode,
           emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
-          controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
+          controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
       }
     }
 
@@ -97,21 +99,31 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           securityQuestionsCYA
       }
-      "go to no id CYA page from name registration page" in {
+      "go to rfm CYA page from name registration page" in {
         navigator.nextPage(
           RfmNameRegistrationPage,
           CheckMode,
           emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")
         ) mustBe
-          noIdQuestionsCYA
+          rfmQuestionsCYA
       }
-      "go to no id CYA page from registered address page" in {
+      "go to rfm CYA page from registered address page" in {
         navigator.nextPage(
           RfmRegisteredAddressPage,
           CheckMode,
           emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
-          noIdQuestionsCYA
+          rfmQuestionsCYA
+      }
+      "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
+        navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
+        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
+        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
+          submitAndReview
       }
     }
   }

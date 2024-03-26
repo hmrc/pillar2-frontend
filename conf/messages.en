@@ -900,11 +900,10 @@ rfm.registeredAddress.messages.error.addressLine1.length = The first line of the
 rfm.registeredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
 rfm.registeredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 rfm.registeredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
-rfm.registeredAddress.change.hidden =  the registered office address of the nominated filing member
 
-rfm.noIdCheckYourAnswers.title = Check Your Answers
-rfm.noIdCheckYourAnswers.heading = Check your answers
-rfm.noIdCheckYourAnswers.heading.caption = Group details
+rfm.rfmCheckYourAnswers.title = Check Your Answers
+rfm.rfmCheckYourAnswers.heading = Check your answers
+rfm.rfmCheckYourAnswers.heading.caption = Group details
 rfm.nameRegistration.checkYourAnswersLabel = Name
 rfm.nameRegistration.change.hidden =  the name of the new nominated filing member
 rfm.registeredAddress.checkYourAnswersLabel = Address
