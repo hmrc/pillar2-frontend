@@ -63,8 +63,7 @@ viewAmendSubscriptionFailed.link= Return to your account homepage to try again
 # Screen Reader and Accessibility
 #
 ###############################################
-section.heading.visually.hidden = This section is:
-
+section.heading.visually.hidden=This section is
 ###############################################
 error.pageNotFound.title = Page not found
 error.pageNotFound.heading = Page not found
