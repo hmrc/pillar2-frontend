@@ -17,16 +17,14 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class RfmPrimaryNameRegistrationFormProvider @Inject() extends Mappings {
+class RfmContactByTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(userName: String): Form[Boolean] =
     Form(
-      "value" -> text("rfm.primaryNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.primaryNameRegistration.error.length"))
+      "value" -> boolean("rfmContactByTelephone.error.required", args = Seq(userName))
     )
 }
