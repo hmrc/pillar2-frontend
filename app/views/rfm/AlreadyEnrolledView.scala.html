@@ -18,27 +18,27 @@
 @import views.html.components.gds._
 
 @this(
-  layout: templates.Layout,
-  govukButton: GovukButton,
-  heading: heading,
-  paragraphBody: paragraphBody,
-  paragraph: paragraph,
-  link: link
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link: link
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("rfm.alreadyEnrolled.title")),
-  showSignOut = false,
-  authorised = false
+    pageTitle = titleNoForm(messages("rfm.alreadyEnrolled.title")),
+    showSignOut = false,
+    authorised = false
 ) {
-  @heading(messages("rfm.alreadyEnrolled.heading"), "govuk-heading-l")
-  @paragraphBody(messages("rfm.alreadyEnrolled.p1"))
-  @paragraphBody(messages("rfm.alreadyEnrolled.p2"))
-  @paragraph(link(
-      text = messages("rfm.alreadyEnrolled.link"),
-      call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
-      fullStop = false
-  ))
+    @heading(messages("rfm.alreadyEnrolled.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.alreadyEnrolled.p1"))
+    @paragraphBody(messages("rfm.alreadyEnrolled.p2"))
+    @paragraph(link(
+        text = messages("rfm.alreadyEnrolled.link"),
+        call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
+        fullStop = false
+    ))
 }

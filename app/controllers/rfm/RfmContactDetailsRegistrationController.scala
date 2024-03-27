@@ -18,7 +18,6 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.RfmIdentifierAction
-import models.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,11 +34,12 @@ class RfmContactDetailsRegistrationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = rfmIdentify { implicit request =>
-    Ok(view(mode))
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode)))
+  def onPageLoad(): Action[AnyContent] = rfmIdentify { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      Ok(view())
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 }

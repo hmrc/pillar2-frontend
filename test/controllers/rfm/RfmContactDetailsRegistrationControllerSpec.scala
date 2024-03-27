@@ -41,14 +41,14 @@ class RfmContactDetailsRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RfmContactDetailsRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(NormalMode)(
+        contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
           messages(application)
@@ -56,17 +56,24 @@ class RfmContactDetailsRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to RfmContactDetailsRegistrationController onSubmit" in {
-      val application = applicationBuilder(userAnswers = None).build()
+    "must redirect to Under Construction page if RFM access is disabled" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
       running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmContactDetailsRegistrationController.onSubmit().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }
     }
-
   }
 }

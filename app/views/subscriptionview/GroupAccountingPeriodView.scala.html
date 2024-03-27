@@ -16,14 +16,18 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Small
+@import views.html.components.gds._
 
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukDateInput: GovukDateInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        govukErrorSummary: GovukErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -33,16 +37,17 @@
     @formHelper(action = controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day" ,"endDate" -> "endDate.day")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day", "endDate" -> "endDate.day")))
         }
 
-        <span class="govuk-caption-l">@messages("groupAccountingPeriod.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("groupAccountingPeriod.title")</h1>
-        <p class="govuk-hint govuk-!-padding-bottom-3">@messages("groupAccountingPeriod.title.desc")</p>
+        @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
+
+        @heading(messages("groupAccountingPeriod.title"), "govuk-heading-l")
+        @paragraphBody(messages("groupAccountingPeriod.title.desc"), "govuk-hint govuk-!-padding-bottom-3")
 
         @govukDateInput(
             DateViewModel(
-                field  = form("startDate"),
+                field = form("startDate"),
                 legend = LegendViewModel(messages("groupAccountingPeriod.startDate.heading")).asPageHeading(Small)
             )
             .withHint(HintViewModel(messages("groupAccountingPeriod.startDate.hint")))
@@ -50,7 +55,7 @@
 
         @govukDateInput(
             DateViewModel(
-                field  = form("endDate"),
+                field = form("endDate"),
                 legend = LegendViewModel(messages("groupAccountingPeriod.endDate.heading")).asPageHeading(Small)
             )
             .withHint(HintViewModel(messages("groupAccountingPeriod.endDate.hint")))

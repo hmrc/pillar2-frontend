@@ -17,29 +17,34 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
 @import utils.InputOption
+@import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    govukSelect: GovukSelect
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukSelect: GovukSelect
 )
 
 
-@(form: Form[_], mode: Mode, UserName:String, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName: String, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("upeRegisteredAddress.title"))) {
+
 
     @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("upeRegisteredAddress.heading.caption")</span>
-        <h1 class="govuk-heading-l long-word">@messages("upeRegisteredAddress.heading", UserName)</h1>
 
+        @sectionHeader(messages("upeRegisteredAddress.heading.caption"))
+
+        @heading(messages("upeRegisteredAddress.heading", UserName), "govuk-heading-l long-word")
 
         @govukInput(
             InputViewModel(
@@ -54,32 +59,32 @@
                 field = form("addressLine2"),
                 label = LabelViewModel(messages("upeRegisteredAddress.addressLine2"))
             )
-                    .withWidth(TwoThirds)
-                    .withAutocomplete("address-line2")
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-line2")
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
                 label = LabelViewModel(messages("upeRegisteredAddress.town_city"))
             )
-                    .withWidth(TwoThirds)
-                    .withAutocomplete("address-level2")
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level2")
         )
         @govukInput(
             InputViewModel(
                 field = form("addressLine4"),
                 label = LabelViewModel(messages("upeRegisteredAddress.region"))
             )
-                    .withWidth(TwoThirds)
-                    .withAutocomplete("address-level1")
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-level1")
         )
         @govukInput(
             InputViewModel(
                 field = form("postalCode"),
                 label = LabelViewModel(messages("upeRegisteredAddress.postcode"))
             )
-                    .withWidth(Fixed10)
-                    .withAutocomplete("postal-code")
+            .withWidth(Fixed10)
+            .withAutocomplete("postal-code")
         )
 
         @govukSelect(
@@ -93,11 +98,11 @@
                 ),
                 hint = Some(Hint(content = Text(messages("upeRegisteredAddress.country.hint")))),
                 items = Seq(
-                            SelectItem(
-                                value = Some(""),
-                                text = messages("site.address.country.select")
-                            )
-                        ) ++
+                    SelectItem(
+                        value = Some(""),
+                        text = messages("site.address.country.select")
+                    )
+                ) ++
                         countryOptions.map(valueOption =>
                             SelectItem(
                                 value = Some(valueOption.value),
