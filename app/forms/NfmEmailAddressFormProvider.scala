@@ -25,8 +25,12 @@ class NfmEmailAddressFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("nfmEmailAddress.error.required", Seq(userName))
-        .verifying(maxLength(Constants.MAX_LENGTH_132, "nfmEmailAddress.error.length"))
-        .verifying(regexp(Validation.EMAIL_REGEX, "nfmEmailAddress.error.invalid"))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_132, "nfmEmailAddress.error.length"),
+            regexp(Validation.EMAIL_REGEX, "nfmEmailAddress.error.invalid")
+          )
+        )
     )
 
 }
