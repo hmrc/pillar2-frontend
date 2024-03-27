@@ -88,32 +88,20 @@
         )
 
         @govukSelect(
-            Select(
-                id = form("countryCode").id,
-                name = form("countryCode").name,
-                label = Label(
-                    isPageHeading = true,
-                    classes = "govuk-heading-l",
-                    content = Text(messages("subscriptionAddress.country"))
+            SelectViewModel(
+                field = form("countryCode"),
+                items = Seq(SelectItem(value = Some(""))) ++
+                countryOptions.map(valueOption =>
+                    SelectItem(
+                        value = Some(valueOption.value),
+                        text = valueOption.label
+                    )
                 ),
-                hint = Some(Hint(content = Text(messages("subscriptionAddress.country.hint")))),
-                items = Seq(
-                            SelectItem(
-                                value = Some(""),
-                                text = messages("site.address.country.select")
-                            )
-                        ) ++
-                        countryOptions.map(valueOption =>
-                            SelectItem(
-                                value = Some(valueOption.value),
-                                text = valueOption.label,
-                                selected = form("countryCode").value.contains(valueOption.value)
-                            )
-                        ),
-                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
-            )
+                label = LabelViewModel(messages("subscriptionAddress.country"))
+            ).withCssClass("govuk-input")
             .withFormGroupClasses("govuk-!-width-two-thirds")
-            .withAttribute("autocomplete" -> "country-name")
+            .withHint(Hint(content = Text(messages("subscriptionAddress.country.hint"))))
+            .withAttribute("aria-label" -> "countryCode")
             .asAccessibleAutocomplete(Some(AccessibleAutocomplete(defaultValue = Some(""), showAllValues = true, autoSelect = true)))
         )
 
