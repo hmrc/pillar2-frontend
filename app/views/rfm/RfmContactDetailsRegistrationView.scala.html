@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.NormalMode
 @import config.FrontendAppConfig
 @import views.html.components.gds._
 
@@ -27,8 +26,7 @@
         govukButton: GovukButton
 )
 
-
-@(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
