@@ -69,8 +69,7 @@ class ManageContactCheckYourAnswersController @Inject() (
                              .getOrElse(if (subData.secondaryContactDetails.flatMap(_.telephone).isDefined) true else false)
       updatedAnswers  <- OptionT.liftF(Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, primaryTelPref)))
       updatedAnswers1 <- OptionT.liftF(Future.fromTry(updatedAnswers.set(SubSecondaryPhonePreferencePage, secondaryPhonePref)))
-      updatedAnswers2 <- OptionT.liftF(Future.fromTry(updatedAnswers1.set(SubAddSecondaryContactPage, secondaryContactNominated)))
-      _               <- OptionT.liftF(userAnswersConnectors.save(updatedAnswers2.id, Json.toJson(updatedAnswers2.data)))
+      _               <- OptionT.liftF(userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data)))
     } yield {
 
       val primaryPhoneSummary = if (request.userAnswers.get(SubPrimaryPhonePreferencePage).contains(true)) {
