@@ -23,6 +23,7 @@ import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
 import pages.{FmEntityTypePage, FmRegisteredInUKPage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,20 +47,30 @@ class NfmEntityTypeController @Inject() (
   view:                                              NfmEntityTypeView
 )(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.get(FmRegisteredInUKPage).contains(true)) {
-      val preparedForm = request.userAnswers.get(FmEntityTypePage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+    request.userAnswers
+      .get(FmRegisteredInUKPage)
+      .map { ukBased =>
+        request.userAnswers
+          .get(FmEntityTypePage)
+          .map { entityType =>
+            if (!ukBased & entityType == EntityType.Other) {
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Ok(view(form.fill(entityType), mode))
+            } else {
+              Future.successful(Ok(view(form.fill(entityType), mode)))
+            }
+          }
+          .getOrElse(Future.successful(Ok(view(form, mode))))
       }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -70,21 +81,29 @@ class NfmEntityTypeController @Inject() (
         value =>
           value match {
             case EntityType.UkLimitedCompany =>
+              logger.info("Filing Member- Initialising GRS journey with entity type chosen as UK Limited Company")
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(FmEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
                 createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Fm, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
             case EntityType.LimitedLiabilityPartnership =>
+              logger.info("Filing Member- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmEntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
             case EntityType.Other =>
-              Future successful Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
+              logger.info("Filing Member- Redirecting to the no ID journey as entity type not listed chosen")
+              for {
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+                _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
+              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
           }
       )
   }
