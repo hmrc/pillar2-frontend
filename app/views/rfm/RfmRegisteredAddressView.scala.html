@@ -35,13 +35,13 @@
 
 @layout(pageTitle = title(form, messages("rfm.registeredAddress.title" ))) {
 
-@sectionHeader(messages("rfm.registration.heading.caption"))
-
 @formHelper(action = controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(mode)) {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
+
+@sectionHeader(messages("rfm.registration.heading.caption"))
 
 @heading(messages("rfm.registeredAddress.heading", UserName), "govuk-heading-l long-word")
 
