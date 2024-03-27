@@ -16,12 +16,15 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
@@ -29,12 +32,15 @@
 
 @layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false, authorised = false) {
 
+
     @formHelper(action = eligibility.routes.TurnOverEligibilityController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("turnOverEligibility.check.liable.text")</span>
+
+        @sectionHeader(messages("turnOverEligibility.check.liable.text"))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),

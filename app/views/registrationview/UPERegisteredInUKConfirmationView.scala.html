@@ -16,13 +16,15 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 
@@ -30,17 +32,18 @@
 
 @layout(pageTitle = title(form, messages("isUPERegisteredInUK.title"))) {
 
+
     @formHelper(action = controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        <span class="govuk-caption-l">@messages("isUPERegisteredInUK.heading.caption")</span>
+        @sectionHeader(messages("isUPERegisteredInUK.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("isUPERegisteredInUK.heading")).asPageHeading(Large)
             )
         )

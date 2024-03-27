@@ -17,26 +17,30 @@
 @import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
-@import viewmodels.govuk.hint
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, UserName:String ="")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, UserName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactEmailAddress.title"))) {
+
 
     @formHelper(action = controllers.subscription.routes.ContactEmailAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-     <span class="govuk-caption-l">@messages("contactEmailAddress.heading.caption")</span>
+
+        @sectionHeader(messages("contactEmailAddress.heading.caption"))
+
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
