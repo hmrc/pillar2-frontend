@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
@@ -30,17 +31,17 @@
         span: Span
 )
 
-
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
+
 
     @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
 
-        @span(messages("NominateFilingMemberYesNo.heading.caption"))
+        @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
 
         @h1(messages("NominateFilingMemberYesNo.heading"), classes = "govuk-heading-l")
 

@@ -14,33 +14,30 @@
  * limitations under the License.
  *@
 
-@import models.NormalMode
 @import config.FrontendAppConfig
 @import views.html.components.gds._
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-heading: heading,
-sectionHeader: sectionHeader,
-paragraphBody: paragraphBody,
-govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        sectionHeader: sectionHeader,
+        paragraphBody: paragraphBody,
+        govukButton: GovukButton
 )
 
-
-@(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
+    pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
 
-@sectionHeader(messages("rfm.contact.heading.caption"))
-@heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-@paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
+    @sectionHeader(messages("rfm.contact.heading.caption"))
+    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
 
-@govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
-)
-
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
+    )
 
 
 }
