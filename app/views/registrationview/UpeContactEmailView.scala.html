@@ -32,12 +32,13 @@
 
 @layout(pageTitle = title(form, messages("upe-input-business-email.title"))) {
 
-    @sectionHeader(messages("upe-input-business-email.caption"))
 
     @formHelper(action = controllers.registration.routes.UpeContactEmailController.onSubmit(mode)) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("upe-input-business-email.caption"))
 
         @govukInput(
             InputViewModel(

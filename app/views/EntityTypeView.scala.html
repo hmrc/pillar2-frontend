@@ -32,13 +32,14 @@ govukButton: GovukButton
 
 @layout(pageTitle = title(form, messages("entityType.title"))) {
 
-    @sectionHeader(messages("entityType.caption"))
 
     @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("entityType.caption"))
 
         @govukRadios(
             RadiosViewModel(

@@ -32,13 +32,14 @@
 
 @layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false, authorised = false) {
 
-    @sectionHeader(messages("turnOverEligibility.check.liable.text"))
 
     @formHelper(action = eligibility.routes.TurnOverEligibilityController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("turnOverEligibility.check.liable.text"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

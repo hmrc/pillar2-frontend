@@ -31,13 +31,14 @@
 
 @layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
 
-    @sectionHeader(messages("taskList.task.contact.heading"))
 
     @formHelper(action = controllers.subscription.routes.AddSecondaryContactController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("taskList.task.contact.heading"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

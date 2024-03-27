@@ -30,10 +30,10 @@
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
 
-    @sectionHeader(messages("contactCheckYourAnswers.heading.caption"))
 
     @formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
         <div class="contact-details">
+            @sectionHeader(messages("contactCheckYourAnswers.heading.caption"))
             @heading(messages("contactCheckYourAnswers.heading"), "govuk-heading-l")
             @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", "h2")
 

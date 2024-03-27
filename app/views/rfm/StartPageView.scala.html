@@ -33,13 +33,13 @@
 
 @layout(pageTitle = title(form, messages("rfm.startPage.title")), showSignOut = false, timeout = false) {
 
-    @sectionHeader(messages("rfm.heading.caption"))
-
     @formHelper(action = controllers.rfm.routes.StartPageController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
         }
+
+        @sectionHeader(messages("rfm.heading.caption"))
 
         @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
 

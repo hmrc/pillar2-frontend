@@ -31,13 +31,13 @@
 
 @layout(pageTitle = title(form, messages("isNFMUKBased.title"))) {
 
-    @sectionHeader(messages("isUPERegisteredInUK.heading.caption"))
-
     @formHelper(action = controllers.fm.routes.IsNfmUKBasedController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("isUPERegisteredInUK.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

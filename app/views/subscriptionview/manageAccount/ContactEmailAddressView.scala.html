@@ -32,13 +32,14 @@
 
 @layout(pageTitle = title(form, messages("contactEmailAddress.title"))) {
 
-    @sectionHeader(messages("contactEmailAddress.heading.caption"))
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("contactEmailAddress.heading.caption"))
 
         @govukInput(
             InputViewModel(

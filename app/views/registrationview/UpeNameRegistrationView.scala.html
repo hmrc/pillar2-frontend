@@ -33,13 +33,14 @@
 
 @layout(pageTitle = title(form, messages("upeNameRegistration.title"))) {
 
-    @sectionHeader(messages("startPageRegistration.heading.caption"))
 
     @formHelper(action = controllers.registration.routes.UpeNameRegistrationController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("startPageRegistration.heading.caption"))
 
         @govukInput(
             InputViewModel(

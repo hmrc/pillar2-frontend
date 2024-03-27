@@ -33,13 +33,13 @@
 
 @layout(pageTitle = title(form, messages("isNFMRegisteredInUK.title"))) {
 
-    @sectionHeader(messages("isNFMRegisteredInUK.heading.caption"))
-
     @formHelper(action = controllers.rfm.routes.UkBasedFilingMemberController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("isNFMRegisteredInUK.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

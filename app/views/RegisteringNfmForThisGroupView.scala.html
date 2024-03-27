@@ -36,13 +36,14 @@
     authorised = false
 ) {
 
-    @sectionHeader(messages("registeringNfmForThisGroup.caption"))
 
     @formHelper(action = eligibility.routes.RegisteringNfmForThisGroupController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("registeringNfmGroup" -> "value_0")))
         }
+
+        @sectionHeader(messages("registeringNfmForThisGroup.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

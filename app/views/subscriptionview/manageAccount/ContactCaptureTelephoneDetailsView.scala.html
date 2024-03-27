@@ -34,13 +34,14 @@
 
 @layout(pageTitle = title(form, messages("contactCaptureTelephoneDetails.title"))) {
 
-    @sectionHeader(messages("contactCaptureTelephoneDetails.heading.caption"))
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("contactCaptureTelephoneDetails.heading.caption"))
 
         @govukInput(
             InputViewModel(

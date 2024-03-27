@@ -32,14 +32,13 @@
 
 @layout(pageTitle = title(form, messages("rfm.primaryNameRegistration.title"))) {
 
-    @sectionHeader(messages("rfm.contact.heading.caption"))
-
     @formHelper(action = controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("rfm.contact.heading.caption"))
 
         @govukInput(
             InputViewModel(

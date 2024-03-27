@@ -34,12 +34,13 @@
 
 @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {
 
-    @sectionHeader(messages("mneOrDomestic.heading.caption"))
     @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("mneOrDomestic.heading.caption"))
 
         @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
         @paragraphBody(messages("mneOrDomestic.p1"))

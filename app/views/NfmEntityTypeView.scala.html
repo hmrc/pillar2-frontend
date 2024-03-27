@@ -33,13 +33,15 @@
 
 @layout(pageTitle = title(form, messages("nfmEntityType.title"))) {
 
-    @sectionHeader(messages("nfmEntityType.caption"))
 
     @formHelper(action = controllers.fm.routes.NfmEntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("nfmEntityType.caption"))
+
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),

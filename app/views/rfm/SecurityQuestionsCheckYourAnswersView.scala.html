@@ -33,9 +33,9 @@
 
 @layout(pageTitle = titleNoForm(messages("securityQuestionsCheckYourAnswers.title"))) {
 
-    @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
-
     @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(mode)) {
+
+        @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
 
         @heading(messages("securityQuestionsCheckYourAnswers.heading"), "govuk-heading-l")
 

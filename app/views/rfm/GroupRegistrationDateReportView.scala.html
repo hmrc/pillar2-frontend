@@ -38,7 +38,6 @@
 
 @layout(pageTitle = title(form, messages("groupRegistrationDateReport.title"))) {
 
-    @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
 
     @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -46,6 +45,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "rfmRegistrationDate.day")))
 
         }
+
+        @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
 
         @heading(Html(messages("groupRegistrationDateReport.heading")))
 

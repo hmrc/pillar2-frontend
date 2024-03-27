@@ -36,13 +36,14 @@
     authorised = false
 ) {
 
-    @sectionHeader(messages("groupTerritories.caption"))
 
     @formHelper(action = eligibility.routes.GroupTerritoriesController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("groupTerritories.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

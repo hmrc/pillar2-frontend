@@ -35,13 +35,14 @@
 
 @layout(pageTitle = title(form, messages("upeRegisteredAddress.title"))) {
 
-    @sectionHeader(messages("upeRegisteredAddress.heading.caption"))
 
     @formHelper(action = controllers.registration.routes.UpeRegisteredAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("upeRegisteredAddress.heading.caption"))
 
         @heading(messages("upeRegisteredAddress.heading", UserName), "govuk-heading-l long-word")
 

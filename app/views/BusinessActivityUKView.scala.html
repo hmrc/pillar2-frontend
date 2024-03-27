@@ -32,13 +32,14 @@
 
 @layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false, authorised = false) {
 
-    @sectionHeader(messages("businessActivityUK.check.liable.text"))
 
     @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("businessActivityUK.check.liable.text"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

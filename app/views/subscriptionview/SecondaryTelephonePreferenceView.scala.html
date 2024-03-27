@@ -31,13 +31,14 @@
 
 @layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
 
-    @sectionHeader(messages("secondaryContactEmail.heading.caption"))
 
     @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("secondaryContactEmail.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

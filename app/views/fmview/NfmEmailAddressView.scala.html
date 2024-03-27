@@ -32,13 +32,14 @@
 
 @layout(pageTitle = title(form, messages("nfmEmailAddress.title"))) {
 
-    @sectionHeader(messages("nfmEmailAddress.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.NfmEmailAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("nfmEmailAddress.heading.caption"))
 
         @govukInput(
             InputViewModel(

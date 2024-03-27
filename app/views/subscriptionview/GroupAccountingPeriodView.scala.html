@@ -34,12 +34,13 @@
 
 @layout(pageTitle = title(form, messages("groupAccountingPeriod.title"))) {
 
-    @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
     @formHelper(action = controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day", "endDate" -> "endDate.day")))
         }
+
+        @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
 
         @heading(messages("groupAccountingPeriod.title"), "govuk-heading-l")
         @paragraphBody(messages("groupAccountingPeriod.title.desc"), "govuk-hint govuk-!-padding-bottom-3")

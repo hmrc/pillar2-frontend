@@ -33,10 +33,11 @@
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    @sectionHeader(messages("checkYourAnswers.heading.caption"))
 
     @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
-            
+
+        @sectionHeader(messages("checkYourAnswers.heading.caption"))
+
         @heading(messages("checkYourAnswers.heading"), classes = "govuk-heading-l")
 
         @h2(messages("checkYourAnswers.upe"), size = "m")

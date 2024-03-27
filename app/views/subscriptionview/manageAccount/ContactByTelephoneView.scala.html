@@ -33,13 +33,14 @@
 
 @layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
 
-    @sectionHeader(messages("contactByTelephone.heading.caption"))
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("contactByTelephone.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

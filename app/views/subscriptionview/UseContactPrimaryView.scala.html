@@ -36,13 +36,14 @@
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
-    @sectionHeader(messages("useContactPrimary.heading.caption"))
 
     @formHelper(action = controllers.subscription.routes.UseContactPrimaryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("useContactPrimary.heading.caption"))
 
         @h1(messages("useContactPrimary.heading"), classes = "govuk-heading-l")
 

@@ -31,13 +31,14 @@
 
 @layout(pageTitle = title(form, messages("contactNfmByTelephone.title"))) {
 
-    @sectionHeader(messages("contactNfmByTelephone.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
+
+        @sectionHeader(messages("contactNfmByTelephone.heading.caption"))
 
         @govukRadios(
             RadiosViewModel.yesNo(

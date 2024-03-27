@@ -35,12 +35,13 @@
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
 
-    @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
 
     @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
+
+        @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
 
         @h1(messages("NominateFilingMemberYesNo.heading"), classes = "govuk-heading-l")
 

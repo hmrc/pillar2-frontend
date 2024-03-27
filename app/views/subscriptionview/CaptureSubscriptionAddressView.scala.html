@@ -34,13 +34,14 @@
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
-    @sectionHeader(messages("subscriptionAddress.heading.caption"))
 
     @formHelper(action = controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("subscriptionAddress.heading.caption"))
 
         @heading(messages("subscriptionAddress.heading"), "govuk-heading-l long-word")
 
