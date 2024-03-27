@@ -485,10 +485,10 @@ rfmContactAddress.messages.error.addressLine1.length = First line of the address
 rfmContactAddress.messages.error.addressLine1.invalid = First line of the address contains invalid characters
 rfmContactAddress.messages.error.addressLine2.length = Second line of the address must be 35 characters or less
 rfmContactAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
-rfmContactAddress.messages.error.postcode.required = Enter the postal code
+rfmContactAddress.messages.error.postcode.required = Enter a full UK postal code
 rfmContactAddress.postcode.error.invalid = Enter a full UK postal code
 rfmContactAddress.error.format = Enter the post code in the correct format
-rfmContactAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+
 
 
 nfmRegisteredAddress.title = What is the registered office address?
