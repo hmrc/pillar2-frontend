@@ -25,6 +25,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.inject.bind
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -75,6 +76,38 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) must include("Name")
         contentAsString(result) must include("Address")
+      }
+    }
+
+    "must redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
+
+      val ua = emptyUserAnswers
+        .set(RfmNameRegistrationPage, "adios")
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "21"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Road"),
+            ("addressLine4", "North east"),
+            ("postalCode", "IG3 1QA"),
+            ("countryCode", "GB")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url
       }
     }
 

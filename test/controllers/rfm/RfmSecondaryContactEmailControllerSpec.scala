@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
 import play.api.inject.bind
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -101,6 +102,50 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must redirect to the under-construction page when rfm feature is set to false" in {
+
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
+    "must redirect to RFM Telephone Preference page with valid data" in {
+
+      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
       }
     }
 

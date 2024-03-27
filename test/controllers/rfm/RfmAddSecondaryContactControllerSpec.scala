@@ -17,12 +17,19 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.RfmAddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmAddSecondaryContactView
+
+import scala.concurrent.Future
 
 class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
@@ -71,6 +78,52 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to UnderConstructionController page if RFM access is disabled" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
+    "must redirect to RFM Secondary Contact Name page when user selects Yes" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setOrException(RfmPrimaryContactNamePage, "name")
+        .setOrException(RfmPrimaryContactEmailPage, "asda@hola.com")
+        .setOrException(RfmAddSecondaryContactPage, true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "true")
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url
       }
     }
 
