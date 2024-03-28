@@ -20,24 +20,26 @@
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
-        heading: heading,
         govukButton: GovukButton,
         formHelper: FormWithCSRF,
+        h1: heading,
+        h2: HeadingH2
 )
 
-
-@(listPrimary: SummaryList, addSecondaryContactList: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title")), showBackLink = false) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
         <div class="manage-contact-details">
-            @heading(messages("contactCheckYourAnswers.heading.caption"), "govuk-heading-l")
-            @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", "h2")
+            @h1(messages("contactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
+
+            @h2(messages("contactCheckYourAnswers.first"), size = "m")
             @govukSummaryList(listPrimary)
-            @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", "h2")
-            @govukSummaryList(addSecondaryContactList)
+
+            @h2(messages("contactCheckYourAnswers.second"), size = "m")
             @govukSummaryList(listSecondary)
-            @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
+
+            @h2(messages("contactCheckYourAnswers.address"), size = "m")
             @govukSummaryList(address)
 
             @govukButton(
