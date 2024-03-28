@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import components.gds._
+@import viewmodels.LegendSize
 
 @this(
         layout: templates.Layout,
@@ -48,11 +49,10 @@
         @para(messages("NominateFilingMemberYesNo.p1"))
         @para(messages("NominateFilingMemberYesNo.p2"))
 
-        @h2(messages("NominateFilingMemberYesNo.subheading"), size = "m", extraClasses = Seq.empty)
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("nominateFilingMember"),
-                fieldset = Fieldset.defaultObject
+                legend = LegendViewModel(messages("NominateFilingMemberYesNo.subheading")).asPageHeading(LegendSize.Medium)
             )
         )
 
