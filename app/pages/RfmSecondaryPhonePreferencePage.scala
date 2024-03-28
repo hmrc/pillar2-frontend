@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package mapping
+package pages
 
-object Constants {
-  final val ENGLISH                = "en"
-  final val WELSH                  = "cy"
-  final val UK_COUNTRY_CODE        = "GB"
-  final val RFM_ADDRESS_MAX_LENGTH = 35
-  final val MAX_LENGTH_105         = 105
-  final val MAX_LENGTH_132         = 132
-  final val MAX_LENGTH_160         = 160
-  final val MAX_LENGTH_200         = 200
-  final val EQUAL_LENGTH_15        = 15
+import models.UserAnswers
+import play.api.libs.json.JsPath
+
+import scala.util.Try
+
+case object RfmSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmSecondaryPhonePreference"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmSecondaryCapturePhonePage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

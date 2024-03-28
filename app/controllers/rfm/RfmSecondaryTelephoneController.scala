@@ -19,61 +19,72 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.GroupRegistrationDateReportFormProvider
+import forms.RfmSecondaryTelephoneFormProvider
 import models.Mode
-import models.rfm.RegistrationDate
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmRegistrationDatePage
-import play.api.data.Form
+import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.GroupRegistrationDateReportView
+import views.html.rfm.RfmSecondaryTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GroupRegistrationDateReportController @Inject() (
+class RfmSecondaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              GroupRegistrationDateReportFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmSecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupRegistrationDateReportView
+  view:                      RfmSecondaryTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def form: Form[RegistrationDate] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
+      (for {
+        contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
+        _           <- request.userAnswers.get(RfmSecondaryPhonePreferencePage)
+      } yield {
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmSecondaryCapturePhonePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode, contactName))
+
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
-      )
+    request.userAnswers
+      .get(RfmSecondaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryCapturePhonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmSecondaryCapturePhonePage, mode, updatedAnswers))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

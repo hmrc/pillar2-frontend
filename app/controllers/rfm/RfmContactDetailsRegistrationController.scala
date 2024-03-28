@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactDetailsRegistrationView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactDetailsRegistrationController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
@@ -35,6 +35,11 @@ class RfmContactDetailsRegistrationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = rfmIdentify { implicit request =>
-    Ok(view())
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      Ok(view())
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 }

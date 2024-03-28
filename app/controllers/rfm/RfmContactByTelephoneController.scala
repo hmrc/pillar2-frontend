@@ -19,59 +19,70 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, Mode, NormalMode}
+import forms.RfmContactByTelephoneFormProvider
+import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmPillar2ReferencePage
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.RfmContactByTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecurityCheckController @Inject() (
+class RfmContactByTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmSecurityCheckFormProvider,
-  navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecurityCheckView
+  view:                      RfmContactByTelephoneView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
+      request.userAnswers
+        .get(RfmPrimaryContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
+            case Some(v) => form.fill(v)
+            case None    => form
+          }
+          Ok(view(preparedForm, mode, contactName))
+        }
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
-      )
+    request.userAnswers
+      .get(RfmPrimaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

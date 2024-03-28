@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import models.registration._
 import models.rfm.RegistrationDate
-import models.{EnrolmentInfo, UKAddress}
+import models.{EnrolmentInfo, NonUKAddress, UKAddress}
 import pages._
 import utils.RowStatus
 
@@ -288,6 +288,39 @@ class SubscriptionHelpersSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
 
         userAnswers.securityQuestionStatus mustEqual RowStatus.NotStarted
+      }
+
+    }
+
+    "SubscriptionHelpers.rfmNoIdQuestionStatus" should {
+      val name = "nfm name"
+      val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
+      "return Completed when answers are provided to all security questions" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(RfmNameRegistrationPage, name)
+          .success
+          .value
+          .set(RfmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
+
+        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.Completed
+      }
+
+      "return InProgress when an answer is provided to rfmNfmNameRegistrationPage and not to rfmNfmRegisteredAddressPage" in {
+        val userAnswersInProgress = emptyUserAnswers
+          .set(RfmNameRegistrationPage, name)
+          .success
+          .value
+
+        userAnswersInProgress.rfmNoIdQuestionStatus mustEqual RowStatus.InProgress
+      }
+
+      "return NotStarted when answers are not provided to any of the rfm NoId questions" in {
+        val userAnswers = emptyUserAnswers
+
+        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.NotStarted
       }
 
     }

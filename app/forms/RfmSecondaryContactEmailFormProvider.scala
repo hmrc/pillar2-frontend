@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package mapping
+package forms
 
-object Constants {
-  final val ENGLISH                = "en"
-  final val WELSH                  = "cy"
-  final val UK_COUNTRY_CODE        = "GB"
-  final val RFM_ADDRESS_MAX_LENGTH = 35
-  final val MAX_LENGTH_105         = 105
-  final val MAX_LENGTH_132         = 132
-  final val MAX_LENGTH_160         = 160
-  final val MAX_LENGTH_200         = 200
-  final val EQUAL_LENGTH_15        = 15
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
+import javax.inject.Inject
+
+class RfmSecondaryContactEmailFormProvider @Inject() extends Mappings {
+
+  def apply(userName: String): Form[String] =
+    Form(
+      "emailAddress" -> text("rfm.secondaryContactEmail.error.required", Seq(userName))
+        .verifying(maxLength(Constants.MAX_LENGTH_132, "rfm.secondaryContactEmail.error.length"))
+        .verifying(regexp(Validation.EMAIL_REGEX, "rfm.secondaryContactEmail.error.format"))
+    )
 }

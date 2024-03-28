@@ -19,43 +19,48 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, Mode, NormalMode}
+import forms.RfmSecondaryContactNameFormProvider
+import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmPillar2ReferencePage
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.RfmSecondaryContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecurityCheckController @Inject() (
+class RfmSecondaryContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmSecurityCheckFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmSecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      SecurityCheckView
+  view:                      RfmSecondaryContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
+      (for {
+        _ <- request.userAnswers.get(RfmAddSecondaryContactPage)
+        _ <- request.userAnswers.get(RfmPrimaryContactNamePage)
+      } yield {
+        val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode))
+      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -68,9 +73,9 @@ class SecurityCheckController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryContactNamePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(RfmSecondaryContactNamePage, mode, updatedAnswers))
       )
   }
 

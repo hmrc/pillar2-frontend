@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package mapping
+package forms
 
-object Constants {
-  final val ENGLISH                = "en"
-  final val WELSH                  = "cy"
-  final val UK_COUNTRY_CODE        = "GB"
-  final val RFM_ADDRESS_MAX_LENGTH = 35
-  final val MAX_LENGTH_105         = 105
-  final val MAX_LENGTH_132         = 132
-  final val MAX_LENGTH_160         = 160
-  final val MAX_LENGTH_200         = 200
-  final val EQUAL_LENGTH_15        = 15
+import forms.mappings.Mappings
+import play.api.data.Form
+import javax.inject.Inject
+
+class RfmSecondaryTelephoneFormProvider @Inject() extends Mappings {
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
+  def apply(userName: String): Form[String] =
+    Form(
+      "value" -> text("rfm.secondaryTelephone.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "rfm.secondaryTelephone.error.length"))
+        .verifying(regexp(phoneRegex, "rfm.secondaryTelephone.error.format"))
+    )
 }

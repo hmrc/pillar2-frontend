@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package mapping
+package pages
 
-object Constants {
-  final val ENGLISH                = "en"
-  final val WELSH                  = "cy"
-  final val UK_COUNTRY_CODE        = "GB"
-  final val RFM_ADDRESS_MAX_LENGTH = 35
-  final val MAX_LENGTH_105         = 105
-  final val MAX_LENGTH_132         = 132
-  final val MAX_LENGTH_160         = 160
-  final val MAX_LENGTH_200         = 200
-  final val EQUAL_LENGTH_15        = 15
+import models.NonUKAddress
+import play.api.libs.json.JsPath
+
+case object RfmRegisteredAddressPage extends QuestionPage[NonUKAddress] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmRegisteredAddress"
 }

@@ -17,22 +17,62 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
+import forms.ContactUPEByTelephoneFormProvider
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers._
 import views.html.rfm.RfmContactDetailsRegistrationView
+
+import scala.concurrent.Future
 
 class RfmContactDetailsRegistrationControllerSpec extends SpecBase {
 
-  "RfmContactDetailsRegistrationControllerSpec" when {
+  "Rfm Contact Details Registration Controller" when {
 
-    "return ok and populate view correctly for GET" in {
-      val application = applicationBuilder().build()
+    "return OK and the correct view for a GET" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
-        val view    = application.injector.instanceOf[RfmContactDetailsRegistrationView]
-        val result  = route(application, request).value
-        status(result) mustBe OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RfmContactDetailsRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must redirect to Under Construction page if RFM access is disabled" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }
     }
   }

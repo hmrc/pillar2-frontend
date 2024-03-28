@@ -18,55 +18,58 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmPrimaryNameRegistrationFormProvider
-import models.{Mode, NormalMode}
+import forms.RfmNameRegistrationFormProvider
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.RfmPrimaryNameRegistrationPage
+import pages.RfmNameRegistrationPage
+import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmPrimaryNameRegistrationView
+import views.html.rfm.RfmNameRegistrationView
 
 import scala.concurrent.Future
 
-class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
+class RfmNameRegistrationControllerSpec extends SpecBase {
 
-  val formProvider = new RfmPrimaryNameRegistrationFormProvider()
+  val formProvider = new RfmNameRegistrationFormProvider()
 
-  "RFM UPE Name Registration controller" when {
+  "RFM NfmNameRegistrationController Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when RFM access is enabled" in {
+
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
+        val view = application.injector.instanceOf[RfmNameRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(RfmPrimaryNameRegistrationPage, "name")
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val pageAnswer = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "alex")
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
-        val result  = route(application, request).value
-        val view    = application.injector.instanceOf[RfmPrimaryNameRegistrationView]
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
+
+        val view = application.injector.instanceOf[RfmNameRegistrationView]
+
+        val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -74,8 +77,7 @@ class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when rfm feature is set to false" in {
-
+    "must redirect to Under Construction page if RFM access is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -86,17 +88,16 @@ class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted" in {
+    "must redirect to RFM Registered Address page with valid data" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -107,13 +108,13 @@ class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url
       }
     }
 
@@ -124,12 +125,17 @@ class RfmPrimaryNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider().bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[RfmNameRegistrationView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
