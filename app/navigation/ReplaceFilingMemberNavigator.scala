@@ -16,6 +16,7 @@
 
 package navigation
 
+import controllers.routes
 import models._
 import pages._
 import play.api.mvc.Call
@@ -37,6 +38,7 @@ class ReplaceFilingMemberNavigator @Inject() {
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case RfmUkBasedPage           => rfmUkBasedLogic
     case RfmPillar2ReferencePage  => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
     case RfmRegistrationDatePage  => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage  => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
@@ -57,5 +59,17 @@ class ReplaceFilingMemberNavigator @Inject() {
       case Some(true) => reviewAndSubmitCheckYourAnswers
       case _          => rfmCheckYourAnswers
     }
+
+  private def rfmUkBasedLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmUkBasedPage)
+      .map { rfmUkBased =>
+        if (rfmUkBased) {
+          controllers.routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
 }
