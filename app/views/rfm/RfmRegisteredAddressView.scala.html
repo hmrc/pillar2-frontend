@@ -1,0 +1,123 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+@import viewmodels.InputWidth._
+@import utils.InputOption
+@import viewmodels.LabelSize.Large
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
+    heading: heading,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukSelect: GovukSelect,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = title(form, messages("rfm.registeredAddress.title" ))) {
+
+@formHelper(action = controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(mode)) {
+
+@if(form.errors.nonEmpty) {
+@govukErrorSummary(ErrorSummaryViewModel(form))
+}
+
+@sectionHeader(messages("rfm.registration.heading.caption"))
+
+@heading(messages("rfm.registeredAddress.heading", UserName), "govuk-heading-l long-word")
+
+@govukInput(
+InputViewModel(
+field = form("addressLine1"),
+label = LabelViewModel(messages("rfm.registeredAddress.addressLine1"))
+)
+.withWidth(TwoThirds)
+.withAutocomplete("address-line1")
+)
+@govukInput(
+InputViewModel(
+field = form("addressLine2"),
+label = LabelViewModel(messages("rfm.registeredAddress.addressLine2"))
+)
+.withWidth(TwoThirds)
+.withAutocomplete("address-line2")
+)
+@govukInput(
+InputViewModel(
+field = form("addressLine3"),
+label = LabelViewModel(messages("rfm.registeredAddress.town_city"))
+)
+.withWidth(TwoThirds)
+.withAutocomplete("address-level2")
+)
+@govukInput(
+InputViewModel(
+field = form("addressLine4"),
+label = LabelViewModel(messages("rfm.registeredAddress.region"))
+)
+.withWidth(TwoThirds)
+.withAutocomplete("address-level1")
+)
+@govukInput(
+InputViewModel(
+field = form("postalCode"),
+label = LabelViewModel(messages("rfm.registeredAddress.postcode"))
+)
+.withWidth(Fixed10)
+.withAutocomplete("postal-code")
+
+)
+
+@govukSelect(
+Select(
+id = form("countryCode").id,
+name = form("countryCode").name,
+label = Label(
+isPageHeading = true,
+classes = "govuk-heading-l",
+content = Text(messages("rfm.registeredAddress.country"))
+),
+hint = Some(Hint(content = Text(messages("rfm.registeredAddress.country.hint")))),
+items = Seq(
+SelectItem(
+value = Some(""),
+text = messages("site.address.country.select")
+)
+) ++
+countryOptions.map(valueOption =>
+SelectItem(
+value = Some(valueOption.value),
+text = valueOption.label,
+selected = form("countryCode").value.contains(valueOption.value)
+)
+),
+formGroupClasses = "autocomplete-wrapper",
+attributes = Map("data-non-uk-countries" -> ""),
+errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+)
+)
+
+@govukButton(
+ButtonViewModel(messages("site.continue"))
+)
+}
+}
