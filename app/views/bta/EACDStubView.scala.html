@@ -15,8 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
+    heading: heading,
+    paragraphBody: paragraphBody,
     govukButton: GovukButton
 )
 
@@ -24,14 +28,13 @@
 
 @layout(pageTitle = titleNoForm(messages("bta.eacd.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("bta.eacd.heading")</h1>
+    @heading(messages("bta.eacd.heading"), "govuk-heading-l")
 
-    <p class="govuk-body">@messages("bta.eacd.p1")</p>
+    @paragraphBody(messages("bta.eacd.p1"))
 
-    <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-                .asLink(appConfig.btaHomePageUrl)
-        )
-    </p>
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+            .asLink(appConfig.btaHomePageUrl)
+    )
+
 }
