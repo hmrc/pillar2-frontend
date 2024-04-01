@@ -31,7 +31,7 @@
     <p class="govuk-body">
         @govukButton(
             ButtonViewModel(messages("site.continue"))
-                .asLink("/report-pillar2-top-up-taxes/bta/confirmation")
+                .asLink(appConfig.btaHomePageUrl)
         )
     </p>
 }
