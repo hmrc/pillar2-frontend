@@ -40,7 +40,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
-        .setOrException(RfmPrimaryContactEmailPage, "asda")
+        .setOrException(RfmPrimaryContactEmailPage, "john.doe@example.com")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -60,7 +60,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
-        .setOrException(RfmPrimaryContactEmailPage, "asda")
+        .setOrException(RfmPrimaryContactEmailPage, "john.doe@example.com")
         .setOrException(RfmAddSecondaryContactPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -106,7 +106,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
-        .setOrException(RfmPrimaryContactEmailPage, "asda@hola.com")
+        .setOrException(RfmPrimaryContactEmailPage, "john.doe@example.com")
         .setOrException(RfmAddSecondaryContactPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
