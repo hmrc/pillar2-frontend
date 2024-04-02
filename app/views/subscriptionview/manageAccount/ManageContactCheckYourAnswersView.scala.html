@@ -15,36 +15,40 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-   formHelper: FormWithCSRF,
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF,
+        h1: heading,
+        h2: HeadingH2
 )
 
-
-@(listPrimary: SummaryList,addSecondaryContactList:SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title")), showBackLink = false) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
         <div class="manage-contact-details">
-            <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading.caption")</h1>
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
+            @h1(messages("contactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
+
+            @h2(messages("contactCheckYourAnswers.first"), size = "m")
             @govukSummaryList(listPrimary)
 
-            <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
-                @govukSummaryList(addSecondaryContactList)
-                 @govukSummaryList(listSecondary)
+            @h2(messages("contactCheckYourAnswers.second"), size = "m")
+            @govukSummaryList(listSecondary)
 
-                <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
-                @govukSummaryList(address)
-            <br>
+            @h2(messages("contactCheckYourAnswers.address"), size = "m")
+            @govukSummaryList(address)
+
             @govukButton(
-                ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit")
+                ButtonViewModel(messages("site.manage.save-and-continue"))
+                .withAttribute("id", "submit")
+                .withCssClass("govuk-!-margin-top-4")
             )
 
         </div>
-}
+    }
 }
 

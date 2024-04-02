@@ -57,23 +57,24 @@ class ManageContactCheckYourAnswersController @Inject() (
         ContactByTelephoneSummary.row(request.userAnswers),
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
       ).flatten
-    )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
         SecondaryTelephoneSummary.row(request.userAnswers)
       ).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     if (request.userAnswers.manageContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+      Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }

@@ -22,11 +22,11 @@ import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredInUKPage}
+import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.fmview.NfmNameRegistrationView
 
@@ -48,20 +48,13 @@ class NfmNameRegistrationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(FmNameRegistrationPage).map(nominated => form.fill(nominated)).getOrElse(form)
-    val result: Future[Result] = if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
-      Future.successful(Ok(view(preparedForm, mode)))
-    } else if (request.userAnswers.get(FmRegisteredInUKPage).contains(true) & request.userAnswers.get(FmEntityTypePage).isEmpty) {
-      for {
-        updatedAnswers <-
-          Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
-        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-      } yield Ok(view(preparedForm, mode))
+    if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
+      Ok(view(preparedForm, mode))
     } else {
-      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-    result
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

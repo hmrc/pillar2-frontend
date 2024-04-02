@@ -14,29 +14,30 @@
  * limitations under the License.
  *@
 
-@import models.NormalMode
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
-
-@(mode:Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("startPageRegistration.title"))) {
+    pageTitle = titleNoForm(messages("startPageRegistration.title"))) {
 
-        <span class="govuk-caption-l">@messages("startPageRegistration.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("startPageRegistration.heading")</h1>
+    @sectionHeader(messages("startPageRegistration.heading.caption"))
+    @heading(messages("startPageRegistration.heading"), "govuk-heading-l")
+    @paragraphBody(messages("startPageRegistration.p1"))
 
-    <p class="govuk-body">@messages("startPageRegistration.p1")</p>
-
-     @govukButton(
-      ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode).url)
-     )
-
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode).url)
+    )
 
 
 }
