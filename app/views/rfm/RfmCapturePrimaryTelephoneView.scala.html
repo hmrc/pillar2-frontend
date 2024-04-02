@@ -31,13 +31,13 @@
 @(form: Form[_], mode: Mode, UserName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfmCaptureTelephoneDetails.title"))) {
-    @sectionHeader(messages("rfmCaptureTelephoneDetails.heading.caption"))
+
     @formHelper(action = controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+        @sectionHeader(messages("rfmCaptureTelephoneDetails.heading.caption"))
         @govukInput(
             InputViewModel(
                 field = form("telephoneNumber"),

@@ -16,10 +16,12 @@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds._
+@import viewmodels.LegendSize
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
         h1: heading,
         h2: HeadingH2,
         span: Span,
@@ -35,21 +37,23 @@
 
 @layout(pageTitle = title(form, messages("useContactPrimary.title"))) {
 
+
     @formHelper(action = controllers.subscription.routes.UseContactPrimaryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @span(messages("useContactPrimary.heading.caption"))
+        @sectionHeader(messages("useContactPrimary.heading.caption"))
+
         @h1(messages("useContactPrimary.heading"), classes = "govuk-heading-l")
+
         @govukSummaryList(list)
 
-        @h2(messages("useContactPrimary.h2"), size = "m")
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                fieldset = Fieldset.defaultObject
+                legend = LegendViewModel(messages("useContactPrimary.h2")).asPageHeading(LegendSize.Medium)
             )
         )
 
