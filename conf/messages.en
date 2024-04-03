@@ -908,6 +908,9 @@ bta.noPlrIdGuidance.cta = Return to your Business Tax Account
 bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.p1 = screen owned by EACD
+bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
+bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
+bta.accessConfirmation.cta = Continue to Business Tax Account
 
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
