@@ -15,36 +15,39 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF
 )
 
-
-@(listPrimary: SummaryList,listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("contactCheckYourAnswers.title"))) {
-@formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
-<div class="contact-details">
-    <span class="govuk-caption-l">@messages("contactCheckYourAnswers.heading.caption")</span>
-    <h1 class="govuk-heading-l">@messages("contactCheckYourAnswers.heading")</h1>
-<h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.first")</h2>
-    @govukSummaryList(listPrimary)
-    <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.second")</h2>
-         @govukSummaryList(listSecondary)
-        <h2 class="govuk-heading-m">@messages("contactCheckYourAnswers.address")</h2>
-        @govukSummaryList(address)
-</div>
-
-    @govukButton(
-    ButtonViewModel(messages("site.save-and-continue"))
-    .withAttribute("id","continue").withCssClass("govuk-!-margin-top-6"))
-
-}
 
 
+    @formHelper(action = controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit) {
+        <div class="contact-details">
+            @sectionHeader(messages("contactCheckYourAnswers.heading.caption"))
+            @heading(messages("contactCheckYourAnswers.heading"), "govuk-heading-l")
+            @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", "h2")
+
+            @govukSummaryList(listPrimary)
+            @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", "h2")
+
+            @govukSummaryList(listSecondary)
+            @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
+
+            @govukSummaryList(address)
+        </div>
+        @govukButton(
+            ButtonViewModel(messages("site.save-and-continue"))
+            .withAttribute("id", "continue").withCssClass("govuk-!-margin-top-6"))
+    }
 }
 

@@ -14,55 +14,60 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
 @import config.FrontendAppConfig
+@import viewmodels.InputWidth._
+@import views.html.components.gds._
 @import utils.InputOption
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    govukSelect: GovukSelect
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukSelect: GovukSelect
 )
 
 @(form: Form[_], mode: Mode, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
+
     @formHelper(action = controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
-    @if(form.errors.nonEmpty) {
-    @govukErrorSummary(ErrorSummaryViewModel(form))
-    }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-    <span class="govuk-caption-l">@messages("subscriptionAddress.heading.caption")</span>
-    <h1 class="govuk-heading-l long-word">@messages("subscriptionAddress.heading")</h1>
+        @sectionHeader(messages("subscriptionAddress.heading.caption"))
 
-         @govukInput(
-             InputViewModel(
-                 field = form("addressLine1"),
-                 label = LabelViewModel(messages("subscriptionAddress.addressLine1"))
-             )
-                    .withWidth(TwoThirds)
-                    .withAutocomplete("address-line1")
+        @heading(messages("subscriptionAddress.heading"), "govuk-heading-l long-word")
+
+        @govukInput(
+            InputViewModel(
+                field = form("addressLine1"),
+                label = LabelViewModel(messages("subscriptionAddress.addressLine1"))
             )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-line1")
+        )
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine2"),
                 label = LabelViewModel(messages("subscriptionAddress.addressLine2"))
-             )
-                .withWidth(TwoThirds)
-                .withAutocomplete("address-line2")
             )
+            .withWidth(TwoThirds)
+            .withAutocomplete("address-line2")
+        )
 
         @govukInput(
             InputViewModel(
                 field = form("addressLine3"),
                 label = LabelViewModel(messages("subscriptionAddress.town_city"))
-             )
+            )
             .withWidth(TwoThirds)
             .withAutocomplete("address-level2")
         )
@@ -74,7 +79,7 @@
             )
             .withWidth(TwoThirds)
             .withAutocomplete("address-level1")
-          )
+        )
 
         @govukInput(
             InputViewModel(
@@ -96,11 +101,11 @@
                 ),
                 hint = Some(Hint(content = Text(messages("subscriptionAddress.country.hint")))),
                 items = Seq(
-                            SelectItem(
-                                value = Some(""),
-                                text = messages("site.address.country.select")
-                            )
-                        ) ++
+                    SelectItem(
+                        value = Some(""),
+                        text = messages("site.address.country.select")
+                    )
+                ) ++
                         countryOptions.map(valueOption =>
                             SelectItem(
                                 value = Some(valueOption.value),

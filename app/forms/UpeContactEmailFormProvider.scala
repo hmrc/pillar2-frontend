@@ -19,13 +19,18 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
+
 import javax.inject.Inject
 
 class UpeContactEmailFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("upe-input-business-contact.email.error.required", Seq(userName))
-        .verifying(maxLength(Constants.MAX_LENGTH_132, "upe-input-business-contact.email.error.length"))
-        .verifying(regexp(Validation.EMAIL_REGEX, "upe-input-business-contact.email.error.invalid"))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_132, "upe-input-business-contact.email.error.length"),
+            regexp(Validation.EMAIL_REGEX, "upe-input-business-contact.email.error.invalid")
+          )
+        )
     )
 }

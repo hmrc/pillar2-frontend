@@ -16,31 +16,36 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Large
+@import views.html.components.gds.sectionHeader
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
-    )
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
+)
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
 
+
     @formHelper(action = controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-    }
-        <span class="govuk-caption-l">@messages("taskList.task.contact.heading", contactName)</span>
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
+        @sectionHeader(messages("taskList.task.contact.heading"))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("addSecondaryContact.heading", contactName)).asPageHeading(Large)
             ).withHint(Hint(content = Text(messages("addSecondaryContact.hint"))))
-            )
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")

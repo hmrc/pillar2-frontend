@@ -16,40 +16,48 @@
 
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Medium
+@import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        bulletList: bulletList,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("mneOrDomestic.heading.caption")</span>
-        <h1 class="govuk-heading-l">@messages("mneOrDomestic.heading")</h1>
-        <p class="govuk-body">@messages("mneOrDomestic.p1")</p>
-        <p class="govuk-body">@messages("mneOrDomestic.p2")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("mneOrDomestic.l1")</li>
-            <li>@messages("mneOrDomestic.l2")</li>
-        </ul>
-        <p class="govuk-body">@messages("mneOrDomestic.p3")</p>
-        <p class="govuk-body">@messages("mneOrDomestic.p4")</p>
-        <p class="govuk-body">@messages("mneOrDomestic.p5")</p>
+
+        @sectionHeader(messages("mneOrDomestic.heading.caption"))
+
+        @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
+        @paragraphBody(messages("mneOrDomestic.p1"))
+        @paragraphBody(messages("mneOrDomestic.p2"))
+        @paragraphBody(messages("mneOrDomestic.p3"))
+        @bulletList(items = List(
+            Html(messages("mneOrDomestic.l1")),
+            Html(messages("mneOrDomestic.l2"))
+        ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+        @paragraphBody(messages("mneOrDomestic.p4"))
+        @paragraphBody(messages("mneOrDomestic.p5"))
+        @paragraphBody(messages("mneOrDomestic.p6"))
         @govukRadios(
             RadiosViewModel(
-                field  = form("value"),
+                field = form("value"),
                 legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
-                items  = MneOrDomestic.options
+                items = MneOrDomestic.options
             )
         )
 

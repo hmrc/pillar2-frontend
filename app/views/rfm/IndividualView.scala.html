@@ -18,33 +18,33 @@
 @import views.html.components.gds._
 
 @this(
-  layout: templates.Layout,
-  govukButton: GovukButton,
-  heading: heading,
-  paragraphBody: paragraphBody,
-  paragraph: paragraph,
-  link: link
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link: link
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("rfm.individual.title")),
-  showSignOut = false,
-  authorised = false
+    pageTitle = titleNoForm(messages("rfm.individual.title")),
+    showSignOut = false,
+    authorised = false
 ) {
-  @heading(messages("rfm.individual.heading"), "govuk-heading-l")
-  @paragraphBody(messages("rfm.individual.p1"))
+    @heading(messages("rfm.individual.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.individual.p1"))
 
-  @paragraphBody(messages("rfm.individual.p2", link(
-    text = messages("rfm.individual.p2.link"),
-    call = Call("GET", appConfig.loginUrl+"?continue="+appConfig.rfmLoginContinueUrl),
-    fullStop = true
-  )))
+    @paragraphBody(messages("rfm.individual.p2", link(
+        text = messages("rfm.individual.p2.link"),
+        call = Call("GET", appConfig.loginUrl + "?continue=" + appConfig.rfmLoginContinueUrl),
+        fullStop = true
+    )))
 
-  @paragraph(link(
-      text = messages("rfm.individual.link"),
-      call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
-      fullStop = false
-  ))
+    @paragraph(link(
+        text = messages("rfm.individual.link"),
+        call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
+        fullStop = false
+    ))
 }
