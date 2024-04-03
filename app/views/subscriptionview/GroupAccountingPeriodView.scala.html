@@ -37,7 +37,26 @@
     @formHelper(action = controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("startDate" -> "startDate.day", "endDate" -> "endDate.day")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = {
+                def errorKeys(errors: Seq[FormError], fieldKey: String): String = {
+                    val errorMessageKeys = form.errors.map(x => x.message).find(x => x.contains(fieldKey))
+                    val emptyErrorFields = form.errors.filter(x => x.key == fieldKey).flatMap(x => x.args.map(_.toString)).headOption
+
+                    def extractErrorKey(error: Option[String], errorField: Option[String], key: String)=
+                        error match {
+                            case Some(msg) if msg.contains("all") => s"$key.day"
+                            case Some(msg) if msg.contains("required") => s"$key.${errorField.getOrElse("day")}"
+                            case Some(msg) if msg.contains("year") => s"$key.year"
+                            case Some(msg) if msg.contains("month") => s"$key.month"
+                            case _ => s"$key.day"
+                        }
+                    extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
+                }
+                Map(
+                    "startDate" -> errorKeys(form.errors, "startDate"),
+                    "endDate" -> errorKeys(form.errors, "endDate")
+                )
+            }))
         }
 
         @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
