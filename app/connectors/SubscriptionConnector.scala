@@ -18,12 +18,12 @@ package connectors
 
 import config.FrontendAppConfig
 import models.{DuplicateSubmissionError, InternalIssueError}
-import models.subscription.{SubscriptionRequestParameters, SuccessResponse}
+import models.subscription.{ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionRequestParameters, SuccessResponse}
 import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
 
@@ -46,4 +46,20 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
           Future.failed(InternalIssueError)
       }
+
+  def readSubscription(
+    readSubscriptionParameter: ReadSubscriptionRequestParameters
+  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[ReadSubscriptionResponse]] = {
+    val subscriptionUrl = constructUrl(readSubscriptionParameter)
+    http
+      .GET[Option[ReadSubscriptionResponse]](subscriptionUrl)
+      .recover { case e: UpstreamErrorResponse =>
+        logger.warn(s"Connection issue when calling read subscription with status: ${e.statusCode}")
+        None
+      }
+  }
+
+  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters): String =
+    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
+
 }

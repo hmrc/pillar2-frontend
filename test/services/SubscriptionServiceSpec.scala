@@ -19,18 +19,25 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.InternalIssueError
 import models.registration.RegistrationInfo
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, ReadSubscriptionResponse, UpeDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
 import play.api.test.Helpers.running
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import java.time.LocalDate
+import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionServiceSpec extends SpecBase {
 
   val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+
+  val id           = "testId"
+  val plrReference = "testPlrRef"
 
   "SubscriptionService" when {
     "subscribe" should {
@@ -193,6 +200,82 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.DuplicateSubmissionError
+        }
+      }
+
+    }
+
+    "readSubscription" when {
+
+      "return ReadSubscriptionResponse when the connector returns valid data and transformation is successful" in {
+        val validResponse =
+          ReadSubscriptionResponse(UpeDetails("International Organisation Inc.", LocalDate.parse("2022-01-31")), Some(AccountStatus(true)))
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+
+        val service = application.injector.instanceOf[SubscriptionService]
+
+        running(application) {
+
+          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(
+              Future.successful(
+                Some(validResponse)
+              )
+            )
+
+          val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+
+          result mustBe validResponse
+        }
+      }
+
+      "return InternalIssueError when the connector returns None" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(None))
+
+          val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
+
+          result mustBe models.InternalIssueError
+        }
+      }
+
+      "handle exceptions thrown by the connector" in {
+        val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+          )
+          .build()
+
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(new RuntimeException("Connection error")))
+
+          val resultFuture = service.readSubscription(requestParameters)
+
+          whenReady(resultFuture.failed) { e =>
+            e mustBe InternalIssueError
+          }
         }
       }
 

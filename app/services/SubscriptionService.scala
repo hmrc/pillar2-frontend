@@ -18,8 +18,8 @@ package services
 
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
-import models.subscription.SubscriptionRequestParameters
-import models.{DuplicateSubmissionError, UserAnswers}
+import models.subscription.{ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionRequestParameters}
+import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,6 +45,13 @@ class SubscriptionService @Inject() (
       _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
     } yield plrRef
 
+  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[ReadSubscriptionResponse] =
+    subscriptionConnector.readSubscription(parameters).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)

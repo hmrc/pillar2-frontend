@@ -23,12 +23,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.IdentifierAction
 import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{FmDashboardPage, SubAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{ReadSubscriptionService, ReferenceNumberService}
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 
@@ -37,14 +36,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
-  val userAnswersConnectors:   UserAnswersConnectors,
-  identify:                    IdentifierAction,
-  val readSubscriptionService: ReadSubscriptionService,
-  val controllerComponents:    MessagesControllerComponents,
-  view:                        DashboardView,
-  referenceNumberService:      ReferenceNumberService,
-  sessionRepository:           SessionRepository
-)(implicit ec:                 ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors: UserAnswersConnectors,
+  identify:                  IdentifierAction,
+  val subscriptionService:   SubscriptionService,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      DashboardView,
+  referenceNumberService:    ReferenceNumberService,
+  sessionRepository:         SessionRepository
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -53,20 +52,15 @@ class DashboardController @Inject() (
     val x = for {
       userAnswers     <- OptionT.liftF(sessionRepository.get(request.userId))
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
-      _               <- OptionT.liftF(readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
-      updatedAnswers  <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
-      dashboard       <- OptionT.fromOption[Future](updatedAnswers.get(FmDashboardPage))
-    } yield {
-      val inactiveStatus = updatedAnswers.get(SubAccountStatusPage).exists(_.inactive)
-      Ok(
-        view(
-          dashboard.organisationName,
-          dashboard.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-          referenceNumber,
-          inactiveStatus = inactiveStatus
-        )
+      dashboard       <- OptionT.liftF(subscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
+    } yield Ok(
+      view(
+        dashboard.upeDetails.organisationName,
+        dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+        referenceNumber,
+        inactiveStatus = dashboard.accountStatus.exists(_.inactive)
       )
-    }
+    )
     x.recover { case InternalIssueError =>
       logger.error(
         s"[ read subscription failed as no valid Json was returned from the controller"
