@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.{CaptureTelephoneDetailsFormProvider, RfmCaptureTelephoneDetailsFormProvider}
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
+  val formProvider = new RfmCaptureTelephoneDetailsFormProvider()
 
   "Rfm Capture Telephone Details Controller" when {
 
@@ -120,25 +120,81 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
       }
 
     }
-    "return bad request if wrong data is inputted" in {
-      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+    "must return a Bad Request errors when invalid data format is submitted" in {
+
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "adsasd")
+            .withFormUrlEncodedBody(("value", "abc"))
+
+        val boundForm = formProvider("name").bind(Map("value" -> "abc"))
+
+        val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
+
         val result = route(application, request).value
+
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "redirect to book mark prevention page" in {
-      val application = applicationBuilder(None).build()
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+
+      val bigString = "123" * 100
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", bigString))
+
+        val boundForm = formProvider("name").bind(Map("value" -> bigString))
+
+        val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when empty page is submitted" in {
+
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider("name").bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to recovery page if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None)
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 

@@ -336,7 +336,6 @@ GET        /replace-filing-member/business-matching/filing-member/no-id/change-i
 POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
-GET        /bta/confirmation                                                 controllers.bta.AccessConfirmationController.onPageLoad
 GET        /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
 POST       /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
 GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
@@ -358,6 +357,8 @@ GET         /replace-filing-member/security/change-registration-date        cont
 POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
+
+
 GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = CheckMode)
@@ -389,10 +390,10 @@ POST       /replace-filing-member/security/check-answers                    cont
 GET        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
-GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.NoIdCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.NoIdCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.NoIdCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.NoIdCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)

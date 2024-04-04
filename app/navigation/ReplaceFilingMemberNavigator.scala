@@ -32,45 +32,41 @@ class ReplaceFilingMemberNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private lazy val reviewAndSubmitCheckYourAnswers   = ??? // TODO route to final check answers page for rfm journey
+  private lazy val reviewAndSubmitCheckYourAnswers =
+    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
   private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
-  private lazy val noIdCheckYourAnswers              = controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
     case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
     case RfmContactByTelephonePage       => telephonePreferenceLogic
     case RfmCapturePrimaryTelephonePage  => _ => controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
+    case RfmUkBasedPage                  => rfmUkBasedLogic
     case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRoute
     case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
     case RfmSecondaryCapturePhonePage    => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
-    case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
     case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case RfmPillar2ReferencePage  => whichCheckYourAnswerPageSecurityQuestions
-    case RfmRegistrationDatePage  => whichCheckYourAnswerPageSecurityQuestions
-    case RfmNameRegistrationPage  => whichCheckYourAnswerPageNoIdQuestions
-    case RfmRegisteredAddressPage => whichCheckYourAnswerPageNoIdQuestions
+    case RfmPillar2ReferencePage  => _ => securityQuestionsCheckYourAnswers
+    case RfmRegistrationDatePage  => _ => securityQuestionsCheckYourAnswers
+    case RfmNameRegistrationPage  => whichCheckYourAnswerPageRfmQuestions
+    case RfmRegisteredAddressPage => whichCheckYourAnswerPageRfmQuestions
     case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
-  private def whichCheckYourAnswerPageSecurityQuestions(userAnswers: UserAnswers): Call =
+  private def whichCheckYourAnswerPageRfmQuestions(userAnswers: UserAnswers): Call =
     userAnswers.get(RfmCheckYourAnswersLogicPage) match {
       case Some(true) => reviewAndSubmitCheckYourAnswers
-      case _          => securityQuestionsCheckYourAnswers
-    }
-
-  private def whichCheckYourAnswerPageNoIdQuestions(userAnswers: UserAnswers): Call =
-    userAnswers.get(RfmCheckYourAnswersLogicPage) match {
-      case Some(true) => reviewAndSubmitCheckYourAnswers
-      case _          => noIdCheckYourAnswers
+      case _          => rfmCheckYourAnswers
     }
 
   private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
@@ -105,6 +101,18 @@ class ReplaceFilingMemberNavigator @Inject() {
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
         } else {
           controllers.routes.UnderConstructionController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmUkBasedLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmUkBasedPage)
+      .map { rfmUkBased =>
+        if (rfmUkBased) {
+          controllers.routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

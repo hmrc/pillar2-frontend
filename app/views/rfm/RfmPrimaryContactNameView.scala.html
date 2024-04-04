@@ -34,24 +34,23 @@
 
 @formHelper(action = controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(mode)) {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-@sectionHeader(messages("rfm.rfmPrimaryContactName.caption"))
+        @sectionHeader(messages("rfm.rfmPrimaryContactName.caption"))
 
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeading(Large)
-)
-.withHint(Hint(content = Text(messages("rfm.rfmPrimaryContactName.hint"))))
-.withWidth(TwoThirds)
-)
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeading(Large)
+            )
+            .withHint(Hint(content = Text(messages("rfm.rfmPrimaryContactName.hint"))))
+            .withWidth(TwoThirds)
+        )
 
-@govukButton(
-ButtonViewModel(messages("site.continue"))
-)
-}
-
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

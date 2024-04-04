@@ -31,12 +31,12 @@
 @layout(
     pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
 
-@sectionHeader(messages("rfm.contact.heading.caption"))
-@heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-@paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
+    @sectionHeader(messages("rfm.contact.heading.caption"))
+    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
 
-@govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
-)
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
+    )
 
 }

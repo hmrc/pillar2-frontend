@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
 import viewmodels.govuk.SummaryListFluency
 
-class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "NoId flow questions check your answers controller" must {
 
@@ -39,12 +39,10 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       .value
 
     "return OK and the correct view if an answer is provided to every question " in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -55,13 +53,11 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     }
 
     "redirect to Journey Recovery page when rfm noId question status is not completed" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -75,7 +71,7 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -84,12 +80,10 @@ class NoIdCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     }
 
     "redirect to Under Construction page on form submission" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.NoIdCheckYourAnswersController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmCheckYourAnswersController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody()
 
         val result = route(application, request).value

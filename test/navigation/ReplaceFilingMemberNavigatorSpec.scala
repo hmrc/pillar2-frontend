@@ -34,10 +34,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
     postalCode = None,
     countryCode = "AB"
   )
-  private lazy val jr = controllers.routes.JourneyRecoveryController.onPageLoad()
 
+  private lazy val jr                   = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val securityQuestionsCYA = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
-  private lazy val noIdQuestionsCYA     = controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmQuestionsCYA      = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val submitAndReview =
+    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
   "Replace Filing Member Navigator" when {
 
     "in Normal mode" must {
@@ -45,6 +47,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to rfm start page" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
+      }
+
+      "go to contact email page from contact name page" in {
+        navigator.nextPage(RfmPrimaryContactNamePage, NormalMode, emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington")) mustBe
+          controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
       }
 
       "go to registration date page from pillar 2 reference page" in {
@@ -63,11 +70,6 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
         ) mustBe
           controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
-      }
-
-      "go to contact email page from contact name page" in {
-        navigator.nextPage(RfmPrimaryContactNamePage, NormalMode, emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington")) mustBe
-          controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
       }
 
       "go to telephone preference page from contact email page" in {
@@ -122,7 +124,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
-          controllers.rfm.routes.NoIdCheckYourAnswersController.onPageLoad(NormalMode)
+          controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
       }
 
       "go to RfmSecondaryContactName page if they select Yes on RfmAddSecondaryContact page" in {
@@ -201,21 +203,32 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           securityQuestionsCYA
       }
-      "go to no id CYA page from name registration page" in {
+
+      "go to rfm CYA page from name registration page" in {
         navigator.nextPage(
           RfmNameRegistrationPage,
           CheckMode,
           emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")
         ) mustBe
-          noIdQuestionsCYA
+          rfmQuestionsCYA
       }
-      "go to no id CYA page from registered address page" in {
+      "go to rfm CYA page from registered address page" in {
         navigator.nextPage(
           RfmRegisteredAddressPage,
           CheckMode,
           emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
-          noIdQuestionsCYA
+          rfmQuestionsCYA
+      }
+      "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
+        navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
+        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
+        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
+          submitAndReview
       }
     }
   }

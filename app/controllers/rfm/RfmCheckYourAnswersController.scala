@@ -27,16 +27,16 @@ import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.rfm.NoIdCheckYourAnswersView
+import views.html.rfm.RfmCheckYourAnswersView
 
 import scala.concurrent.Future
 
-class NoIdCheckYourAnswersController @Inject() (
+class RfmCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NoIdCheckYourAnswersView,
+  view:                     RfmCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
