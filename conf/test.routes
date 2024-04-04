@@ -1,5 +1,4 @@
 GET         /stub-grs-journey-data                                                   stubsonly.controllers.stubs.StubGrsJourneyDataController.onPageLoad(continueUrl, entityType)
-+ nocsrf
 POST        /stub-grs-journey-data                                                   stubsonly.controllers.stubs.StubGrsJourneyDataController.onSubmit(continueUrl, entityType)
 
 GET         /get-all                                                                 stubsonly.controllers.TestOnlyController.getAllRecords()
@@ -7,7 +6,6 @@ GET         /clear-all                                                          
 GET         /clear-current                                                           stubsonly.controllers.TestOnlyController.clearCurrentData()
 GET         /registration-data                                                       stubsonly.controllers.TestOnlyController.getRegistrationData()
 GET         /eligibility/clear-session                                               stubsonly.controllers.TestOnlyController.clearSession
-+ nocsrf
 POST        /upsertRecord/:id                                                        stubsonly.controllers.TestOnlyController.upsertRecord(id: String)
 
 GET         /de-enrol                                                                stubsonly.controllers.TestOnlyController.deEnrol()

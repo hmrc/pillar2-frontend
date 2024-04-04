@@ -122,15 +122,15 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   )
 
   val viewGroupTerritories: GroupTerritoriesView =
-    new GroupTerritoriesView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new GroupTerritoriesView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewBusinessActivityUK: BusinessActivityUKView =
-    new BusinessActivityUKView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new BusinessActivityUKView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton, heading)
   val viewRegisteringNfmForThisGroup: RegisteringNfmForThisGroupView =
-    new RegisteringNfmForThisGroupView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new RegisteringNfmForThisGroupView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewTurnOverEligibility: TurnOverEligibilityView =
-    new TurnOverEligibilityView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new TurnOverEligibilityView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewKbUKIneligible: KbUKIneligibleView =
     new KbUKIneligibleView(pillar2layout, formWithCSRF, heading, paragraphBody, paragraphBodyLink, govukButton)
@@ -143,12 +143,13 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
-    new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewNominateFilingMemberYesNo: NominateFilingMemberYesNoView =
     new NominateFilingMemberYesNoView(
       pillar2layout,
       formWithCSRF,
+      sectionHeader,
       govukErrorSummary,
       govukRadios,
       govukButton,
@@ -160,33 +161,34 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     )
 
   val viewStartPageRegistration: StartPageRegistrationView =
-    new StartPageRegistrationView(pillar2layout, formWithCSRF, govukButton)
+    new StartPageRegistrationView(pillar2layout, sectionHeader, heading, paragraphBody, formWithCSRF, govukButton)
 
   val viewRfmEntityTypeController: RfmEntityTypeView =
     new RfmEntityTypeView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton, sectionHeader)
   val viewUPENameRegistration: UpeNameRegistrationView =
-    new UpeNameRegistrationView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new UpeNameRegistrationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeContactName: UpeContactNameView =
-    new UpeContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new UpeContactNameView(pillar2layout, formWithCSRF, govukErrorSummary, sectionHeader, govukInput, govukButton)
   val viewUpeContactEmail: UpeContactEmailView =
-    new UpeContactEmailView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
+    new UpeContactEmailView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
-    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
-    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
-    new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
   val viewContactByTelephoneView: ContactByTelephoneView =
-    new ContactByTelephoneView(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)
+    new ContactByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
-    new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)
-  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView = new UpeCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+    new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
+  val viewCheckYourAnswersUPE: UpeCheckYourAnswersView =
+    new UpeCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
-    new FilingMemberCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+    new FilingMemberCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
-    new SubCheckYourAnswersView(pillar2layout, govukSummaryList, govukButton)
+    new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
   val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
 

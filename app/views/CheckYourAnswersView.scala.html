@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
+        sectionHeader: sectionHeader,
         govukButton: GovukButton,
         printLink: printLink,
         formHelper: FormWithCSRF,
@@ -31,9 +32,12 @@
 @(listUpe: SummaryList, listNfm: SummaryList, furtherRegistrationDetailsList: SummaryList, listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
+
     @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
 
-        <span class="govuk-caption-l">@messages("checkYourAnswers.heading.caption")</span>
+        @sectionHeader(messages("checkYourAnswers.heading.caption"))
+
         @heading(messages("checkYourAnswers.heading"), classes = "govuk-heading-l")
 
         @h2(messages("checkYourAnswers.upe"), size = "m")

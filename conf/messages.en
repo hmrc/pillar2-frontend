@@ -63,8 +63,7 @@ viewAmendSubscriptionFailed.link= Return to your account homepage to try again
 # Screen Reader and Accessibility
 #
 ###############################################
-pillar2.screen-reader.section = This section is
-
+section.heading.visually.hidden=This section is
 ###############################################
 error.pageNotFound.title = Page not found
 error.pageNotFound.heading = Page not found
@@ -261,12 +260,12 @@ upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
 
 under_construction.heading = Under Construction
-businessActivityUK.title = Does the group have business operations in the UK?
-businessActivityUK.heading = Does the group have business operations in the UK?
+businessActivityUK.title = Does the group have an entity located in the UK?
+businessActivityUK.heading = Does the group have an entity located in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.hint = Business operations refer to activities that businesses engage in to increase the value of the enterprise.
+businessActivityUK.p1 = Pillar 2 top-up taxes may be collected when your group has an entity located in the UK.
 businessActivityUK.error.required = Select yes if the group has business operations in the UK
 
 turnOverEligibility.title = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
@@ -294,8 +293,8 @@ KBMnIneligible.link = Find out more about who can use this service
 
 KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
 KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have business activities located in the UK.
-KbUKIneligible.p2 = If your business activities are only located outside the UK, you should check where any liability may apply.
+KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have an entity located in the UK.
+KbUKIneligible.p2 = If your group members are only located outside the UK, you should check where any liability may apply.
 KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
 
 
@@ -566,24 +565,24 @@ nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office addre
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
 
-mneOrDomestic.title = Group operations
+mneOrDomestic.title = Entity locations
 mneOrDomestic.heading.caption = Group details
-mneOrDomestic.heading = Group operations
+mneOrDomestic.heading = Entity locations
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
-mneOrDomestic.group-operate = Where does the group operate?
-mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
+mneOrDomestic.group-operate = Where are the entities in your group located?
+mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
-mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
-mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
+mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
+mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
 mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
-
-mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
-mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
-mneOrDomestic.p5 = If group operations change, you must amend the group’s details.
+mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
+mneOrDomestic.p5 = Groups with entities that are located in the UK and other jurisdictions will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -798,8 +797,9 @@ dashboard.p4 = This service will allow groups to access other features such as t
 dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
 
 dashboard.link = draft guidance (opens in new tab)
-dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
-dashboard.inactive.link = draft guidance (opens in a new tab)
+dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
+dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
+dashboard.inactive.message2 = if your circumstances change.
 
 tasklist.incomplete.header= You have one or more incomplete registration tasks
 tasklist.incomplete.message= You must

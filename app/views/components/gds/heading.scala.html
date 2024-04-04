@@ -18,4 +18,4 @@
 
 @(message: String, classes: String = "govuk-heading-xl", tier: String = "h1")
 
-<@tier class="@classes">@message</@tier>
+<@tier class="@classes">@message</@tier.strip()>
