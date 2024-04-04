@@ -133,6 +133,21 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
+    "Bad request when no data added and click on submit" in {
+      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("emailAddress" -> "")
+        val boundForm = formProvider("name").bind(Map("emailAddress" -> ""))
+        val view      = application.injector.instanceOf[RfmPrimaryContactEmailView]
+        val result    = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
+
     "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -167,8 +182,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
-
-    "redirect to bookmark page if previous page not answered" in {
+    "redirect to Recovery page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None)
         .build()
 

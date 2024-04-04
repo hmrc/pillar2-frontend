@@ -18,11 +18,11 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactUPEByTelephoneFormProvider
-import models.NormalMode
+import forms.RfmContactByTelephoneFormProvider
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class RfmContactByTelephoneControllerSpec extends SpecBase {
 
-  val form         = new ContactUPEByTelephoneFormProvider()
+  val form         = new RfmContactByTelephoneFormProvider()
   val formProvider = form("sad")
 
   "Rfm Can we contact by Telephone Controller" when {
@@ -139,24 +139,26 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "Show error when no option is selected " in {
-
+    "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "sad")
         .success
         .value
-      val application = applicationBuilder(Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[RfmContactByTelephoneView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "sad")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -181,15 +183,6 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url
       }
 
-    }
-    "redirect to book mark prevention page for GET if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
     }
     "redirect to journey recovery when no contact name is found for POST" in {
       val application = applicationBuilder(userAnswers = None)

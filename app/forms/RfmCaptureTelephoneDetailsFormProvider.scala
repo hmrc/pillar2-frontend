@@ -27,7 +27,11 @@ class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] = Form(
     "telephoneNumber" ->
       text("rfmCaptureTelephoneDetails.error.required", Seq(userName))
-        .verifying(maxLength(phoneNumberLength, "rfmCaptureTelephoneDetails.messages.error.length"))
-        .verifying(regexp(phoneRegex, "rfmCaptureTelephoneDetails.messages.error.format"))
+        .verifying(
+          firstError(
+            maxLength(phoneNumberLength, "rfmCaptureTelephoneDetails.messages.error.length"),
+            regexp(phoneRegex, "rfmCaptureTelephoneDetails.messages.error.format")
+          )
+        )
   )
 }

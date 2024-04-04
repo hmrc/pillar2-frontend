@@ -26,7 +26,12 @@ class RfmPrimaryContactEmailFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] =
     Form(
       "emailAddress" -> text("rfm-input-business-contact.email.error.required", Seq(userName))
-        .verifying(maxLength(Constants.MAX_LENGTH_132, "rfm-input-business-contact.email.error.length"))
-        .verifying(regexp(Validation.EMAIL_REGEX, "rfm-input-business-contact.email.error.invalid"))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_132, "rfm-input-business-contact.email.error.length"),
+            regexp(Validation.EMAIL_REGEX, "rfm-input-business-contact.email.error.invalid")
+          )
+        )
     )
+
 }
