@@ -123,7 +123,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new GroupTerritoriesView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
   val viewBusinessActivityUK: BusinessActivityUKView =
-    new BusinessActivityUKView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
+    new BusinessActivityUKView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton, heading)
   val viewRegisteringNfmForThisGroup: RegisteringNfmForThisGroupView =
     new RegisteringNfmForThisGroupView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 

@@ -15,8 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    paragraph: paragraph,
+    link: link,
     govukButton: GovukButton
 )
 
@@ -24,19 +30,21 @@
 
 @layout(pageTitle = titleNoForm(messages("bta.noPlrIdGuidance.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("bta.noPlrIdGuidance.heading")</h1>
+    @heading(messages("bta.noPlrIdGuidance.heading"), "govuk-heading-l")
 
-    <p class="govuk-body">@messages("bta.noPlrIdGuidance.p1")</p>
+    @paragraphBody(messages("bta.noPlrIdGuidance.p1"))
 
-    <p class="govuk-body">
-        <a href="@appConfig.startPagePillar2Url" class="govuk-link govuk-link--no-visited-state" target="_blank"> @messages("bta.noPlrIdGuidance.link")</a>
-    </p>
+    @paragraph(link(
+        text = messages("bta.noPlrIdGuidance.link"),
+        call = Call("GET", appConfig.startPagePillar2Url),
+        target = Some("_blank"),
+        fullStop = false
+    ))
 
-    <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("bta.noPlrIdGuidance.cta"))
-                .asLink(appConfig.btaHomePageUrl)
-                .asSecondaryButton()
-        )
-    </p>
+    @govukButton(
+        ButtonViewModel(messages("bta.noPlrIdGuidance.cta"))
+        .asLink(appConfig.btaHomePageUrl)
+        .asSecondaryButton()
+    )
+
 }
