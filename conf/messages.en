@@ -105,7 +105,6 @@ upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or ch
 upeRegisteredAddress.error.format = Enter the post code in the correct format
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 
-
 upe-input-business-name.title=What is the name of the person or team we should contact from the ultimate parent entity?
 upe-input-business-name.caption = Group details
 upe-input-business-name.heading = What is the name of the person or team we should contact from the ultimate parent entity?
@@ -154,7 +153,6 @@ task.status.completed = Completed
 task.status.cannotStartYet = Cannot start yet
 task.status.CannotStartYet = Cannot start yet
 
-
 grs.registration.failed.header = Sorry, there is a problem with the service
 grs.registration.failed.line1 = Try again later.
 grs.registration.failed.line2 = Your company details could not be confirmed.
@@ -201,13 +199,10 @@ payment.dashboard.table2.row_32= HMRC Shipley
 payment.dashboard.table2.row_31= Account name
 payment.dashboard.table2.caption= HMRC’s overseas bank details
 
-
-
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
-
 
 error.browser.title.prefix = Error:
 error.boolean = Please give an answer
@@ -247,7 +242,6 @@ checkNewFilingMember.title = We need to match the details of the new nominated f
 checkNewFilingMember.heading = We need to match the details of the new nominated filing member to HMRC records
 checkNewFilingMember.p1 = We will ask you for several pieces of identifying information about the new nominated filing member so that we can best match them to our records.
 checkNewFilingMember.heading.caption = Group details
-
 
 upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
@@ -290,12 +284,12 @@ rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
 under_construction.heading = Under Construction
-businessActivityUK.title = Does the group have business operations in the UK?
-businessActivityUK.heading = Does the group have business operations in the UK?
+businessActivityUK.title = Does the group have an entity located in the UK?
+businessActivityUK.heading = Does the group have an entity located in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.hint = Business operations refer to activities that businesses engage in to increase the value of the enterprise.
+businessActivityUK.p1 = Pillar 2 top-up taxes may be collected when your group has an entity located in the UK.
 businessActivityUK.error.required = Select yes if the group has business operations in the UK
 
 turnOverEligibility.title = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
@@ -320,14 +314,11 @@ KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an e
 KBMnIneligible.p2 = This group may still need to register.
 KBMnIneligible.link = Find out more about who can use this service
 
-
 KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
 KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have business activities located in the UK.
-KbUKIneligible.p2 = If your business activities are only located outside the UK, you should check where any liability may apply.
+KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have an entity located in the UK.
+KbUKIneligible.p2 = If your group members are only located outside the UK, you should check where any liability may apply.
 KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
-
-
 
 Kb750Ineligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes
 Kb750Ineligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes
@@ -359,7 +350,6 @@ journeyRecovery.startAgain.title = There has been an error
 journeyRecovery.startAgain.heading = There has been an error
 journeyRecovery.startAgain.link=return to your Pillar 2 top-up taxes registration
 journeyRecovery.startAgain.message2 = and complete the required tasks.
-
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
@@ -425,7 +415,6 @@ entityType.hint.companyTypeNotListed = Select to create a HMRC record.
 entityType.checkYourAnswersLabel = Org Type
 entityType.error.required = Select what type of company the ultimate parent entity is
 
-
 registeringNfmForThisGroup.title = Are you registering to report Pillar 2 top-up taxes as the nominated filing member for this group?
 registeringNfmForThisGroup.heading = Are you registering to report Pillar 2 top-up taxes as the nominated filing member for this group?
 registeringNfmForThisGroup.yes = Yes
@@ -449,7 +438,6 @@ nfmNameRegistration.error.required =  You need to enter the name of the nominate
 nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
-
 
 securityQuestionsCheckYourAnswers.title = Check Your Answers
 securityQuestionsCheckYourAnswers.heading = Check your answers
@@ -615,7 +603,6 @@ nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for 
 nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 
-
 nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
 contactNfmByTelephone.checkYourAnswersLabel.hidden =  your response to whether we can make contact by telephone
 nfmEmailAddress.checkYourAnswersLabel.hidden =  the contact email address
@@ -624,24 +611,24 @@ nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office addre
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
 
-mneOrDomestic.title = Group operations
+mneOrDomestic.title = Entity locations
 mneOrDomestic.heading.caption = Group details
-mneOrDomestic.heading = Group operations
+mneOrDomestic.heading = Entity locations
 mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
-mneOrDomestic.group-operate = Where does the group operate?
-mneOrDomestic.checkYourAnswersLabel = Where does the group operate?
+mneOrDomestic.group-operate = Where are the entities in your group located?
+mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
 mneOrDomestic.error.required = Select where the group operates
 mneOrDomestic.change.hidden =  your response to where the group operates
 mneOrDomestic.ukAndOther = In the UK and other countries
-mneOrDomestic.p1 = Group operations refer to the collective activities of the group. You must answer this question on behalf of the whole group.
-mneOrDomestic.p2 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
+mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
+mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
 mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
-
-mneOrDomestic.p3 = Groups that operate only in the UK will register to report for Domestic Top-up Tax.
-mneOrDomestic.p4= Groups that operate in the UK and other countries will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
-mneOrDomestic.p5 = If group operations change, you must amend the group’s details.
+mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
+mneOrDomestic.p5 = Groups with entities that are located in the UK and other jurisdictions will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -650,7 +637,6 @@ content.title = We need contact details for the filing member
 content.heading = We need contact details for the filing member
 content.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your compliance with Pillar 2 top-up taxes.
 content.p2 = These may be different to any contact details you have already provided during registration, which were used to match your business with our records.
-
 
 useContactPrimary.no = No
 useContactPrimary.yes = Yes
@@ -665,7 +651,6 @@ useContactPrimary.email = Email
 useContactPrimary.telephone = Telephone
 
 contactNameCompliance.heading.caption = Contact details
-
 contactNameCompliance.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 contactNameCompliance.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
 contactNameCompliance.hint =  For example, ‘Tax team’ or ‘Ashley Smith’.
@@ -673,10 +658,6 @@ contactNameCompliance.error.required = Enter name of the person of team we shoul
 contactNameCompliance.error.required = Enter name of the person of team we should contact
 contactNameCompliance.error.length = The name of the contact person or team should be 160 characters or less
 contactNameCompliance.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
-
-
-
-
 
 contactEmailAddress.heading.caption = Contact details
 contactEmailAddress.title = What is the email address?
@@ -703,7 +684,6 @@ contactCaptureTelephoneDetails.error.required = You need to enter the telephone 
 contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
-
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
 contactNameCompliance.change.hidden =  the first contact name
@@ -768,13 +748,11 @@ secondaryContactEmail.error.required = You need to enter the email address for {
 secondaryContactEmail.error.length = The email address should be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
-
 secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
-
 
 secondaryTelephone.title = What is the telephone number?
 secondaryTelephone.heading = What is the telephone number for {0}?
@@ -788,8 +766,6 @@ checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
 checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 site.confirm.send = Confirm and send
-
-
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
@@ -856,8 +832,9 @@ dashboard.p4 = This service will allow groups to access other features such as t
 dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
 
 dashboard.link = draft guidance (opens in new tab)
-dashboard.inactive.message = Your account is currently inactive. For additional information, please refer to the
-dashboard.inactive.link = draft guidance (opens in a new tab)
+dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
+dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
+dashboard.inactive.message2 = if your circumstances change.
 
 tasklist.incomplete.header= You have one or more incomplete registration tasks
 tasklist.incomplete.message= You must
@@ -876,7 +853,6 @@ unauthorised.agent.hyper1 = sign in via Agent Services.
 unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
 unauthorised.agent.hyper2 = request authorisation via Agent services.
 unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 top-up taxes
-
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
@@ -962,6 +938,42 @@ rfm.rfmPrimaryContactName.error.length = Name of the contact person or team shou
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
 
 
+rfm.registration.heading.caption = Group details
+rfm.nameRegistration.title = What is the name of the new nominated filing member?
+rfm.nameRegistration.heading = What is the name of the new nominated filing member?
+rfm.nameRegistration.error.required = Enter the name of the new nominated filing member
+rfm.nameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
+
+rfm.registeredAddress.title = What is the registered office address?
+rfm.registeredAddress.heading = What is the registered office address of {0}?
+rfm.registeredAddress.addressLine1 = Address line 1
+rfm.registeredAddress.addressLine2 = Address line 2 (optional)
+rfm.registeredAddress.town_city = Town or city
+rfm.registeredAddress.region = Region (optional)
+rfm.registeredAddress.postcode = Postal code
+rfm.registeredAddress.country = Country
+rfm.registeredAddress.country.hint = Enter text and then choose from the list.
+rfm.registeredAddress.town_city.error.required = Enter town or city
+rfm.registeredAddress.town_city.error.length = The town or city must be 35 characters or less
+rfm.registeredAddress.region.error.length = The region must be 35 characters or less
+rfm.registeredAddress.postcode.error.length = The postal code must be 10 characters or less
+rfm.registeredAddress.postcode.error.invalid = Enter a full UK postal code
+rfm.registeredAddress.country.error.required = Enter country
+rfm.registeredAddress.country.error.length = The country cannot be more than 35 characters
+rfm.registeredAddress.messages.error.addressLine1.required= Enter first line of the address
+rfm.registeredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+rfm.registeredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
+rfm.registeredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+rfm.registeredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+
+rfm.rfmCheckYourAnswers.title = Check Your Answers
+rfm.rfmCheckYourAnswers.heading = Check your answers
+rfm.rfmCheckYourAnswers.heading.caption = Group details
+rfm.nameRegistration.checkYourAnswersLabel = Name
+rfm.nameRegistration.change.hidden =  the name of the new nominated filing member
+rfm.registeredAddress.checkYourAnswersLabel = Address
+rfm.registeredAddress.change.hidden =  the registered office address
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
@@ -970,9 +982,6 @@ bta.noPlrIdGuidance.cta = Return to your Business Tax Account
 bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.p1 = screen owned by EACD
-bta.accessConfirmation.heading = You now have access to Report Pillar 2 top-up taxes
-bta.accessConfirmation.p1 = You can access the service from your Business Tax Account
-bta.accessConfirmation.cta = Continue to Business Tax Account
 
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
