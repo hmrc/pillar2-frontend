@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.RfmContactAddressFormProvider
 import models.{Mode, UKAddress}
-import navigation.UltimateParentNavigator
-import pages.{RfmContactAddressPage, UpeNameRegistrationPage, UpeRegisteredAddressPage}
+import navigation.ReplaceFilingMemberNavigator
+import pages.RfmContactAddressPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -41,7 +41,7 @@ class RfmContactAddressController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmContactAddressFormProvider,
   val countryOptions:        CountryOptions,
-  navigator:                 UltimateParentNavigator,
+  navigator:                 ReplaceFilingMemberNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmContactAddressView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -74,7 +74,7 @@ class RfmContactAddressController @Inject() (
                   .set(RfmContactAddressPage, value)
               )
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(navigator.nextPage(RfmContactAddressPage, mode, updatedAnswers))
       )
 
   }

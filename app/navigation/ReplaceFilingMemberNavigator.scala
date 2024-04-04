@@ -43,6 +43,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmPrimaryContactEmailPage     => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
     case RfmContactByTelephonePage      => telephonePreferenceLogic
     case RfmCapturePrimaryTelephonePage => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmContactAddressPage          => _ => controllers.routes.UnderConstructionController.onPageLoad
     case RfmUkBasedPage                 => rfmUkBasedLogic
     case RfmPillar2ReferencePage        => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
     case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
