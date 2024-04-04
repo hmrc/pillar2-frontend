@@ -275,9 +275,9 @@ rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
 rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 rfmCaptureTelephoneDetails.hint = For international numbers include the country code
-rfmCaptureTelephoneDetails.error.required = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
+rfmCaptureTelephoneDetails.error.required = Enter a telephone number
 rfmCaptureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
-rfmCaptureTelephoneDetails.messages.error.format = The telephone number must include only letters a to z, numbers, brackets, hyphens, forward slashes, asterisks, hashtags and plus signs
+rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 rfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
