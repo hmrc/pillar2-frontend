@@ -120,17 +120,28 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
       }
 
     }
-    "return bad request if wrong data is inputted" in {
-      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+    "must return a Bad Request errors when invalid data format is submitted" in {
+
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "adsasd")
+            .withFormUrlEncodedBody(("value", "abc"))
+
+        val boundForm = formProvider("name").bind(Map("value" -> "abc"))
+
+        val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
+
         val result = route(application, request).value
+
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
       }
     }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
