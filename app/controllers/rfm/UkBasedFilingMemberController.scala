@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
 import pages.RfmUkBasedPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -38,6 +39,7 @@ class UkBasedFilingMemberController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              NFMRegisteredInUKConfirmationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UkBasedFilingMemberView
@@ -69,7 +71,7 @@ class UkBasedFilingMemberController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, ukBasedFilingMember))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.RfmEntityTypeController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(RfmUkBasedPage, mode, updatedAnswers))
       )
   }
 

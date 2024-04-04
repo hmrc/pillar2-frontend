@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.RfmEntityTypeFormProvider
 import models.{Mode, UserType}
 import models.grs.EntityType
+import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -37,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   rfmIdentify:                                       RfmIdentifierAction,
+  navigator:                                         ReplaceFilingMemberNavigator,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,
@@ -50,20 +52,31 @@ class RfmEntityTypeController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      if (request.userAnswers.get(RfmUkBasedPage).contains(true)) {
-        val preparedForm = request.userAnswers.get(RfmEntityTypePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+
+      request.userAnswers
+        .get(RfmUkBasedPage)
+        .map { ukBased =>
+          request.userAnswers
+            .get(RfmEntityTypePage)
+            .map { entityType =>
+              if (!ukBased & entityType == EntityType.Other) {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, true))
+                  _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Ok(view(form.fill(entityType), mode))
+              } else {
+                Future.successful(Ok(view(form.fill(entityType), mode)))
+              }
+            }
+            .getOrElse(Future.successful(Ok(view(form, mode))))
         }
-        Ok(view(preparedForm, mode))
-      } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
@@ -91,11 +104,10 @@ class RfmEntityTypeController @Inject() (
 
             case EntityType.Other =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                createJourneyRes <-
-                  partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, false))
+                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmEntityTypePage, value))
+                _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
+              } yield Redirect(navigator.nextPage(RfmEntityTypePage, mode, updatedAnswers))
           }
       )
   }

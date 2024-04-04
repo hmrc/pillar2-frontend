@@ -54,16 +54,12 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return Journey Recovery for view for a GET" in {
-      val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, false)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
+    "must return Journey Recovery if previous page not answered" in {
+      val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[RfmEntityTypeView]
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
@@ -84,6 +80,28 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(EntityType.values.head), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered And Entity type is other" in {
+      val ua          = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+      val userAnswers = ua.set(RfmEntityTypePage, EntityType.Other).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
+
+        val view = application.injector.instanceOf[RfmEntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.Other), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -184,6 +202,28 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
       }
 
+    }
+
+    "redirect to name registration page if entity type not listed is chosen and set fm as non uk based" in {
+      val jsonTobeReturned = Json.toJson(
+        emptyUserAnswers
+          .setOrException(RfmUkBasedPage, false)
+          .setOrException(RfmEntityTypePage, EntityType.Other)
+      )
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.Other.toString))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url
+      }
     }
 
   }
