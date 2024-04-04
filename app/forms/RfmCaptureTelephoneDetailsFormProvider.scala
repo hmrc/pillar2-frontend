@@ -23,14 +23,13 @@ import javax.inject.Inject
 
 class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24
-  private val phoneRegex        = """^[A-Z0-9 )/(\-*#+]*$"""
   def apply(userName: String): Form[String] = Form(
     "telephoneNumber" ->
       text("rfmCaptureTelephoneDetails.error.required", Seq(userName))
         .verifying(
           firstError(
             maxLength(phoneNumberLength, "rfmCaptureTelephoneDetails.messages.error.length"),
-            regexp(phoneRegex, "rfmCaptureTelephoneDetails.messages.error.format")
+            regexp(forms.Validation.telephoneRegex, "rfmCaptureTelephoneDetails.messages.error.format")
           )
         )
   )

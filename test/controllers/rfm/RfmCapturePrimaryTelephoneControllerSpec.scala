@@ -121,7 +121,7 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
 
     }
 
-    "must return a Bad Request  errors when invalid data format is submitted" in {
+    "must return a Bad Request errors when invalid data format is submitted" in {
 
       val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
