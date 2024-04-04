@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation.telephoneRegex
 import forms.mappings.Mappings
 import play.api.data.Form
 
@@ -29,7 +30,7 @@ class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(phoneNumberLength, "rfmCaptureTelephoneDetails.messages.error.length"),
-            regexp(forms.Validation.telephoneRegex, "rfmCaptureTelephoneDetails.messages.error.format")
+            regexp(telephoneRegex, "rfmCaptureTelephoneDetails.messages.error.format")
           )
         )
   )

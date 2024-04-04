@@ -21,5 +21,6 @@ object Validation {
   final val EMAIL_REGEX =
     """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
   final val GROUPID_REGEX = "^X[A-Z]PLR[0-9]{10}$"
-  val telephoneRegex      = """^+[0-9 ]{1,18}$|^[0-9 ]{1,19}$"""
+  val telephoneRegex      = "^[0-9 +()]{0,25}$"
+
 }
