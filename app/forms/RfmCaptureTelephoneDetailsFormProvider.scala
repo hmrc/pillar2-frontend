@@ -24,7 +24,6 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
-  private val phoneNumberLength = 24
   def apply(userName: String): Form[String] = Form(
     "telephoneNumber" ->
       text("rfmCaptureTelephoneDetails.error.required", Seq(userName))
