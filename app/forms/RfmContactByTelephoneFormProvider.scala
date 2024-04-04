@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object RfmPrimaryNameRegistrationPage extends QuestionPage[String] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class RfmContactByTelephoneFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "rfmPrimaryNameRegistration"
+  def apply(userName: String): Form[Boolean] =
+    Form(
+      "value" -> boolean("rfmContactByTelephone.error.required", args = Seq(userName))
+    )
 }

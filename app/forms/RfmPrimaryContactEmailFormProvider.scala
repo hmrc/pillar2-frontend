@@ -22,11 +22,16 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-class RfmPrimaryNameRegistrationFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[String] =
+class RfmPrimaryContactEmailFormProvider @Inject() extends Mappings {
+  def apply(userName: String): Form[String] =
     Form(
-      "value" -> text("rfm.primaryNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.primaryNameRegistration.error.length"))
+      "emailAddress" -> text("rfm-input-business-contact.email.error.required", Seq(userName))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_132, "rfm-input-business-contact.email.error.length"),
+            regexp(Validation.EMAIL_REGEX, "rfm-input-business-contact.email.error.invalid")
+          )
+        )
     )
+
 }

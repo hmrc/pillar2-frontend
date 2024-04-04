@@ -38,13 +38,18 @@ class ReplaceFilingMemberNavigator @Inject() {
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case RfmUkBasedPage           => rfmUkBasedLogic
-    case RfmPillar2ReferencePage  => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage  => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmNameRegistrationPage  => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
-    case RfmEntityTypePage        => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
-    case RfmRegisteredAddressPage => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case RfmPrimaryContactNamePage      => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
+    case RfmPrimaryContactEmailPage     => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
+    case RfmContactByTelephonePage      => telephonePreferenceLogic
+    case RfmCapturePrimaryTelephonePage => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmUkBasedPage                 => rfmUkBasedLogic
+    case RfmPillar2ReferencePage        => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmNameRegistrationPage        => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
+    case RfmRegisteredAddressPage       => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmEntityTypePage              => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+
+    case _ => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -61,6 +66,18 @@ class ReplaceFilingMemberNavigator @Inject() {
       case Some(true) => reviewAndSubmitCheckYourAnswers
       case _          => rfmCheckYourAnswers
     }
+
+  private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmContactByTelephonePage)
+      .map { provided =>
+        if (provided) {
+          controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
+        } else {
+          controllers.routes.UnderConstructionController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private def rfmUkBasedLogic(userAnswers: UserAnswers): Call =
     userAnswers
