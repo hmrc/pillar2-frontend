@@ -34,6 +34,7 @@
 @import config.FrontendAppConfig
 @import utils.InputOption
 @import views.html.components.gds.sectionHeader
+@import views.html.components.gds.heading
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -42,6 +43,7 @@
     govukButton: GovukButton,
     govukSelect: GovukSelect,
     sectionHeader: sectionHeader,
+        heading: heading,
 )
 
 
@@ -55,8 +57,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         @sectionHeader(messages("rfmContactAddress.heading.caption"))
-        <h1 class="govuk-heading-l long-word">@messages("rfmContactAddress.heading")</h1>
-
+        @heading(messages("rfmContactAddress.heading"), "govuk-heading-l long-word")
 
         @govukInput(
             InputViewModel(

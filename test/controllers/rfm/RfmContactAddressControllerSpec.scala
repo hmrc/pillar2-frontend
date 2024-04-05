@@ -22,20 +22,20 @@ import forms.RfmContactAddressFormProvider
 import models.{NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactAddressPage, RfmPrimaryContactNamePage}
+import pages.{RfmContactAddressPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.InputOption
+import utils.countryOptions.CountryOptions
 import views.html.rfm.RfmContactAddressView
 
-import javax.inject.Inject
 import scala.concurrent.Future
 
 class RfmContactAddressControllerSpec extends SpecBase {
   val formProvider = new RfmContactAddressFormProvider()
-  val countryList  = List(InputOption("AF", "Afghanistan", None))
+  val countryList  = List(InputOption("AD", "Andorra", None))
   "RfmContactAddress Controller" when {
 
     "return OK and the correct view for a GET with no previous answer" in {
@@ -45,11 +45,56 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual OK
+        contentAsString(result) must include(
+          "What address do you want to use as the filing member&#x27;s contact address?"
+        )
+        contentAsString(result) must include(
+          "Address line 1"
+        )
+        contentAsString(result) must include(
+          "Town or city"
+        )
+        contentAsString(result) must include(
+          "Region (optional)"
+        )
+        contentAsString(result) must include(
+          "Postal code (if applicable)"
+        )
+        contentAsString(result) must include(
+          "Enter text and then choose from the list."
+        )
       }
     }
+
+    "must return OK and populate the view correctly when the question has been previously answered" in {
+      val contactAddress = UKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), "ne5 2dh", "AT")
+      val ua = emptyUserAnswers
+        .set(RfmPrimaryContactNamePage, "name")
+        .success
+        .value
+        .set(RfmContactAddressPage, contactAddress)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Address line first drive"
+        )
+        contentAsString(result) must include(
+          "Home Town"
+        )
+
+      }
+    }
+
     "must redirect to correct view when rfm feature false" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
@@ -66,37 +111,6 @@ class RfmContactAddressControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-      }
-    }
-    "must return OK and the correct view for a GET if no previous data is found" in {
-      val data =
-        emptyUserAnswers.setOrException(
-          RfmContactAddressPage,
-          UKAddress(
-            addressLine1 = "adress line 1",
-            addressLine2 = Some("Line 2"),
-            addressLine3 = "addres line 3",
-            addressLine4 = Some("adres line 4"),
-            postalCode = "ne54rrf",
-            countryCode = "AF"
-          )
-        )
-      val application = applicationBuilder(userAnswers = Some(data))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[RfmContactAddressView]
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "What address do you want to use as the filing members contact address?"
-        )
-        contentAsString(result) must include(
-          "Afghanistan"
-        )
-
       }
     }
 
@@ -147,6 +161,9 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include(
+          "Enter a full UK postal code"
+        )
 
       }
     }
@@ -167,7 +184,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
                 "addressLine1",
                 badHouse
               ),
-              ("addressLine2", "Drive"),
+              ("addressLine2", badHouse),
               ("addressLine3", "Newcastle"),
               ("addressLine4", "North east"),
               ("postalCode", "ne5 2th"),
@@ -177,6 +194,12 @@ class RfmContactAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include(
+          "First line of the address must be 35 characters or less"
+        )
+        contentAsString(result) must include(
+          "Second line of the address must be 35 characters or less"
+        )
       }
     }
 
