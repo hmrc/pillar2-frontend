@@ -33,9 +33,9 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET" in {
       val ua =
-        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
@@ -44,7 +44,8 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(
+
+        contentAsString(result) mustEqual view(formProvider.fill(false), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -55,7 +56,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if page has previously been answered" in {
       val ua =
-        emptyUserAnswers
+        emptySubscriptionLocalData
           .set(SubPrimaryContactNamePage, "name")
           .success
           .value
@@ -63,7 +64,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
           .success
           .value
 
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
@@ -81,8 +82,8 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
     "must return bad request when invalid data is submitted" in {
-      val userAnswer  = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(userAnswer)).build()
+      val userAnswer  = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "")

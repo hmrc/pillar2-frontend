@@ -32,7 +32,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
@@ -48,8 +48,8 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when previous data is found" in {
 
-      val ua          = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
@@ -69,7 +69,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       running(application) {
         val request =

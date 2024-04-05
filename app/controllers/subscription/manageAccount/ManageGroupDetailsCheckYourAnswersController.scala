@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.subscription.AmendSubscriptionRequestParameters
 import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
@@ -35,11 +35,11 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageGroupDetailsCheckYourAnswersView,
   amendSubscriptionService:  AmendSubscriptionService,
@@ -52,10 +52,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val list = SummaryListViewModel(
       rows = Seq(
-        MneOrDomesticSummary.row(request.userAnswers),
-        GroupAccountingPeriodSummary.row(request.userAnswers),
-        GroupAccountingPeriodStartDateSummary.row(request.userAnswers),
-        GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
+        MneOrDomesticSummary.row(request.subscriptionLocalData),
+        GroupAccountingPeriodSummary.row(request.subscriptionLocalData),
+        GroupAccountingPeriodStartDateSummary.row(request.subscriptionLocalData),
+        GroupAccountingPeriodEndDateSummary.row(request.subscriptionLocalData)
       ).flatten
     )
     Ok(view(list))
@@ -65,12 +65,11 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val showErrorScreens = appConfig.showErrorScreens
 
-    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
-      case Right(s) =>
-        userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from group details ")
-          Redirect(controllers.routes.DashboardController.onPageLoad)
-        }
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).map {
+      case Right(_) =>
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from group details ")
+        Redirect(controllers.routes.DashboardController.onPageLoad)
+
       case Left(error) if showErrorScreens =>
         val errorMessage = error match {
           case BadRequestError =>
@@ -89,9 +88,9 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
         }
         logger.error(errorMessage)
-        Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
 
-      case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
 
   }

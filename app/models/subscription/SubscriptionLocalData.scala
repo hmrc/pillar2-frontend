@@ -16,33 +16,67 @@
 
 package models.subscription
 
-import models.{MneOrDomestic, NonUKAddress}
-import play.api.libs.json.{Json, OFormat}
+import models.{MneOrDomestic, NonUKAddress, RichJsObject}
+import pages._
+import play.api.libs.json._
+import queries.{Gettable, Settable}
 
 import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
-  plrReference:                String,
   subMneOrDomestic:            MneOrDomestic,
-  upeNameRegistration:         String,
+  subAccountingPeriod:         AccountingPeriod,
   subPrimaryContactName:       String,
   subPrimaryEmail:             String,
-  subPrimaryCapturePhone:      Option[String],
   subPrimaryPhonePreference:   Boolean,
-  subSecondaryContactName:     Option[String],
+  subPrimaryCapturePhone:      Option[String],
   subAddSecondaryContact:      Boolean,
+  subSecondaryContactName:     Option[String],
   subSecondaryEmail:           Option[String],
   subSecondaryCapturePhone:    Option[String],
   subSecondaryPhonePreference: Boolean,
   subRegisteredAddress:        NonUKAddress,
-  subFilingMemberDetails:      Option[FilingMemberDetails],
-  subAccountingPeriod:         AccountingPeriod,
-  subAccountStatus:            Option[AccountStatus],
-  NominateFilingMember:        Boolean,
-  subExtraSubscription:        ExtraSubscription,
-  subRegistrationDate:         LocalDate,
-  fmDashboard:                 DashboardInfo
-)
+  subFilingMemberDetails:      Option[FilingMemberDetails]
+) {
+
+  private lazy val jsObj = Json.toJsObject(this)
+  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
+    Reads.optionNoError(Reads.at(page.path)).reads(jsObj).getOrElse(None)
+
+  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[SubscriptionLocalData] = {
+    val updatedData = jsObj.setObject(page.path, Json.toJson(value)) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(errors) =>
+        Failure(JsResultException(errors))
+    }
+
+    updatedData.map(_.as[SubscriptionLocalData])
+  }
+
+  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): SubscriptionLocalData =
+    set(page, value) match {
+      case Success(ua) => ua
+      case Failure(ex) => throw ex
+    }
+
+  def manageContactDetailStatus: Boolean = {
+    val p1  = get(SubPrimaryContactNamePage).isDefined
+    val p2  = get(SubPrimaryEmailPage).isDefined
+    val p3  = get(SubPrimaryPhonePreferencePage).isDefined
+    val p4  = get(SubAddSecondaryContactPage).getOrElse(false)
+    val s1  = get(SubSecondaryContactNamePage).isDefined
+    val s2  = get(SubSecondaryEmailPage).isDefined
+    val s3  = get(SubSecondaryPhonePreferencePage).isDefined
+    val ad1 = get(SubRegisteredAddressPage).isDefined
+    (p1, p2, p3, p4, s1, s2, s3, ad1) match {
+      case (true, true, true, true, true, true, true, true) => true
+      case (true, true, true, false, _, _, _, true)         => true
+      case _                                                => false
+    }
+  }
+}
 
 object SubscriptionLocalData {
   implicit val format: OFormat[SubscriptionLocalData] = Json.format[SubscriptionLocalData]

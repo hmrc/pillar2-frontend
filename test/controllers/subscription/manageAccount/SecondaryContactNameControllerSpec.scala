@@ -31,8 +31,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
-      val application = applicationBuilder(Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
@@ -47,11 +47,11 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubAddSecondaryContactPage, true)
         .setOrException(SubPrimaryContactNamePage, "asd")
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
@@ -71,7 +71,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       running(application) {
         val request =

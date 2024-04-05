@@ -38,9 +38,9 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
   "ContactCaptureTelephoneDetails Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
-      val userAnswers: UserAnswers =
-        emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers =
+        emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
@@ -59,12 +59,12 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page previously answered" in {
-      val userAnswers: UserAnswers =
-        emptyUserAnswers
+      val userAnswers =
+        emptySubscriptionLocalData
           .setOrException(SubPrimaryContactNamePage, "name")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123132")
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
@@ -83,9 +83,9 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
     "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
       val userAnswersSubCapturePhone =
-        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubCapturePhone))
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubCapturePhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

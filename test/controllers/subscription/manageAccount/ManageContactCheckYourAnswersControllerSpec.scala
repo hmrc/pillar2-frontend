@@ -37,7 +37,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  val subDataWithAddress = emptyUserAnswers
+  val subDataWithAddress = emptySubscriptionLocalData
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -47,7 +47,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-  val subDataWithoutAddress = emptyUserAnswers
+
+  val subDataWithoutAddress = emptySubscriptionLocalData
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -83,7 +84,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
   val startDate = LocalDate.of(2023, 12, 31)
   val endDate   = LocalDate.of(2025, 12, 31)
   val date      = AccountingPeriod(startDate, endDate)
-  val amendSubscription = emptyUserAnswers
+  val amendSubscription = emptySubscriptionLocalData
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
     .setOrException(SubPrimaryContactNamePage, "Name")
@@ -104,7 +105,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
   "Contact Check Your Answers Controller" must {
 
     "return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(subDataWithAddress)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -124,7 +125,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     }
 
     "redirect to bookmark page if address page not answered" in {
-      val application = applicationBuilder(userAnswers = Some(subDataWithoutAddress)).build()
+      val application = applicationBuilder(subscriptionLocalData = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
 
@@ -136,7 +137,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     }
 
     "trigger amend subscription API if all data is available for contact detail" in {
-      val application = applicationBuilder(userAnswers = Some(amendSubscription))
+      val application = applicationBuilder(subscriptionLocalData = Some(amendSubscription))
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -156,7 +157,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
     "redirect to journey recovery if no data if no data is found for amend contact detail" in {
       val mockAmendSubscriptionService = mock[AmendSubscriptionService]
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(subscriptionLocalData = None)
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .build()
 
@@ -173,7 +174,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
     "redirect to the JourneyRecoveryController" in {
       val testConfig = Configuration("features.showErrorScreens" -> false)
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .configure(testConfig)
         .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .build()

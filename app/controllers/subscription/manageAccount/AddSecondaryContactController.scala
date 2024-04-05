@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
@@ -34,10 +34,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddSecondaryContactController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   formProvider:              AddSecondaryContactFormProvider,
   navigator:                 AmendSubscriptionNavigator,
   val controllerComponents:  MessagesControllerComponents,
@@ -48,12 +48,13 @@ class AddSecondaryContactController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(SubPrimaryEmailPage)
-      contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
+      subscriptionLocalData <- request.maybeSubscriptionLocalData
+      _                     <- subscriptionLocalData.get(SubPrimaryEmailPage)
+      contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
     } yield {
-      val preparedForm = request.userAnswers.get(SubAddSecondaryContactPage) match {
+      val preparedForm = subscriptionLocalData.get(SubAddSecondaryContactPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -63,7 +64,7 @@ class AddSecondaryContactController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         form
@@ -72,8 +73,8 @@ class AddSecondaryContactController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
             wantsToNominateSecondaryContact =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
           )
       }

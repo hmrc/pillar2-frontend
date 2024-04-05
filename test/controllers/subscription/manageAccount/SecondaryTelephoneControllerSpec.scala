@@ -33,10 +33,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
 
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
 
@@ -51,12 +51,12 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
         .setOrException(SubSecondaryCapturePhonePage, "1234567")
 
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
@@ -76,8 +76,8 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       val bigString   = "123" * 100
       running(application) {
         val request =
@@ -96,7 +96,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     }
     "redirect to bookmark page if previous page not answered" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
@@ -110,7 +110,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url)
         .withFormUrlEncodedBody("value" -> "12233444")
 

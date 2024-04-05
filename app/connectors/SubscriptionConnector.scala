@@ -17,13 +17,15 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.SubscriptionConnector.constructUrl
+import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError}
-import models.subscription.{ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionRequestParameters, SuccessResponse}
 import play.api.Logging
-import play.api.http.Status.CONFLICT
+import play.api.http.Status.{CONFLICT, OK}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
 
@@ -48,18 +50,50 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
 
   def readSubscription(
-    readSubscriptionParameter: ReadSubscriptionRequestParameters
+    readSubscriptionParameter: ReadSubscriptionRequestParameters // TODO - change to plfReference
   )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[ReadSubscriptionResponse]] = {
-    val subscriptionUrl = constructUrl(readSubscriptionParameter)
+    val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
+
     http
-      .GET[Option[ReadSubscriptionResponse]](subscriptionUrl)
-      .recover { case e: UpstreamErrorResponse =>
-        logger.warn(s"Connection issue when calling read subscription with status: ${e.statusCode}")
-        None
+      .GET[HttpResponse](subscriptionUrl)
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[ReadSubscriptionResponse])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
+          None
       }
   }
 
-  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters): String =
+  def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+    http
+      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionLocalData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
+          None
+      }
+
+  def save(userId: String, subscriptionLocalData: JsValue)(implicit
+    hc:            HeaderCarrier
+  ): Future[JsValue] =
+    http
+      .POST[JsValue, HttpResponse](
+        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId",
+        subscriptionLocalData
+      )
+      .map { response =>
+        response.status match {
+          case OK => subscriptionLocalData
+          case _  => throw new HttpException(response.body, response.status)
+        }
+      }
+}
+
+object SubscriptionConnector {
+  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters, config: FrontendAppConfig): String =
     s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
 
 }

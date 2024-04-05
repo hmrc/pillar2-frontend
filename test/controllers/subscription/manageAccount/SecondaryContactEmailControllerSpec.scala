@@ -39,8 +39,8 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
   "SecondaryContactEmail Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET when no data is found" in {
-      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
@@ -55,14 +55,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .set(SubSecondaryContactNamePage, "name")
         .success
         .value
         .set(SubSecondaryEmailPage, "my@my.com")
         .success
         .value
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
@@ -80,13 +80,13 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))

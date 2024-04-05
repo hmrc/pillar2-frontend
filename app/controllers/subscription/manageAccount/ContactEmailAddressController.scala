@@ -16,8 +16,8 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import connectors.SubscriptionConnector
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.ContactEmailAddressFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
@@ -32,10 +32,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactEmailAddressController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -44,24 +44,26 @@ class ContactEmailAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(SubPrimaryEmailPage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode, contactName))
-
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
+    request.maybeSubscriptionLocalData
+      .flatMap { subscriptionLocalData =>
+        subscriptionLocalData
+          .get(SubPrimaryContactNamePage)
+          .map { contactName =>
+            val form = formProvider(contactName)
+            val preparedForm = subscriptionLocalData.get(SubPrimaryEmailPage) match {
+              case Some(v) => form.fill(v)
+              case None    => form
+            }
+            Ok(view(preparedForm, mode, contactName))
+          }
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
@@ -72,8 +74,8 @@ class ContactEmailAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers set (SubPrimaryEmailPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryEmailPage, value))
+                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
           )
       }

@@ -18,8 +18,7 @@ package controllers.subscription.manageAccount
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.subscription.AmendSubscriptionRequestParameters
 import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
@@ -34,17 +33,16 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 class ManageContactCheckYourAnswersController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageContactCheckYourAnswersView,
-  countryOptions:            CountryOptions,
-  amendSubscriptionService:  AmendSubscriptionService
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     ManageContactCheckYourAnswersView,
+  countryOptions:           CountryOptions,
+  amendSubscriptionService: AmendSubscriptionService
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -52,43 +50,41 @@ class ManageContactCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val primaryContactList = SummaryListViewModel(
       rows = Seq(
-        ContactNameComplianceSummary.row(request.userAnswers),
-        ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+        ContactNameComplianceSummary.row(request.subscriptionLocalData),
+        ContactEmailAddressSummary.row(request.subscriptionLocalData),
+        ContactByTelephoneSummary.row(request.subscriptionLocalData),
+        ContactCaptureTelephoneDetailsSummary.row(request.subscriptionLocalData)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
-        AddSecondaryContactSummary.row(request.userAnswers),
-        SecondaryContactNameSummary.row(request.userAnswers),
-        SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers)
+        AddSecondaryContactSummary.row(request.subscriptionLocalData),
+        SecondaryContactNameSummary.row(request.subscriptionLocalData),
+        SecondaryContactEmailSummary.row(request.subscriptionLocalData),
+        SecondaryTelephonePreferenceSummary.row(request.subscriptionLocalData),
+        SecondaryTelephoneSummary.row(request.subscriptionLocalData)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
     val address = SummaryListViewModel(
-      rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
+      rows = Seq(ContactCorrespondenceAddressSummary.row(request.subscriptionLocalData, countryOptions)).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-    if (request.userAnswers.manageContactDetailStatus) {
+    if (request.subscriptionLocalData.manageContactDetailStatus) {
       Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData) async { implicit request =>
     val showErrorScreens = appConfig.showErrorScreens
 
-    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {
-      case Right(s) =>
-        userAnswersConnectors.remove(request.userId).map { _ =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from contact details")
-          Redirect(controllers.routes.DashboardController.onPageLoad)
-        }
+    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).map {
+      case Right(_) =>
+        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from contact details")
+        Redirect(controllers.routes.DashboardController.onPageLoad)
 
       case Left(error) if showErrorScreens =>
         val errorMessage = error match {
@@ -108,11 +104,11 @@ class ManageContactCheckYourAnswersController @Inject() (
             s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
         }
         logger.error(errorMessage)
-        Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
 
       case _ =>
         logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - An error occurred during amend subscription processing")
-        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

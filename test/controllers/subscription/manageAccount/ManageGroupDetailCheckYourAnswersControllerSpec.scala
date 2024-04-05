@@ -43,7 +43,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
     val endDate   = LocalDate.of(2025, 12, 31)
     val date      = AccountingPeriod(startDate, endDate)
 
-    val amendSubUserAnswers = emptyUserAnswers
+    val amendSubUserAnswers = emptySubscriptionLocalData
       .setOrException(UpeRegisteredInUKPage, true)
       .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
       .setOrException(SubPrimaryContactNamePage, "Name")
@@ -62,14 +62,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       .setOrException(NominateFilingMemberPage, false)
 
     "return OK and the correct view if an answer is provided to every question " in {
-      val userAnswer = UserAnswers(userAnswersId)
+      val userAnswer = emptySubscriptionLocalData
         .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
         .set(SubAccountingPeriodPage, date)
         .success
         .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
@@ -80,14 +80,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
     }
 
     "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
-      val userAnswer = UserAnswers(userAnswersId)
+      val userAnswer = emptySubscriptionLocalData
         .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
         .success
         .value
         .set(SubAccountingPeriodPage, date)
         .success
         .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
@@ -98,7 +98,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
     }
 
     "trigger amend subscription API if all data is available for group accounting period" in {
-      val application = applicationBuilder(userAnswers = Some(amendSubUserAnswers))
+      val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers))
         .overrides(inject.bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -118,7 +118,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
     "redirect to journey recovery if no data if no data is found for group accounting period" in {
       val mockAmendSubscriptionService = mock[AmendSubscriptionService]
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(inject.bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
         .build()
 

@@ -32,12 +32,13 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   val formProvider = new GroupAccountingPeriodFormProvider()
   val startDate    = LocalDate.of(2023, 12, 31)
   val endDate      = LocalDate.of(2025, 12, 31)
+
   "GroupAccountingPeriod Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
@@ -46,15 +47,19 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod), CheckMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
-      val date        = AccountingPeriod(startDate, endDate)
-      val ua          = emptyUserAnswers.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
-      val application = applicationBuilder(Some(ua)).build()
+      val date = AccountingPeriod(startDate, endDate)
+      val ua   = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
@@ -73,7 +78,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       val request =
         FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url)

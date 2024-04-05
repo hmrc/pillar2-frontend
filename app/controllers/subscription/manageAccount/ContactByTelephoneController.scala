@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.ContactByTelephoneFormProvider
 import models.Mode
@@ -33,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactByTelephoneController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -46,11 +46,11 @@ class ContactByTelephoneController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
+        val preparedForm = request.subscriptionLocalData.get(SubPrimaryPhonePreferencePage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -62,7 +62,7 @@ class ContactByTelephoneController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
@@ -73,8 +73,8 @@ class ContactByTelephoneController @Inject() (
             nominatePrimaryContactNumber =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
+                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
           )
       }

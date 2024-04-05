@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.ContactNameComplianceFormProvider
 import models.{Mode, NormalMode}
@@ -33,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactNameComplianceController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactNameComplianceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -46,8 +46,8 @@ class ContactNameComplianceController @Inject() (
     with I18nSupport {
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData) { implicit request =>
+    val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubPrimaryContactNamePage)) match {
       case Some(v) => form.fill(v)
       case None    => form
     }
@@ -63,8 +63,8 @@ class ContactNameComplianceController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(SubPrimaryContactNamePage, value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                .fromTry(request.subscriptionLocalData.set(SubPrimaryContactNamePage, value))
+            _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
           } yield Redirect(navigator.nextPage(SubPrimaryContactNamePage, mode, updatedAnswers))
       )
   }

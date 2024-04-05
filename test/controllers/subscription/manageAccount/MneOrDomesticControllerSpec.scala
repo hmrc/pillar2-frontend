@@ -31,12 +31,12 @@ class MneOrDomesticControllerSpec extends SpecBase {
   "MneOrDomestic Controller" when {
 
     "must return OK and the correct view for a GET when previous data is found" in {
-      val userAnswer = UserAnswers(userAnswersId)
+      val userAnswer = emptySubscriptionLocalData
         .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
@@ -56,7 +56,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when no previous data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
         val result  = route(application, request).value
@@ -69,7 +69,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       running(application) {
         val request =

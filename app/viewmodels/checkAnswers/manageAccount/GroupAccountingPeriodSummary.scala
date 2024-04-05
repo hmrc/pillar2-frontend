@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -26,8 +26,8 @@ import viewmodels.implicits._
 
 object GroupAccountingPeriodSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubAccountingPeriodPage).map { answer =>
+  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
+    data.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent("")),

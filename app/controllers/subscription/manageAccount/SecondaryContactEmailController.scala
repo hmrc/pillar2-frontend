@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.SecondaryContactEmailFormProvider
 import models.Mode
@@ -33,11 +33,11 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactEmailController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
   navigator:                 AmendSubscriptionNavigator,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   formProvider:              SecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactEmailView
@@ -46,11 +46,11 @@ class SecondaryContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(SubSecondaryEmailPage) match {
+        val preparedForm = request.subscriptionLocalData.get(SubSecondaryEmailPage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }
@@ -62,7 +62,7 @@ class SecondaryContactEmailController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
@@ -72,8 +72,8 @@ class SecondaryContactEmailController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryEmailPage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryEmailPage, value))
+                _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubSecondaryEmailPage, mode, updatedAnswers))
           )
       }

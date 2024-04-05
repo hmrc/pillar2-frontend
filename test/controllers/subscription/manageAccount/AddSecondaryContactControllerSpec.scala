@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import forms.AddSecondaryContactFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode}
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,11 +31,11 @@ class AddSecondaryContactControllerSpec extends SpecBase {
   "AddSecondaryContact Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = emptySubscriptionLocalData
         .setOrException(SubPrimaryContactNamePage, "name")
         .setOrException(SubPrimaryEmailPage, "asda")
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
@@ -45,18 +45,22 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), "name", CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(false), "name", CheckMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = emptySubscriptionLocalData
         .setOrException(SubPrimaryContactNamePage, "name")
         .setOrException(SubPrimaryEmailPage, "asda")
         .setOrException(SubAddSecondaryContactPage, true)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
@@ -75,11 +79,11 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = emptySubscriptionLocalData
         .set(SubPrimaryContactNamePage, "name")
         .success
         .value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -98,7 +102,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     }
     "must redirect to book mark page for a GET if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
 
       running(application) {
@@ -112,7 +116,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
         .withFormUrlEncodedBody(
           "value" -> "true"
