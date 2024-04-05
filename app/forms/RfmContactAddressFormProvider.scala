@@ -17,34 +17,35 @@
 package forms
 
 import forms.mappings.{AddressMappings, Mappings}
-import models.UKAddress
+import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
 class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength = 35
-  def apply(): Form[UKAddress] = Form(
+  private val textLength    = 35
+  private val addressLength = 35
+  def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
         text("rfmContactAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(textLength, "rfmContactAddress.messages.error.addressLine1.length")),
+          .verifying(maxLength(addressLength, "rfmContactAddress.messages.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "rfmContactAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(addressLength, "rfmContactAddress.messages.error.addressLine2.length"))
       ),
       "addressLine3" ->
         text("rfmContactAddress.town_city.error.required")
-          .verifying(maxLength(textLength, "rfmContactAddress.town_city.error.length")),
+          .verifying(maxLength(addressLength, "rfmContactAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "rfmContactAddress.region.error.length"))
+            .verifying(maxLength(addressLength, "rfmContactAddress.region.error.length"))
         ),
       "postalCode" ->
-        mandatoryPostcode(
-          "rfmContactAddress.messages.error.postcode.required",
+        optionalPostcode(
+          Some("rfmContactAddress.postcode.error.invalid"),
           "rfmContactAddress.postcode.error.invalid",
           "rfmContactAddress.postcode.error.length",
           "countryCode"
@@ -52,6 +53,6 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
       "countryCode" ->
         text("rfmContactAddress.country.error.required")
           .verifying(maxLength(textLength, "rfmContactAddress.country.error.length"))
-    )(UKAddress.apply)(UKAddress.unapply)
+    )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

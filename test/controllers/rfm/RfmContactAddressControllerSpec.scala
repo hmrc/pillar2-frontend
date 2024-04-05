@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmContactAddressFormProvider
-import models.{NormalMode, UKAddress}
+import models.{NonUKAddress, NormalMode, UKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmContactAddressPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
@@ -28,8 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.InputOption
-import utils.countryOptions.CountryOptions
-import views.html.rfm.RfmContactAddressView
+
 
 import scala.concurrent.Future
 
@@ -69,7 +68,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val contactAddress = UKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), "ne5 2dh", "AT")
+      val contactAddress = NonUKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), Some("ne5 2dh"), "AT")
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "name")
         .success
