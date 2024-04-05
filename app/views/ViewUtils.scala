@@ -16,7 +16,7 @@
 
 package views
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
@@ -33,6 +33,22 @@ object ViewUtils {
 
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+
+  def errorKey(form: Form[_], fieldKey: String): String = {
+    val errorMessageKeys = form.errors.map(x => x.message).find(x => x.contains(fieldKey))
+    val emptyErrorFields = form.errors.filter(x => x.key == fieldKey).flatMap(x => x.args.map(_.toString)).headOption
+
+    def extractErrorKey(error: Option[String], errorField: Option[String], key: String): String =
+      error match {
+        case Some(msg) if msg.contains("all")      => s"$key.day"
+        case Some(msg) if msg.contains("required") => s"$key.${errorField.getOrElse("day")}"
+        case Some(msg) if msg.contains("year")     => s"$key.year"
+        case Some(msg) if msg.contains("month")    => s"$key.month"
+        case _                                     => s"$key.day"
+      }
+
+    extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
+  }
 
   def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =
     screenReaderKey.fold(
