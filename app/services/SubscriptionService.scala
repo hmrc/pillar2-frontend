@@ -16,12 +16,13 @@
 
 package services
 
+import cats.data.EitherT
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
-import models.subscription.{ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionRequestParameters}
-import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import models.subscription.{AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionData, SubscriptionLocalData, SubscriptionRequestParameters, UpeDetailsAmend}
+import models.{ApiError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NotFoundError, UserAnswers}
 import pages.NominateFilingMemberPage
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,12 +47,24 @@ class SubscriptionService @Inject() (
     } yield plrRef
 
   def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[ReadSubscriptionResponse] =
-    subscriptionConnector.readSubscription(parameters).flatMap {
+    subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
       case Some(readSubscriptionResponse) =>
         Future.successful(readSubscriptionResponse)
       case _ =>
         Future.failed(InternalIssueError)
     }
+
+  def amendSubscription(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
+    hc:                         HeaderCarrier
+  ): Future[Either[ApiError, HttpResponse]] = { // TODO - tests
+    for {
+      // get etmp subscription data
+      currentSubscriptionData <- EitherT.fromOptionF(subscriptionConnector.readSubscription(plrReference), NotFoundError)
+      amendData = createAmendSubscription(plrReference, currentSubscriptionData, subscriptionLocalData)
+      result <- EitherT(subscriptionConnector.amendSubscription(userId, amendData))
+    } yield result
+  }.value
+
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
@@ -67,4 +80,43 @@ class SubscriptionService @Inject() (
           Future.successful(None)
         }
       }
+
+  private def createAmendSubscription(
+    plrReference: String,
+    currentData:  SubscriptionData,
+    userData:     SubscriptionLocalData
+  ): AmendSubscription =
+    AmendSubscription(
+      upeDetails = UpeDetailsAmend(
+        plrReference,
+        customerIdentification1 = None,
+        customerIdentification2 = None,
+        organisationName = currentData.upeDetails.organisationName,
+        registrationDate = currentData.upeDetails.registrationDate,
+        domesticOnly = userData.subMneOrDomestic == MneOrDomestic.Uk,
+        filingMember = false
+      ),
+      accountingPeriod = userData.subAccountingPeriod,
+      upeCorrespAddressDetails = userData.subRegisteredAddress,
+      primaryContactDetails = ContactDetailsType(
+        name = userData.subPrimaryContactName,
+        telephone = userData.subPrimaryCapturePhone,
+        emailAddress = userData.subPrimaryEmail
+      ),
+      secondaryContactDetails = Option.when(userData.subAddSecondaryContact)( //TODO - maybe use Applicative here
+        ContactDetailsType(
+          userData.subSecondaryContactName.getOrElse(""),
+          userData.subSecondaryCapturePhone,
+          userData.subSecondaryEmail.getOrElse("")
+        )
+      ),
+      filingMemberDetails = currentData.filingMemberDetails.map(details =>
+        FilingMemberAmendDetails(
+          safeId = details.safeId,
+          customerIdentification1 = details.customerIdentification1,
+          customerIdentification2 = details.customerIdentification2,
+          organisationName = details.organisationName
+        )
+      )
+    )
 }

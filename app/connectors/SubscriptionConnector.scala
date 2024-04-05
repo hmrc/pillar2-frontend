@@ -19,15 +19,16 @@ package connectors
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError}
+import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalIssueError, InternalServerError_, NotFoundError, ServiceUnavailableError, UnprocessableEntityError}
 import play.api.Logging
-import play.api.http.Status.{CONFLICT, OK}
+import play.api.http.Status.{BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
+import cats.syntax.either._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +50,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           Future.failed(InternalIssueError)
       }
 
-  def readSubscription(
+  def readSubscriptionAndCache(
     readSubscriptionParameter: ReadSubscriptionRequestParameters // TODO - change to plfReference
   )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[ReadSubscriptionResponse]] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
@@ -65,7 +66,25 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+  def readSubscription(
+    plrReference: String
+  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = { // TODO - write tests
+    val subscriptionUrl = s"${config.pillar2BaseUrl}/subscription/read-subscription/$plrReference"
+
+    http
+      .GET[HttpResponse](subscriptionUrl)
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
+          None
+      }
+  }
+
+  def getSubscriptionCache(
+    userId:      String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] = // TODO -write test
     http
       .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
       .map {
@@ -78,7 +97,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def save(userId: String, subscriptionLocalData: JsValue)(implicit
     hc:            HeaderCarrier
-  ): Future[JsValue] =
+  ): Future[JsValue] = // TODO - write tests
     http
       .POST[JsValue, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId",
@@ -88,6 +107,25 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         response.status match {
           case OK => subscriptionLocalData
           case _  => throw new HttpException(response.body, response.status)
+        }
+      }
+
+  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Either[ApiError, HttpResponse]] = // TODO tests
+    http
+      .PUT[AmendSubscription, HttpResponse](
+        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId",
+        amendData
+      )
+      .map { response =>
+        response.status match {
+          case OK  => response.asRight[ApiError]
+          case BAD_REQUEST => BadRequestError.asLeft[HttpResponse]
+          case NOT_FOUND => NotFoundError.asLeft[HttpResponse]
+          case CONFLICT => DuplicateSubmissionError.asLeft[HttpResponse]
+          case UNPROCESSABLE_ENTITY => UnprocessableEntityError.asLeft[HttpResponse]
+          case INTERNAL_SERVER_ERROR => InternalServerError_.asLeft[HttpResponse]
+          case SERVICE_UNAVAILABLE => ServiceUnavailableError.asLeft[HttpResponse]
+          case _   => throw new HttpException(response.body, response.status)
         }
       }
 }

@@ -223,7 +223,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
         running(application) {
 
-          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(
               Future.successful(
                 Some(validResponse)
@@ -247,7 +247,7 @@ class SubscriptionServiceSpec extends SpecBase {
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
 
           val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
@@ -268,7 +268,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
           val resultFuture = service.readSubscription(requestParameters)

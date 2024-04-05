@@ -66,7 +66,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
     "return Some(json) when the backend has returned 200 OK with data" in {
       stubGet(s"$readSubscriptionPath/$id/$plrReference", OK, successfulResponseJson)
-      val result: Option[ReadSubscriptionResponse] = connector.readSubscription(readSubscriptionParameters).futureValue
+      val result: Option[ReadSubscriptionResponse] = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
 
       result mustBe defined
       result mustBe Some(
@@ -81,7 +81,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
           .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
       )
 
-      val result = connector.readSubscription(readSubscriptionParameters).futureValue
+      val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
 
       result mustBe None
     }

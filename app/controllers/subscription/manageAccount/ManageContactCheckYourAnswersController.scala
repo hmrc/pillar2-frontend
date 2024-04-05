@@ -25,7 +25,7 @@ import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, 
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendSubscriptionService
+import services.{AmendSubscriptionService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
@@ -41,7 +41,8 @@ class ManageContactCheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     ManageContactCheckYourAnswersView,
   countryOptions:           CountryOptions,
-  amendSubscriptionService: AmendSubscriptionService
+  amendSubscriptionService: AmendSubscriptionService,
+  subscriptionService: SubscriptionService
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -78,10 +79,10 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val showErrorScreens = appConfig.showErrorScreens
 
-    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).map {
+    subscriptionService.amendSubscription(request.userId, ???, request.subscriptionLocalData).map {
       case Right(_) =>
         logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from contact details")
         Redirect(controllers.routes.DashboardController.onPageLoad)
