@@ -45,13 +45,14 @@
         @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
         @paragraphBody(messages("mneOrDomestic.p1"))
         @paragraphBody(messages("mneOrDomestic.p2"))
+        @paragraphBody(messages("mneOrDomestic.p3"))
         @bulletList(items = List(
             Html(messages("mneOrDomestic.l1")),
             Html(messages("mneOrDomestic.l2"))
         ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
-        @paragraphBody(messages("mneOrDomestic.p3"))
         @paragraphBody(messages("mneOrDomestic.p4"))
         @paragraphBody(messages("mneOrDomestic.p5"))
+        @paragraphBody(messages("mneOrDomestic.p6"))
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),

@@ -19,60 +19,66 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import forms.NFMRegisteredInUKConfirmationFormProvider
+import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmUkBasedPage
-import play.api.data.Form
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.UkBasedFilingMemberView
+import views.html.rfm.RfmPrimaryContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UkBasedFilingMemberController @Inject() (
+class RfmPrimaryContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  navigator:                 ReplaceFilingMemberNavigator,
-  formProvider:              NFMRegisteredInUKConfirmationFormProvider,
+  formProvider:              RfmPrimaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      UkBasedFilingMemberView
+  view:                      RfmPrimaryContactEmailView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
-      val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, mode))
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      request.userAnswers
+        .get(RfmPrimaryContactNamePage)
+        .map { username =>
+          val form = formProvider(username)
+          val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
+            case Some(value) => form.fill(value)
+            case None        => form
+          }
+          Ok(view(preparedForm, mode, username))
+        }
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        ukBasedFilingMember =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, ukBasedFilingMember))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmUkBasedPage, mode, updatedAnswers))
-      )
+    request.userAnswers
+      .get(RfmPrimaryContactNamePage)
+      .map { name =>
+        formProvider(name)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPrimaryContactEmailPage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(RfmPrimaryContactEmailPage, mode, updatedAnswers))
+          )
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

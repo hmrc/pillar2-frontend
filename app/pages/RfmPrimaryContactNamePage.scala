@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-object Validation {
-  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX   = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
+import play.api.libs.json.JsPath
 
+case object RfmPrimaryContactNamePage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "rfmPrimaryContactName"
 }

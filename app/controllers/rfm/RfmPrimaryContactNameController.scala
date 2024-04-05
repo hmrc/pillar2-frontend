@@ -19,27 +19,29 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmPrimaryNameRegistrationFormProvider
+import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
-import pages.RfmPrimaryNameRegistrationPage
+import navigation.ReplaceFilingMemberNavigator
+import pages.RfmPrimaryContactNamePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmPrimaryNameRegistrationView
+import views.html.rfm.RfmPrimaryContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmPrimaryNameRegistrationController @Inject() (
+class RfmPrimaryContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmPrimaryNameRegistrationFormProvider,
+  formProvider:              RfmPrimaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryNameRegistrationView
+  view:                      RfmPrimaryContactNameView,
+  navigator:                 ReplaceFilingMemberNavigator
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -49,7 +51,7 @@ class RfmPrimaryNameRegistrationController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPrimaryNameRegistrationPage) match {
+      val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -68,9 +70,9 @@ class RfmPrimaryNameRegistrationController @Inject() (
           for {
             updatedAnswers <-
               Future
-                .fromTry(request.userAnswers.set(RfmPrimaryNameRegistrationPage, value))
+                .fromTry(request.userAnswers.set(RfmPrimaryContactNamePage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          } yield Redirect(navigator.nextPage(RfmPrimaryContactNamePage, mode, updatedAnswers))
       )
   }
 

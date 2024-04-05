@@ -15,38 +15,38 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
-@import views.html.components.gds.sectionHeader
-@import views.html.components.gds.heading
+@import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
-        govukRadios: GovukRadios,
-        govukButton: GovukButton,
-        h: heading
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
-@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessActivityUK.title")), showSignOut = false, timeout = false, authorised = false) {
+@layout(pageTitle = title(form, messages("rfm.rfmPrimaryContactName.title"))) {
 
-    @formHelper(action = eligibility.routes.BusinessActivityUKController.onSubmit, 'autoComplete -> "off") {
+@formHelper(action = controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("businessActivityUK.check.liable.text"))
-        @h(messages("businessActivityUK.heading"), classes = "govuk-heading-l")
+        @sectionHeader(messages("rfm.rfmPrimaryContactName.caption"))
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.p1"))
+                label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeading(Large)
             )
+            .withHint(Hint(content = Text(messages("rfm.rfmPrimaryContactName.hint"))))
+            .withWidth(TwoThirds)
         )
 
         @govukButton(
