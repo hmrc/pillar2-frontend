@@ -18,17 +18,9 @@ package views
 
 import base.SpecBase
 import forms.GroupAccountingPeriodFormProvider
-import models.registration._
-import models.rfm.RegistrationDate
 import models.subscription.AccountingPeriod
-import models.{EnrolmentInfo, UKAddress}
-import pages._
 import play.api.data.Form
-import utils.RowStatus
 import views.ViewUtils.errorKey
-import views.html.helper.form
-
-import java.time.LocalDate
 
 class ViewUtilsSpec extends SpecBase {
 
@@ -38,14 +30,14 @@ class ViewUtilsSpec extends SpecBase {
   "View Utils" should {
     "provide the right field key" when {
       "only the day is incorrect" in {
-        val startDateDay: String = "1char"
+        val startDateDay:   String = "1char"
         val startDateMonth: String = "1"
-        val startDateYear: String = "1"
+        val startDateYear:  String = "1"
 
         val data = Map(
-          "startDate.day" -> startDateDay,
+          "startDate.day"   -> startDateDay,
           "startDate.month" -> startDateMonth,
-          "startDate.year" -> startDateYear
+          "startDate.year"  -> startDateYear
         )
 
         val testErrorKey = errorKey(form.bind(data), "startDate")
@@ -53,14 +45,14 @@ class ViewUtilsSpec extends SpecBase {
       }
 
       "only the month is incorrect" in {
-        val startDateDay: String = "1"
+        val startDateDay:   String = "1"
         val startDateMonth: String = "1char"
-        val startDateYear: String = "1"
+        val startDateYear:  String = "1"
 
         val data = Map(
-          "startDate.day" -> startDateDay,
+          "startDate.day"   -> startDateDay,
           "startDate.month" -> startDateMonth,
-          "startDate.year" -> startDateYear
+          "startDate.year"  -> startDateYear
         )
 
         val testErrorKey = errorKey(form.bind(data), "startDate")
@@ -68,14 +60,14 @@ class ViewUtilsSpec extends SpecBase {
       }
 
       "only the year is incorrect" in {
-        val startDateDay: String = "1"
+        val startDateDay:   String = "1"
         val startDateMonth: String = "1"
-        val startDateYear: String = "1char"
+        val startDateYear:  String = "1char"
 
         val data = Map(
-          "startDate.day" -> startDateDay,
+          "startDate.day"   -> startDateDay,
           "startDate.month" -> startDateMonth,
-          "startDate.year" -> startDateYear
+          "startDate.year"  -> startDateYear
         )
 
         val testErrorKey = errorKey(form.bind(data), "startDate")
@@ -83,14 +75,14 @@ class ViewUtilsSpec extends SpecBase {
       }
 
       "no values have been provided" in {
-        val startDateDay: String = ""
+        val startDateDay:   String = ""
         val startDateMonth: String = ""
-        val startDateYear: String = ""
+        val startDateYear:  String = ""
 
         val data = Map(
-          "startDate.day" -> startDateDay,
+          "startDate.day"   -> startDateDay,
           "startDate.month" -> startDateMonth,
-          "startDate.year" -> startDateYear
+          "startDate.year"  -> startDateYear
         )
 
         val testErrorKey = errorKey(form.bind(data), "startDate")
