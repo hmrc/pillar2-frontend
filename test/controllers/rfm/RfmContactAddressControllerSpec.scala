@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.InputOption
 
-
 import scala.concurrent.Future
 
 class RfmContactAddressControllerSpec extends SpecBase {
