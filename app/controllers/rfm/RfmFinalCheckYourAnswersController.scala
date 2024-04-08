@@ -47,3 +47,22 @@ class RfmFinalCheckYourAnswersController @Inject() (
     }
   }
 
+  private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+    SummaryListViewModel(
+      rows = Seq(
+
+        RfmCorporatePositionSummary.row(userAnswers),
+        RfmNameRegistrationSummary.row(userAnswers),
+        RfmRegisteredAddressSummary.row(userAnswers, countryOptions),
+        NfmContactNameSummary.row(userAnswers),
+        NfmEmailAddressSummary.row(userAnswers),
+        NfmTelephonePreferenceSummary.row(userAnswers),
+        NfmContactTelephoneSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyNameNfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyRegNfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyUtrNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyNameNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyRegNfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyUtrNfmSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")

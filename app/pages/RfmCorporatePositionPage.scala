@@ -38,22 +38,11 @@ case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
           .flatMap(
             _.remove(NfmNameRegistrationPage).flatMap(
               _.remove(NfmRegisteredAddressPage).flatMap(
-                _.remove().flatMap(
-                  _.remove().flatMap(
-                    _.remove().flatMap(
-                      _.remove().flatMap(
-                        _.remove().flatMap(
-                          _.remove(FmEntityTypePage).flatMap(
-                            _.remove(FmGRSResponsePage)
-                          )
-                        )
-                      )
-                    )
-                  )
+                _.remove(RfmEntityTypePage).flatMap(
+                  _.remove(RfmGRSResponsePage)
                 )
               )
             )
           )
-
     }
 }

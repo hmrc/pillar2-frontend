@@ -16,7 +16,9 @@
 
 package pages
 
-import play.api.libs.json.JsPath
+import models.UserAnswers
+
+import scala.util.Try
 
 case object RfmUkBasedPage extends QuestionPage[Boolean] {
 
@@ -24,4 +26,20 @@ case object RfmUkBasedPage extends QuestionPage[Boolean] {
 
   override def toString: String = "RfmUkBased"
 
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmNameRegistrationPage)
+        .flatMap(
+          _.remove(RfmRegisteredAddressPage)
+        )
+    } else if (value.contains(true)) {
+      userAnswers
+        .remove(RfmEntityTypePage)
+        .flatMap(
+            _.remove(RfmGRSResponsePage)
+        )
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }
