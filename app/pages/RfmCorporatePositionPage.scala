@@ -17,11 +17,43 @@
 package pages
 
 import models.rfm.CorporatePosition
+import models.UserAnswers
 import play.api.libs.json.JsPath
+import scala.util.Try
 
 case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "rfmCorporatePosition"
+
+  override def cleanup(value: Option[CorporatePosition], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(CorporatePosition.NewNfm) =>
+        super.cleanup(value, userAnswers)
+
+      case _ =>
+        userAnswers
+          .remove(RfmUkBasedPage)
+          .flatMap(
+            _.remove(NfmNameRegistrationPage).flatMap(
+              _.remove(NfmRegisteredAddressPage).flatMap(
+                _.remove().flatMap(
+                  _.remove().flatMap(
+                    _.remove().flatMap(
+                      _.remove().flatMap(
+                        _.remove().flatMap(
+                          _.remove(FmEntityTypePage).flatMap(
+                            _.remove(FmGRSResponsePage)
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+
+    }
 }

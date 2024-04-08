@@ -31,16 +31,19 @@ import views.html.rfm.RfmFinalCheckYourAnswersView
 import scala.concurrent.ExecutionContext
 
 class RfmFinalCheckYourAnswersController @Inject() (
-  getData:                  DataRetrievalAction,
-  rfmIdentify:              RfmIdentifierAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RfmFinalCheckYourAnswersView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+                                                     getData:                  DataRetrievalAction,
+                                                     rfmIdentify:              RfmIdentifierAction,
+                                                     requireData:              DataRequiredAction,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     view:                     RfmFinalCheckYourAnswersView
+                                                   )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      Ok(view())
+    }
   }
-}
+
