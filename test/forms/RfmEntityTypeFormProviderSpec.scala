@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
+import forms.behaviours.OptionFieldBehaviours
 import models.grs.EntityType
-import models.subscription.DashboardInfo
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.data.FormError
 
-trait ModelGenerators {
+class RfmEntityTypeFormProviderSpec extends OptionFieldBehaviours {
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
+  val form = new RfmEntityTypeFormProvider()()
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
+  ".value" - {
 
+    val fieldName   = "value"
+    val requiredKey = "rfmEntityType.error.required"
+
+    behave like optionsField[EntityType](
+      form,
+      fieldName,
+      validValues = EntityType.values,
+      invalidError = FormError(fieldName, "error.invalid")
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

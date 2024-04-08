@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
-import models.grs.EntityType
-import models.subscription.DashboardInfo
-import org.scalacheck.{Arbitrary, Gen}
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
 
-trait ModelGenerators {
+import javax.inject.Inject
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
+class RfmPrimaryContactNameFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("rfm.rfmPrimaryContactName.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.rfmPrimaryContactName.error.length"))
+    )
 }

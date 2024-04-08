@@ -18,26 +18,22 @@
 @import views.html.components.gds._
 
 @this(
-        layout: templates.Layout,
-        formHelper: FormWithCSRF,
+    layout: templates.Layout,
         heading: heading,
-        sectionHeader: sectionHeader,
         paragraphBody: paragraphBody,
-        govukButton: GovukButton
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+    govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
-
-    @sectionHeader(messages("rfm.contact.heading.caption"))
-    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
-
-    @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
-    )
-
+    pageTitle    = titleNoForm(messages("grs.registration.failed.header")),
+    showBackLink = false
+) {
+    @heading(messages("grs.registration.failed.header"), "govuk-heading-l")
+    @paragraphBody(messages("grs.registration.failed.line1"))
+    @paragraphBody(messages("grs.registration.failed.line2"))
+    @paragraphMessageWithLink(linkMessage = messages("grs.registration.failed.line3-hyperlink"), message2 = Some(messages("grs.registration.failed.line3-cont")), linkUrl = "/report-pillar2-top-up-taxes/replace-filing-member/business-matching/filing-member/uk-based/org-type", linkClass = "govuk-link govuk-link--no-visited-state" )
 
 }

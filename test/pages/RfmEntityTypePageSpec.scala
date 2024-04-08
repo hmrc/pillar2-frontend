@@ -16,11 +16,17 @@
 
 package pages
 
-import play.api.libs.json.JsPath
+import models.grs.EntityType
+import pages.behaviours.PageBehaviours
 
-case object RfmPrimaryNameRegistrationPage extends QuestionPage[String] {
+class RfmEntityTypePageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "RfmEntityTypePage" - {
 
-  override def toString: String = "rfmPrimaryNameRegistration"
+    beRetrievable[EntityType](RfmEntityTypePage)
+
+    beSettable[EntityType](RfmEntityTypePage)
+
+    beRemovable[EntityType](RfmEntityTypePage)
+  }
 }

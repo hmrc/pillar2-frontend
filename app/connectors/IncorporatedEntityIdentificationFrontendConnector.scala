@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.grs.{GrsCreateRegistrationResponse, ServiceName}
+import models.grs.{GrsCreateRegistrationResponse, JourneyType, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
@@ -47,7 +47,11 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
   def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit
     hc:                                     HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] = {
-    val serviceName = ServiceName()
+    val journeyType = userType match {
+      case UserType.Rfm => JourneyType.Rfm
+      case _            => JourneyType.Reg
+    }
+    val serviceName = ServiceName(journeyType)
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
       businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,

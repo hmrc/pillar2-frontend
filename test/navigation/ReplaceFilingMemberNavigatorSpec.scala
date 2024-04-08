@@ -34,7 +34,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
     postalCode = None,
     countryCode = "AB"
   )
-
+  private lazy val jr                   = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val securityQuestionsCYA = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmQuestionsCYA      = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val submitAndReview =
@@ -47,6 +47,44 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
       }
+
+      "go to contact email page from contact name page" in {
+        navigator.nextPage(RfmPrimaryContactNamePage, NormalMode, emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington")) mustBe
+          controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
+      }
+      "go to telephone preference page from contact email page" in {
+        navigator.nextPage(
+          RfmPrimaryContactEmailPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")
+        ) mustBe
+          controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
+      }
+      "if user select yes on contact by telephone page  then go to a page where we capture primary telephone number" in {
+        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)) mustBe
+          controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for contact by telephone page can be found" in {
+        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+      "if user select no  on contact by telephone page then go to under construction page " in {
+        navigator.nextPage(
+          RfmContactByTelephonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmContactByTelephonePage, false)
+        ) mustBe controllers.routes.UnderConstructionController.onPageLoad
+
+      }
+      "go to Under construction page from a page where they enter their phone details" in {
+        navigator.nextPage(
+          RfmCapturePrimaryTelephonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "12321321")
+        ) mustBe
+          controllers.routes.UnderConstructionController.onPageLoad
+      }
+
       "go to registration date page from pillar 2 reference page" in {
         navigator.nextPage(
           RfmPillar2ReferencePage,

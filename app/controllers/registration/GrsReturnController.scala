@@ -16,8 +16,10 @@
 
 package controllers.registration
 
+import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import models.NormalMode
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -41,13 +43,14 @@ import utils.Pillar2SessionKeys
 class GrsReturnController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   identify:                                          IdentifierAction,
+  rfmIdentify:                                       RfmIdentifierAction,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   auditService:                                      AuditService
-)(implicit ec:                                       ExecutionContext)
+)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with Logging {
 
@@ -228,6 +231,88 @@ class GrsReturnController @Inject() (
 
   }
 
+  def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      request.userAnswers
+        .get(RfmEntityTypePage)
+        .map {
+          case EntityType.UkLimitedCompany =>
+            incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+              if (data.registration.registrationStatus == Registered) {
+                data.registration.registeredBusinessPartnerId
+                  .map { safeId =>
+                    for {
+                      userAnswers <-
+                        Future.fromTry(request.userAnswers.set(RfmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
+
+                      - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+
+                    } yield handleGrsAndBvResult(
+                      data.identifiersMatch,
+                      data.businessVerification,
+                      data.registration,
+                      JourneyType.ReplaceFilingMember,
+                      journeyId,
+                      EntityType.UkLimitedCompany
+                    )
+                  }
+                  .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+              } else {
+                Future.successful(
+                  handleGrsAndBvResult(
+                    data.identifiersMatch,
+                    data.businessVerification,
+                    data.registration,
+                    JourneyType.ReplaceFilingMember,
+                    journeyId,
+                    EntityType.UkLimitedCompany
+                  )
+                )
+              }
+            }
+          case EntityType.LimitedLiabilityPartnership =>
+            partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
+              auditService.auditGrsReturnNfmForLLP(data)
+              if (data.registration.registrationStatus == Registered) {
+                data.registration.registeredBusinessPartnerId
+                  .map { safeId =>
+                    for {
+                      userAnswers <-
+                        Future.fromTry(request.userAnswers.set(RfmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data))))
+                      - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+
+                    } yield handleGrsAndBvResult(
+                      data.identifiersMatch,
+                      data.businessVerification,
+                      data.registration,
+                      JourneyType.ReplaceFilingMember,
+                      journeyId,
+                      EntityType.LimitedLiabilityPartnership
+                    )
+                  }
+                  .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+              } else {
+                Future.successful(
+                  handleGrsAndBvResult(
+                    data.identifiersMatch,
+                    data.businessVerification,
+                    data.registration,
+                    JourneyType.ReplaceFilingMember,
+                    journeyId,
+                    EntityType.LimitedLiabilityPartnership
+                  )
+                )
+              }
+            }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    } else {
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    }
+
+  }
+
   private def handleGrsAndBvResult(
     identifiersMatch: Boolean,
     bvResult:         Option[BusinessVerificationResult],
@@ -249,6 +334,19 @@ class GrsReturnController @Inject() (
             s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
+      case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.ReplaceFilingMember =>
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Replace Filing Member Business Verification failed for $entityType with journey ID $journeyId"
+        )
+        Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadRfm)
+      case (true, _, _, Some(_)) if journeyType == JourneyType.ReplaceFilingMember =>
+        logger.info(
+          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
+            s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
+        )
+        Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
+
       case (true, _, _, Some(_)) =>
         logger.info(
           s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
@@ -265,6 +363,8 @@ class GrsReturnController @Inject() (
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)
           case (_, JourneyType.UltimateParent) =>
             Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadUpe)
+          case (_, JourneyType.ReplaceFilingMember) =>
+            Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadRfm)
         }
       case _ =>
         throw new IllegalStateException(
