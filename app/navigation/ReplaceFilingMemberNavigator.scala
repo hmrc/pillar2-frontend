@@ -47,7 +47,6 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage        => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage       => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmEntityTypePage              => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
 
     case _ => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
@@ -57,7 +56,6 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmRegistrationDatePage  => _ => securityQuestionsCheckYourAnswers
     case RfmNameRegistrationPage  => whichCheckYourAnswerPageRfmQuestions
     case RfmRegisteredAddressPage => whichCheckYourAnswerPageRfmQuestions
-    case RfmEntityTypePage        => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(CheckMode)
     case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 

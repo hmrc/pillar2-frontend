@@ -161,4 +161,53 @@ trait TestData {
        |            }
        |  }
        """.stripMargin
+
+  val validRegistrationWithIdResponseForLLPWithoutPartnerId: String =
+    s"""{
+       |  "companyProfile" : {
+       |                "companyName" : "Test Example Partnership Name",
+       |                "companyNumber" : "76543210",
+       |                "dateOfIncorporation" : "2010-12-12",
+       |                "unsanitisedCHROAddress" : {
+       |                    "address_line_1" : "Address Line 1",
+       |                    "address_line_2" : "Address Line 2",
+       |                    "country" : "United Kingdom",
+       |                    "locality" : "Town",
+       |                    "postal_code" : "AB12 3CD",
+       |                    "region" : "Region"
+       |                }
+       |            },
+       |            "sautr" : "1234567890",
+       |            "postcode" : "AA11AA",
+       |            "identifiersMatch" : true,
+       |            "registration" : {
+       |                "registrationStatus" : "REGISTERED"
+       |            }
+       |  }
+
+       """.stripMargin
+
+  val validRegistrationWithIdResponseWithoutPartnerId: String =
+    s"""{
+       |            "companyProfile" : {
+       |                "companyName" : "Test Example Company Name",
+       |                "companyNumber" : "76543210",
+       |                "dateOfIncorporation" : "2010-12-12",
+       |                "unsanitisedCHROAddress" : {
+       |                    "address_line_1" : "Address Line 1",
+       |                    "address_line_2" : "Address Line 2",
+       |                    "locality" : "Town",
+       |                    "postal_code" : "AB12 3CD",
+       |                    "region" : "Region"
+       |                }
+       |            },
+       |            "ctutr" : "1234567890",
+       |            "identifiersMatch" : true,
+       |            "registration" : {
+       |                "registrationStatus" : "REGISTERED"
+       |            }
+       |  }
+
+       """.stripMargin
+
 }

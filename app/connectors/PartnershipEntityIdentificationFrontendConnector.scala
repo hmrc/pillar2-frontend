@@ -54,11 +54,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
 
-    val journeyType = userType match {
-      case UserType.Rfm => JourneyType.Rfm
-      case _            => JourneyType.Reg
-    }
-    val serviceName = ServiceName(journeyType)
+    val serviceName = ServiceName()
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
       businessVerificationCheck = appConfig.partnershipBvEnabled,

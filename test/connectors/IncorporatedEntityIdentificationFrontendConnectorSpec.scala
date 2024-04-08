@@ -18,19 +18,30 @@ package connectors
 
 import base.SpecBase
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
-import models.registration.IncorporatedEntityCreateRegistrationRequest
+import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
 class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
-  val apiUrl    = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
-  val connector = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
+  val apiUrl                              = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
+  val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
+  private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
+  /*  override lazy val app: Application = new GuiceApplicationBuilder()
+    .configure(
+      conf = "microservice.services.pillar2.port" -> server.port()
+    )
+    .build()
+
+  lazy val connector = app.injector.instanceOf[IncorporatedEntityIdentificationFrontendConnectorImpl]*/
   "IncorporatedEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createLimitedCompanyJourney" in {
@@ -73,6 +84,56 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
 
     }
 
+    "must return OK status for createLimitedCompanyJourney for RFM" in {
+      val expectedUrl = s"$apiUrl/limited-company-journey"
+      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest = {
+        val serviceName = ServiceName(
+          OptServiceName("Report Pillar 2 top-up taxes"),
+          OptServiceName("Report Pillar 2 top-up taxes")
+        )
+
+        IncorporatedEntityCreateRegistrationRequest(
+          continueUrl =
+            s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Rfm.value.toLowerCase}",
+          businessVerificationCheck = false,
+          optServiceName = Some(serviceName.en.optServiceName),
+          deskProServiceId = "pillar2-frontend",
+          signOutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state",
+          accessibilityUrl = "/accessibility-statement/pillar2-frontend",
+          labels = serviceName
+        )
+      }
+
+      when(
+        mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
+          any(),
+          any(),
+          any()
+        )(any(), any(), any(), any())
+      )
+        .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
+
+      val result = connector.createLimitedCompanyJourney(UserType.Rfm, NormalMode).futureValue
+      result shouldBe validGrsCreateRegistrationResponse
+      verify(mockHttpClient, times(1))
+        .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
+          ArgumentMatchers.eq(expectedUrl),
+          ArgumentMatchers.eq(expectedIncorporatedEntityCreateRegistrationRequest),
+          any()
+        )(any(), any(), any(), any())
+
+    }
+
+    "getJourneyData should be successful" in {
+      when(
+        mockHttpClient.GET[IncorporatedEntityRegistrationData](any(), any(), any())(any(), any(), any())
+      )
+        .thenReturn(Future.successful(validRegisterWithIdResponse))
+      val result = connector.getJourneyData("1234")
+      whenReady(result) { response =>
+        response shouldBe validRegisterWithIdResponse
+      }
+    }
   }
 
 }

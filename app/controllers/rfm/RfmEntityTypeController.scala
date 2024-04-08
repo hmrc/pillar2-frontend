@@ -24,6 +24,7 @@ import models.{Mode, UserType}
 import models.grs.EntityType
 import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -50,7 +51,7 @@ class RfmEntityTypeController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[EntityType] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
@@ -107,7 +108,7 @@ class RfmEntityTypeController @Inject() (
                 updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, false))
                 updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmEntityTypePage, value))
                 _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
-              } yield Redirect(navigator.nextPage(RfmEntityTypePage, mode, updatedAnswers))
+              } yield Redirect(controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(mode))
           }
       )
   }
