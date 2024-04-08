@@ -36,7 +36,7 @@
     @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryNameRegistrationController.onPageLoad().url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
     )
 
 

@@ -16,11 +16,17 @@
 
 package forms
 
-object Validation {
-  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX   = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
 
+import javax.inject.Inject
+
+class RfmPrimaryContactNameFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("rfm.rfmPrimaryContactName.error.required")
+        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.rfmPrimaryContactName.error.length"))
+    )
 }
