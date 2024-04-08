@@ -16,33 +16,32 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
+import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.subscription.AmendSubscriptionRequestParameters
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import models.UnexpectedResponse
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
   identify:                  IdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ManageGroupDetailsCheckYourAnswersView,
-  amendSubscriptionService:  AmendSubscriptionService,
+  subscriptionService:       SubscriptionService,
+  referenceNumberService:    ReferenceNumberService,
   val userAnswersConnectors: UserAnswersConnectors
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -62,37 +61,14 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val showErrorScreens = appConfig.showErrorScreens
-
-    amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).map {
-      case Right(_) =>
-        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from group details ")
-        Redirect(controllers.routes.DashboardController.onPageLoad)
-
-      case Left(error) if showErrorScreens =>
-        val errorMessage = error match {
-          case BadRequestError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error."
-          case NotFoundError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found."
-          case DuplicateSubmissionError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected."
-          case UnprocessableEntityError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
-          case InternalServerError_ =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
-          case ServiceUnavailableError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Service Unavailable error."
-          case SubscriptionCreateError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
-        }
-        logger.error(errorMessage)
+    (for {
+      referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
+      _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
+    } yield Redirect(controllers.routes.DashboardController.onPageLoad))
+      .recover { case UnexpectedResponse =>
         Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-
-      case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
-
+      }
+      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
   }
 
 }

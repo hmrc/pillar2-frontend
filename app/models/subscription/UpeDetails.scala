@@ -16,26 +16,19 @@
 
 package models.subscription
 
-import models.subscription.UpeDetails._
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
 import play.api.libs.json._
 
 import java.time.LocalDate
 
-final case class ReadSubscriptionResponse(upeDetails: UpeDetails, accountStatus: Option[AccountStatus])
-
-final case class UpeDetails(organisationName: String, registrationDate: LocalDate)
-
-object ReadSubscriptionResponse {
-
-  implicit val reads: Reads[ReadSubscriptionResponse] = (
-    (JsPath \ "success" \ "upeDetails").read[UpeDetails] and
-      (JsPath \ "success" \ "accountStatus").readNullable[AccountStatus]
-  )(ReadSubscriptionResponse.apply _)
-
-  implicit val writes: OWrites[ReadSubscriptionResponse] = Json.writes[ReadSubscriptionResponse]
-}
+final case class UpeDetails(
+  safeId:                  Option[String],
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String,
+  registrationDate:        LocalDate,
+  domesticOnly:            Boolean,
+  filingMember:            Boolean
+)
 
 object UpeDetails {
   implicit val format: OFormat[UpeDetails] = Json.format[UpeDetails]

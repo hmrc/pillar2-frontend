@@ -230,7 +230,7 @@ class SubscriptionServiceSpec extends SpecBase {
               )
             )
 
-          val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
           result mustBe validResponse
         }
@@ -250,7 +250,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
 
-          val result = service.readSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
+          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
 
           result mustBe models.InternalIssueError
         }
@@ -271,7 +271,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
-          val resultFuture = service.readSubscription(requestParameters)
+          val resultFuture = service.readAndCacheSubscription(requestParameters)
 
           whenReady(resultFuture.failed) { e =>
             e mustBe InternalIssueError

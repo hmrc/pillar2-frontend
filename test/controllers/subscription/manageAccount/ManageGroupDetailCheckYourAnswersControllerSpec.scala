@@ -28,7 +28,6 @@ import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.AmendSubscriptionService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import viewmodels.govuk.SummaryListFluency
 

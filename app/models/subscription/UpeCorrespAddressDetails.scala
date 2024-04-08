@@ -18,18 +18,15 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionData(
-  formBundleNumber:         String,
-  upeDetails:               UpeDetails,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         AccountingPeriod,
-  accountStatus:            Option[AccountStatus]
+final case class UpeCorrespAddressDetails(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode:     Option[String],
+  countryCode:  String
 )
 
-object SubscriptionData {
-
-  implicit val format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
+object UpeCorrespAddressDetails {
+  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }

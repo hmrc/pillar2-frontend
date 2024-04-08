@@ -16,19 +16,19 @@
 
 package connectors
 
+import akka.Done
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
-import models.{ApiError, BadRequestError, DuplicateSubmissionError, InternalIssueError, InternalServerError_, NotFoundError, ServiceUnavailableError, UnprocessableEntityError}
+import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
 import play.api.Logging
-import play.api.http.Status.{BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
-import cats.syntax.either._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,14 +52,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscriptionAndCache(
     readSubscriptionParameter: ReadSubscriptionRequestParameters // TODO - change to plfReference
-  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[ReadSubscriptionResponse]] = {
+  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
-
     http
       .GET[HttpResponse](subscriptionUrl)
       .map {
         case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[ReadSubscriptionResponse])
+          Some(Json.parse(response.body).as[SubscriptionData])
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           None
@@ -69,7 +68,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
   def readSubscription(
     plrReference: String
   )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = { // TODO - write tests
-    val subscriptionUrl = s"${config.pillar2BaseUrl}/subscription/read-subscription/$plrReference"
+    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
       .GET[HttpResponse](subscriptionUrl)
@@ -110,22 +109,16 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         }
       }
 
-  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Either[ApiError, HttpResponse]] = // TODO tests
+  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] = // TODO tests
     http
       .PUT[AmendSubscription, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId",
         amendData
       )
-      .map { response =>
+      .flatMap { response =>
         response.status match {
-          case OK  => response.asRight[ApiError]
-          case BAD_REQUEST => BadRequestError.asLeft[HttpResponse]
-          case NOT_FOUND => NotFoundError.asLeft[HttpResponse]
-          case CONFLICT => DuplicateSubmissionError.asLeft[HttpResponse]
-          case UNPROCESSABLE_ENTITY => UnprocessableEntityError.asLeft[HttpResponse]
-          case INTERNAL_SERVER_ERROR => InternalServerError_.asLeft[HttpResponse]
-          case SERVICE_UNAVAILABLE => ServiceUnavailableError.asLeft[HttpResponse]
-          case _   => throw new HttpException(response.body, response.status)
+          case OK => Done.toFuture
+          case _  => Future.failed(UnexpectedResponse)
         }
       }
 }

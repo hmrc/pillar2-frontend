@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import akka.Done
 import models.{MneOrDomestic, NonUKAddress, RichJsObject}
 import pages._
 import play.api.libs.json._
@@ -35,9 +36,8 @@ case class SubscriptionLocalData(
   subSecondaryContactName:     Option[String],
   subSecondaryEmail:           Option[String],
   subSecondaryCapturePhone:    Option[String],
-  subSecondaryPhonePreference: Boolean,
-  subRegisteredAddress:        NonUKAddress,
-  subFilingMemberDetails:      Option[FilingMemberDetails]
+  subSecondaryPhonePreference: Option[Boolean],
+  subRegisteredAddress:        NonUKAddress
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)
@@ -52,6 +52,16 @@ case class SubscriptionLocalData(
         Failure(JsResultException(errors))
     }
 
+    updatedData.map(_.as[SubscriptionLocalData])
+  }
+
+  def remove[A](page: Settable[A]): Try[SubscriptionLocalData] = {
+    val updatedData = jsObj.removeObject(page.path) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(e) =>
+        Failure(JsResultException(e))
+    }
     updatedData.map(_.as[SubscriptionLocalData])
   }
 

@@ -27,18 +27,14 @@ import viewmodels.implicits._
 object SecondaryTelephoneSummary {
 
   def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    if (data.subSecondaryPhonePreference) {
-      data.get(SubSecondaryCapturePhonePage).map { answer =>
-        SummaryListRowViewModel(
-          key = "secondaryTelephone.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("secondaryTelephone.change.hidden"))
-          )
+    data.get(SubSecondaryCapturePhonePage).map { answer =>
+      SummaryListRowViewModel(
+        key = "secondaryTelephone.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad().url)
+            .withVisuallyHiddenText(messages("secondaryTelephone.change.hidden"))
         )
-      }
-    } else {
-      None
+      )
     }
 }

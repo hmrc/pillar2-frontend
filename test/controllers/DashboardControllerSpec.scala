@@ -71,7 +71,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[DashboardView]
@@ -102,7 +102,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
@@ -121,7 +121,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -140,7 +140,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -163,7 +163,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(None))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

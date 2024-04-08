@@ -16,24 +16,24 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
 import com.google.inject.Inject
+import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.subscription.AmendSubscriptionRequestParameters
-import models.{BadRequestError, DuplicateSubmissionError, InternalServerError_, NotFoundError, ServiceUnavailableError, SubscriptionCreateError, UnprocessableEntityError}
+import models.UnexpectedResponse
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AmendSubscriptionService, SubscriptionService}
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
   getData:                  SubscriptionDataRetrievalAction,
@@ -41,8 +41,8 @@ class ManageContactCheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     ManageContactCheckYourAnswersView,
   countryOptions:           CountryOptions,
-  amendSubscriptionService: AmendSubscriptionService,
-  subscriptionService: SubscriptionService
+  subscriptionService:      SubscriptionService,
+  referenceNumberService:   ReferenceNumberService
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -80,37 +80,14 @@ class ManageContactCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val showErrorScreens = appConfig.showErrorScreens
-
-    subscriptionService.amendSubscription(request.userId, ???, request.subscriptionLocalData).map {
-      case Right(_) =>
-        logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Redirecting to Dashboard from contact details")
-        Redirect(controllers.routes.DashboardController.onPageLoad)
-
-      case Left(error) if showErrorScreens =>
-        val errorMessage = error match {
-          case BadRequestError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Bad request error."
-          case NotFoundError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - No subscription data found."
-          case DuplicateSubmissionError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Duplicate submission detected."
-          case UnprocessableEntityError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unprocessable entity error."
-          case InternalServerError_ =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Internal server error."
-          case ServiceUnavailableError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Service Unavailable error."
-          case SubscriptionCreateError =>
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription creation error."
-        }
-        logger.error(errorMessage)
+    (for {
+      referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
+      _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
+    } yield Redirect(controllers.routes.DashboardController.onPageLoad))
+      .recover { case UnexpectedResponse =>
         Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-
-      case _ =>
-        logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - An error occurred during amend subscription processing")
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+      }
+      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
   }
 
 }

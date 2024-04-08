@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.ContactByTelephoneFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
+import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -70,15 +70,22 @@ class ContactByTelephoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominatePrimaryContactNumber =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
-                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-              } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
+            {
+              case nominatePrimaryContactNumber @ true =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
+              case nominatePrimaryContactNumber @ false =>
+                for {
+                  updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
+                  updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubPrimaryCapturePhonePage))
+                  _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers1))
+                } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
+            }
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
 
+  }
 }

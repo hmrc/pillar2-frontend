@@ -49,10 +49,10 @@ class DashboardController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = identify.async { implicit request =>
-    val x = for {
+    (for {
       userAnswers     <- OptionT.liftF(sessionRepository.get(request.userId))
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
-      dashboard       <- OptionT.liftF(subscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
+      dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
     } yield Ok(
       view(
         dashboard.upeDetails.organisationName,
@@ -60,8 +60,7 @@ class DashboardController @Inject() (
         referenceNumber,
         inactiveStatus = dashboard.accountStatus.exists(_.inactive)
       )
-    )
-    x.recover { case InternalIssueError =>
+    )).recover { case InternalIssueError =>
       logger.error(
         s"[ read subscription failed as no valid Json was returned from the controller"
       )

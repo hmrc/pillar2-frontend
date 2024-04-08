@@ -16,13 +16,13 @@
 
 package services
 
-import cats.data.EitherT
+import akka.Done
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
-import models.subscription.{AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, ReadSubscriptionRequestParameters, ReadSubscriptionResponse, SubscriptionData, SubscriptionLocalData, SubscriptionRequestParameters, UpeDetailsAmend}
-import models.{ApiError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NotFoundError, UserAnswers}
+import models.subscription._
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
 import pages.NominateFilingMemberPage
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,8 +46,17 @@ class SubscriptionService @Inject() (
       _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
     } yield plrRef
 
-  def readSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[ReadSubscriptionResponse] =
+  def readAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
+
+  //todo -tests
+  def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+    subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(readSubscriptionResponse) =>
         Future.successful(readSubscriptionResponse)
       case _ =>
@@ -56,14 +65,12 @@ class SubscriptionService @Inject() (
 
   def amendSubscription(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                         HeaderCarrier
-  ): Future[Either[ApiError, HttpResponse]] = { // TODO - tests
+  ): Future[Done] = // TODO - tests
     for {
-      // get etmp subscription data
-      currentSubscriptionData <- EitherT.fromOptionF(subscriptionConnector.readSubscription(plrReference), NotFoundError)
+      currentSubscriptionData <- readSubscription(plrReference)
       amendData = createAmendSubscription(plrReference, currentSubscriptionData, subscriptionLocalData)
-      result <- EitherT(subscriptionConnector.amendSubscription(userId, amendData))
+      result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
-  }.value
 
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
@@ -85,19 +92,27 @@ class SubscriptionService @Inject() (
     plrReference: String,
     currentData:  SubscriptionData,
     userData:     SubscriptionLocalData
-  ): AmendSubscription =
+  ): AmendSubscription = {
+    val address = UpeCorrespAddressDetails(
+      addressLine1 = userData.subRegisteredAddress.addressLine1,
+      addressLine2 = userData.subRegisteredAddress.addressLine2,
+      addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
+      addressLine4 = userData.subRegisteredAddress.addressLine4,
+      postCode = userData.subRegisteredAddress.postalCode,
+      countryCode = userData.subRegisteredAddress.countryCode
+    )
     AmendSubscription(
       upeDetails = UpeDetailsAmend(
         plrReference,
-        customerIdentification1 = None,
-        customerIdentification2 = None,
+        customerIdentification1 = currentData.upeDetails.customerIdentification1,
+        customerIdentification2 = currentData.upeDetails.customerIdentification2,
         organisationName = currentData.upeDetails.organisationName,
         registrationDate = currentData.upeDetails.registrationDate,
-        domesticOnly = userData.subMneOrDomestic == MneOrDomestic.Uk,
-        filingMember = false
+        domesticOnly = if (userData.subMneOrDomestic == MneOrDomestic.Uk) true else false,
+        filingMember = currentData.upeDetails.filingMember
       ),
-      accountingPeriod = userData.subAccountingPeriod,
-      upeCorrespAddressDetails = userData.subRegisteredAddress,
+      accountingPeriod = AccountingPeriodAmend(startDate = userData.subAccountingPeriod.startDate, endDate = userData.subAccountingPeriod.endDate),
+      upeCorrespAddressDetails = address,
       primaryContactDetails = ContactDetailsType(
         name = userData.subPrimaryContactName,
         telephone = userData.subPrimaryCapturePhone,
@@ -119,4 +134,5 @@ class SubscriptionService @Inject() (
         )
       )
     )
+  }
 }

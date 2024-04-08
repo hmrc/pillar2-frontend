@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -72,11 +72,21 @@ class SecondaryTelephonePreferenceController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominatedSecondaryContactNumber =>
-              for {
-                updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
-                _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-              } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
+            {
+              case nominatedSecondaryContactNumber @ true =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.subscriptionLocalData.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
+                  _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
+              case nominatedSecondaryContactNumber @ false =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.subscriptionLocalData.set(SubSecondaryPhonePreferencePage, nominatedSecondaryContactNumber))
+                  updatedAnswers <- Future.fromTry(updatedAnswers.remove(SubSecondaryCapturePhonePage))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubSecondaryPhonePreferencePage, mode, updatedAnswers))
+            }
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

@@ -39,7 +39,8 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
       OptionalSubscriptionDataRequest(
         request.request,
         request.userId,
-        maybeSubscriptionLocalData
+        maybeSubscriptionLocalData,
+        request.enrolments
       )
     }
 
