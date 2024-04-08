@@ -20,9 +20,11 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.UserAnswers
-import play.api.i18n.I18nSupport
+import connectors.UserAnswersConnectors
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -31,38 +33,42 @@ import views.html.rfm.RfmFinalCheckYourAnswersView
 import scala.concurrent.ExecutionContext
 
 class RfmFinalCheckYourAnswersController @Inject() (
-                                                     getData:                  DataRetrievalAction,
-                                                     rfmIdentify:              RfmIdentifierAction,
-                                                     requireData:              DataRequiredAction,
-                                                     val controllerComponents: MessagesControllerComponents,
-                                                     view:                     RfmFinalCheckYourAnswersView
-                                                   )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  override val messagesApi: MessagesApi,
+  getData:                  DataRetrievalAction,
+  rfmIdentify:              RfmIdentifierAction,
+  requireData:              DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  userAnswersConnectors:    UserAnswersConnectors,
+  view:                     RfmFinalCheckYourAnswersView,
+  countryOptions:           CountryOptions
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    implicit val userAnswers: UserAnswers = request.userAnswers
+
     val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Ok(view())
+    if (rfmEnabled) {
+      Ok(view(rfmCorporatePositionSummaryList))
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
   private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
-
         RfmCorporatePositionSummary.row(userAnswers),
         RfmNameRegistrationSummary.row(userAnswers),
         RfmRegisteredAddressSummary.row(userAnswers, countryOptions),
-        NfmContactNameSummary.row(userAnswers),
-        NfmEmailAddressSummary.row(userAnswers),
-        NfmTelephonePreferenceSummary.row(userAnswers),
-        NfmContactTelephoneSummary.row(userAnswers),
-        EntityTypeIncorporatedCompanyNameNfmSummary.row(userAnswers),
-        EntityTypeIncorporatedCompanyRegNfmSummary.row(userAnswers),
-        EntityTypeIncorporatedCompanyUtrNfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyNameNfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyRegNfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyUtrNfmSummary.row(userAnswers)
+        EntityTypeIncorporatedCompanyNameRfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyRegRfmSummary.row(userAnswers),
+        EntityTypeIncorporatedCompanyUtrRfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyNameRfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyRegRfmSummary.row(userAnswers),
+        EntityTypePartnershipCompanyUtrRfmSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
+
+}

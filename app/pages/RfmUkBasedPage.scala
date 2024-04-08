@@ -17,6 +17,7 @@
 package pages
 
 import models.UserAnswers
+import play.api.libs.json.JsPath
 
 import scala.util.Try
 
@@ -37,7 +38,7 @@ case object RfmUkBasedPage extends QuestionPage[Boolean] {
       userAnswers
         .remove(RfmEntityTypePage)
         .flatMap(
-            _.remove(RfmGRSResponsePage)
+          _.remove(RfmGRSResponsePage)
         )
     } else {
       super.cleanup(value, userAnswers)

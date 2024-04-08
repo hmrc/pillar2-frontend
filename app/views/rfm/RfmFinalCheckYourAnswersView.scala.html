@@ -15,15 +15,40 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukSummaryList: GovukSummaryList,
+        sectionHeader: sectionHeader,
+        govukButton: GovukButton,
+        printLink: printLink,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        h2: HeadingH2,
+        para: paragraphBody
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listCorporatePosition: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfm/RfmFinalCheckYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("rfm.rfmFinalCheckYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("rfm/RfmFinalCheckYourAnswers.heading")</h1>
+     @formHelper(action = controllers.rfm.routes.RfmFinalCheckYourAnswersController.onPageLoad) {
+
+         @sectionHeader(messages("rfm.finalCheckYourAnswers.heading.caption"))
+
+         @heading(messages("rfm.finalCheckYourAnswers.heading"), classes = "govuk-heading-l")
+
+         @h2(messages("rfm.finalCheckYourAnswers.upe"), size = "m")
+         @govukSummaryList(listCorporatePosition)
+
+         @printLink(messages("site.print"))
+
+         @h2(messages("rfm.finalCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
+         @para(messages("checkYourAnswers.submit.p"))
+
+         @govukButton(
+         ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit").withCssClass("govuk-!-display-none-print")
+         )
+     }
 }
