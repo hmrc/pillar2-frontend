@@ -74,7 +74,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
+        contentAsString(result) must include("Group details")
         contentAsString(result) must include("Where are the entities in your group located?")
       }
     }
@@ -92,7 +92,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
+        contentAsString(result) must include("Group details")
         contentAsString(result) must include("Where are the entities in your group located?")
       }
     }
