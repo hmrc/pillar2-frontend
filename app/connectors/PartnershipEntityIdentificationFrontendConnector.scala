@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.grs.{EntityType, GrsCreateRegistrationResponse, JourneyType, ServiceName}
+import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
