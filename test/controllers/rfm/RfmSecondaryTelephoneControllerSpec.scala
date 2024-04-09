@@ -106,7 +106,7 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction page with valid data" in {
+    "must redirect to contact address page with valid data" in {
 
       val ua = emptyUserAnswers
         .setOrException(RfmSecondaryContactNamePage, "name")
@@ -128,7 +128,7 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url
       }
     }
 
