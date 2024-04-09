@@ -41,30 +41,41 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
     case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
     case RfmContactByTelephonePage       => telephonePreferenceLogic
-    case RfmCapturePrimaryTelephonePage  => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmCapturePrimaryTelephonePage  => _ => controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
     case RfmUkBasedPage                  => rfmUkBasedLogic
     case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRoute
     case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
-    case RfmSecondaryCapturePhonePage    => _ => controllers.routes.UnderConstructionController.onPageLoad
-
-    case RfmPillar2ReferencePage  => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage  => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmNameRegistrationPage  => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
-    case RfmRegisteredAddressPage => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmEntityTypePage        => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+    case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
+    case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+    case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
+    case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmEntityTypePage               => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
 
     case _ => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case RfmPillar2ReferencePage  => _ => securityQuestionsCheckYourAnswers
-    case RfmRegistrationDatePage  => _ => securityQuestionsCheckYourAnswers
-    case RfmNameRegistrationPage  => whichCheckYourAnswerPageRfmQuestions
-    case RfmRegisteredAddressPage => whichCheckYourAnswerPageRfmQuestions
-    case RfmEntityTypePage        => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(CheckMode)
-    case _                        => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(CheckMode)
+    case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(CheckMode)
+    case RfmContactByTelephonePage       => telephonePreferenceLogic
+    case RfmCapturePrimaryTelephonePage  => _ => controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(CheckMode)
+    case RfmUkBasedPage                  => rfmUkBasedLogic
+    case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRoute
+    case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode)
+    case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(CheckMode)
+    case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
+    case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactAddressController.onPageLoad(CheckMode)
+    case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+    case RfmPillar2ReferencePage         => _ => securityQuestionsCheckYourAnswers
+    case RfmRegistrationDatePage         => _ => securityQuestionsCheckYourAnswers
+    case RfmNameRegistrationPage         => whichCheckYourAnswerPageRfmQuestions
+    case RfmRegisteredAddressPage        => whichCheckYourAnswerPageRfmQuestions
+    case RfmEntityTypePage               => _ => controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(CheckMode)
+    case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private def whichCheckYourAnswerPageRfmQuestions(userAnswers: UserAnswers): Call =
@@ -92,7 +103,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (nominated) {
           controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
@@ -104,7 +115,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (provided) {
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

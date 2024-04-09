@@ -68,7 +68,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         ).flatten
       )
       val address = SummaryListViewModel(
-        rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
+        rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
 
       Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))

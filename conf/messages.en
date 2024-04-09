@@ -447,6 +447,37 @@ rfmSecurityCheck.change.hidden = The group’s Pillar 2 top-up taxes ID
 rfmRegistrationDate.checkYourAnswersLabel = Registration date
 rfmRegistrationDate.change.hidden = The group’s registration date
 
+
+rfmContactAddress.title = What address do you want to use as the filing member''s contact address?
+rfmContactAddress.heading = What address do you want to use as the filing member''s contact address?
+rfmContactAddress.checkYourAnswersLabel = Address
+rfmContactAddress.change.hidden = The contact address of the filing member
+rfmContactAddress.addressLine1 = Address line 1
+rfmContactAddress.addressLine2 = Address line 2 (optional)
+rfmContactAddress.town_city = Town or city
+rfmContactAddress.region = Region (optional)
+rfmContactAddress.postcode = Postal code (if applicable)
+rfmContactAddress.country = Country
+rfmContactAddress.country.hint = Enter text and then choose from the list.
+rfmContactAddress.addressLine1.error.required = Enter first line of the address
+rfmContactAddress.town_city.error.required = Enter town or city
+rfmContactAddress.town_city.error.length = The town or city must be 35 characters or less
+rfmContactAddress.region.error.length = Region must be 35 characters or less
+rfmContactAddress.postcode.error.length = Postal code must be 10 characters or less
+rfmContactAddress.country.error.required = Enter country
+rfmContactAddress.country.error.length = Country cannot be more than 200 characters
+rfmContactAddress.heading.caption = Contact details
+rfmContactAddress.messages.error.addressLine1.required = Enter first line of the address
+rfmContactAddress.messages.error.addressLine1.length = First line of the address must be 35 characters or less
+rfmContactAddress.messages.error.addressLine1.invalid = First line of the address contains invalid characters
+rfmContactAddress.messages.error.addressLine2.length = Second line of the address must be 35 characters or less
+rfmContactAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+rfmContactAddress.messages.error.postcode.required = Enter a full postal code
+rfmContactAddress.postcode.error.invalid = Enter a full UK postal code
+rfmContactAddress.error.format = Enter the post code in the correct format
+
+
+
 nfmRegisteredAddress.title = What is the registered office address?
 nfmRegisteredAddress.heading = What is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
