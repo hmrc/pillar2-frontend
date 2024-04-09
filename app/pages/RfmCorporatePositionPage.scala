@@ -32,12 +32,12 @@ case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
       case Some(CorporatePosition.NewNfm) =>
         super.cleanup(value, userAnswers)
 
-      case _ =>
+      case Some(CorporatePosition.Upe) =>
         userAnswers
           .remove(RfmUkBasedPage)
           .flatMap(
-            _.remove(NfmNameRegistrationPage).flatMap(
-              _.remove(NfmRegisteredAddressPage).flatMap(
+            _.remove(RfmNameRegistrationPage).flatMap(
+              _.remove(RfmRegisteredAddressPage).flatMap(
                 _.remove(RfmEntityTypePage).flatMap(
                   _.remove(RfmGRSResponsePage)
                 )

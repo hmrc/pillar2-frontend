@@ -890,7 +890,7 @@ rfm.corporatePosition.title = What is your position in the corporate structure o
 rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
 rfm.corporatePosition.upe = Ultimate parent entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
-rfm.corporatePosition.change.hidden = What is your position in the corporate structure of the group?
+rfm.corporatePosition.change.hidden = what is your position is in the corporate structure of the group
 rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
 
@@ -911,6 +911,7 @@ rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
 rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
 rfm.nameRegistration.heading = What is the name of the new nominated filing member?
+rfm.nameRegistration.change.hidden = the name of the new nominated filing member
 rfm.nameRegistration.error.required = Enter the name of the new nominated filing member
 rfm.nameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
 
@@ -935,6 +936,7 @@ rfm.registeredAddress.messages.error.addressLine1.length = The first line of the
 rfm.registeredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
 rfm.registeredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 rfm.registeredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
+rfm.registeredAddress.change.hidden = the address of the new nominated filing member
 
 rfm.rfmCheckYourAnswers.title = Check Your Answers
 rfm.rfmCheckYourAnswers.heading = Check your answers
@@ -944,6 +946,7 @@ rfm.nameRegistration.change.hidden =  the name of the new nominated filing membe
 rfm.registeredAddress.checkYourAnswersLabel = Address
 rfm.registeredAddress.change.hidden =  the registered office address
 
+entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.title = Review and submit
 rfm.contactCheckYourAnswers.heading = Review and submit
 rfm.contactCheckYourAnswers.filingmember = Filing member details
