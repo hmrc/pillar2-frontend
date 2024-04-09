@@ -50,7 +50,7 @@ showBackLink = false
     ))
     ), additionalListClasses = Some("govuk-list--spaced"))
 
-    @paragraphMessageWithLink(message1 = Some(messages("grs.registration.error.b31")), linkMessage = messages("grs.registration.error.b32"), message2 = Some(messages("grs.registration.error.b33")), linkUrl = "/report-pillar2-top-up-taxes/replace-filing-member/business-matching/filing-member/uk-based/org-type", linkClass = "govuk-link govuk-link--no-visited-state" )
+    @paragraphMessageWithLink(message1 = Some(messages("grs.registration.error.b31")), linkMessage = messages("grs.registration.error.b32"), message2 = Some(messages("grs.registration.error.b33")), linkUrl = controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url, linkClass = "govuk-link govuk-link--no-visited-state" )
 
-
+O
 }

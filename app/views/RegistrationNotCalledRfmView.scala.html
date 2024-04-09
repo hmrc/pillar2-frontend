@@ -34,6 +34,6 @@
     @heading(messages("grs.registration.failed.header"), "govuk-heading-l")
     @paragraphBody(messages("grs.registration.failed.line1"))
     @paragraphBody(messages("grs.registration.failed.line2"))
-    @paragraphMessageWithLink(linkMessage = messages("grs.registration.failed.line3-hyperlink"), message2 = Some(messages("grs.registration.failed.line3-cont")), linkUrl = "/report-pillar2-top-up-taxes/replace-filing-member/business-matching/filing-member/uk-based/org-type", linkClass = "govuk-link govuk-link--no-visited-state" )
+    @paragraphMessageWithLink(linkMessage = messages("grs.registration.failed.line3-hyperlink"), message2 = Some(messages("grs.registration.failed.line3-cont")), linkUrl = controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url, linkClass = "govuk-link govuk-link--no-visited-state" )
 
 }

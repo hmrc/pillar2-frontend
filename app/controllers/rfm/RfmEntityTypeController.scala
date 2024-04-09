@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   rfmIdentify:                                       RfmIdentifierAction,
-  navigator:                                         ReplaceFilingMemberNavigator,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,

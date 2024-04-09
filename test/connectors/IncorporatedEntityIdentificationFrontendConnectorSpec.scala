@@ -35,13 +35,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
   val apiUrl                              = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
   val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
   private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
-  /*  override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.pillar2.port" -> server.port()
-    )
-    .build()
 
-  lazy val connector = app.injector.instanceOf[IncorporatedEntityIdentificationFrontendConnectorImpl]*/
   "IncorporatedEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createLimitedCompanyJourney" in {
