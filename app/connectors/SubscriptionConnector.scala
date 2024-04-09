@@ -83,7 +83,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def getSubscriptionCache(
     userId:      String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] = // TODO -write test
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
     http
       .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
       .map {
@@ -109,7 +109,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         }
       }
 
-  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] = // TODO tests
+  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
     http
       .PUT[AmendSubscription, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId",

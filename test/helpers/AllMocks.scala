@@ -64,7 +64,6 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
   val mockRegistration:                               Registration                               = mock[Registration]
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
-  val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
   val mockAuditService:                               AuditService                               = mock[AuditService]
   val mockEnrolmentConnector:                         EnrolmentConnector                         = mock[EnrolmentConnector]
 
