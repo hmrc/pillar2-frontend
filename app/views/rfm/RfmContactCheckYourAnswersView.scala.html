@@ -29,7 +29,7 @@
         para: paragraphBody
 )
 
-@(listCorporatePosition: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listCorporatePosition: SummaryList, listPrimary:SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfm.contactCheckYourAnswers.title"))) {
 
@@ -40,10 +40,20 @@
          @h2(messages("rfm.contactCheckYourAnswers.filingmember"), size = "m")
          @govukSummaryList(listCorporatePosition)
 
+         @govukSummaryList(listPrimary)
+         @heading(messages("contactCheckYourAnswers.second"), "govuk-heading-m", "h2")
+
+         @heading(messages("contactCheckYourAnswers.first"), "govuk-heading-m", "h2")
+         @govukSummaryList(listSecondary)
+
+         @heading(messages("contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
+         @govukSummaryList(address)
+
          @printLink(messages("site.print"))
 
          @h2(messages("rfm.contactCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
          @para(messages("checkYourAnswers.submit.p"))
+
 
          @govukButton(
          ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "send").withCssClass("govuk-!-display-none-print")

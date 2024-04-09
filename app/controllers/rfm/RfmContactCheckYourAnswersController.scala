@@ -50,7 +50,28 @@ class RfmContactCheckYourAnswersController @Inject() (
 
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      Ok(view(rfmCorporatePositionSummaryList))
+      val rfmPrimaryContactList = SummaryListViewModel(
+        rows = Seq(
+          RfmPrimaryContactNameSummary.row(request.userAnswers),
+          RfmPrimaryContactEmailSummary.row(request.userAnswers),
+          RfmContactByTelephoneSummary.row(request.userAnswers),
+          RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      )
+      val rfmSecondaryContactList = SummaryListViewModel(
+        rows = Seq(
+          AddSecondaryContactSummary.row(request.userAnswers),
+          SecondaryContactNameSummary.row(request.userAnswers),
+          SecondaryContactEmailSummary.row(request.userAnswers),
+          SecondaryTelephonePreferenceSummary.row(request.userAnswers),
+          SecondaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      )
+      val address = SummaryListViewModel(
+        rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
+      )
+
+      Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
