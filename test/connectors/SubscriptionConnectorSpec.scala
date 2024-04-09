@@ -23,9 +23,9 @@ import models.subscription._
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 
 import java.time.LocalDate
-import scala.collection.immutable.Seq
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
@@ -36,6 +36,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     .build()
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+  private val subscriptionData = Json.parse(successfulResponseJson).as[SubscriptionData]
 
   "SubscriptionConnector subscribe" should {
 
@@ -62,16 +63,14 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     }
   }
 
-  "SubscriptionConnector readSubscription" should {
+  "SubscriptionConnector readSubscriptionAndCache" should {
 
     "return Some(json) when the backend has returned 200 OK with data" in {
       stubGet(s"$readSubscriptionPath/$id/$plrReference", OK, successfulResponseJson)
-      val result: Option[ReadSubscriptionResponse] = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+      val result: Option[SubscriptionData] = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
 
       result mustBe defined
-      result mustBe Some(
-        ReadSubscriptionResponse(UpeDetails("International Organisation Inc.", LocalDate.parse("2022-01-31")), Some(AccountStatus(true)))
-      )
+      result mustBe Some(subscriptionData)
 
     }
 
@@ -82,7 +81,28 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       )
 
       val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+      result mustBe None
+    }
+  }
 
+  "SubscriptionConnector readSubscription" should {
+
+    "return Some(json) when the backend has returned 200 OK with data" in {
+      stubGet(s"$readSubscriptionPath/$plrReference", OK, successfulResponseJson)
+      val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
+
+      result mustBe defined
+      result mustBe Some(subscriptionData)
+
+    }
+
+    "return None when the backend has returned a non-success status code" in {
+      server.stubFor(
+        get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+          .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
+      )
+
+      val result = connector.readSubscription(plrReference).futureValue
       result mustBe None
     }
   }
@@ -126,7 +146,6 @@ object SubscriptionConnectorSpec {
   private val successfulResponseJson =
     """
       |{
-      |  "success": {
       |
       |      "formBundleNumber": "119000004320",
       |      "upeDetails": {
@@ -172,7 +191,6 @@ object SubscriptionConnectorSpec {
       |          "inactive": true
       |      }
       |  }
-      |}
       |""".stripMargin
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""

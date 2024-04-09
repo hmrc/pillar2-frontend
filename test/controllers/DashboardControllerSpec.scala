@@ -17,13 +17,11 @@
 package controllers
 
 import base.SpecBase
-import connectors.{SubscriptionConnector, UserAnswersConnectors}
+import connectors.SubscriptionConnector
 import generators.ModelGenerators
-import models.InternalIssueError
-import models.subscription.{AccountStatus, DashboardInfo, ReadSubscriptionResponse, UpeDetails}
+import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{FmDashboardPage, SubAccountStatusPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -48,40 +46,44 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       state = "activated"
     )
   )
-  val dashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
-  val readSubscriptionResponse =
-    ReadSubscriptionResponse(UpeDetails("International Organisation Inc.", LocalDate.parse("2022-01-31")), Some(AccountStatus(true)))
+  val dashboardInfo     = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
+  private lazy val date = LocalDate.now()
+  private val subscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", date, domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
+    primaryContactDetails = ContactDetailsType("name", None, "email"),
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(date, date),
+    accountStatus = Some(AccountStatus(false))
+  )
 
   "Dashboard Controller" should {
 
     "return OK and the correct view for a GET" in {
-      val accountStatus = AccountStatus(inactive = false)
-      val userAnswers = emptyUserAnswers
-        .setOrException(FmDashboardPage, dashboardInfo)
-        .setOrException(SubAccountStatusPage, accountStatus)
+
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers), enrolments)
+        applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
-        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[DashboardView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          readSubscriptionResponse.upeDetails.organisationName,
-          readSubscriptionResponse.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          subscriptionData.upeDetails.organisationName,
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           "12345678",
-          inactiveStatus = true
+          inactiveStatus = false
         )(
           request,
           appConfig(application),
@@ -91,27 +93,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     }
 
-    "redirect to view and amend subscription recovery if no dashboard info is found" in {
-      val application =
-        applicationBuilder(userAnswers = None, enrolments)
-          .overrides(
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
-        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
-      }
-
-    }
     "redirect to error page if no valid Js value is found from read subscription api" in {
       val application =
         applicationBuilder(userAnswers = None, enrolments)
@@ -147,27 +128,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
 
-    }
-
-    "redirect to error page if no userAnswer is found from the connector" in {
-      val application = applicationBuilder(None)
-        .overrides(
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(None))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(readSubscriptionResponse))
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
     }
 
   }

@@ -23,7 +23,6 @@ import pages._
 
 import java.time.LocalDate
 
-//TODO - fix some tests
 class AmendSubscriptionNavigatorSpec extends SpecBase {
 
   val navigator = new AmendSubscriptionNavigator
@@ -90,10 +89,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
         contactCYA
     }
-    "go to journey recovery if no answer for primary phone preference can be found" in {
-      navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptySubscriptionLocalData) mustBe
-        jr
-    }
+
     "go to CYA page if they have chosen not to nominate a  primary contact number" in {
       navigator.nextPage(
         SubPrimaryPhonePreferencePage,
@@ -110,10 +106,6 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)) mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
     }
-    "go to journey recovery if no answer for secondary contact preference can be found" in {
-      navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptySubscriptionLocalData) mustBe
-        jr
-    }
     "go to email page from secondary contact name page if they have chosen to nominate a secondary contact but no email has been provided" in {
       val ua = emptySubscriptionLocalData.setOrException(SubSecondaryContactNamePage, "name").setOrException(SubAddSecondaryContactPage, true)
       navigator.nextPage(SubSecondaryContactNamePage, CheckMode, ua) mustBe
@@ -124,7 +116,11 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         contactCYA
     }
     "go to secondary phone preference page from secondary email page if nominated secondary contact but no phone preference has been provided" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubSecondaryEmailPage, "email.email.com").setOrException(SubAddSecondaryContactPage, true)
+      val ua = emptySubscriptionLocalData.copy(
+        subAddSecondaryContact = true,
+        subSecondaryEmail = Some("email.email.com"),
+        subSecondaryPhonePreference = None
+      )
       navigator.nextPage(SubSecondaryEmailPage, CheckMode, ua) mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad()
     }
@@ -139,7 +135,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         contactCYA
     }
     "go to journey recovery if no answer for secondary phone preference can be found" in {
-      navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, emptySubscriptionLocalData) mustBe
+      navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, emptySubscriptionLocalData.copy(subSecondaryPhonePreference = None)) mustBe
         jr
     }
     "go to CYA page if they have chosen not to nominate a  secondary contact number" in {

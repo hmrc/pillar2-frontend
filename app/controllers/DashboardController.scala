@@ -62,7 +62,7 @@ class DashboardController @Inject() (
       )
     )).recover { case InternalIssueError =>
       logger.error(
-        s"[ read subscription failed as no valid Json was returned from the controller"
+        "read subscription failed as no valid Json was returned from the controller"
       )
       Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
     }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))

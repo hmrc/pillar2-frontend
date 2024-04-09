@@ -34,8 +34,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryContactName = None,
     subSecondaryEmail = None,
     subSecondaryCapturePhone = None,
-    subSecondaryPhonePreference = false,
-    subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
-    subFilingMemberDetails = None
+    subSecondaryPhonePreference = Some(false),
+    subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
   )
 }

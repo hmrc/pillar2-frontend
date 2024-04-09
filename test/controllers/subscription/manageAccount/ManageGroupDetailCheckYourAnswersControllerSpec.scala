@@ -16,19 +16,19 @@
 
 package controllers.subscription.manageAccount
 
+import akka.Done
 import base.SpecBase
-import connectors.UserAnswersConnectors
-import models.subscription.{AccountingPeriod, AmendSubscriptionRequestParameters, DashboardInfo}
-import models.{ApiError, MneOrDomestic, NonUKAddress, SubscriptionCreateError, UserAnswers}
+import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
+import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.inject
-import play.api.inject.bind
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import services.SubscriptionService
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -60,76 +60,93 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       .setOrException(FmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
       .setOrException(NominateFilingMemberPage, false)
 
-    "return OK and the correct view if an answer is provided to every question " in {
-      val userAnswer = emptySubscriptionLocalData
-        .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
-        .success
-        .value
-        .set(SubAccountingPeriodPage, date)
-        .success
-        .value
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
-        contentAsString(result) must include("Where are the entities in your group located?")
+    val enrolments: Set[Enrolment] = Set(
+      Enrolment(
+        key = "HMRC-PILLAR2-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier("PLRID", "12345678"),
+          EnrolmentIdentifier("UTR", "ABC12345")
+        ),
+        state = "activated"
+      )
+    )
+    "onPageLoad" should {
+      "return OK and the correct view if an answer is provided to every question " in {
+        val userAnswer = emptySubscriptionLocalData
+          .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
+          .success
+          .value
+          .set(SubAccountingPeriodPage, date)
+          .success
+          .value
+        val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answer")
+          contentAsString(result) must include("Where are the entities in your group located?")
+        }
+      }
+
+      "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
+        val userAnswer = emptySubscriptionLocalData
+          .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
+          .success
+          .value
+          .set(SubAccountingPeriodPage, date)
+          .success
+          .value
+        val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answer")
+          contentAsString(result) must include("Where are the entities in your group located?")
+        }
       }
     }
-
-    "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
-      val userAnswer = emptySubscriptionLocalData
-        .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
-        .success
-        .value
-        .set(SubAccountingPeriodPage, date)
-        .success
-        .value
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
-        contentAsString(result) must include("Where are the entities in your group located?")
+    "onSubmit" should {
+      "redirect to journey recovery if no pillar2 reference is found" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
-    }
 
-    "trigger amend subscription API if all data is available for group accounting period" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers))
-        .overrides(inject.bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        val mockHttpResponse = HttpResponse(OK, "")
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
-        val mockResponse = Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
-        when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-          .thenReturn(Future.successful(Right(mockResponse)))
+      "redirect to error page if a an unexpected response is received from ETMP/BE" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = enrolments)
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+
+        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+          .thenReturn(Future.failed(UnexpectedResponse))
 
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
     }
-
-    "redirect to journey recovery if no data if no data is found for group accounting period" in {
-      val mockAmendSubscriptionService = mock[AmendSubscriptionService]
-      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
-        .overrides(inject.bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
+    "redirect to dashboard page if they successfully amend their data" in {
+      val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers), enrolments = enrolments)
+        .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
-
-      val mockResponse: Either[ApiError, JsValue] = Left(SubscriptionCreateError)
-      when(mockAmendSubscriptionService.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(mockResponse))
-
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
-      val result  = route(application, request).value
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+      running(application) {
+        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(Done))
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
+        val result  = route(application, request).value
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+      }
     }
 
   }

@@ -54,7 +54,6 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  //todo -tests
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(readSubscriptionResponse) =>
@@ -65,7 +64,7 @@ class SubscriptionService @Inject() (
 
   def amendSubscription(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                         HeaderCarrier
-  ): Future[Done] = // TODO - tests
+  ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
       amendData = createAmendSubscription(plrReference, currentSubscriptionData, subscriptionLocalData)
