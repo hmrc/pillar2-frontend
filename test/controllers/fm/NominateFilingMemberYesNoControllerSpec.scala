@@ -70,16 +70,34 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to journey recovery if upe details not provided" in {
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
+        val result  = route(application, request).value
+
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        status(result) mustBe SEE_OTHER
+      }
+    }
+
     "Bad request if no option  is selected" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+            "value" -> "$$"
+          )
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result = route(application, request).value
+        val result    = route(application, request).value
+        val boundForm = formProvider().bind(Map("value" -> "$$"))
+        val view      = application.injector.instanceOf[NominateFilingMemberYesNoView]
         status(result) mustEqual BAD_REQUEST
-
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString()
       }
     }
+
   }
 }

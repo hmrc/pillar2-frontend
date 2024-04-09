@@ -14,39 +14,38 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import base.SpecBase
-import pages.UpeNameRegistrationPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 
-class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class FmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "UPE no ID Check Your Answers Controller" must {
 
     "redirect to bookmark prevention page if all required pages have not been answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
 
     }
     "return ok with correct view" in {
-      val application = applicationBuilder(userAnswers = Some(upeCompletedNoPhoneNumber)).build()
+      val application = applicationBuilder(userAnswers = Some(fmCompletedGrsResponse)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) must include("Check your answers for ultimate parent details")
+        contentAsString(result) must include("Check your answers for filing member details")
       }
 
     }
