@@ -28,18 +28,18 @@ import utils.countryOptions.CountryOptions
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.rfm.RfmFinalCheckYourAnswersView
+import views.html.rfm.RfmContactCheckYourAnswersView
 
 import scala.concurrent.ExecutionContext
 
-class RfmFinalCheckYourAnswersController @Inject() (
+class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   getData:                  DataRetrievalAction,
   rfmIdentify:              RfmIdentifierAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   userAnswersConnectors:    UserAnswersConnectors,
-  view:                     RfmFinalCheckYourAnswersView,
+  view:                     RfmContactCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController

@@ -31,24 +31,22 @@
 
 @(listCorporatePosition: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfm.rfmFinalCheckYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("rfm.contactCheckYourAnswers.title"))) {
 
-     @formHelper(action = controllers.rfm.routes.RfmFinalCheckYourAnswersController.onPageLoad) {
+     @formHelper(action = controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad) {
 
-         @sectionHeader(messages("rfm.finalCheckYourAnswers.heading.caption"))
+         @heading(messages("rfm.contactCheckYourAnswers.heading"), classes = "govuk-heading-l")
 
-         @heading(messages("rfm.finalCheckYourAnswers.heading"), classes = "govuk-heading-l")
-
-         @h2(messages("rfm.finalCheckYourAnswers.upe"), size = "m")
+         @h2(messages("rfm.contactCheckYourAnswers.filingmember"), size = "m")
          @govukSummaryList(listCorporatePosition)
 
          @printLink(messages("site.print"))
 
-         @h2(messages("rfm.finalCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
+         @h2(messages("rfm.contactCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
          @para(messages("checkYourAnswers.submit.p"))
 
          @govukButton(
-         ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "submit").withCssClass("govuk-!-display-none-print")
+         ButtonViewModel(messages("site.confirm.send")).withAttribute("id", "send").withCssClass("govuk-!-display-none-print")
          )
      }
 }
