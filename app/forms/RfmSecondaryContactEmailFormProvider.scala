@@ -16,22 +16,17 @@
 
 package forms
 
-import forms.Validation.TELEPHONE_REGEX
 import forms.mappings.Mappings
-import mapping.Constants.TELEPHONE_NUMBER_MAX_LENGTH
+import mapping.Constants
 import play.api.data.Form
-
 import javax.inject.Inject
 
-class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
-  def apply(userName: String): Form[String] = Form(
-    "telephoneNumber" ->
-      text("rfmCaptureTelephoneDetails.error.required", Seq(userName))
-        .verifying(
-          firstError(
-            maxLength(TELEPHONE_NUMBER_MAX_LENGTH, "rfmCaptureTelephoneDetails.messages.error.length"),
-            regexp(TELEPHONE_REGEX, "rfmCaptureTelephoneDetails.messages.error.format")
-          )
-        )
-  )
+class RfmSecondaryContactEmailFormProvider @Inject() extends Mappings {
+
+  def apply(userName: String): Form[String] =
+    Form(
+      "emailAddress" -> text("rfm.secondaryContactEmail.error.required", Seq(userName))
+        .verifying(maxLength(Constants.MAX_LENGTH_132, "rfm.secondaryContactEmail.error.length"))
+        .verifying(regexp(Validation.EMAIL_REGEX, "rfm.secondaryContactEmail.error.format"))
+    )
 }

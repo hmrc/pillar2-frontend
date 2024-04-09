@@ -60,11 +60,11 @@ class RfmContactCheckYourAnswersController @Inject() (
       )
       val rfmSecondaryContactList = SummaryListViewModel(
         rows = Seq(
-          AddSecondaryContactSummary.row(request.userAnswers),
-          SecondaryContactNameSummary.row(request.userAnswers),
-          SecondaryContactEmailSummary.row(request.userAnswers),
-          SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-          SecondaryTelephoneSummary.row(request.userAnswers)
+          RfmAddSecondaryContactSummary.row(request.userAnswers),
+          RfmSecondaryContactNameSummary.row(request.userAnswers),
+          RfmSecondaryContactEmailSummary.row(request.userAnswers),
+          RfmSecondaryTelephonePreferenceSummary.row(request.userAnswers),
+          RfmSecondaryTelephoneSummary.row(request.userAnswers)
         ).flatten
       )
       val address = SummaryListViewModel(

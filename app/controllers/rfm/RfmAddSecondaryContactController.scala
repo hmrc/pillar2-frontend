@@ -19,70 +19,67 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmContactByTelephoneFormProvider
-import models.{Mode, NormalMode}
+import forms.RfmAddSecondaryContactFormProvider
+import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmContactByTelephoneView
+import views.html.rfm.RfmAddSecondaryContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmContactByTelephoneController @Inject() (
+class RfmAddSecondaryContactController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmContactByTelephoneFormProvider,
+  navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmAddSecondaryContactFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmContactByTelephoneView,
-  navigator:                 ReplaceFilingMemberNavigator
+  view:                      RfmAddSecondaryContactView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
+  val form = formProvider()
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      request.userAnswers
-        .get(RfmPrimaryContactNamePage)
-        .map { contactName =>
-          val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
-            case Some(v) => form.fill(v)
-            case None    => form
-          }
-          Ok(view(preparedForm, mode, contactName))
+      (for {
+        _           <- request.userAnswers.get(RfmPrimaryContactEmailPage)
+        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
+      } yield {
+        val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        Ok(view(preparedForm, contactName, mode))
+      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { contactName =>
-        val form = formProvider(contactName)
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
+            wantsToNominateRfmSecondaryContact =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmAddSecondaryContactPage, wantsToNominateRfmSecondaryContact))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(RfmAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

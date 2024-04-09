@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-object Validation {
-  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX   = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
+import scala.util.Try
+
+case object RfmSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmSecondaryPhonePreference"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmSecondaryCapturePhonePage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }
