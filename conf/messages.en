@@ -261,7 +261,7 @@ rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter email address for {0}
 rfm-input-business-contact.email.error.length = The email address should be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-rfm-input-business-email.change.hidden=  the contact email address
+rfm-input-business-email.change.hidden=  the first contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
 
 rfmContactByTelephone.heading.caption = Contact details
@@ -270,7 +270,8 @@ rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will use this to confirm your records.
 rfmContactByTelephone.error.required= Select yes if we can contact {0} by telephone
 rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-rfmContactByTelephone.change.hidden =  your response to whether we make contact by telephone
+rfmContactByTelephone.change.hidden =  can we contact the first contact by telephone
+
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
 rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
@@ -278,7 +279,7 @@ rfmCaptureTelephoneDetails.hint = For international numbers include the country 
 rfmCaptureTelephoneDetails.error.required = Enter a telephone number
 rfmCaptureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
-rfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
+rfmCaptureTelephoneDetails.change.hidden =  the telephone number for the first contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
@@ -451,7 +452,7 @@ rfmRegistrationDate.change.hidden = The group’s registration date
 rfmContactAddress.title = What address do you want to use as the filing member''s contact address?
 rfmContactAddress.heading = What address do you want to use as the filing member''s contact address?
 rfmContactAddress.checkYourAnswersLabel = Address
-rfmContactAddress.change.hidden = The contact address of the filing member
+rfmContactAddress.change.hidden = the contact address
 rfmContactAddress.addressLine1 = Address line 1
 rfmContactAddress.addressLine2 = Address line 2 (optional)
 rfmContactAddress.town_city = Town or city
@@ -936,7 +937,7 @@ rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith�
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team should be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
-
+rfm.rfmPrimaryContactName.change.hidden = the first contact name
 
 rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
@@ -980,10 +981,10 @@ rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-rfm.addsecondaryContact.change.hidden = your response to whether you want to provide a second contact
+rfm.addsecondaryContact.change.hidden = do you have a second contact
 rfm.secondaryContactName.change.hidden = the second contact name
 rfm.secondaryContactEmail.change.hidden = the second contact email address
-rfm.secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact by telephone
+rfm.secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone
 rfm.secondaryTelephone.change.hidden = the telephone number for the second contact
 
 rfm.addSecondaryContact.title = Is there someone else we can contact?
