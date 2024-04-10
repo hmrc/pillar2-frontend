@@ -15,13 +15,13 @@
  */
 
 package controllers.subscription.manageAccount
-
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
-import pages.{subSecondaryCapturePhonePage, subSecondaryContactNamePage, subSecondaryPhonePreferencePage}
+import navigation.AmendSubscriptionNavigator
+import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -37,6 +37,7 @@ class SecondaryTelephoneController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryTelephoneView
@@ -46,11 +47,11 @@ class SecondaryTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      contactName <- request.userAnswers.get(subSecondaryContactNamePage)
-      _           <- request.userAnswers.get(subSecondaryPhonePreferencePage)
+      contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
+      _           <- request.userAnswers.get(SubSecondaryPhonePreferencePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(subSecondaryCapturePhonePage) match {
+      val preparedForm = request.userAnswers.get(SubSecondaryCapturePhonePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -63,7 +64,7 @@ class SecondaryTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(subSecondaryContactNamePage)
+      .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -72,9 +73,9 @@ class SecondaryTelephoneController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(subSecondaryCapturePhonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryCapturePhonePage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad)
+              } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

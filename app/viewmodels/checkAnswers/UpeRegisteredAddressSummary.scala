@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.upeRegisteredAddressPage
+import pages.UpeRegisteredAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -28,7 +28,7 @@ import viewmodels.implicits._
 object UpeRegisteredAddressSummary {
 
   def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(upeRegisteredAddressPage).map { answer =>
+    answers.get(UpeRegisteredAddressPage).map { answer =>
       val country = countryOptions.getCountryNameFromCode(answer.countryCode)
       SummaryListRowViewModel(
         key = "upeRegisteredAddress.checkYourAnswersLabel",
@@ -36,6 +36,7 @@ object UpeRegisteredAddressSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("upeRegisteredAddress.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       )
     }

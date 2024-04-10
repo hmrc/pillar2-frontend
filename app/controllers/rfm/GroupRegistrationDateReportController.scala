@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
 import models.rfm.RegistrationDate
+import navigation.ReplaceFilingMemberNavigator
 import pages.RfmRegistrationDatePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,6 +41,7 @@ class GroupRegistrationDateReportController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              GroupRegistrationDateReportFormProvider,
+  navigator:                 ReplaceFilingMemberNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupRegistrationDateReportView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -70,7 +72,7 @@ class GroupRegistrationDateReportController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad)
+          } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )
   }
 

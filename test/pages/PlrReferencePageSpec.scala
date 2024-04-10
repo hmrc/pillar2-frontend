@@ -16,17 +16,16 @@
 
 package pages
 
-import models.grs.EntityType
 import pages.behaviours.PageBehaviours
 
 class PlrReferencePageSpec extends PageBehaviours {
 
   "plrReferencePage" - {
 
-    beRetrievable[String](plrReferencePage)
+    beRetrievable[String](PlrReferencePage)
 
-    beSettable[String](plrReferencePage)
+    beSettable[String](PlrReferencePage)
 
-    beRemovable[String](plrReferencePage)
+    beRemovable[String](PlrReferencePage)
   }
 }

@@ -70,13 +70,13 @@ class CorporatePositionController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
 
           case value @ CorporatePosition.NewNfm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(mode))
 
         }
       )

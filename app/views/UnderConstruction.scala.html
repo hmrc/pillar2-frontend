@@ -15,23 +15,25 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        govukButton: GovukButton
 )
 
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
-        <h1 class="govuk-heading-xl">@messages("under_construction.heading")</h1>
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
 
+    @heading(messages("under_construction.heading"))
 
-
-        @govukButton(
-            ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
-        )
+    @govukButton(
+        ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+    )
 
 }

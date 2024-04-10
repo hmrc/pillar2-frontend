@@ -15,45 +15,50 @@
  *@
 
 @import config.FrontendAppConfig
+@import components.gds._
 @import viewmodels.LegendSize
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    govukInsetText : GovukInsetText
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
+        para: paragraphBody,
+        h1: heading,
+        h2: HeadingH2,
+        span: Span
 )
-
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
 
-    @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
 
+    @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("nominateFilingMember" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
 
-        <span class="govuk-caption-l">@messages("NominateFilingMemberYesNo.heading.caption")</span>
+        @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
+
+        @h1(messages("NominateFilingMemberYesNo.heading"), classes = "govuk-heading-l")
+
+        @para(messages("NominateFilingMemberYesNo.p1"))
+        @para(messages("NominateFilingMemberYesNo.p2"))
+
         @govukRadios(
             RadiosViewModel.yesNo(
-                field  = form("nominateFilingMember"),
-                legend = LegendViewModel(messages("NominateFilingMemberYesNo.heading")).asPageHeading(LegendSize.Large)
-            ).withHint(HintViewModel(HtmlContent(headingContent)))
+                field = form("nominateFilingMember"),
+                legend = LegendViewModel(messages("NominateFilingMemberYesNo.subheading")).asPageHeading(LegendSize.Medium)
+            )
         )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
         )
     }
-}
-
-@headingContent = @{
-    s""" <p class="govuk-body">${messages("NominateFilingMemberYesNo.p1")}</p>
-           |${govukInsetText(InsetText(content = Text(messages("NominateFilingMemberYesNo.insetText"))))}
-           |""".stripMargin
 }
 

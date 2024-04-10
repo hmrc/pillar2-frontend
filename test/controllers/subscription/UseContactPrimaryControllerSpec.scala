@@ -18,6 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import models.NormalMode
 import models.subscription.AccountingPeriod
@@ -44,12 +45,12 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, false)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -59,7 +60,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -69,13 +70,13 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmContactNamePage, name)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, true)
-        .setOrException(fmCapturePhonePage, telephone)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmContactNamePage, name)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, true)
+        .setOrException(FmCapturePhonePage, telephone)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -85,7 +86,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -95,13 +100,13 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, false)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -111,7 +116,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, None)
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -121,14 +130,14 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, true)
-        .setOrException(fmCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, true)
+        .setOrException(FmCapturePhonePage, telephone)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -138,7 +147,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -149,12 +162,12 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -164,7 +177,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -174,13 +187,13 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, true)
-        .setOrException(upeCapturePhonePage, telephone)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, telephone)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -190,7 +203,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -200,13 +217,13 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -216,7 +233,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, None)
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -226,14 +247,14 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, true)
-        .setOrException(upeCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -243,7 +264,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -253,11 +278,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if fm has gone through no id journey but contact name not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -272,11 +297,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if fm has gone through no id journey but contact email not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmPhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmPhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -292,11 +317,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if fm has gone through no id journey but phone preference is not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -312,11 +337,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if upe has gone through no id journey but contact name not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -330,11 +355,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if upe has gone through no id journey but contact email not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -350,11 +375,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must redirect to journey recovery if upe has gone through no id journey but phone preference is not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upeContactNamePage, name)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpeContactNamePage, name)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -369,11 +394,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK with the correct view if no filing member has been nominated with upe non-uk based and page not answered previously" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -383,7 +408,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -393,13 +418,13 @@ class UseContactPrimaryControllerSpec extends SpecBase {
     "must return OK with the correct view if no filing member has been nominated with upe non-uk based and page answered previously" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
-        .setOrException(subAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, true)
-        .setOrException(upeCapturePhonePage, telephone)
-        .setOrException(subUsePrimaryContactPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -409,7 +434,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UseContactPrimaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(false), NormalMode, name, email, Some(telephone))(
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(name, email, Some(telephone))
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -417,7 +446,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
       }
     }
     "must redirect to journey recovery if no answer is provided/available for whether if they want to nominate a filing member" in {
-      val ua          = emptyUserAnswers.set(upeRegisteredInUKPage, false).success.value
+      val ua          = emptyUserAnswers.set(UpeRegisteredInUKPage, false).success.value
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -425,7 +454,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-//        redirectLocation(result) mustBe Some(controllers.routes.BookmarkPreventionController.onPageLoad.url)
       }
     }
 
@@ -445,11 +473,11 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, true)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upeRegisteredInUKPage, false)
-        .setOrException(upePhonePreferencePage, false)
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -468,7 +496,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -480,10 +508,10 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
-        .setOrException(fmContactEmailPage, email)
-        .setOrException(fmPhonePreferencePage, false)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
+        .setOrException(FmContactEmailPage, email)
+        .setOrException(FmPhonePreferencePage, false)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -502,7 +530,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, name, email, None)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
           appConfig(application),
           messages(application)
@@ -514,8 +542,8 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactEmailPage, email)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactEmailPage, email)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -536,8 +564,8 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(upeContactEmailPage, email)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(UpeContactEmailPage, email)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -559,8 +587,8 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(fmContactNamePage, name)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmContactNamePage, name)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -581,8 +609,8 @@ class UseContactPrimaryControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
-        .setOrException(fmRegisteredInUKPage, false)
-        .setOrException(upeContactNamePage, name)
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(UpeContactNamePage, name)
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -613,53 +641,6 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
 
-      }
-    }
-    "must redirect to add secondary contact detail page when Yes is selected" in {
-      val ua = emptyUserAnswers
-        .setOrException(NominateFilingMemberPage, false)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upePhonePreferencePage, false)
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to add primary contact name page when no is selected" in {
-      val ua = emptyUserAnswers
-        .setOrException(NominateFilingMemberPage, false)
-        .setOrException(upeContactNamePage, name)
-        .setOrException(upeContactEmailPage, email)
-        .setOrException(upePhonePreferencePage, false)
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-        val request = FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url
       }
     }
 

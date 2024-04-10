@@ -23,7 +23,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.IdentifierAction
 import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{fmDashboardPage, subAccountStatusPage}
+import pages.{FmDashboardPage, SubAccountStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,9 +55,9 @@ class DashboardController @Inject() (
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(userAnswers, Some(request.enrolments)))
       _               <- OptionT.liftF(readSubscriptionService.readSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       updatedAnswers  <- OptionT(userAnswersConnectors.getUserAnswer(request.userId))
-      dashboard       <- OptionT.fromOption[Future](updatedAnswers.get(fmDashboardPage))
+      dashboard       <- OptionT.fromOption[Future](updatedAnswers.get(FmDashboardPage))
     } yield {
-      val inactiveStatus = updatedAnswers.get(subAccountStatusPage).exists(_.inactive)
+      val inactiveStatus = updatedAnswers.get(SubAccountStatusPage).exists(_.inactive)
       Ok(
         view(
           dashboard.organisationName,

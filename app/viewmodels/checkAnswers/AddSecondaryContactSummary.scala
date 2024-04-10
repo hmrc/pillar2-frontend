@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.subAddSecondaryContactPage
+import pages.SubAddSecondaryContactPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -26,7 +26,7 @@ import viewmodels.implicits._
 object AddSecondaryContactSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(subAddSecondaryContactPage).map { answer =>
+    answers.get(SubAddSecondaryContactPage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "addSecondaryContact.checkYourAnswersLabel",
@@ -34,6 +34,7 @@ object AddSecondaryContactSummary {
         actions = Seq(
           ActionItemViewModel("site.change", controllers.subscription.routes.AddSecondaryContactController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
       ).withCssClass("contact-margin-bottom")
     }

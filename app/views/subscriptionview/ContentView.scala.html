@@ -16,24 +16,28 @@
 
 @import config.FrontendAppConfig
 @import models.{Mode, NormalMode}
+@import views.html.components.gds._
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        paragraphBody: paragraphBody,
+        heading: heading,
+        govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("content.title"))) {
+    pageTitle = titleNoForm(messages("content.title"))) {
 
-<span class="govuk-caption-l">@messages("content.heading.caption")</span>
-<h1 class="govuk-heading-l">@messages("content.heading")</h1>
+    @sectionHeader(messages("content.heading.caption"))
+    @heading(messages("content.heading"), "govuk-heading-l")
+    @paragraphBody(messages("content.p1"))
+    @paragraphBody(messages("content.p2"))
 
-<p class="govuk-body">@messages("content.p1")</p>
-<p class="govuk-body">@messages("content.p2")</p>
-@govukButton(
-ButtonViewModel(messages("site.continue")).asLink(controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
-)
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+    )
 }

@@ -22,7 +22,7 @@ import forms.HavePillar2TopUpTaxIdFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.subHavePillar2TopUpTaxIdPage
+import pages.BtaPillar2ReferencePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -80,14 +80,14 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
 
     "redirect to the user to EACD Frontend management page to confirm identifier/verifier page when valid data is submitted with value YES" in {
 
       val ua = emptyUserAnswers
-        .set(subHavePillar2TopUpTaxIdPage, true)
+        .set(BtaPillar2ReferencePage, true)
         .success
         .value
       val application = applicationBuilder(Some(ua))
@@ -113,7 +113,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
     }
 
     " redirect to en-eligible page when NO is selected " in {
-      val ua = emptyUserAnswers.set(subHavePillar2TopUpTaxIdPage, false).success.value
+      val ua = emptyUserAnswers.set(BtaPillar2ReferencePage, false).success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
@@ -136,7 +136,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrException(subHavePillar2TopUpTaxIdPage, true)
+        .setOrException(BtaPillar2ReferencePage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .configure(

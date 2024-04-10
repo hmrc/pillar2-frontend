@@ -20,7 +20,7 @@ import base.SpecBase
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.plrReferencePage
+import pages.PlrReferencePage
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -68,7 +68,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
     }
 
     "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
-      val sessionUserAnswers = UserAnswers("id").setOrException(plrReferencePage, "12345678")
+      val sessionUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "12345678")
       val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
         .build()
       running(application) {

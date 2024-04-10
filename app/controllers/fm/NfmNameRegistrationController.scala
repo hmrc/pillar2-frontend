@@ -21,11 +21,12 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
-import pages.{fmEntityTypePage, fmNameRegistrationPage, fmRegisteredInUKPage}
+import navigation.NominatedFilingMemberNavigator
+import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.fmview.NfmNameRegistrationView
 
@@ -37,6 +38,7 @@ class NfmNameRegistrationController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmNameRegistrationView
@@ -46,23 +48,13 @@ class NfmNameRegistrationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val preparedForm = request.userAnswers.get(fmNameRegistrationPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
-    }
-    val result: Future[Result] = if (request.userAnswers.get(fmRegisteredInUKPage).contains(false)) {
-      Future.successful(Ok(view(preparedForm, mode)))
-    } else if (request.userAnswers.get(fmRegisteredInUKPage).contains(true) & request.userAnswers.get(fmEntityTypePage).isEmpty) {
-      for {
-        updatedAnswers <-
-          Future.fromTry(request.userAnswers.set(fmRegisteredInUKPage, false))
-        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-      } yield Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(FmNameRegistrationPage).map(nominated => form.fill(nominated)).getOrElse(form)
+    if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
+      Ok(view(preparedForm, mode))
     } else {
-      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-    result
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,9 +64,9 @@ class NfmNameRegistrationController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(fmNameRegistrationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(FmNameRegistrationPage, value))
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(FmNameRegistrationPage, mode, updatedAnswers))
       )
   }
 

@@ -21,10 +21,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeNameRegistrationFormProvider
 import models.Mode
-import pages.{upeEntityTypePage, upeNameRegistrationPage, upeRegisteredInUKPage}
+import navigation.UltimateParentNavigator
+import pages.{UpeNameRegistrationPage, UpeRegisteredInUKPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.UpeNameRegistrationView
 
@@ -37,6 +38,7 @@ class UpeNameRegistrationController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              UpeNameRegistrationFormProvider,
+  navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeNameRegistrationView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -45,23 +47,13 @@ class UpeNameRegistrationController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val preparedForm = request.userAnswers.get(upeNameRegistrationPage) match {
-      case Some(value) => form.fill(value)
-      case None        => form
-    }
-    val result: Future[Result] = if (request.userAnswers.get(upeRegisteredInUKPage).contains(false)) {
-      Future.successful(Ok(view(preparedForm, mode)))
-    } else if (request.userAnswers.get(upeRegisteredInUKPage).contains(true) & request.userAnswers.get(upeEntityTypePage).isEmpty) {
-      for {
-        updatedAnswers <-
-          Future.fromTry(request.userAnswers.set(upeRegisteredInUKPage, false))
-        _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-      } yield Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(UpeNameRegistrationPage).map(companyName => form.fill(companyName)).getOrElse(form)
+    if (request.userAnswers.get(UpeRegisteredInUKPage).contains(false)) {
+      Ok(view(preparedForm, mode))
     } else {
-      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-    result
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -72,9 +64,9 @@ class UpeNameRegistrationController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(upeNameRegistrationPage, value))
+              Future.fromTry(request.userAnswers.set(UpeNameRegistrationPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(mode))
+          } yield Redirect(navigator.nextPage(UpeNameRegistrationPage, mode, updatedAnswers))
       )
   }
 

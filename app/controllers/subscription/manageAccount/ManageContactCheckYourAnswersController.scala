@@ -27,9 +27,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AmendSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
@@ -59,30 +57,30 @@ class ManageContactCheckYourAnswersController @Inject() (
         ContactByTelephoneSummary.row(request.userAnswers),
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
       ).flatten
-    )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
         SecondaryTelephoneSummary.row(request.userAnswers)
       ).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
+
     if (request.userAnswers.manageContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+      Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val showErrorScreens = appConfig.showErrorScreens
 
     amendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(request.userId)).flatMap {

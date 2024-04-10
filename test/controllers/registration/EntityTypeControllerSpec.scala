@@ -23,9 +23,9 @@ import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{upeEntityTypePage, upeRegisteredInUKPage}
+import pages.{UpeEntityTypePage, UpeRegisteredInUKPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.EntityTypeView
@@ -39,7 +39,7 @@ class EntityTypeControllerSpec extends SpecBase {
   "EntityType Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.setOrException(upeRegisteredInUKPage, true)
+      val ua          = emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -60,8 +60,8 @@ class EntityTypeControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
-        .setOrException(upeEntityTypePage, EntityType.UkLimitedCompany)
-        .setOrException(upeRegisteredInUKPage, true)
+        .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
+        .setOrException(UpeRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
@@ -79,7 +79,32 @@ class EntityTypeControllerSpec extends SpecBase {
         ).toString
       }
     }
+    "if chosen, populate view with entity type not listed and set fm as a uk based entity to delete all no ID data" in {
+      val ua = emptyUserAnswers
+        .setOrException(UpeEntityTypePage, EntityType.Other)
+        .setOrException(UpeRegisteredInUKPage, true)
+      val jsUserAnswers: JsValue = Json.toJson(ua)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+        val view = application.injector.instanceOf[EntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.Other), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -113,7 +138,7 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must redirect to GRS for UK Limited company" in {
-      val ua = emptyUserAnswers.set(upeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -145,7 +170,7 @@ class EntityTypeControllerSpec extends SpecBase {
     }
 
     "must redirect to GRS for Limited Liability Partnership" in {
-      val ua = emptyUserAnswers.set(upeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -173,6 +198,27 @@ class EntityTypeControllerSpec extends SpecBase {
         ).value mustEqual "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
       }
 
+    }
+    "redirect to ultimate parent name registration if entity type not listed chosen with set UPE as non-uk based" in {
+      val jsonTobeReturned = Json.toJson(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeEntityTypePage, EntityType.Other)
+      )
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.Other.toString))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode).url
+      }
     }
 
   }

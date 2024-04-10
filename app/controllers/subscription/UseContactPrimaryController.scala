@@ -16,19 +16,26 @@
 
 package controllers.subscription
 
+import cats.syntax.option._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
+import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
 import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
+import navigation.SubscriptionNavigator
 import pages._
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
@@ -40,6 +47,7 @@ class UseContactPrimaryController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  navigator:                 SubscriptionNavigator,
   formProvider:              UseContactPrimaryFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UseContactPrimaryView
@@ -51,10 +59,10 @@ class UseContactPrimaryController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
       nfmNominated     <- request.userAnswers.get(NominateFilingMemberPage)
-      upeMneOrDomestic <- request.userAnswers.get(upeRegisteredInUKPage)
-      _                <- request.userAnswers.get(subAccountingPeriodPage)
+      upeMneOrDomestic <- request.userAnswers.get(UpeRegisteredInUKPage)
+      _                <- request.userAnswers.get(SubAccountingPeriodPage)
     } yield {
-      val nfmMneOrDom = request.userAnswers.get(fmRegisteredInUKPage)
+      val nfmMneOrDom = request.userAnswers.get(FmRegisteredInUKPage)
       (nfmNominated, upeMneOrDomestic, nfmMneOrDom) match {
         case (true, _, Some(false))                        => fmNoID(mode)
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
@@ -70,25 +78,33 @@ class UseContactPrimaryController @Inject() (
           .fold(
             formWithErrors =>
               Future
-                .successful(BadRequest(view(formWithErrors, mode, contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel))),
+                .successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      mode,
+                      contactSummaryList(contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel)
+                    )
+                  )
+                ),
             value =>
               value match {
                 case true =>
                   for {
-                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(subPrimaryContactNamePage, contactDetail.contactName))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(subPrimaryEmailPage, contactDetail.ContactEmail))
-                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(subPrimaryPhonePreferencePage, contactDetail.phonePref))
+                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.ContactEmail))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
                     updatedAnswers4 <-
                       Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(subPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                     _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
-                  } yield Redirect(controllers.subscription.routes.AddSecondaryContactController.onPageLoad(mode))
+                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers4))
                 case false =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(subUsePrimaryContactPage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
                     _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(mode))
+                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers))
               }
           )
       case Left(result) => Future.successful(result)
@@ -100,61 +116,75 @@ class UseContactPrimaryController @Inject() (
       .get(NominateFilingMemberPage)
       .flatMap { registered =>
         if (registered) {
-          request.userAnswers.get(fmRegisteredInUKPage).map { ukBased =>
+          request.userAnswers.get(FmRegisteredInUKPage).map { ukBased =>
             if (!ukBased) {
               (for {
-                contactName  <- request.userAnswers.get(fmContactNamePage)
-                contactEmail <- request.userAnswers.get(fmContactEmailPage)
-                phonePref    <- request.userAnswers.get(fmPhonePreferencePage)
-              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(fmCapturePhonePage))))
+                contactName  <- request.userAnswers.get(FmContactNamePage)
+                contactEmail <- request.userAnswers.get(FmContactEmailPage)
+                phonePref    <- request.userAnswers.get(FmPhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(FmCapturePhonePage))))
                 .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               (for {
-                contactName  <- request.userAnswers.get(upeContactNamePage)
-                contactEmail <- request.userAnswers.get(upeContactEmailPage)
-                phonePref    <- request.userAnswers.get(upePhonePreferencePage)
-              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage))))
+                contactName  <- request.userAnswers.get(UpeContactNamePage)
+                contactEmail <- request.userAnswers.get(UpeContactEmailPage)
+                phonePref    <- request.userAnswers.get(UpePhonePreferencePage)
+              } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage))))
                 .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             }
           }
         } else {
           for {
-            contactName  <- request.userAnswers.get(upeContactNamePage)
-            contactEmail <- request.userAnswers.get(upeContactEmailPage)
-            phonePref    <- request.userAnswers.get(upePhonePreferencePage)
-          } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(upeCapturePhonePage)))
+            contactName  <- request.userAnswers.get(UpeContactNamePage)
+            contactEmail <- request.userAnswers.get(UpeContactEmailPage)
+            phonePref    <- request.userAnswers.get(UpePhonePreferencePage)
+          } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage)))
         }
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
-      contactName  <- request.userAnswers.get(fmContactNamePage)
-      contactEmail <- request.userAnswers.get(fmContactEmailPage)
-      telPref      <- request.userAnswers.get(fmPhonePreferencePage)
+      contactName  <- request.userAnswers.get(FmContactNamePage)
+      contactEmail <- request.userAnswers.get(FmContactEmailPage)
+      telPref      <- request.userAnswers.get(FmPhonePreferencePage)
     } yield {
-      val contactTel = request.userAnswers.get(fmCapturePhonePage)
-      request.userAnswers.get(subUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+      val contactTel = request.userAnswers.get(FmCapturePhonePage)
+      request.userAnswers.get(SubUsePrimaryContactPage) match {
+        case Some(value) if telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref =>
+          Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   private def upeNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
-      contactName  <- request.userAnswers.get(upeContactNamePage)
-      contactEmail <- request.userAnswers.get(upeContactEmailPage)
-      telPref      <- request.userAnswers.get(upePhonePreferencePage)
+      contactName  <- request.userAnswers.get(UpeContactNamePage)
+      contactEmail <- request.userAnswers.get(UpeContactEmailPage)
+      telPref      <- request.userAnswers.get(UpePhonePreferencePage)
     } yield {
-      val contactTel = request.userAnswers.get(upeCapturePhonePage)
-      request.userAnswers.get(subUsePrimaryContactPage) match {
-        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactName, contactEmail, contactTel))
-        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactName, contactEmail, None))
-        case None if telPref         => Ok(view(form, mode, contactName, contactEmail, contactTel))
-        case None if !telPref        => Ok(view(form, mode, contactName, contactEmail, None))
+      val contactTel = request.userAnswers.get(UpeCapturePhonePage)
+      request.userAnswers.get(SubUsePrimaryContactPage) match {
+        case Some(value) if telPref  => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
+        case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
+        case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+}
 
+object UseContactPrimaryController {
+  private[controllers] def contactSummaryList(contactName: String, contactEmail: String, contactTel: Option[String])(implicit
+    messages:                                              Messages
+  ): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(key = "useContactPrimary.name", value = ValueViewModel(HtmlFormat.escape(contactName).toString)).some,
+        SummaryListRowViewModel(key = "useContactPrimary.email", value = ValueViewModel(HtmlFormat.escape(contactEmail).toString)).some,
+        contactTel.map(tel => SummaryListRowViewModel(key = "useContactPrimary.telephone", value = ValueViewModel(HtmlFormat.escape(tel).toString)))
+      ).flatten
+    )
 }

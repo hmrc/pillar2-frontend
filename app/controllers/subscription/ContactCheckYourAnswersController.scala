@@ -20,7 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.{CheckYourAnswersLogicPage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -29,7 +31,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ContactCheckYourAnswersController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -52,11 +54,9 @@ class ContactCheckYourAnswersController @Inject() (
         ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
       ).flatten
     )
-    val secondaryPreference = SummaryListViewModel(
-      rows = Seq(AddSecondaryContactSummary.row(request.userAnswers)).flatten
-    )
     val secondaryContactList = SummaryListViewModel(
       rows = Seq(
+        AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
         SecondaryTelephonePreferenceSummary.row(request.userAnswers),
@@ -67,9 +67,17 @@ class ContactCheckYourAnswersController @Inject() (
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
     if (request.userAnswers.contactDetailStatus == RowStatus.Completed) {
-      Ok(view(primaryContactList, secondaryPreference, secondaryContactList, address))
+      Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    for {
+      updatedAnswers <-
+        Future.fromTry(request.userAnswers.set(CheckYourAnswersLogicPage, true))
+      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield Redirect(controllers.routes.TaskListController.onPageLoad)
   }
 }

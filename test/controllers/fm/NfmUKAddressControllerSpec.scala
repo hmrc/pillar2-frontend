@@ -22,8 +22,7 @@ import forms.NfmRegisteredAddressFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages.fmNameRegistrationPage
+import pages.FmNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +37,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
       val data =
-        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+        emptyUserAnswers.set(FmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -62,36 +61,9 @@ class NfmUKAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-      val data =
-        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
-      val application = applicationBuilder(userAnswers = Some(data))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "NE3 2TR"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url
-      }
-    }
-
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
       val data =
-        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+        emptyUserAnswers.set(FmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -117,7 +89,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid address length is used  when country code is GB" in {
       val data =
-        emptyUserAnswers.set(fmNameRegistrationPage, "adios").success.value
+        emptyUserAnswers.set(FmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
