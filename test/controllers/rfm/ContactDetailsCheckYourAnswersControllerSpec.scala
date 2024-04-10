@@ -59,15 +59,21 @@ class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with Summary
         val request = FakeRequest(GET, controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Contact details"
-        )
-        contentAsString(result) must include(
-          "Second contact"
-        )
-        contentAsString(result) must include(
-          "Contact address"
-        )
+        contentAsString(result) must include("Check your answers for contact details")
+        contentAsString(result) must include("Contact details")
+        contentAsString(result) must include("First contact")
+        contentAsString(result) must include("Contact name")
+        contentAsString(result) must include("Change")
+        contentAsString(result) must include(" the first contact name")
+        contentAsString(result) must include("Email address")
+        contentAsString(result) must include(" the first contact email address")
+        contentAsString(result) must include("Can we contact by telephone?")
+        contentAsString(result) must include(" can we contact the first contact by telephone")
+        contentAsString(result) must include("Second contact")
+        contentAsString(result) must include(" do you have a second contact")
+        contentAsString(result) must include("Contact address")
+        contentAsString(result) must include("Address")
+        contentAsString(result) must include(" the contact address")
       }
     }
 
