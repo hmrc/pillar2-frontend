@@ -17,20 +17,16 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants
 import play.api.data.Form
 import javax.inject.Inject
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
-
+class RfmSecondaryTelephoneFormProvider @Inject() extends Mappings {
+  private val phoneNumberLength = 24
+  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
   def apply(userName: String): Form[String] =
     Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(
-          firstError(
-            maxLength(Constants.MAX_LENGTH_132, "secondaryContactEmail.error.length"),
-            regexp(Validation.EMAIL_REGEX, "secondaryContactEmail.error.format")
-          )
-        )
+      "value" -> text("rfm.secondaryTelephone.error.required", Seq(userName))
+        .verifying(maxLength(phoneNumberLength, "rfm.secondaryTelephone.error.length"))
+        .verifying(regexp(phoneRegex, "rfm.secondaryTelephone.error.format"))
     )
 }

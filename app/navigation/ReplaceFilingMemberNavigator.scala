@@ -38,18 +38,22 @@ class ReplaceFilingMemberNavigator @Inject() {
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
-
-    case RfmPrimaryContactNamePage      => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
-    case RfmPrimaryContactEmailPage     => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
-    case RfmContactByTelephonePage      => telephonePreferenceLogic
-    case RfmCapturePrimaryTelephonePage => _ => controllers.routes.UnderConstructionController.onPageLoad
-    case RfmContactAddressPage          => _ => controllers.routes.UnderConstructionController.onPageLoad
-    case RfmUkBasedPage                 => rfmUkBasedLogic
-    case RfmPillar2ReferencePage        => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmNameRegistrationPage        => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
-    case RfmRegisteredAddressPage       => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case _                              => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
+    case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
+    case RfmContactByTelephonePage       => telephonePreferenceLogic
+    case RfmCapturePrimaryTelephonePage  => _ => controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
+    case RfmUkBasedPage                  => rfmUkBasedLogic
+    case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRoute
+    case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
+    case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
+    case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
+    case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
+    case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
+    case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmContactAddressPage           => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -72,6 +76,30 @@ class ReplaceFilingMemberNavigator @Inject() {
       .map { provided =>
         if (provided) {
           controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
+        } else {
+          controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmAddSecondaryContactRoute(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmAddSecondaryContactPage)
+      .map { nominated =>
+        if (nominated) {
+          controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
+        } else {
+          controllers.routes.UnderConstructionController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmSecondaryPhonePreference(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmSecondaryPhonePreferencePage)
+      .map { provided =>
+        if (provided) {
+          controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
         } else {
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }

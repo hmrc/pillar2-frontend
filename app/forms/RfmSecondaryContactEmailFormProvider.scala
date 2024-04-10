@@ -21,16 +21,12 @@ import mapping.Constants
 import play.api.data.Form
 import javax.inject.Inject
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
+class RfmSecondaryContactEmailFormProvider @Inject() extends Mappings {
 
   def apply(userName: String): Form[String] =
     Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(
-          firstError(
-            maxLength(Constants.MAX_LENGTH_132, "secondaryContactEmail.error.length"),
-            regexp(Validation.EMAIL_REGEX, "secondaryContactEmail.error.format")
-          )
-        )
+      "emailAddress" -> text("rfm.secondaryContactEmail.error.required", Seq(userName))
+        .verifying(maxLength(Constants.MAX_LENGTH_132, "rfm.secondaryContactEmail.error.length"))
+        .verifying(regexp(Validation.EMAIL_REGEX, "rfm.secondaryContactEmail.error.format"))
     )
 }
