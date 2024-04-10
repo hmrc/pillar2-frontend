@@ -19,29 +19,30 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmContactByTelephoneFormProvider
-import models.{Mode, NormalMode}
+import forms.RfmSecondaryContactEmailFormProvider
+import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmContactByTelephoneView
+import views.html.rfm.RfmSecondaryContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RfmContactByTelephoneController @Inject() (
+class RfmSecondaryContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              RfmContactByTelephoneFormProvider,
+  navigator:                 ReplaceFilingMemberNavigator,
+  formProvider:              RfmSecondaryContactEmailFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmContactByTelephoneView,
-  navigator:                 ReplaceFilingMemberNavigator
+  view:                      RfmSecondaryContactEmailView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,10 +51,10 @@ class RfmContactByTelephoneController @Inject() (
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers
-        .get(RfmPrimaryContactNamePage)
+        .get(RfmSecondaryContactNamePage)
         .map { contactName =>
           val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
+          val preparedForm = request.userAnswers.get(RfmSecondaryEmailPage) match {
             case Some(v) => form.fill(v)
             case None    => form
           }
@@ -63,12 +64,11 @@ class RfmContactByTelephoneController @Inject() (
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(RfmPrimaryContactNamePage)
+      .get(RfmSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
         form
@@ -77,9 +77,9 @@ class RfmContactByTelephoneController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmContactByTelephonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmSecondaryEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(RfmContactByTelephonePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(RfmSecondaryEmailPage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

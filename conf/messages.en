@@ -943,6 +943,55 @@ rfm.nameRegistration.change.hidden =  the name of the new nominated filing membe
 rfm.registeredAddress.checkYourAnswersLabel = Address
 rfm.registeredAddress.change.hidden =  the registered office address
 
+rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
+rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+
+rfm.addsecondaryContact.change.hidden = your response to whether you want to provide a second contact
+rfm.secondaryContactName.change.hidden = the second contact name
+rfm.secondaryContactEmail.change.hidden = the second contact email address
+rfm.secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact by telephone
+rfm.secondaryTelephone.change.hidden = the telephone number for the second contact
+
+rfm.addSecondaryContact.title = Is there someone else we can contact?
+rfm.addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
+rfm.addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact
+rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+
+rfm.secondaryContactName.title = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+rfm.secondaryContactName.heading = What is the name of the person or team we should contact about compliance with Pillar 2 top-up taxes?
+rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
+rfm.secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+rfm.secondaryContactName.error.required = Enter name of the person of team we should contact
+rfm.secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+rfm.secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+
+rfm.secondaryContactEmail.title =What is the email address?
+rfm.secondaryContactEmail.heading = What is the email address for {0}?
+rfm.secondaryContactEmail.heading.caption= Contact details
+rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
+rfm.secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+rfm.secondaryContactEmail.error.required = You need to enter the email address for {0}
+rfm.secondaryContactEmail.error.length = The email address should be 132 characters or less
+rfm.secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
+
+rfm.secondaryTelephonePreference.title = Can we contact by telephone?
+rfm.secondaryTelephonePreference.heading = Can we contact {0} by telephone?
+rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
+
+rfm.secondaryTelephone.title = What is the telephone number?
+rfm.secondaryTelephone.heading = What is the telephone number for {0}?
+rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
+rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
+rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
+rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
