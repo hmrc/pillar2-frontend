@@ -89,7 +89,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (nominated) {
           controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
