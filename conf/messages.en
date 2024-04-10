@@ -985,7 +985,7 @@ rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-rfm.addsecondaryContact.change.hidden = your response to whether you want to provide a second contact
+rfm.addsecondaryContact.change.hidden = do you have a second contact
 rfm.secondaryContactName.change.hidden = the second contact name
 rfm.secondaryContactEmail.change.hidden = the second contact email address
 rfm.secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone
@@ -1036,6 +1036,13 @@ rfm.contactCheckYourAnswers.filingmember = Filing member details
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
 
 
+
+rfm.contactDetailsCheckYourAnswers.heading.caption = Contact details
+rfm.contactDetailsCheckYourAnswers.heading = Check your answers for contact details
+rfm.contactDetailsCheckYourAnswers.title = Check your answers for contact details
+rfm.contactDetailsCheckYourAnswers.first = First contact
+rfm.contactDetailsCheckYourAnswers.second = Second contact
+rfm.contactDetailsCheckYourAnswers.address = Contact address
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

@@ -36,6 +36,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
   private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
@@ -48,7 +49,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
     case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
-    case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+    case RfmContactAddressPage           => _ => controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
     case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
     case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
@@ -82,6 +83,12 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers.get(RfmCheckYourAnswersLogicPage) match {
       case Some(true) => reviewAndSubmitCheckYourAnswers
       case _          => rfmCheckYourAnswers
+    }
+
+  private def whichCheckYourAnswerPageContactQuestions(userAnswers: UserAnswers): Call =
+    userAnswers.get(RfmCheckYourAnswersLogicPage) match {
+      case Some(true) => reviewAndSubmitCheckYourAnswers
+      case _          => rfmContactDetailsCheckYourAnswers
     }
 
   private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =

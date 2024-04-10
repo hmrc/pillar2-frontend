@@ -35,9 +35,10 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
     countryCode = "AB"
   )
 
-  private lazy val jr                   = controllers.routes.JourneyRecoveryController.onPageLoad()
-  private lazy val securityQuestionsCYA = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
-  private lazy val rfmQuestionsCYA      = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val jr                                = controllers.routes.JourneyRecoveryController.onPageLoad()
+  private lazy val securityQuestionsCYA              = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmQuestionsCYA                   = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview =
     controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
   "Replace Filing Member Navigator" when {
@@ -130,7 +131,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
       }
 
-      "go to RfmContactAddressController if they select No on RfmAddSecondaryContact page" in {
+      "go to Contact Address page if they select No on RfmAddSecondaryContact page" in {
         navigator.nextPage(RfmAddSecondaryContactPage, NormalMode, emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)) mustBe
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
@@ -151,7 +152,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       }
 
       "go to RfmSecondaryTelephonePreference page if they choose to nominate a secondary contact number" in {
-        navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)) mustBe
+        navigator.nextPage(
+          RfmSecondaryPhonePreferencePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)
+        ) mustBe
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
       }
 
@@ -177,56 +182,197 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
-    }
 
-    "in Check mode" must {
+      "in Check mode" must {
 
-      "must go from a page that doesn't exist in the route map to rfm start page" in {
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
-      }
-      "go to security questions CYA page from pillar 2 reference page" in {
-        navigator.nextPage(
-          RfmPillar2ReferencePage,
-          CheckMode,
-          emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "XMPLR0123456789")
-        ) mustBe
-          securityQuestionsCYA
-      }
-      "go to security questions CYA page from registration date page" in {
-        navigator.nextPage(
-          RfmRegistrationDatePage,
-          CheckMode,
-          emptyUserAnswers.setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
-        ) mustBe
-          securityQuestionsCYA
-      }
+        "must go from a page that doesn't exist in the route map to rfm start page" in {
+          case object UnknownPage extends Page
+          navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
+        }
+        "go to security questions CYA page from pillar 2 reference page" in {
+          navigator.nextPage(
+            RfmPillar2ReferencePage,
+            CheckMode,
+            emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "XMPLR0123456789")
+          ) mustBe
+            securityQuestionsCYA
+        }
+        "go to security questions CYA page from registration date page" in {
+          navigator.nextPage(
+            RfmRegistrationDatePage,
+            CheckMode,
+            emptyUserAnswers.setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          ) mustBe
+            securityQuestionsCYA
+        }
 
-      "go to rfm CYA page from name registration page" in {
-        navigator.nextPage(
-          RfmNameRegistrationPage,
-          CheckMode,
-          emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")
-        ) mustBe
-          rfmQuestionsCYA
-      }
-      "go to rfm CYA page from registered address page" in {
-        navigator.nextPage(
-          RfmRegisteredAddressPage,
-          CheckMode,
-          emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
-        ) mustBe
-          rfmQuestionsCYA
-      }
-      "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
-        navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
-          submitAndReview
-      }
-      "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
-        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
-          submitAndReview
+        "go to rfm CYA page from name registration page" in {
+          navigator.nextPage(
+            RfmNameRegistrationPage,
+            CheckMode,
+            emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last")
+          ) mustBe
+            rfmQuestionsCYA
+        }
+        "go to rfm CYA page from registered address page" in {
+          navigator.nextPage(
+            RfmRegisteredAddressPage,
+            CheckMode,
+            emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
+          ) mustBe
+            rfmQuestionsCYA
+        }
+        "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
+          val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
+          navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
+            submitAndReview
+        }
+        "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
+          val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
+          navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
+            submitAndReview
+        }
+//
+//        "go to rfm contact details CYA page from primary contact name page" in {
+//          navigator.nextPage(
+//            RfmPrimaryContactNamePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "first last")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from primary contact name page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from primary contact email page" in {
+//          navigator.nextPage(
+//            RfmPrimaryContactEmailPage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmPrimaryContactEmailPage, "test@email.com")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from primary contact email page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmPrimaryContactEmailPage, "test@email.com").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmPrimaryContactEmailPage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from primary contact by telephone page" in {
+//          navigator.nextPage(
+//            RfmContactByTelephonePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from primary contact by telephone page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmContactByTelephonePage, true).setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from primary contact telephone page" in {
+//          navigator.nextPage(
+//            RfmCapturePrimaryTelephonePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from primary contact telephone page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "1234567890").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmCapturePrimaryTelephonePage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from add secondary contact page" in {
+//          navigator.nextPage(
+//            RfmAddSecondaryContactPage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, true)
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from add secondary contact page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, true).setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from secondary contact name page" in {
+//          navigator.nextPage(
+//            RfmSecondaryContactNamePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmSecondaryContactNamePage, "second last")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from secondary contact name page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmSecondaryContactNamePage, "second last").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmSecondaryContactNamePage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from secondary contact email page" in {
+//          navigator.nextPage(
+//            RfmSecondaryEmailPage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "test2@email.com")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from secondary contact email page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "test2@email.com").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmSecondaryEmailPage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from secondary contact by telephone page" in {
+//          navigator.nextPage(
+//            RfmSecondaryPhonePreferencePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from secondary contact by telephone page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true).setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmSecondaryPhonePreferencePage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from secondary contact telephone page" in {
+//          navigator.nextPage(
+//            RfmSecondaryCapturePhonePage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmSecondaryCapturePhonePage, "0987654321")
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from secondary contact telephone page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmSecondaryCapturePhonePage, "0987654321").setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmSecondaryCapturePhonePage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
+//        "go to rfm contact details CYA page from contact address page" in {
+//          navigator.nextPage(
+//            RfmContactAddressPage,
+//            CheckMode,
+//            emptyUserAnswers.setOrException(RfmContactAddressPage, nonUKAddress)
+//          ) mustBe
+//            rfmContactDetailsCheckYourAnswers
+//        }
+//        "go to submit and review CYA page from contact address page if RfmCheckYourAnswersLogicPage is true" in {
+//          val ua = emptyUserAnswers.setOrException(RfmContactAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
+//          navigator.nextPage(RfmContactAddressPage, CheckMode, ua) mustBe
+//            submitAndReview
+//        }
+//
       }
     }
   }

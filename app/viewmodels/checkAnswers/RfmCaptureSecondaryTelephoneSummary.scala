@@ -17,25 +17,25 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RfmSecondaryEmailPage
+import pages.RfmSecondaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RfmSecondaryContactEmailSummary {
+object RfmCaptureSecondaryTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(RfmSecondaryEmailPage)
+      .get(RfmSecondaryCapturePhonePage)
       .map { answer =>
         SummaryListRowViewModel(
-          key = "rfm.secondaryContactEmail.checkYourAnswersLabel",
+          key = "rfm.secondaryTelephone.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("rfm.secondaryContactEmail.change.hidden"))
+            ActionItemViewModel("site.change", controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("rfm.secondaryTelephone.change.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
         )

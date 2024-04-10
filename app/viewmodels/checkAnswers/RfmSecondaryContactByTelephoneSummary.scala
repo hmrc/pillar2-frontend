@@ -17,27 +17,25 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RfmSecondaryEmailPage
+import pages.RfmSecondaryPhonePreferencePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RfmSecondaryContactEmailSummary {
+object RfmSecondaryContactByTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers
-      .get(RfmSecondaryEmailPage)
-      .map { answer =>
-        SummaryListRowViewModel(
-          key = "rfm.secondaryContactEmail.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("rfm.secondaryContactEmail.change.hidden"))
-              .withCssClass("govuk-!-display-none-print")
-          )
+    answers.get(RfmSecondaryPhonePreferencePage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
+      SummaryListRowViewModel(
+        key = "rfm.secondaryTelephonePreference.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("rfm.secondaryTelephonePreference.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
         )
-      }
+      )
+    }
 }
