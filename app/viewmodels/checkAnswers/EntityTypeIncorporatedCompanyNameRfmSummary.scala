@@ -38,7 +38,7 @@ object EntityTypeIncorporatedCompanyNameRfmSummary {
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
               ActionItemViewModel("site.change", controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-                .withVisuallyHiddenText(messages("entityType.Nfm.change.hidden"))
+                .withVisuallyHiddenText(messages("entityType.Rfm.change.hidden"))
                 .withCssClass("govuk-!-display-none-print")
             )
           )

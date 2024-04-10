@@ -21,23 +21,23 @@
 @import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    heading: heading,
-    formHelper: FormWithCSRF,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    sectionHeader: sectionHeader
+layout: templates.Layout,
+heading: heading,
+formHelper: FormWithCSRF,
+govukSummaryList: GovukSummaryList,
+govukButton: GovukButton,
+sectionHeader: sectionHeader
 )
 
 @(mode: Mode, list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfm.rfmCheckYourAnswers.title"))) {
-    @sectionHeader(messages("rfm.rfmCheckYourAnswers.heading.caption"))
-    @heading(messages("rfm.rfmCheckYourAnswers.heading"), "govuk-heading-l")
-    @govukSummaryList(list)
-    @govukButton(
-        ButtonViewModel(content = Text(messages("site.continue")))
-        .withCssClass("govuk-!-margin-top-6")
-        .asLink(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
-    )
+@sectionHeader(messages("rfm.rfmCheckYourAnswers.heading.caption"))
+@heading(messages("rfm.rfmCheckYourAnswers.heading"), "govuk-heading-l")
+@govukSummaryList(list)
+@govukButton(
+ButtonViewModel(content = Text(messages("site.continue")))
+.withCssClass("govuk-!-margin-top-6")
+.asLink(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+)
 }

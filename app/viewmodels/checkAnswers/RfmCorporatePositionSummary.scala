@@ -38,7 +38,7 @@ object RfmCorporatePositionSummary {
         key = "rfm.corporatePosition.heading",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+          ActionItemViewModel("site.change", controllers.rfm.routes.CorporatePositionController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfm.corporatePosition.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )
