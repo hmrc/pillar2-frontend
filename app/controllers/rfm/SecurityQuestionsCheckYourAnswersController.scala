@@ -25,14 +25,11 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import controllers.routes
 import models.InternalIssueError
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.{RfmRegistrationDatePage, RfmSecurityCheckPage, fmDashboardPage}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.Mode
+import pages.{FmDashboardPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReadSubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
@@ -72,10 +69,10 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     (for {
-      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmSecurityCheckPage))
+      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
       inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
       _         <- OptionT.liftF(readSubscription.readSubscription(ReadSubscriptionRequestParameters(request.userId, inputPillar2Reference)))
-      dashboard <- OptionT.fromOption[Future](request.userAnswers.get(fmDashboardPage))
+      dashboard <- OptionT.fromOption[Future](request.userAnswers.get(FmDashboardPage))
     } yield
       if (dashboard.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)

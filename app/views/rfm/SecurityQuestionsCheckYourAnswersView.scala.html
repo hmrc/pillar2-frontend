@@ -29,11 +29,11 @@
         govukButton: GovukButton
 )
 
-@(mode: Mode, list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("securityQuestionsCheckYourAnswers.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit) {
 
         @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
 

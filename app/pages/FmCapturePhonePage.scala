@@ -18,11 +18,7 @@ package pages
 
 import play.api.libs.json.JsPath
 
-<<<<<<<< HEAD:app/pages/RfmSecurityCheckPage.scala
-case object RfmSecurityCheckPage extends QuestionPage[String] {
-========
 case object FmCapturePhonePage extends QuestionPage[String] {
->>>>>>>> main:app/pages/FmCapturePhonePage.scala
 
   override def path: JsPath = JsPath \ toString
 

@@ -34,7 +34,7 @@ class ReplaceFilingMemberNavigator @Inject() {
 
   private lazy val reviewAndSubmitCheckYourAnswers =
     controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
-  private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
@@ -45,7 +45,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmCapturePrimaryTelephonePage => _ => controllers.routes.UnderConstructionController.onPageLoad
     case RfmUkBasedPage                 => rfmUkBasedLogic
     case RfmPillar2ReferencePage        => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
-    case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmRegistrationDatePage        => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad
     case RfmNameRegistrationPage        => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage       => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
     case _                              => _ => controllers.rfm.routes.StartPageController.onPageLoad
