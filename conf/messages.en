@@ -680,6 +680,10 @@ contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
 manageContactCheckYourAnswers.title = Contact details
+manageContactCheckYourAnswers.heading.caption = Contact details
+manageContactCheckYourAnswers.first = First contact
+manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.address = Contact address
 
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company

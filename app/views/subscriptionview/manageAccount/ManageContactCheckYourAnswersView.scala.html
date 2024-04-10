@@ -30,16 +30,16 @@
 
 @layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = false) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
-        <div class="manage-contact-details">
-            @h1(messages("contactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
 
-            @h2(messages("contactCheckYourAnswers.first"), size = "m")
+            @h1(messages("manageContactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
+
+            @h2(messages("manageContactCheckYourAnswers.first"), size = "m")
             @govukSummaryList(listPrimary)
 
-            @h2(messages("contactCheckYourAnswers.second"), size = "m")
+            @h2(messages("manageContactCheckYourAnswers.second"), size = "m")
             @govukSummaryList(listSecondary)
 
-            @h2(messages("contactCheckYourAnswers.address"), size = "m")
+            @h2(messages("manageContactCheckYourAnswers.address"), size = "m")
             @govukSummaryList(address)
 
             @govukButton(
@@ -48,7 +48,6 @@
                 .withCssClass("govuk-!-margin-top-4")
             )
 
-        </div>
     }
 }
 
