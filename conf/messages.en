@@ -986,11 +986,11 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = For international numbers include the country code
+rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-rfm.secondaryTelephone.error.required = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
+rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
-rfm.secondaryTelephone.error.format = The telephone number must include only letters a to z, numbers, brackets, hyphens, forward slashes, asterisks, hashtags and plus signs
+rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
