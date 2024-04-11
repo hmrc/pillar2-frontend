@@ -1,0 +1,180 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.subscription
+
+import base.SpecBase
+import connectors.UserAnswersConnectors
+import forms.RfmSecondaryContactEmailFormProvider
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
+import play.api.inject.bind
+import play.api.inject
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import views.html.rfm.RfmSecondaryContactEmailView
+
+import scala.concurrent.Future
+
+class RfmSecondaryContactEmailControllerSpec extends SpecBase {
+
+  val form         = new RfmSecondaryContactEmailFormProvider()
+  val formProvider = form("name")
+
+  "RfmSecondaryContactEmail Controller" when {
+
+    "must return OK and the correct view for a GET when no data is found" in {
+      val ua          = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(Some(ua)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RfmSecondaryContactEmailView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val ua = emptyUserAnswers
+        .set(RfmSecondaryContactNamePage, "name")
+        .success
+        .value
+        .set(RfmSecondaryEmailPage, "my@my.com")
+        .success
+        .value
+      val application = applicationBuilder(Some(ua)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RfmSecondaryContactEmailView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("emailAddress", "12345"))
+
+        val view      = application.injector.instanceOf[RfmSecondaryContactEmailView]
+        val boundForm = formProvider.bind(Map("emailAddress" -> "12345"))
+        val result    = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must redirect to the under-construction page when rfm feature is set to false" in {
+
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
+    "must redirect to RFM Telephone Preference page with valid data" in {
+
+      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
+        .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
+
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirect to bookmark page if no data is found for primary contact name page" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request     = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
+
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+  }
+}

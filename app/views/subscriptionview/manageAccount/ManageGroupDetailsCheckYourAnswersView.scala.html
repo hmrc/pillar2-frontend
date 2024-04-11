@@ -15,33 +15,28 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds.heading
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    formHelper: FormWithCSRF,
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        heading: heading,
+        formHelper: FormWithCSRF,
 )
-
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")),showBackLink = false) {
-    <div class="group-details-check-answer">
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = false) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
-        <h1 class="govuk-heading-l">@messages("manageFurtherGroupDetail.checkYourAnswers.heading")</h1>
+        @heading(messages("manageFurtherGroupDetails.checkYourAnswers.heading"), classes = "govuk-heading-l")
 
         @govukSummaryList(list)
 
-
-        <br>
         @govukButton(
-            ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit").withCssClass("govuk-!-margin-top-6")
         )
-
-
     }
-    </div>
 
 }
 
