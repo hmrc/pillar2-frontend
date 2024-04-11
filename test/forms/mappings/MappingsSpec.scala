@@ -167,4 +167,47 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.errors must contain(FormError("value", "error.required"))
     }
   }
+
+  "pillar2Id" - {
+    val testForm: Form[String] =
+      Form(
+        "value" -> pillar2Id()
+      )
+
+    "must bind a valid pillar2Id" in {
+      val result = testForm.bind(Map("value" -> "XMPLR0123456789"))
+      result.get mustEqual "XMPLR0123456789"
+    }
+
+    "must bind a valid pillar2Id which contains spaces and lowercase characters" in {
+      val result = testForm.bind(Map("value" -> " XMplr 01234 56789 "))
+      result.get mustEqual "XMPLR0123456789"
+    }
+
+    "must not bind an empty string as a pillar2Id" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a string of whitespace only as a pillar2Id" in {
+      val result = testForm.bind(Map("value" -> " \t"))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must return a custom error message" in {
+      val form   = Form("value" -> text("custom.error"))
+      val result = form.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "custom.error"))
+    }
+
+    "must unbind a valid pillar2Id" in {
+      val result = testForm.fill("XMPLR0123456789")
+      result.apply("value").value.value mustEqual "XMPLR0123456789"
+    }
+  }
 }
