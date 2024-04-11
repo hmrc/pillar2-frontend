@@ -17,12 +17,19 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.RfmNameRegistrationFormProvider
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.RfmNameRegistrationPage
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmNameRegistrationView
+
+import scala.concurrent.Future
 
 class RfmNameRegistrationControllerSpec extends SpecBase {
 
@@ -86,6 +93,27 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+      }
+    }
+
+    "must redirect to RFM Registered Address page with valid data" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmNameRegistrationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "name")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url
       }
     }
 

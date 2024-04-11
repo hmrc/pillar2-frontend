@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
-import javax.inject.Inject
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-class SecondaryContactEmailFormProvider @Inject() extends Mappings {
+import scala.util.Try
 
-  def apply(userName: String): Form[String] =
-    Form(
-      "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
-        .verifying(
-          firstError(
-            maxLength(Constants.MAX_LENGTH_132, "secondaryContactEmail.error.length"),
-            regexp(Validation.EMAIL_REGEX, "secondaryContactEmail.error.format")
-          )
-        )
-    )
+case object RfmSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmSecondaryPhonePreference"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmSecondaryCapturePhonePage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }

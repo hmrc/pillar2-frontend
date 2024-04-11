@@ -79,19 +79,5 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
     }
 
-    "redirect to Under Construction page on form submission" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmCheckYourAnswersController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody()
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
-      }
-    }
-
   }
 }

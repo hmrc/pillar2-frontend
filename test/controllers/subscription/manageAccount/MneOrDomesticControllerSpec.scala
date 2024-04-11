@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import forms.MneOrDomesticFormProvider
-import models.{CheckMode, MneOrDomestic, NormalMode, UserAnswers}
+import models.{CheckMode, MneOrDomestic, NormalMode}
 import pages.SubMneOrDomesticPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

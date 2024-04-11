@@ -17,11 +17,18 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.RfmRegisteredAddressFormProvider
 import models.{NonUKAddress, NormalMode}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import play.api.inject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+
+import scala.concurrent.Future
 
 class RfmRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new RfmRegisteredAddressFormProvider()
@@ -65,6 +72,38 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) must include("Name")
         contentAsString(result) must include("Address")
+      }
+    }
+
+    "must redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
+
+      val ua = emptyUserAnswers
+        .set(RfmNameRegistrationPage, "adios")
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "21"),
+            ("addressLine2", "Drive"),
+            ("addressLine3", "Road"),
+            ("addressLine4", "North east"),
+            ("postalCode", "IG3 1QA"),
+            ("countryCode", "GB")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url
       }
     }
 

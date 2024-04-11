@@ -17,7 +17,6 @@
 package controllers.registration
 
 import base.SpecBase
-import pages.UpeNameRegistrationPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
