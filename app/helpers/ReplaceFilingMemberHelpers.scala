@@ -36,11 +36,12 @@ trait ReplaceFilingMemberHelpers {
     val s5 = get(RfmSecondaryCapturePhonePage).isDefined
     val a1 = get(RfmContactAddressPage).isDefined
     (p1, p2, p3, p4, s1, s2, s3, s4, s5, a1) match {
-      case (true, true, true, true, true, true, true, true, true, true)      => true
-      case (true, true, false, false, true, true, true, true, true, true)    => true
-      case (true, true, false, false, true, true, true, false, false, true)  => true
-      case (true, true, true, true, false, false, false, false, false, true) => true
-      case _                                                                 => false
+      case (true, true, true, true, true, true, true, true, true, true)        => true
+      case (true, true, false, false, true, true, true, true, true, true)      => true
+      case (true, true, false, false, false, false, false, false, false, true) => true
+      case (true, true, false, false, true, true, true, false, false, true)    => true
+      case (true, true, true, true, false, false, false, false, false, true)   => true
+      case _                                                                   => false
     }
   }
 
