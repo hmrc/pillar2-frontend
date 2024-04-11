@@ -19,7 +19,7 @@ package controllers.rfm
 import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import connectors.UserAnswersConnectors
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +30,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -70,11 +70,18 @@ class RfmContactCheckYourAnswersController @Inject() (
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-
-      Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
+      if (request.userAnswers.rfmContactDetailStatus) {
+        Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
+  }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
+    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
   }
 
   private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =

@@ -33,7 +33,7 @@
 
 @layout(pageTitle = titleNoForm(messages("rfm.contactCheckYourAnswers.title"))) {
 
-     @formHelper(action = controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad) {
+     @formHelper(action = controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit) {
 
          @heading(messages("rfm.contactCheckYourAnswers.heading"), classes = "govuk-heading-l")
 

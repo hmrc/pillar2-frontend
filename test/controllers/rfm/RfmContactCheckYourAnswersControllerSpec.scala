@@ -125,7 +125,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "return OK and the correct view if an answer is provided to every New RFM-UPE journey question" in {
+    "return to recovery page if any part is missing for check answer page" in {
 
       val application = applicationBuilder(userAnswers = Some(rfmCorpPosition))
         .build()
@@ -133,9 +133,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include("Filing member details")
-        contentAsString(result) must include("Ultimate parent entity (UPE)")
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -209,6 +208,22 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("line3")
         contentAsString(result) must include("1234567891")
         contentAsString(result) must include("email@address.com")
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(RfmPrimaryContactNamePage, "name")
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
