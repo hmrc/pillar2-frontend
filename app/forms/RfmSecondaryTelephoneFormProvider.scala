@@ -26,7 +26,8 @@ class RfmSecondaryTelephoneFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] =
     Form(
       "value" -> text("rfm.secondaryTelephone.error.required", Seq(userName))
-        .verifying(maxLength(phoneNumberLength, "rfm.secondaryTelephone.error.length"))
-        .verifying(regexp(phoneRegex, "rfm.secondaryTelephone.error.format"))
+        .verifying(
+          firstError(maxLength(phoneNumberLength, "rfm.secondaryTelephone.error.length"), regexp(phoneRegex, "rfm.secondaryTelephone.error.format"))
+        )
     )
 }

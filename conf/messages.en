@@ -710,6 +710,12 @@ contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
+manageContactCheckYourAnswers.title = Contact details
+manageContactCheckYourAnswers.heading.caption = Contact details
+manageContactCheckYourAnswers.first = First contact
+manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.address = Contact address
+
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
@@ -859,7 +865,9 @@ unauthorised.individual.message = You’ve signed in with an individual account.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
-manageFurtherGroupDetail.checkYourAnswers.heading = Group details
+
+manageFurtherGroupDetails.checkYourAnswers.heading = Group details
+manageFurtherGroupDetails.checkYourAnswers.title = Group details
 
 rfm.heading.caption = Replace filing member
 rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
@@ -1023,11 +1031,11 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = For international numbers include the country code
+rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-rfm.secondaryTelephone.error.required = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
+rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
-rfm.secondaryTelephone.error.format = The telephone number must include only letters a to z, numbers, brackets, hyphens, forward slashes, asterisks, hashtags and plus signs
+rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
 entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.title = Review and submit
