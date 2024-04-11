@@ -24,7 +24,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
-import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest, OptionalSubscriptionDataRequest}
+import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -69,7 +69,6 @@ trait SpecBase
     with UserAnswersFixture
     with SubscriptionLocalDataFixture {
 
-  def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId) // TODO - delete
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
   implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
@@ -107,18 +106,6 @@ trait SpecBase
         Future.successful(Right(identifierRequest))
       }
     }
-
-  def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) { // TODO - delete
-    override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, testUserAnswers)))
-  }
-
-  def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) { // TODO - delete
-    override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      Future(OptionalDataRequest(request.request, request.userId, Some(testUserAnswers)))(ec)
-    }
-  }
 
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,

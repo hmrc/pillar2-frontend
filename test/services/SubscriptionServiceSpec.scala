@@ -19,15 +19,14 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import models.registration.RegistrationInfo
 import models.subscription._
+import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api.inject.bind
-import play.api.libs.json.JsResultException
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 

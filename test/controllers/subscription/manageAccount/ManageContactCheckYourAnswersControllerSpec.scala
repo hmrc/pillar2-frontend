@@ -20,7 +20,7 @@ import akka.Done
 import base.SpecBase
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress, UnexpectedResponse}
+import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._

@@ -51,7 +51,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
 
   def readSubscriptionAndCache(
-    readSubscriptionParameter: ReadSubscriptionRequestParameters // TODO - change to plfReference
+    readSubscriptionParameter: ReadSubscriptionRequestParameters
   )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
@@ -67,7 +67,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscription(
     plrReference: String
-  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = { // TODO - write tests
+  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
@@ -96,7 +96,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def save(userId: String, subscriptionLocalData: JsValue)(implicit
     hc:            HeaderCarrier
-  ): Future[JsValue] = // TODO - write tests
+  ): Future[JsValue] =
     http
       .POST[JsValue, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId",
