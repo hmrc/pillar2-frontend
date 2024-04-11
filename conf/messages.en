@@ -679,6 +679,12 @@ contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Second contact
 contactCheckYourAnswers.address = Contact address
 
+manageContactCheckYourAnswers.title = Contact details
+manageContactCheckYourAnswers.heading.caption = Contact details
+manageContactCheckYourAnswers.first = First contact
+manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.address = Contact address
+
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
@@ -828,7 +834,9 @@ unauthorised.individual.message = You’ve signed in with an individual account.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
 unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
-manageFurtherGroupDetail.checkYourAnswers.heading = Group details
+
+manageFurtherGroupDetails.checkYourAnswers.heading = Group details
+manageFurtherGroupDetails.checkYourAnswers.title = Group details
 
 rfm.heading.caption = Replace filing member
 rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
