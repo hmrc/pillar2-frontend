@@ -163,8 +163,8 @@ grs.registration.error.line1 =  We could not match the details you entered with 
 grs.registration.error.line2 =  How to confirm your details
 grs.registration.error.p1 = You can confirm your details with the records held by HMRC by:
 
-grs.registration.error.b1 =  searching Companies House for the company registration number and registered office address (opens in a new tab)
-grs.registration.error.b2 =  asking for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)
+grs.registration.error.b1 =  searching Companies House for the company registration number and registered office address (opens in a new tab).
+grs.registration.error.b2 =  asking for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab).
 grs.registration.error.b31 =  You can
 grs.registration.error.b32 =  go back to select the entity type
 grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
