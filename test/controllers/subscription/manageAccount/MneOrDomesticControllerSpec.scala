@@ -17,12 +17,22 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import forms.MneOrDomesticFormProvider
 import models.{CheckMode, MneOrDomestic, NormalMode}
+import navigation.AmendSubscriptionNavigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import pages.SubMneOrDomesticPage
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
+
+import scala.concurrent.Future
 
 class MneOrDomesticControllerSpec extends SpecBase {
 
@@ -78,6 +88,38 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "must update subscription data and redirect to the next page" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptySubscriptionLocalData
+
+      val expectedUserAnswers = userAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> "uk")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubMneOrDomesticPage, CheckMode, expectedUserAnswers)
       }
     }
 

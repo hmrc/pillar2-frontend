@@ -37,15 +37,15 @@ trait SubscriptionLocalDataFixture {
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
   )
-  private lazy val date = LocalDate.now()
+  lazy val currentDate = LocalDate.now()
   val subscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", date, domesticOnly = false, filingMember = false),
+    upeDetails = UpeDetails(None, None, None, "orgName", currentDate, domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
     primaryContactDetails = ContactDetailsType("name", None, "email"),
     secondaryContactDetails = None,
     filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(date, date),
+    accountingPeriod = AccountingPeriod(currentDate, currentDate),
     accountStatus = Some(AccountStatus(false))
   )
 }

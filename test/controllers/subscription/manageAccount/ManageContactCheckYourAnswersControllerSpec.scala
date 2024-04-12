@@ -91,7 +91,6 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
   )
   val startDate = LocalDate.of(2023, 12, 31)
   val endDate   = LocalDate.of(2025, 12, 31)
-  val date      = AccountingPeriod(startDate, endDate)
   val amendSubscription = emptySubscriptionLocalData
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
@@ -106,7 +105,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryCapturePhonePage, "123456789")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
     .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
-    .setOrException(SubAccountingPeriodPage, date)
+    .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate, None))
     .setOrException(FmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
     .setOrException(NominateFilingMemberPage, false)
 
