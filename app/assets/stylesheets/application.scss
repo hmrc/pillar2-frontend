@@ -51,6 +51,7 @@ label[for="confirmation_0"] {
     z-index: 0;
     pointer-events: none;
 }
+.autocomplete__option {font-size: 1rem;}
 // Constrain the input (and drop-down) so they site with the other address inputs
 // important to do this on the wrapper rather than the input itself otherwise the down-arrow will be floating by itself
 @media (min-width: 40.0625em){
