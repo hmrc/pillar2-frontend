@@ -106,5 +106,44 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must update subscription data and redirect to the next page" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      val someDate    = LocalDate.of(2024, 1, 1)
+      val userAnswers = emptySubscriptionLocalData
+
+      val expectedUserAnswers = userAnswers.setOrException(SubAccountingPeriodPage, AccountingPeriod(someDate, someDate.plusMonths(5), None))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "1",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "1",
+            "endDate.month"   -> "6",
+            "endDate.year"    -> "2024"
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubAccountingPeriodPage, CheckMode, expectedUserAnswers)
+      }
+    }
+
   }
 }
