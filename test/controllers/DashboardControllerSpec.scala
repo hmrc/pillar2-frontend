@@ -46,18 +46,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       state = "activated"
     )
   )
-  val dashboardInfo     = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
-  private lazy val date = LocalDate.now()
-  private val subscriptionData = SubscriptionData(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", date, domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
-    primaryContactDetails = ContactDetailsType("name", None, "email"),
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(date, date),
-    accountStatus = Some(AccountStatus(false))
-  )
+  val dashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
+  private val date  = LocalDate.now()
 
   "Dashboard Controller" should {
 

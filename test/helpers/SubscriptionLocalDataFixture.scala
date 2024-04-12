@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.subscription.{AccountingPeriod, SubscriptionLocalData}
+import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails}
 import models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
@@ -36,5 +36,16 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+  )
+  private lazy val date = LocalDate.now()
+  val subscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", date, domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
+    primaryContactDetails = ContactDetailsType("name", None, "email"),
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(date, date),
+    accountStatus = Some(AccountStatus(false))
   )
 }

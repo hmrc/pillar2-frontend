@@ -22,6 +22,7 @@ import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

@@ -16,13 +16,11 @@
 
 package models.subscription
 
-import akka.Done
 import models.{MneOrDomestic, NonUKAddress, RichJsObject}
-import pages._
+import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
 
-import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
@@ -54,7 +52,11 @@ case class SubscriptionLocalData(
 
     updatedData.map(_.as[SubscriptionLocalData])
   }
-
+  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): SubscriptionLocalData =
+    set(page, value) match {
+      case Success(ua) => ua
+      case Failure(ex) => throw ex
+    }
   def remove[A](page: Settable[A]): Try[SubscriptionLocalData] = {
     val updatedData = jsObj.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>
@@ -65,27 +67,6 @@ case class SubscriptionLocalData(
     updatedData.map(_.as[SubscriptionLocalData])
   }
 
-  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): SubscriptionLocalData =
-    set(page, value) match {
-      case Success(ua) => ua
-      case Failure(ex) => throw ex
-    }
-
-  def manageContactDetailStatus: Boolean = {
-    val p1  = get(SubPrimaryContactNamePage).isDefined
-    val p2  = get(SubPrimaryEmailPage).isDefined
-    val p3  = get(SubPrimaryPhonePreferencePage).isDefined
-    val p4  = get(SubAddSecondaryContactPage).getOrElse(false)
-    val s1  = get(SubSecondaryContactNamePage).isDefined
-    val s2  = get(SubSecondaryEmailPage).isDefined
-    val s3  = get(SubSecondaryPhonePreferencePage).isDefined
-    val ad1 = get(SubRegisteredAddressPage).isDefined
-    (p1, p2, p3, p4, s1, s2, s3, ad1) match {
-      case (true, true, true, true, true, true, true, true) => true
-      case (true, true, true, false, _, _, _, true)         => true
-      case _                                                => false
-    }
-  }
 }
 
 object SubscriptionLocalData {

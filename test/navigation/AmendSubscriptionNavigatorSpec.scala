@@ -32,10 +32,18 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
   private lazy val jr          = controllers.routes.JourneyRecoveryController.onPageLoad()
   private val secondaryContact = emptySubscriptionLocalData
-    .setOrException(SubAddSecondaryContactPage, true)
-    .setOrException(SubSecondaryContactNamePage, "Bear")
-    .setOrException(SubSecondaryEmailPage, "Bear@jungle.com")
-    .setOrException(SubSecondaryPhonePreferencePage, false)
+    .set(SubAddSecondaryContactPage, true)
+    .success
+    .value
+    .set(SubSecondaryContactNamePage, "Bear")
+    .success
+    .value
+    .set(SubSecondaryEmailPage, "Bear@jungle.com")
+    .success
+    .value
+    .set(SubSecondaryPhonePreferencePage, false)
+    .success
+    .value
   "Navigator" must {
 
     "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
@@ -48,7 +56,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubMneOrDomesticPage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        emptySubscriptionLocalData.set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther).success.value
       ) mustBe
         groupCYA
     }
@@ -56,7 +64,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubAccountingPeriodPage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, accountingPeriod)
+        emptySubscriptionLocalData.set(SubAccountingPeriodPage, accountingPeriod).success.value
       ) mustBe
         groupCYA
     }
@@ -64,7 +72,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubPrimaryContactNamePage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "Paddington")
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "Paddington").success.value
       ) mustBe
         contactCYA
     }
@@ -72,7 +80,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubPrimaryEmailPage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubPrimaryEmailPage, "something@something.com")
+        emptySubscriptionLocalData.set(SubPrimaryEmailPage, "something@something.com").success.value
       ) mustBe
         contactCYA
     }
@@ -80,12 +88,13 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubPrimaryPhonePreferencePage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubPrimaryPhonePreferencePage, true)
+        emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value
       ) mustBe
         controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a primary contact number and they have already provided one" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubPrimaryPhonePreferencePage, true).setOrException(SubPrimaryCapturePhonePage, "12313")
+      val ua =
+        emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value.set(SubPrimaryCapturePhonePage, "12313").success.value
       navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
         contactCYA
     }
@@ -94,7 +103,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubPrimaryPhonePreferencePage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubPrimaryPhonePreferencePage, false)
+        emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, false).success.value
       ) mustBe
         contactCYA
     }
@@ -103,11 +112,11 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         contactCYA
     }
     "go to secondary contact name page if they have chosen to nominate one but no further info has been provided" in {
-      navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)) mustBe
+      navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value) mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
     }
     "go to email page from secondary contact name page if they have chosen to nominate a secondary contact but no email has been provided" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubSecondaryContactNamePage, "name").setOrException(SubAddSecondaryContactPage, true)
+      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value.set(SubAddSecondaryContactPage, true).success.value
       navigator.nextPage(SubSecondaryContactNamePage, CheckMode, ua) mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad()
     }
@@ -125,12 +134,13 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad()
     }
     "go secondary capture telephone page if they have chosen to nominate a secondary contact number and non provided" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubSecondaryPhonePreferencePage, true)
+      val ua = emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a secondary contact number and they have already provided one" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubSecondaryPhonePreferencePage, true).setOrException(SubSecondaryCapturePhonePage, "1231")
+      val ua =
+        emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value.set(SubSecondaryCapturePhonePage, "1231").success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
         contactCYA
     }
@@ -142,7 +152,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubSecondaryPhonePreferencePage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubSecondaryPhonePreferencePage, false)
+        emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, false).success.value
       ) mustBe
         contactCYA
     }
@@ -151,7 +161,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       navigator.nextPage(
         SubRegisteredAddressPage,
         CheckMode,
-        emptySubscriptionLocalData.setOrException(SubRegisteredAddressPage, nonUKAddress)
+        emptySubscriptionLocalData.set(SubRegisteredAddressPage, nonUKAddress).success.value
       ) mustBe
         contactCYA
     }

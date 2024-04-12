@@ -67,7 +67,7 @@ class SubscriptionService @Inject() (
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
-      amendData = createAmendSubscription(plrReference, currentSubscriptionData, subscriptionLocalData)
+      amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
 
@@ -87,7 +87,7 @@ class SubscriptionService @Inject() (
         }
       }
 
-  private def createAmendSubscription(
+  def amendGroupOrContactDetails(
     plrReference: String,
     currentData:  SubscriptionData,
     userData:     SubscriptionLocalData
@@ -117,13 +117,14 @@ class SubscriptionService @Inject() (
         telephone = userData.subPrimaryCapturePhone,
         emailAddress = userData.subPrimaryEmail
       ),
-      secondaryContactDetails = Option.when(userData.subAddSecondaryContact)( //TODO - maybe use Applicative here
-        ContactDetailsType(
-          userData.subSecondaryContactName.getOrElse(""),
-          userData.subSecondaryCapturePhone,
-          userData.subSecondaryEmail.getOrElse("")
-        )
-      ),
+      secondaryContactDetails = if (userData.subAddSecondaryContact) {
+        for {
+          name  <- userData.subSecondaryContactName
+          email <- userData.subSecondaryEmail
+        } yield ContactDetailsType(name = name, telephone = userData.subSecondaryCapturePhone, emailAddress = email)
+      } else {
+        None
+      },
       filingMemberDetails = currentData.filingMemberDetails.map(details =>
         FilingMemberAmendDetails(
           safeId = details.safeId,

@@ -72,11 +72,7 @@ class ManageContactCheckYourAnswersController @Inject() (
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.subscriptionLocalData, countryOptions)).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-    if (request.subscriptionLocalData.manageContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryContactList, address))
-    } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+    Ok(view(primaryContactList, secondaryContactList, address))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>

@@ -19,9 +19,9 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.InternalIssueError
 import models.registration.RegistrationInfo
 import models.subscription._
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -30,39 +30,12 @@ import play.api.inject.bind
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionServiceSpec extends SpecBase {
 
-  val id                = "testId"
-  val plrReference      = "testPlrRef"
-  private lazy val date = LocalDate.now()
-  private val subscriptionData = SubscriptionData(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", date, domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
-    primaryContactDetails = ContactDetailsType("name", None, "email"),
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(date, date),
-    accountStatus = Some(AccountStatus(false))
-  )
-
-  private val subscriptionLocalData = SubscriptionLocalData(
-    subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(date, date),
-    subPrimaryContactName = "p name",
-    subPrimaryEmail = "p email",
-    subPrimaryPhonePreference = true,
-    subPrimaryCapturePhone = Some("12312"),
-    subAddSecondaryContact = false,
-    subSecondaryContactName = None,
-    subSecondaryEmail = None,
-    subSecondaryCapturePhone = None,
-    subSecondaryPhonePreference = None,
-    subRegisteredAddress = NonUKAddress("line1", None, "line3", None, None, "GB")
-  )
+  val id           = "testId"
+  val plrReference = "testPlrRef"
 
   "SubscriptionService" must {
 
@@ -342,7 +315,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
     "amendSubscription" when {
-      "call read subscription and create the required amend object to submit" in {
+      "call read subscription and create the required amend object to submit when no secondary contact" in {
 
         val application = applicationBuilder()
           .overrides(
@@ -354,7 +327,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.amendSubscription(any(), any[AmendSubscription])(any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendSubscription("id", "plr", subscriptionLocalData).futureValue
+          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).futureValue
 
           result mustBe Done
         }
@@ -370,7 +343,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendSubscription("id", "plr", subscriptionLocalData).failed.futureValue
+          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).failed.futureValue
 
           result mustBe InternalIssueError
         }
@@ -387,10 +360,24 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
-          val resultFuture = service.amendSubscription("id", "plr", subscriptionLocalData)
+          val resultFuture = service.amendSubscription("id", "plr", emptySubscriptionLocalData)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }
+      }
+    }
+
+    "createAmendObject" when {
+      "create the right object when secondary contact is nominated" in {
+        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val newLocalData = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionData, newLocalData)
+        resultFuture.secondaryContactDetails mustBe None
+      }
+      "create the right object when no secondary detail is nominated" in {
+        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
+        resultFuture.secondaryContactDetails mustBe None
       }
     }
   }

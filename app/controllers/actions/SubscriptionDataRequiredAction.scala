@@ -34,11 +34,6 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    logger.debug(
-      s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - SubscriptionDataRequiredAction called for user: ${request.userId} with subscriptionData: ${request.maybeSubscriptionLocalData}"
-    )
-
     request.maybeSubscriptionLocalData match {
       case None =>
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

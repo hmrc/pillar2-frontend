@@ -46,7 +46,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -148,6 +148,35 @@ class ContactByTelephoneControllerSpec extends SpecBase {
     running(application) {
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
         .withFormUrlEncodedBody("value" -> "false")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual expectedNextPage.url
+
+      verify(mockNavigator).nextPage(SubPrimaryPhonePreferencePage, CheckMode, answers)
+    }
+  }
+
+  "redirect to the next page when the user answers yes" in {
+    import play.api.inject.bind
+    val expectedNextPage = Call(GET, "/")
+    val mockNavigator    = mock[AmendSubscriptionNavigator]
+    when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+    val answers = emptySubscriptionLocalData.copy(subPrimaryPhonePreference = true, subPrimaryCapturePhone = Some("12312"))
+
+    val application = applicationBuilder(subscriptionLocalData = Some(answers))
+      .overrides(
+        bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      )
+      .build()
+
+    running(application) {
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "true")
 
       val result = route(application, request).value
 

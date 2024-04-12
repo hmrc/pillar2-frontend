@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.AddSecondaryContactFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
-import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage, SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import pages._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -84,7 +84,7 @@ class AddSecondaryContactController @Inject() (
                   updatedAnswers3 <- Future.fromTry(updatedAnswers2.remove(SubSecondaryPhonePreferencePage))
                   updatedAnswers4 <- Future.fromTry(updatedAnswers3.remove(SubSecondaryCapturePhonePage))
                   _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers4))
-                } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers4))
             }
           )
       }

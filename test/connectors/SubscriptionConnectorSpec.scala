@@ -39,7 +39,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     .build()
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-  private val subscriptionData = Json.parse(successfulResponseJson).as[SubscriptionData]
+  private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
   "SubscriptionConnector" must {
     "subscribe" should {
 
@@ -73,7 +73,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         val result: Option[SubscriptionData] = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
 
         result mustBe defined
-        result mustBe Some(subscriptionData)
+        result mustBe Some(subscriptionDataJson)
 
       }
 
@@ -95,7 +95,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
 
         result mustBe defined
-        result mustBe Some(subscriptionData)
+        result mustBe Some(subscriptionDataJson)
 
       }
 
