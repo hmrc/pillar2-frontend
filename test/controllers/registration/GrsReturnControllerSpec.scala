@@ -22,7 +22,7 @@ import models.grs.EntityType
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{FmEntityTypePage, UpeEntityTypePage}
+import pages.{FmEntityTypePage, RfmEntityTypePage, UpeEntityTypePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,12 +33,16 @@ import scala.concurrent.Future
 class GrsReturnControllerSpec extends SpecBase {
 
   private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
-  private val failedIdentifierLimited     = Json.parse(registrationNotCalledLimited).as[IncorporatedEntityRegistrationData]
-  private val registrationFailedLimited   = Json.parse(registrationFailedLimitedJs).as[IncorporatedEntityRegistrationData]
+  private val validRegisterWithIdResponseWithoutPartner =
+    Json.parse(validRegistrationWithIdResponseWithoutPartnerId).as[IncorporatedEntityRegistrationData]
+  private val failedIdentifierLimited   = Json.parse(registrationNotCalledLimited).as[IncorporatedEntityRegistrationData]
+  private val registrationFailedLimited = Json.parse(registrationFailedLimitedJs).as[IncorporatedEntityRegistrationData]
 
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
-  private val failedIdentifierLLP               = Json.parse(registrationNotCalledLLP).as[PartnershipEntityRegistrationData]
-  private val registrationFailedLLP             = Json.parse(registrationFailedLLPJs).as[PartnershipEntityRegistrationData]
+  private val validRegisterWithIdResponseForLLPWithoutPartner =
+    Json.parse(validRegistrationWithIdResponseForLLPWithoutPartnerId).as[PartnershipEntityRegistrationData]
+  private val failedIdentifierLLP   = Json.parse(registrationNotCalledLLP).as[PartnershipEntityRegistrationData]
+  private val registrationFailedLLP = Json.parse(registrationFailedLLPJs).as[PartnershipEntityRegistrationData]
 
   "GrsReturn Controller" when {
 
@@ -136,6 +140,137 @@ class GrsReturnControllerSpec extends SpecBase {
 
     }
 
+    "must return 303 redirect to the next page with UK Limited company for RFM" in {
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponse))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url
+      }
+
+    }
+
+    "must return 303 redirect to the next page with Limited Liability Partnership for RFM" in {
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url
+
+      }
+
+    }
+
+    "must return 303 redirect to Journey Recovery page for RFM When RFMEntityType not set" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+
+    }
+
+    "must return 303 redirect to Journey Recovery page for RFM When businesspartnerId not set for UKLimited " in {
+
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponseWithoutPartner))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+
+    }
+
+    "must return 303 redirect to Journey Recovery page for RFM When businesspartnerId not set for LLP " in {
+      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(validRegisterWithIdResponseForLLPWithoutPartner))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+
+    }
+
+    "redirect to under construction page if rfm functionality is off" in {
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure("features.rfmAccessEnabled" -> false)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+        val result  = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
     "must redirect to registration not called controller for UPE if GRS fails to identify the entity" in {
       val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -225,6 +360,53 @@ class GrsReturnControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.GrsRegistrationFailedController.onPageLoadUpe.url
+
+      }
+
+    }
+
+    "redirect to registration failed controller if grs registration fails in the RFM journey " in {
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(registrationFailedLimited))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.GrsRegistrationFailedController.onPageLoadRfm.url
+      }
+
+    }
+
+    "must redirect to registration not called controller for nfm if GRS fails to identify the entity in RFM journey" in {
+      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+          .thenReturn(Future.successful(failedIdentifierLLP))
+
+        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.GrsRegistrationNotCalledController.onPageLoadRfm.url
 
       }
 
