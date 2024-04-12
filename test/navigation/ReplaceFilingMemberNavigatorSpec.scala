@@ -134,7 +134,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
       "go to UnderConstructionController if they select No on RfmAddSecondaryContact page" in {
         navigator.nextPage(RfmAddSecondaryContactPage, NormalMode, emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
 
       "go to JourneyRecovery if no answer for RfmAddSecondaryContact page can be found" in {
@@ -163,7 +163,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(RfmSecondaryCapturePhonePage, "1232132100")
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
 
       "go to JourneyRecovery if no answer for RfmSecondaryPhonePreference page can be found" in {
@@ -177,7 +177,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, false)
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
     }
 

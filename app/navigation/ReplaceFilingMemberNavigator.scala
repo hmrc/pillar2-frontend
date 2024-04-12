@@ -47,11 +47,12 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
-    case RfmSecondaryCapturePhonePage    => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
     case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
     case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
+    case RfmContactAddressPage           => _ => controllers.routes.UnderConstructionController.onPageLoad
     case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
@@ -88,7 +89,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (nominated) {
           controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
@@ -100,7 +101,7 @@ class ReplaceFilingMemberNavigator @Inject() {
         if (provided) {
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
