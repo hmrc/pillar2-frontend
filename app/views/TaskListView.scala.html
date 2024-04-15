@@ -49,9 +49,9 @@
                 @messages("taskList.task.business.heading")
             </h2>
             <ul class="app-task-list__items">
-            @groupSections.map { section =>
-                @taskListSection(section, section.status.tag)
-            }
+                @taskListSection(groupSections(0), groupSections(0).status.tag, "ultimate-parent")
+                @taskListSection(groupSections(1), groupSections(1).status.tag, "filing-member")
+                @taskListSection(groupSections(2), groupSections(2).status.tag, "further-group-details")
             </ul>
         </li>
 
@@ -60,7 +60,7 @@
                 @messages("taskList.task.contact.heading")
             </h2>
             <ul class="app-task-list__items">
-                @taskListSection(contactSection, contactSection.status.tag)
+                @taskListSection(contactSection, contactSection.status.tag, "contact-details")
             </ul>
         </li>
 
@@ -69,7 +69,7 @@
                 @messages("taskList.task.review.heading")
             </h2>
             <ul class="app-task-list__items">
-                @taskListSection(reviewSection, reviewSection.status.tag)
+                @taskListSection(reviewSection, reviewSection.status.tag, "check-your-answers")
             </ul>
         </li>
 
