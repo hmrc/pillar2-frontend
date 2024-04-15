@@ -176,6 +176,20 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("line3")
         contentAsString(result) must include("1234567891")
         contentAsString(result) must include("email@address.com")
+        contentAsString(result) must include("the first contact name")
+        contentAsString(result) must include("the first contact email address")
+        contentAsString(result) must include("can we contact the first contact by telephone")
+        contentAsString(result) must include("the telephone number for the first contact")
+        contentAsString(result) must include("the telephone number for the first contact")
+        contentAsString(result) must include("do you have a second contact")
+        contentAsString(result) must include("the second contact name")
+        contentAsString(result) must include("the second contact email address")
+        contentAsString(result) must include("can we contact the second contact by telephone")
+        contentAsString(result) must include("the telephone number for the second contact")
+        contentAsString(result) must include("Now submit your details to replace the current filing member")
+        contentAsString(result) must include(
+          "By sending these details, you are confirming that the information is correct and complete to the best of your knowledge."
+        )
 
       }
     }
