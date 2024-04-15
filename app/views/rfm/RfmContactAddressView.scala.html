@@ -35,6 +35,9 @@
 @import utils.InputOption
 @import views.html.components.gds.sectionHeader
 @import views.html.components.gds.heading
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -101,32 +104,21 @@
         )
 
         @govukSelect(
-            Select(
-                id = form("countryCode").id,
-                name = form("countryCode").name,
-                label = Label(
-                    isPageHeading = true,
-                    classes = "govuk-heading-l",
-                    content = Text(messages("rfmContactAddress.country"))
+            SelectViewModel(
+                field = form("countryCode"),
+                items = Seq(SelectItem(value = Some(""))) ++
+                    countryOptions.map(valueOption =>
+                    SelectItem(
+                        value = Some(valueOption.value),
+                        text = valueOption.label
+                    )
                 ),
-                hint = Some(Hint(content = Text(messages("rfmContactAddress.country.hint")))),
-                items = Seq(
-                            SelectItem(
-                                value = Some(""),
-                                text = messages("site.address.country.select")
-                            )
-                        ) ++
-                        countryOptions.map(valueOption =>
-                            SelectItem(
-                                value = Some(valueOption.value),
-                                text = valueOption.label,
-                                selected = form("countryCode").value.contains(valueOption.value)
-                            )
-                        ),
-                formGroupClasses = "autocomplete-wrapper",
-                attributes = Map("data-non-uk-countries" -> ""),
-                errorMessage = form("countryCode").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
-            )
+                label = LabelViewModel(messages("rfmContactAddress.country"))
+            ).withCssClass("govuk-input")
+            .withFormGroupClasses("govuk-!-width-two-thirds")
+            .withHint(Hint(content = Text(messages("rfmContactAddress.country.hint"))))
+            .withAttribute("aria-label" -> "countryCode")
+            .asAccessibleAutocomplete(Some(AccessibleAutocomplete(defaultValue = Some(""), showAllValues = true, autoSelect = true)))
         )
 
         @govukButton(
