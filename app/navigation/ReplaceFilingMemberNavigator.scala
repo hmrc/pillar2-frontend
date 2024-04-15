@@ -38,6 +38,7 @@ class ReplaceFilingMemberNavigator @Inject() {
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
 
   private val normalRoutes: Page => UserAnswers => Call = {
+
     case RfmPrimaryContactNamePage       => _ => controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode)
     case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
     case RfmContactByTelephonePage       => telephonePreferenceLogic
@@ -111,7 +112,7 @@ class ReplaceFilingMemberNavigator @Inject() {
       .get(RfmUkBasedPage)
       .map { rfmUkBased =>
         if (rfmUkBased) {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
         }
