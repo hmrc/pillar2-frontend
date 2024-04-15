@@ -59,6 +59,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       case _            => JourneyType.Reg
     }
     val serviceName = ServiceName(journeyType)
+
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
       businessVerificationCheck = appConfig.partnershipBvEnabled,

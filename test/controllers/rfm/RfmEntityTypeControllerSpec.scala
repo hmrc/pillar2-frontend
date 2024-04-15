@@ -38,6 +38,24 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
   "RfmEntityTypeController Controller" when {
 
+    "must return Under Construction  view when rfm feature false" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+      }
+
+    }
+
     "must return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -204,7 +222,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
     }
 
-    "redirect to name registration page if entity type not listed is chosen and set fm as non uk based" in {
+    "redirect to name registration page if entity type not listed is chosen and set rfm as non uk based" in {
       val jsonTobeReturned = Json.toJson(
         emptyUserAnswers
           .setOrException(RfmUkBasedPage, false)
@@ -223,6 +241,37 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "redirect to Entity page page if entity type not listed is chosen and set rfm as Non UK based" in {
+      val jsonTobeReturned = Json.toJson(
+        emptyUserAnswers
+          .setOrException(RfmUkBasedPage, true)
+          .setOrException(RfmEntityTypePage, EntityType.Other)
+      )
+      val userAnswers = emptyUserAnswers
+        .setOrException(RfmUkBasedPage, false)
+        .setOrException(RfmEntityTypePage, EntityType.Other)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        val view = application.injector.instanceOf[RfmEntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.Other), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+
       }
     }
 

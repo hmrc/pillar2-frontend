@@ -418,6 +418,12 @@ POST        /replace-filing-member/business-matching/registered-in-uk           
 GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
 
+
+GET         /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+
 GET        /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/contact-details/second-input-name                     controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)

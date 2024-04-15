@@ -19,7 +19,6 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
-import models.NormalMode
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -33,11 +32,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
+import utils.{Pillar2SessionKeys, RowStatus}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 @Singleton
 class GrsReturnController @Inject() (
