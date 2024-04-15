@@ -53,6 +53,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     partnershipType: EntityType,
     mode:            Mode
   )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
+
     val serviceName = ServiceName()
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
