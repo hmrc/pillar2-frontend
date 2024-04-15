@@ -118,7 +118,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url
         }
       }
     }

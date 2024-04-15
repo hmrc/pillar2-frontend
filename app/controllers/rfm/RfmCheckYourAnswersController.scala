@@ -61,8 +61,4 @@ class RfmCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-  }
-
 }

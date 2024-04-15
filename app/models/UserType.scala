@@ -29,11 +29,17 @@ object UserType {
     val value: String = this.toString
   }
 
+  case object Rfm extends UserType {
+    val value: String = this.toString
+  }
+
   implicit val format: Format[UserType] = new Format[UserType] {
     override def reads(json: JsValue): JsResult[UserType] =
       json.as[String] match {
         case "Upe" => JsSuccess[UserType](Upe)
         case "Fm"  => JsSuccess[UserType](Fm)
+        case "Rfm" => JsSuccess[UserType](Rfm)
+
         case other => JsError(s"Invalid Source System: $other")
       }
 
@@ -41,6 +47,7 @@ object UserType {
       sourceSystem match {
         case Upe => JsString("Upe")
         case Fm  => JsString("Fm")
+        case Rfm => JsString("Rfm")
       }
   }
 
@@ -49,6 +56,7 @@ object UserType {
       value match {
         case Upe => "Upe"
         case Fm  => "Fm"
+        case Fm  => "Rfm"
       }
   }
 

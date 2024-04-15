@@ -58,7 +58,6 @@ class RfmContactByTelephoneController @Inject() (
             case None    => form
           }
           Ok(view(preparedForm, mode, contactName))
-
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     } else {

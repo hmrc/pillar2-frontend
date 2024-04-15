@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
-import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledUpeView}
+import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledRfmView, RegistrationNotCalledUpeView}
 
 class GrsRegistrationNotCalledControllerSpec extends SpecBase {
 
@@ -51,6 +51,22 @@ class GrsRegistrationNotCalledControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RegistrationNotCalledNfmView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET for RFM" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.GrsRegistrationNotCalledController.onPageLoadRfm.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RegistrationNotCalledRfmView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
