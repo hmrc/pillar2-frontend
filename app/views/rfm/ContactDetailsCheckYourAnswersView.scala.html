@@ -42,7 +42,7 @@ govukButton: GovukButton
         ButtonViewModel(messages("site.save-and-continue"))
         .withAttribute("id", "continue")
         .withCssClass("govuk-!-margin-top-4")
-        .asLink(controllers.routes.UnderConstructionController.onPageLoad.url)
+        .asLink(controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
     )
 
 }

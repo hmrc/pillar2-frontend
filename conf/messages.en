@@ -268,7 +268,7 @@ rfmContactByTelephone.title = Can we contact by telephone?
 rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will use this to confirm your records.
 rfmContactByTelephone.error.required= Select yes if we can contact {0} by telephone
-rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+rfmContactByTelephone.checkYourAnswersLabel = Telephone contact
 rfmContactByTelephone.change.hidden =  can we contact the first contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
@@ -1036,6 +1036,13 @@ rfm.contactDetailsCheckYourAnswers.title = Check your answers for contact detail
 rfm.contactDetailsCheckYourAnswers.first = First contact
 rfm.contactDetailsCheckYourAnswers.second = Second contact
 rfm.contactDetailsCheckYourAnswers.address = Contact address
+
+entityType.Rfm.change.hidden = company
+rfm.contactCheckYourAnswers.title = Review and submit
+rfm.contactCheckYourAnswers.heading = Review and submit
+rfm.contactCheckYourAnswers.filingmember = Filing member details
+rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
+
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
