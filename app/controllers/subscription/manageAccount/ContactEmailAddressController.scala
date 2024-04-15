@@ -51,11 +51,7 @@ class ContactEmailAddressController @Inject() (
           .get(SubPrimaryContactNamePage)
           .map { contactName =>
             val form = formProvider(contactName)
-            val preparedForm = subscriptionLocalData.get(SubPrimaryEmailPage) match {
-              case Some(v) => form.fill(v)
-              case None    => form
-            }
-            Ok(view(preparedForm, mode, contactName))
+            Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), mode, contactName))
           }
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

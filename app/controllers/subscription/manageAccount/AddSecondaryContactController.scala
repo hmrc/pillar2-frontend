@@ -52,13 +52,7 @@ class AddSecondaryContactController @Inject() (
     (for {
       subscriptionLocalData <- request.maybeSubscriptionLocalData
       contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
-    } yield {
-      val preparedForm = subscriptionLocalData.get(SubAddSecondaryContactPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      Ok(view(preparedForm, contactName, mode))
-    })
+    } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, mode)))
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
