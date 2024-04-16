@@ -180,6 +180,30 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
+
+      "go to Entity Type Page page from if new nominated filing member is UK based" in {
+        navigator.nextPage(
+          RfmUkBasedPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+        ) mustBe
+          controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
+      }
+
+      "go to Name Registration page from if new nominated filing member is not UK based" in {
+        navigator.nextPage(
+          RfmUkBasedPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RfmUkBasedPage, false)
+        ) mustBe
+          controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+      }
+
+      "go to JourneyRecovery if no answer for RfmUkBasedPage page can be found" in {
+        navigator.nextPage(RfmUkBasedPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+
     }
 
     "in Check mode" must {
