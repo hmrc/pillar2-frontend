@@ -18,8 +18,11 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import pages.RfmCheckYourAnswersLogicPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
@@ -27,14 +30,17 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.ContactDetailsCheckYourAnswersView
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class ContactDetailsCheckYourAnswersController @Inject() (
-  rfmIdentify:              RfmIdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  countryOptions:           CountryOptions,
-  view:                     ContactDetailsCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+  rfmIdentify:               RfmIdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  val controllerComponents:  MessagesControllerComponents,
+  countryOptions:            CountryOptions,
+  val userAnswersConnectors: UserAnswersConnectors,
+  view:                      ContactDetailsCheckYourAnswersView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -69,6 +75,14 @@ class ContactDetailsCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    for {
+      updatedAnswers <-
+        Future.fromTry(request.userAnswers.set(RfmCheckYourAnswersLogicPage, true))
+      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield Redirect(controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad)
   }
 
 }

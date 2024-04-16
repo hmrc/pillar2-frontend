@@ -33,7 +33,7 @@ class ReplaceFilingMemberNavigator @Inject() {
   }
 
   private lazy val reviewAndSubmitCheckYourAnswers =
-    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
+    controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
   private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad

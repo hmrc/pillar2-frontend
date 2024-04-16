@@ -22,27 +22,28 @@
     sectionHeader: sectionHeader,
     heading: heading,
     govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF
 )
 
 @(primaryContactList: SummaryList, secondaryContactList: SummaryList, contactAddress: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfm.contactDetailsCheckYourAnswers.title"))) {
+    @formHelper(action = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onSubmit) {
+        <div class="contact-details">
+            @sectionHeader(messages("rfm.contactDetailsCheckYourAnswers.heading.caption"))
+            @heading(messages("rfm.contactDetailsCheckYourAnswers.heading"), "govuk-heading-l")
+            @heading(messages("rfm.contactDetailsCheckYourAnswers.first"), "govuk-heading-m", "h2")
+            @govukSummaryList(primaryContactList)
+            @heading(messages("rfm.contactDetailsCheckYourAnswers.second"), "govuk-heading-m", "h2")
+            @govukSummaryList(secondaryContactList)
+            @heading(messages("rfm.contactDetailsCheckYourAnswers.address"), "govuk-heading-m", "h2")
+            @govukSummaryList(contactAddress)
 
-    @sectionHeader(messages("rfm.contactDetailsCheckYourAnswers.heading.caption"))
-    @heading(messages("rfm.contactDetailsCheckYourAnswers.heading"), "govuk-heading-l")
-    @heading(messages("rfm.contactDetailsCheckYourAnswers.first"), "govuk-heading-m", "h2")
-    @govukSummaryList(primaryContactList)
-    @heading(messages("rfm.contactDetailsCheckYourAnswers.second"), "govuk-heading-m", "h2")
-    @govukSummaryList(secondaryContactList)
-    @heading(messages("rfm.contactDetailsCheckYourAnswers.address"), "govuk-heading-m", "h2")
-    @govukSummaryList(contactAddress)
+        </div>
+        @govukButton(
+            ButtonViewModel(messages("site.save-and-continue"))
+            .withAttribute("id", "continue").withCssClass("govuk-!-margin-top-6"))
 
-    @govukButton(
-        ButtonViewModel(messages("site.save-and-continue"))
-        .withAttribute("id", "continue")
-        .withCssClass("govuk-!-margin-top-4")
-        .asLink(controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
-    )
-
+    }
 }
