@@ -15,17 +15,14 @@
  */
 
 package controllers.rfm
-
 import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.{Mode, UserAnswers}
-import connectors.UserAnswersConnectors
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
@@ -38,7 +35,6 @@ class RfmContactCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  userAnswersConnectors:    UserAnswersConnectors,
   view:                     RfmContactCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)

@@ -17,14 +17,9 @@
 package helpers
 
 import base.SpecBase
-import models.registration._
-import models.rfm.RegistrationDate
-import models.{EnrolmentInfo, NonUKAddress, UKAddress, UserAnswers}
-import pages._
-import utils.RowStatus
 
-import java.time.LocalDate
-import scala.util.Try
+import models.{NonUKAddress, UserAnswers}
+import pages._
 
 class ReplaceFilingMemberHelpersSpec extends SpecBase {
 

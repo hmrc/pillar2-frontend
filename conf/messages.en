@@ -930,8 +930,9 @@ rfm.corporatePosition.upe = Ultimate parent entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
 rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
+rfm.corporatePosition.change.hidden = what is your position is in the corporate structure of the group
 
-rfm.contact.heading.caption = Contact details
+rfm.contact.heading.caption = Contact detNails
 rfm.contactDetailsRegistration.title = We need contact details for your Pillar 2 top-up taxes account
 rfm.contactDetailsRegistration.heading = We need contact details for your Pillar 2 top-up taxes account
 rfm.contactDetailsRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
