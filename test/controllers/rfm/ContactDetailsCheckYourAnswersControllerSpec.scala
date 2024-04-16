@@ -19,7 +19,6 @@ package controllers.rfm
 import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
