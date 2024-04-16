@@ -46,6 +46,14 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         val userAnswer = primaryAndSecondaryContactData
         userAnswer.rfmContactDetailStatus mustEqual true
       }
+      "return true if all primary contact question answered and no secondary contact by phone" in {
+        val userAnswer = primaryAndSecondaryContactData
+          .setOrException(RfmSecondaryPhonePreferencePage, false)
+          .remove(RfmSecondaryCapturePhonePage)
+          .success
+          .value
+        userAnswer.rfmContactDetailStatus mustEqual true
+      }
       "return true if no primary telephone contact and all other contact questions are answered" in {
         val userAnswer = primaryAndSecondaryContactData.setOrException(RfmContactByTelephonePage, false)
         userAnswer.rfmContactDetailStatus mustEqual true
