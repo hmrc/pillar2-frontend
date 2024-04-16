@@ -334,6 +334,25 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           rfmContactDetailsCheckYourAnswers
       }
+
+      "go to Entity Type Page page from if new nominated filing member is UK based" in {
+        navigator.nextPage(
+          RfmUkBasedPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+        ) mustBe
+          controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
+      }
+
+      "go to Name Registration page from if new nominated filing member is not UK based" in {
+        navigator.nextPage(
+          RfmUkBasedPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RfmUkBasedPage, false)
+        ) mustBe
+          controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+      }
+
       "go to submit and review CYA page from add secondary contact page if secondary contact name exists and RfmCheckYourAnswersLogicPage is true" in {
         val ua = emptyUserAnswers
           .setOrException(RfmAddSecondaryContactPage, true)
