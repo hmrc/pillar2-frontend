@@ -63,6 +63,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmRegistrationDatePage         => _ => securityQuestionsCheckYourAnswers
     case RfmNameRegistrationPage         => whichCheckYourAnswerPageRfmQuestions
     case RfmRegisteredAddressPage        => whichCheckYourAnswerPageRfmQuestions
+    case RfmUkBasedPage                  => rfmUkBasedLogic
     case RfmPrimaryContactNamePage       => whichCheckYourAnswerPageContactQuestions
     case RfmPrimaryContactEmailPage      => whichCheckYourAnswerPageContactQuestions
     case RfmContactByTelephonePage       => telephonePreferenceLogic

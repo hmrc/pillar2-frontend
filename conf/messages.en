@@ -980,7 +980,7 @@ rfm.rfmCheckYourAnswers.heading.caption = Group details
 rfm.nameRegistration.checkYourAnswersLabel = Name
 rfm.nameRegistration.change.hidden =  the name of the new nominated filing member
 rfm.registeredAddress.checkYourAnswersLabel = Address
-rfm.registeredAddress.change.hidden =  the registered office address
+rfm.registeredAddress.change.hidden =  the address of the new nominated filing member
 
 rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
