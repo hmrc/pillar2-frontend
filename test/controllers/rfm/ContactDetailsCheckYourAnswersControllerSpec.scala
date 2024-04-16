@@ -30,29 +30,10 @@ import scala.concurrent.Future
 
 class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  private val primaryAndSecondaryContactData = emptyUserAnswers
-    .setOrException(RfmPrimaryContactNamePage, "primary name")
-    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-    .setOrException(RfmAddSecondaryContactPage, true)
-    .setOrException(RfmSecondaryContactNamePage, "secondary name")
-    .setOrException(RfmSecondaryEmailPage, "email@address.com")
-    .setOrException(RfmSecondaryPhonePreferencePage, true)
-    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
-    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
-
-  private val missingContactData = emptyUserAnswers
-    .setOrException(RfmPrimaryContactNamePage, "primary name")
-    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-    .setOrException(RfmAddSecondaryContactPage, false)
-
   "Contact Check Your Answers Controller" must {
 
     "must return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(primaryAndSecondaryContactData)).build()
+      val application = applicationBuilder(userAnswers = Some(rfmPrimaryAndSecondaryContactData)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -87,7 +68,7 @@ class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with Summary
     }
 
     "redirect to bookmark page if address page not answered" in {
-      val application = applicationBuilder(userAnswers = Some(missingContactData)).build()
+      val application = applicationBuilder(userAnswers = Some(rfmMissingContactData)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad.url)
 

@@ -525,4 +525,23 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
+  val rfmPrimaryAndSecondaryContactData: UserAnswers = emptyUserAnswers
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, true)
+    .setOrException(RfmSecondaryContactNamePage, "secondary name")
+    .setOrException(RfmSecondaryEmailPage, "email@address.com")
+    .setOrException(RfmSecondaryPhonePreferencePage, true)
+    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
+  val rfmMissingContactData: UserAnswers = emptyUserAnswers
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, false)
+
 }
