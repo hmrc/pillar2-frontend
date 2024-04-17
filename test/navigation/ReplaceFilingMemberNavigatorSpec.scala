@@ -37,7 +37,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
   private lazy val jr                                = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val securityQuestionsCYA              = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
-  private lazy val rfmQuestionsCYA                   = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
+  private lazy val rfmQuestionsCYA                   = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
   private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview =
     controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
@@ -126,6 +126,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress)
         ) mustBe
           controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
+      }
+
+      "go to Rfm Contact Details Registration page from Rfm Check Your Answers Page" in {
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmRegisteredAddressPage, nonUKAddress)
+        navigator.nextPage(RfmCheckYourAnswersPage, NormalMode, ua) mustBe
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
       }
 
       "go to RfmSecondaryContactName page if they select Yes on RfmAddSecondaryContact page" in {
@@ -254,6 +260,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
         navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
           submitAndReview
+      }
+
+      "go to Rfm Contact Details Registration page from Rfm Check Your Answers Page" in {
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmRegisteredAddressPage, nonUKAddress)
+        navigator.nextPage(RfmCheckYourAnswersPage, CheckMode, ua) mustBe
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
       }
 
       "go to rfm contact details CYA page from primary contact name page" in {
