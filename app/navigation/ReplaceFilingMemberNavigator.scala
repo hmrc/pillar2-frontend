@@ -51,12 +51,12 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreference
     case RfmSecondaryCapturePhonePage    => rfmSecondaryPhoneCaptureRoute
+    case RfmCheckYourAnswersPage         => rfmRegistrationDetailsCheckRoute
     case RfmContactAddressPage           => _ => controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
     case RfmPillar2ReferencePage         => _ => controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode)
     case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case RfmCheckYourAnswersPage         => _ => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
     case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
@@ -66,6 +66,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmNameRegistrationPage         => whichCheckYourAnswerPageRfmQuestions
     case RfmRegisteredAddressPage        => whichCheckYourAnswerPageRfmQuestions
     case RfmCorporatePositionPage        => rfmCorporatePositionCheckRouteLogic
+    case RfmUkBasedPage                  => rfmUkBasedCheckRouteLogic
     case RfmPrimaryContactNamePage       => whichCheckYourAnswerPageContactQuestions
     case RfmPrimaryContactEmailPage      => whichCheckYourAnswerPageContactQuestions
     case RfmContactByTelephonePage       => telephonePreferenceLogic
@@ -90,6 +91,12 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers.get(RfmCheckYourAnswersLogicPage) match {
       case Some(true) => reviewAndSubmitCheckYourAnswers
       case _          => rfmContactDetailsCheckYourAnswers
+    }
+
+  private def rfmRegistrationDetailsCheckRoute(userAnswers: UserAnswers): Call =
+    userAnswers.get(RfmCheckYourAnswersLogicPage) match {
+      case Some(true) => reviewAndSubmitCheckYourAnswers
+      case _          => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
     }
 
   private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
@@ -148,6 +155,18 @@ class ReplaceFilingMemberNavigator @Inject() {
     }
 
   private def rfmUkBasedLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmUkBasedPage)
+      .map { rfmUkBased =>
+        if (rfmUkBased) {
+          controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
+        } else {
+          controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmUkBasedCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(RfmUkBasedPage)
       .map { rfmUkBased =>
