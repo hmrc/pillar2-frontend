@@ -404,7 +404,9 @@ GET         /replace-filing-member/security/change-check-answers             con
 POST        /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
 GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
