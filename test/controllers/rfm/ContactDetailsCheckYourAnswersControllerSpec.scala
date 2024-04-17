@@ -18,10 +18,8 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

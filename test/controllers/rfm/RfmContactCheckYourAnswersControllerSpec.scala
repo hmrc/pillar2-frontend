@@ -17,92 +17,13 @@
 package controllers.rfm
 
 import base.SpecBase
-import connectors.{EnrolmentConnector, UserAnswersConnectors}
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration._
-import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NonUKAddress, NormalMode, UKAddress, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.UserAnswers
 import pages._
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
-import models.rfm.CorporatePosition
-
-import java.time.LocalDate
-import scala.concurrent.Future
 
 class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-
-  private val date = LocalDate.now()
-
-  private val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
-
-  private val grsResponse = GrsResponse(
-    Some(
-      IncorporatedEntityRegistrationData(
-        companyProfile = CompanyProfile(
-          companyName = "ABC Limited",
-          companyNumber = "1234",
-          dateOfIncorporation = date,
-          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-        ),
-        ctutr = "1234567890",
-        identifiersMatch = true,
-        businessVerification = None,
-        registration = GrsRegistrationResult(
-          registrationStatus = RegistrationStatus.Registered,
-          registeredBusinessPartnerId = Some("XB0000000000001"),
-          failures = None
-        )
-      )
-    )
-  )
-
-  private val rfmCorpPosition = emptyUserAnswers
-    .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
-
-  private val rfmNoID = emptyUserAnswers
-    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-    .setOrException(RfmUkBasedPage, false)
-    .setOrException(RfmNameRegistrationPage, "name")
-    .setOrException(RfmRegisteredAddressPage, nonUkAddress)
-    .setOrException(RfmPrimaryContactNamePage, "primary name")
-    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-    .setOrException(RfmAddSecondaryContactPage, true)
-    .setOrException(RfmSecondaryContactNamePage, "secondary name")
-    .setOrException(RfmSecondaryEmailPage, "email@address.com")
-    .setOrException(RfmSecondaryPhonePreferencePage, true)
-    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
-    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
-
-  private val rfmID = emptyUserAnswers
-    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-    .setOrException(RfmUkBasedPage, true)
-    .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(RfmGRSResponsePage, grsResponse)
-    .setOrException(RfmPrimaryContactNamePage, "primary name")
-    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-    .setOrException(RfmAddSecondaryContactPage, true)
-    .setOrException(RfmSecondaryContactNamePage, "secondary name")
-    .setOrException(RfmSecondaryEmailPage, "email@address.com")
-    .setOrException(RfmSecondaryPhonePreferencePage, true)
-    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
-    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
   "Check Your Answers Controller" when {
 
