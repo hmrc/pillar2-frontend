@@ -79,5 +79,23 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
     }
 
+    "redirect to rfm contact details registration page on form submission" in {
+      val userAnswer = UserAnswers(userAnswersId)
+        .set(RfmNameRegistrationPage, name)
+        .success
+        .value
+        .set(RfmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmCheckYourAnswersController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody()
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+      }
+    }
+
   }
 }
