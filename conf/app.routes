@@ -444,8 +444,9 @@ GET        /replace-filing-member/contact-details/change-second-input-telephone 
 POST       /replace-filing-member/contact-details/change-second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/check-answers                                controllers.rfm.ContactDetailsCheckYourAnswersController.onPageLoad
+POST        /replace-filing-member/contact-details/check-answers                                controllers.rfm.ContactDetailsCheckYourAnswersController.onSubmit
 
 GET         /replace-filing-member/review-submit/check-answers                                           controllers.rfm.RfmContactCheckYourAnswersController.onPageLoad
-POST        /replace-filing-member/review-submit/check-answers                                           controllers.rfm.RfmContactCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+POST        /replace-filing-member/review-submit/check-answers                                           controllers.rfm.RfmContactCheckYourAnswersController.onSubmit
 
 

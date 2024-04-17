@@ -76,7 +76,7 @@ class RfmContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
+  def onSubmit(): Action[AnyContent] = rfmIdentify.async { implicit request =>
     Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
   }
 

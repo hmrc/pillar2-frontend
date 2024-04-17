@@ -17,10 +17,10 @@
 package controllers.rfm
 
 import base.SpecBase
-import models.NonUKAddress
+import connectors.UserAnswersConnectors
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,6 +31,23 @@ import scala.concurrent.Future
 class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "Contact Check Your Answers Controller" must {
+
+    "must redirect to correct view when rfm feature false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
 
     "must return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(rfmPrimaryAndSecondaryContactData)).build()
@@ -66,7 +83,25 @@ class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with Summary
         contentAsString(result) must include(" the contact address")
       }
     }
+    "must redirect to final check answer page when clicked save and continue" in {
 
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onSubmit.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
+      }
+    }
     "redirect to bookmark page if address page not answered" in {
       val application = applicationBuilder(userAnswers = Some(rfmMissingContactData)).build()
       running(application) {

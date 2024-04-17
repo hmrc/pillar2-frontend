@@ -40,7 +40,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
   private lazy val rfmQuestionsCYA                   = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview =
-    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
+    controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
   "Replace Filing Member Navigator" when {
 
     "in Normal mode" must {

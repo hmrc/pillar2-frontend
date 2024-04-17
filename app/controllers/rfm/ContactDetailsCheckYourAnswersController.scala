@@ -18,59 +18,76 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.Mode
+import pages.RfmCheckYourAnswersLogicPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.ContactDetailsCheckYourAnswersView
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class ContactDetailsCheckYourAnswersController @Inject() (
-  rfmIdentify:              RfmIdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  countryOptions:           CountryOptions,
-  view:                     ContactDetailsCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+  rfmIdentify:               RfmIdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  val controllerComponents:  MessagesControllerComponents,
+  countryOptions:            CountryOptions,
+  val userAnswersConnectors: UserAnswersConnectors,
+  view:                      ContactDetailsCheckYourAnswersView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val primaryContactList = SummaryListViewModel(
-      rows = Seq(
-        RfmPrimaryContactNameSummary.row(request.userAnswers),
-        RfmPrimaryContactEmailSummary.row(request.userAnswers),
-        RfmContactByTelephoneSummary.row(request.userAnswers),
-        RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      val primaryContactList = SummaryListViewModel(
+        rows = Seq(
+          RfmPrimaryContactNameSummary.row(request.userAnswers),
+          RfmPrimaryContactEmailSummary.row(request.userAnswers),
+          RfmContactByTelephoneSummary.row(request.userAnswers),
+          RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val secondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        RfmAddSecondaryContactSummary.row(request.userAnswers),
-        RfmSecondaryContactNameSummary.row(request.userAnswers),
-        RfmSecondaryContactEmailSummary.row(request.userAnswers),
-        RfmSecondaryContactByTelephoneSummary.row(request.userAnswers),
-        RfmCaptureSecondaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val secondaryContactList = SummaryListViewModel(
+        rows = Seq(
+          RfmAddSecondaryContactSummary.row(request.userAnswers),
+          RfmSecondaryContactNameSummary.row(request.userAnswers),
+          RfmSecondaryContactEmailSummary.row(request.userAnswers),
+          RfmSecondaryContactByTelephoneSummary.row(request.userAnswers),
+          RfmCaptureSecondaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val contactAddress = SummaryListViewModel(
-      rows = Seq(
-        RfmContactAddressSummary.row(request.userAnswers, countryOptions)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val contactAddress = SummaryListViewModel(
+        rows = Seq(
+          RfmContactAddressSummary.row(request.userAnswers, countryOptions)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    if (request.userAnswers.rfmContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryContactList, contactAddress))
+      if (request.userAnswers.rfmContactDetailStatus) {
+        Ok(view(primaryContactList, secondaryContactList, contactAddress))
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
+  }
+
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    for {
+      updatedAnswers <-
+        Future.fromTry(request.userAnswers.set(RfmCheckYourAnswersLogicPage, true))
+      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield Redirect(controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad)
   }
 
 }
