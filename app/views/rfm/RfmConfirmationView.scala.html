@@ -1,0 +1,65 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        bulletList:bulletList,
+        paragraphBody: paragraphBody,
+        link: link,
+        printLink: printLink,
+        govukButton: GovukButton,
+        govukPanel: GovukPanel
+)
+
+
+@(pil2Id: String, currentDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("rfmConfirmation.title")), showBackLink = false) {
+
+    @govukPanel(Panel(
+        title = Text(messages("rfmConfirmation.rfmComplete")),
+        content = HtmlContent(""),
+        attributes = Map("id" -> "plr2-banner")
+    ))
+    @paragraphBody(messages("rfmConfirmation.topup", pil2Id))
+    <p class="govuk-body">@messages("rfmConfirmation.reg-date") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span></p>
+    @heading(messages("rfmConfirmation.h2"), "govuk-heading-s govuk-!-margin-top-5", "h2")
+
+
+
+
+
+    @paragraphBody(messages("rfmConfirmation.p2"), isBold = true)
+
+    @paragraphBody(messages("rfmConfirmation.p3"))
+
+    @paragraphBody(messages("rfmConfirmation.p4"))
+
+    @heading(messages("rfmConfirmation.next"), "govuk-heading-m govuk-!-margin-top-5", "h2")
+
+    @paragraphBody(messages("rfmConfirmation.now", link(
+        text = messages("rfmConfirmation.link-home"),
+        call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
+        fullStop = true
+    )))
+
+    @printLink(messages("registrationConfirmation.print"))
+}
