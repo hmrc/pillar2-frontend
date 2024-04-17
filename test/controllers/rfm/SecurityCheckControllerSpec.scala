@@ -35,9 +35,9 @@ class SecurityCheckControllerSpec extends SpecBase {
 
   val formProvider = new RfmSecurityCheckFormProvider()
 
-  "RFM Security Check controller" when {
+  "RFM Security Check controller" must {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -59,7 +59,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET - rfm feature false" in {
+    "return OK and the correct view for a GET - rfm feature false" in {
 
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -81,7 +81,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted" in {
+    "redirect to the group registration date report page when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -105,7 +105,59 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "allow the user to enter valid IDs which contain white space and lower case characters" in {
+      val testPillar2Id = "     xmp lR0   123456789    "
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> testPillar2Id)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "return bad request when the ID is invalid and contains white space and lower case characters" in {
+      val testPillar2Id = "     XMPlR0   123456789    XMP"
+
+      val application = applicationBuilder(userAnswers = None)
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", testPillar2Id))
+
+        val boundForm = formProvider().bind(Map("value" -> testPillar2Id))
+
+        val view = application.injector.instanceOf[SecurityCheckView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .configure(
@@ -131,7 +183,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the Security Questions Check Your Answers page when valid data is submitted in CheckMode" in {
+    "redirect to the Security Questions Check Your Answers page when valid data is submitted in CheckMode" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
@@ -154,7 +206,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the Group Registration Date Report page when valid data is submitted in modes other than CheckMode" in {
+    "redirect to the Group Registration Date Report page when valid data is submitted in modes other than CheckMode" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
