@@ -32,6 +32,23 @@ class ContactDetailsCheckYourAnswersControllerSpec extends SpecBase with Summary
 
   "Contact Check Your Answers Controller" must {
 
+    "must redirect to correct view when rfm feature false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
     "must return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(rfmPrimaryAndSecondaryContactData)).build()
 

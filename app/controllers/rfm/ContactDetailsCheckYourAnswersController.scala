@@ -45,35 +45,40 @@ class ContactDetailsCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val primaryContactList = SummaryListViewModel(
-      rows = Seq(
-        RfmPrimaryContactNameSummary.row(request.userAnswers),
-        RfmPrimaryContactEmailSummary.row(request.userAnswers),
-        RfmContactByTelephoneSummary.row(request.userAnswers),
-        RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      val primaryContactList = SummaryListViewModel(
+        rows = Seq(
+          RfmPrimaryContactNameSummary.row(request.userAnswers),
+          RfmPrimaryContactEmailSummary.row(request.userAnswers),
+          RfmContactByTelephoneSummary.row(request.userAnswers),
+          RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val secondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        RfmAddSecondaryContactSummary.row(request.userAnswers),
-        RfmSecondaryContactNameSummary.row(request.userAnswers),
-        RfmSecondaryContactEmailSummary.row(request.userAnswers),
-        RfmSecondaryContactByTelephoneSummary.row(request.userAnswers),
-        RfmCaptureSecondaryTelephoneSummary.row(request.userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val secondaryContactList = SummaryListViewModel(
+        rows = Seq(
+          RfmAddSecondaryContactSummary.row(request.userAnswers),
+          RfmSecondaryContactNameSummary.row(request.userAnswers),
+          RfmSecondaryContactEmailSummary.row(request.userAnswers),
+          RfmSecondaryContactByTelephoneSummary.row(request.userAnswers),
+          RfmCaptureSecondaryTelephoneSummary.row(request.userAnswers)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val contactAddress = SummaryListViewModel(
-      rows = Seq(
-        RfmContactAddressSummary.row(request.userAnswers, countryOptions)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val contactAddress = SummaryListViewModel(
+        rows = Seq(
+          RfmContactAddressSummary.row(request.userAnswers, countryOptions)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    if (request.userAnswers.rfmContactDetailStatus) {
-      Ok(view(primaryContactList, secondaryContactList, contactAddress))
+      if (request.userAnswers.rfmContactDetailStatus) {
+        Ok(view(primaryContactList, secondaryContactList, contactAddress))
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
