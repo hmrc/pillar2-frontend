@@ -20,6 +20,7 @@ import controllers.routes
 import models._
 import pages._
 import play.api.mvc.Call
+import models.rfm.CorporatePosition
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,8 +33,7 @@ class ReplaceFilingMemberNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private lazy val reviewAndSubmitCheckYourAnswers =
-    controllers.routes.UnderConstructionController.onPageLoad // TODO route to final check answers page for rfm journey
+  private lazy val reviewAndSubmitCheckYourAnswers   = controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
   private lazy val securityQuestionsCheckYourAnswers = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmCheckYourAnswers               = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmContactDetailsCheckYourAnswers = controllers.rfm.routes.ContactDetailsCheckYourAnswersController.onPageLoad
@@ -44,6 +44,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmPrimaryContactEmailPage      => _ => controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
     case RfmContactByTelephonePage       => telephonePreferenceLogic
     case RfmCapturePrimaryTelephonePage  => rfmPrimaryPhoneCaptureRoute
+    case RfmCorporatePositionPage        => rfmCorporatePosition
     case RfmUkBasedPage                  => rfmUkBasedLogic
     case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRoute
     case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
@@ -63,7 +64,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmRegistrationDatePage         => _ => securityQuestionsCheckYourAnswers
     case RfmNameRegistrationPage         => whichCheckYourAnswerPageRfmQuestions
     case RfmRegisteredAddressPage        => whichCheckYourAnswerPageRfmQuestions
-    case RfmUkBasedPage                  => rfmUkBasedLogic
+    case RfmCorporatePositionPage        => rfmCorporatePositionCheckRouteLogic
     case RfmPrimaryContactNamePage       => whichCheckYourAnswerPageContactQuestions
     case RfmPrimaryContactEmailPage      => whichCheckYourAnswerPageContactQuestions
     case RfmContactByTelephonePage       => telephonePreferenceLogic
@@ -152,6 +153,34 @@ class ReplaceFilingMemberNavigator @Inject() {
           controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmCorporatePosition(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmCorporatePositionPage)
+      .map { corporatePosition =>
+        if (corporatePosition == CorporatePosition.Upe) {
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+        } else if (corporatePosition == CorporatePosition.NewNfm) {
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+        } else {
+          routes.JourneyRecoveryController.onPageLoad()
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmCorporatePositionCheckRouteLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmCorporatePositionPage)
+      .map { corporatePosition =>
+        if (corporatePosition == CorporatePosition.Upe) {
+          reviewAndSubmitCheckYourAnswers
+        } else if (corporatePosition == CorporatePosition.NewNfm) {
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+        } else {
+          routes.JourneyRecoveryController.onPageLoad()
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
