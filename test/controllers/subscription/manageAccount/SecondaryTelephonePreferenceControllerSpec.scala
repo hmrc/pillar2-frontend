@@ -17,12 +17,22 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.CheckMode
-import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import navigation.AmendSubscriptionNavigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import pages.{SubAddSecondaryContactPage, SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryTelephonePreferenceView
+
+import scala.concurrent.Future
 
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
@@ -31,10 +41,10 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
   "SecondaryTelephonePreference Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryEmailPage, "he@a.com")
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
@@ -44,18 +54,22 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, CheckMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider.fill(false), CheckMode, "name")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryEmailPage, "he@a.com")
         .setOrException(SubSecondaryPhonePreferencePage, true)
 
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
@@ -75,8 +89,8 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
         val request =
@@ -95,7 +109,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     }
     "redirect to bookmark page if previous page not answered" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
 
       running(application) {
@@ -109,7 +123,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url)
         .withFormUrlEncodedBody("value" -> "true")
 
@@ -118,6 +132,47 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must update subscription data and redirect to the next page when the user answers no" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptySubscriptionLocalData
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryEmailPage, "name")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "123123")
+
+      val expectedUserAnswers = userAnswers
+        .copy(subSecondaryPhonePreference = Some(false))
+        .remove(SubSecondaryCapturePhonePage)
+        .success
+        .value
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> "false")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, CheckMode, expectedUserAnswers)
       }
     }
 

@@ -52,7 +52,6 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  // noinspection ScalaStyle
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
 

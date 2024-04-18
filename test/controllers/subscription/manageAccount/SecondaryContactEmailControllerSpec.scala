@@ -17,16 +17,20 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
+import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import forms.SecondaryContactEmailFormProvider
 import models.{CheckMode, NormalMode}
+import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import pages.{SubAddSecondaryContactPage, SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryContactEmailView
 
 import scala.concurrent.Future
@@ -39,8 +43,8 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
   "SecondaryContactEmail Controller for View Contact details" when {
 
     "must return OK and the correct view for a GET when no data is found" in {
-      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
@@ -55,14 +59,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ua = emptyUserAnswers
+      val ua = emptySubscriptionLocalData
         .set(SubSecondaryContactNamePage, "name")
         .success
         .value
         .set(SubSecondaryEmailPage, "my@my.com")
         .success
         .value
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
@@ -80,13 +84,13 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
@@ -128,6 +132,39 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must update subscription data and redirect to the next page" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers =
+        emptySubscriptionLocalData.setOrException(SubSecondaryContactNamePage, "Keith")
+
+      val expectedUserAnswers = userAnswers.setOrException(SubSecondaryEmailPage, "keith@google.com")
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit().url)
+          .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubSecondaryEmailPage, CheckMode, expectedUserAnswers)
       }
     }
 

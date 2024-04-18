@@ -45,3 +45,12 @@ case class AccountingPeriod(
 object AccountingPeriod {
   implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }
+
+final case class AccountingPeriodAmend(
+  startDate: LocalDate,
+  endDate:   LocalDate
+)
+
+object AccountingPeriodAmend {
+  implicit val format: OFormat[AccountingPeriodAmend] = Json.format[AccountingPeriodAmend]
+}

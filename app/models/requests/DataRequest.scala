@@ -18,9 +18,24 @@ package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import uk.gov.hmrc.auth.core.Enrolment
 case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers], enrolments: Option[Set[Enrolment]] = None)
     extends WrappedRequest[A](request)
 
 case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers, enrolments: Option[Set[Enrolment]] = None)
     extends WrappedRequest[A](request)
+
+final case class OptionalSubscriptionDataRequest[A](
+  request:                    Request[A],
+  userId:                     String,
+  maybeSubscriptionLocalData: Option[SubscriptionLocalData],
+  enrolments:                 Set[Enrolment]
+) extends WrappedRequest[A](request)
+
+final case class SubscriptionDataRequest[A](
+  request:               Request[A],
+  userId:                String,
+  subscriptionLocalData: SubscriptionLocalData,
+  enrolments:            Set[Enrolment]
+) extends WrappedRequest[A](request)

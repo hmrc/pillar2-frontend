@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.ContactCaptureTelephoneDetailsFormProvider
 import models.Mode
@@ -33,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactCaptureTelephoneDetailsController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              ContactCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -45,13 +45,14 @@ class ContactCaptureTelephoneDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(SubPrimaryPhonePreferencePage)
-      contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
+      subscriptionLocalData <- request.maybeSubscriptionLocalData
+      _                     <- subscriptionLocalData.get(SubPrimaryPhonePreferencePage)
+      contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(SubPrimaryCapturePhonePage) match {
+      val preparedForm = subscriptionLocalData.get(SubPrimaryCapturePhonePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -63,7 +64,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
@@ -74,8 +75,8 @@ class ContactCaptureTelephoneDetailsController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubPrimaryCapturePhonePage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryCapturePhonePage, value))
+                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubPrimaryCapturePhonePage, mode, updatedAnswers))
           )
       }

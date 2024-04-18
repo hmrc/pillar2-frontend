@@ -129,22 +129,6 @@ trait SubscriptionHelpers {
       true
     else false
 
-  def manageContactDetailStatus: Boolean = {
-    val p1  = get(SubPrimaryContactNamePage).isDefined
-    val p2  = get(SubPrimaryEmailPage).isDefined
-    val p3  = get(SubPrimaryPhonePreferencePage).isDefined
-    val p4  = get(SubAddSecondaryContactPage).getOrElse(false)
-    val s1  = get(SubSecondaryContactNamePage).isDefined
-    val s2  = get(SubSecondaryEmailPage).isDefined
-    val s3  = get(SubSecondaryPhonePreferencePage).isDefined
-    val ad1 = get(SubRegisteredAddressPage).isDefined
-    (p1, p2, p3, p4, s1, s2, s3, ad1) match {
-      case (true, true, true, true, true, true, true, true) => true
-      case (true, true, true, false, _, _, _, true)         => true
-      case _                                                => false
-    }
-  }
-
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (
       upe == RowStatus.Completed &

@@ -32,7 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -43,20 +43,24 @@ import viewmodels.implicits._
 
 object ContactCaptureTelephoneDetailsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubPrimaryCapturePhonePage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(answer)
+  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
+    if (data.subPrimaryPhonePreference) {
+      data.get(SubPrimaryCapturePhonePage).map { answer =>
+        val value = ValueViewModel(
+          HtmlContent(
+            HtmlFormat.escape(answer)
+          )
         )
-      )
-      SummaryListRowViewModel(
-        key = "contactCaptureTelephoneDetails.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
-            .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
+        SummaryListRowViewModel(
+          key = "contactCaptureTelephoneDetails.checkYourAnswersLabel",
+          value = value,
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+              .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
+          )
         )
-      )
+      }
+    } else {
+      None
     }
 }

@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import forms.CaptureSubscriptionAddressFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -35,12 +35,12 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   "UpeRegisteredAddress Controller for View Contact details" when {
 
     "redirect to contact CYA when valid data is submitted" in {
-      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -55,26 +55,28 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
+
     "must return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
       }
     }
+
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
             .withFormUrlEncodedBody(
@@ -93,12 +95,12 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)

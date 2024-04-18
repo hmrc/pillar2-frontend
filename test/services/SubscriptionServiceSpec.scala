@@ -19,21 +19,27 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import models.InternalIssueError
 import models.registration.RegistrationInfo
+import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api.inject.bind
 import play.api.test.Helpers.running
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionServiceSpec extends SpecBase {
 
-  val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+  val id           = "testId"
+  val plrReference = "testPlrRef"
 
-  "SubscriptionService" when {
-    "subscribe" should {
+  "SubscriptionService" must {
+
+    "subscribe" when {
       "return a success response with a pillar 2 reference for non uk based upe and fm" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
@@ -197,6 +203,182 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
     }
-  }
 
+    "readAndCacheSubscription" when {
+
+      "return SubscriptionData object when the connector returns valid data and transformation is successful" in {
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(subscriptionData)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+
+          result mustBe subscriptionData
+        }
+      }
+
+      "return InternalIssueError when the connector returns None" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
+
+          result mustBe models.InternalIssueError
+        }
+      }
+
+      "handle exceptions thrown by the connector" in {
+
+        val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(new RuntimeException("Connection error")))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val resultFuture = service.readAndCacheSubscription(requestParameters)
+
+          resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+    }
+
+    "readSubscription" when {
+
+      "return SubscriptionDAta object when the connector returns valid data and transformation is successful" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(subscriptionData)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readSubscription("plr").futureValue
+
+          result mustBe subscriptionData
+        }
+      }
+
+      "return InternalIssueError when the connector returns None" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readSubscription("plr").failed.futureValue
+
+          result mustBe models.InternalIssueError
+        }
+      }
+
+      "handle exceptions thrown by the connector" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(new RuntimeException("Connection error")))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val resultFuture = service.readSubscription("plr")
+
+          resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+
+    }
+    "amendSubscription" when {
+      "call read subscription and create the required amend object to submit when no secondary contact" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockSubscriptionConnector.amendSubscription(any(), any[AmendSubscription])(any[HeaderCarrier]))
+            .thenReturn(Future.successful(Done))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).futureValue
+
+          result mustBe Done
+        }
+      }
+      "return InternalIssueError when the connector returns None" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(InternalIssueError))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).failed.futureValue
+
+          result mustBe InternalIssueError
+        }
+      }
+      "handle exceptions thrown by the connector" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(new RuntimeException("Connection error")))
+
+          val resultFuture = service.amendSubscription("id", "plr", emptySubscriptionLocalData)
+
+          resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+    }
+
+    "createAmendObject" when {
+      "create the right object when secondary contact is nominated" in {
+        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val newLocalData = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionData, newLocalData)
+        resultFuture.secondaryContactDetails mustBe None
+      }
+      "create the right object when no secondary detail is nominated" in {
+        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
+        resultFuture.secondaryContactDetails mustBe None
+      }
+    }
+  }
 }

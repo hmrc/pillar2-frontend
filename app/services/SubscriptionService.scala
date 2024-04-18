@@ -16,10 +16,11 @@
 
 package services
 
+import akka.Done
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
-import models.subscription.SubscriptionRequestParameters
-import models.{DuplicateSubmissionError, UserAnswers}
+import models.subscription._
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
 import pages.NominateFilingMemberPage
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,6 +46,31 @@ class SubscriptionService @Inject() (
       _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
     } yield plrRef
 
+  def readAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+    subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
+
+  def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+    subscriptionConnector.readSubscription(plrReference).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
+
+  def amendSubscription(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
+    hc:                         HeaderCarrier
+  ): Future[Done] =
+    for {
+      currentSubscriptionData <- readSubscription(plrReference)
+      amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
+      result <- subscriptionConnector.amendSubscription(userId, amendData)
+    } yield result
+
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
@@ -60,4 +86,53 @@ class SubscriptionService @Inject() (
           Future.successful(None)
         }
       }
+
+  def amendGroupOrContactDetails(
+    plrReference: String,
+    currentData:  SubscriptionData,
+    userData:     SubscriptionLocalData
+  ): AmendSubscription = {
+    val address = UpeCorrespAddressDetails(
+      addressLine1 = userData.subRegisteredAddress.addressLine1,
+      addressLine2 = userData.subRegisteredAddress.addressLine2,
+      addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
+      addressLine4 = userData.subRegisteredAddress.addressLine4,
+      postCode = userData.subRegisteredAddress.postalCode,
+      countryCode = userData.subRegisteredAddress.countryCode
+    )
+    AmendSubscription(
+      upeDetails = UpeDetailsAmend(
+        plrReference,
+        customerIdentification1 = currentData.upeDetails.customerIdentification1,
+        customerIdentification2 = currentData.upeDetails.customerIdentification2,
+        organisationName = currentData.upeDetails.organisationName,
+        registrationDate = currentData.upeDetails.registrationDate,
+        domesticOnly = if (userData.subMneOrDomestic == MneOrDomestic.Uk) true else false,
+        filingMember = currentData.upeDetails.filingMember
+      ),
+      accountingPeriod = AccountingPeriodAmend(startDate = userData.subAccountingPeriod.startDate, endDate = userData.subAccountingPeriod.endDate),
+      upeCorrespAddressDetails = address,
+      primaryContactDetails = ContactDetailsType(
+        name = userData.subPrimaryContactName,
+        telephone = userData.subPrimaryCapturePhone,
+        emailAddress = userData.subPrimaryEmail
+      ),
+      secondaryContactDetails = if (userData.subAddSecondaryContact) {
+        for {
+          name  <- userData.subSecondaryContactName
+          email <- userData.subSecondaryEmail
+        } yield ContactDetailsType(name = name, telephone = userData.subSecondaryCapturePhone, emailAddress = email)
+      } else {
+        None
+      },
+      filingMemberDetails = currentData.filingMemberDetails.map(details =>
+        FilingMemberAmendDetails(
+          safeId = details.safeId,
+          customerIdentification1 = details.customerIdentification1,
+          customerIdentification2 = details.customerIdentification2,
+          organisationName = details.organisationName
+        )
+      )
+    )
+  }
 }

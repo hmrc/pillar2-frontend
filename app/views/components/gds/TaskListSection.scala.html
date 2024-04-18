@@ -17,12 +17,12 @@
 @import models.tasklist.SectionViewModel
 
 @this()
-@(section: SectionViewModel, params: Tag, id: String = "")(implicit messages: Messages)
+@(section: SectionViewModel, params: Tag, component: String, id: String = "")(implicit messages: Messages)
 
 <li class="app-task-list__item">
     <span class="app-task-list__task-name">
         @if(section.call.isDefined) {
-            <a href="@section.call.get.url" class="govuk-link">@messages(section.name)</a>
+            <a href="@section.call.get.url" class="govuk-link" aria-describedby="@component">@messages(section.name)</a>
         } else {
             @messages(section.name)
         }
