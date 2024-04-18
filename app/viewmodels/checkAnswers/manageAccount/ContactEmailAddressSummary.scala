@@ -32,7 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -43,11 +43,11 @@ import viewmodels.implicits._
 
 object ContactEmailAddressSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubPrimaryEmailPage).map { answer =>
+  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
+    data.get(SubPrimaryEmailPage).map { _ =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(answer)
+          HtmlFormat.escape(data.subPrimaryEmail)
         )
       )
       SummaryListRowViewModel(

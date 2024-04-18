@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmPrimaryContactNameFormProvider
-import models.{Mode, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmPrimaryContactNamePage

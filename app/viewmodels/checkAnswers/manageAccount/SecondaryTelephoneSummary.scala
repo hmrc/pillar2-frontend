@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubSecondaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -26,13 +26,13 @@ import viewmodels.implicits._
 
 object SecondaryTelephoneSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubSecondaryCapturePhonePage).map { answer =>
+  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
+    data.get(SubSecondaryCapturePhonePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryTelephone.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
+          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad().url)
             .withVisuallyHiddenText(messages("secondaryTelephone.change.hidden"))
         )
       )

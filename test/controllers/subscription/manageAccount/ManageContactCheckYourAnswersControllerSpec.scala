@@ -16,28 +16,27 @@
 
 package controllers.subscription.manageAccount
 
+import akka.Done
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription.{AccountingPeriod, AmendSubscriptionRequestParameters, DashboardInfo}
-import models.{ApiError, InternalServerError_, MneOrDomestic, NonUKAddress, SubscriptionCreateError}
+import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
+import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
-import play.api.Configuration
 import play.api.inject.bind
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.AmendSubscriptionService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import services.SubscriptionService
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  val subDataWithAddress = emptyUserAnswers
+  val subDataWithAddress = emptySubscriptionLocalData
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -47,7 +46,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
-  val subDataWithoutAddress = emptyUserAnswers
+
+  val subDataWithoutAddress = emptySubscriptionLocalData
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -79,11 +79,19 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         )
       )
     )
-
+  val enrolments: Set[Enrolment] = Set(
+    Enrolment(
+      key = "HMRC-PILLAR2-ORG",
+      identifiers = Seq(
+        EnrolmentIdentifier("PLRID", "12345678"),
+        EnrolmentIdentifier("UTR", "ABC12345")
+      ),
+      state = "activated"
+    )
+  )
   val startDate = LocalDate.of(2023, 12, 31)
   val endDate   = LocalDate.of(2025, 12, 31)
-  val date      = AccountingPeriod(startDate, endDate)
-  val amendSubscription = emptyUserAnswers
+  val amendSubscription = emptySubscriptionLocalData
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
     .setOrException(SubPrimaryContactNamePage, "Name")
@@ -97,14 +105,14 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryCapturePhonePage, "123456789")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
     .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
-    .setOrException(SubAccountingPeriodPage, date)
+    .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate, None))
     .setOrException(FmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
     .setOrException(NominateFilingMemberPage, false)
 
   "Contact Check Your Answers Controller" must {
 
     "return OK and the correct view if an answer is provided to every question " in {
-      val application = applicationBuilder(userAnswers = Some(subDataWithAddress)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress)).build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -124,7 +132,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     }
 
     "redirect to bookmark page if address page not answered" in {
-      val application = applicationBuilder(userAnswers = Some(subDataWithoutAddress)).build()
+      val application = applicationBuilder(subscriptionLocalData = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
 
@@ -134,62 +142,51 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
+    "onSubmit" should {
+      "trigger amend subscription API if all data is available for contact detail" in {
 
-    "trigger amend subscription API if all data is available for contact detail" in {
-      val application = applicationBuilder(userAnswers = Some(amendSubscription))
-        .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        val mockHttpResponse = HttpResponse(OK, "")
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
-        val mockResponse = Json.parse("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320"}}""")
-        when(mockAmendSubscriptionService.amendSubscription(AmendSubscriptionRequestParameters(any()))(any()))
-          .thenReturn(Future.successful(Right(mockResponse)))
+        val application = applicationBuilder(subscriptionLocalData = Some(amendSubscription), enrolments = enrolments)
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+            .thenReturn(Future.successful(Done))
 
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
-        val result  = route(application, request).value
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+        }
       }
-    }
 
-    "redirect to journey recovery if no data if no data is found for amend contact detail" in {
-      val mockAmendSubscriptionService = mock[AmendSubscriptionService]
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
-        .build()
+      "redirect to error page if POST of amend object fails" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = enrolments)
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.failed(UnexpectedResponse))
 
-      val mockResponse: Either[ApiError, JsValue] = Left(SubscriptionCreateError)
-      when(mockAmendSubscriptionService.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(mockResponse))
-
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
-      val result  = route(application, request).value
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
-    }
-
-    "redirect to the JourneyRecoveryController" in {
-      val testConfig = Configuration("features.showErrorScreens" -> false)
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(testConfig)
-        .overrides(bind[AmendSubscriptionService].toInstance(mockAmendSubscriptionService))
-        .build()
-      val uncoveredError = InternalServerError_
-
-      when(mockAmendSubscriptionService.amendSubscription(any[AmendSubscriptionRequestParameters])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Left(uncoveredError)))
-
-      running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/restart-error")
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
 
+      "redirect to the journey recovery if no pillar2 reference is found" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+
+      }
     }
+
   }
 }

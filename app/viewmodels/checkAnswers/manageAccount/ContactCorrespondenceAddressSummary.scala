@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubRegisteredAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,8 +27,8 @@ import viewmodels.implicits._
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
-    answers
+  def row(data: SubscriptionLocalData, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
+    data
       .get(SubRegisteredAddressPage)
       .map { answer =>
         val country = countryOptions.getCountryNameFromCode(answer.countryCode)
