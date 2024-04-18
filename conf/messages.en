@@ -1043,7 +1043,9 @@ rfm.contactCheckYourAnswers.title = Review and submit
 rfm.contactCheckYourAnswers.heading = Review and submit
 rfm.contactCheckYourAnswers.filingmember = Filing member details
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
-
+rfm.contactCheckYourAnswers.first = First contact
+rfm.contactCheckYourAnswers.second = Second contact
+rfm.contactCheckYourAnswers.address = Contact address
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service

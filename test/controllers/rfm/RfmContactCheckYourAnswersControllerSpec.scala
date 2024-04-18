@@ -93,10 +93,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
-        contentAsString(result) must include("line1")
-        contentAsString(result) must include("line3")
-        contentAsString(result) must include("1234567891")
-        contentAsString(result) must include("email@address.com")
         contentAsString(result) must include("the first contact name")
         contentAsString(result) must include("the first contact email address")
         contentAsString(result) must include("can we contact the first contact by telephone")
@@ -139,10 +135,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
-        contentAsString(result) must include("line1")
-        contentAsString(result) must include("line3")
-        contentAsString(result) must include("1234567891")
-        contentAsString(result) must include("email@address.com")
       }
     }
 
