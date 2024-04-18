@@ -17,11 +17,10 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import connectors.SubscriptionConnector
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
-import navigation.AmendSubscriptionNavigator
 import pages.SubRegisteredAddressPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -34,11 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureSubscriptionAddressController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   formProvider:              CaptureSubscriptionAddressFormProvider,
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
@@ -49,10 +47,9 @@ class CaptureSubscriptionAddressController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
+    val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
     Ok(view(preparedForm, mode, countryOptions.options()))
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -63,10 +60,12 @@ class CaptureSubscriptionAddressController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(SubRegisteredAddressPage, value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              Future.fromTry(request.subscriptionLocalData.set(SubRegisteredAddressPage, value))
+            _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+
           } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
       )
+
   }
 
 }

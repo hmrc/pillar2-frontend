@@ -17,12 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.AddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
-import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
+import navigation.SubscriptionNavigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import pages._
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.AddSecondaryContactView
+
+import scala.concurrent.Future
 
 class AddSecondaryContactControllerSpec extends SpecBase {
 
@@ -125,6 +134,45 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "must delete all secondary contact details and redirect to the next page when the user answers no" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[SubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptyUserAnswers
+        .setOrException(SubAddSecondaryContactPage, false)
+        .setOrException(SubPrimaryContactNamePage, "primary name")
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryEmailPage, "name")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "1232")
+
+      val expectedUserAnswers = userAnswers
+        .setOrException(SubAddSecondaryContactPage, false)
+        .setOrException(SubPrimaryContactNamePage, "primary name")
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SubscriptionNavigator].toInstance(mockNavigator),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "false")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockNavigator).nextPage(SubAddSecondaryContactPage, NormalMode, expectedUserAnswers)
       }
     }
 

@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
@@ -35,10 +35,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class GroupAccountingPeriodController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -49,8 +49,8 @@ class GroupAccountingPeriodController @Inject() (
 
   def form: Form[AccountingPeriod] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubAccountingPeriodPage) match {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
+    val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubAccountingPeriodPage)) match {
       case Some(v) => form.fill(v)
       case None    => form
     }
@@ -66,8 +66,8 @@ class GroupAccountingPeriodController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAccountingPeriodPage, value))
+            _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
           } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, mode, updatedAnswers))
       )
   }

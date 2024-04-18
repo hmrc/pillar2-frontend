@@ -19,18 +19,14 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmRegisteredAddressFormProvider
-import models.{NonUKAddress, NormalMode, UserAnswers}
+import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
-import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmRegisteredAddressView
-import utils.countryOptions.CountryOptions
 
 import scala.concurrent.Future
 

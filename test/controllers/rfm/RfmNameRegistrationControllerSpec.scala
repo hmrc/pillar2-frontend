@@ -23,7 +23,6 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmNameRegistrationPage
-import play.api.inject.bind
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
