@@ -17,12 +17,20 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import forms.ContactByTelephoneFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
+import navigation.AmendSubscriptionNavigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.manageAccount.ContactByTelephoneView
+
+import scala.concurrent.Future
 
 class ContactByTelephoneControllerSpec extends SpecBase {
 
@@ -33,18 +41,19 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET" in {
       val ua =
-        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactByTelephoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(
+
+        contentAsString(result) mustEqual view(formProvider.fill(false), NormalMode, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -55,7 +64,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET if page has previously been answered" in {
       val ua =
-        emptyUserAnswers
+        emptySubscriptionLocalData
           .set(SubPrimaryContactNamePage, "name")
           .success
           .value
@@ -63,10 +72,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
           .success
           .value
 
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -80,11 +89,26 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
       }
     }
-    "must return bad request when invalid data is submitted" in {
-      val userAnswer  = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
-      val application = applicationBuilder(Some(userAnswer)).build()
+
+    "redirect to journey recovery if no primary contact name is found" in {
+
+      val application = applicationBuilder(subscriptionLocalData = None).build()
+
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+    }
+    "must return bad request when invalid data is submitted" in {
+      val userAnswer  = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "")
         val result = route(application, request).value
 
@@ -92,27 +116,74 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to bookmark page if previous page not answered" in {
+  }
 
-      val application = applicationBuilder().build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
-        val result  = route(application, request).value
+  " redirect to journey recovery if no primary contact name is found for POST" in {
+    val application = applicationBuilder(subscriptionLocalData = None).build()
+    running(application) {
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
+      val result  = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
-      val application = applicationBuilder().build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
-        val result  = route(application, request).value
+  }
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
+  " remove primary telephone and redirect to the next page when the user answers no" in {
+    import play.api.inject.bind
+    val expectedNextPage = Call(GET, "/")
+    val mockNavigator    = mock[AmendSubscriptionNavigator]
+    when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+    val answers = emptySubscriptionLocalData.copy(subPrimaryPhonePreference = false, subPrimaryCapturePhone = Some("12312"))
+
+    val application = applicationBuilder(subscriptionLocalData = Some(answers))
+      .overrides(
+        bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      )
+      .build()
+
+    running(application) {
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "false")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual expectedNextPage.url
+
+      verify(mockNavigator).nextPage(SubPrimaryPhonePreferencePage, CheckMode, answers)
+    }
+  }
+
+  "redirect to the next page when the user answers yes" in {
+    import play.api.inject.bind
+    val expectedNextPage = Call(GET, "/")
+    val mockNavigator    = mock[AmendSubscriptionNavigator]
+    when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+    val answers = emptySubscriptionLocalData.copy(subPrimaryPhonePreference = true, subPrimaryCapturePhone = Some("12312"))
+
+    val application = applicationBuilder(subscriptionLocalData = Some(answers))
+      .overrides(
+        bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      )
+      .build()
+
+    running(application) {
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "true")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual expectedNextPage.url
+
+      verify(mockNavigator).nextPage(SubPrimaryPhonePreferencePage, CheckMode, answers)
     }
   }
 }

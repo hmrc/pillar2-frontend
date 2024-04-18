@@ -37,5 +37,17 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
 
     }
+    "return ok with correct view" in {
+      val application = applicationBuilder(userAnswers = Some(upeCompletedNoPhoneNumber)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("Check your answers for ultimate parent details")
+      }
+
+    }
   }
 }

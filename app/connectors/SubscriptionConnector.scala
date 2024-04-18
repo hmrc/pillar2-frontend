@@ -16,14 +16,17 @@
 
 package connectors
 
+import akka.Done
 import config.FrontendAppConfig
-import models.{DuplicateSubmissionError, InternalIssueError}
-import models.subscription.{SubscriptionRequestParameters, SuccessResponse}
+import connectors.SubscriptionConnector.constructUrl
+import models.subscription._
+import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
 import play.api.Logging
-import play.api.http.Status.CONFLICT
+import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
 import utils.Pillar2SessionKeys
 
@@ -46,4 +49,82 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
           Future.failed(InternalIssueError)
       }
+
+  def readSubscriptionAndCache(
+    readSubscriptionParameter: ReadSubscriptionRequestParameters
+  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+    val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
+    http
+      .GET[HttpResponse](subscriptionUrl)
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
+          None
+      }
+  }
+
+  def readSubscription(
+    plrReference: String
+  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
+
+    http
+      .GET[HttpResponse](subscriptionUrl)
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
+          None
+      }
+  }
+
+  def getSubscriptionCache(
+    userId:      String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+    http
+      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionLocalData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
+          None
+      }
+
+  def save(userId: String, subscriptionLocalData: JsValue)(implicit
+    hc:            HeaderCarrier
+  ): Future[JsValue] =
+    http
+      .POST[JsValue, HttpResponse](
+        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId",
+        subscriptionLocalData
+      )
+      .map { response =>
+        response.status match {
+          case OK => subscriptionLocalData
+          case _  => throw new HttpException(response.body, response.status)
+        }
+      }
+
+  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
+    http
+      .PUT[AmendSubscription, HttpResponse](
+        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId",
+        amendData
+      )
+      .flatMap { response =>
+        response.status match {
+          case OK => Done.toFuture
+          case _  => Future.failed(UnexpectedResponse)
+        }
+      }
+}
+
+object SubscriptionConnector {
+  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters, config: FrontendAppConfig): String =
+    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
+
 }

@@ -17,12 +17,22 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
-import pages.UpeRegisteredInUKPage
+import navigation.UltimateParentNavigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
+
+import scala.concurrent.Future
 
 class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
@@ -72,6 +82,41 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+    "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[UltimateParentNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptyUserAnswers
+        .setOrException(UpeRegisteredInUKPage, true)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+
+      val expectedUserAnswers = userAnswers
+        .setOrException(UpeRegisteredInUKPage, true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[UltimateParentNavigator].toInstance(mockNavigator),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "true")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }
 

@@ -35,9 +35,9 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page previously  not answered" in {
 
       val userAnswersSubContactEmail =
-        emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -59,9 +59,9 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page previously has been answered" in {
 
       val userAnswersSubContactEmail =
-        emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
+        emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersSubContactEmail))
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubContactEmail))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -80,8 +80,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request when invalid data is submitted" in {
-      val ua          = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)

@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmContactByTelephoneFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmContactByTelephonePage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json

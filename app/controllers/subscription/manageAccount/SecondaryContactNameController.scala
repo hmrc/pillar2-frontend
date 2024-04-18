@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
 import models.Mode
@@ -33,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactNameController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -48,7 +48,7 @@ class SecondaryContactNameController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(SubSecondaryContactNamePage) match {
+    val preparedForm = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
       case Some(v) => form.fill(v)
       case None    => form
     }
@@ -62,8 +62,8 @@ class SecondaryContactNameController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryContactNamePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryContactNamePage, value))
+            _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
           } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, mode, updatedAnswers))
       )
   }
