@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
 import models.Mode
@@ -33,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryTelephoneController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
   formProvider:              SecondaryTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -47,11 +47,11 @@ class SecondaryTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
-      _           <- request.userAnswers.get(SubSecondaryPhonePreferencePage)
+      contactName <- request.subscriptionLocalData.get(SubSecondaryContactNamePage)
+      _           <- request.subscriptionLocalData.get(SubSecondaryPhonePreferencePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(SubSecondaryCapturePhonePage) match {
+      val preparedForm = request.subscriptionLocalData.get(SubSecondaryCapturePhonePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -63,7 +63,7 @@ class SecondaryTelephoneController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.userAnswers
+    request.subscriptionLocalData
       .get(SubSecondaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
@@ -73,8 +73,8 @@ class SecondaryTelephoneController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubSecondaryCapturePhonePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryCapturePhonePage, value))
+                _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
               } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
           )
       }

@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
-import models.UserAnswers
+import models.subscription.SubscriptionLocalData
 import pages.SubMneOrDomesticPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -27,8 +27,8 @@ import viewmodels.implicits._
 
 object MneOrDomesticSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubMneOrDomesticPage).map { answer =>
+  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
+    data.get(SubMneOrDomesticPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
           HtmlFormat.escape(messages(s"mneOrDomestic.${answer.toString}"))

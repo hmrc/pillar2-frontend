@@ -26,7 +26,7 @@ class RfmSecurityCheckFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("rfm.securityCheck.error.required")
+      "value" -> pillar2Id("rfm.securityCheck.error.required")
         .verifying(
           firstError(
             equalLength(Constants.EQUAL_LENGTH_15, "rfm.securityCheck.error.length"),

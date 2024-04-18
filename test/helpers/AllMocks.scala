@@ -61,13 +61,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockHttpClient:                                 HttpClient                                 = mock[HttpClient]
   val mockRegistrationConnector:                      RegistrationConnector                      = mock[RegistrationConnector]
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
-  val mockAmendSubscriptionService:                   AmendSubscriptionService                   = mock[AmendSubscriptionService]
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]
   val mockRegistration:                               Registration                               = mock[Registration]
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
-  val mockReadSubscriptionService:                    ReadSubscriptionService                    = mock[ReadSubscriptionService]
-  val mockReadSubscriptionConnector:                  ReadSubscriptionConnector                  = mock[ReadSubscriptionConnector]
-  val mockAmendSubscriptionConnector:                 AmendSubscriptionConnector                 = mock[AmendSubscriptionConnector]
   val mockAuditService:                               AuditService                               = mock[AuditService]
   val mockEnrolmentConnector:                         EnrolmentConnector                         = mock[EnrolmentConnector]
 
@@ -79,7 +75,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockUserAnswersConnectors,
       mockCountryOptions,
       mockNavigator,
-      mockReadSubscriptionService,
+      mockSubscriptionService,
       mockDataRetrievalAction,
       mockDataRequiredAction,
       mockTradingBusinessConfirmationFormProvider,
