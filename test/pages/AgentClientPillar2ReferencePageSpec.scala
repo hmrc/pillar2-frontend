@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.Enrolment
+import pages.behaviours.PageBehaviours
 
-case class IdentifierRequest[A](request: Request[A], userId: String, enrolments: Set[Enrolment] = Set.empty, isAgent: Boolean = false)
-    extends WrappedRequest[A](request)
+class AgentClientPillar2ReferencePageSpec extends PageBehaviours {
+
+  "plrReferencePage" - {
+
+    beRetrievable[String](AgentClientPillar2ReferencePage)
+
+    beSettable[String](AgentClientPillar2ReferencePage)
+
+    beRemovable[String](AgentClientPillar2ReferencePage)
+  }
+}

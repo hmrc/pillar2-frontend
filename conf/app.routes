@@ -328,7 +328,7 @@ GET        /replace-filing-member/authenticate                                  
 GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
 GET        /replace-filing-member/error/standard-organisation                   controllers.rfm.StandardOrganisationController.onPageLoad
 GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
-GET        /replace-filing-member/error/agent-sign-in                           controllers.rfm.AgentController.onPageLoad
+GET        /replace-filing-member/error/agent-sign-in                           controllers.AgentController.onPageLoad
 
 GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
@@ -449,3 +449,6 @@ GET        /replace-filing-member/contact-details/change-second-telephone       
 POST       /replace-filing-member/contact-details/change-second-telephone                      	controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 GET        /replace-filing-member/contact-details/change-second-input-telephone             	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/contact-details/change-second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
+POST       /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId

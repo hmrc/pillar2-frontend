@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.rfm
+package forms
 
-import config.FrontendAppConfig
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.AgentView
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
 
 import javax.inject.Inject
 
-class AgentController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view:                     AgentView
-)(implicit appConfig:       FrontendAppConfig)
-    extends FrontendBaseController
-    with I18nSupport {
+class AgentClientPillar2ReferenceFormProvider @Inject() extends Mappings {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view()).withNewSession
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> pillar2Id("agent.pillar2Ref.error.required")
+        .verifying(
+          firstError(
+            equalLength(Constants.EQUAL_LENGTH_15, "agent.pillar2Ref.error.length"),
+            regexp(Validation.GROUPID_REGEX, "agent.pillar2Ref.error.format")
+          )
+        )
+    )
 }

@@ -110,24 +110,29 @@ trait SpecBase
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
-    subscriptionLocalData: Option[SubscriptionLocalData] = None
+    subscriptionLocalData: Option[SubscriptionLocalData] = None,
+    additionalData:        Map[String, Any] = Map.empty
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        Configuration(
-          "metrics.enabled"         -> "false",
-          "auditing.enabled"        -> false,
-          "features.grsStubEnabled" -> true
+        Configuration.from(
+          Map(
+            "metrics.enabled"         -> "false",
+            "auditing.enabled"        -> false,
+            "features.grsStubEnabled" -> true
+          ) ++ additionalData
         )
       )
       .overrides(
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("AgentIdentifier").to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
       )
+
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       post(urlEqualTo(s"$expectedEndpoint"))
