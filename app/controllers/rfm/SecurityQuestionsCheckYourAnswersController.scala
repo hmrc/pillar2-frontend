@@ -16,12 +16,16 @@
 
 package controllers.rfm
 
+import cats.data.OptionT
+import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.Mode
+import models.{InternalIssueError, Mode}
+import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import viewmodels.checkAnswers._
@@ -34,6 +38,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  subscriptionService:      SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   view:                     SecurityQuestionsCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
@@ -59,8 +64,22 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+  def onSubmit: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    (for {
+      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
+      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
+      readData              <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
+    } yield
+      if (readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
+        Redirect(controllers.rfm.routes.CorporatePositionController.onPageLoad())
+      } else {
+        Redirect(controllers.rfm.routes.SecurityQuestionsNoMatchController.onPageLoad)
+      })
+      .recover { case InternalIssueError =>
+        Redirect(controllers.rfm.routes.SecurityQuestionsNoMatchController.onPageLoad)
+      }
+      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+
   }
 
 }
