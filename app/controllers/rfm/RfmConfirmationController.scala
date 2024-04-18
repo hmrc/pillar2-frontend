@@ -46,13 +46,7 @@ class RfmConfirmationController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-      (for {
-        userAnswer <- optionalUserAnswers
-        pillar2Id <- Pillar2Reference
-                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                       .orElse(userAnswer.get(PlrReferencePage))
-
-      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      (Ok(view("12345678", currentDate.toString())))
     }
   }
 

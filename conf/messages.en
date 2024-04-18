@@ -1085,7 +1085,7 @@ rfmEntityType.caption = Group details
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
-rfmConfirmation.reg-date =  Filing member was replaced on:
+rfmConfirmation.reg-date =  Filing member was replaced on
 rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
 rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
 rfmConfirmation.li1 = act as HMRC's primary contact in relation to the group's Pillar 2 top-up tax compliance
@@ -1093,12 +1093,10 @@ rfmConfirmation.li2 = submit your group's Pillar 2 top-up tax returns
 rfmConfirmation.li3 = ensure your group's Pillar 2 top-up taxes account accurately reflects their records.
 
 
-rfmConfirmation.p2 = You will not be emailed a confirmation of this registration.
-rfmConfirmation.p3 = You must record your group’s Pillar 2 top-up taxes ID and registration date.
-rfmConfirmation.p4 = You must not disclose your Pillar 2 top-up taxes ID or registration date outside of agreed communications.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0}
 rfmConfirmation.link-home =  report and manage your Pillar 2 top-up taxes
 rfmConfirmation.whatDidYouThink = What did you think of this service
-rfmConfirmation.takes30 = (takes 30 seconds)
 rfmConfirmation.print = Print this page
