@@ -29,8 +29,8 @@ object EntityTypePartnershipCompanyNameRfmSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(RfmGRSResponsePage)
-      .flatMap { GRS =>
-        GRS.partnershipEntityRegistrationData.flatMap { PartnershipEntity =>
+      .flatMap { grs =>
+        grs.partnershipEntityRegistrationData.flatMap { PartnershipEntity =>
           PartnershipEntity.companyProfile.map(company =>
             SummaryListRowViewModel(
               key = "entityType.companyName.checkYourAnswersLabel",

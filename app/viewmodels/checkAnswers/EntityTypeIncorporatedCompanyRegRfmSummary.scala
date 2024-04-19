@@ -30,8 +30,8 @@ object EntityTypeIncorporatedCompanyRegRfmSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(RfmGRSResponsePage)
-      .flatMap { GRS =>
-        GRS.incorporatedEntityRegistrationData.map { answer =>
+      .flatMap { grs =>
+        grs.incorporatedEntityRegistrationData.map { answer =>
           val value = HtmlFormat.escape(answer.companyProfile.companyNumber).toString
           SummaryListRowViewModel(
             key = "entityType.companyReg.checkYourAnswersLabel",
