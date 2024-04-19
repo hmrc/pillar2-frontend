@@ -1032,13 +1032,6 @@ rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
 rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
-rfm.contactDetailsCheckYourAnswers.heading.caption = Contact details
-rfm.contactDetailsCheckYourAnswers.heading = Check your answers for contact details
-rfm.contactDetailsCheckYourAnswers.title = Check your answers for contact details
-rfm.contactDetailsCheckYourAnswers.first = First contact
-rfm.contactDetailsCheckYourAnswers.second = Second contact
-rfm.contactDetailsCheckYourAnswers.address = Contact address
-
 entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.title = Review and submit
 rfm.contactCheckYourAnswers.heading = Review and submit
