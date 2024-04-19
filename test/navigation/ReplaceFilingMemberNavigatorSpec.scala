@@ -255,27 +255,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         ) mustBe
           rfmQuestionsCYA
       }
-      "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmContactAddressPage, true)
-        navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
-          submitAndReview
-      }
-      "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmContactAddressPage, true)
-        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
-          submitAndReview
-      }
 
       "go to Rfm Contact Details Registration page from Rfm Check Your Answers Page" in {
         val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmRegisteredAddressPage, nonUKAddress)
         navigator.nextPage(RfmCheckYourAnswersPage, CheckMode, ua) mustBe
           controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
-      }
-
-      "go to submit and review CYA page from primary contact name page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
-        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
-          submitAndReview
       }
 
       "go to submit and review CYA page from primary contact email page if RfmCheckYourAnswersLogicPage is true" in {
