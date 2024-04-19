@@ -256,12 +256,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           rfmQuestionsCYA
       }
       "go to submit and review CYA page from name registration page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmCheckYourAnswersLogicPage, true)
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmContactAddressPage, true)
         navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
           submitAndReview
       }
       "go to submit and review CYA page from address page if RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmCheckYourAnswersLogicPage, true)
+        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmContactAddressPage, true)
         navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
           submitAndReview
       }

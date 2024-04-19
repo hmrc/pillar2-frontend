@@ -81,15 +81,15 @@ class ReplaceFilingMemberNavigator @Inject() {
   }
 
   private def whichCheckYourAnswerPageRfmQuestions(userAnswers: UserAnswers): Call =
-    userAnswers.get(RfmCheckYourAnswersLogicPage) match {
-      case Some(true) => reviewAndSubmitCheckYourAnswers
-      case _          => rfmCheckYourAnswers
+    userAnswers.get(RfmContactAddressPage) match {
+      case Some(value) => reviewAndSubmitCheckYourAnswers
+      case _           => rfmCheckYourAnswers
     }
 
   private def rfmRegistrationDetailsCheckRoute(userAnswers: UserAnswers): Call =
-    userAnswers.get(RfmCheckYourAnswersLogicPage) match {
-      case Some(true) => reviewAndSubmitCheckYourAnswers
-      case _          => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+    userAnswers.get(RfmContactAddressPage) match {
+      case Some(value) => reviewAndSubmitCheckYourAnswers
+      case _           => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
     }
 
   private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
