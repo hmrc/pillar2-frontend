@@ -329,6 +329,17 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           jr
       }
 
+      "go to submit and review CYA page from name registration page if RfmContactAddressPage is valid" in {
+        val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmContactAddressPage, nonUKAddress)
+        navigator.nextPage(RfmNameRegistrationPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to submit and review CYA page from address page if RfmContactAddressPage is valid" in {
+        val ua = emptyUserAnswers.setOrException(RfmRegisteredAddressPage, nonUKAddress).setOrException(RfmContactAddressPage, nonUKAddress)
+        navigator.nextPage(RfmRegisteredAddressPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+
       "go to submit and review CYA page from add secondary contact page if secondary contact name exists and RfmCheckYourAnswersLogicPage is true" in {
         val ua = emptyUserAnswers
           .setOrException(RfmAddSecondaryContactPage, true)
