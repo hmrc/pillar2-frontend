@@ -1084,3 +1084,9 @@ rfmEntityType.error.required = Select what type of entity the new filing member 
 rfmEntityType.change.hidden = What entity type is the new nominated filing member?
 rfmEntityType.caption = Group details
 
+rfm.security.errorPage.title= The details you entered do not match our records
+rfm.security.errorPage.heading= The details you entered do not match our records
+rfm.security.errorPage.p1= We could not match the details you entered with records held by HMRC.
+rfm.security.errorPage.p2= If you think you made an error when entering them you can
+rfm.security.errorPage.p2.link= go back to try again using different details.
+

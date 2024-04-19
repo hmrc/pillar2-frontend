@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-
 @import config.FrontendAppConfig
 @import views.html.components.gds._
 
 @this(
 layout: templates.Layout,
-govukButton: GovukButton,
 heading: heading,
 paragraphBody: paragraphBody,
 paragraphWithLink: ParagraphMessageWithLink,
 sectionHeader: sectionHeader,
-link: link
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -39,7 +36,9 @@ authorised = false
 @heading(messages("rfm.security.errorPage.heading"), "govuk-heading-l")
 @paragraphBody(messages("rfm.security.errorPage.p1"))
 @paragraphWithLink(
+message1 = Some(messages("rfm.security.errorPage.p2")),
 linkMessage=  messages("rfm.security.errorPage.p2.link"),
+message2= None,
 linkUrl =  controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url,
 linkClass = "govuk-link govuk-link--no-visited-state")
 }

@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
+import cats.implicits.{catsStdInstancesForFuture, catsSyntaxApplicativeError}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
@@ -32,7 +32,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
@@ -41,7 +41,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   subscriptionService:      SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   view:                     SecurityQuestionsCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -73,12 +73,12 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       if (readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
         Redirect(controllers.rfm.routes.CorporatePositionController.onPageLoad())
       } else {
-        Redirect(controllers.rfm.routes.SecurityQuestionsNoMatchController.onPageLoad)
+        Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
       .recover { case InternalIssueError =>
-        Redirect(controllers.rfm.routes.SecurityQuestionsNoMatchController.onPageLoad)
+        Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
-      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
