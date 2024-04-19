@@ -18,7 +18,7 @@ package navigation
 
 import base.SpecBase
 import models._
-import models.rfm.RegistrationDate
+import models.rfm.{CorporatePosition, RegistrationDate}
 import pages._
 
 import java.time.LocalDate
@@ -205,6 +205,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
       }
 
+      "go to JourneyRecovery if no answer for RfmCorporatePosition page can be found" in {
+        navigator.nextPage(RfmCorporatePositionPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+
       "go to JourneyRecovery if no answer for RfmUkBasedPage page can be found" in {
         navigator.nextPage(RfmUkBasedPage, NormalMode, emptyUserAnswers) mustBe
           jr
@@ -347,6 +352,29 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           rfmContactDetailsCheckYourAnswers
       }
 
+      "go to rfm New Nfm page from corporate position if new nominated filing member is selelcted" in {
+        navigator.nextPage(
+          RfmCorporatePositionPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        ) mustBe
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+      }
+
+      "go to rfm UPE page from corporate position if ultimate parent entity is selelcted" in {
+        navigator.nextPage(
+          RfmCorporatePositionPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        ) mustBe
+          controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+      }
+
+      "go to journey recovery if no answer for contact by RFM Corporate Position logic can be found" in {
+        navigator.nextPage(RfmCorporatePositionPage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
+
       "go to Entity Type Page page from if new nominated filing member is UK based" in {
         navigator.nextPage(
           RfmUkBasedPage,
@@ -363,6 +391,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RfmUkBasedPage, false)
         ) mustBe
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
+      }
+
+      "go to journey recovery if no answer for contact by RFM UK based logic can be found" in {
+        navigator.nextPage(RfmUkBasedPage, CheckMode, emptyUserAnswers) mustBe
+          jr
       }
 
       "go to submit and review CYA page from add secondary contact page if secondary contact name exists and RfmCheckYourAnswersLogicPage is true" in {

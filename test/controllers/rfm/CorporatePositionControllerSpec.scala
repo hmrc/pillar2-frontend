@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmCorporatePositionFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.rfm.CorporatePosition
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -184,10 +184,8 @@ class ReplaceFilingMemberNavigator @Inject() {
       .map { corporatePosition =>
         if (corporatePosition == CorporatePosition.Upe) {
           controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
-        } else if (corporatePosition == CorporatePosition.NewNfm) {
-          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         } else {
-          routes.JourneyRecoveryController.onPageLoad()
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
@@ -198,10 +196,8 @@ class ReplaceFilingMemberNavigator @Inject() {
       .map { corporatePosition =>
         if (corporatePosition == CorporatePosition.Upe) {
           reviewAndSubmitCheckYourAnswers
-        } else if (corporatePosition == CorporatePosition.NewNfm) {
-          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         } else {
-          routes.JourneyRecoveryController.onPageLoad()
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
