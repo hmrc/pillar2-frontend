@@ -71,27 +71,6 @@ trait UserAnswersFixture extends TryValues {
     )
   )
 
-  val grsResponseRfm = GrsResponse(
-    Some(
-      IncorporatedEntityRegistrationData(
-        companyProfile = CompanyProfile(
-          companyName = "ABC Limited",
-          companyNumber = "1234",
-          dateOfIncorporation = LocalDate.now(),
-          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-        ),
-        ctutr = "1234567890",
-        identifiersMatch = true,
-        businessVerification = None,
-        registration = GrsRegistrationResult(
-          registrationStatus = RegistrationStatus.Registered,
-          registeredBusinessPartnerId = Some("XB0000000000001"),
-          failures = None
-        )
-      )
-    )
-  )
-
   val rfmCorpPosition = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
 
@@ -115,7 +94,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
     .setOrException(RfmUkBasedPage, true)
     .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(RfmGRSResponsePage, grsResponseRfm)
+    .setOrException(RfmGRSResponsePage, grsResponse)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
     .setOrException(RfmContactByTelephonePage, true)
