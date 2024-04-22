@@ -17,24 +17,23 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.html.RegistrationConfirmationView
 import views.html.rfm.RfmConfirmationView
+import utils.ViewHelpers
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class RfmConfirmationController @Inject() (
   getData:                  DataRetrievalAction,
-  identify:                 IdentifierAction,
+  rfmIdentify:              RfmIdentifierAction,
   requireData:              DataRequiredAction,
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
@@ -42,11 +41,16 @@ class RfmConfirmationController @Inject() (
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  val dateHelper = new ViewHelpers()
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-      (Ok(view("12345678", currentDate.toString())))
+      (for {
+        userAnswer <- optionalUserAnswers
+        pillar2Id <- Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswer.get(PlrReferencePage))
+      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 

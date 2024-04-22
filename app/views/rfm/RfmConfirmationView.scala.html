@@ -54,8 +54,8 @@
     @paragraphBody(messages("rfmConfirmation.now", link(
         text = messages("rfmConfirmation.link-home"),
         call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
-        fullStop = true
-    )))
+        fullStop = false
+    ), messages("rfmConfirmation.now.group") ))
 
     @printLink(messages("registrationConfirmation.print"))
 }
