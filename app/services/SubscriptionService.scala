@@ -19,9 +19,10 @@ package services
 import akka.Done
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
+import models.rfm.CorporatePosition
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
-import pages.NominateFilingMemberPage
+import pages.{NominateFilingMemberPage, RfmCorporatePositionPage}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -134,5 +135,19 @@ class SubscriptionService @Inject() (
         )
       )
     )
+  }
+
+  def replaceFilingMemberDetails(userAnswers: UserAnswers, subscriptionData: SubscriptionData) : AmendSubscription ={
+    userAnswers.get(RfmCorporatePositionPage).map{corporatePosition=>
+      if (corporatePosition == CorporatePosition.Upe){
+        for{
+          untag <- ???
+          register <-
+        }
+      }else{
+
+      }
+
+    }
   }
 }
