@@ -20,11 +20,9 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmSecondaryTelephoneFormProvider
 import models.NormalMode
-import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
-import play.api.inject.bind
+import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

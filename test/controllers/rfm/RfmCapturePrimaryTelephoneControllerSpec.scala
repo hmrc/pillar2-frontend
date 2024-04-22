@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.{CaptureTelephoneDetailsFormProvider, RfmCaptureTelephoneDetailsFormProvider}
+import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

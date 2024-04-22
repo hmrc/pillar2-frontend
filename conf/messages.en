@@ -10,6 +10,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.save-and-continue = Save and continue
+site.confirm-and-continue = Confirm and continue
 site.manage.save-and-continue =  Save and return to homepage
 site.address.country.select = Select a country
 site.print = Print this page

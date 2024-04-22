@@ -33,7 +33,6 @@ class GroupDetailCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  countryOptions:           CountryOptions,
   view:                     SubCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController

@@ -46,33 +46,30 @@
     <ol class="app-task-list">
         <li> <!-- Group details -->
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">1. </span>
                 @messages("taskList.task.business.heading")
             </h2>
             <ul class="app-task-list__items">
-            @groupSections.map { section =>
-                @taskListSection(section, section.status.tag)
-            }
+                @taskListSection(groupSections(0), groupSections(0).status.tag, "ultimate-parent")
+                @taskListSection(groupSections(1), groupSections(1).status.tag, "filing-member")
+                @taskListSection(groupSections(2), groupSections(2).status.tag, "further-group-details")
             </ul>
         </li>
 
         <li> <!-- Contact Details Section -->
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">2. </span>
                 @messages("taskList.task.contact.heading")
             </h2>
             <ul class="app-task-list__items">
-                @taskListSection(contactSection, contactSection.status.tag)
+                @taskListSection(contactSection, contactSection.status.tag, "contact-details")
             </ul>
         </li>
 
         <li> <!-- Review and Submit Section -->
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">3. </span>
                 @messages("taskList.task.review.heading")
             </h2>
             <ul class="app-task-list__items">
-                @taskListSection(reviewSection, reviewSection.status.tag)
+                @taskListSection(reviewSection, reviewSection.status.tag, "check-your-answers")
             </ul>
         </li>
 

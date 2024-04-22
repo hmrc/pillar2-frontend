@@ -22,9 +22,10 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
-import helpers.{AllMocks, UserAnswersFixture, ViewInstances}
+import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
-import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
+import models.requests.IdentifierRequest
+import models.subscription.SubscriptionLocalData
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -65,9 +66,9 @@ trait SpecBase
     with IntegrationPatience
     with GuiceOneAppPerSuite
     with WireMockServerHandler
-    with UserAnswersFixture {
+    with UserAnswersFixture
+    with SubscriptionLocalDataFixture {
 
-  def testUserAnswers:            UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
   implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
@@ -106,19 +107,11 @@ trait SpecBase
       }
     }
 
-  def preDataRequiredActionImpl: DataRequiredActionImpl = new DataRequiredActionImpl()(ec) {
-    override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-      Future.successful(Right(DataRequest(request.request, request.userId, testUserAnswers)))
-  }
-
-  def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockUserAnswersConnectors)(ec) {
-    override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      Future(OptionalDataRequest(request.request, request.userId, Some(testUserAnswers)))(ec)
-    }
-  }
-
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None, enrolments: Set[Enrolment] = Set.empty): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers:           Option[UserAnswers] = None,
+    enrolments:            Set[Enrolment] = Set.empty,
+    subscriptionLocalData: Option[SubscriptionLocalData] = None
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
         Configuration(
@@ -132,9 +125,9 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
       )
-
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       post(urlEqualTo(s"$expectedEndpoint"))
