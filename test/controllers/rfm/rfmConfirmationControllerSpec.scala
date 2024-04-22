@@ -70,6 +70,28 @@ class rfmConfirmationControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for a GET - rfm feature false" in {
+
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> false
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)

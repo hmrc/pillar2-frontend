@@ -29,7 +29,7 @@ import views.html.rfm.RfmConfirmationView
 import utils.ViewHelpers
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RfmConfirmationController @Inject() (
   getData:                  DataRetrievalAction,
@@ -42,16 +42,23 @@ class RfmConfirmationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val dateHelper = new ViewHelpers()
-  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
-    sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-      (for {
-        userAnswer <- optionalUserAnswers
-        pillar2Id <- Pillar2Reference
-                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                       .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
-  }
 
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+
+      val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+      sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
+        (for {
+          userAnswer <- optionalUserAnswers
+          pillar2Id <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswer.get(PlrReferencePage))
+        } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    } else {
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    }
+
+  }
 }
