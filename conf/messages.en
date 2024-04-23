@@ -1090,3 +1090,14 @@ rfm.security.errorPage.p1= We could not match the details you entered with recor
 rfm.security.errorPage.p2= If you think you made an error when entering them you can
 rfm.security.errorPage.p2.link= go back to try again using different details.
 
+###############################################
+#
+# Agent Services
+#
+###############################################
+agent.pillar2Ref.title = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.heading = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
+agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
+agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
