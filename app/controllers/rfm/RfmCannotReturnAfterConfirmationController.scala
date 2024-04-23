@@ -35,7 +35,12 @@ class RfmCannotReturnAfterConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = rfmIdentify { implicit request =>
-    Ok(view())
+    val rfmAccessEnabled = appConfig.rfmAccessEnabled
+    if (rfmAccessEnabled) {
+      Ok(view())
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
 }
