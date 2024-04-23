@@ -21,20 +21,20 @@ import controllers.actions.RfmIdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RfmCannotReturnAfterSubscriptionView
+import views.html.rfm.RfmCannotReturnAfterConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RfmCannotReturnAfterSubscriptionController @Inject() (
-                                                          rfmIdentify             : RfmIdentifierAction,
-                                                          val controllerComponents: MessagesControllerComponents,
-                                                          view:                     CannotReturnAfterSubscriptionView
-                                                        )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class RfmCannotReturnAfterConfirmationController @Inject() (
+  rfmIdentify:              RfmIdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RfmCannotReturnAfterConfirmationView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = rfmIdentify { implicit request =>
     Ok(view())
   }
 
