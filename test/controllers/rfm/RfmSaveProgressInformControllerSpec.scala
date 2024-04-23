@@ -54,6 +54,13 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RfmSaveProgressInformView]
 
         status(result) mustEqual OK
+        contentAsString(result) must include("Replace filing member")
+        contentAsString(result) must include("Saving progress")
+        contentAsString(result) must include(
+          "From this point, the information you enter will be saved as you progress." +
+            " If you sign out, the information you have already entered will be saved for 28 days." +
+            " After that time you will need to enter all of the information again."
+        )
         contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
