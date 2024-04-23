@@ -58,7 +58,7 @@ class MismatchedRegistrationDetailsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.MismatchedRegistrationDetailsController.onPageLoad.url)
 
         val result = route(application, request).value
 
