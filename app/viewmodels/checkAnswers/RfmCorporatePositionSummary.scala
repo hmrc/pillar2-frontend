@@ -35,7 +35,7 @@ object RfmCorporatePositionSummary {
         )
       )
       SummaryListRowViewModel(
-        key = "rfm.corporatePosition.heading",
+        key = "rfm.corporatePositionCya.heading",
         value = value,
         actions = Seq(
           ActionItemViewModel("site.change", controllers.rfm.routes.CorporatePositionController.onPageLoad(CheckMode).url)
