@@ -188,7 +188,11 @@ class ReplaceFilingMemberNavigator @Inject() {
         } else {
           userAnswers.get(RfmRegisteredAddressPage) match {
             case Some(value) => reviewAndSubmitCheckYourAnswers
-            case _           => controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+            case _ =>
+              userAnswers.get(RfmEntityTypePage) match {
+                case Some(value) => reviewAndSubmitCheckYourAnswers
+                case _           => controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+              }
           }
         }
       }
