@@ -69,6 +69,26 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
       }
     }
 
+    "Send to recovery page if directly hit this page and no answer provided to security related questions" in {
+      val date       = LocalDate.of(2024, 12, 31)
+      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
+      val userAnswer = UserAnswers(userAnswersId)
+        .set(RfmRegistrationDatePage, RegistrationDate(date))
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .configure(testConfig)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+
+      }
+    }
+
     "must redirect to Under Construction page if RFM access is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
