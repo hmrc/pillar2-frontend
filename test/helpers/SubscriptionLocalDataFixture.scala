@@ -40,7 +40,7 @@ trait SubscriptionLocalDataFixture {
   lazy val currentDate = LocalDate.now()
   val subscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", currentDate, domesticOnly = false, filingMember = false),
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
     primaryContactDetails = ContactDetailsType("name", None, "email"),
     secondaryContactDetails = None,
