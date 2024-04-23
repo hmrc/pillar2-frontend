@@ -17,12 +17,11 @@
 package services
 
 import akka.Done
-import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.fm.JourneyType
+import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector, UserAnswersConnectors}
 import models.rfm.CorporatePosition
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
-import pages.{NominateFilingMemberPage, RfmCorporatePositionPage}
+import pages._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -32,6 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionService @Inject() (
   registrationConnector:        RegistrationConnector,
   subscriptionConnector:        SubscriptionConnector,
+  userAnswersConnectors:          UserAnswersConnectors,
   enrolmentConnector:           EnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
 )(implicit ec:                  ExecutionContext) {
@@ -63,8 +63,8 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  def amendSubscription(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
-    hc:                         HeaderCarrier
+  def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
+                                                                                                                     hc:                         HeaderCarrier
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
@@ -72,17 +72,24 @@ class SubscriptionService @Inject() (
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
 
+  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc:HeaderCarrier): Future[Done] ={
+    for {
+      result <- subscriptionConnector.amendSubscription(userId, amendData)
+      _ <- userAnswersConnectors.remove(userId)
+    } yield result
+  }
+
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
-      .getOrElse(registrationConnector.register(userAnswers.id, JourneyType.UltimateParent))
+      .getOrElse(registrationConnector.registerUltimateParent(userAnswers.id))
 
   private def registerNfm(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[String]] =
     userAnswers.getFmSafeID
       .map(safeId => Future.successful(Some(safeId)))
       .getOrElse {
         if (userAnswers.get(NominateFilingMemberPage).contains(true)) {
-          registrationConnector.register(userAnswers.id, JourneyType.FilingMember).map(Some(_))
+          registrationConnector.registerFilingMember(userAnswers.id).map(Some(_))
         } else {
           Future.successful(None)
         }
@@ -137,17 +144,86 @@ class SubscriptionService @Inject() (
     )
   }
 
-  def replaceFilingMemberDetails(userAnswers: UserAnswers, subscriptionData: SubscriptionData) : AmendSubscription ={
-    userAnswers.get(RfmCorporatePositionPage).map{corporatePosition=>
-      if (corporatePosition == CorporatePosition.Upe){
-        for{
-          untag <- ???
-          register <-
-        }
-      }else{
+   def setUltimateParentAsNewFilingMember(requiredInfo: NewFilingMemberDetails, subscriptionData: SubscriptionData, userAnswers: UserAnswers):
+  AmendSubscription = {
+     AmendSubscription(
+      upeDetails = UpeDetailsAmend(
+        plrReference = requiredInfo.plrReference,
+        customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,
+        customerIdentification2 = subscriptionData.upeDetails.customerIdentification2,
+        organisationName = subscriptionData.upeDetails.organisationName,
+        registrationDate = subscriptionData.upeDetails.registrationDate,
+        domesticOnly = subscriptionData.upeDetails.domesticOnly,
+        filingMember = true
+      ),
+      accountingPeriod =
+        AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
+      upeCorrespAddressDetails = UpeCorrespAddressDetails(
+        requiredInfo.address.addressLine1,
+        requiredInfo.address.addressLine2,
+        Some(requiredInfo.address.addressLine3),
+        requiredInfo.address.addressLine4,
+        requiredInfo.address.postalCode,
+        requiredInfo.address.countryCode
+      ),
+      primaryContactDetails =
+        ContactDetailsType(name = requiredInfo.companyName,
+          telephone = userAnswers.get(RfmCapturePrimaryTelephonePage),
+          emailAddress = requiredInfo.contactEmail),
+      secondaryContactDetails = userAnswers.getSecondaryContact,
+      filingMemberDetails = None
+    )
+  }
 
-      }
+   def replaceOldFilingMember(safeId:String, requiredInfo: NewFilingMemberDetails, subscriptionData: SubscriptionData, userAnswers: UserAnswers)(implicit
+    hc:                                            HeaderCarrier
+  ): AmendSubscription = {
+  AmendSubscription(
+      upeDetails = UpeDetailsAmend(
+        plrReference = requiredInfo.plrReference,
+        customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,
+        customerIdentification2 = subscriptionData.upeDetails.customerIdentification2,
+        organisationName = subscriptionData.upeDetails.organisationName,
+        registrationDate = subscriptionData.upeDetails.registrationDate,
+        domesticOnly = subscriptionData.upeDetails.domesticOnly,
+        filingMember = false
+      ),
+      accountingPeriod =
+        AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
+      upeCorrespAddressDetails = UpeCorrespAddressDetails(
+        requiredInfo.address.addressLine1,
+        requiredInfo.address.addressLine2,
+        Some(requiredInfo.address.addressLine3),
+        requiredInfo.address.addressLine4,
+        requiredInfo.address.postalCode,
+        requiredInfo.address.countryCode
+      ),
+      primaryContactDetails =
+        ContactDetailsType(name = requiredInfo.companyName,
+          telephone = userAnswers.get(RfmSecondaryCapturePhonePage),
+          emailAddress = requiredInfo.contactEmail),
+      secondaryContactDetails = userAnswers.getSecondaryContact,
+      filingMemberDetails =createNewFilingMemberDetails(safeId, userAnswers)
 
+    )
+  }
+
+   def registerNewFilingMember(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] = {
+    userAnswers.get(RfmSafeIDPage)
+      .map(Future.successful)
+      .getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
+  }
+  private def createNewFilingMemberDetails(safeId: String , userAnswers: UserAnswers)(implicit hc: HeaderCarrier) = {
+    userAnswers.get(RfmNameRegistrationPage).map{orgName=>
+      FilingMemberAmendDetails(
+        addNewFilingMember = true,
+        safeId = safeId,
+        customerIdentification1 = None,
+        customerIdentification2 = None,
+        organisationName = orgName
+      )
     }
   }
+
+
 }

@@ -46,7 +46,7 @@ final case class ContactDetailsType(
 )
 
 final case class FilingMemberAmendDetails(
-  addNewFilingMember:      Boolean = true,
+  addNewFilingMember:      Boolean = false,
   safeId:                  String,
   customerIdentification1: Option[String],
   customerIdentification2: Option[String],

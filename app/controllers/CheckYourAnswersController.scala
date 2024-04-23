@@ -79,11 +79,11 @@ class CheckYourAnswersController @Inject() (
           } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
             .recover {
               case InternalIssueError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to failed call to the backend")
+                logger.error("Subscription failed due to failed call to the backend")
                 Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
 
               case DuplicateSubmissionError =>
-                logger.error(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed due to a Duplicate Submission")
+                logger.error("Subscription failed due to a Duplicate Submission")
                 Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
             }
         }

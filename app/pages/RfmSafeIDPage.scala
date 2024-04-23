@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package models.fm
+package pages
 
-sealed trait JourneyType
+import play.api.libs.json.JsPath
 
-object JourneyType {
-  case object FilingMember extends JourneyType
+case object RfmSafeIDPage extends QuestionPage[String] {
 
-  case object UltimateParent extends JourneyType
+  override def path: JsPath = JsPath \ toString
 
-  case object ReplaceFilingMember extends JourneyType
-
+  override def toString: String = "RfmSafeID"
 }

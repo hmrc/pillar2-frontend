@@ -243,8 +243,8 @@ class GrsReturnController @Inject() (
                     for {
                       userAnswers <-
                         Future.fromTry(request.userAnswers.set(RfmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
-
-                      - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+                      userAnswers1 <- Future.fromTry(userAnswers.set(RfmSafeIDPage, safeId))
+                      -            <- userAnswersConnectors.save(userAnswers1.id, Json.toJson(userAnswers1.data))
 
                     } yield handleGrsAndBvResult(
                       data.identifiersMatch,
@@ -278,7 +278,8 @@ class GrsReturnController @Inject() (
                     for {
                       userAnswers <-
                         Future.fromTry(request.userAnswers.set(RfmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data))))
-                      - <- userAnswersConnectors.save(userAnswers.id, Json.toJson(userAnswers.data))
+                      userAnswers1 <- Future.fromTry(userAnswers.set(RfmSafeIDPage, safeId))
+                      -            <- userAnswersConnectors.save(userAnswers1.id, Json.toJson(userAnswers1.data))
 
                     } yield handleGrsAndBvResult(
                       data.identifiersMatch,

@@ -327,7 +327,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.amendSubscription(any(), any[AmendSubscription])(any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).futureValue
+          val result = service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData).futureValue
 
           result mustBe Done
         }
@@ -343,7 +343,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendSubscription("id", "plr", emptySubscriptionLocalData).failed.futureValue
+          val result = service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData).failed.futureValue
 
           result mustBe InternalIssueError
         }
@@ -360,7 +360,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
-          val resultFuture = service.amendSubscription("id", "plr", emptySubscriptionLocalData)
+          val resultFuture = service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }

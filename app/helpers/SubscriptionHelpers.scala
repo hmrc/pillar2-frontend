@@ -16,6 +16,7 @@
 
 package helpers
 
+import models.subscription.ContactDetailsType
 import models.{EnrolmentInfo, UserAnswers}
 import pages._
 import utils.RowStatus
@@ -198,4 +199,17 @@ trait SubscriptionHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+
+  def getSecondaryContact: Option[ContactDetailsType] = //TODO unitTests
+    get(RfmAddSecondaryContactPage).flatMap { nominated =>
+      if (nominated) {
+        for {
+          primaryName  <- get(RfmSecondaryContactNamePage)
+          primaryEmail <- get(RfmSecondaryEmailPage)
+        } yield ContactDetailsType(name = primaryName, telephone = get(RfmCapturePrimaryTelephonePage), emailAddress = primaryEmail)
+      } else {
+        None
+      }
+    }
+
 }

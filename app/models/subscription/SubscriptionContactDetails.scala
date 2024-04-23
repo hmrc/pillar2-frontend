@@ -16,4 +16,7 @@
 
 package models.subscription
 
+import models.NonUKAddress
+
 case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])
+case class NewFilingMemberDetails(plrReference: String, companyName: String, contactEmail: String, address: NonUKAddress )

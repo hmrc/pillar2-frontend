@@ -16,17 +16,25 @@
 
 package controllers.rfm
 
+
+import akka.actor.TypedActor.dispatcher
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.Mode
+import models.rfm.CorporatePosition
+import pages.{RfmContactAddressPage, RfmCorporatePositionPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
+import cats.data.OptionT
+import cats.implicits._
+import models.subscription.NewFilingMemberDetails
 
 import scala.concurrent.Future
 
@@ -34,6 +42,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  referenceNumberService:    ReferenceNumberService,
+  subscriptionService:      SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   view:                     SecurityQuestionsCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig)
@@ -60,7 +70,30 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    (for {
+     referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, request.enrolments))
+     corporatePosition <- OptionT.fromOption[Future](request.userAnswers.get(RfmCorporatePositionPage))
+     companyName <- OptionT.fromOption[Future](request.userAnswers.get(RfmNameRegistrationPage))
+     email <- OptionT.fromOption[Future](request.userAnswers.get(RfmPrimaryContactEmailPage))
+     address <- OptionT.fromOption[Future](request.userAnswers.get(RfmContactAddressPage))
+     safeId <- OptionT.liftF(subscriptionService.registerNewFilingMember(request.userAnswers))
+     subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+     filingMemberDetails = NewFilingMemberDetails(plrReference = referenceNumber, companyName = companyName, contactEmail = email, address = address)
+     amendData = if (corporatePosition == CorporatePosition.Upe){
+       subscriptionService.setUltimateParentAsNewFilingMember(
+         requiredInfo = filingMemberDetails,
+         subscriptionData = subscriptionData,
+         userAnswers = request.userAnswers)
+     }else {
+       subscriptionService.replaceOldFilingMember(
+         safeId = safeId,
+         requiredInfo = filingMemberDetails,
+         subscriptionData= subscriptionData,
+         userAnswers= request.userAnswers)}
+     _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userId,amendData ))
+   } yield{
+     Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+   }).getOrElse(Redirect(controllers.routes.UnauthorisedController.onPageLoad))
   }
 
 }
