@@ -71,7 +71,7 @@ class RfmAuthenticatedIdentifierAction @Inject() (
           Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
           logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Agent login attempt")
-          Future.successful(Left(Redirect(controllers.rfm.routes.AgentController.onPageLoad)))
+          Future.successful(Left(Redirect(controllers.routes.AgentController.onPageLoad)))
         case _ =>
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
