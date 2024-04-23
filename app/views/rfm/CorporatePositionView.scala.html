@@ -41,18 +41,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @sectionHeader(messages("rfm.heading.caption"))
-
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(messages("rfm.corporatePosition.heading")).asPageHeading(LegendSize.Large),
-                items = CorporatePosition.options
+                items = CorporatePosition.options.reverse
             ).withHint(HintViewModel(HtmlContent(headingContent)))
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.save-and-continue")).withAttribute("id", "submit")
         )
     }
 }
