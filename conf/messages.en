@@ -1034,6 +1034,16 @@ rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
 rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
+rfm.journeyRecoveryView.title = There has been an error
+rfm.journeyRecoveryView.heading = There has been an error
+rfm.journeyRecoveryView.paragraphStart = You can go back to
+rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
+rfm.incompleteDataView.title = You have an incomplete task
+rfm.incompleteDataView.heading = You have an incomplete task
+rfm.incompleteDataView.paragraphStart = You can go back to
+rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
 entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.title = Review and submit
 rfm.contactCheckYourAnswers.heading = Review and submit

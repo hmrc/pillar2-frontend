@@ -58,10 +58,8 @@ class RfmCapturePrimaryTelephoneController @Inject() (
           case None        => form
           case Some(value) => form.fill(value)
         }
-
         Ok(view(preparedForm, mode, contactName))
-      })
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }).getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -83,7 +81,7 @@ class RfmCapturePrimaryTelephoneController @Inject() (
               } yield Redirect(navigator.nextPage(RfmCapturePrimaryTelephonePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
 
   }
 

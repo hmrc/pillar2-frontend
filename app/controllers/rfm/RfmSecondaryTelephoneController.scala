@@ -61,7 +61,7 @@ class RfmSecondaryTelephoneController @Inject() (
         Ok(view(preparedForm, mode, contactName))
 
       })
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -83,7 +83,7 @@ class RfmSecondaryTelephoneController @Inject() (
               } yield Redirect(navigator.nextPage(RfmSecondaryCapturePhonePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 
 }

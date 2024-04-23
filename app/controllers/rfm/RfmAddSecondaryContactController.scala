@@ -59,7 +59,7 @@ class RfmAddSecondaryContactController @Inject() (
           case None        => form
         }
         Ok(view(preparedForm, contactName, mode))
-      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }).getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -80,6 +80,6 @@ class RfmAddSecondaryContactController @Inject() (
               } yield Redirect(navigator.nextPage(RfmAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 }

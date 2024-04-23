@@ -366,36 +366,35 @@ POST        /replace-filing-member/security/change-registration-date        cont
 
 GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
 
-
 GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = CheckMode)
-
-
 
 GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-
 GET         /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
-
 
 GET         /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
+GET         /replace-filing-member/error/incomplete-task                            controllers.rfm.RfmIncompleteDataController.onPageLoad
+
+GET         /replace-filing-member/error/restart-error                              controllers.rfm.RfmJourneyRecoveryController.onPageLoad
+
 GET         /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
-
+ controllers.MakeAPaymentDashboardController.onPageLoad
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
 GET         /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)

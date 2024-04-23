@@ -31,8 +31,6 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
-import scala.concurrent.Future
-
 class RfmCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
@@ -57,7 +55,7 @@ class RfmCheckYourAnswersController @Inject() (
       if (request.userAnswers.rfmNoIdQuestionStatus == RowStatus.Completed) {
         Ok(view(mode, list))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad)
       }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)

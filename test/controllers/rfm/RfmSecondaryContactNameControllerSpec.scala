@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
@@ -108,7 +108,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
       }
     }
 

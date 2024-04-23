@@ -60,7 +60,7 @@ class RfmSecondaryContactNameController @Inject() (
           case None    => form
         }
         Ok(view(preparedForm, mode))
-      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }).getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
