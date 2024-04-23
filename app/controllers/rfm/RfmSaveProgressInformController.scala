@@ -24,33 +24,23 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
-import views.html.rfm.SecurityQuestionsCheckYourAnswersView
+import views.html.rfm.RfmSaveProgressInformView
 
-import scala.concurrent.Future
-
-class SecurityQuestionsCheckYourAnswersController @Inject() (
+class RfmSaveProgressInformController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     SecurityQuestionsCheckYourAnswersView
+  view:                     RfmSaveProgressInformView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      val list = SummaryListViewModel(
-        rows = Seq(
-          RfmSecurityCheckSummary.row(request.userAnswers),
-          RfmRegistrationDateSummary.row(request.userAnswers)
-        ).flatten
-      )
       if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
-        Ok(view(mode, list))
+        Ok(view())
       } else {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
@@ -58,9 +48,4 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    Future.successful(Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad))
-  }
-
 }

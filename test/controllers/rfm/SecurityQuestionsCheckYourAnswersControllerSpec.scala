@@ -106,7 +106,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
       }
     }
 
