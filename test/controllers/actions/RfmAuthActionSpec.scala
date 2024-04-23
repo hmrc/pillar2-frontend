@@ -167,7 +167,7 @@ class RfmAuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.rfm.routes.AgentController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.routes.AgentController.onPageLoad.url
 
         }
       }

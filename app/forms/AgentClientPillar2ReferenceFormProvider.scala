@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.Enrolment
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
 
-case class IdentifierRequest[A](request: Request[A], userId: String, enrolments: Set[Enrolment] = Set.empty, isAgent: Boolean = false)
-    extends WrappedRequest[A](request)
+import javax.inject.Inject
+
+class AgentClientPillar2ReferenceFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> pillar2Id("agent.pillar2Ref.error.required")
+        .verifying(
+          firstError(
+            equalLength(Constants.EQUAL_LENGTH_15, "agent.pillar2Ref.error.length"),
+            regexp(Validation.GROUPID_REGEX, "agent.pillar2Ref.error.format")
+          )
+        )
+    )
+}
