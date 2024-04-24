@@ -23,7 +23,7 @@ import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.{RfmContactDetailsRegistrationView, RfmSaveProgressInformView}
+import views.html.rfm.RfmSaveProgressInformView
 
 import java.time.LocalDate
 
@@ -70,14 +70,12 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
     }
 
     "Send to recovery page if directly hit this page and no answer provided to security related questions" in {
-      val date       = LocalDate.of(2024, 12, 31)
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
+      val date = LocalDate.of(2024, 12, 31)
       val userAnswer = UserAnswers(userAnswersId)
         .set(RfmRegistrationDatePage, RegistrationDate(date))
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
         .build()
 
       running(application) {
