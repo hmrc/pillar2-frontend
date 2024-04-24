@@ -80,22 +80,13 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
       }
 
-      "go to submit and review page if secondary contact is not available" in {
+      "go to contact address if secondary contact is not available" in {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
           NormalMode,
           emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)
         ) mustBe
-          submitAndReview
-      }
-
-      "go to submit and review page if primary phone and secondary contact is not available" in {
-        navigator.nextPage(
-          RfmContactByTelephonePage,
-          NormalMode,
-          emptyUserAnswers.setOrException(RfmContactByTelephonePage, false).setOrException(RfmAddSecondaryContactPage, false)
-        ) mustBe
-          submitAndReview
+          controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
 
       "if user select yes on contact by telephone page  then go to a page where we capture primary telephone number" in {
@@ -208,9 +199,8 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryCapturePhonePage, "1234567890")
           .setOrException(RfmSecondaryPhonePreferencePage, true)
-          .setOrException(RfmContactAddressPage, nonUKAddress)
         navigator.nextPage(RfmSecondaryCapturePhonePage, NormalMode, ua) mustBe
-          submitAndReview
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
 
       "go to Entity Type Page page from if new nominated filing member is UK based" in {
@@ -304,7 +294,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers
           .setOrException(RfmContactByTelephonePage, true)
           .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-        navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
+        navigator.nextPage(RfmCapturePrimaryTelephonePage, CheckMode, ua) mustBe
           submitAndReview
       }
 
@@ -371,14 +361,6 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           submitAndReview
       }
 
-      "go to submit and review CYA page from add secondary contact page if secondary contact name exists and RfmCheckYourAnswersLogicPage is true" in {
-        val ua = emptyUserAnswers
-          .setOrException(RfmAddSecondaryContactPage, true)
-          .setOrException(RfmSecondaryContactNamePage, "first last")
-        navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
-          submitAndReview
-      }
-
       "go to submit and review CYA page from secondary contact name page" in {
         val ua = emptyUserAnswers.setOrException(RfmSecondaryContactNamePage, "second last")
         navigator.nextPage(RfmSecondaryContactNamePage, CheckMode, ua) mustBe
@@ -393,9 +375,8 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
       "go to submit and review CYA page from secondary contact by telephone page" in {
         val ua = emptyUserAnswers
-          .setOrException(RfmSecondaryPhonePreferencePage, true)
-          .setOrException(RfmSecondaryCapturePhonePage, "1234567890")
-        navigator.nextPage(RfmSecondaryPhonePreferencePage, CheckMode, ua) mustBe
+          .setOrException(RfmSecondaryPhonePreferencePage, false)
+        navigator.nextPage(RfmSecondaryCapturePhonePage, CheckMode, ua) mustBe
           submitAndReview
       }
 
