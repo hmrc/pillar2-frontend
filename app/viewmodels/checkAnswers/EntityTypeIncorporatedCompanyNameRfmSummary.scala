@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.RfmGRSResponsePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -37,7 +37,7 @@ object EntityTypeIncorporatedCompanyNameRfmSummary {
             key = "entityType.companyName.checkYourAnswersLabel",
             value = ValueViewModel(HtmlContent(value)),
             actions = Seq(
-              ActionItemViewModel("site.change", controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
+              ActionItemViewModel("site.change", controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("entityType.Rfm.change.hidden"))
                 .withCssClass("govuk-!-display-none-print")
             )
