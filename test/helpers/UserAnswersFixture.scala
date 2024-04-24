@@ -106,6 +106,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
+  val registrationDate: LocalDate = LocalDate.of(2024, 1, 31)
+
   val upeInProgressUserAnswer = emptyUserAnswers
     .set(UpeContactNamePage, "name")
     .success
