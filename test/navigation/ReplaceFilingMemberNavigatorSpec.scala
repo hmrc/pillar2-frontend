@@ -362,13 +362,21 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       }
 
       "go to submit and review CYA page from secondary contact name page" in {
-        val ua = emptyUserAnswers.setOrException(RfmSecondaryContactNamePage, "second last")
+        val ua = emptyUserAnswers
+          .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryContactNamePage, "second last")
+          .setOrException(RfmSecondaryEmailPage, "test@test.com")
+          .setOrException(RfmSecondaryPhonePreferencePage, false)
         navigator.nextPage(RfmSecondaryContactNamePage, CheckMode, ua) mustBe
           submitAndReview
       }
 
       "go to submit and review CYA page from secondary contact email page" in {
-        val ua = emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "test2@email.com")
+        val ua = emptyUserAnswers
+          .setOrException(RfmSecondaryEmailPage, "test2@email.com")
+          .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryContactNamePage, "second last")
+          .setOrException(RfmSecondaryPhonePreferencePage, false)
         navigator.nextPage(RfmSecondaryEmailPage, CheckMode, ua) mustBe
           submitAndReview
       }

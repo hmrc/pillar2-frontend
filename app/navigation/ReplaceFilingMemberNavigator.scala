@@ -71,8 +71,8 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmContactByTelephonePage       => telephonePreferenceLogicCheck
     case RfmCapturePrimaryTelephonePage  => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     case RfmAddSecondaryContactPage      => rfmAddSecondaryContactRouteCheck
-    case RfmSecondaryContactNamePage     => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
-    case RfmSecondaryEmailPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+    case RfmSecondaryContactNamePage     => rfmSecondaryContactCheck
+    case RfmSecondaryEmailPage           => rfmSecondaryEmailCheck
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreferenceCheck
     case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
@@ -151,6 +151,24 @@ class ReplaceFilingMemberNavigator @Inject() {
         case false => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmSecondaryContactCheck(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmAddSecondaryContactPage)
+      .map {
+        case true if userAnswers.get(RfmSecondaryEmailPage).isEmpty =>
+          controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode)
+        case _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def rfmSecondaryEmailCheck(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RfmSecondaryEmailPage) match {
+      case Some(value) if userAnswers.get(RfmSecondaryPhonePreferencePage).isEmpty =>
+        controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(CheckMode)
+      case _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+    }
 
   private def rfmUkBasedLogic(userAnswers: UserAnswers): Call =
     userAnswers
