@@ -1084,6 +1084,24 @@ rfmEntityType.error.required = Select what type of entity the new filing member 
 rfmEntityType.change.hidden = What entity type is the new nominated filing member?
 rfmEntityType.caption = Group details
 
+rfm.security.errorPage.title= The details you entered do not match our records
+rfm.security.errorPage.heading= The details you entered do not match our records
+rfm.security.errorPage.p1= We could not match the details you entered with records held by HMRC.
+rfm.security.errorPage.p2= If you think you made an error when entering them you can
+rfm.security.errorPage.p2.link= go back to try again using different details.
+
+###############################################
+#
+# Agent Services
+#
+###############################################
+agent.pillar2Ref.title = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.heading = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
+agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
+agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
+
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
 rfmConfirmation.reg-date =  Filing member was replaced on
@@ -1092,10 +1110,7 @@ rfmConfirmation.h2 = As the new filing member, you have taken over the obligatio
 rfmConfirmation.li1 = act as HMRC's primary contact in relation to the group's Pillar 2 top-up tax compliance
 rfmConfirmation.li2 = submit your group's Pillar 2 top-up tax returns
 rfmConfirmation.li3 = ensure your group's Pillar 2 top-up taxes account accurately reflects their records.
-
-
 rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
-
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0} {1}
 rfmConfirmation.now.group = on behalf of your group.
