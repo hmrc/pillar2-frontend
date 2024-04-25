@@ -296,6 +296,11 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
           controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(CheckMode)
       }
+      "go to recovery if correct info not provided" in {
+        val ua = emptyUserAnswers
+        navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
+          controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
 
       "go to submit and review CYA page from primary contact by telephone page if Primary Telephone Number not exists" in {
         val ua = emptyUserAnswers
@@ -432,11 +437,34 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode)
       }
 
+      "go to recovery page if RfmAddSecondaryContactPage  not provided" in {
+        val ua = emptyUserAnswers
+        navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
+          controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
+
       "go to submit and review CYA page from secondary contact by telephone page" in {
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryPhonePreferencePage, false)
         navigator.nextPage(RfmSecondaryCapturePhonePage, CheckMode, ua) mustBe
           submitAndReview
+      }
+
+      "go to recover page if correct info not given for RfmAddSecondaryContact " in {
+        val ua = emptyUserAnswers
+        navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
+          controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
+
+      "go to recover page if correct info not given for Rfm Add Secondary Contact " in {
+        val ua = emptyUserAnswers
+        navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
+          controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
+      "go to recover page if correct info not given for Rfm Secondary Phone Preference " in {
+        val ua = emptyUserAnswers
+        navigator.nextPage(RfmSecondaryPhonePreferencePage, CheckMode, ua) mustBe
+          controllers.routes.JourneyRecoveryController.onPageLoad()
       }
 
       "go to submit and review CYA page from secondary contact telephone page" in {
