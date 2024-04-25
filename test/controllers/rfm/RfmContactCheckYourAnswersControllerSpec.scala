@@ -94,7 +94,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the telephone number for the second contact")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
-          "By sending these details, you are confirming that the information is correct and complete to the best of your knowledge."
+          "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
 
       }
@@ -137,7 +137,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the telephone number for the second contact")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
-          "By sending these details, you are confirming that the information is correct and complete to the best of your knowledge."
+          "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
 
       }
@@ -189,7 +189,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the telephone number for the second contact")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
-          "By sending these details, you are confirming that the information is correct and complete to the best of your knowledge."
+          "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
 
       }
