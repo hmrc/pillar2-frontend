@@ -21,6 +21,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
+import models.subscription.AccountingPeriod
 import navigation.SubscriptionNavigator
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.data.Form
@@ -47,7 +48,7 @@ class GroupAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form = formProvider()
+  def form: Form[AccountingPeriod] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(SubMneOrDomesticPage)) {
@@ -57,7 +58,7 @@ class GroupAccountingPeriodController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
 

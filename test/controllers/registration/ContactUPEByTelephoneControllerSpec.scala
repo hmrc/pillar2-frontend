@@ -20,14 +20,15 @@ import base.SpecBase
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
 
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
-  val form         = new ContactUPEByTelephoneFormProvider()
-  val formProvider = form("sad")
+  val form = new ContactUPEByTelephoneFormProvider()
+  val formProvider: Form[Boolean] = form("sad")
 
   "Can we contact UPE by Telephone Controller" when {
 
@@ -82,7 +83,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
     "redirect to journey recovery when no contact name is found for POST" in {
@@ -91,7 +92,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 

@@ -59,7 +59,7 @@ class ContactUPEByTelephoneController @Inject() (
 
       Ok(view(preparedForm, mode, contactName))
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
 
   }
 
@@ -79,7 +79,7 @@ class ContactUPEByTelephoneController @Inject() (
               } yield Redirect(navigator.nextPage(UpePhonePreferencePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
   }
 
 }

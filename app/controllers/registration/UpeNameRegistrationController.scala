@@ -23,6 +23,7 @@ import forms.UpeNameRegistrationFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeNameRegistrationPage, UpeRegisteredInUKPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,14 +46,14 @@ class UpeNameRegistrationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(UpeNameRegistrationPage).map(companyName => form.fill(companyName)).getOrElse(form)
     if (request.userAnswers.get(UpeRegisteredInUKPage).contains(false)) {
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
 

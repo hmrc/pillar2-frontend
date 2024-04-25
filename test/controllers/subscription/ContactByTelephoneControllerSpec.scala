@@ -20,14 +20,15 @@ import base.SpecBase
 import forms.ContactByTelephoneFormProvider
 import models.NormalMode
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContactByTelephoneView
 
 class ContactByTelephoneControllerSpec extends SpecBase {
 
-  val form         = new ContactByTelephoneFormProvider()
-  val formProvider = form("name")
+  val form = new ContactByTelephoneFormProvider()
+  val formProvider: Form[Boolean] = form("name")
 
   "Can we contact  by Telephone Controller" should {
 
@@ -101,7 +102,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
 
     }
@@ -112,7 +113,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
   }

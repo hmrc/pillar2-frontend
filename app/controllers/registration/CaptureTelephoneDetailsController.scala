@@ -59,7 +59,7 @@ class CaptureTelephoneDetailsController @Inject() (
 
       Ok(view(preparedForm, mode, contactName))
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -78,7 +78,7 @@ class CaptureTelephoneDetailsController @Inject() (
               } yield Redirect(navigator.nextPage(UpeCapturePhonePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
 
   }
 

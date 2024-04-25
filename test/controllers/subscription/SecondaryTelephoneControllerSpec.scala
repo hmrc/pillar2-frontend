@@ -20,14 +20,15 @@ import base.SpecBase
 import forms.SecondaryTelephoneFormProvider
 import models.NormalMode
 import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryTelephoneView
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form         = new SecondaryTelephoneFormProvider()
-  val formProvider = form("test")
+  val form = new SecondaryTelephoneFormProvider()
+  val formProvider: Form[String] = form("test")
 
   "SecondaryTelephone Controller" when {
 
@@ -104,7 +105,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 
@@ -118,7 +119,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 

@@ -78,7 +78,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
         status(result) mustBe SEE_OTHER
       }
     }

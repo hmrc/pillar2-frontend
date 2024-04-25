@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
-import models.Mode
+import models.{Mode, NonUKAddress}
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmNameRegistrationPage, FmRegisteredAddressPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,7 +47,7 @@ class NfmRegisteredAddressController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form = formProvider()
+  val form: Form[NonUKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(FmNameRegistrationPage)
@@ -54,7 +55,7 @@ class NfmRegisteredAddressController @Inject() (
         val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -73,7 +74,7 @@ class NfmRegisteredAddressController @Inject() (
               } yield Redirect(navigator.nextPage(FmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
   }
 
 }

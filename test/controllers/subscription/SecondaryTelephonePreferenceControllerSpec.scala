@@ -20,14 +20,15 @@ import base.SpecBase
 import forms.SecondaryTelephonePreferenceFormProvider
 import models.NormalMode
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.SecondaryTelephonePreferenceView
 
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
-  val form         = new SecondaryTelephonePreferenceFormProvider()
-  val formProvider = form("name")
+  val form = new SecondaryTelephonePreferenceFormProvider()
+  val formProvider: Form[Boolean] = form("name")
   "SecondaryTelephonePreference Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
@@ -103,7 +104,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 
@@ -117,7 +118,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 

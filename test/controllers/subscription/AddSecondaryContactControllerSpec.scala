@@ -116,7 +116,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
 
@@ -133,7 +133,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
       }
     }
     "must delete all secondary contact details and redirect to the next page when the user answers no" in {

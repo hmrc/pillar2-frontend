@@ -27,6 +27,7 @@ import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
 import navigation.SubscriptionNavigator
 import pages._
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -54,7 +55,7 @@ class UseContactPrimaryController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
@@ -68,7 +69,7 @@ class UseContactPrimaryController @Inject() (
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
         case _ => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
       }
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     contactDetail(request) match {
@@ -123,14 +124,14 @@ class UseContactPrimaryController @Inject() (
                 contactEmail <- request.userAnswers.get(FmContactEmailPage)
                 phonePref    <- request.userAnswers.get(FmPhonePreferencePage)
               } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(FmCapturePhonePage))))
-                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
             } else {
               (for {
                 contactName  <- request.userAnswers.get(UpeContactNamePage)
                 contactEmail <- request.userAnswers.get(UpeContactEmailPage)
                 phonePref    <- request.userAnswers.get(UpePhonePreferencePage)
               } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage))))
-                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+                .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
             }
           }
         } else {
@@ -141,7 +142,7 @@ class UseContactPrimaryController @Inject() (
           } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage)))
         }
       }
-      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
 
   private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
@@ -158,7 +159,7 @@ class UseContactPrimaryController @Inject() (
         case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
 
   private def upeNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
@@ -173,7 +174,7 @@ class UseContactPrimaryController @Inject() (
         case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
-    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
 }
 
 object UseContactPrimaryController {

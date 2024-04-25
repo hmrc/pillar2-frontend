@@ -23,6 +23,7 @@ import forms.UpeContactNameFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,14 +46,14 @@ class UpeContactNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(UpeRegisteredAddressPage)) {
       val preparedForm = request.userAnswers.get(UpeContactNamePage).map(contactName => form.fill(contactName)).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
 
   }
