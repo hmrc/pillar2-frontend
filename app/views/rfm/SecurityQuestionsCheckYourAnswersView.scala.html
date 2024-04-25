@@ -33,7 +33,7 @@
 
 @layout(pageTitle = titleNoForm(messages("securityQuestionsCheckYourAnswers.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(mode)) {
+    @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit) {
 
         @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
 

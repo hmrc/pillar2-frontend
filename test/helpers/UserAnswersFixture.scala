@@ -70,6 +70,8 @@ trait UserAnswersFixture extends TryValues {
     )
   )
 
+  val registrationDate: LocalDate = LocalDate.of(2024, 1, 31)
+
   val upeInProgressUserAnswer: UserAnswers = emptyUserAnswers
     .set(UpeContactNamePage, "name")
     .success
