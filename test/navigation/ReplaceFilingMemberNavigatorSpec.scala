@@ -80,7 +80,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
       }
 
-      "go to contact address if secondary contact is not available" in {
+      "go to secondary contact  from Rfm Capture Primary Telephone Page" in {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
           NormalMode,
