@@ -222,8 +222,85 @@ class SubscriptionHelpersSpec extends SpecBase {
 
     "groupDetails status checker" should {
 
-      "return true if right combination of the contact details and the subscription address have been answered " in {
-        groupStatusIsTrue.groupDetailStatusChecker mustEqual true
+      "return true if all contact questions are answered " in {
+        groupPrimaryAndSecondaryContactData.groupDetailStatusChecker mustEqual true
+      }
+      "return true if all primary contact question answered and no secondary contact by phone" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubSecondaryPhonePreferencePage, false)
+          .remove(SubSecondaryCapturePhonePage)
+          .success
+          .value
+          .groupDetailStatusChecker mustEqual true
+      }
+      "return true if no primary telephone contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData.setOrException(SubPrimaryPhonePreferencePage, false).groupDetailStatusChecker mustEqual true
+      }
+      "return true if no primary & secondary telephone contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubPrimaryPhonePreferencePage, false)
+          .setOrException(SubSecondaryPhonePreferencePage, false)
+          .groupDetailStatusChecker mustEqual true
+      }
+      "return true if primary telephone and no secondary contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubPrimaryPhonePreferencePage, false)
+          .setOrException(SubAddSecondaryContactPage, false)
+          .groupDetailStatusChecker mustEqual true
+      }
+      "return true if no secondary contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubAddSecondaryContactPage, false)
+          .groupDetailStatusChecker mustEqual true
+      }
+      "return false if primary contact name is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryContactNamePage)
+          .success
+          .value
+          .groupDetailStatusChecker mustEqual false
+      }
+      "return false if primary contact email is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryEmailPage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
+      }
+      "return false if primary contact by telephone is true and primary telephone is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryCapturePhonePage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
+      }
+      "return false if add secondary contact is true and secondary contact name is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryContactNamePage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
+      }
+      "return false if add secondary contact is true and secondary contact email is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryEmailPage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
+      }
+      "return false if secondary contact by telephone is true and secondary contact telephone is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryCapturePhonePage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
+      }
+      "return false if contact address is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubRegisteredAddressPage)
+          .success
+          .value
+          .groupDetailStatusChecker mustBe false
       }
     }
 

@@ -19,7 +19,7 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmContactNameFormProvider
-import models.{NonUKAddress, NormalMode}
+import models.NormalMode
 import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -28,7 +28,6 @@ import views.html.fmview.NfmContactNameView
 
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
-  val nonUkAddress: NonUKAddress = NonUKAddress("this", None, "over", None, None, countryCode = "AR")
   "NFMContactName Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {

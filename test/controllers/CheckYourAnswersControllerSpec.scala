@@ -21,7 +21,7 @@ import connectors.{EnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -43,14 +43,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val plrReference = "XE1111123456789"
 
   private val date = LocalDate.now()
-  private val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
   private val ukAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,

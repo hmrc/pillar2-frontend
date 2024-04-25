@@ -29,53 +29,8 @@ import java.time.LocalDate
 
 class SubscriptionNavigatorSpec extends SpecBase {
 
-  val navigator = new SubscriptionNavigator
-  private val nonUKAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
-  private val grsResponse = GrsResponse(
-    Some(
-      IncorporatedEntityRegistrationData(
-        companyProfile = CompanyProfile(
-          companyName = "ABC Limited",
-          companyNumber = "1234",
-          dateOfIncorporation = LocalDate.now(),
-          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-        ),
-        ctutr = "1234567890",
-        identifiersMatch = true,
-        businessVerification = None,
-        registration = GrsRegistrationResult(
-          registrationStatus = RegistrationStatus.Registered,
-          registeredBusinessPartnerId = Some("XB0000000000001"),
-          failures = None
-        )
-      )
-    )
-  )
-  private val regData          = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+  val navigator                = new SubscriptionNavigator
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
-  private val completedJourney = emptyUserAnswers
-    .setOrException(UpeRegisteredInUKPage, true)
-    .setOrException(UpeGRSResponsePage, grsResponse)
-    .setOrException(UpeRegInformationPage, regData)
-    .setOrException(GrsUpeStatusPage, RowStatus.Completed)
-    .setOrException(NominateFilingMemberPage, false)
-    .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
-    .setOrException(SubAccountingPeriodPage, accountingPeriod)
-    .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(SubPrimaryContactNamePage, "contact")
-    .setOrException(SubPrimaryEmailPage, "contact@yes.com")
-    .setOrException(SubPrimaryPhonePreferencePage, false)
-    .setOrException(SubAddSecondaryContactPage, true)
-    .setOrException(SubSecondaryPhonePreferencePage, false)
-    .setOrException(SubSecondaryContactNamePage, "Paddington")
-    .setOrException(SubRegisteredAddressPage, nonUKAddress)
 
   private lazy val contactCYA      = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
   private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
@@ -167,7 +122,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
           controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
       }
       "go to group CYA page once they provide a subscription address" in {
-        navigator.nextPage(SubRegisteredAddressPage, NormalMode, emptyUserAnswers.setOrException(SubRegisteredAddressPage, nonUKAddress)) mustBe
+        navigator.nextPage(SubRegisteredAddressPage, NormalMode, emptyUserAnswers.setOrException(SubRegisteredAddressPage, nonUkAddress)) mustBe
           contactCYA
       }
 
@@ -210,11 +165,11 @@ class SubscriptionNavigatorSpec extends SpecBase {
           contactCYA
       }
       "go to contact CYA page from secondary contact name page" in {
-        navigator.nextPage(SubSecondaryContactNamePage, CheckMode, completedJourney) mustBe
+        navigator.nextPage(SubSecondaryContactNamePage, CheckMode, subCompletedJourney) mustBe
           contactCYA
       }
       "go to contact CYA page from secondary contact email page" in {
-        navigator.nextPage(SubSecondaryEmailPage, CheckMode, completedJourney) mustBe
+        navigator.nextPage(SubSecondaryEmailPage, CheckMode, subCompletedJourney) mustBe
           contactCYA
       }
       "go secondary capture telephone page if they have chosen to nominate a secondary contact number" in {
@@ -227,7 +182,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
           jr
       }
       "go to CYA page if they have chosen not to nominate a  secondary contact number" in {
-        navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, completedJourney) mustBe
+        navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, subCompletedJourney) mustBe
           contactCYA
       }
       "go back to review and submit CYA page from mne or domestic page if they have finished every task " in {
@@ -256,17 +211,17 @@ class SubscriptionNavigatorSpec extends SpecBase {
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
       }
       "go to review and submit page if they have chosen not to nominate a  primary contact number and if they have finished every task " in {
-        val ua = completedJourney.setOrException(CheckYourAnswersLogicPage, true)
+        val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
           submitAndReview
       }
       "go to review and submit CYA page from secondary contact name page if they have finished every task " in {
-        val ua = completedJourney.setOrException(CheckYourAnswersLogicPage, true)
+        val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubSecondaryContactNamePage, CheckMode, ua) mustBe
           submitAndReview
       }
       "go to review and submit CYA page from secondary contact email page if they have finished every task " in {
-        val ua = completedJourney.setOrException(CheckYourAnswersLogicPage, true)
+        val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubSecondaryEmailPage, CheckMode, ua) mustBe
           submitAndReview
       }
@@ -276,7 +231,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
           controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(CheckMode)
       }
       "go to review and submit page if they have chosen not to nominate a secondary contact number if they have finished every task " in {
-        val ua = completedJourney.setOrException(CheckYourAnswersLogicPage, true)
+        val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
           submitAndReview
       }

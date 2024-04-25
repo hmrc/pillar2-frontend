@@ -36,7 +36,7 @@ trait SubscriptionHelpers {
             telPref      <- get(UpePhonePreferencePage)
           } yield {
             val telephone = get(UpeCapturePhonePage).isDefined
-            if ((telPref & telephone) | !telPref) {
+            if ((telPref & telephone) | (!telPref & !telephone)) {
               RowStatus.Completed
             } else {
               RowStatus.InProgress
@@ -68,7 +68,7 @@ trait SubscriptionHelpers {
                   telPref      <- get(FmPhonePreferencePage)
                 } yield {
                   val telephone = get(FmCapturePhonePage).isDefined
-                  if ((telPref & telephone) | !telPref) {
+                  if ((telPref & telephone) | (!telPref & !telephone)) {
                     RowStatus.Completed
                   } else {
                     RowStatus.InProgress
@@ -103,6 +103,28 @@ trait SubscriptionHelpers {
     }
   }
 
+  def groupDetailStatusChecker: Boolean = {
+    val pName            = get(SubPrimaryContactNamePage).isDefined
+    val PEmail           = get(SubPrimaryEmailPage).isDefined
+    val pPhonePref       = get(SubPrimaryPhonePreferencePage)
+    val pPhone           = get(SubPrimaryCapturePhonePage).isDefined
+    val addSecondaryPref = get(SubAddSecondaryContactPage)
+    val sName            = get(SubSecondaryContactNamePage).isDefined
+    val sEmail           = get(SubSecondaryEmailPage).isDefined
+    val sPhonePref       = get(SubSecondaryPhonePreferencePage)
+    val sPhone           = get(SubSecondaryCapturePhonePage).isDefined
+    val address          = get(SubRegisteredAddressPage).isDefined
+    (pName, PEmail, pPhonePref, pPhone, addSecondaryPref, sName, sEmail, sPhonePref, sPhone, address) match {
+      case (true, true, Some(true), true, Some(true), true, true, Some(true), true, true)     => true
+      case (true, true, Some(true), true, Some(true), true, true, Some(false), false, true)   => true
+      case (true, true, Some(true), true, Some(false), false, false, None, false, true)       => true
+      case (true, true, Some(false), false, Some(true), true, true, Some(true), true, true)   => true
+      case (true, true, Some(false), false, Some(true), true, true, Some(false), false, true) => true
+      case (true, true, Some(false), false, Some(false), false, false, None, false, true)     => true
+      case _                                                                                  => false
+    }
+  }
+
   def contactDetailStatus: RowStatus =
     get(SubPrimaryContactNamePage) match {
       case Some(_) if groupDetailStatusChecker => RowStatus.Completed
@@ -110,24 +132,14 @@ trait SubscriptionHelpers {
       case _                                   => RowStatus.InProgress
     }
 
-  val primaryTelephone: Boolean =
-    get(SubPrimaryPhonePreferencePage).exists(nominated => if (nominated & get(SubPrimaryCapturePhonePage).isEmpty) false else true)
-
-  val secondaryTelephone: Boolean =
-    get(SubSecondaryPhonePreferencePage).exists(nominated => if (nominated & get(SubSecondaryCapturePhonePage).isEmpty) false else true)
-
-  def groupDetailStatusChecker: Boolean =
-    if (
-      primaryTelephone &
-        ((get(SubAddSecondaryContactPage).contains(true) & secondaryTelephone) | get(SubAddSecondaryContactPage).contains(false))
-        & get(SubRegisteredAddressPage).isDefined
-    ) true
-    else false
-
   def finalStatusCheck: Boolean =
-    if (groupDetailStatus == RowStatus.Completed & fmStatus == RowStatus.Completed & upeStatus == RowStatus.Completed & groupDetailStatusChecker)
-      true
-    else false
+    if (
+      groupDetailStatus == RowStatus.Completed
+        & fmStatus == RowStatus.Completed
+        & upeStatus == RowStatus.Completed
+        & groupDetailStatusChecker
+    ) { true }
+    else { false }
 
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (
