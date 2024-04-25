@@ -432,7 +432,6 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode)
       }
 
-
       "go to submit and review CYA page from secondary contact by telephone page" in {
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryPhonePreferencePage, false)
