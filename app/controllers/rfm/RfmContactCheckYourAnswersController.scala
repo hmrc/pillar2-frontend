@@ -53,7 +53,7 @@ class RfmContactCheckYourAnswersController @Inject() (
           RfmContactByTelephoneSummary.row(request.userAnswers),
           RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
         ).flatten
-      )
+      ).withCssClass("govuk-!-margin-bottom-9")
       val rfmSecondaryContactList = SummaryListViewModel(
         rows = Seq(
           RfmAddSecondaryContactSummary.row(request.userAnswers),
@@ -62,7 +62,7 @@ class RfmContactCheckYourAnswersController @Inject() (
           RfmSecondaryTelephonePreferenceSummary.row(request.userAnswers),
           RfmSecondaryTelephoneSummary.row(request.userAnswers)
         ).flatten
-      )
+      ).withCssClass("govuk-!-margin-bottom-9")
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
@@ -93,6 +93,6 @@ class RfmContactCheckYourAnswersController @Inject() (
         EntityTypePartnershipCompanyRegRfmSummary.row(userAnswers),
         EntityTypePartnershipCompanyUtrRfmSummary.row(userAnswers)
       ).flatten
-    )
+    ).withCssClass("govuk-!-margin-bottom-9")
 
 }
