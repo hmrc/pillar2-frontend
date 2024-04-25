@@ -1039,6 +1039,7 @@ rfm.contactCheckYourAnswers.title = Review and submit
 rfm.contactCheckYourAnswers.heading = Review and submit
 rfm.contactCheckYourAnswers.filingmember = Filing member details
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
+rfm.checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 rfm.contactCheckYourAnswers.first = First contact
 rfm.contactCheckYourAnswers.second = Second contact
 rfm.contactCheckYourAnswers.address = Contact address
