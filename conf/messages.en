@@ -1116,6 +1116,12 @@ agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
 agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
 agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
 
+agent.clientConfirm.title = Confirm your client’s details
+agent.clientConfirm.heading = Confirm your client’s details
+agent.clientConfirm.h2.upe = Client’s ultimate parent
+agent.clientConfirm.h2.id = Client’s Pillar 2 top-up taxes ID
+agent.clientConfirm.link = Enter a different client’s Pillar 2 top-up taxes ID
+
 agent.noMatch.title = Your client’s details did not match HMRC records
 agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.

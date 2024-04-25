@@ -127,7 +127,6 @@ trait SpecBase
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[IdentifierAction].qualifiedWith("AgentIdentifier").to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
