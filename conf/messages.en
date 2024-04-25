@@ -1102,7 +1102,7 @@ rfm.security.errorPage.heading= The details you entered do not match our records
 rfm.security.errorPage.p1= We could not match the details you entered with records held by HMRC.
 rfm.security.errorPage.p2= If you think you made an error when entering them you can
 rfm.security.errorPage.p2.link= go back to try again using different details.
-
+rfm.site.confirm.submit = Confirm and submit
 ###############################################
 #
 # Agent Services

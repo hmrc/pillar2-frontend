@@ -93,6 +93,6 @@ class RfmContactCheckYourAnswersController @Inject() (
         EntityTypePartnershipCompanyRegRfmSummary.row(userAnswers),
         EntityTypePartnershipCompanyUtrRfmSummary.row(userAnswers)
       ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+    )
 
 }
