@@ -84,7 +84,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)
+          emptyUserAnswers
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
@@ -108,7 +108,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
 
-      "go to Add Secondary Contact details page where they enter their phone details" in {
+      "go to Add Secondary Contact details page when they enter their phone details" in {
         navigator.nextPage(
           RfmCapturePrimaryTelephonePage,
           NormalMode,
@@ -161,12 +161,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
       }
 
-      "go to RfmSecondartyTelephonePreference page from RfmSecondaryTelephonePreference page" in {
+      "go to RfmSecondaryTelephonePreference page from RfmSecondaryEmailPage page" in {
         navigator.nextPage(RfmSecondaryEmailPage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "someone@unknown.com")) mustBe
           controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
       }
 
-      "go to RfmSecondaryTelephonePreference page if they choose to nominate a secondary contact number" in {
+      "go to RfmSecondaryCapturePhonePage page if they choose to nominate a secondary contact number" in {
         navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)) mustBe
           controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
       }
@@ -194,7 +194,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
 
-      "go to submit and review CYA page from secondary contact telephone page with address" in {
+      "go to RfmContactAddress page from secondary contact telephone page" in {
 
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryCapturePhonePage, "1234567890")
@@ -330,7 +330,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           CheckMode,
           emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         ) mustBe
-          controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+          submitAndReview
       }
 
       "go to journey recovery if no answer for contact by RFM Corporate Position logic can be found" in {
@@ -372,7 +372,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           submitAndReview
       }
 
-      "go to submit and review CYA page from  do you want to add secondary contact  page with answer Yes" in {
+      "go to secondary contact name page from  do you want to add secondary contact  page with answer Yes" in {
         val ua = emptyUserAnswers
           .setOrException(RfmAddSecondaryContactPage, true)
           .setOrException(RfmSecondaryContactNamePage, "second last")
@@ -428,13 +428,6 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           .setOrException(RfmAddSecondaryContactPage, true)
         navigator.nextPage(RfmAddSecondaryContactPage, CheckMode, ua) mustBe
           controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(CheckMode)
-      }
-
-      "go to check answer if no secondary information is present for name " in {
-        val ua = emptyUserAnswers
-          .setOrException(RfmAddSecondaryContactPage, true)
-        navigator.nextPage(RfmSecondaryContactNamePage, CheckMode, ua) mustBe
-          controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(CheckMode)
       }
 
       "go to recovery page if RfmAddSecondaryContactPage  not provided" in {
