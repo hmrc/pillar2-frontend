@@ -103,9 +103,17 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
+  val rfmNewFilingMemberDetails = emptyUserAnswers
+    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+    .setOrException(RfmUkBasedPage, false)
+    .setOrException(RfmNameRegistrationPage, "name")
+    .setOrException(RfmRegisteredAddressPage, nonUkAddress)
+
   val rfmID = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
     .setOrException(RfmUkBasedPage, true)
+    .setOrException(RfmNameRegistrationPage, "name")
+    .setOrException(RfmRegisteredAddressPage, nonUkAddress) //TODO - consider inheritance/traits with ukAddress and nonUkAddress
     .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(RfmGRSResponsePage, grsResponse)
     .setOrException(RfmPrimaryContactNamePage, "primary name")

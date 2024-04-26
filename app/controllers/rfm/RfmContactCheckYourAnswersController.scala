@@ -69,15 +69,19 @@ class RfmContactCheckYourAnswersController @Inject() (
       if (request.userAnswers.rfmContactDetailStatus) {
         Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    if (request.userAnswers.rfmContactDetailStatus && request.userAnswers.rfmNewFilingMemberDetailsStatus) {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    } else {
+      Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad)
+    }
   }
 
   private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =

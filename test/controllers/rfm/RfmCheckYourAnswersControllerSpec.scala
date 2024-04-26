@@ -52,7 +52,7 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
       }
     }
 
-    "redirect to incomplete data page when rfm noId question status is not completed" in {
+    "redirect to restart error page when rfm noId question status is not completed" in {
       val userAnswer = UserAnswers(userAnswersId)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .build()
@@ -61,7 +61,7 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
       }
     }
 

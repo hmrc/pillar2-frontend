@@ -17,13 +17,33 @@
 package helpers
 
 import base.SpecBase
-
-import models.{NonUKAddress, UserAnswers}
+import models.rfm.CorporatePosition
+import models.UserAnswers
 import pages._
 
 class ReplaceFilingMemberHelpersSpec extends SpecBase {
 
   "Replace Filing Member Helper" when {
+    "filing members details status" should {
+      "return true if all the fields are answered" in {
+        val userAnswers: UserAnswers = rfmNewFilingMemberDetails
+        userAnswers.rfmNewFilingMemberDetailsStatus mustEqual true
+      }
+      "return false if a new nominated filing member's details are missing" in {
+        val userAnswers = rfmNewFilingMemberDetails
+          .remove(RfmRegisteredAddressPage)
+          .success
+          .value
+        userAnswers.rfmNewFilingMemberDetailsStatus mustEqual false
+
+      }
+      "return true for a UPE" in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        userAnswers.rfmNewFilingMemberDetailsStatus mustEqual true
+      }
+    }
+
     "Contact Detail Status" should {
       "return true if all questions are answered" in {
         val userAnswer = rfmPrimaryAndSecondaryContactData

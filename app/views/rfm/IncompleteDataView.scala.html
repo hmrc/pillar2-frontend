@@ -34,5 +34,10 @@
     showBackLink = false
 ) {
     @heading(messages("rfm.incompleteDataView.heading"), "govuk-heading-l")
-    @paragraphMessageWithLink(Some(messages("rfm.incompleteDataView.paragraphStart")), messages("rfm.incompleteDataView.link.text"),None, controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(CheckMode).url)
+    @paragraphMessageWithLink(
+        Some(messages("rfm.incompleteDataView.paragraphStart")),
+        messages("rfm.incompleteDataView.link.text"),
+        None,
+        controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
+    )
 }

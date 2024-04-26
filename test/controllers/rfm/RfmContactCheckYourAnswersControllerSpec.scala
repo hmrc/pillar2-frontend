@@ -55,12 +55,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
       }
     }
 
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
-
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
         .build()
       running(application) {
@@ -227,6 +226,19 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .set(RfmPrimaryContactNamePage, "name")
         .success
         .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
+      }
+    }
+
+    "must redirect to the 'under construction' page when valid data is submitted" in {
+      val userAnswers = rfmID
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {

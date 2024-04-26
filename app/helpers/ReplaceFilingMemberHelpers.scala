@@ -16,9 +16,9 @@
 
 package helpers
 
-import models.{EnrolmentInfo, UserAnswers}
+import models.UserAnswers
+import models.rfm.CorporatePosition.{NewNfm, Upe}
 import pages._
-import utils.RowStatus
 
 trait ReplaceFilingMemberHelpers {
 
@@ -43,6 +43,17 @@ trait ReplaceFilingMemberHelpers {
       case (true, true, false, false, true, true, true, false, false, true)    => true
       case (true, true, true, true, false, false, false, false, false, true)   => true
       case _                                                                   => false
+    }
+  }
+
+  def rfmNewFilingMemberDetailsStatus: Boolean = {
+    val corporatePosition   = get(RfmCorporatePositionPage).getOrElse(NewNfm)
+    val filingMemberName    = get(RfmNameRegistrationPage).isDefined
+    val filingMemberAddress = get(RfmRegisteredAddressPage).isDefined
+    (corporatePosition, filingMemberName, filingMemberAddress) match {
+      case (Upe, _, _)          => true
+      case (NewNfm, true, true) => true
+      case _                    => false
     }
   }
 
