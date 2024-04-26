@@ -103,7 +103,7 @@ trait SubscriptionHelpers {
     }
   }
 
-  def groupDetailStatusChecker: Boolean = {
+  def contactDetailStatusChecker: Boolean = {
     val pName            = get(SubPrimaryContactNamePage).isDefined
     val PEmail           = get(SubPrimaryEmailPage).isDefined
     val pPhonePref       = get(SubPrimaryPhonePreferencePage)
@@ -127,9 +127,9 @@ trait SubscriptionHelpers {
 
   def contactDetailStatus: RowStatus =
     get(SubPrimaryContactNamePage) match {
-      case Some(_) if groupDetailStatusChecker => RowStatus.Completed
-      case None                                => RowStatus.NotStarted
-      case _                                   => RowStatus.InProgress
+      case Some(_) if contactDetailStatusChecker => RowStatus.Completed
+      case None                                  => RowStatus.NotStarted
+      case _                                     => RowStatus.InProgress
     }
 
   def finalStatusCheck: Boolean =
@@ -137,7 +137,7 @@ trait SubscriptionHelpers {
       groupDetailStatus == RowStatus.Completed
         & fmStatus == RowStatus.Completed
         & upeStatus == RowStatus.Completed
-        & groupDetailStatusChecker
+        & contactDetailStatus == RowStatus.Completed
     ) { true }
     else { false }
 
