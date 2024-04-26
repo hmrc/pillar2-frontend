@@ -12,13 +12,14 @@ import viewmodels.govuk.summarylist._
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   val userName     = "John Doe"
   val countryCode  = "US"
+  val country      = "United States"
   val nonUkAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = countryCode)
 
   val userAnswer = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
 
-  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn("United States")
+  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
   val list = SummaryListViewModel(
     rows = Seq(
@@ -52,7 +53,9 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list items" in {
       view.getElementsByClass("govuk-summary-list__value").get(0).text must include(userName)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.fullAddress + countryCode)
+      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine1)
+      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine3)
+      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(country)
     }
 
     "have a summary list links" in {
