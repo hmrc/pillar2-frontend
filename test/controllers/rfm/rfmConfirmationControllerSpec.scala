@@ -27,14 +27,13 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.html.RegistrationConfirmationView
+import utils.ViewHelpers
 import views.html.rfm.RfmConfirmationView
 
 import scala.concurrent.Future
 
 class rfmConfirmationControllerSpec extends SpecBase {
-
+  val dateHelper = new ViewHelpers()
   "RfmConfirmation Controller" when {
     val enrolments: Set[Enrolment] = Set(
       Enrolment(
@@ -101,7 +100,7 @@ class rfmConfirmationControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther))))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RfmConfirmationView]
