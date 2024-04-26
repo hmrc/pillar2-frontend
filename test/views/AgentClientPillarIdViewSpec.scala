@@ -31,19 +31,21 @@ class AgentClientPillarIdViewSpec extends ViewSpecBase {
   "Agent Client PillarId View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("agent.pillar2Ref.title"))
+      view.getElementsByTag("title").text must include("What is your client’s Pillar 2 top-up taxes ID?")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("agent.pillar2Ref.heading"))
+      view.getElementsByTag("h1").text must include("What is your client’s Pillar 2 top-up taxes ID?")
     }
 
     "have a hint" in {
-      view.getElementById("value-hint").text must include(messages("agent.pillar2Ref.hint"))
+      view.getElementById("value-hint").text must include(
+        "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage."
+      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
+      view.getElementsByClass("govuk-button").text must include("Continue")
     }
 
   }

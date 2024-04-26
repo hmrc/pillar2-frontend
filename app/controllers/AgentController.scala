@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AgentClientPillarIdView
+import views.html.{AgentClientNoMatch, AgentClientPillarIdView}
 import views.html.rfm.AgentView
 
 import javax.inject.{Inject, Named}
@@ -39,6 +39,7 @@ class AgentController @Inject() (
   subscriptionService:                SubscriptionService,
   view:                               AgentView,
   clientPillarIdView:                 AgentClientPillarIdView,
+  clientNoMatchView:                  AgentClientNoMatch,
   @Named("AgentIdentifier") identify: IdentifierAction,
   featureAction:                      FeatureFlagActionFactory,
   getData:                            DataRetrievalAction,
@@ -73,16 +74,22 @@ class AgentController @Inject() (
           value => {
             val result = for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, value))
-              _              <- subscriptionService.readSubscription(value)
               _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              _              <- subscriptionService.readSubscription(value)
             } yield Redirect(routes.UnderConstructionController.onPageLoad)
 
             result.recover { case InternalIssueError =>
               Redirect(
-                routes.UnderConstructionController.onPageLoad
-              ) // user must be routed to a placeholder error screen which will be developed in a separate ticket PIL-501
+                routes.AgentController.onPageLoadNoClientMatch
+              )
             }
           }
         )
   }
+
+  def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
+      Ok(clientNoMatchView())
+  }
+
 }
