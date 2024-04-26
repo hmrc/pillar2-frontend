@@ -27,13 +27,14 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 
-trait ViewSpecBase extends PlaySpec
-  with GuiceOneAppPerSuite
-  with Injecting
-  with Matchers
-  with UserAnswersFixture
-  with BeforeAndAfterEach
-  with AllMocks {
+trait ViewSpecBase
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with Matchers
+    with UserAnswersFixture
+    with BeforeAndAfterEach
+    with AllMocks {
 
   val request:                        Request[AnyContent] = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]

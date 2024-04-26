@@ -6,7 +6,7 @@ import views.html.rfm.StartPageView
 
 class StartPageViewSpec extends ViewSpecBase {
 
-  val page         = inject[StartPageView]
+  val page = inject[StartPageView]
 
   val view = Jsoup.parse(page()(request, appConfig, messages).toString())
 
@@ -38,8 +38,10 @@ class StartPageViewSpec extends ViewSpecBase {
     "have a paragraph body" in {
       view.getElementsByClass("govuk-body").get(0).text must include(messages("rfm.startPage.p1"))
       view.getElementsByClass("govuk-body").get(1).text must include(messages("rfm.startPage.p2"))
-      view.getElementsByClass("govuk-body").get(2).text must include(messages("rfm.startPage.p3")
-        .replace("{0}", messages("rfm.startPage.p3.link") + "."))
+      view.getElementsByClass("govuk-body").get(2).text must include(
+        messages("rfm.startPage.p3")
+          .replace("{0}", messages("rfm.startPage.p3.link") + ".")
+      )
       view.getElementsByClass("govuk-body").get(3).text must include(messages("rfm.startPage.p4"))
       view.getElementsByClass("govuk-body").get(4).text must include(messages("rfm.startPage.p5"))
       view.getElementsByClass("govuk-body").get(5).text must include(messages("rfm.startPage.p6"))
@@ -48,16 +50,16 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have a bulleted list" in {
-      view.getElementsByTag("li").get(0).text must include(messages("rfm.startPage.b1"))
-      view.getElementsByTag("li").get(1).text must include(messages("rfm.startPage.b2"))
-      view.getElementsByTag("li").get(2).text must include(messages("rfm.startPage.b3"))
-      view.getElementsByTag("li").get(3).text must include(messages("rfm.startPage.b4"))
-      view.getElementsByTag("li").get(4).text must include(messages("rfm.startPage.b5"))
-      view.getElementsByTag("li").get(5).text must include(messages("rfm.startPage.b6"))
-      view.getElementsByTag("li").get(6).text must include(messages("rfm.startPage.b7"))
-      view.getElementsByTag("li").get(7).text must include(messages("rfm.startPage.b8"))
-      view.getElementsByTag("li").get(8).text must include(messages("rfm.startPage.b9"))
-      view.getElementsByTag("li").get(9).text must include(messages("rfm.startPage.b10"))
+      view.getElementsByTag("li").get(0).text  must include(messages("rfm.startPage.b1"))
+      view.getElementsByTag("li").get(1).text  must include(messages("rfm.startPage.b2"))
+      view.getElementsByTag("li").get(2).text  must include(messages("rfm.startPage.b3"))
+      view.getElementsByTag("li").get(3).text  must include(messages("rfm.startPage.b4"))
+      view.getElementsByTag("li").get(4).text  must include(messages("rfm.startPage.b5"))
+      view.getElementsByTag("li").get(5).text  must include(messages("rfm.startPage.b6"))
+      view.getElementsByTag("li").get(6).text  must include(messages("rfm.startPage.b7"))
+      view.getElementsByTag("li").get(7).text  must include(messages("rfm.startPage.b8"))
+      view.getElementsByTag("li").get(8).text  must include(messages("rfm.startPage.b9"))
+      view.getElementsByTag("li").get(9).text  must include(messages("rfm.startPage.b10"))
       view.getElementsByTag("li").get(10).text must include(messages("rfm.startPage.b11"))
       view.getElementsByTag("li").get(11).text must include(messages("rfm.startPage.b12"))
     }

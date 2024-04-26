@@ -10,8 +10,8 @@ import views.html.rfm.RfmCheckYourAnswersView
 import viewmodels.govuk.summarylist._
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  val userName = "John Doe"
-  val countryCode = "US"
+  val userName     = "John Doe"
+  val countryCode  = "US"
   val nonUkAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = countryCode)
 
   val userAnswer = emptyUserAnswers
