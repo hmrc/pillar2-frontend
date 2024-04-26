@@ -19,10 +19,10 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmContactAddressFormProvider
-import models.{NonUKAddress, NormalMode, UKAddress}
+import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactAddressPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmContactAddressPage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -133,7 +133,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
 
       }
     }
