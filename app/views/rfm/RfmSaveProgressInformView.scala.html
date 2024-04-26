@@ -35,7 +35,7 @@
     @paragraphBody(messages("rfm.saveProgressInform.p1"), id = Some("save-p1"))
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.CorporatePositionController.onPageLoad.url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
     )
 
 }
