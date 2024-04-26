@@ -1036,8 +1036,8 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 
 rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
 rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 top-up taxes account.
-rfm.cannotReturnAfterConfirmation.p2 = You can now report and manage your Pillar 2 top-up taxes.
-rfm.cannotReturnAfterConfirmation.link = sample
+rfm.cannotReturnAfterConfirmation.p2 = You can now
+rfm.cannotReturnAfterConfirmation.link = report and manage your Pillar 2 top-up taxes
 
 entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.title = Review and submit

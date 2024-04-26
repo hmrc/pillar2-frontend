@@ -21,8 +21,7 @@
 layout: templates.Layout,
 heading: heading,
 paragraphBody: paragraphBody,
-paragraph: paragraph,
-link: link,
+paragraphLink: paragraphBodyWithLink,
 govukButton: GovukButton
 )
 
@@ -35,11 +34,6 @@ showBackLink = false
 
 @heading(messages("rfm.cannotReturnAfterConfirmation.heading"), "govuk-heading-l")
 @paragraphBody(messages("rfm.cannotReturnAfterConfirmation.p1"))
-@paragraphBody(messages("rfm.cannotReturnAfterConfirmation.p2"))
-@paragraph(link(
-text = messages("rfm.cannotReturnAfterConfirmation.link"),
-call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
-fullStop = false
-))
+@paragraphLink(messages("rfm.cannotReturnAfterConfirmation.p2"), messages("rfm.cannotReturnAfterConfirmation.link"), "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
 
 }
