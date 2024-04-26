@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmCorporatePositionFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.rfm.CorporatePosition
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -44,7 +44,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -62,7 +62,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[CorporatePositionView]
 
@@ -87,7 +87,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -108,7 +108,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.Upe.toString)
 
         val result = route(application, request).value
@@ -129,7 +129,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
 
         val result = route(application, request).value
@@ -146,7 +146,7 @@ class CorporatePositionControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad().url)
+          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.tasklist.SectionViewModel
+package pages
 
-@this()
-@(section: SectionViewModel, params: Tag, component: String, id: String = "")(implicit messages: Messages)
+import play.api.libs.json.JsPath
 
-<li class="app-task-list__item">
-    <span class="app-task-list__task-name">
-        @if(section.call.isDefined) {
-            <a href="@section.call.get.url" class="govuk-link" aria-describedby="@component">@messages(section.name)</a>
-        } else {
-            @messages(section.name)
-        }
-    </span>
-    <span class="hmrc-status-tag" id="@component">
-    @params.content.asHtml
-    </span>
-</li>
+case object RfmCheckYourAnswersPage extends QuestionPage[String] {
 
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmCheckYourAnswers"
+}

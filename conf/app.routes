@@ -352,6 +352,9 @@ POST       /replace-filing-member/security/enter-pillar2-id                    c
 
 GET        /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
+GET        /replace-filing-member/change-corporate-position                    controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/change-corporate-position                    controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = CheckMode)
@@ -388,20 +391,10 @@ POST        /replace-filing-member/contact-details/input-telephone              
 GET         /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-
-
-
-
-
-
 GET         /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
-
-
-
-
 
 GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
 
@@ -411,7 +404,9 @@ GET         /replace-filing-member/security/change-check-answers             con
 GET        /replace-filing-member/error/no-match                          controllers.rfm.MismatchedRegistrationDetailsController.onPageLoad
 
 GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
@@ -449,6 +444,9 @@ GET        /replace-filing-member/contact-details/change-second-telephone       
 POST       /replace-filing-member/contact-details/change-second-telephone                      	controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 GET        /replace-filing-member/contact-details/change-second-input-telephone             	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /replace-filing-member/contact-details/change-second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /replace-filing-member/review-submit/check-answers                                   controllers.rfm.RfmContactCheckYourAnswersController.onPageLoad
+POST       /replace-filing-member/review-submit/check-answers                                   controllers.rfm.RfmContactCheckYourAnswersController.onSubmit
 
 GET        /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
 POST       /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId

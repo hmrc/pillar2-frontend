@@ -18,6 +18,7 @@ package helpers
 
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
 import org.scalatest.TryValues
@@ -69,6 +70,54 @@ trait UserAnswersFixture extends TryValues {
       )
     )
   )
+
+  val rfmCorpPosition = emptyUserAnswers
+    .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+
+  val rfmUpe = emptyUserAnswers
+    .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, true)
+    .setOrException(RfmSecondaryContactNamePage, "secondary name")
+    .setOrException(RfmSecondaryEmailPage, "email@address.com")
+    .setOrException(RfmSecondaryPhonePreferencePage, true)
+    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
+  val rfmNoID = emptyUserAnswers
+    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+    .setOrException(RfmUkBasedPage, false)
+    .setOrException(RfmNameRegistrationPage, "name")
+    .setOrException(RfmRegisteredAddressPage, nonUkAddress)
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, true)
+    .setOrException(RfmSecondaryContactNamePage, "secondary name")
+    .setOrException(RfmSecondaryEmailPage, "email@address.com")
+    .setOrException(RfmSecondaryPhonePreferencePage, true)
+    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
+  val rfmID = emptyUserAnswers
+    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+    .setOrException(RfmUkBasedPage, true)
+    .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(RfmGRSResponsePage, grsResponse)
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, true)
+    .setOrException(RfmSecondaryContactNamePage, "secondary name")
+    .setOrException(RfmSecondaryEmailPage, "email@address.com")
+    .setOrException(RfmSecondaryPhonePreferencePage, true)
+    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
   val registrationDate: LocalDate = LocalDate.of(2024, 1, 31)
 
@@ -526,5 +575,24 @@ trait UserAnswersFixture extends TryValues {
     .set(SubAccountingPeriodPage, accountingPeriod)
     .success
     .value
+
+  val rfmPrimaryAndSecondaryContactData: UserAnswers = emptyUserAnswers
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, true)
+    .setOrException(RfmSecondaryContactNamePage, "secondary name")
+    .setOrException(RfmSecondaryEmailPage, "email@address.com")
+    .setOrException(RfmSecondaryPhonePreferencePage, true)
+    .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
+  val rfmMissingContactData: UserAnswers = emptyUserAnswers
+    .setOrException(RfmPrimaryContactNamePage, "primary name")
+    .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
+    .setOrException(RfmContactByTelephonePage, true)
+    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmAddSecondaryContactPage, false)
 
 }
