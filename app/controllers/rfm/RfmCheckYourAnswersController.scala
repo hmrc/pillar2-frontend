@@ -20,6 +20,8 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.Mode
+import navigation.ReplaceFilingMemberNavigator
+import pages.RfmCheckYourAnswersPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +37,7 @@ class RfmCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  navigator:                ReplaceFilingMemberNavigator,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmCheckYourAnswersView,
   countryOptions:           CountryOptions
@@ -59,6 +62,10 @@ class RfmCheckYourAnswersController @Inject() (
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
+  }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    Future.successful(Redirect(navigator.nextPage(RfmCheckYourAnswersPage, mode, request.userAnswers)))
   }
 
 }

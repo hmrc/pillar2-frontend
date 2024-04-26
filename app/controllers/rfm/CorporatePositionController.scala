@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmCorporatePositionFormProvider
-import models.rfm.CorporatePosition
+import navigation.ReplaceFilingMemberNavigator
 import models.Mode
 import pages.RfmCorporatePositionPage
 import play.api.i18n.I18nSupport
@@ -39,6 +39,7 @@ class CorporatePositionController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
+  navigator:                 ReplaceFilingMemberNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CorporatePositionView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -65,20 +66,11 @@ class CorporatePositionController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        {
-          case value @ CorporatePosition.Upe =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
-              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
-
-          case value @ CorporatePosition.NewNfm =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, value))
-              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            } yield Redirect(controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(mode))
-
-        }
+        corporatePosition =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, corporatePosition))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Redirect(navigator.nextPage(RfmCorporatePositionPage, mode, updatedAnswers))
       )
   }
 }

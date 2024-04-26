@@ -35,7 +35,7 @@
 @layout(pageTitle = title(form, messages("rfm.corporatePosition.title"))) {
 
 
-    @formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.CorporatePositionController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
