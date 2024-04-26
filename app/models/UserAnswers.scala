@@ -16,7 +16,7 @@
 
 package models
 
-import helpers.{BookmarkHelper, SubscriptionHelpers}
+import helpers.{BookmarkHelper, ReplaceFilingMemberHelpers, SubscriptionHelpers}
 import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -30,6 +30,7 @@ final case class UserAnswers(
   data:        JsObject = Json.obj(),
   lastUpdated: Instant = Instant.now
 ) extends SubscriptionHelpers
+    with ReplaceFilingMemberHelpers
     with BookmarkHelper {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =

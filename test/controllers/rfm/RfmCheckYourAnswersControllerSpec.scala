@@ -21,7 +21,7 @@ import models.{NonUKAddress, NormalMode, UserAnswers}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.Configuration
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
 import viewmodels.govuk.SummaryListFluency
 
 class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -76,6 +76,24 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+      }
+    }
+
+    "redirect to rfm contact details registration page on form submission" in {
+      val userAnswer = UserAnswers(userAnswersId)
+        .set(RfmNameRegistrationPage, name)
+        .success
+        .value
+        .set(RfmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmCheckYourAnswersController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody()
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
       }
     }
 
