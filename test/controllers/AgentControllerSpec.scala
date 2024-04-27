@@ -29,7 +29,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import views.html.AgentClientPillarIdView
+import views.html.{AgentClientNoMatch, AgentClientPillarIdView}
 import views.html.rfm.AgentView
 
 import scala.concurrent.Future
@@ -132,7 +132,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to under construction page (change in 501) if the read subscription returns a failed response" in {
+    "must redirect to no match if the read subscription returns a failed response" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -152,7 +152,7 @@ class AgentControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.AgentController.onPageLoadNoClientMatch.url
       }
     }
 
@@ -177,6 +177,36 @@ class AgentControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+  }
+
+  "Agent No Client Match" must {
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+      }
+    }
+
+    "must return the correct view if the feature flag is true and user is agent" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AgentClientNoMatch]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }
