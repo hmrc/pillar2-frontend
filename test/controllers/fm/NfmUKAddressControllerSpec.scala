@@ -117,5 +117,39 @@ class NfmUKAddressControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
       }
     }
+
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers.set(FmNameRegistrationPage, "Name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "addressLine1" -> "Line1",
+              "addressLine2" -> "Line2",
+              "addressLine3" -> "Line3",
+              "addressLine4" -> "Line4",
+              "postalCode"   -> "123456",
+              "countryCode"  -> "US"
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered on POST" in {
+      val application = applicationBuilder(userAnswers = None).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
+      }
+    }
+
   }
 }

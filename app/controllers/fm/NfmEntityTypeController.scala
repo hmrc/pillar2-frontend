@@ -60,10 +60,12 @@ class NfmEntityTypeController @Inject() (
         request.userAnswers
           .get(FmEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType == EntityType.Other) {
+            if (!ukBased & entityType == EntityType.Other) { // TODO Check logic - would have to be registered in the UK to get to this page
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(
+                                    request.userAnswers.set(FmRegisteredInUKPage, true)
+                                  ) // TODO - Check logic - should we be setting this to true on page load ?
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Ok(view(form.fill(entityType), mode))
             } else {
               Future.successful(Ok(view(form.fill(entityType), mode)))
