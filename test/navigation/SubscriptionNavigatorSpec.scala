@@ -19,12 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import models._
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
 import models.subscription.AccountingPeriod
 import pages._
-import utils.RowStatus
-
 import java.time.LocalDate
 
 class SubscriptionNavigatorSpec extends SpecBase {
@@ -41,7 +37,6 @@ class SubscriptionNavigatorSpec extends SpecBase {
     "in Normal mode" must {
 
       "must go from a page that doesn't exist in the route map to Index" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
@@ -77,6 +72,10 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true)) mustBe
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode)
       }
+      "go to AddSecondaryContact page from the primary contact capture number page" in {
+        navigator.nextPage(SubPrimaryCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryCapturePhonePage, "1234567890")) mustBe
+          controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
+      }
       "go to journey recovery if no answer for SubPrimaryPhonePreference page can be found" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
           jr
@@ -109,6 +108,14 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubSecondaryPhonePreferencePage, true)) mustBe
           controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode)
       }
+      "go to subscription address page from the secondary contact capture number page" in {
+        navigator.nextPage(
+          SubSecondaryCapturePhonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(SubSecondaryCapturePhonePage, "1234567890")
+        ) mustBe
+          controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
+      }
       "go to journey recovery if no answer for SubSecondaryPhonePreference page can be found" in {
         navigator.nextPage(SubSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
           jr
@@ -125,17 +132,14 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubRegisteredAddressPage, NormalMode, emptyUserAnswers.setOrException(SubRegisteredAddressPage, nonUkAddress)) mustBe
           contactCYA
       }
-
     }
 
     "in Check mode" must {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe contactCYA
       }
-
       "go to group CYA page from mne or domestic page" in {
         navigator.nextPage(SubMneOrDomesticPage, CheckMode, emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)) mustBe
           groupCYA
@@ -163,6 +167,35 @@ class SubscriptionNavigatorSpec extends SpecBase {
       "go to CYA page if they have chosen not to nominate a  primary contact number" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, false)) mustBe
           contactCYA
+      }
+      "go to secondary contact name page if they select yes on AddSecondaryContact page and secondary contact name is empty" in {
+        navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)) mustBe
+          controllers.subscription.routes.SecondaryContactNameController.onPageLoad(CheckMode)
+      }
+      "go to journey recovery if no answer for SubAddSecondaryContactPage page can be found" in {
+        navigator.nextPage(SubAddSecondaryContactPage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
+      "go to contact CYA page if they select yes on AddSecondaryContact page and secondary contact name is not empty" in {
+        navigator.nextPage(
+          SubAddSecondaryContactPage,
+          CheckMode,
+          emptyUserAnswers
+            .setOrException(SubAddSecondaryContactPage, true)
+            .setOrException(SubSecondaryContactNamePage, "Name")
+        ) mustBe
+          contactCYA
+      }
+      "go to review and submit CYA page if they select yes on AddSecondaryContact page and they have finished every task" in {
+        navigator.nextPage(
+          SubAddSecondaryContactPage,
+          CheckMode,
+          emptyUserAnswers
+            .setOrException(SubAddSecondaryContactPage, true)
+            .setOrException(SubSecondaryContactNamePage, "Name")
+            .setOrException(CheckYourAnswersLogicPage, true)
+        ) mustBe
+          submitAndReview
       }
       "go to contact CYA page from secondary contact name page" in {
         navigator.nextPage(SubSecondaryContactNamePage, CheckMode, subCompletedJourney) mustBe
@@ -205,6 +238,15 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubPrimaryEmailPage, CheckMode, ua) mustBe
           submitAndReview
       }
+      "go to contact CYA page from primary capture phone page" in {
+        navigator.nextPage(SubPrimaryCapturePhonePage, CheckMode, emptyUserAnswers.setOrException(SubPrimaryCapturePhonePage, "123456789")) mustBe
+          contactCYA
+      }
+      "go to review and submit CYA page from primary capture phone page if they have finished every task " in {
+        val ua = emptyUserAnswers.setOrException(SubPrimaryCapturePhonePage, "123456789").setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(SubPrimaryCapturePhonePage, CheckMode, ua) mustBe
+          submitAndReview
+      }
       "go primary capture telephone page if they have chosen to nominate a primary contact number and if they have finished every task " in {
         val ua = emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
@@ -214,6 +256,16 @@ class SubscriptionNavigatorSpec extends SpecBase {
         val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
           submitAndReview
+      }
+      "go to secondary contact email page from secondary contact name page if they have not finished every task" in {
+        navigator.nextPage(
+          SubSecondaryContactNamePage,
+          CheckMode,
+          emptyUserAnswers
+            .setOrException(SubSecondaryContactNamePage, "Name")
+            .setOrException(CheckYourAnswersLogicPage, false)
+        ) mustBe
+          controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(CheckMode)
       }
       "go to review and submit CYA page from secondary contact name page if they have finished every task " in {
         val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)
@@ -225,6 +277,16 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubSecondaryEmailPage, CheckMode, ua) mustBe
           submitAndReview
       }
+      "go to secondary telephone preference page from secondary contact email page if they have not finished every task" in {
+        navigator.nextPage(
+          SubSecondaryEmailPage,
+          CheckMode,
+          emptyUserAnswers
+            .setOrException(SubSecondaryEmailPage, "test@test.com")
+            .setOrException(CheckYourAnswersLogicPage, false)
+        ) mustBe
+          controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(CheckMode)
+      }
       "go secondary capture telephone page if they have chosen to nominate a secondary contact number and if they have finished every task " in {
         val ua = emptyUserAnswers.setOrException(SubSecondaryPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
@@ -235,7 +297,24 @@ class SubscriptionNavigatorSpec extends SpecBase {
         navigator.nextPage(SubSecondaryPhonePreferencePage, CheckMode, ua) mustBe
           submitAndReview
       }
-
+      "go to contact CYA page from secondary capture phone page" in {
+        navigator.nextPage(SubSecondaryCapturePhonePage, CheckMode, emptyUserAnswers.setOrException(SubSecondaryCapturePhonePage, "123456789")) mustBe
+          contactCYA
+      }
+      "go to review and submit CYA page from secondary capture phone page if they have finished every task " in {
+        val ua = emptyUserAnswers.setOrException(SubSecondaryCapturePhonePage, "123456789").setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(SubSecondaryCapturePhonePage, CheckMode, ua) mustBe
+          submitAndReview
+      }
+      "go to contact CYA page from registered address page" in {
+        navigator.nextPage(SubRegisteredAddressPage, CheckMode, emptyUserAnswers.setOrException(SubRegisteredAddressPage, nonUkAddress)) mustBe
+          contactCYA
+      }
+      "go to review and submit CYA page from registered address page if they have finished every task " in {
+        val ua = emptyUserAnswers.setOrException(SubRegisteredAddressPage, nonUkAddress).setOrException(CheckYourAnswersLogicPage, true)
+        navigator.nextPage(SubRegisteredAddressPage, CheckMode, ua) mustBe
+          submitAndReview
+      }
     }
   }
 }
