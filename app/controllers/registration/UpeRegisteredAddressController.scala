@@ -58,7 +58,7 @@ class UpeRegisteredAddressController @Inject() (
         }
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
-      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -80,6 +80,6 @@ class UpeRegisteredAddressController @Inject() (
               } yield Redirect(navigator.nextPage(UpeRegisteredAddressPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

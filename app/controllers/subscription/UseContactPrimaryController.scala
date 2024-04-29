@@ -69,7 +69,7 @@ class UseContactPrimaryController @Inject() (
         case (true, false, Some(true)) | (false, false, _) => upeNoID(mode)
         case _ => Redirect(controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode))
       }
-    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     contactDetail(request) match {
@@ -124,14 +124,14 @@ class UseContactPrimaryController @Inject() (
                 contactEmail <- request.userAnswers.get(FmContactEmailPage)
                 phonePref    <- request.userAnswers.get(FmPhonePreferencePage)
               } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(FmCapturePhonePage))))
-                .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               (for {
                 contactName  <- request.userAnswers.get(UpeContactNamePage)
                 contactEmail <- request.userAnswers.get(UpeContactEmailPage)
                 phonePref    <- request.userAnswers.get(UpePhonePreferencePage)
               } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage))))
-                .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             }
           }
         } else {
@@ -142,7 +142,7 @@ class UseContactPrimaryController @Inject() (
           } yield Right(SubscriptionContactDetails(contactName, contactEmail, phonePref, request.userAnswers.get(UpeCapturePhonePage)))
         }
       }
-      .getOrElse(Left(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
@@ -159,7 +159,7 @@ class UseContactPrimaryController @Inject() (
         case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
-    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   private def upeNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
     (for {
@@ -174,7 +174,7 @@ class UseContactPrimaryController @Inject() (
         case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
       }
-    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 }
 
 object UseContactPrimaryController {

@@ -53,7 +53,7 @@ class UpeContactEmailController @Inject() (
         val preparedForm = request.userAnswers.get(UpeContactEmailPage).map(email => form.fill(email)).getOrElse(form)
         Ok(view(preparedForm, mode, username))
       }
-      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -74,6 +74,6 @@ class UpeContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(UpeContactEmailPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

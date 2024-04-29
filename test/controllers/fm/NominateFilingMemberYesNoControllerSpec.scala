@@ -79,7 +79,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
-        redirectLocation(result).value mustEqual controllers.subscription.routes.InprogressTaskListController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         status(result) mustBe SEE_OTHER
       }
     }

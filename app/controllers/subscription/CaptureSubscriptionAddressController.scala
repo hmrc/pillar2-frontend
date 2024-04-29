@@ -55,7 +55,7 @@ class CaptureSubscriptionAddressController @Inject() (
       val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
       Ok(view(preparedForm, mode, countryOptions.options()))
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

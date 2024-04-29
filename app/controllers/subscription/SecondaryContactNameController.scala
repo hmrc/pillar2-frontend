@@ -59,7 +59,7 @@ class SecondaryContactNameController @Inject() (
         case None    => form
       }
       Ok(view(preparedForm, mode))
-    }).getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+    }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

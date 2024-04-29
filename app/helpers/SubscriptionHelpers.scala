@@ -52,46 +52,86 @@ trait SubscriptionHelpers {
       }
       .getOrElse(RowStatus.NotStarted)
 
-  // TODO - refactor this
+  private def fmDetailStatusChecker: Boolean = {
+    val nominateFM        = get(NominateFilingMemberPage)
+    val registeredInUK    = get(FmRegisteredInUKPage)
+    val registeredName    = get(FmNameRegistrationPage).isDefined
+    val registeredAddress = get(FmRegisteredAddressPage).isDefined
+    val contactName       = get(FmContactNamePage).isDefined
+    val contactEmail      = get(FmContactEmailPage).isDefined
+    val phonePref         = get(FmPhonePreferencePage)
+    val phoneNumber       = get(FmCapturePhonePage).isDefined
+    val entityType        = get(FmEntityTypePage).isDefined
+    val grsResponse       = get(FmGRSResponsePage).isDefined
+    val grsStatus         = get(GrsFilingMemberStatusPage).isDefined
+    (
+      nominateFM,
+      registeredInUK,
+      registeredName,
+      registeredAddress,
+      contactName,
+      contactEmail,
+      phonePref,
+      phoneNumber,
+      entityType,
+      grsResponse,
+      grsStatus
+    ) match {
+      case (Some(true), Some(false), true, true, true, true, Some(false), false, false, false, false) => true
+      case (Some(true), Some(false), true, true, true, true, Some(true), true, false, false, false)   => true
+      case (Some(true), Some(true), false, false, false, false, None, false, true, true, true)        => true
+      case (Some(false), None, false, false, false, false, None, false, false, false, false)          => true
+      case _                                                                                          => false
+    }
+  }
+
   def fmStatus: RowStatus =
-    get(NominateFilingMemberPage)
-      .map { nominated =>
-        if (nominated) {
-          get(FmRegisteredInUKPage)
-            .map { ukBased =>
-              if (!ukBased) {
-                (for {
-                  nameReg      <- get(FmNameRegistrationPage)
-                  address      <- get(FmRegisteredAddressPage)
-                  contactName  <- get(FmContactNamePage)
-                  contactEmail <- get(FmContactEmailPage)
-                  telPref      <- get(FmPhonePreferencePage)
-                } yield {
-                  val telephone = get(FmCapturePhonePage).isDefined
-                  if ((telPref & telephone) | (!telPref & !telephone)) {
-                    RowStatus.Completed
-                  } else {
-                    RowStatus.InProgress
-                  }
-                }).getOrElse(RowStatus.InProgress)
-              } else if (ukBased) {
-                (for {
-                  entityType <- get(FmEntityTypePage)
-                  grsData    <- get(FmGRSResponsePage)
-                  grsStatus  <- get(GrsFilingMemberStatusPage)
-                } yield grsStatus).getOrElse(RowStatus.InProgress)
-              } else {
-                RowStatus.NotStarted
-              }
-            }
-            .getOrElse(RowStatus.InProgress)
-        } else if (!nominated) {
-          RowStatus.Completed
-        } else {
-          RowStatus.NotStarted
-        }
-      }
-      .getOrElse(RowStatus.NotStarted)
+    get(NominateFilingMemberPage) match {
+      case Some(_) if fmDetailStatusChecker => RowStatus.Completed
+      case None                             => RowStatus.NotStarted
+      case _                                => RowStatus.InProgress
+    }
+
+//  // TODO - refactor this
+//  def fmStatus: RowStatus =
+//    get(NominateFilingMemberPage)
+//      .map { nominated =>
+//        if (nominated) {
+//          get(FmRegisteredInUKPage)
+//            .map { ukBased =>
+//              if (!ukBased) {
+//                (for {
+//                  nameReg      <- get(FmNameRegistrationPage)
+//                  address      <- get(FmRegisteredAddressPage)
+//                  contactName  <- get(FmContactNamePage)
+//                  contactEmail <- get(FmContactEmailPage)
+//                  telPref      <- get(FmPhonePreferencePage)
+//                } yield {
+//                  val telephone = get(FmCapturePhonePage).isDefined
+//                  if ((telPref & telephone) | (!telPref & !telephone)) {
+//                    RowStatus.Completed
+//                  } else {
+//                    RowStatus.InProgress
+//                  }
+//                }).getOrElse(RowStatus.InProgress)
+//              } else if (ukBased) {
+//                (for {
+//                  entityType <- get(FmEntityTypePage)
+//                  grsData    <- get(FmGRSResponsePage)
+//                  grsStatus  <- get(GrsFilingMemberStatusPage)
+//                } yield grsStatus).getOrElse(RowStatus.InProgress)
+//              } else {
+//                RowStatus.NotStarted
+//              }
+//            }
+//            .getOrElse(RowStatus.InProgress)
+//        } else if (!nominated) {
+//          RowStatus.Completed
+//        } else {
+//          RowStatus.NotStarted
+//        }
+//      }
+//      .getOrElse(RowStatus.NotStarted)
 
   def groupDetailStatus: RowStatus = {
     val first  = get(SubMneOrDomesticPage).isDefined
@@ -133,13 +173,10 @@ trait SubscriptionHelpers {
     }
 
   def finalStatusCheck: Boolean =
-    if (
-      groupDetailStatus == RowStatus.Completed
-        & fmStatus == RowStatus.Completed
-        & upeStatus == RowStatus.Completed
-        & contactDetailStatus == RowStatus.Completed
-    ) { true }
-    else { false }
+    groupDetailStatus == RowStatus.Completed &
+      fmStatus == RowStatus.Completed &
+      upeStatus == RowStatus.Completed &
+      contactDetailStatus == RowStatus.Completed
 
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (

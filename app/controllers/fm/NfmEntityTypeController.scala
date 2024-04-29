@@ -73,7 +73,7 @@ class NfmEntityTypeController @Inject() (
           }
           .getOrElse(Future.successful(Ok(view(form, mode))))
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

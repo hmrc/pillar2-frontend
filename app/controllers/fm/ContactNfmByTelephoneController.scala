@@ -58,7 +58,7 @@ class ContactNfmByTelephoneController @Inject() (
       }
       Ok(view(preparedForm, mode, name))
     })
-      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
@@ -78,7 +78,7 @@ class ContactNfmByTelephoneController @Inject() (
               } yield Redirect(navigator.nextPage(FmPhonePreferencePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

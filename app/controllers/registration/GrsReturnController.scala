@@ -59,7 +59,7 @@ class GrsReturnController @Inject() (
         case EntityType.UkLimitedCompany            => upeLimited(request, journeyId)
         case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 
@@ -91,7 +91,7 @@ class GrsReturnController @Inject() (
               EntityType.UkLimitedCompany
             )
           }
-          .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+          .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       } else {
         Future.successful(
           handleGrsAndBvResult(
@@ -133,7 +133,7 @@ class GrsReturnController @Inject() (
             EntityType.LimitedLiabilityPartnership
           )
         }
-      }.getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       else {
         Future.successful(
           handleGrsAndBvResult(
@@ -174,7 +174,7 @@ class GrsReturnController @Inject() (
                     EntityType.UkLimitedCompany
                   )
                 }
-                .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               Future.successful(
                 handleGrsAndBvResult(
@@ -210,7 +210,7 @@ class GrsReturnController @Inject() (
                     EntityType.LimitedLiabilityPartnership
                   )
                 }
-                .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
             } else {
               Future.successful(
                 handleGrsAndBvResult(
@@ -225,7 +225,7 @@ class GrsReturnController @Inject() (
             }
           }
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
 
@@ -255,7 +255,7 @@ class GrsReturnController @Inject() (
                       EntityType.UkLimitedCompany
                     )
                   }
-                  .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                  .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
               } else {
                 Future.successful(
                   handleGrsAndBvResult(
@@ -289,7 +289,7 @@ class GrsReturnController @Inject() (
                       EntityType.LimitedLiabilityPartnership
                     )
                   }
-                  .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+                  .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
               } else {
                 Future.successful(
                   handleGrsAndBvResult(
@@ -304,7 +304,7 @@ class GrsReturnController @Inject() (
               }
             }
         }
-        .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     } else {
       Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }

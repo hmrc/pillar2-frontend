@@ -55,7 +55,7 @@ class NfmRegisteredAddressController @Inject() (
         val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
         Ok(view(preparedForm, mode, name, countryOptions.options()))
       }
-      .getOrElse(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -74,7 +74,7 @@ class NfmRegisteredAddressController @Inject() (
               } yield Redirect(navigator.nextPage(FmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }

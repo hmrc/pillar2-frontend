@@ -54,7 +54,7 @@ class NfmNameRegistrationController @Inject() (
     if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

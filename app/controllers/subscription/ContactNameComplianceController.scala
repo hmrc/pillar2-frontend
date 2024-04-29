@@ -57,7 +57,7 @@ class ContactNameComplianceController @Inject() (
       }
       Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
