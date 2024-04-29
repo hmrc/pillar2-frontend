@@ -92,47 +92,6 @@ trait SubscriptionHelpers {
       case _                                => RowStatus.InProgress
     }
 
-//  // TODO - refactor this
-//  def fmStatus: RowStatus =
-//    get(NominateFilingMemberPage)
-//      .map { nominated =>
-//        if (nominated) {
-//          get(FmRegisteredInUKPage)
-//            .map { ukBased =>
-//              if (!ukBased) {
-//                (for {
-//                  nameReg      <- get(FmNameRegistrationPage)
-//                  address      <- get(FmRegisteredAddressPage)
-//                  contactName  <- get(FmContactNamePage)
-//                  contactEmail <- get(FmContactEmailPage)
-//                  telPref      <- get(FmPhonePreferencePage)
-//                } yield {
-//                  val telephone = get(FmCapturePhonePage).isDefined
-//                  if ((telPref & telephone) | (!telPref & !telephone)) {
-//                    RowStatus.Completed
-//                  } else {
-//                    RowStatus.InProgress
-//                  }
-//                }).getOrElse(RowStatus.InProgress)
-//              } else if (ukBased) {
-//                (for {
-//                  entityType <- get(FmEntityTypePage)
-//                  grsData    <- get(FmGRSResponsePage)
-//                  grsStatus  <- get(GrsFilingMemberStatusPage)
-//                } yield grsStatus).getOrElse(RowStatus.InProgress)
-//              } else {
-//                RowStatus.NotStarted
-//              }
-//            }
-//            .getOrElse(RowStatus.InProgress)
-//        } else if (!nominated) {
-//          RowStatus.Completed
-//        } else {
-//          RowStatus.NotStarted
-//        }
-//      }
-//      .getOrElse(RowStatus.NotStarted)
-
   def groupDetailStatus: RowStatus = {
     val first  = get(SubMneOrDomesticPage).isDefined
     val second = get(SubAccountingPeriodPage).isDefined
