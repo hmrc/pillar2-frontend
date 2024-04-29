@@ -40,6 +40,7 @@ class DataRetrievalActionImpl @Inject() (
       OptionalDataRequest(
         request.request,
         request.userId,
+        request.groupID,
         Some(UserAnswers(id = request.userId, data = data.getOrElse(Json.obj()).as[JsObject])),
         Some(request.enrolments)
       )

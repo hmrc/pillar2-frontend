@@ -17,96 +17,151 @@
 package controllers.rfm
 
 import base.SpecBase
-import models.{NormalMode, UserAnswers}
 import models.rfm.RegistrationDate
 import models.rfm.RegistrationDate._
+import models.{InternalIssueError, NormalMode}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages._
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.{Configuration, inject}
+import services.SubscriptionService
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "Security Questions Check Your Answers Controller" must {
-
     val plrReference = "XE1111123456789"
-    val date         = LocalDate.of(2024, 12, 31)
-    "return OK and the correct view if an answer is provided to every question " in {
+    "onPageLoad" should {
+      "return OK and the correct view if an answer is provided to every question " in {
 
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(RfmPillar2ReferencePage, plrReference)
-        .success
-        .value
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
 
-        status(result) mustEqual OK
-        contentAsString(result) must include("Check your answer")
-        contentAsString(result) must include("Pillar 2 top-up taxes ID")
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
 
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answer")
+          contentAsString(result) must include("Pillar 2 top-up taxes ID")
+
+        }
+      }
+
+      "redirect to Journey Recovery page when security question status is not completed" in {
+        val userAnswer = emptyUserAnswers
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        }
+      }
+
+      "redirect to Under Construction page when RFM access is disabled" in {
+        val testConfig = Configuration("features.rfmAccessEnabled" -> false)
+        val application = applicationBuilder()
+          .configure(testConfig)
+          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        }
       }
     }
+    "onSubmit" should {
+      "redirect to corporate position group page if registration date match our records" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
 
-    "redirect to Journey Recovery page when security question status is not completed" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+            .withFormUrlEncodedBody()
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.CorporatePositionController.onPageLoad().url
+        }
       }
-    }
 
-    "redirect to Under Construction page when RFM access is disabled" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> false)
-      val application = applicationBuilder()
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+      "redirect to error page if registration dates do not match" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
+        }
       }
-    }
+      "redirect to error page if read subscription fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
-    "redirect to Under Construction page on form submission" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> true)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(RfmPillar2ReferencePage, plrReference)
-        .success
-        .value
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody()
+          val result = route(application, request).value
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
+        }
+      }
+      "redirect to journey recovery if no input pillar 2 id is found" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "redirect to journey recovery if no input registration date is found" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
 

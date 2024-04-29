@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import models.registration.GrsResponse
-import play.api.libs.json.JsPath
+import models.EnrolmentInfo
+import models.subscription.AmendSubscription
 
-case object RfmGRSResponsePage extends QuestionPage[GrsResponse] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "rfmGRSResponse"
-}
+case class RfmEnrolmentInformation(amendData: AmendSubscription, enrolmentInfo: EnrolmentInfo)

@@ -18,17 +18,18 @@ package services
 
 import akka.Done
 import base.SpecBase
-import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
+import connectors._
 import models.InternalIssueError
 import models.registration.RegistrationInfo
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api.inject.bind
 import play.api.test.Helpers.running
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,14 +50,14 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
-          when(mockRegistrationConnector.register(any(), any())(any())).thenReturn(Future.successful("upeID"))
-          when(mockRegistrationConnector.register(any(), any())(any())).thenReturn(Future.successful("fmID"))
+          when(mockRegistrationConnector.registerUltimateParent(any())(any())).thenReturn(Future.successful("upeID"))
+          when(mockRegistrationConnector.registerFilingMember(any())(any())).thenReturn(Future.successful("fmID"))
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.createEnrolment(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.enrolmentExists(any())(any(), any())).thenReturn(Future.successful(false))
@@ -79,7 +80,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
@@ -104,7 +105,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
@@ -132,7 +133,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
@@ -160,7 +161,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
@@ -188,7 +189,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
           )
           .build()
@@ -379,6 +380,75 @@ class SubscriptionServiceSpec extends SpecBase {
         val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
         resultFuture.secondaryContactDetails mustBe None
       }
+    }
+    "amendFilingMemberDetails" when {
+      "return done if the amend subscription is successful and delete userAnswers" in {
+        import play.api.inject.bind
+        val mockHttpResponse = HttpResponse(OK, "")
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+
+        val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+
+        service.amendFilingMemberDetails("id", amendData).futureValue mustEqual Done
+        verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())
+      }
+
+      "return failure if amend subscription fails" in {
+        val application = applicationBuilder().overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+
+        service.amendFilingMemberDetails("id", amendData).failed.futureValue mustEqual InternalIssueError
+      }
+
+      "return failure if removing data fails" in {
+
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.failed(new RuntimeException("Connection error")))
+
+        val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+
+        service.amendFilingMemberDetails("id", amendData).failed.futureValue mustBe a[RuntimeException]
+      }
+    }
+    "registerNewFilingMember" when {
+      "calls connector and returns a string if successful" in {
+
+        val application = applicationBuilder().overrides(
+          bind[RegistrationConnector].toInstance(mockRegistrationConnector)
+        )
+        when(mockRegistrationConnector.registerNewFilingMember(any())(any())).thenReturn(Future.successful("ID"))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+
+        service.registerNewFilingMember("id").futureValue mustEqual "ID"
+      }
+      "calls connector and returns failure if connector fails" in {
+        val application = applicationBuilder().overrides(
+          bind[RegistrationConnector].toInstance(mockRegistrationConnector)
+        )
+        when(mockRegistrationConnector.registerNewFilingMember(any())(any()))
+          .thenReturn(Future.failed(InternalIssueError))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+
+        service.registerNewFilingMember("id").failed.futureValue mustEqual InternalIssueError
+      }
+    }
+
+    "createAmendObjectForReplacingFilingMember" when {
+      "set ultimate parent as the new filing member and create the required object if corporate position is upe" in {}
     }
   }
 }

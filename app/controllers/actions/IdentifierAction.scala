@@ -54,10 +54,12 @@ class AuthenticatedIdentifierAction @Inject() (
     val enrolmentKey: String = config.enrolmentKey
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
+      .retrieve(
+        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
+      ) {
 
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+        case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+          Future.successful(Right(IdentifierRequest(request, internalId, groupID, enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))

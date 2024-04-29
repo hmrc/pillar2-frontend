@@ -34,20 +34,19 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
 ) extends Logging {
   private val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
   private val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"
-  private val rfmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/rfm/registration"
-//TODO unit tests
-  def registerUltimateParent(id: String)(implicit hc: HeaderCarrier): Future[String] = {
-          http.POSTEmpty(s"$upeRegistrationUrl/$id") flatMap {
-            case response if is2xx(response.status) =>
-              logger.info(s" UPE register without ID successful with response ${response.status}")
-              response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
-            case errorResponse =>
-              logger.warn(s"UPE register without ID call failed with status ${errorResponse.status}")
-              Future.failed(InternalIssueError)
-          }
-  }
+  private val rfmRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/rfm/registration"
 
-  def registerFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] = {
+  def registerUltimateParent(id: String)(implicit hc: HeaderCarrier): Future[String] =
+    http.POSTEmpty(s"$upeRegistrationUrl/$id") flatMap {
+      case response if is2xx(response.status) =>
+        logger.info(s" UPE register without ID successful with response ${response.status}")
+        response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
+      case errorResponse =>
+        logger.warn(s"UPE register without ID call failed with status ${errorResponse.status}")
+        Future.failed(InternalIssueError)
+    }
+
+  def registerFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
     http.POSTEmpty(s"$fmRegistrationUrl/$id") flatMap {
       case response if is2xx(response.status) =>
         logger.info(
@@ -60,20 +59,18 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         )
         Future.failed(InternalIssueError)
     }
-  }
 
-    def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] = {
-      http.POSTEmpty(s"$rfmRegistrationUrl/$id") flatMap {
-        case response if is2xx(response.status) =>
-          logger.info(
-            s"Replace Filing Member registration without ID successful with response ${response.status}"
-          )
-          response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
-        case errorResponse =>
-          logger.warn(
-            s"Replace Filing Member registration without ID call failed with status ${errorResponse.status}"
-          )
-          Future.failed(InternalIssueError)
-      }
+  def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
+    http.POSTEmpty(s"$rfmRegistrationUrl/$id") flatMap {
+      case response if is2xx(response.status) =>
+        logger.info(
+          s"Replace Filing Member registration without ID successful with response ${response.status}"
+        )
+        response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
+      case errorResponse =>
+        logger.warn(
+          s"Replace Filing Member registration without ID call failed with status ${errorResponse.status}"
+        )
+        Future.failed(InternalIssueError)
     }
-  }
+}

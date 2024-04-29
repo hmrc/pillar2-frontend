@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{EnrolmentConnector, UserAnswersConnectors}
+import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
@@ -264,7 +264,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -302,7 +302,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -329,7 +329,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()

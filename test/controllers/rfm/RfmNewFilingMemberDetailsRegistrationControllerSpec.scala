@@ -21,7 +21,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmContactDetailsRegistrationView
 
-class RfmContactDetailsRegistrationControllerSpec extends SpecBase {
+class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
 
   "Rfm Contact Details Registration Controller" when {
 

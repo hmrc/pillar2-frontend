@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package models.subscription
+package pages
 
-import models.NonUKAddress
-import models.rfm.CorporatePosition
+import models.registration.IncorporatedEntityRegistrationData
+import play.api.libs.json.JsPath
 
-case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])
-case class NewFilingMemberDetail(
-  plrReference:                String,
-  corporatePosition:           CorporatePosition,
-  contactName:                 String,
-  contactEmail:                String,
-  phoneNumber:                 Option[String],
-  address:                     NonUKAddress,
-  secondaryContactInformation: Option[ContactDetailsType]
-)
+case object RfmGRSUkLimitedPage extends QuestionPage[IncorporatedEntityRegistrationData] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmGRSUkLimited"
+}

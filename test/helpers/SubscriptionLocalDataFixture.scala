@@ -16,12 +16,22 @@
 
 package helpers
 
-import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails}
+import models.subscription.{AccountStatus, AccountingPeriod, AccountingPeriodAmend, AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails, UpeDetailsAmend}
 import models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
+  private val upCorrespondenceAddress = UpeCorrespAddressDetails("line1", None, None, None, None, "GB")
+  private val upeDetailsAmend = UpeDetailsAmend("plrId", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
+  private val contactDetails  = ContactDetailsType("name", None, "email")
+  private val filingMemberAmendDetails = FilingMemberAmendDetails(
+    addNewFilingMember = true,
+    safeId = "someSafeId",
+    customerIdentification1 = Some("CRN"),
+    customerIdentification2 = Some("UTR"),
+    organisationName = "Company"
+  )
 
   val emptySubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
@@ -40,12 +50,21 @@ trait SubscriptionLocalDataFixture {
   lazy val currentDate = LocalDate.now()
   val subscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", currentDate, domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
-    primaryContactDetails = ContactDetailsType("name", None, "email"),
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = upCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
     accountingPeriod = AccountingPeriod(currentDate, currentDate),
     accountStatus = Some(AccountStatus(false))
+  )
+
+  val amendData: AmendSubscription = AmendSubscription(
+    upeDetails = upeDetailsAmend,
+    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate),
+    upeCorrespAddressDetails = upCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
+    secondaryContactDetails = Some(contactDetails),
+    filingMemberDetails = Some(filingMemberAmendDetails)
   )
 }

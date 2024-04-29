@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models.grs
 
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object RfmSafeIDPage extends QuestionPage[String] {
+case class GrsRegistrationData(companyId: String, companyName: String, utr: String, crn: String)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "RfmSafeID"
+object GrsRegistrationData {
+  implicit val format: OFormat[GrsRegistrationData] = Json.format[GrsRegistrationData]
 }

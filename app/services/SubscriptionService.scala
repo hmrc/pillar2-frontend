@@ -17,10 +17,11 @@
 package services
 
 import akka.Done
-import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector, UserAnswersConnectors}
+import connectors._
+import models.registration.RfmEnrolmentInformation
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
+import models.{DuplicateSubmissionError, EnrolmentInfo, InternalIssueError, MneOrDomestic, UserAnswers}
 import pages._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,8 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionService @Inject() (
   registrationConnector:        RegistrationConnector,
   subscriptionConnector:        SubscriptionConnector,
-  userAnswersConnectors:          UserAnswersConnectors,
-  enrolmentConnector:           EnrolmentConnector,
+  userAnswersConnectors:        UserAnswersConnectors,
+  enrolmentConnector:           TaxEnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
 )(implicit ec:                  ExecutionContext) {
 
@@ -64,20 +65,13 @@ class SubscriptionService @Inject() (
     }
 
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
-                                                                                                                     hc:                         HeaderCarrier
+    hc:                                  HeaderCarrier
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
       amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
-
-  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc:HeaderCarrier): Future[Done] ={
-    for {
-      result <- subscriptionConnector.amendSubscription(userId, amendData)
-      _ <- userAnswersConnectors.remove(userId)
-    } yield result
-  }
 
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
@@ -144,9 +138,11 @@ class SubscriptionService @Inject() (
     )
   }
 
-   def setUltimateParentAsNewFilingMember(requiredInfo: NewFilingMemberDetails, subscriptionData: SubscriptionData, userAnswers: UserAnswers):
-  AmendSubscription = {
-     AmendSubscription(
+  private def setUltimateParentAsNewFilingMember(
+    requiredInfo:     NewFilingMemberDetail,
+    subscriptionData: SubscriptionData
+  ): AmendSubscription =
+    AmendSubscription(
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
         customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,
@@ -166,19 +162,21 @@ class SubscriptionService @Inject() (
         requiredInfo.address.postalCode,
         requiredInfo.address.countryCode
       ),
-      primaryContactDetails =
-        ContactDetailsType(name = requiredInfo.companyName,
-          telephone = userAnswers.get(RfmCapturePrimaryTelephonePage),
-          emailAddress = requiredInfo.contactEmail),
-      secondaryContactDetails = userAnswers.getSecondaryContact,
+      primaryContactDetails = ContactDetailsType(
+        name = requiredInfo.contactName,
+        telephone = requiredInfo.phoneNumber,
+        emailAddress = requiredInfo.contactEmail
+      ),
+      secondaryContactDetails = requiredInfo.secondaryContactInformation,
       filingMemberDetails = None
     )
-  }
 
-   def replaceOldFilingMember(safeId:String, requiredInfo: NewFilingMemberDetails, subscriptionData: SubscriptionData, userAnswers: UserAnswers)(implicit
-    hc:                                            HeaderCarrier
-  ): AmendSubscription = {
-  AmendSubscription(
+  private def replaceOldFilingMember(
+    requiredInfo:     NewFilingMemberDetail,
+    subscriptionData: SubscriptionData,
+    filingMember:     FilingMemberAmendDetails
+  ): AmendSubscription =
+    AmendSubscription(
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
         customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,
@@ -198,32 +196,86 @@ class SubscriptionService @Inject() (
         requiredInfo.address.postalCode,
         requiredInfo.address.countryCode
       ),
-      primaryContactDetails =
-        ContactDetailsType(name = requiredInfo.companyName,
-          telephone = userAnswers.get(RfmSecondaryCapturePhonePage),
-          emailAddress = requiredInfo.contactEmail),
-      secondaryContactDetails = userAnswers.getSecondaryContact,
-      filingMemberDetails =createNewFilingMemberDetails(safeId, userAnswers)
-
+      primaryContactDetails = ContactDetailsType(
+        name = requiredInfo.contactName,
+        telephone = requiredInfo.phoneNumber,
+        emailAddress = requiredInfo.contactEmail
+      ),
+      secondaryContactDetails = requiredInfo.secondaryContactInformation,
+      filingMemberDetails = Some(filingMember)
     )
-  }
+  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
+    for {
+      result <- subscriptionConnector.amendSubscription(userId, amendData)
+      _      <- userAnswersConnectors.remove(userId)
+    } yield result
 
-   def registerNewFilingMember(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] = {
-    userAnswers.get(RfmSafeIDPage)
-      .map(Future.successful)
-      .getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
-  }
-  private def createNewFilingMemberDetails(safeId: String , userAnswers: UserAnswers)(implicit hc: HeaderCarrier) = {
-    userAnswers.get(RfmNameRegistrationPage).map{orgName=>
-      FilingMemberAmendDetails(
-        addNewFilingMember = true,
-        safeId = safeId,
-        customerIdentification1 = None,
-        customerIdentification2 = None,
-        organisationName = orgName
+  def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
+    registrationConnector.registerNewFilingMember(id)
+  private def getNewFilingMemberDetails(companyId: String, userAnswers: UserAnswers): FilingMemberAmendDetails =
+    userAnswers
+      .get(RfmUkBasedPage)
+      .flatMap { ukBased =>
+        if (ukBased) {
+          userAnswers
+            .get(RfmGrsDataPage)
+            .map(grsData =>
+              FilingMemberAmendDetails(
+                addNewFilingMember = true,
+                safeId = grsData.companyId,
+                customerIdentification1 = Some(grsData.crn),
+                customerIdentification2 = Some(grsData.utr),
+                organisationName = grsData.companyName
+              )
+            )
+        } else {
+          userAnswers
+            .get(RfmNameRegistrationPage)
+            .map(companyName =>
+              FilingMemberAmendDetails(
+                addNewFilingMember = true,
+                safeId = companyId,
+                customerIdentification1 = None,
+                customerIdentification2 = None,
+                organisationName = companyName
+              )
+            )
+        }
+      }
+      .getOrElse(throw new Exception("Expected a new nominated filing member but could not find the relevant information"))
+
+  def createAmendObjectForReplacingFilingMember(
+    safeId:             String,
+    subscriptionData:   SubscriptionData,
+    filingMemberDetail: NewFilingMemberDetail,
+    userAnswers:        UserAnswers
+  ): RfmEnrolmentInformation =
+    if (filingMemberDetail.corporatePosition == CorporatePosition.Upe) {
+      RfmEnrolmentInformation(
+        amendData = setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData),
+        enrolmentInfo = if (subscriptionData.upeDetails.domesticOnly) {
+          EnrolmentInfo(
+            plrId = ???,
+            crn = subscriptionData.upeDetails.customerIdentification1,
+            ctUtr = subscriptionData.upeDetails.customerIdentification2
+          )
+        } else {
+          EnrolmentInfo(
+            plrId = ???,
+            nonUkPostcode = subscriptionData.upeCorrespAddressDetails.postCode,
+            countryCode = ???
+          )
+        }
+      )
+    } else {
+      RfmEnrolmentInformation(
+        replaceOldFilingMember(
+          requiredInfo = filingMemberDetail,
+          subscriptionData = subscriptionData,
+          filingMember = getNewFilingMemberDetails(companyId = safeId, userAnswers = userAnswers)
+        ),
+        enrolmentInfo = ???
       )
     }
-  }
-
 
 }

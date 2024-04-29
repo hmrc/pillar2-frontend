@@ -18,7 +18,8 @@ package helpers
 
 import base.SpecBase
 import models.registration._
-import models.rfm.RegistrationDate
+import models.rfm.{CorporatePosition, RegistrationDate}
+import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import models.{EnrolmentInfo, NonUKAddress, UKAddress}
 import pages._
 import utils.RowStatus
@@ -28,7 +29,7 @@ import java.time.LocalDate
 class SubscriptionHelpersSpec extends SpecBase {
 
   private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
-
+  private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
   "Subscription Helper" when {
 
     "getUpe status" should {
@@ -294,7 +295,6 @@ class SubscriptionHelpersSpec extends SpecBase {
 
     "SubscriptionHelpers.rfmNoIdQuestionStatus" should {
       val name = "nfm name"
-      val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
       "return Completed when answers are provided to all security questions" in {
 
         val userAnswers = emptyUserAnswers
@@ -323,6 +323,162 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.NotStarted
       }
 
+    }
+    "getSecondaryContact" should {
+      "return none if no secondary contact is nominated" in {
+        val ua = emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, false)
+        ua.getSecondaryContact mustBe None
+      }
+      "return none if secondary contact is nominated with a phone but no name or email can be found" in {
+        val ua = emptyUserAnswers
+          .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryCapturePhonePage, "12312123")
+          .setOrException(RfmContactByTelephonePage, true)
+        ua.getSecondaryContact mustBe None
+      }
+
+      "return ContactDetail with phone as None if no telephone is provided" in {
+        val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", telephone = None, emailAddress = "email")
+        val ua = emptyUserAnswers
+          .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryCapturePhonePage, "12312123")
+          .setOrException(RfmSecondaryContactNamePage, "name")
+          .setOrException(RfmSecondaryEmailPage, "email")
+          .setOrException(RfmContactByTelephonePage, false)
+        ua.getSecondaryContact mustBe Some(expectedAnswer)
+      }
+
+      "return ContactDetail with phone if telephone is provided" in {
+        val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", telephone = Some("12312123"), emailAddress = "email")
+        val ua = emptyUserAnswers
+          .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryCapturePhonePage, "12312123")
+          .setOrException(RfmSecondaryContactNamePage, "name")
+          .setOrException(RfmSecondaryEmailPage, "email")
+          .setOrException(RfmContactByTelephonePage, true)
+        ua.getSecondaryContact mustBe Some(expectedAnswer)
+      }
+
+    }
+
+    "getRfmContactDetails" should {
+      val nonUKAddress = NonUKAddress(
+        addressLine1 = "1 drive",
+        addressLine2 = None,
+        addressLine3 = "la la land",
+        addressLine4 = None,
+        postalCode = None,
+        countryCode = "AB"
+      )
+      "return None if no primary contact name can be found" in {
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe None
+      }
+
+      "return None if no primary email can be found" in {
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe None
+      }
+
+      "return None if no contact address can be found" in {
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe None
+      }
+
+      "return None if no corporate position can be found" in {
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe None
+      }
+
+      "return None if no pillar2 reference can be found" in {
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe None
+      }
+
+      "return ContactDetail with primary phone detail if provided" in {
+        val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
+          "plrReference",
+          CorporatePosition.Upe,
+          contactName = "pName",
+          contactEmail = "pEmail",
+          phoneNumber = Some("12312"),
+          address = nonUKAddress,
+          secondaryContactInformation = None
+        )
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
+      }
+      "return ContactDetail with no primary phone detail if they have answered no to phone preference page" in {
+        val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
+          "plrReference",
+          CorporatePosition.Upe,
+          contactName = "pName",
+          contactEmail = "pEmail",
+          phoneNumber = None,
+          address = nonUKAddress,
+          secondaryContactInformation = None
+        )
+
+        val ua = emptyUserAnswers
+          .setOrException(RfmPrimaryContactNamePage, "pName")
+          .setOrException(RfmPrimaryContactEmailPage, "pEmail")
+          .setOrException(RfmContactAddressPage, nonUKAddress)
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmAddSecondaryContactPage, false)
+          .setOrException(RfmContactByTelephonePage, false)
+          .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
+      }
     }
 
   }

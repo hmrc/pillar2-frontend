@@ -90,7 +90,7 @@ trait SpecBase
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
 
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        Future.successful(Right(IdentifierRequest(request, "internalId")))
+        Future.successful(Right(IdentifierRequest(request, "internalId", "groupID")))
       }
     }
 
@@ -102,7 +102,7 @@ trait SpecBase
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        val identifierRequest = IdentifierRequest(request, "internalId", enrolments.getOrElse(Set.empty))
+        val identifierRequest = IdentifierRequest(request, "internalId", "groupID", enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }
     }
