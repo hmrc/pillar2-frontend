@@ -16,27 +16,36 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
   "Group Registration Date Report View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("groupRegistrationDateReport.title"))
+      view.getElementsByTag("title").text must include(
+        "Enter the group’s registration date to the Report Pillar 2 " +
+          "top-up taxes service"
+      )
     }
 
     "have a caption" in {
-      view.getElementById("section-header").text must include(messages("groupRegistrationDateReport.heading.caption"))
+      view.getElementById("section-header").text must include("Replace filing member")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("groupRegistrationDateReport.heading"))
+      view.getElementsByTag("h1").text must include(
+        "Enter the group’s registration date to the Report Pillar 2 " +
+          "top-up taxes service"
+      )
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(messages("groupRegistrationDateReport.hint.desc"))
+      view.getElementsByClass("govuk-hint").get(0).text must include(
+        "This will be the date when your group first " +
+          "registered to report their pillar 2 taxes in the UK."
+      )
     }
 
     "have a registration date hint" in {
-      view.getElementsByClass("govuk-hint").get(1).text must include(messages("groupRegistrationDateReport.registrationDate.hint"))
+      view.getElementsByClass("govuk-hint").get(1).text must include("For example, 27 3 2026")
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
+      view.getElementsByClass("govuk-button").text must include("Continue")
     }
   }
 }

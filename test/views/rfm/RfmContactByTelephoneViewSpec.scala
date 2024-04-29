@@ -16,15 +16,15 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfmContactByTelephone.title"))
+      view.getElementsByTag("title").text must include("Can we contact by telephone?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("rfmContactByTelephone.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfmContactByTelephone.heading").replace("{0}", "John Doe"))
+      view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
     }
 
     "have radio items" in {
@@ -33,7 +33,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }

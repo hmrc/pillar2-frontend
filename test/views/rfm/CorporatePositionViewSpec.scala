@@ -16,15 +16,18 @@ class CorporatePositionViewSpec extends ViewSpecBase {
   "Corporate Position View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.corporatePosition.title"))
+      view.getElementsByTag("title").text must include("What is your position in the corporate structure of the group?")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.corporatePosition.heading"))
+      view.getElementsByTag("h1").text must include("What is your position in the corporate structure of the group?")
     }
 
     "have a hint" in {
-      view.getElementById("value-hint").text must include(messages("rfm.corporatePosition.insetText"))
+      view.getElementById("value-hint").text must include(
+        "To replace the existing filing member for this account " +
+          "you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf."
+      )
     }
 
     "have radio items" in {
@@ -33,7 +36,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }

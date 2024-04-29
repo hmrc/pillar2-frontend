@@ -31,20 +31,20 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
   "Security Questions Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("securityQuestionsCheckYourAnswers.title"))
+      view.getElementsByTag("title").text must include("Check Your Answers")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("securityQuestionsCheckYourAnswers.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("securityQuestionsCheckYourAnswers.heading"))
+      view.getElementsByTag("h1").text must include("Check your answers")
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include(messages("rfmSecurityCheck.checkYourAnswersLabel"))
-      view.getElementsByClass("govuk-summary-list__key").get(1).text must include(messages("rfmRegistrationDate.checkYourAnswersLabel"))
+      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Pillar 2 top-up taxes ID")
+      view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Registration date")
     }
 
     "have a summary list items" in {
@@ -58,7 +58,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.confirm-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
     }
   }
 

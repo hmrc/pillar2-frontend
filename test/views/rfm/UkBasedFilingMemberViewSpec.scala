@@ -16,19 +16,19 @@ class UkBasedFilingMemberViewSpec extends ViewSpecBase {
   "Uk Based Filing Member View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("isNFMRegisteredInUK.title"))
+      view.getElementsByTag("title").text must include("Is the new nominated filing member registered in the UK?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("isNFMRegisteredInUK.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("isNFMRegisteredInUK.heading"))
+      view.getElementsByTag("h1").text must include("Is the new nominated filing member registered in the UK?")
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 

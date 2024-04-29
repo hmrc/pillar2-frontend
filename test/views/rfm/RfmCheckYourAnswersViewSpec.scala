@@ -35,20 +35,20 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.rfmCheckYourAnswers.title"))
+      view.getElementsByTag("title").text must include("Check your answers for filing member details")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("rfm.rfmCheckYourAnswers.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.rfmCheckYourAnswers.heading"))
+      view.getElementsByTag("h1").text must include("Check your answers for filing member details")
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include(messages("rfm.nameRegistration.checkYourAnswersLabel"))
-      view.getElementsByClass("govuk-summary-list__key").get(1).text must include(messages("rfm.registeredAddress.checkYourAnswersLabel"))
+      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Name")
+      view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Address")
     }
 
     "have a summary list items" in {
@@ -64,7 +64,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.confirm-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
     }
   }
 }

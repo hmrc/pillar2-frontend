@@ -16,23 +16,26 @@ class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
   "Rfm Primary Contact Email View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm-input-business-email.title"))
+      view.getElementsByTag("title").text must include("What is the email address?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("rfm-input-business-email.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm-input-business-email.heading").replace("{0}", "John Doe"))
+      view.getElementsByTag("h1").text must include("What is the email address forJohn Doe")
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include(messages("rfm-input-business-email.hint"))
+      view.getElementsByClass("govuk-hint").text must include(
+        "We will only use this to contact you about Pillar 2 " +
+          "top-up taxes."
+      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }

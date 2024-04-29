@@ -16,19 +16,19 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
   "Rfm Secondary Telephone Preference View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.secondaryTelephonePreference.title"))
+      view.getElementsByTag("title").text must include("Can we contact by telephone?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("rfm.secondaryContactEmail.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.secondaryTelephonePreference.heading").replace("{0}", "John Doe"))
+      view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }

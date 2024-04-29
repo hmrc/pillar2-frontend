@@ -16,23 +16,26 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
   "Rfm Add Secondary Contact View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.addSecondaryContact.title"))
+      view.getElementsByTag("title").text must include("Is there someone else we can contact?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("taskList.task.contact.heading"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.addSecondaryContact.heading").replace("{0}", "John Doe"))
+      view.getElementsByTag("h1").text must include("Is there someone else we can contact if John Doe is not available?")
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(messages("rfm.addSecondaryContact.hint"))
+      view.getElementsByClass("govuk-hint").get(0).text must include(
+        "This can be a team mailbox or another contact " +
+          "who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes."
+      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }

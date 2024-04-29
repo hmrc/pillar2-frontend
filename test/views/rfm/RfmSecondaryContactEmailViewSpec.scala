@@ -16,23 +16,26 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
   "Rfm Secondary Contact Email View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.secondaryContactEmail.title"))
+      view.getElementsByTag("title").text must include("What is the email address?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("rfm.secondaryContactEmail.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.secondaryContactEmail.heading").replace("{0}", "John Doe"))
+      view.getElementsByTag("h1").text must include("What is the email address for John Doe")
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include(messages("rfm.secondaryContactEmail.hint"))
+      view.getElementsByClass("govuk-hint").text must include(
+        "We will only use this to contact you about Pillar 2 " +
+          "top-up taxes."
+      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 }
