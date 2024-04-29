@@ -24,7 +24,7 @@ class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is the email address forJohn Doe")
+      view.getElementsByTag("h1").text must include("What is the email address for John Doe")
     }
 
     "have a hint" in {
