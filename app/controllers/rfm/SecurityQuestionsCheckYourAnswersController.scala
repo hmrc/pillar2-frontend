@@ -22,6 +22,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.{InternalIssueError, Mode}
+import models.NormalMode
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -71,7 +72,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       readData              <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
     } yield
       if (readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
-        Redirect(controllers.rfm.routes.CorporatePositionController.onPageLoad())
+        Redirect(controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode))
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })

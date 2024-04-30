@@ -88,7 +88,7 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
-        Future.successful(Right(IdentifierRequest(request, "internalId", "groupID")))
+        Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"))))
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -98,7 +98,7 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        val identifierRequest = IdentifierRequest(request, "internalId", "groupID", enrolments.getOrElse(Set.empty))
+        val identifierRequest = IdentifierRequest(request, "internalId", Some("groupID"), enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }
     }
@@ -106,24 +106,30 @@ trait SpecBase
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
-    subscriptionLocalData: Option[SubscriptionLocalData] = None
+    groupID:               Option[String] = None,
+    subscriptionLocalData: Option[SubscriptionLocalData] = None,
+    additionalData:        Map[String, Any] = Map.empty
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        Configuration(
-          "metrics.enabled"         -> "false",
-          "auditing.enabled"        -> false,
-          "features.grsStubEnabled" -> true
+        Configuration.from(
+          Map(
+            "metrics.enabled"         -> "false",
+            "auditing.enabled"        -> false,
+            "features.grsStubEnabled" -> true
+          ) ++ additionalData
         )
       )
       .overrides(
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("AgentIdentifier").to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
       )
+
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       post(urlEqualTo(s"$expectedEndpoint"))

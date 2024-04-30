@@ -35,7 +35,7 @@ object RfmPrimaryContactNameSummary {
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("rmt.rfmPrimaryContactName.change.hidden"))
+              .withVisuallyHiddenText(messages("rfm.rfmPrimaryContactName.change.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
         )

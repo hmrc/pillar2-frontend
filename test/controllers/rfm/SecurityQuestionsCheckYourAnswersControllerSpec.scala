@@ -100,7 +100,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.CorporatePositionController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url
         }
       }
 

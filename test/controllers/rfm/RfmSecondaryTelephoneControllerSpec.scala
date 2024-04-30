@@ -104,7 +104,7 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction page with valid data" in {
+    "must redirect to contact address page with valid data" in {
 
       val ua = emptyUserAnswers
         .setOrException(RfmSecondaryContactNamePage, "name")

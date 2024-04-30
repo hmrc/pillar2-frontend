@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FakeRfmIdentifierAction @Inject() (bodyParsers: PlayBodyParsers, enrolments: Enrolments) extends RfmIdentifierAction {
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
-    Future.successful(Right(IdentifierRequest(request, "id", "groupID", enrolments.enrolments)))
+    Future.successful(Right(IdentifierRequest(request, "id", Some("groupID"), enrolments.enrolments)))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

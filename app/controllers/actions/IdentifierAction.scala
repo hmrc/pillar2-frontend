@@ -56,7 +56,7 @@ class AuthenticatedIdentifierAction @Inject() (
       ) {
 
         case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, groupID, enrolments = enrolments.enrolments)))
+          Future.successful(Right(IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))

@@ -42,7 +42,7 @@ class DataRetrievalActionSpec extends SpecBase {
         when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(None)(ec)
         val action = new Harness(mockUserAnswersConnectors)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", "groupID")).futureValue
+        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"))).futureValue
 
         result.userAnswers.get.data shouldBe Json.obj()
       }
@@ -55,7 +55,7 @@ class DataRetrievalActionSpec extends SpecBase {
         when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(Some(Json.obj("abc" -> "def")))(ec)
         val action = new Harness(mockUserAnswersConnectors)
 
-        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", "groupID")).futureValue
+        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", Some("groupID"))).futureValue
 
         result.userAnswers mustBe defined
       }

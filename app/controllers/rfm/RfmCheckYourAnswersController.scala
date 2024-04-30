@@ -16,16 +16,14 @@
 
 package controllers.rfm
 
-import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.{InternalIssueError, Mode}
-import play.api.Logging
+import models.Mode
+import navigation.ReplaceFilingMemberNavigator
+import pages.RfmCheckYourAnswersPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -33,20 +31,19 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RfmCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  navigator:                ReplaceFilingMemberNavigator,
   val controllerComponents: MessagesControllerComponents,
-  subscriptionService:      SubscriptionService,
   view:                     RfmCheckYourAnswersView,
   countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport
-    with Logging {
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
@@ -68,26 +65,7 @@ class RfmCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    (for {
-      newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-      subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-      _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
-      _                          <- OptionT.liftF(subscriptionService.allocateEnrolment(request.groupId, newFilingMemberInformation.plrReference))
-      amendData <- OptionT.liftF(
-                     subscriptionService
-                       .createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-                   )
-      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-      .recover {
-        case InternalIssueError =>
-          logger.warn("Replace filing member failed")
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-        case _: Exception =>
-          logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    Future.successful(Redirect(navigator.nextPage(RfmCheckYourAnswersPage, mode, request.userAnswers)))
   }
 
 }

@@ -62,7 +62,7 @@ class RfmAuthenticatedIdentifierAction @Inject() (
             logger.info("Rfm - Organisation:User already enrolled login attempt")
             Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {
-            Future.successful(Right(IdentifierRequest(request, internalId, groupID, enrolments = enrolments.enrolments)))
+            Future.successful(Right(IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments)))
           }
         case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
           logger.info("Rfm -Organisation:Assistant login attempt")
@@ -72,7 +72,7 @@ class RfmAuthenticatedIdentifierAction @Inject() (
           Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
           logger.info("Rfm - Agent login attempt")
-          Future.successful(Left(Redirect(controllers.rfm.routes.AgentController.onPageLoad)))
+          Future.successful(Left(Redirect(controllers.routes.AgentController.onPageLoad)))
         case _ =>
           logger.warn("Rfm Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))

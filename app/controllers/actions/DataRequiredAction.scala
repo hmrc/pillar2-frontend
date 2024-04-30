@@ -34,7 +34,7 @@ class DataRequiredActionImpl @Inject() (implicit val executionContext: Execution
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     logger.debug(
-      s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
+      s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
     )
 
     request.userAnswers match {
