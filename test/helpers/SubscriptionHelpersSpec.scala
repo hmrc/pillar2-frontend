@@ -333,7 +333,6 @@ class SubscriptionHelpersSpec extends SpecBase {
         val ua = emptyUserAnswers
           .setOrException(RfmAddSecondaryContactPage, true)
           .setOrException(RfmSecondaryCapturePhonePage, "12312123")
-          .setOrException(RfmContactByTelephonePage, true)
         ua.getSecondaryContact mustBe None
       }
 
@@ -344,7 +343,6 @@ class SubscriptionHelpersSpec extends SpecBase {
           .setOrException(RfmSecondaryCapturePhonePage, "12312123")
           .setOrException(RfmSecondaryContactNamePage, "name")
           .setOrException(RfmSecondaryEmailPage, "email")
-          .setOrException(RfmContactByTelephonePage, false)
         ua.getSecondaryContact mustBe Some(expectedAnswer)
       }
 
@@ -355,7 +353,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .setOrException(RfmSecondaryCapturePhonePage, "12312123")
           .setOrException(RfmSecondaryContactNamePage, "name")
           .setOrException(RfmSecondaryEmailPage, "email")
-          .setOrException(RfmContactByTelephonePage, true)
+          .setOrException(RfmSecondaryPhonePreferencePage, true)
         ua.getSecondaryContact mustBe Some(expectedAnswer)
       }
 

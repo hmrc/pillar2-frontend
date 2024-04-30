@@ -87,11 +87,8 @@ trait SpecBase
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
         Future.successful(Right(IdentifierRequest(request, "internalId", "groupID")))
-      }
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -101,7 +98,6 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         val identifierRequest = IdentifierRequest(request, "internalId", "groupID", enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }

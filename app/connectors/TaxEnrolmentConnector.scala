@@ -20,6 +20,7 @@ import akka.Done
 import config.FrontendAppConfig
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
 import play.api.Logging
+import play.api.http.Status.{CREATED, NO_CONTENT}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -31,42 +32,38 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
-  private val url: String = s"${config.taxEnrolmentsUrl1}/service/${config.enrolmentKey}${config.taxEnrolmentsUrl2}"
-  private def allocateOrDeallocateUr(groupId: String, plrReference: String): String = {
-    val serviceEnrolmentPattern = s"${config.enrolmentKey}~PLRID~$plrReference"
-    s"${config.taxEnrolmentsUrl1}/groups/$groupId${config.taxEnrolmentsUrl2 ++ "s"}/$serviceEnrolmentPattern"
-  }
+  private val enrolAndActivateUrl: String = s"${config.taxEnrolmentsUrl1}/service/${config.enrolmentKey}${config.taxEnrolmentsUrl2}"
+  private def serviceEnrolmentPattern(plrReference: String) = s"${config.enrolmentKey}~PLRID~$plrReference"
+  private def allocateOrDeallocateUr(groupId: String, plrReference: String): String =
+    s"${config.taxEnrolmentsUrl1}/groups/$groupId${config.taxEnrolmentsUrl2 ++ "s"}/${serviceEnrolmentPattern(plrReference)}"
 
-  def createEnrolment(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
-    http.PUT[EnrolmentRequest, HttpResponse](url, enrolmentInfo.convertToEnrolmentRequest) flatMap {
+  def enrolAndActivate(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
+    http.PUT[EnrolmentRequest, HttpResponse](enrolAndActivateUrl, enrolmentInfo.convertToEnrolmentRequest) flatMap {
       case success if is2xx(success.status) => Done.toFuture
       case failure =>
         logger.error(
-          s" Error with tax-enrolments create call  ${failure.status} : ${failure.body}"
+          s" Error in creating and activating a new enrolment  ${failure.status} : ${failure.body}"
         )
         Future.failed(InternalIssueError)
-
     }
 
-  def allocateEnrolment(enrolmentInfo: EnrolmentInfo, groupId: String)(implicit hc: HeaderCarrier): Future[Done] = {
-    val completeUrl = allocateOrDeallocateUr(groupId = groupId, plrReference = enrolmentInfo.plrId)
-    http.PUT[EnrolmentRequest, HttpResponse](completeUrl, enrolmentInfo.convertToEnrolmentRequest) flatMap {
-      case success if success.status == 201 => Done.toFuture
+  def allocateEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
+    http.POSTEmpty(allocateOrDeallocateUr(groupId, plrReference)).flatMap {
+      case success if success.status == CREATED => Done.toFuture
       case failure =>
         logger.error(
-          s" Error with tax-enrolments allocate call  ${failure.status} : ${failure.body}"
+          s" Allocating an enrolment to a new filing member failed ${failure.status} : ${failure.body}"
         )
         Future.failed(InternalIssueError)
     }
-  }
 
   def revokeEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] = {
     val completeUrl = allocateOrDeallocateUr(groupId = groupId, plrReference = plrReference)
     http.DELETE(completeUrl) flatMap {
-      case success if success.status == 204 => Done.toFuture
+      case success if success.status == NO_CONTENT => Done.toFuture
       case failure =>
         logger.error(
-          s" Error with tax-enrolments deallocate call  ${failure.status} : ${failure.body}"
+          s" Error with tax-enrolments revoke enrolment call  ${failure.status} : ${failure.body}"
         )
         Future.failed(InternalIssueError)
     }

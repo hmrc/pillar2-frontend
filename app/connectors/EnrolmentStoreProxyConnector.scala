@@ -19,21 +19,19 @@ package connectors
 import config.FrontendAppConfig
 import models.GroupIds
 import play.api.Logging
-import play.api.http.Status.NO_CONTENT
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
-  def enrolmentExists(plrReference: String)(implicit
-    hc:                             HeaderCarrier,
-    ec:                             ExecutionContext
-  ): Future[Boolean] = {
+  def getGroupIds(plrReference: String)(implicit
+    hc:                         HeaderCarrier,
+    ec:                         ExecutionContext
+  ): Future[Option[GroupIds]] = {
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     http
@@ -41,21 +39,12 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
         submissionUrl
       )(rds = readRaw, hc = hc, ec = ec)
       .map {
-        case response if response.status == NO_CONTENT => false
-        case response if is2xx(response.status) =>
+        case response if response.status == OK =>
           response.json
             .asOpt[GroupIds]
-            .exists(groupIds =>
-              if (groupIds.principalGroupIds.nonEmpty) {
-                groupIds.principalGroupIds.toList
-                true
-              } else {
-                false
-              }
-            )
         case response =>
           logger.warn(s"Enrolment response not formed. ${response.status} response status")
-          throw new IllegalStateException()
+          None
       }
 
   }

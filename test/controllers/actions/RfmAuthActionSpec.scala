@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class RfmAuthActionSpec extends SpecBase {
 
-  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  private type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 
   val enrolmentKey    = "HMRC-PILLAR2-ORG"
   val identifierName  = "PLRID"
@@ -46,7 +46,8 @@ class RfmAuthActionSpec extends SpecBase {
   val noEnrolments: Enrolments =
     Enrolments(Set.empty)
 
-  val id: String = UUID.randomUUID().toString
+  val id:      String = UUID.randomUUID().toString
+  val groupID: String = UUID.randomUUID().toString
 
   class Harness(rfmAuthAction: RfmIdentifierAction) {
     def onPageLoad(): Action[AnyContent] = rfmAuthAction(_ => Results.Ok)
@@ -61,7 +62,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ Some(groupID) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -85,7 +86,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ Some(groupID) ~ noEnrolments ~ Some(Organisation) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -108,7 +109,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant)))
+          .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -132,7 +133,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Individual) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Individual) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -156,7 +157,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Agent) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Agent) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -180,7 +181,7 @@ class RfmAuthActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(None ~ noEnrolments ~ None ~ None))
+          .thenReturn(Future.successful(None ~ None ~ noEnrolments ~ None ~ None))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]

@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
+import models.grs.{EntityType, GrsRegistrationData, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
@@ -458,6 +458,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(UpeGRSResponsePage, grsResponse)
+
+  val rfmGrsData: GrsRegistrationData = GrsRegistrationData(companyId = "someSafeId", companyName = "Company", utr = "UTR", crn = "CRN")
 
   val allSectionsCompleted = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")

@@ -17,10 +17,11 @@
 package connectors
 
 import base.SpecBase
+import models.GroupIds
+import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.libs.json.Json
 
 class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
@@ -30,55 +31,28 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
     )
     .build()
   lazy val connector: EnrolmentStoreProxyConnector = app.injector.instanceOf[EnrolmentStoreProxyConnector]
-  val enrolmentStoreProxyUrl    = "/enrolment-store-proxy/enrolment-store/enrolments"
-  val enrolmentStoreProxy200Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~xxx200/groups"
-  val enrolmentStoreProxy204Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~xxx204/groups"
+  private val enrolmentStoreProxy200Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~200/groups"
+  private val enrolmentStoreProxy204Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~900/groups"
 
-  val enrolmentStoreProxyResponseJson: String =
-    """{
-      |  "principalGroupIds": [
-      |    "ABCEDEFGI1234567",
-      |    "ABCEDEFGI1234568"
-      |  ],
-      |  "delegatedGroupIds": [
-      |    "ABCEDEFGI1234567",
-      |    "ABCEDEFGI1234568"
-      |  ]
-      |}""".stripMargin
+  val groupIds     = GroupIds(principalGroupIds = "ABCEDEFGI1234567", delegatedGroupIds = Seq("ABCEDEFGI1234568"))
+  val jsonGroupIds = Json.toJson(groupIds).toString()
 
-  val enrolmentStoreProxyResponseNoPrincipalIdJson: String =
-    """{
-      |  "principalGroupIds": []
-      |}""".stripMargin
+  private val errorCodes: Gen[Int] =
+    Gen.oneOf(Seq(BAD_REQUEST, FORBIDDEN, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_GATEWAY, GATEWAY_TIMEOUT, SERVICE_UNAVAILABLE))
 
-  "EnrolmentStoreProxyConnector when calling enrolmentStatus" when {
+  "EnrolmentStoreProxyConnector when calling enrolment store" when {
 
-    "return 200 and a enrolmentStatus response when already enrolment exists" in {
-      val plrRef = "xxx200"
-      stubGet(enrolmentStoreProxy200Url, OK, enrolmentStoreProxyResponseJson)
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe true
+    "return group IDs associated with an enrolment if 200 response is received" in {
+
+      stubGet(enrolmentStoreProxy200Url, OK, jsonGroupIds)
+      val result = connector.getGroupIds("200")
+      result.futureValue mustBe Some(groupIds)
     }
 
-    "return 204 and a enrolmentStatus response when no enrolment exists" in {
-      val plrRef = "xxx204"
-      stubGet(enrolmentStoreProxy204Url, NO_CONTENT, "")
-
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
-    }
-
-    "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
-      val plrRef = "xxx204"
-      stubGet(enrolmentStoreProxy204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
-    }
-
-    "return 404 and a enrolmentStatus response when invalid or malfromed URL" in {
-      val plrRef = "xxx404"
-      stubGet(enrolmentStoreProxy204Url, NOT_FOUND, "")
-      intercept[IllegalStateException](await(connector.enrolmentExists(plrRef)))
+    "return None for any non-200 status received for this API" in {
+      stubGet(enrolmentStoreProxy204Url, errorCodes.sample.value, "")
+      val result = connector.getGroupIds("900")
+      result.futureValue mustBe None
 
     }
 

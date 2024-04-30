@@ -18,12 +18,12 @@ package services
 
 import akka.Done
 import connectors._
-import models.registration.RfmEnrolmentInformation
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, EnrolmentInfo, InternalIssueError, MneOrDomestic, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
 import pages._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,11 +42,17 @@ class SubscriptionService @Inject() (
       upeSafeId       <- registerUpe(userAnswers)
       fmnSafeId       <- registerNfm(userAnswers)
       plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
-      enrolmentExists <- enrolmentStoreProxyConnector.enrolmentExists(plrRef)
+      enrolmentExists <- enrolmentExists(plrRef)
       _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)
       enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
-      _ <- enrolmentConnector.createEnrolment(enrolmentInfo)
+      _ <- enrolmentConnector.enrolAndActivate(enrolmentInfo)
     } yield plrRef
+
+  private def enrolmentExists(plrReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
+      case Some(_) => true
+      case _       => false
+    }
 
   def readAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
@@ -210,8 +216,18 @@ class SubscriptionService @Inject() (
       _      <- userAnswersConnectors.remove(userId)
     } yield result
 
-  def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
-    registrationConnector.registerNewFilingMember(id)
+  private def registerNewFilingMember(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    userAnswers.get(RfmGrsDataPage).map(_.companyId).map(Future.successful).getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
+
+  def deallocateEnrolment(plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
+    enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
+      case Some(groupIds) => enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds, plrReference = plrReference)
+      case _              => Future.failed(InternalIssueError)
+    }
+
+  def allocateEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
+    enrolmentConnector.allocateEnrolment(groupId, plrReference)
+
   private def getNewFilingMemberDetails(companyId: String, userAnswers: UserAnswers): FilingMemberAmendDetails =
     userAnswers
       .get(RfmUkBasedPage)
@@ -222,7 +238,7 @@ class SubscriptionService @Inject() (
             .map(grsData =>
               FilingMemberAmendDetails(
                 addNewFilingMember = true,
-                safeId = grsData.companyId,
+                safeId = companyId,
                 customerIdentification1 = Some(grsData.crn),
                 customerIdentification2 = Some(grsData.utr),
                 organisationName = grsData.companyName
@@ -242,39 +258,22 @@ class SubscriptionService @Inject() (
             )
         }
       }
-      .getOrElse(throw new Exception("Expected a new nominated filing member but could not find the relevant information"))
+      .getOrElse(throw new Exception("Expected a value for RfmUkBased page but could not find one"))
 
   def createAmendObjectForReplacingFilingMember(
-    safeId:             String,
     subscriptionData:   SubscriptionData,
     filingMemberDetail: NewFilingMemberDetail,
     userAnswers:        UserAnswers
-  ): RfmEnrolmentInformation =
+  )(implicit hc:        HeaderCarrier): Future[AmendSubscription] =
     if (filingMemberDetail.corporatePosition == CorporatePosition.Upe) {
-      RfmEnrolmentInformation(
-        amendData = setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData),
-        enrolmentInfo = if (subscriptionData.upeDetails.domesticOnly) {
-          EnrolmentInfo(
-            plrId = ???,
-            crn = subscriptionData.upeDetails.customerIdentification1,
-            ctUtr = subscriptionData.upeDetails.customerIdentification2
-          )
-        } else {
-          EnrolmentInfo(
-            plrId = ???,
-            nonUkPostcode = subscriptionData.upeCorrespAddressDetails.postCode,
-            countryCode = ???
-          )
-        }
-      )
+      setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
     } else {
-      RfmEnrolmentInformation(
+      registerNewFilingMember(userAnswers).map(companyID =>
         replaceOldFilingMember(
           requiredInfo = filingMemberDetail,
           subscriptionData = subscriptionData,
-          filingMember = getNewFilingMemberDetails(companyId = safeId, userAnswers = userAnswers)
-        ),
-        enrolmentInfo = ???
+          filingMember = getNewFilingMemberDetails(companyID, userAnswers)
+        )
       )
     }
 

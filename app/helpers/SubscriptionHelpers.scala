@@ -213,7 +213,7 @@ trait SubscriptionHelpers {
     }
 
   private def getSecondaryTelephone: Option[String] =
-    get(RfmContactByTelephonePage).flatMap { nominated =>
+    get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
       if (nominated) {
         get(RfmSecondaryCapturePhonePage)
       } else {

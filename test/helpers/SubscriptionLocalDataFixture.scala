@@ -16,15 +16,17 @@
 
 package helpers
 
-import models.subscription.{AccountStatus, AccountingPeriod, AccountingPeriodAmend, AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails, UpeDetailsAmend}
+import models.rfm.CorporatePosition
+import models.subscription.{AccountStatus, AccountingPeriod, AccountingPeriodAmend, AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, NewFilingMemberDetail, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails, UpeDetailsAmend}
 import models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
-  private val upCorrespondenceAddress = UpeCorrespAddressDetails("line1", None, None, None, None, "GB")
-  private val upeDetailsAmend = UpeDetailsAmend("plrId", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
-  private val contactDetails  = ContactDetailsType("name", None, "email")
+  private val upCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
+  private val upeDetailsAmend =
+    UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
+  private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
   private val filingMemberAmendDetails = FilingMemberAmendDetails(
     addNewFilingMember = true,
     safeId = "someSafeId",
@@ -66,5 +68,14 @@ trait SubscriptionLocalDataFixture {
     primaryContactDetails = contactDetails,
     secondaryContactDetails = Some(contactDetails),
     filingMemberDetails = Some(filingMemberAmendDetails)
+  )
+  val replaceFilingMemberData: NewFilingMemberDetail = NewFilingMemberDetail(
+    plrReference = "plrReference",
+    corporatePosition = CorporatePosition.Upe,
+    contactName = "shadow",
+    contactEmail = "shadow@fiend.com",
+    phoneNumber = Some("dota2"),
+    address = NonUKAddress("middle", None, "lane", None, None, "obv"),
+    secondaryContactInformation = Some(contactDetails)
   )
 }
