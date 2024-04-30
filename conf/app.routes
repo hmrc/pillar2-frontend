@@ -90,6 +90,7 @@ GET         /grs-return/checkmode/rfm                                           
 
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-error                                                   controllers.UnderConstructionController.onPageLoadError
 
 GET         /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onSubmit

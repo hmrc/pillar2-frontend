@@ -140,7 +140,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoadError.url
       }
     }
 
@@ -179,7 +179,23 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoadError.url
+      }
+    }
+
+    "redirect to agent there is a problem page if an error outside service" in {
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AgentIdentifierAction(new FakeFailingAuthConnector(new NoSuchElementException()), appConfig, bodyParsers)(ec)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoadError.url
       }
     }
   }

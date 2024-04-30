@@ -51,7 +51,6 @@ class AgentIdentifierAction @Inject() (
 
         authorised(agentPredicate)
           .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
-
             case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ =>
               Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments, isAgent = true)))
             case _ ~ _ ~ Some(Organisation) ~ _ =>
@@ -64,12 +63,12 @@ class AgentIdentifierAction @Inject() (
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
-            Left(Redirect(routes.UnderConstructionController.onPageLoad)) // PIL-505
-          case _: InternalError => Left(Redirect(routes.UnderConstructionController.onPageLoad)) // PIL-922
+            Left(Redirect(routes.UnderConstructionController.onPageLoadError)) // PIL-505
+          case _: InternalError => Left(Redirect(routes.UnderConstructionController.onPageLoadError)) // PIL-922
           case _: AuthorisationException =>
             Left(Redirect(routes.UnderConstructionController.onPageLoad))
+          case _ => Left(Redirect(routes.UnderConstructionController.onPageLoadError))
         }
-
       }
 
       override def parser: BodyParser[AnyContent] = bodyParser

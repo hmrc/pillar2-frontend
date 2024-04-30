@@ -17,23 +17,27 @@
 package controllers
 
 import config.FrontendAppConfig
-
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.UnderConstruction
+import views.html.{UnderConstruction, UnderConstructionError}
 
 import javax.inject.Inject
 
 class UnderConstructionController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     UnderConstruction
+  view:                     UnderConstruction,
+  errorView:                UnderConstructionError
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view())
+  }
+
+  def onPageLoadError: Action[AnyContent] = Action { implicit request =>
+    Ok(errorView())
   }
 
   def onPageLoadClear: Action[AnyContent] = Action { implicit request =>

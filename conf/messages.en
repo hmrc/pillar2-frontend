@@ -285,6 +285,7 @@ rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
 under_construction.heading = Under Construction
+under_construction.error.heading = Under Construction Error
 businessActivityUK.title = Does the group have an entity located in the UK?
 businessActivityUK.heading = Does the group have an entity located in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
