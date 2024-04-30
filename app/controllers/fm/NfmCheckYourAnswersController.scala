@@ -53,7 +53,7 @@ class NfmCheckYourAnswersController @Inject() (
       )
       Ok(view(list))
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
