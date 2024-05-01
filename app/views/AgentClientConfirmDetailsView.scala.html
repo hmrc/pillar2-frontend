@@ -1,0 +1,47 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
+@this(
+        layout: templates.Layout,
+        heading: heading,
+        govukButton: GovukButton,
+        p: paragraphBody,
+        formHelper: FormWithCSRF,
+        paragraphMessageWithLink: ParagraphMessageWithLink
+)
+
+@(clientUltimateParentName: String, clientPillar2Id: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("agent.clientConfirm.title"))) {
+
+    @formHelper(action = routes.AgentController.onSubmitConfirmClientDetails(clientPillar2Id)) {
+
+        @heading(messages("agent.clientConfirm.heading"), classes = "govuk-heading-l")
+        @heading(messages("agent.clientConfirm.h2.upe"), classes = "govuk-heading-m", "h2")
+        @p(clientUltimateParentName)
+        @heading(messages("agent.clientConfirm.h2.id"), classes = "govuk-heading-m", "h2")
+        @p(clientPillar2Id)
+
+        @paragraphMessageWithLink(linkMessage = messages("agent.clientConfirm.link"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
+
+        @govukButton(
+            ButtonViewModel(messages("site.confirm-and-continue")).withAttribute("id", "continue")
+        )
+    }
+}
