@@ -230,11 +230,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
         val application = applicationBuilder(None)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER

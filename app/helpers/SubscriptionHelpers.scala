@@ -24,58 +24,71 @@ trait SubscriptionHelpers {
 
   self: UserAnswers =>
 
-  def upeStatus: RowStatus =
-    get(UpeRegisteredInUKPage)
-      .map { ukBased =>
-        if (!ukBased) {
-          (for {
-            nameReg      <- get(UpeNameRegistrationPage)
-            address      <- get(UpeRegisteredAddressPage)
-            contactName  <- get(UpeContactNamePage)
-            contactEmail <- get(UpeContactEmailPage)
-            telPref      <- get(UpePhonePreferencePage)
-          } yield {
-            val telephone = get(UpeCapturePhonePage).isDefined
-            if ((telPref & telephone) | (!telPref & !telephone)) {
-              RowStatus.Completed
-            } else {
-              RowStatus.InProgress
-            }
-          }).getOrElse(RowStatus.InProgress)
-        } else {
-          (for {
-            entityType <- get(UpeEntityTypePage)
-            grsData    <- get(UpeGRSResponsePage)
-            grsStatus  <- get(GrsUpeStatusPage)
-          } yield grsStatus).getOrElse(RowStatus.InProgress)
-        }
-      }
-      .getOrElse(RowStatus.NotStarted)
-
-  private def fmDetailStatusChecker: Boolean = {
-    val nominateFM        = get(NominateFilingMemberPage)
-    val registeredInUK    = get(FmRegisteredInUKPage)
-    val registeredName    = get(FmNameRegistrationPage).isDefined
-    val registeredAddress = get(FmRegisteredAddressPage).isDefined
-    val contactName       = get(FmContactNamePage).isDefined
-    val contactEmail      = get(FmContactEmailPage).isDefined
-    val phonePref         = get(FmPhonePreferencePage)
-    val phoneNumber       = get(FmCapturePhonePage).isDefined
-    val entityType        = get(FmEntityTypePage).isDefined
-    val grsResponse       = get(FmGRSResponsePage).isDefined
-    val grsStatus         = get(GrsFilingMemberStatusPage).isDefined
+  private def upeStatusChecker: Boolean =
     (
-      nominateFM,
-      registeredInUK,
-      registeredName,
-      registeredAddress,
-      contactName,
-      contactEmail,
-      phonePref,
-      phoneNumber,
-      entityType,
-      grsResponse,
-      grsStatus
+      get(UpeRegisteredInUKPage),
+      get(UpeNameRegistrationPage).isDefined,
+      get(UpeRegisteredAddressPage).isDefined,
+      get(UpeContactNamePage).isDefined,
+      get(UpeContactEmailPage).isDefined,
+      get(UpePhonePreferencePage),
+      get(UpeCapturePhonePage).isDefined,
+      get(UpeEntityTypePage).isDefined,
+      get(UpeGRSResponsePage).isDefined,
+      get(GrsUpeStatusPage).isDefined
+    ) match {
+      case (Some(false), true, true, true, true, Some(_), _, _, _, _) => true
+      case (Some(true), _, _, _, _, _, _, true, true, true)           => true
+      case _                                                          => false
+    }
+
+  def upeStatus: RowStatus =
+    (get(UpeRegisteredInUKPage), get(CheckYourAnswersLogicPage)) match {
+      case (Some(_), Some(true)) if !upeFinalStatusChecker => RowStatus.InProgress
+      case (Some(_), _) if upeStatusChecker                => RowStatus.Completed
+      case (None, _)                                       => RowStatus.NotStarted
+      case _                                               => RowStatus.InProgress
+    }
+
+  private def upeFinalStatusChecker: Boolean =
+    (
+      get(UpeRegisteredInUKPage),
+      get(UpeNameRegistrationPage).isDefined,
+      get(UpeRegisteredAddressPage).isDefined,
+      get(UpeContactNamePage).isDefined,
+      get(UpeContactEmailPage).isDefined,
+      get(UpePhonePreferencePage),
+      get(UpeCapturePhonePage).isDefined,
+      get(UpeEntityTypePage).isDefined,
+      get(UpeGRSResponsePage).isDefined,
+      get(GrsUpeStatusPage).isDefined
+    ) match {
+      case (Some(false), true, true, true, true, Some(true), true, false, false, false)   => true
+      case (Some(false), true, true, true, true, Some(false), false, false, false, false) => true
+      case (Some(true), false, false, false, false, None, false, true, true, true)        => true
+      case _                                                                              => false
+    }
+
+  def upeFinalStatus: RowStatus =
+    get(UpeRegisteredInUKPage) match {
+      case Some(_) if upeFinalStatusChecker => RowStatus.Completed
+      case None                             => RowStatus.NotStarted
+      case _                                => RowStatus.InProgress
+    }
+
+  private def fmFinalStatusChecker: Boolean =
+    (
+      get(NominateFilingMemberPage),
+      get(FmRegisteredInUKPage),
+      get(FmNameRegistrationPage).isDefined,
+      get(FmRegisteredAddressPage).isDefined,
+      get(FmContactNamePage).isDefined,
+      get(FmContactEmailPage).isDefined,
+      get(FmPhonePreferencePage),
+      get(FmCapturePhonePage).isDefined,
+      get(FmEntityTypePage).isDefined,
+      get(FmGRSResponsePage).isDefined,
+      get(GrsFilingMemberStatusPage).isDefined
     ) match {
       case (Some(true), Some(false), true, true, true, true, Some(false), false, false, false, false) => true
       case (Some(true), Some(false), true, true, true, true, Some(true), true, false, false, false)   => true
@@ -83,37 +96,96 @@ trait SubscriptionHelpers {
       case (Some(false), None, false, false, false, false, None, false, false, false, false)          => true
       case _                                                                                          => false
     }
-  }
 
-  def fmStatus: RowStatus =
+  def fmFinalStatus: RowStatus =
     get(NominateFilingMemberPage) match {
-      case Some(_) if fmDetailStatusChecker => RowStatus.Completed
-      case None                             => RowStatus.NotStarted
-      case _                                => RowStatus.InProgress
+      case Some(_) if fmFinalStatusChecker => RowStatus.Completed
+      case None                            => RowStatus.NotStarted
+      case _                               => RowStatus.InProgress
     }
 
-  def groupDetailStatus: RowStatus = {
-    val first  = get(SubMneOrDomesticPage).isDefined
-    val second = get(SubAccountingPeriodPage).isDefined
-    (first, second) match {
+  private def fmStatusChecker: Boolean =
+    (
+      get(NominateFilingMemberPage),
+      get(FmRegisteredInUKPage),
+      get(FmNameRegistrationPage).isDefined,
+      get(FmRegisteredAddressPage).isDefined,
+      get(FmContactNamePage).isDefined,
+      get(FmContactEmailPage).isDefined,
+      get(FmPhonePreferencePage),
+      get(FmCapturePhonePage).isDefined,
+      get(FmEntityTypePage).isDefined,
+      get(FmGRSResponsePage).isDefined,
+      get(GrsFilingMemberStatusPage).isDefined
+    ) match {
+      case (Some(true), Some(false), true, true, true, true, Some(_), _, _, _, _) => true
+      case (Some(true), Some(true), _, _, _, _, _, _, true, true, true)           => true
+      case (Some(false), _, _, _, _, _, _, _, _, _, _)                            => true
+      case _                                                                      => false
+    }
+
+  def fmStatus: RowStatus =
+    (
+      get(NominateFilingMemberPage),
+      get(CheckYourAnswersLogicPage)
+    ) match {
+      case (Some(_), Some(true)) if !fmFinalStatusChecker => RowStatus.InProgress
+      case (Some(_), _) if fmStatusChecker                => RowStatus.Completed
+      case (None, _)                                      => RowStatus.NotStarted
+      case _                                              => RowStatus.InProgress
+    }
+
+  def groupDetailStatus: RowStatus =
+    (
+      get(SubMneOrDomesticPage).isDefined,
+      get(SubAccountingPeriodPage).isDefined
+    ) match {
       case (true, true)  => RowStatus.Completed
       case (true, false) => RowStatus.InProgress
       case _             => RowStatus.NotStarted
     }
-  }
 
-  def contactDetailStatusChecker: Boolean = {
-    val pName            = get(SubPrimaryContactNamePage).isDefined
-    val PEmail           = get(SubPrimaryEmailPage).isDefined
-    val pPhonePref       = get(SubPrimaryPhonePreferencePage)
-    val pPhone           = get(SubPrimaryCapturePhonePage).isDefined
-    val addSecondaryPref = get(SubAddSecondaryContactPage)
-    val sName            = get(SubSecondaryContactNamePage).isDefined
-    val sEmail           = get(SubSecondaryEmailPage).isDefined
-    val sPhonePref       = get(SubSecondaryPhonePreferencePage)
-    val sPhone           = get(SubSecondaryCapturePhonePage).isDefined
-    val address          = get(SubRegisteredAddressPage).isDefined
-    (pName, PEmail, pPhonePref, pPhone, addSecondaryPref, sName, sEmail, sPhonePref, sPhone, address) match {
+  private def contactsStatusChecker: Boolean =
+    (
+      get(SubPrimaryContactNamePage).isDefined,
+      get(SubPrimaryEmailPage).isDefined,
+      get(SubPrimaryPhonePreferencePage),
+      get(SubPrimaryCapturePhonePage).isDefined,
+      get(SubAddSecondaryContactPage),
+      get(SubSecondaryContactNamePage).isDefined,
+      get(SubSecondaryEmailPage).isDefined,
+      get(SubSecondaryPhonePreferencePage),
+      get(SubSecondaryCapturePhonePage).isDefined,
+      get(SubRegisteredAddressPage).isDefined
+    ) match {
+      case (true, true, Some(_), _, Some(_), _, _, _, _, true) => true
+      case _                                                   => false
+    }
+
+  def contactsStatus: RowStatus =
+    (
+      get(SubPrimaryContactNamePage),
+      get(CheckYourAnswersLogicPage)
+    ) match {
+      case (Some(_), Some(true)) if !contactsFinalStatusChecker => RowStatus.InProgress
+      case (Some(_), _) if contactsStatusChecker                => RowStatus.Completed
+      case (None, _)                                            => RowStatus.NotStarted
+      case _                                                    => RowStatus.InProgress
+    }
+
+  def contactsFinalStatusChecker: Boolean =
+    (
+      get(SubPrimaryContactNamePage).isDefined,
+      get(SubPrimaryEmailPage).isDefined,
+      get(SubPrimaryPhonePreferencePage),
+      get(SubPrimaryCapturePhonePage).isDefined,
+      get(SubAddSecondaryContactPage),
+      get(SubSecondaryContactNamePage).isDefined,
+      get(SubSecondaryEmailPage).isDefined,
+      get(SubSecondaryPhonePreferencePage),
+      get(SubSecondaryCapturePhonePage).isDefined,
+      get(SubRegisteredAddressPage).isDefined
+    ) match {
       case (true, true, Some(true), true, Some(true), true, true, Some(true), true, true)     => true
       case (true, true, Some(true), true, Some(true), true, true, Some(false), false, true)   => true
       case (true, true, Some(true), true, Some(false), false, false, None, false, true)       => true
@@ -122,20 +194,19 @@ trait SubscriptionHelpers {
       case (true, true, Some(false), false, Some(false), false, false, None, false, true)     => true
       case _                                                                                  => false
     }
-  }
 
-  def contactDetailStatus: RowStatus =
+  def contactsFinalStatus: RowStatus =
     get(SubPrimaryContactNamePage) match {
-      case Some(_) if contactDetailStatusChecker => RowStatus.Completed
+      case Some(_) if contactsFinalStatusChecker => RowStatus.Completed
       case None                                  => RowStatus.NotStarted
       case _                                     => RowStatus.InProgress
     }
 
   def finalStatusCheck: Boolean =
     groupDetailStatus == RowStatus.Completed &
-      fmStatus == RowStatus.Completed &
-      upeStatus == RowStatus.Completed &
-      contactDetailStatus == RowStatus.Completed
+      fmFinalStatus == RowStatus.Completed &
+      upeFinalStatus == RowStatus.Completed &
+      contactsFinalStatus == RowStatus.Completed
 
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
     if (
@@ -187,23 +258,23 @@ trait SubscriptionHelpers {
       }
       .getOrElse(EnrolmentInfo(plrId = plpID))
 
-  def securityQuestionStatus: RowStatus = {
-    val first  = get(RfmPillar2ReferencePage).isDefined
-    val second = get(RfmRegistrationDatePage).isDefined
-    (first, second) match {
+  def securityQuestionStatus: RowStatus =
+    (
+      get(RfmPillar2ReferencePage).isDefined,
+      get(RfmRegistrationDatePage).isDefined
+    ) match {
       case (true, true)  => RowStatus.Completed
       case (true, false) => RowStatus.InProgress
       case _             => RowStatus.NotStarted
     }
-  }
 
-  def rfmNoIdQuestionStatus: RowStatus = {
-    val first  = get(RfmNameRegistrationPage).isDefined
-    val second = get(RfmRegisteredAddressPage).isDefined
-    (first, second) match {
+  def rfmNoIdQuestionStatus: RowStatus =
+    (
+      get(RfmNameRegistrationPage).isDefined,
+      get(RfmRegisteredAddressPage).isDefined
+    ) match {
       case (true, true)  => RowStatus.Completed
       case (true, false) => RowStatus.InProgress
       case _             => RowStatus.NotStarted
     }
-  }
 }

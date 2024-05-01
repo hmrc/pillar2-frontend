@@ -31,97 +31,111 @@ class SubscriptionHelpersSpec extends SpecBase {
 
   "Subscription Helper" when {
 
-    "getUpe status" should {
+    "upe final status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
         val userAnswer = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
-        userAnswer.upeStatus mustEqual RowStatus.NotStarted
+        userAnswer.upeFinalStatus mustEqual RowStatus.NotStarted
       }
       "return in progress if user is not registered in uk but no name reg can be found" in {
-        upeInProgressUserAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeInProgressUserAnswer.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no contact name can be found" in {
-        upeInProgressNoContactName.upeStatus mustEqual RowStatus.InProgress
+        upeInProgressNoContactName.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no address can be found" in {
-        upeNoAddressFound.upeStatus mustEqual RowStatus.InProgress
+        upeNoAddressFound.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no email can be found" in {
-        upeNoEmailFound.upeStatus mustEqual RowStatus.InProgress
+        upeNoEmailFound.upeFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        upeNoPhonePref.upeStatus mustEqual RowStatus.InProgress
+        upeNoPhonePref.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered answered yes to phone preference page and no phone number can be found" in {
-        upePhonePrefButNoPhoneNumber.upeStatus mustEqual RowStatus.InProgress
+        upePhonePrefButNoPhoneNumber.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        upeCompletedNoPhoneNumber.upeStatus mustEqual RowStatus.Completed
+        upeCompletedNoPhoneNumber.upeFinalStatus mustEqual RowStatus.Completed
+      }
+
+      "return completed if user is not registered and answered no to phone preference page" in {
+        upeCompletedNoPhoneNumber
+          .set(UpePhonePreferencePage, false)
+          .success
+          .value
+          .upeFinalStatus mustEqual RowStatus.Completed
       }
 
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        upeCompletedGrsStatus.upeStatus mustEqual RowStatus.Completed
+        upeCompletedGrsStatus.upeFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        upeNoEntityType.upeStatus mustEqual RowStatus.InProgress
+        upeNoEntityType.upeFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        upeNoGrsResponseType.upeStatus mustEqual RowStatus.InProgress
+        upeNoGrsResponseType.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
     }
 
-    "NFM status" should {
+    "fm final status" should {
 
       "return Not Started if no answer can be found to fm nominated" in {
         val userAnswer = emptyUserAnswers.set(FmContactNamePage, "name").success.value
-        userAnswer.fmStatus mustEqual RowStatus.NotStarted
+        userAnswer.fmFinalStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
         val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
-        userAnswer.fmStatus mustEqual RowStatus.Completed
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if fm is not registered in uk and no name reg can be found" in {
-        fmNoNameReg.fmStatus mustEqual RowStatus.InProgress
+        fmNoNameReg.fmFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no contact name can be found" in {
-        fmNoContactName.fmStatus mustEqual RowStatus.InProgress
+        fmNoContactName.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no address can be found" in {
-        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
-        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmFinalStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no email can be found" in {
-        fmNoEmail.fmStatus mustEqual RowStatus.InProgress
+        fmNoEmail.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        fmNoPhonePref.fmStatus mustEqual RowStatus.InProgress
+        fmNoPhonePref.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        fmPhonePrefNoPhoneNum.fmStatus mustEqual RowStatus.InProgress
+        fmPhonePrefNoPhoneNum.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
         val userAnswer = fmPhonePrefNoPhoneNum
           .set(FmCapturePhonePage, "12312")
           .success
           .value
-        userAnswer.fmStatus mustEqual RowStatus.Completed
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
       }
-
+      "return completed if user is not registered answered no to phone preference page" in {
+        val userAnswer = fmPhonePrefNoPhoneNum
+          .set(FmPhonePreferencePage, false)
+          .success
+          .value
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
+      }
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        fmCompletedGrsResponse.fmStatus mustEqual RowStatus.Completed
+        fmCompletedGrsResponse.fmFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        fmNoEntityType.fmStatus mustEqual RowStatus.InProgress
+        fmNoEntityType.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        fmNoGrsResponse.fmStatus mustEqual RowStatus.InProgress
+        fmNoGrsResponse.fmFinalStatus mustEqual RowStatus.InProgress
       }
 
     }
@@ -140,17 +154,17 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
     }
 
-    "contact detail status" should {
+    "contacts final status" should {
       "return completed if an answer is provided to the right combination of pages" in {
-        contactDetailCompleted.contactDetailStatus mustEqual RowStatus.Completed
+        contactDetailCompleted.contactsFinalStatus mustEqual RowStatus.Completed
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        contactDetailInProgress.contactDetailStatus mustEqual RowStatus.InProgress
+        contactDetailInProgress.contactsFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return Not start if no answer is provided to either of the pages" in {
-        emptyUserAnswers.contactDetailStatus mustEqual RowStatus.NotStarted
+        emptyUserAnswers.contactsFinalStatus mustEqual RowStatus.NotStarted
       }
     }
 
@@ -201,6 +215,7 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswer.getFmSafeID mustBe None
       }
     }
+
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
         val userAnswer = emptyUserAnswers
@@ -223,7 +238,7 @@ class SubscriptionHelpersSpec extends SpecBase {
     "groupDetails status checker" should {
 
       "return true if all contact questions are answered " in {
-        groupPrimaryAndSecondaryContactData.contactDetailStatusChecker mustEqual true
+        groupPrimaryAndSecondaryContactData.contactsFinalStatusChecker mustEqual true
       }
       "return true if all primary contact question answered and no secondary contact by phone" in {
         groupPrimaryAndSecondaryContactData
@@ -231,76 +246,76 @@ class SubscriptionHelpersSpec extends SpecBase {
           .remove(SubSecondaryCapturePhonePage)
           .success
           .value
-          .contactDetailStatusChecker mustEqual true
+          .contactsFinalStatusChecker mustEqual true
       }
       "return true if no primary telephone contact and all other contact questions are answered" in {
-        groupPrimaryAndSecondaryContactData.setOrException(SubPrimaryPhonePreferencePage, false).contactDetailStatusChecker mustEqual true
+        groupPrimaryAndSecondaryContactData.setOrException(SubPrimaryPhonePreferencePage, false).contactsFinalStatusChecker mustEqual true
       }
       "return true if no primary & secondary telephone contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData
           .setOrException(SubPrimaryPhonePreferencePage, false)
           .setOrException(SubSecondaryPhonePreferencePage, false)
-          .contactDetailStatusChecker mustEqual true
+          .contactsFinalStatusChecker mustEqual true
       }
       "return true if primary telephone and no secondary contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData
           .setOrException(SubPrimaryPhonePreferencePage, false)
           .setOrException(SubAddSecondaryContactPage, false)
-          .contactDetailStatusChecker mustEqual true
+          .contactsFinalStatusChecker mustEqual true
       }
       "return true if no secondary contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData
           .setOrException(SubAddSecondaryContactPage, false)
-          .contactDetailStatusChecker mustEqual true
+          .contactsFinalStatusChecker mustEqual true
       }
       "return false if primary contact name is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubPrimaryContactNamePage)
           .success
           .value
-          .contactDetailStatusChecker mustEqual false
+          .contactsFinalStatusChecker mustEqual false
       }
       "return false if primary contact email is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubPrimaryEmailPage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
       "return false if primary contact by telephone is true and primary telephone is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubPrimaryCapturePhonePage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
       "return false if add secondary contact is true and secondary contact name is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubSecondaryContactNamePage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
       "return false if add secondary contact is true and secondary contact email is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubSecondaryEmailPage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
       "return false if secondary contact by telephone is true and secondary contact telephone is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubSecondaryCapturePhonePage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
       "return false if contact address is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubRegisteredAddressPage)
           .success
           .value
-          .contactDetailStatusChecker mustBe false
+          .contactsFinalStatusChecker mustBe false
       }
     }
 

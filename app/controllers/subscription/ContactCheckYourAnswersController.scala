@@ -66,18 +66,14 @@ class ContactCheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    if (request.userAnswers.contactDetailStatus == RowStatus.Completed) {
+    if (request.userAnswers.contactsStatus == RowStatus.Completed) {
       Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    for {
-      updatedAnswers <-
-        Future.fromTry(request.userAnswers.set(CheckYourAnswersLogicPage, true))
-      _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-    } yield Redirect(controllers.routes.TaskListController.onPageLoad)
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Redirect(controllers.routes.TaskListController.onPageLoad)
   }
 }
