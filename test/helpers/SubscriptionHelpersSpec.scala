@@ -31,6 +31,54 @@ class SubscriptionHelpersSpec extends SpecBase {
 
   "Subscription Helper" when {
 
+    "upe status" should {
+      "return in progress for invalid upe journey data identified at review and submit page" in {
+        val userAnswers = upeCompletedNoPhoneNumber
+          .set(UpePhonePreferencePage, false)
+          .success
+          .value
+          .set(UpeCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.upeStatus mustEqual RowStatus.InProgress
+      }
+    }
+
+    "fm status" should {
+      "return in progress for invalid fm journey data identified at review and submit page" in {
+        val userAnswers = fmPhonePrefNoPhoneNum
+          .set(FmPhonePreferencePage, false)
+          .success
+          .value
+          .set(FmCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.fmStatus mustEqual RowStatus.InProgress
+      }
+    }
+
+    "contacts status" should {
+      "return in progress for invalid contacts journey data identified at review and submit page" in {
+        val userAnswers = contactDetailCompleted
+          .set(SubPrimaryPhonePreferencePage, false)
+          .success
+          .value
+          .set(SubPrimaryCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.contactsStatus mustEqual RowStatus.InProgress
+      }
+    }
+
     "upe final status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
