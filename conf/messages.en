@@ -819,11 +819,16 @@ subscriptionAddress.messages.error.addressLine2.length = The second line of the 
 subscriptionAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.change.hidden =  the registered contact address
 
+###############################################
+#
+# Dashboard
+#
+###############################################
 dashboard.title = Your Pillar 2 top-up taxes account
 dashboard.heading = Your Pillar 2 top-up taxes account
-dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID:
-dashboard.registrationDate = Registration date:
-dashboard.upe = Ultimate parent entity:
+dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID: {0}
+dashboard.registrationDate = Registration date: {0}
+dashboard.upe = Ultimate parent entity: {0}
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due
 dashboard.voluntaryPayment = Make a payment
@@ -834,15 +839,24 @@ dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
 
 dashboard.p1 = This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution.
-dashboard.p2 = The first deadline to submit a return is
-dashboard.p3 = 18 months after the last day of the group’s accounting period that started on or after 31 December 2023.
-dashboard.p4 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline.
-dashboard.p5 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
+dashboard.p2 = The first deadline to submit a return is {1}18 months after the last day of the group’s accounting period that started on or after 31 December 2023{0}.
+dashboard.p3 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR) and GloBE Information Returns (GIR) ahead of this deadline.
+dashboard.p4 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
 
 dashboard.link = draft guidance (opens in new tab)
 dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
 dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
 dashboard.inactive.message2 = if your circumstances change.
+
+### Agent Dashboard
+dashboard.agent.accountLink = Agent Services Account
+dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
+dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
+dashboard.agent.changeClientLink = Change client
+dashboard.agent.noPayment = Your client has no payments due.
+dashboard.agent.paymentHistory = View your client’s payment history
+dashboard.agent.manageAccount = Manage your client’s account
+###############################################
 
 tasklist.incomplete.header= You have one or more incomplete registration tasks
 tasklist.incomplete.message= You must

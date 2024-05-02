@@ -155,7 +155,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
         }
       }
 
