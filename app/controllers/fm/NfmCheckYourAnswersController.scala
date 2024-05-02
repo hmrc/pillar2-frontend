@@ -19,6 +19,7 @@ package controllers.fm
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import pages.CheckYourAnswersLogicPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,7 +41,9 @@ class NfmCheckYourAnswersController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.fmStatus == RowStatus.Completed) {
+    val fmStatus = request.userAnswers.fmStatus
+    val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
+    if (fmStatus == RowStatus.Completed | fmStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
       val list = SummaryListViewModel(
         rows = Seq(
           NfmNameRegistrationSummary.row(request.userAnswers),

@@ -50,7 +50,7 @@ trait SubscriptionHelpers {
       case _                                               => RowStatus.InProgress
     }
 
-  private def upeFinalStatusChecker: Boolean =
+  def upeFinalStatusChecker: Boolean =
     (
       get(UpeRegisteredInUKPage),
       get(UpeNameRegistrationPage).isDefined,
@@ -76,7 +76,7 @@ trait SubscriptionHelpers {
       case _                                => RowStatus.InProgress
     }
 
-  private def fmFinalStatusChecker: Boolean =
+  def fmFinalStatusChecker: Boolean =
     (
       get(NominateFilingMemberPage),
       get(FmRegisteredInUKPage),
@@ -162,17 +162,31 @@ trait SubscriptionHelpers {
       case _                                                   => false
     }
 
-  def contactsStatus: RowStatus =
+  def contactsStatus: RowStatus = {
+    println(
+      get(SubPrimaryContactNamePage),
+      get(CheckYourAnswersLogicPage),
+      !contactsFinalStatusChecker,
+      contactsStatusChecker
+    )
     (
       get(SubPrimaryContactNamePage),
       get(CheckYourAnswersLogicPage)
     ) match {
-      case (Some(_), Some(true)) if !contactsFinalStatusChecker => RowStatus.InProgress
-      case (Some(_), _) if contactsStatusChecker                => RowStatus.Completed
-      case (None, _)                                            => RowStatus.NotStarted
-      case _                                                    => RowStatus.InProgress
+      case (Some(_), Some(true)) if !contactsFinalStatusChecker =>
+        println("1. InProgress")
+        RowStatus.InProgress
+      case (Some(_), _) if contactsStatusChecker =>
+        println("2. Completed")
+        RowStatus.Completed
+      case (None, _) =>
+        println("3. NotStarted")
+        RowStatus.NotStarted
+      case _ =>
+        println("4. InProgress")
+        RowStatus.InProgress
     }
-
+  }
   def contactsFinalStatusChecker: Boolean =
     (
       get(SubPrimaryContactNamePage).isDefined,

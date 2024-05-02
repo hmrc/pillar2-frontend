@@ -66,7 +66,9 @@ class ContactCheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    if (request.userAnswers.contactsStatus == RowStatus.Completed) {
+    val contactsStatus = request.userAnswers.contactsStatus
+    val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
+    if (contactsStatus == RowStatus.Completed | contactsStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
       Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
