@@ -1,0 +1,41 @@
+package views.rfm
+
+import base.ViewSpecBase
+import forms.RfmSecurityCheckFormProvider
+import models.NormalMode
+import org.jsoup.Jsoup
+import views.html.rfm.SecurityCheckView
+
+class SecurityCheckViewSpec extends ViewSpecBase {
+
+  val formProvider = new RfmSecurityCheckFormProvider
+  val page         = inject[SecurityCheckView]
+
+  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+
+  "Security Check View" should {
+
+    "have a title" in {
+      view.getElementsByTag("title").text must include("Enter the group’s Pillar 2 top-up taxes ID")
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+    }
+
+    "have a heading" in {
+      view.getElementsByTag("h1").text must include("Enter the group’s Pillar 2 top-up taxes ID")
+    }
+
+    "have a hint description" in {
+      view.getElementsByClass("govuk-hint").get(0).text must include(
+        "This is 15 characters, for example, " +
+          "XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account."
+      )
+    }
+
+    "have a button" in {
+      view.getElementsByClass("govuk-button").text must include("Continue")
+    }
+  }
+}

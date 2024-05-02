@@ -81,14 +81,10 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have a bulleted list" in {
-      view.getElementsByTag("li").get(0).text must include(
-        "the ultimate parent (UPE), taking over from a nominated " +
-          "filing member as the group’s default filing member"
-      )
+      view.getElementsByTag("li").get(0).text must include("the ultimate parent entity (UPE)")
 
       view.getElementsByTag("li").get(1).text must include(
-        "a new nominated filing member, taking over from a " +
-          "previous filing member"
+        "a new nominated filing member, replacing a previous filing member"
       )
 
       view.getElementsByTag("li").get(2).text must include("act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance")

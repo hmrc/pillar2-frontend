@@ -29,8 +29,7 @@ class RfmSecondaryTelephoneViewSpec extends ViewSpecBase {
 
     "have a hint" in {
       view.getElementsByClass("govuk-hint").text must include(
-        "Enter a telephone number, like 01632 960 001, " +
-          "07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192."
+        "For international numbers include the country code"
       )
     }
 

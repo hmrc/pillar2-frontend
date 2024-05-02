@@ -881,8 +881,8 @@ rfm.startPage.p3 = If your group has not yet registered, you will need to {0} Yo
 rfm.startPage.p3.link = register to report Pillar 2 top-up taxes
 rfm.startPage.subHeading2 = Who can replace a filing member
 rfm.startPage.p4 = The filing member can be replaced by:
-rfm.startPage.b1 = the ultimate parent (UPE), taking over from a nominated filing member as the group’s default filing member
-rfm.startPage.b2 = a new nominated filing member, taking over from a previous filing member
+rfm.startPage.b1 = the ultimate parent entity (UPE)
+rfm.startPage.b2 = a new nominated filing member, replacing a previous filing member
 rfm.startPage.subHeading3 = Obligations as the filing member
 rfm.startPage.p5 = As the new filing member, you will take over the obligations to:
 rfm.startPage.b3 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
@@ -930,7 +930,7 @@ rfm.agent.link = Find out more about who can use this service
 
 rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 taxes top-up account.
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account.
 rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
 rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
@@ -939,7 +939,6 @@ rfm.corporatePosition.title = What is your position in the corporate structure o
 rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
 rfm.corporatePosition.upe = Ultimate parent entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
-rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
 rfm.corporatePosition.change.hidden = the position in the group’s corporate structure
 
@@ -1038,7 +1037,7 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
+rfm.secondaryTelephone.hint = For international numbers include the country code
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less

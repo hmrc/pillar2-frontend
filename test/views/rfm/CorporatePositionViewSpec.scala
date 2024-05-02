@@ -19,15 +19,12 @@ class CorporatePositionViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text must include("What is your position in the corporate structure of the group?")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your position in the corporate structure of the group?")
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
     }
 
-    "have a hint" in {
-      view.getElementById("value-hint").text must include(
-        "To replace the existing filing member for this account " +
-          "you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf."
-      )
+    "have a heading" in {
+      view.getElementsByTag("h1").text must include("What is your position in the corporate structure of the group?")
     }
 
     "have radio items" in {
