@@ -28,14 +28,14 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
+    pageTitle = titleNoForm(messages("rfm.saveProgressInform.title"))) {
 
-    @sectionHeader(messages("rfm.contact.heading.caption"))
-    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
+    @sectionHeader(messages("rfm.saveProgressInform.heading.caption"))
+    @heading(messages("rfm.saveProgressInform.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.saveProgressInform.p1"), id = Some("save-p1"))
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
     )
 
 }

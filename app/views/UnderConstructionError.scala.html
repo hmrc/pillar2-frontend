@@ -19,23 +19,21 @@
 
 @this(
         layout: templates.Layout,
+        formHelper: FormWithCSRF,
         heading: heading,
-        sectionHeader: sectionHeader,
-        paragraphBody: paragraphBody,
         govukButton: GovukButton
 )
+
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
 
-    @sectionHeader(messages("rfm.contact.heading.caption"))
-    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
+    @heading(messages("under_construction.error.heading"))
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
     )
 
 }
