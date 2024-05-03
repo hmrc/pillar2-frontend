@@ -17,28 +17,17 @@
 package controllers
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
-import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SubscriptionService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import views.html.rfm.AgentView
-import views.html.{ASAStubView, AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView}
-
-import scala.concurrent.Future
+import views.html.ASAStubView
 
 class ASAStubControllerSpec extends SpecBase {
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
   val agentEnrolments: Enrolments = Enrolments(
     Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None))
   )

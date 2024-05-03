@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
-import forms.AgentClientPillar2ReferenceFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,15 +34,13 @@ class ASAStubController @Inject() (
   identify:                  AgentIdentifierAction,
   featureAction:             FeatureFlagActionFactory,
   getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              AgentClientPillar2ReferenceFormProvider
+  requireData:               DataRequiredAction
 )(implicit appConfig:        FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  import identify._
   def onPageLoad: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen identify.agentIdentify() andThen getData andThen requireData).async { implicit request =>
       Future.successful(Ok(view()))
     }
 }
