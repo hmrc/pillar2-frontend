@@ -162,31 +162,16 @@ trait SubscriptionHelpers {
       case _                                                   => false
     }
 
-  def contactsStatus: RowStatus = {
-    println(
-      get(SubPrimaryContactNamePage),
-      get(CheckYourAnswersLogicPage),
-      !contactsFinalStatusChecker,
-      contactsStatusChecker
-    )
+  def contactsStatus: RowStatus =
     (
       get(SubPrimaryContactNamePage),
       get(CheckYourAnswersLogicPage)
     ) match {
-      case (Some(_), Some(true)) if !contactsFinalStatusChecker =>
-        println("1. InProgress")
-        RowStatus.InProgress
-      case (Some(_), _) if contactsStatusChecker =>
-        println("2. Completed")
-        RowStatus.Completed
-      case (None, _) =>
-        println("3. NotStarted")
-        RowStatus.NotStarted
-      case _ =>
-        println("4. InProgress")
-        RowStatus.InProgress
+      case (Some(_), Some(true)) if !contactsFinalStatusChecker => RowStatus.InProgress
+      case (Some(_), _) if contactsStatusChecker                => RowStatus.Completed
+      case (None, _)                                            => RowStatus.NotStarted
+      case _                                                    => RowStatus.InProgress
     }
-  }
   def contactsFinalStatusChecker: Boolean =
     (
       get(SubPrimaryContactNamePage).isDefined,
