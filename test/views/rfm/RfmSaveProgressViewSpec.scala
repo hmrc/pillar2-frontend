@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package views
+package views.rfm
 
 import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import views.html.AgentClientPillarIdView
+import views.html.rfm.RfmSaveProgressInformView
 
-class AgentClientPillarIdViewSpec extends ViewSpecBase {
+class RfmSaveProgressViewSpec extends ViewSpecBase {
 
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page         = inject[AgentClientPillarIdView]
+  val page = inject[RfmSaveProgressInformView]
 
-  val view = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
 
-  "Agent Client PillarId View" should {
+  "Rfm Save Progress inform View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is your client’s Pillar 2 top-up taxes ID?")
+      view.getElementsByTag("title").text must include("Saving progress")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your client’s Pillar 2 top-up taxes ID?")
+      view.getElementsByTag("h1").text must include("Saving progress")
     }
 
-    "have a hint" in {
-      view.getElementById("value-hint").text must include(
-        "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage."
+    "have a p1 " in {
+      view.getElementById("save-p1").text must include(
+        "From this point, the information you enter will be saved as you progress. If you sign out," +
+          " the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again."
       )
     }
 

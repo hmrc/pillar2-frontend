@@ -19,23 +19,17 @@
 
 @this(
         layout: templates.Layout,
-        heading: heading,
-        sectionHeader: sectionHeader,
-        paragraphBody: paragraphBody,
-        govukButton: GovukButton
+        h: heading,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(
-    pageTitle = titleNoForm(messages("rfm.contactDetailsRegistration.title"))) {
+@layout(pageTitle = titleNoForm(messages("agent.noMatch.title"))) {
 
-    @sectionHeader(messages("rfm.contact.heading.caption"))
-    @heading(messages("rfm.contactDetailsRegistration.heading"), "govuk-heading-l")
-    @paragraphBody(messages("rfm.contactDetailsRegistration.p1"))
-
-    @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
-    )
+    @h(messages("agent.noMatch.heading"), classes = "govuk-heading-l")
+    @p(messages("agent.noMatch.p1"))
+    @paragraphMessageWithLink(linkMessage = messages("agent.noMatch.link"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
 
 }
