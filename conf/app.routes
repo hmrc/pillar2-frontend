@@ -90,6 +90,7 @@ GET         /grs-return/checkmode/rfm                                           
 
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-error                                                   controllers.UnderConstructionController.onPageLoadError
 
 GET         /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onSubmit
@@ -446,4 +447,9 @@ POST       /replace-filing-member/review-submit/check-answers                   
 
 GET        /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
 POST       /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId
+GET        /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
+POST       /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
 GET        /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+
+GET         /replace-filing-member/security/saving-progress                     controllers.rfm.RfmSaveProgressInformController.onPageLoad
+

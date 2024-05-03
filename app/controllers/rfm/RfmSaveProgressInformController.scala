@@ -14,34 +14,37 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.rfm
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{UnderConstruction, UnderConstructionError}
+import utils.RowStatus
+import views.html.rfm.RfmSaveProgressInformView
 
-import javax.inject.Inject
-
-class UnderConstructionController @Inject() (
+class RfmSaveProgressInformController @Inject() (
+  rfmIdentify:              RfmIdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     UnderConstruction,
-  errorView:                UnderConstructionError
+  view:                     RfmSaveProgressInformView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view())
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+    val rfmEnabled = appConfig.rfmAccessEnabled
+    if (rfmEnabled) {
+      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
+        Ok(view())
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
-
-  def onPageLoadError: Action[AnyContent] = Action { implicit request =>
-    Ok(errorView())
-  }
-
-  def onPageLoadClear: Action[AnyContent] = Action { implicit request =>
-    Redirect(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad).withNewSession
-  }
-
 }

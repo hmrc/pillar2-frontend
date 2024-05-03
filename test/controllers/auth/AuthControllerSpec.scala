@@ -24,6 +24,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.{AuthConnector, InsufficientEnrolments, MissingBearerToken}
 
 import java.net.URLEncoder
 import scala.concurrent.Future
@@ -35,14 +36,20 @@ class AuthControllerSpec extends SpecBase {
     "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(None)
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AuthConnector].to(mockAuthConnector)
+          )
           .build()
 
       running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(userAnswersId)))
+        when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val request   = FakeRequest(GET, routes.AuthController.signOut.url)
@@ -57,6 +64,58 @@ class AuthControllerSpec extends SpecBase {
         verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
       }
     }
+
+    "must redirect to unauthorised page if there is no session id" in {
+
+      val application =
+        applicationBuilder(None)
+          .overrides(
+            bind[AuthConnector].to(mockAuthConnector)
+          )
+          .build()
+
+      running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.failed(InsufficientEnrolments("failure")))
+
+        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+
+        val result = route(application, request).value
+
+        val expectedRedirectUrl = controllers.routes.UnauthorisedController.onPageLoad.url
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+      }
+    }
+
+    "must redirect to log in page if there is no active session" in {
+
+      val application =
+        applicationBuilder(None)
+          .overrides(
+            bind[AuthConnector].to(mockAuthConnector)
+          )
+          .build()
+
+      running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.failed(MissingBearerToken("some failure")))
+
+        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+
+        val result = route(application, request).value
+
+        val encodedContinueUrl  = URLEncoder.encode(appConfig.loginContinueUrl, "UTF-8")
+        val expectedRedirectUrl = s"${appConfig.loginUrl}?continue=$encodedContinueUrl"
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+      }
+    }
+
   }
 
   "signOutNoSurvey" must {
@@ -64,14 +123,20 @@ class AuthControllerSpec extends SpecBase {
     "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(None)
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AuthConnector].to(mockAuthConnector)
+          )
           .build()
 
       running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some(userAnswersId)))
+        when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
@@ -86,5 +151,58 @@ class AuthControllerSpec extends SpecBase {
         verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
       }
     }
+
+    "must redirect to unauthorised page if there is no session id" in {
+
+      val application =
+        applicationBuilder(None)
+          .overrides(
+            bind[AuthConnector].to(mockAuthConnector)
+          )
+          .build()
+
+      running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.failed(InsufficientEnrolments("failure")))
+
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+
+        val result = route(application, request).value
+
+        val expectedRedirectUrl = controllers.routes.UnauthorisedController.onPageLoad.url
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+      }
+    }
+
+    "must redirect to log in page if there is no active session" in {
+
+      val application =
+        applicationBuilder(None)
+          .overrides(
+            bind[AuthConnector].to(mockAuthConnector)
+          )
+          .build()
+
+      running(application) {
+
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.failed(MissingBearerToken("some failure")))
+
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+
+        val result = route(application, request).value
+
+        val encodedContinueUrl  = URLEncoder.encode(appConfig.loginContinueUrl, "UTF-8")
+        val expectedRedirectUrl = s"${appConfig.loginUrl}?continue=$encodedContinueUrl"
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+      }
+
+    }
   }
+
 }
