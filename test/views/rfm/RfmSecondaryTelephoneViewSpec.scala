@@ -29,7 +29,7 @@ class RfmSecondaryTelephoneViewSpec extends ViewSpecBase {
 
     "have a hint" in {
       view.getElementsByClass("govuk-hint").text must include(
-        "For international numbers include the country code"
+        "For international numbers include the country code."
       )
     }
 

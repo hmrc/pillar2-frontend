@@ -276,7 +276,7 @@ rfmContactByTelephone.change.hidden =  can we contact the first contact by telep
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
 rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-rfmCaptureTelephoneDetails.hint = For international numbers include the country code
+rfmCaptureTelephoneDetails.hint = For international numbers include the country code.
 rfmCaptureTelephoneDetails.error.required = Enter a telephone number
 rfmCaptureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
@@ -1037,7 +1037,7 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = For international numbers include the country code
+rfm.secondaryTelephone.hint = For international numbers include the country code.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less

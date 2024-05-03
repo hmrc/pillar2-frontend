@@ -28,7 +28,7 @@ class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include("For international numbers include the country code")
+      view.getElementsByClass("govuk-hint").get(0).text must include("For international numbers include the country code.")
     }
 
     "have a button" in {
