@@ -29,68 +29,57 @@
         govukErrorSummary: GovukErrorSummary,
         govukButton: GovukButton)
 
-@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.startPage.title")), showSignOut = false, timeout = false) {
+@layout(pageTitle = titleNoForm(messages("rfm.startPage.title")), showSignOut = false, timeout = false) {
 
-    @formHelper(action = controllers.rfm.routes.StartPageController.onSubmit, 'autoComplete -> "off") {
+    @sectionHeader(messages("rfm.heading.caption"))
+    @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmation" -> "confirmation_0")))
-        }
+    @heading(messages("rfm.startPage.subHeading1"), "govuk-heading-m", "h2")
+    @paragraphBody(messages("rfm.startPage.p1"))
+    @paragraphBody(messages("rfm.startPage.p2"))
+    @paragraphBody(messages("rfm.startPage.p3", link(
+        text = messages("rfm.startPage.p3.link"),
+        call = Call("GET", appConfig.serviceStartLink),
+        fullStop = true
+    )))
 
-        @sectionHeader(messages("rfm.heading.caption"))
+    @heading(messages("rfm.startPage.subHeading2"), "govuk-heading-m", "h2")
+    @paragraphBody(messages("rfm.startPage.p4"))
+    @bulletList(items = List(
+        Html(messages("rfm.startPage.b1")),
+        Html(messages("rfm.startPage.b2"))
+    ), additionalListClasses = Some("govuk-list--spaced"))
 
-        @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
+    @heading(messages("rfm.startPage.subHeading3"), "govuk-heading-m", "h2")
+    @paragraphBody(messages("rfm.startPage.p5"))
+    @bulletList(items = List(
+        Html(messages("rfm.startPage.b3")),
+        Html(messages("rfm.startPage.b4")),
+        Html(messages("rfm.startPage.b5"))
+    ), additionalListClasses = Some("govuk-list--spaced"))
+    @paragraphBody(messages("rfm.startPage.p6"))
 
-        @paragraphBody(messages("rfm.startPage.p1"))
-
-        @heading(messages("rfm.startPage.subHeading1"), "govuk-heading-m", "h2")
-
-        @paragraphBody(messages("rfm.startPage.p2"))
-
-        @paragraphBody(messages("rfm.startPage.p3", link(
-            text = messages("rfm.startPage.p3.link"),
-            call = Call("GET", appConfig.serviceStartLink),
-            fullStop = true
-        )))
-
-        @heading(messages("rfm.startPage.subHeading2"), "govuk-heading-m", "h2")
-
-        @bulletList(items = List(
-            Html(messages("rfm.startPage.b1")),
-            Html(messages("rfm.startPage.b2"))
-        ), additionalListClasses = Some("govuk-list--spaced"))
-
-        @heading(messages("rfm.startPage.subHeading3"), "govuk-heading-m", "h2")
-
-        @paragraphBody(messages("rfm.startPage.p4"))
-
-        @bulletList(items = List(
-            Html(messages("rfm.startPage.b3")),
-            Html(messages("rfm.startPage.b4")),
-            Html(messages("rfm.startPage.b5")),
+    @heading(messages("rfm.startPage.subHeading4"), "govuk-heading-m", "h2")
+    @paragraphBody(messages("rfm.startPage.p7"))
+    @paragraphBody(messages("rfm.startPage.p8"))
+    @bulletList(items = List(
             Html(messages("rfm.startPage.b6")),
-            Html(messages("rfm.startPage.b7"))
-        ), additionalListClasses = Some("govuk-list--spaced"))
+            Html(messages("rfm.startPage.b7")),
+            Html(messages("rfm.startPage.b8")),
+            Html(messages("rfm.startPage.b9")),
+            Html(messages("rfm.startPage.b10")),
+            Html(messages("rfm.startPage.b11")),
+            Html(messages("rfm.startPage.b12"))
+    ), additionalListClasses = Some("govuk-list--spaced"))
 
-        @heading(messages("rfm.startPage.legend"), "govuk-heading-m", "h2")
+    @heading(messages("rfm.startPage.legend"), "govuk-heading-s", "h2")
 
-        @govukCheckboxes(
-            CheckboxesViewModel(
-                form = form,
-                name = "confirmation",
-                items = Confirmation.checkboxItems("rfm.startPage.confirm"),
-                legend = LegendViewModel("")
-            )
-        )
-
-        @govukButton(Button(
-            content = Text(messages("site.start")),
-            href = Some(""),
-            classes = "govuk-button govuk-button--start",
-            isStartButton = true
-        ))
-
-    }
+    @govukButton(Button(
+        content = Text(messages("site.confirm-and-continue")),
+        href = Some(controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url),
+        classes = "govuk-button govuk-button--start",
+        isStartButton = true
+    ))
 }

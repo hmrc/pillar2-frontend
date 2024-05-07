@@ -17,43 +17,28 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import forms.RfmStartPageFormProvider
-import models.Confirmation
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.Future
-import play.api.data.Form
 import views.html.rfm.StartPageView
 
 class StartPageController @Inject() (
-  formProvider:             RfmStartPageFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageView
 )(implicit val appConfig:   FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Set[Confirmation]] = formProvider("rfm.startPage.error")
-
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      Future.successful(Ok(view(form)))
+      Future.successful(Ok(view()))
     } else {
       Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
-  }
-
-  def onSubmit: Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        error => Future.successful(BadRequest(view(error))),
-        _ => Future.successful(Redirect(controllers.rfm.routes.AuthenticateController.rfmAuthenticate))
-      )
   }
 
 }
