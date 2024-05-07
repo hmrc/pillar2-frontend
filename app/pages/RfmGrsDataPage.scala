@@ -23,5 +23,5 @@ case object RfmGrsDataPage extends QuestionPage[GrsRegistrationData] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "RfmGrsDataPage"
+  override def toString: String = "RfmGrsData"
 }

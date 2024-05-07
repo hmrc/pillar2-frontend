@@ -16,6 +16,7 @@
 
 package controllers
 
+import akka.Done
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
@@ -32,7 +33,6 @@ import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HttpResponse
 import utils.RowStatus
 
 import java.time.LocalDate
@@ -92,7 +92,7 @@ class TaskListControllerSpec extends SpecBase {
     }
 
     "redirect to tasklist if pillar 2 exists from read subscription API" in {
-      val mockHttpResponse = HttpResponse(OK, "")
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(PlrReferencePage, "1231")))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
@@ -102,7 +102,7 @@ class TaskListControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
         val result = route(application, request).value

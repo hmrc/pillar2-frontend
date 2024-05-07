@@ -18,10 +18,13 @@ package services
 
 import akka.Done
 import connectors._
+import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
+import models.registration.{CRN, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
 import pages._
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
 
@@ -216,8 +219,12 @@ class SubscriptionService @Inject() (
       _      <- userAnswersConnectors.remove(userId)
     } yield result
 
-  private def registerNewFilingMember(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
-    userAnswers.get(RfmGrsDataPage).map(_.companyId).map(Future.successful).getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
+  private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+    for {
+      safeID         <- userAnswers.get(RfmSafeIdPage).map(Future.successful).getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
+      updatedAnswers <- Future.fromTry(userAnswers.set(RfmSafeIdPage, safeID))
+      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield safeID
 
   def deallocateEnrolment(plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
@@ -225,8 +232,27 @@ class SubscriptionService @Inject() (
       case _              => Future.failed(InternalIssueError)
     }
 
-  def allocateEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
-    enrolmentConnector.allocateEnrolment(groupId, plrReference)
+  def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
+    enrolmentConnector.allocateEnrolment(groupId, plrReference, enrolmentInfo)
+
+  def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionData, pillar2Reference: String, userId: String)(implicit
+    hc:                                                       HeaderCarrier
+  ): Future[AllocateEnrolmentParameters] =
+    subscriptionData.upeDetails.customerIdentification1
+      .flatMap { crn =>
+        subscriptionData.upeDetails.customerIdentification2
+          .map { utr =>
+            AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+          }
+          .map(Future.successful)
+      }
+      .getOrElse(
+        enrolmentStoreProxyConnector
+          .getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts(Pillar2Identifier.toString, pillar2Reference))))
+          .map { knownFacts =>
+            AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+          }
+      )
 
   private def getNewFilingMemberDetails(companyId: String, userAnswers: UserAnswers): FilingMemberAmendDetails =
     userAnswers
@@ -238,7 +264,7 @@ class SubscriptionService @Inject() (
             .map(grsData =>
               FilingMemberAmendDetails(
                 addNewFilingMember = true,
-                safeId = companyId,
+                safeId = grsData.companyId,
                 customerIdentification1 = Some(grsData.crn),
                 customerIdentification2 = Some(grsData.utr),
                 organisationName = grsData.companyName
@@ -268,7 +294,7 @@ class SubscriptionService @Inject() (
     if (filingMemberDetail.corporatePosition == CorporatePosition.Upe) {
       setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
     } else {
-      registerNewFilingMember(userAnswers).map(companyID =>
+      registerOrGetNewFilingMemberSafeId(userAnswers).map(companyID =>
         replaceOldFilingMember(
           requiredInfo = filingMemberDetail,
           subscriptionData = subscriptionData,

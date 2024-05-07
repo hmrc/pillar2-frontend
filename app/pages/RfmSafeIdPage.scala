@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-sealed trait ApiError extends Throwable
-case object InternalIssueError extends ApiError
-case object UnexpectedResponse extends ApiError
-case object UnexpectedJsResult extends ApiError
-case object DuplicateSubmissionError extends ApiError
+import play.api.libs.json.JsPath
+
+case object RfmSafeIdPage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmSafeId"
+}

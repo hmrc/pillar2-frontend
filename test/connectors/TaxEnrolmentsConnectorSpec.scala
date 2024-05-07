@@ -18,7 +18,8 @@ package connectors
 
 import akka.Done
 import base.SpecBase
-import models.EnrolmentInfo
+import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.{EnrolmentInfo, Verifier}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -41,14 +42,14 @@ class TaxEnrolmentsConnectorSpec extends SpecBase {
     "createEnrolment" should {
       "createEnrolment must return status as 204 for successful Tax Enrolment call" in {
 
-        stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", NO_CONTENT)
+        stubResponseForPutRequest("/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", NO_CONTENT)
         val result = connector.enrolAndActivate(enrolmentInfo)
         result.futureValue mustBe Done
       }
 
       "must return status as 400 and BadRequest error" in {
 
-        stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", BAD_REQUEST)
+        stubResponseForPutRequest("/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", BAD_REQUEST)
         val result = connector.enrolAndActivate(enrolmentInfo).failed.futureValue
         result mustBe models.InternalIssueError
       }
@@ -61,31 +62,31 @@ class TaxEnrolmentsConnectorSpec extends SpecBase {
       }
     }
     "allocate Enrolment" should {
-      "return done in case of a CREATED response from ETMP " in {
-        stubResponse(s"/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", CREATED, "")
-        val result = connector.allocateEnrolment("id", "plrId")
+      val allocateBody = AllocateEnrolmentParameters("id", verifiers = Seq(Verifier("nonUkPostalCode", "1231"), Verifier("countryCode", "DS")))
+      "return done in case of a CREATED response from tax enrolment " in {
+        stubResponse("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", CREATED, "")
+        val result = connector.allocateEnrolment("id", "plrId", allocateBody)
         result.futureValue mustBe Done
       }
       "return a failed result in case of any response else than 201" in {
-        stubResponse(s"/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
-        val result = connector.allocateEnrolment("id", "plrId").failed.futureValue
+        stubResponse("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
+        val result = connector.allocateEnrolment("id", "plrId", allocateBody).failed.futureValue
         result mustBe models.InternalIssueError
       }
 
     }
 
     "revoke Enrolment" should {
-      "return done in case of a No content response from ETMP " in {
-        stubDelete(s"/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", NO_CONTENT, "")
+      "return done in case of a No content response from tax enrolment " in {
+        stubDelete("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", NO_CONTENT, "")
         val result = connector.revokeEnrolment("id", "plrId")
         result.futureValue mustBe Done
       }
       "return a failed result in case of any response else than 204" in {
-        stubDelete(s"/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
+        stubDelete("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
         val result = connector.revokeEnrolment("id", "plrId").failed.futureValue
         result mustBe models.InternalIssueError
       }
-
     }
 
   }

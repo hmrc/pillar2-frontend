@@ -16,6 +16,7 @@
 
 package controllers
 
+import akka.Done
 import base.SpecBase
 import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
@@ -31,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HttpResponse
 import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
@@ -251,7 +251,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
     "on submit method" should {
-      val mockHttpResponse = HttpResponse(OK, "")
       "redirect to confirmation page in case of a success response" in {
 
         val userAnswer = defaultUserAnswer
@@ -270,7 +269,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
         running(application) {
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
@@ -307,7 +306,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
         running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
@@ -334,7 +333,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
         running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
 

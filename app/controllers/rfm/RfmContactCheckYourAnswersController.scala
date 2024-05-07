@@ -87,8 +87,17 @@ class RfmContactCheckYourAnswersController @Inject() (
       newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
       subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
       _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
-      groupID                    <- OptionT.fromOption[Future](request.groupId)
-      _                          <- OptionT.liftF(subscriptionService.allocateEnrolment(groupID, newFilingMemberInformation.plrReference))
+      upeEnrolmentInfo <- OptionT.liftF(
+                            subscriptionService.getUltimateParentEnrolmentInformation(
+                              subscriptionData = subscriptionData,
+                              pillar2Reference = newFilingMemberInformation.plrReference,
+                              request.userId
+                            )
+                          )
+      groupId <- OptionT.fromOption[Future](request.groupId)
+      _ <- OptionT.liftF(
+             subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
+           )
       amendData <- OptionT.liftF(
                      subscriptionService
                        .createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)

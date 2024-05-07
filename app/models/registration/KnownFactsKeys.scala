@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.registration
 
-sealed trait ApiError extends Throwable
-case object InternalIssueError extends ApiError
-case object UnexpectedResponse extends ApiError
-case object UnexpectedJsResult extends ApiError
-case object DuplicateSubmissionError extends ApiError
+import models.WithName
+
+sealed trait KnownFactsKeys
+
+case object Pillar2Identifier extends WithName("PLRID") with KnownFactsKeys
+case object CRN extends WithName("CRN") with KnownFactsKeys
+case object UTR extends WithName("CTUTR") with KnownFactsKeys
+case object NonUkPostCode extends WithName("NonUKPostalCode") with KnownFactsKeys
+case object CountryCode extends WithName("CountryCode") with KnownFactsKeys

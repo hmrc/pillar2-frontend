@@ -18,15 +18,17 @@ package controllers.rfm
 
 import akka.Done
 import base.SpecBase
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, UserAnswers, Verifier}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
+import utils.FutureConverter.FutureOps
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -229,9 +231,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
     "onSubmit" should {
       import play.api.inject.bind
-      val defaultRfmData = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
-      lazy val jr        = controllers.routes.JourneyRecoveryController.onPageLoad().url
-      lazy val uc        = controllers.routes.UnderConstructionController.onPageLoad.url
+      val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
+      lazy val jr                     = controllers.routes.JourneyRecoveryController.onPageLoad().url
+      lazy val uc                     = controllers.routes.UnderConstructionController.onPageLoad.url
+      val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
       "redirect to under construction page in case of a successful replace filing member" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
@@ -241,7 +244,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -280,7 +285,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -301,7 +306,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -322,7 +329,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -343,7 +350,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
+            .thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -365,7 +375,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()
@@ -387,7 +397,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(
             mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
               any()

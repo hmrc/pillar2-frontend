@@ -17,7 +17,8 @@
 package connectors
 
 import base.SpecBase
-import models.GroupIds
+import models.EnrolmentRequest.{KnownFacts, KnownFactsParameters, KnownFactsResponse}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -31,8 +32,9 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
     )
     .build()
   lazy val connector: EnrolmentStoreProxyConnector = app.injector.instanceOf[EnrolmentStoreProxyConnector]
-  private val enrolmentStoreProxy200Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~200/groups"
-  private val enrolmentStoreProxy204Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~900/groups"
+  private val getIdsUrl = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~200/groups"
+
+  private val getKnownFactsUrl = "/enrolment-store-proxy/enrolment-store/enrolments"
 
   val groupIds     = GroupIds(principalGroupIds = "ABCEDEFGI1234567", delegatedGroupIds = Seq("ABCEDEFGI1234568"))
   val jsonGroupIds = Json.toJson(groupIds).toString()
@@ -42,18 +44,40 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
   "EnrolmentStoreProxyConnector when calling enrolment store" when {
 
-    "return group IDs associated with an enrolment if 200 response is received" in {
+    "getGroupIds" should {
+      "return group IDs associated with an enrolment if 200 response is received" in {
 
-      stubGet(enrolmentStoreProxy200Url, OK, jsonGroupIds)
-      val result = connector.getGroupIds("200")
-      result.futureValue mustBe Some(groupIds)
+        stubGet(getIdsUrl, OK, jsonGroupIds)
+        val result = connector.getGroupIds("200")
+        result.futureValue mustBe Some(groupIds)
+      }
+
+      "return None for any non-200 status received for this API" in {
+        stubGet(getIdsUrl, errorCodes.sample.value, "")
+        val result = connector.getGroupIds("200")
+        result.futureValue mustBe None
+
+      }
     }
-
-    "return None for any non-200 status received for this API" in {
-      stubGet(enrolmentStoreProxy204Url, errorCodes.sample.value, "")
-      val result = connector.getGroupIds("900")
-      result.futureValue mustBe None
-
+    "getKnownFacts" should {
+      "return an identifier and two verifiers using a valid pillar 2 reference" in {
+        stubResponse(getKnownFactsUrl, OK, expectedKnownFactsResponse)
+        val requestParameters = Json.parse(knownFactsRequest).as[KnownFactsParameters]
+        val expectedResponse  = Json.parse(expectedKnownFactsResponse).as[KnownFactsResponse]
+        val result            = connector.getKnownFacts(requestParameters)
+        result.futureValue mustEqual expectedResponse
+      }
+      "return failed response in case of a non-200 response from tax enrolment" in {
+        stubResponse(getKnownFactsUrl, errorCodes.sample.value, "")
+        val result = connector.getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts("PLRID", "id"))))
+        result.failed.futureValue mustBe InternalIssueError
+      }
+      "return failed response in case of a js result error in the body received from tax enrolments" in {
+        stubResponse(getKnownFactsUrl, OK, badKnownFactsResponse)
+        val requestParameters = Json.parse(knownFactsRequest).as[KnownFactsParameters]
+        val result            = connector.getKnownFacts(requestParameters)
+        result.failed.futureValue mustEqual UnexpectedJsResult
+      }
     }
 
   }

@@ -19,18 +19,20 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors._
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.registration.RegistrationInfo
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{GroupIds, InternalIssueError}
+import models.{GroupIds, InternalIssueError, Verifier}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.Helpers.running
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,7 +66,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockRegistrationConnector.registerFilingMember(any())(any())).thenReturn(Future.successful("fmID"))
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
           val result = service.createSubscription(userAnswer)
           result.futureValue mustBe "ID"
         }
@@ -92,7 +94,7 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
           val result = service.createSubscription(userAnswer)
           result.futureValue mustBe "ID"
         }
@@ -117,7 +119,7 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
           val result = service.createSubscription(userAnswer)
           result.futureValue mustBe "ID"
         }
@@ -145,7 +147,7 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.InternalIssueError
         }
@@ -173,7 +175,7 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.InternalIssueError
         }
@@ -200,7 +202,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
-          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(expectedGroupIdReturned)
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(expectedGroupIdReturned)
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.DuplicateSubmissionError
@@ -388,8 +390,7 @@ class SubscriptionServiceSpec extends SpecBase {
     "amendFilingMemberDetails" when {
       "return done if the amend subscription is successful and delete userAnswers" in {
         import play.api.inject.bind
-        val mockHttpResponse = HttpResponse(OK, "")
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
@@ -434,7 +435,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
-        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(expectedGroupIdReturned)
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(expectedGroupIdReturned)
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
@@ -446,7 +447,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
-        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
@@ -458,7 +459,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
-        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any(), any())).thenReturn(expectedGroupIdReturned)
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(expectedGroupIdReturned)
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
@@ -467,24 +468,26 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "allocateEnrolment" when {
+      val enrolmentInfo = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("nonUkPostCode", "somePostCode")))
       "return done if tax enrolment has successfully allocated an enrolment to a group" in {
         val application = applicationBuilder().overrides(
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
-        when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
+        when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
-        service.allocateEnrolment(id, plrReference).futureValue mustEqual Done
+        service.allocateEnrolment("groupdID", "plr", enrolmentInfo).futureValue mustEqual Done
       }
 
       "return failure object if enrolment allocation fails in tax enrolment" in {
         val application = applicationBuilder().overrides(
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
-        when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
+          .thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
-        service.allocateEnrolment(id, plrReference).failed.futureValue mustEqual models.InternalIssueError
+        service.allocateEnrolment("groupdID", "plr", enrolmentInfo).failed.futureValue mustEqual models.InternalIssueError
       }
     }
 
@@ -497,7 +500,16 @@ class SubscriptionServiceSpec extends SpecBase {
       }
       "collate all relevant information for new filing member detail if they are uk based" in {
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true).setOrException(RfmGrsDataPage, rfmGrsData)
-        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(
+              bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+              bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+            )
+            .build()
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockRegistrationConnector.registerNewFilingMember(any())(any())).thenReturn(Future.successful("someSafeId"))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = false))
         val result = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,
@@ -508,9 +520,15 @@ class SubscriptionServiceSpec extends SpecBase {
       }
       "collate all relevant information for new filing member detail and register them if they are not uk based" in {
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, false).setOrException(RfmNameRegistrationPage, "Company")
-        val application = applicationBuilder().overrides(bind[RegistrationConnector].toInstance(mockRegistrationConnector)).build()
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val application = applicationBuilder()
+          .overrides(
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
         when(mockRegistrationConnector.registerNewFilingMember(any())(any())).thenReturn(Future.successful("someSafeId"))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         val expectedResult = amendData.copy(
           upeDetails = amendData.upeDetails.copy(filingMember = false),
           filingMemberDetails = Some(
@@ -529,6 +547,40 @@ class SubscriptionServiceSpec extends SpecBase {
           userAnswers
         )
         result.futureValue mustEqual expectedResult
+      }
+
+      "fetch the rfm safe ID from the database if it exists" in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(RfmUkBasedPage, false)
+          .setOrException(RfmNameRegistrationPage, "Company")
+          .setOrException(RfmSafeIdPage, "someSafeId")
+        val application = applicationBuilder()
+          .overrides(
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val expectedResult = amendData.copy(
+          upeDetails = amendData.upeDetails.copy(filingMember = false),
+          filingMemberDetails = Some(
+            FilingMemberAmendDetails(
+              addNewFilingMember = true,
+              safeId = "someSafeId",
+              customerIdentification1 = None,
+              customerIdentification2 = None,
+              organisationName = "Company"
+            )
+          )
+        )
+        val result = service.createAmendObjectForReplacingFilingMember(
+          subscriptionData,
+          replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
+          userAnswers
+        )
+        result.futureValue mustEqual expectedResult
+        verify(mockUserAnswersConnectors).save(eqTo(userAnswers.id), eqTo(userAnswers.data))(any())
       }
       "throw an exception if new fm corporate position is chosen but no RfmUkBasedPage value can be found" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]

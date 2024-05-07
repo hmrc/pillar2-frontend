@@ -210,4 +210,55 @@ trait TestData {
 
        """.stripMargin
 
+  val expectedKnownFactsResponse: String =
+    """
+      |{
+      |    "service": "HMRC-PILLAR2-ORG",
+      |    "enrolments": [{
+      |        "identifiers": [{
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }],
+      |        "verifiers": [{
+      |            "key": "NonUKPostalCode",
+      |            "value": "SE1232113"
+      |        },
+      |        {
+      |            "key": "CountryCode",
+      |            "value": "AR"
+      |        }]
+      |    }]
+      |}
+      |""".stripMargin
+
+  val badKnownFactsResponse: String =
+    """
+      |{
+      |    "enrolments": [{
+      |        "identifiers": [{
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }],
+      |        "verifiers": [{
+      |            "value": "SE1232113"
+      |        },
+      |        {
+      |            "value": "AR"
+      |        }]
+      |    }]
+      |}
+      |""".stripMargin
+  val knownFactsRequest: String =
+    """
+      |{
+      |    "service": "HMRC-PILLAR2-ORG",
+      |    "knownFacts": [
+      |        {
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }
+      |    ]
+      |}
+      |""".stripMargin
+
 }

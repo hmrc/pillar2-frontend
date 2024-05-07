@@ -18,6 +18,7 @@ package connectors
 
 import akka.Done
 import config.FrontendAppConfig
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
 import play.api.Logging
 import play.api.http.Status.{CREATED, NO_CONTENT}
@@ -42,17 +43,17 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
       case success if is2xx(success.status) => Done.toFuture
       case failure =>
         logger.error(
-          s" Error in creating and activating a new enrolment  ${failure.status} : ${failure.body}"
+          s" Error in creating and activating a new enrolment with status  ${failure.status} and body: ${failure.body}"
         )
         Future.failed(InternalIssueError)
     }
 
-  def allocateEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
-    http.POSTEmpty(allocateOrDeallocateUr(groupId, plrReference)).flatMap {
+  def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
+    http.POST[AllocateEnrolmentParameters, HttpResponse](allocateOrDeallocateUr(groupId, plrReference), body).flatMap {
       case success if success.status == CREATED => Done.toFuture
       case failure =>
         logger.error(
-          s" Allocating an enrolment to a new filing member failed ${failure.status} : ${failure.body}"
+          s" Allocating an enrolment to a new filing member failed with status ${failure.status} and body: ${failure.body}"
         )
         Future.failed(InternalIssueError)
     }
@@ -63,7 +64,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
       case success if success.status == NO_CONTENT => Done.toFuture
       case failure =>
         logger.error(
-          s" Error with tax-enrolments revoke enrolment call  ${failure.status} : ${failure.body}"
+          s"Revoke enrolments call to tax enrolments failed with status ${failure.status} and body:  ${failure.body}"
         )
         Future.failed(InternalIssueError)
     }
