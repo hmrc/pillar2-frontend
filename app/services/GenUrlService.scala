@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package helpers
+package services
 
-import com.typesafe.config.ConfigFactory
 import config.FrontendAppConfig
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-trait Configs {
+import javax.inject.Inject
+class GenUrlService @Inject() (val appConfig: FrontendAppConfig) {
 
-  def configuration: Configuration = Configuration(ConfigFactory.parseResources("application.conf"))
-
-  def environment: Environment = Environment.simple()
-
-  def servicesConfig = new ServicesConfig(configuration)
-
+  def generateUrl(url: String, authorised: Boolean): Option[String] =
+    (url.contains("/asa/"), authorised, url.contains("/replace-filing-member")) match {
+      case (false, _, true)     => None
+      case (true, true, false)  => Some(appConfig.asaHomePageUrl)
+      case (false, true, false) => Some(controllers.routes.IndexController.onPageLoad.url)
+      case (_, _, _)            => Some(appConfig.startPagePillar2Url)
+    }
 }
