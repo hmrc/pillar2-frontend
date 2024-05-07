@@ -1,36 +1,53 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package views.rfm
 
 import base.ViewSpecBase
-import models.{NonUKAddress, NormalMode}
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.{RfmNameRegistrationSummary, RfmRegisteredAddressSummary}
 import views.html.rfm.RfmCheckYourAnswersView
 import viewmodels.govuk.summarylist._
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  val userName     = "John Doe"
-  val countryCode  = "US"
-  val country      = "United States"
-  val nonUkAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = countryCode)
+  val userName    = "John Doe"
+  val countryCode = "US"
+  val country     = "United States"
 
-  val userAnswer = emptyUserAnswers
+  val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
 
   when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
-  val list = SummaryListViewModel(
+  val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmNameRegistrationSummary.row(userAnswer)(messages),
       RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(messages)
     ).flatten
   )
 
-  val page = inject[RfmCheckYourAnswersView]
+  val page: RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
 
-  val view = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
 
   "Rfm Check Your Answers View" should {
 

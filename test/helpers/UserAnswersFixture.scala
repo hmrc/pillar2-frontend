@@ -32,20 +32,20 @@ trait UserAnswersFixture extends TryValues {
   val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
+    addressLine1 = "Line1",
     addressLine2 = None,
-    addressLine3 = "la la land",
+    addressLine3 = "Line3",
     addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
+    postalCode = "M19AGS",
+    countryCode = "GB"
   )
   val nonUkAddress: NonUKAddress = NonUKAddress(
-    addressLine1 = "1 drive",
+    addressLine1 = "Line1",
     addressLine2 = None,
-    addressLine3 = "la la land",
+    addressLine3 = "Line3",
     addressLine4 = None,
     postalCode = None,
-    countryCode = "AB"
+    countryCode = "US"
   )
   private val email            = "hello@darkness.myoldFriend"
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
