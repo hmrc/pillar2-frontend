@@ -23,7 +23,7 @@ class GenUrlService @Inject() (val appConfig: FrontendAppConfig) {
 
   def generateUrl(url: String, authorised: Boolean): Option[String] =
     (url.contains("/asa/"), authorised, url.contains("/replace-filing-member")) match {
-      case (false, _, true)     => None
+      case (_, _, true)         => None
       case (true, true, false)  => Some(appConfig.asaHomePageUrl)
       case (false, true, false) => Some(controllers.routes.IndexController.onPageLoad.url)
       case (_, _, _)            => Some(appConfig.startPagePillar2Url)
