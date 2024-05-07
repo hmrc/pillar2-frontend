@@ -68,7 +68,7 @@
     <!--MANAGE YOUR TUT SECTION-->
     @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
     @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
 
     @sectionBreak()
 

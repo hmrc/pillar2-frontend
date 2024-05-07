@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import views.html.DashboardView
@@ -61,14 +62,17 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     "return OK and the correct view for a GET" in {
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        applicationBuilder(userAnswers = None, enrolments)
           .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[DashboardView]
@@ -90,8 +94,9 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     "redirect to error page if no valid Js value is found from read subscription api" in {
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        applicationBuilder(userAnswers = None, enrolments)
           .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()

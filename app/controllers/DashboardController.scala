@@ -28,6 +28,7 @@ import models.subscription.ReadSubscriptionRequestParameters
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
@@ -45,7 +46,8 @@ class DashboardController @Inject() (
   val subscriptionService:   SubscriptionService,
   val controllerComponents:  MessagesControllerComponents,
   view:                      DashboardView,
-  referenceNumberService:    ReferenceNumberService
+  referenceNumberService:    ReferenceNumberService,
+  sessionRepository:         SessionRepository
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -54,9 +56,10 @@ class DashboardController @Inject() (
   def onPageLoad(clientPillar2Id: Option[String] = None, agentView: Boolean = false): Action[AnyContent] =
     (identifierAction(agentView, clientPillar2Id) andThen getData).async { implicit request =>
       (for {
-        userAnswers <- OptionT.fromOption[Future](request.userAnswers)
+        userAnswers <-
+          if (agentView) OptionT.fromOption[Future](Option(request.userAnswers)) else OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- if (agentView) OptionT.fromOption[Future](clientPillar2Id)
-                           else OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments))
+                           else OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(
