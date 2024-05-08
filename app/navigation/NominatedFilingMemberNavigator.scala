@@ -92,7 +92,7 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(NominateFilingMemberPage)
       .map(nominated =>
-        if (nominated & userAnswers.fmStatus != RowStatus.Completed) {
+        if (nominated & userAnswers.fmFinalStatus != RowStatus.Completed) {
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers

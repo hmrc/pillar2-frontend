@@ -50,7 +50,7 @@ class GroupDetailCheckYourAnswersController @Inject() (
     if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
       Ok(view(list))
     } else {
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
 

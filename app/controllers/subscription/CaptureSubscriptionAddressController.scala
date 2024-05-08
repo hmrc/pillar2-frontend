@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.CaptureSubscriptionAddressFormProvider
-import models.Mode
+import models.{Mode, NonUKAddress}
 import navigation.SubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,7 +48,7 @@ class CaptureSubscriptionAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NonUKAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isPageDefined(SubAddSecondaryContactPage)) {

@@ -227,10 +227,6 @@ POST        /manage-account/account-details/summary               controllers.su
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
-
-
-GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
-
 GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
 POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
 

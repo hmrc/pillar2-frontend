@@ -24,6 +24,7 @@ import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
 import pages.{UpeEntityTypePage, UpeRegisteredInUKPage}
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -50,7 +51,7 @@ class EntityTypeController @Inject() (
     with I18nSupport
     with Logging {
 
-  val form = formProvider()
+  val form: Form[EntityType] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     request.userAnswers
