@@ -57,14 +57,6 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
-  val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
   val filingMember =
     FilingMember(
       isNfmRegisteredInUK = false,

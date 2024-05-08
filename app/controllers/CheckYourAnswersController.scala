@@ -21,12 +21,14 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
+import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -54,14 +56,18 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
 
-    sessionRepository.get(request.userId).map { optionalUserAnswer =>
-      (for {
-        userAnswer <- optionalUserAnswer
-        _          <- userAnswer.get(PlrReferencePage)
-      } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
-        .getOrElse(
-          Ok(view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList))
-        )
+    setCheckYourAnswersLogic(userAnswers).flatMap { _ =>
+      sessionRepository.get(request.userId).map { optionalUserAnswer =>
+        (for {
+          userAnswer <- optionalUserAnswer
+          _          <- userAnswer.get(PlrReferencePage)
+        } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
+          .getOrElse(
+            Ok(
+              view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
+            )
+          )
+      }
     }
   }
 
@@ -91,6 +97,13 @@ class CheckYourAnswersController @Inject() (
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
+
+  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
+    Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true)).flatMap { ua =>
+      userAnswersConnectors.save(ua.id, Json.toJson(ua.data)).map { _ =>
+        ua
+      }
+    }
 
   private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(

@@ -29,8 +29,8 @@ import java.time.LocalDate
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
-  val startDate    = LocalDate.of(2023, 12, 31)
-  val endDate      = LocalDate.of(2025, 12, 31)
+  val startDate: LocalDate = LocalDate.of(2023, 12, 31)
+  val endDate:   LocalDate = LocalDate.of(2025, 12, 31)
   "GroupAccountingPeriod Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {

@@ -22,7 +22,7 @@ import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -43,14 +43,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val plrReference = "XE1111123456789"
 
   private val date = LocalDate.now()
-  private val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
   private val ukAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
@@ -238,11 +230,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
         val application = applicationBuilder(None)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER

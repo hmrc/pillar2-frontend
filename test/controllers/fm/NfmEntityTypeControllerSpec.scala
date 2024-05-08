@@ -77,6 +77,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         ).toString
       }
     }
+
+    // TODO - This test will not work
     "if chosen, populate view with entity type not listed and set fm as a uk based entity to delete all no ID data" in {
       val ua =
         emptyUserAnswers

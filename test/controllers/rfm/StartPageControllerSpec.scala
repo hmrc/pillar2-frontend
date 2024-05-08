@@ -17,14 +17,11 @@
 package controllers.rfm
 
 import base.SpecBase
-import forms.RfmStartPageFormProvider
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
 import views.html.rfm.StartPageView
 
 class StartPageControllerSpec extends SpecBase {
-
-  val formProvider = new RfmStartPageFormProvider()("rfm.startPage.error")
 
   "StartPage Controller" when {
 
@@ -43,7 +40,7 @@ class StartPageControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[StartPageView]
         status(result) mustEqual OK
         val content = contentAsString(result)
-        content mustEqual view(formProvider)(request, appConfig(application), messages(application)).toString
+        content mustEqual view()(request, appConfig(application), messages(application)).toString
       }
 
     }
@@ -62,33 +59,6 @@ class StartPageControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-      }
-
-    }
-
-    "must return a Bad Request when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request   = FakeRequest(POST, controllers.rfm.routes.StartPageController.onPageLoad.url)
-        val boundForm = formProvider.bind(Map("confirmation" -> ""))
-        val result    = route(application, request).value
-        val view      = application.injector.instanceOf[StartPageView]
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString
-      }
-
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.StartPageController.onPageLoad.url).withFormUrlEncodedBody(("confirmation[0]", "confirm"))
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url
       }
 
     }

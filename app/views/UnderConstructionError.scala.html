@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import config.FrontendAppConfig
+@import views.html.components.gds._
 
-import forms.mappings.Mappings
-import models.Confirmation
-import play.api.data.Form
-import play.api.data.Forms.set
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        govukButton: GovukButton
+)
 
-import javax.inject.Inject
 
-class RfmStartPageFormProvider @Inject() extends Mappings {
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-  def apply(errorKey: String): Form[Set[Confirmation]] =
-    Form(
-      "confirmation" -> set(enumerable[Confirmation](errorKey)).verifying(nonEmptySet(errorKey))
+@layout(
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
+
+    @heading(messages("under_construction.error.heading"))
+
+    @govukButton(
+        ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
     )
 
 }

@@ -240,7 +240,8 @@ upeNameRegistration.change.hidden=  the name of the ultimate parent entity
 
 checkNewFilingMember.title = We need to match the details of the new nominated filing member to HMRC records
 checkNewFilingMember.heading = We need to match the details of the new nominated filing member to HMRC records
-checkNewFilingMember.p1 = We will ask you for several pieces of identifying information about the new nominated filing member so that we can best match them to our records.
+checkNewFilingMember.p1 =  If the new filing member is registered in the UK, we will ask you for identifying information so we can best match it with our records.
+checkNewFilingMember.p2 = If the new filing member is registered outside of the UK or if they are not a listed entity type, we will ask you for identifying information so we can create a new HMRC record.
 checkNewFilingMember.heading.caption = Group details
 
 upe-input-business-email.title=What is the email address?
@@ -275,7 +276,7 @@ rfmContactByTelephone.change.hidden =  can we contact the first contact by telep
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
 rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-rfmCaptureTelephoneDetails.hint = For international numbers include the country code
+rfmCaptureTelephoneDetails.hint = For international numbers include the country code.
 rfmCaptureTelephoneDetails.error.required = Enter a telephone number
 rfmCaptureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
@@ -285,6 +286,7 @@ rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
 under_construction.heading = Under Construction
+under_construction.error.heading = Under Construction Error
 businessActivityUK.title = Does the group have an entity located in the UK?
 businessActivityUK.heading = Does the group have an entity located in the UK?
 businessActivityUK.check.liable.text = Check if the group needs to report
@@ -449,8 +451,8 @@ rfmRegistrationDate.checkYourAnswersLabel = Registration date
 rfmRegistrationDate.change.hidden = The group’s registration date
 
 
-rfmContactAddress.title = What address do you want to use as the filing member''s contact address?
-rfmContactAddress.heading = What address do you want to use as the filing member''s contact address?
+rfmContactAddress.title = What address do you want to use as the filing member’s contact address?
+rfmContactAddress.heading = What address do you want to use as the filing member’s contact address?
 rfmContactAddress.checkYourAnswersLabel = Address
 rfmContactAddress.change.hidden = the contact address
 rfmContactAddress.addressLine1 = Address line 1
@@ -873,54 +875,63 @@ manageFurtherGroupDetails.checkYourAnswers.title = Group details
 rfm.heading.caption = Replace filing member
 rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
 rfm.startPage.title = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.subHeading1 = Tell HMRC when you have replaced your filing member
 rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
-rfm.startPage.subHeading1 = Not yet registered to report Pillar 2 top-up taxes
-rfm.startPage.p2 = You cannot use this service until you have first registered.
-rfm.startPage.p3 = If you need to register a new Pillar 2 top-up taxes account {0}
-rfm.startPage.p3.link = go back to the service start page for more information
+rfm.startPage.p2 = You must replace your filing member’s details within 6 months of the change occurring in your group.
+rfm.startPage.p3 = If your group has not yet registered, you will need to {0} You can choose to nominate a filing member during registration.
+rfm.startPage.p3.link = register to report Pillar 2 top-up taxes
 rfm.startPage.subHeading2 = Who can replace a filing member
-rfm.startPage.b1 = the ultimate parent (UPE), taking over from a nominated filing member as the group’s default filing member
-rfm.startPage.b2 = a new nominated filing member, taking over from a previous filing member
-rfm.startPage.subHeading3 = Before you start
-rfm.startPage.p4 = You will need the following information to replace the filing member for your group’s account:
-rfm.startPage.b3 = the group’s Pillar 2 top-up taxes ID
-rfm.startPage.b4 = the date the group first registered to report their Pillar 2 top up taxes in the UK
-rfm.startPage.b5 = identifying information for the new nominated filing member, if applicable, this could include the company registration number (CRN) and/or unique taxpayer reference (UTR) for a UK registered business or a registered address for overseas entities
-rfm.startPage.b6 = contact preferences and details for up to 2 individuals or teams that we can use as primary contacts about Pillar 2 compliance
-rfm.startPage.b7 = a contact address for the group that we can send correspondence to
-rfm.startPage.legend = Replace a filing member
-rfm.startPage.confirm = Confirm you have read all of the above and are able to act as a new filing member for this group
-rfm.startPage.error = You must select the checkbox to continue
+rfm.startPage.p4 = The filing member can be replaced by:
+rfm.startPage.b1 = the ultimate parent entity (UPE)
+rfm.startPage.b2 = a new nominated filing member, replacing a previous filing member
+rfm.startPage.subHeading3 = Obligations as the filing member
+rfm.startPage.p5 = As the new filing member, you will take over the obligations to:
+rfm.startPage.b3 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
+rfm.startPage.b4 = submit your group’s Pillar 2 top-up tax returns
+rfm.startPage.b5 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records
+rfm.startPage.p6 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfm.startPage.subHeading4 = What you will need
+rfm.startPage.p7 = This section has force of law under paragraph 8 of Schedule 14 to the Finance (No. 2) Act 2023.
+rfm.startPage.p8 = You will need the following information to replace the filing member:
+rfm.startPage.b6 = the Government Gateway user ID for the new filing member who is replacing the current filing member
+rfm.startPage.b7 = the group’s Pillar 2 top-up taxes ID
+rfm.startPage.b8 = the date the group first registered to report their Pillar 2 top up taxes in the UK
+rfm.startPage.b9 = for a UK registered new filing member, you will need the company registration number (CRN) and Unique Taxpayer Reference (UTR) and their postcode
+rfm.startPage.b10 = for an overseas new filing member, you will need to give their name and a registered address
+rfm.startPage.b11 = contact preferences and details for up to 2 individuals or teams that we can use as primary contacts for Pillar 2 compliance
+rfm.startPage.b12 = a contact address for the group that we can send correspondence to
+rfm.startPage.legend = By continuing you confirm you are able to act as a new filing member for your group
 
 rfm.alreadyEnrolled.title = You cannot replace the current filing member for this group
 rfm.alreadyEnrolled.heading = You cannot replace the current filing member for this group
 rfm.alreadyEnrolled.p1 = The Government Gateway user ID you entered as the replacement is currently registered as the nominated filing member for this group.
 rfm.alreadyEnrolled.p2 = To replace the nominated filing member for this group, the new nominated filing member will need to try again with their Government Gateway user ID.
-rfm.alreadyEnrolled.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+rfm.alreadyEnrolled.link = Find out more about who can use this service
 
 rfm.standardOrganisation.title = Sorry, you’re unable to use this service
 rfm.standardOrganisation.heading = Sorry, you’re unable to use this service
 rfm.standardOrganisation.p1 = You’ve signed in with a standard organisation account.
 rfm.standardOrganisation.p2 = Only Government Gateway accounts with an administrator role can replace their nominated filing member.
-rfm.standardOrganisation.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+rfm.standardOrganisation.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
+rfm.standardOrganisation.link = Find out more about who can use this service
 
 rfm.individual.title = Sorry, you’re unable to use this service
 rfm.individual.heading = Sorry, you’re unable to use this service
 rfm.individual.p1 = You’ve signed in with an individual account. Only users with an organisation account can replace their nominated filing member.
 rfm.individual.p2 = If you need to replace a nominated filing member, {0}
 rfm.individual.p2.link = sign in to Government Gateway with an organisation account
-rfm.individual.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+rfm.individual.link = Find out more about who can use this service
 
 rfm.agent.title = Sorry, you’re unable to use this service
 rfm.agent.heading = Sorry, you’re unable to use this service
 rfm.agent.p1 = You’ve signed in using an agent’s Government Gateway user ID.
 rfm.agent.p2 = Agents cannot use this service to replace a nominated filing member.
 rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
-rfm.agent.link = Go back to the Replace filing member for Pillar 2 top-up taxes start page for more information on who can use this service
+rfm.agent.link = Find out more about who can use this service
 
 rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account.
 rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
 rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
@@ -929,7 +940,6 @@ rfm.corporatePosition.title = What is your position in the corporate structure o
 rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
 rfm.corporatePosition.upe = Ultimate parent entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
-rfm.corporatePosition.insetText = To replace the existing filing member for this account you must have access to the information required to report Pillar 2 top-up taxes on the group’s behalf.
 rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
 rfm.corporatePosition.change.hidden = the position in the group’s corporate structure
 
@@ -977,8 +987,8 @@ rfm.registeredAddress.messages.error.addressLine1.invalid = The first line of th
 rfm.registeredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
 rfm.registeredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 
-rfm.rfmCheckYourAnswers.title = Check Your Answers
-rfm.rfmCheckYourAnswers.heading = Check your answers
+rfm.rfmCheckYourAnswers.title = Check your answers for filing member details
+rfm.rfmCheckYourAnswers.heading = Check your answers for filing member details
 rfm.rfmCheckYourAnswers.heading.caption = Group details
 rfm.nameRegistration.checkYourAnswersLabel = Name
 rfm.nameRegistration.change.hidden =  the name of the new nominated filing member
@@ -1028,7 +1038,7 @@ rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {
 
 rfm.secondaryTelephone.title = What is the telephone number?
 rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
+rfm.secondaryTelephone.hint = For international numbers include the country code.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
@@ -1058,11 +1068,10 @@ havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
 havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
 
-groupRegistrationDateReport.title = What was the group’s date of registration to the Report Pillar 2 top-up taxes service?
-groupRegistrationDateReport.heading = What was the group’s date of registration to the Report Pillar 2 top&#8209;up taxes service?
+groupRegistrationDateReport.title = Enter the group’s registration date to the Report Pillar 2 top-up taxes service
+groupRegistrationDateReport.heading = Enter the group’s registration date to the Report Pillar 2 top-up taxes service
 groupRegistrationDateReport.heading.caption = Replace filing member
 groupRegistrationDateReport.hint.desc = This will be the date when your group first registered to report their pillar 2 taxes in the UK.
-groupRegistrationDateReport.registrationDate.heading = Enter registration date
 groupRegistrationDateReport.registrationDate.hint = For example, 27 3 2026
 
 groupRegistrationDateReport.error.startDate.format = Enter a date in the correct format
@@ -1116,7 +1125,18 @@ agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
 agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
 agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
 
+agent.clientConfirm.title = Confirm your client’s details
+agent.clientConfirm.heading = Confirm your client’s details
+agent.clientConfirm.h2.upe = Client’s ultimate parent
+agent.clientConfirm.h2.id = Client’s Pillar 2 top-up taxes ID
+agent.clientConfirm.link = Enter a different client’s Pillar 2 top-up taxes ID
+
 agent.noMatch.title = Your client’s details did not match HMRC records
 agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
 agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
+
+rfm.saveProgressInform.title = Saving progress
+rfm.saveProgressInform.heading = Saving progress
+rfm.saveProgressInform.heading.caption = Replace filing member
+rfm.saveProgressInform.p1 = From this point, the information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.

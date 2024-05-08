@@ -32,7 +32,7 @@ object ContactDetailSection extends Section {
   }
 
   override def progress(answers: UserAnswers): SectionStatus =
-    (answers.fmStatus, answers.groupDetailStatus, answers.contactDetailStatus) match {
+    (answers.fmStatus, answers.groupDetailStatus, answers.contactsStatus) match {
       case (RowStatus.Completed, RowStatus.Completed, RowStatus.Completed)  => SectionStatus.Completed
       case (RowStatus.InProgress, RowStatus.Completed, RowStatus.Completed) => SectionStatus.Completed
       case (RowStatus.Completed, RowStatus.Completed, status)               => toStatus(status)

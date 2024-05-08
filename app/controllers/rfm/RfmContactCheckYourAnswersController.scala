@@ -102,7 +102,10 @@ class RfmContactCheckYourAnswersController @Inject() (
                      subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
                    )
       _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+    } yield {
+      logger.info("sexxxxxxxxx")
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    })
       .recover {
         case InternalIssueError =>
           logger.warn("Replace filing member failed")

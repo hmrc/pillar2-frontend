@@ -72,7 +72,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       readData              <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
     } yield
       if (readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
-        Redirect(controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode))
+        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
