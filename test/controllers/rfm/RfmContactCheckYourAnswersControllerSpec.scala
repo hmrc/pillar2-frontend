@@ -17,17 +17,25 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages._
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
+
+import scala.concurrent.Future
 
 class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  "Check Your Answers Controller" when {
+  "Check Your Answers Controller" must {
 
-    "must redirect to correct view when rfm feature false" in {
+    "redirect to correct view when rfm feature false" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
       val application = applicationBuilder(userAnswers = Some(rfmID))
@@ -222,7 +230,25 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to 'cannot return after confirmation' page once nfm submitted successfully and user attempts to go back" in {
+      val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
+      val application = applicationBuilder(None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad.url
+      }
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(RfmPrimaryContactNamePage, "name")
         .success

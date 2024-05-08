@@ -18,9 +18,11 @@ package controllers.rfm
 import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.{Mode, UserAnswers}
+import models.UserAnswers
+import pages.PlrReferencePage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -35,13 +37,14 @@ class RfmContactCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  sessionRepository:        SessionRepository,
   view:                     RfmContactCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
 
     val rfmEnabled = appConfig.rfmAccessEnabled
@@ -66,17 +69,36 @@ class RfmContactCheckYourAnswersController @Inject() (
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-      if (request.userAnswers.rfmContactDetailStatus) {
-        Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
-      } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      sessionRepository.get(request.userId).map { optionalUserAnswer =>
+        (for {
+          userAnswer <- optionalUserAnswer
+          _          <- userAnswer.get(PlrReferencePage)
+        } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+          .getOrElse(
+            if (request.userAnswers.rfmContactDetailStatus) {
+              Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
+            } else {
+              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            }
+          )
       }
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Future(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
-  def onSubmit(): Action[AnyContent] = rfmIdentify.async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    // TODO - PIL-768, save plrReference to sessionRepository once subscriptionService.amendFilingMemberDetails is successful
+    //    (for {
+    //      newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+    //      ...
+    //      ...
+    //      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+    //      dataToSave <- UserAnswers(request.userAnswers.id).setOrException(PlrReferencePage, newFilingMemberInformation.plrReference)
+    //      _ <- OptionT.liftF(sessionRepository.set(dataToSave))
+    //    } yield {
+    //      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
+    //    })
     Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
   }
 

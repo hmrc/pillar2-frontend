@@ -24,26 +24,26 @@ trait ReplaceFilingMemberHelpers {
 
   self: UserAnswers =>
 
-  def rfmContactDetailStatus: Boolean = {
-    val p1 = get(RfmPrimaryContactNamePage).isDefined
-    val p2 = get(RfmPrimaryContactEmailPage).isDefined
-    val p3 = get(RfmContactByTelephonePage).getOrElse(false)
-    val p4 = get(RfmCapturePrimaryTelephonePage).isDefined
-    val s1 = get(RfmAddSecondaryContactPage).getOrElse(false)
-    val s2 = get(RfmSecondaryContactNamePage).isDefined
-    val s3 = get(RfmSecondaryEmailPage).isDefined
-    val s4 = get(RfmSecondaryPhonePreferencePage).getOrElse(false)
-    val s5 = get(RfmSecondaryCapturePhonePage).isDefined
-    val a1 = get(RfmContactAddressPage).isDefined
-    (p1, p2, p3, p4, s1, s2, s3, s4, s5, a1) match {
-      case (true, true, true, true, true, true, true, true, true, true)        => true
-      case (true, true, true, true, true, true, true, false, false, true)      => true
-      case (true, true, false, false, true, true, true, true, true, true)      => true
-      case (true, true, false, false, false, false, false, false, false, true) => true
-      case (true, true, false, false, true, true, true, false, false, true)    => true
-      case (true, true, true, true, false, false, false, false, false, true)   => true
-      case _                                                                   => false
+  def rfmContactDetailStatus: Boolean =
+    (
+      get(RfmPrimaryContactNamePage).isDefined,
+      get(RfmPrimaryContactEmailPage).isDefined,
+      get(RfmContactByTelephonePage),
+      get(RfmCapturePrimaryTelephonePage).isDefined,
+      get(RfmAddSecondaryContactPage),
+      get(RfmSecondaryContactNamePage).isDefined,
+      get(RfmSecondaryEmailPage).isDefined,
+      get(RfmSecondaryPhonePreferencePage),
+      get(RfmSecondaryCapturePhonePage).isDefined,
+      get(RfmContactAddressPage).isDefined
+    ) match {
+      case (true, true, Some(true), true, Some(true), true, true, Some(true), true, true)     => true
+      case (true, true, Some(true), true, Some(true), true, true, Some(false), false, true)   => true
+      case (true, true, Some(true), true, Some(false), false, false, None, false, true)       => true
+      case (true, true, Some(false), false, Some(true), true, true, Some(true), true, true)   => true
+      case (true, true, Some(false), false, Some(true), true, true, Some(false), false, true) => true
+      case (true, true, Some(false), false, Some(false), false, false, None, false, true)     => true
+      case _                                                                                  => false
     }
-  }
 
 }

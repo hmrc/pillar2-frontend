@@ -18,22 +18,24 @@
 @import views.html.components.gds._
 
 @this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody,
-paragraphLink: paragraphBodyWithLink,
-govukButton: GovukButton
+    layout: templates.Layout,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    paragraphMessageWithLink: ParagraphMessageWithLink,
+    govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("task-list.title")),
-showBackLink = false
+    pageTitle    = titleNoForm(messages("task-list.title")),
+    showBackLink = false
 ) {
-
-@heading(messages("rfm.cannotReturnAfterConfirmation.heading"), "govuk-heading-l")
-@paragraphBody(messages("rfm.cannotReturnAfterConfirmation.p1"))
-@paragraphLink(messages("rfm.cannotReturnAfterConfirmation.p2"), messages("rfm.cannotReturnAfterConfirmation.link"), "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
-
+    @heading(messages("rfm.cannotReturnAfterConfirmation.heading"), "govuk-heading-l")
+    @paragraphBody(messages("rfm.cannotReturnAfterConfirmation.p1"))
+    @paragraphMessageWithLink(
+        message1 = Some(messages("rfm.cannotReturnAfterConfirmation.p2")),
+        linkMessage = messages("rfm.cannotReturnAfterConfirmation.link"),
+        linkUrl = routes.DashboardController.onPageLoad.url,
+        linkFullStop = true)
 }
