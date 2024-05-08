@@ -17,6 +17,8 @@
 package base
 
 import config.FrontendAppConfig
+import helpers.{AllMocks, UserAnswersFixture}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -25,7 +27,14 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 
-trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting with Matchers {
+trait ViewSpecBase
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with Matchers
+    with UserAnswersFixture
+    with BeforeAndAfterEach
+    with AllMocks {
 
   val request:                        Request[AnyContent] = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]
