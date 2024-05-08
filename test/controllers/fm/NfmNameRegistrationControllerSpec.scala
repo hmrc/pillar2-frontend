@@ -17,12 +17,19 @@
 package controllers.fm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmNameRegistrationView
+
+import scala.concurrent.Future
 
 class NfmNameRegistrationControllerSpec extends SpecBase {
 
@@ -95,6 +102,23 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url
       }
     }
 
