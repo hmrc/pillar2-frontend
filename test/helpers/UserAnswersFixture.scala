@@ -39,13 +39,13 @@ trait UserAnswersFixture extends TryValues {
     postalCode = "m19hgs",
     countryCode = "AB"
   )
-   val nonUkAddress = NonUKAddress(
+  val nonUkAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
     addressLine4 = None,
     postalCode = None,
-    countryCode = "AB"
+    countryCode = "US"
   )
   private val email            = "hello@darkness.myoldFriend"
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())

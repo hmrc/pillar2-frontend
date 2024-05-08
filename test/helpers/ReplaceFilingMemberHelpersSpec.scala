@@ -26,7 +26,6 @@ import utils.RowStatus
 import java.time.LocalDate
 
 class ReplaceFilingMemberHelpersSpec extends SpecBase {
-  private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
   "Replace Filing Member Helper" when {
     "Contact Detail Status" should {
       "return true if all questions are answered" in {

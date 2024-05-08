@@ -17,9 +17,7 @@
 package views.rfm
 
 import base.ViewSpecBase
-import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
-import views.html.AgentClientPillarIdView
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressViewSpec extends ViewSpecBase {
