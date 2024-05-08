@@ -17,6 +17,7 @@
 package services
 
 import akka.Done
+import cats.data.OptionT
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
@@ -254,37 +255,29 @@ class SubscriptionService @Inject() (
           }
       )
 
-  private def getNewFilingMemberDetails(companyId: String, userAnswers: UserAnswers): FilingMemberAmendDetails =
-    userAnswers
-      .get(RfmUkBasedPage)
-      .flatMap { ukBased =>
-        if (ukBased) {
-          userAnswers
-            .get(RfmGrsDataPage)
-            .map(grsData =>
-              FilingMemberAmendDetails(
-                addNewFilingMember = true,
-                safeId = grsData.companyId,
-                customerIdentification1 = Some(grsData.crn),
-                customerIdentification2 = Some(grsData.utr),
-                organisationName = grsData.companyName
-              )
-            )
-        } else {
-          userAnswers
-            .get(RfmNameRegistrationPage)
-            .map(companyName =>
-              FilingMemberAmendDetails(
-                addNewFilingMember = true,
-                safeId = companyId,
-                customerIdentification1 = None,
-                customerIdentification2 = None,
-                organisationName = companyName
-              )
-            )
-        }
-      }
-      .getOrElse(throw new Exception("Expected a value for RfmUkBased page but could not find one"))
+  private def getNewFilingMemberDetails(companyId: Option[String], userAnswers: UserAnswers): FilingMemberAmendDetails =
+    companyId.flatMap(companyId=>
+      userAnswers
+        .get(RfmNameRegistrationPage)
+        .map(companyName =>
+          FilingMemberAmendDetails(
+            addNewFilingMember = true,
+            safeId = companyId,
+            customerIdentification1 = None,
+            customerIdentification2 = None,
+            organisationName = companyName
+          )
+        )).getOrElse(userAnswers
+          .get(RfmGrsDataPage)
+          .map(grsData =>
+            FilingMemberAmendDetails(
+              addNewFilingMember = true,
+              safeId = grsData.companyId,
+              customerIdentification1 = Some(grsData.crn),
+              customerIdentification2 = Some(grsData.utr),
+              organisationName = grsData.companyName)))
+
+
 
   def createAmendObjectForReplacingFilingMember(
     subscriptionData:   SubscriptionData,
@@ -294,13 +287,19 @@ class SubscriptionService @Inject() (
     if (filingMemberDetail.corporatePosition == CorporatePosition.Upe) {
       setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
     } else {
-      registerOrGetNewFilingMemberSafeId(userAnswers).map(companyID =>
+      registerOrGetNewFilingMemberSafeId(userAnswers).map(companyId=>
         replaceOldFilingMember(
           requiredInfo = filingMemberDetail,
           subscriptionData = subscriptionData,
-          filingMember = getNewFilingMemberDetails(companyID, userAnswers)
+          filingMember = getNewFilingMemberDetails(Some(companyId), userAnswers)
         )
-      )
+      ).recover{
+        case _ => replaceOldFilingMember(requiredInfo = filingMemberDetail,
+          subscriptionData = subscriptionData,
+          filingMember = getNewFilingMemberDetails(None,userAnswers)
+        )
+      }
+
     }
 
 }

@@ -583,7 +583,18 @@ class SubscriptionServiceSpec extends SpecBase {
         verify(mockUserAnswersConnectors).save(eqTo(userAnswers.id), eqTo(userAnswers.data))(any())
       }
       "throw an exception if new fm corporate position is chosen but no RfmUkBasedPage value can be found" in {
-        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+
+        val userAnswers = emptyUserAnswers
+          .setOrException(RfmUkBasedPage, false)
+          .setOrException(RfmNameRegistrationPage, "Company")
+          .setOrException(RfmSafeIdPage, "someSafeId")
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
         val result = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,
