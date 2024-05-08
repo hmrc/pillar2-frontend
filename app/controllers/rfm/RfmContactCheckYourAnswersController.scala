@@ -88,17 +88,6 @@ class RfmContactCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    // TODO - PIL-768, save plrReference to sessionRepository once subscriptionService.amendFilingMemberDetails is successful
-    //    (for {
-    //      newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-    //      ...
-    //      ...
-    //      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-    //      dataToSave <- UserAnswers(request.userAnswers.id).setOrException(PlrReferencePage, newFilingMemberInformation.plrReference)
-    //      _ <- OptionT.liftF(sessionRepository.set(dataToSave))
-    //    } yield {
-    //      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
-    //    })
     Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
   }
 
