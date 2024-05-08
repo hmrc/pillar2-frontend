@@ -72,13 +72,6 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
-    Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true)).flatMap { ua =>
-      userAnswersConnectors.save(ua.id, Json.toJson(ua.data)).map { _ =>
-        ua
-      }
-    }
-
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
       request.userAnswers
@@ -105,6 +98,13 @@ class CheckYourAnswersController @Inject() (
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
+
+  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
+    Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true)).flatMap { ua =>
+      userAnswersConnectors.save(ua.id, Json.toJson(ua.data)).map { _ =>
+        ua
+      }
+    }
 
   private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(

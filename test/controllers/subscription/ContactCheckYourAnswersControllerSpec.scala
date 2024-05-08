@@ -17,7 +17,7 @@
 package controllers.subscription
 
 import base.SpecBase
-import models.{NonUKAddress, UserAnswers}
+import models.{NonUKAddress, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -82,6 +82,16 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "redirect to tasklist on page on form submission" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TaskListController.onPageLoad.url)
       }
     }
 
