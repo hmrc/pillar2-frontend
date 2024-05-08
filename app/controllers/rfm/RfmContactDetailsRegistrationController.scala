@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactDetailsRegistrationView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class RfmContactDetailsRegistrationController @Inject() (
   rfmIdentify:              RfmIdentifierAction,

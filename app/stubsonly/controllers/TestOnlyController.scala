@@ -19,14 +19,14 @@ package stubsonly.controllers
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class TestOnlyController @Inject() (
