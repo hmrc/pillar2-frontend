@@ -99,8 +99,7 @@ class RfmContactCheckYourAnswersController @Inject() (
              subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
            )
       amendData <- OptionT.liftF(
-                     subscriptionService
-                       .createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+                     subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
                    )
       _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
     } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad))

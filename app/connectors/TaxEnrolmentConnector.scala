@@ -35,7 +35,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   private val enrolAndActivateUrl: String = s"${config.taxEnrolmentsUrl1}/service/${config.enrolmentKey}${config.taxEnrolmentsUrl2}"
   private def serviceEnrolmentPattern(plrReference: String) = s"${config.enrolmentKey}~PLRID~$plrReference"
-  private def allocateOrDeallocateUr(groupId: String, plrReference: String): String =
+  private def allocateOrDeallocateUrl(groupId: String, plrReference: String): String =
     s"${config.taxEnrolmentsUrl1}/groups/$groupId${config.taxEnrolmentsUrl2 ++ "s"}/${serviceEnrolmentPattern(plrReference)}"
 
   def enrolAndActivate(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
@@ -49,7 +49,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
     }
 
   def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
-    http.POST[AllocateEnrolmentParameters, HttpResponse](allocateOrDeallocateUr(groupId, plrReference), body).flatMap {
+    http.POST[AllocateEnrolmentParameters, HttpResponse](allocateOrDeallocateUrl(groupId, plrReference), body).flatMap {
       case success if success.status == CREATED => Done.toFuture
       case failure =>
         logger.error(
@@ -59,7 +59,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
     }
 
   def revokeEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] = {
-    val completeUrl = allocateOrDeallocateUr(groupId = groupId, plrReference = plrReference)
+    val completeUrl = allocateOrDeallocateUrl(groupId = groupId, plrReference = plrReference)
     http.DELETE(completeUrl) flatMap {
       case success if success.status == NO_CONTENT => Done.toFuture
       case failure =>

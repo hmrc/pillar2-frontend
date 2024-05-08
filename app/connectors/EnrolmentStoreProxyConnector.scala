@@ -56,7 +56,7 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
     http.POST[KnownFactsParameters, HttpResponse](submissionUrl, knownFacts).flatMap { response =>
       if (response.status == OK) {
         response.json.validate[KnownFactsResponse] match {
-          case JsSuccess(correctResponse, _) => correctResponse.toFuture //does this return one enrolment?
+          case JsSuccess(correctResponse, _) => correctResponse.toFuture
           case JsError(_) =>
             logger.error("Known facts response from tax enrolment received in unexpected json form")
             Future.failed(UnexpectedJsResult)

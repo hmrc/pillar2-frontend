@@ -16,9 +16,10 @@
 
 package helpers
 
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.subscription.{AccountStatus, AccountingPeriod, AccountingPeriodAmend, AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, NewFilingMemberDetail, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails, UpeDetailsAmend}
-import models.{MneOrDomestic, NonUKAddress}
+import models.{MneOrDomestic, NonUKAddress, Verifier}
 
 import java.time.LocalDate
 
@@ -27,7 +28,7 @@ trait SubscriptionLocalDataFixture {
   private val upeDetailsAmend =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
   private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  private val filingMemberAmendDetails = FilingMemberAmendDetails(
+  val filingMemberAmendDetails = FilingMemberAmendDetails(
     addNewFilingMember = true,
     safeId = "someSafeId",
     customerIdentification1 = Some("CRN"),
@@ -49,8 +50,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
   )
-  lazy val currentDate = LocalDate.now()
-  val subscriptionData = SubscriptionData(
+  lazy val currentDate: LocalDate = LocalDate.now()
+  val subscriptionData: SubscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = upCorrespondenceAddress,
@@ -59,6 +60,11 @@ trait SubscriptionLocalDataFixture {
     filingMemberDetails = None,
     accountingPeriod = AccountingPeriod(currentDate, currentDate),
     accountStatus = Some(AccountStatus(false))
+  )
+
+  val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
+    userId = "id",
+    verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))
   )
 
   val amendData: AmendSubscription = AmendSubscription(

@@ -19,11 +19,11 @@ package services
 import akka.Done
 import base.SpecBase
 import connectors._
-import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.registration.RegistrationInfo
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{GroupIds, InternalIssueError, Verifier}
+import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
@@ -491,6 +491,41 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
+    "getUltimateParentEnrolmentInformation" when {
+      "get ultimate parent verifiers from subscription data if ultimate was registered via GRS" in {
+        val grsRegisteredSubData = subscriptionData.copy(upeDetails =
+          subscriptionData.upeDetails.copy(customerIdentification1 = Some("Crn"), customerIdentification2 = Some("Utr"))
+        )
+        val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
+        val result = service.getUltimateParentEnrolmentInformation(grsRegisteredSubData, "plrId", "id")
+        result.futureValue mustBe allocateEnrolmentParameters
+      }
+      "get ultimate parent verifiers via a call to tax enrolment if no Crn or UTR can be found in subcription data" in {
+        val knownFactsResponse = Future.successful(
+          KnownFactsResponse(enrolments =
+            Seq(EnrolmentRequest(identifiers = Seq(Identifier("PLRID", "plrId")), verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))))
+          )
+        )
+        val application = applicationBuilder().overrides(
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
+        when(mockEnrolmentStoreProxyConnector.getKnownFacts(any[KnownFactsParameters])(any())).thenReturn(knownFactsResponse)
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getUltimateParentEnrolmentInformation(subscriptionData, "plrId", "id")
+        result.futureValue mustBe allocateEnrolmentParameters
+      }
+
+      "return failed result if call to enrolment store fails" in {
+        val application = applicationBuilder().overrides(
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
+        when(mockEnrolmentStoreProxyConnector.getKnownFacts(any[KnownFactsParameters])(any())).thenReturn(Future.failed(InternalIssueError))
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getUltimateParentEnrolmentInformation(subscriptionData, "plrId", "id")
+        result.failed.futureValue mustEqual InternalIssueError
+      }
+    }
+
     "createAmendObjectForReplacingFilingMember" when {
       "set ultimate parent as the new filing member if user has chosen corporate position as upe" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
@@ -599,7 +634,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,
           replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
-          emptyUserAnswers
+          userAnswers
         )
         result.map { e =>
           e mustEqual a[Exception]
