@@ -52,15 +52,22 @@ class MneOrDomesticController @Inject() (
       case Some(value) => form.fill(value)
       case None        => form
     }
-
-    Ok(view(preparedForm, mode))
+    val findIfAgent = request.isAgent match {
+      case true => "/asa/"
+      case _    => ""
+    }
+    Ok(view(preparedForm, mode, findIfAgent))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val findIfAgent = request.isAgent match {
+      case true  => "/asa/"
+      case false => ""
+    }
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, findIfAgent))),
         value =>
           for {
             updatedAnswers <-

@@ -58,7 +58,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678")(
+        contentAsString(result) mustEqual view("12345678", "")(
           request,
           appConfig(application),
           messages(application)
@@ -80,7 +80,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678")(
+        contentAsString(result) mustEqual view("12345678", "")(
           request,
           appConfig(application),
           messages(application)

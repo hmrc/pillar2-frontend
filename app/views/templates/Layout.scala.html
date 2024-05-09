@@ -38,7 +38,7 @@
 )
 
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, serviceUrlTitle:String="")(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, titleUrlLink:String="")(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 
 @scripts = {
@@ -97,7 +97,7 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = if (serviceUrlTitle.trim=="") serviceUrl.generateUrl(request.uri, authorised) else serviceUrl.generateUrl(serviceUrlTitle, authorised),
+        serviceUrl  = if (titleUrlLink.trim=="") serviceUrl.generateUrl(request.uri, authorised) else serviceUrl.generateUrl(titleUrlLink, authorised),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),
