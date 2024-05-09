@@ -38,7 +38,7 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
       case None =>
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       case Some(data) =>
-        Future.successful(Right(SubscriptionDataRequest(request.request, request.userId, data, request.enrolments)))
+        Future.successful(Right(SubscriptionDataRequest(request.request, request.userId, data, request.enrolments, request.isAgent)))
     }
   }
 

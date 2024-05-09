@@ -20,6 +20,7 @@ import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
+import models.requests.{DataRequest, IdentifierRequest}
 import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
@@ -31,7 +32,6 @@ import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
 class MneOrDomesticController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
@@ -52,6 +52,7 @@ class MneOrDomesticController @Inject() (
       case Some(value) => form.fill(value)
       case None        => form
     }
+
     Ok(view(preparedForm, mode))
   }
 

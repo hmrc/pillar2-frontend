@@ -30,12 +30,14 @@ final case class OptionalSubscriptionDataRequest[A](
   request:                    Request[A],
   userId:                     String,
   maybeSubscriptionLocalData: Option[SubscriptionLocalData],
-  enrolments:                 Set[Enrolment]
+  enrolments:                 Set[Enrolment],
+  isAgent:                    Boolean
 ) extends WrappedRequest[A](request)
 
 final case class SubscriptionDataRequest[A](
   request:               Request[A],
   userId:                String,
   subscriptionLocalData: SubscriptionLocalData,
-  enrolments:            Set[Enrolment]
+  enrolments:            Set[Enrolment],
+  isAgent:               Boolean
 ) extends WrappedRequest[A](request)
