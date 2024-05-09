@@ -103,13 +103,13 @@ class RfmContactCheckYourAnswersController @Inject() (
                    )
       _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
     } yield {
-      logger.info("sexxxxxxxxx")
+      logger.info("successfully replaced filing member")
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     })
       .recover {
         case InternalIssueError =>
           logger.warn("Replace filing member failed")
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         case _: Exception =>
           logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
