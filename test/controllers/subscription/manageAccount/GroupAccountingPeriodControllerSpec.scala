@@ -57,7 +57,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod), CheckMode, "")(
           request,
           appConfig(application),
           messages(application)
@@ -78,7 +78,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(date), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), CheckMode, "")(
           request,
           appConfig(application),
           messages(application)
@@ -102,7 +102,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, CheckMode, "")(request, appConfig(application), messages(application)).toString
       }
     }
 
