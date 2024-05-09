@@ -26,9 +26,10 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.FutureConverter.FutureOps
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def getGroupIds(plrReference: String)(implicit
