@@ -20,7 +20,6 @@ import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
 import models.Mode
-import models.requests.{DataRequest, IdentifierRequest}
 import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
@@ -52,22 +51,15 @@ class MneOrDomesticController @Inject() (
       case Some(value) => form.fill(value)
       case None        => form
     }
-    val findIfAgent = request.isAgent match {
-      case true => "/asa/"
-      case _    => ""
-    }
-    Ok(view(preparedForm, mode, findIfAgent))
+
+    Ok(view(preparedForm, mode, request.isAgent))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val findIfAgent = request.isAgent match {
-      case true  => "/asa/"
-      case false => ""
-    }
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, findIfAgent))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, request.isAgent))),
         value =>
           for {
             updatedAnswers <-

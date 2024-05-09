@@ -54,24 +54,17 @@ class GroupAccountingPeriodController @Inject() (
       case Some(v) => form.fill(v)
       case None    => form
     }
-    val findIfAgent = request.isAgent match {
-      case true => "/asa/"
-      case _    => ""
-    }
-    Ok(view(preparedForm, mode, findIfAgent))
+
+    Ok(view(preparedForm, mode, request.isAgent))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val findIfAgent = request.isAgent match {
-      case true => "/asa/"
-      case _    => ""
-    }
     remapFormErrors(
       form
         .bindFromRequest()
     )
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, findIfAgent))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, request.isAgent))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAccountingPeriodPage, value))

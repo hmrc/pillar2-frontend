@@ -29,9 +29,9 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, titleUrl:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")),titleUrlLink = titleUrl) {
+@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")),titleUrlLink = isAgent) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit, 'autoComplete -> "off") {

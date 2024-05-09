@@ -57,7 +57,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(request.subscriptionLocalData)
       ).flatten
     )
-    Ok(view(list))
+    Ok(view(list, request.isAgent))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
