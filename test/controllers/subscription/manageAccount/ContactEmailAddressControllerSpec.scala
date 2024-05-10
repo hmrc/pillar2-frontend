@@ -48,7 +48,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)
@@ -72,7 +72,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)

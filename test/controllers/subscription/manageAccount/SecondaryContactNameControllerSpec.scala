@@ -52,7 +52,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), CheckMode, false)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -71,7 +71,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), CheckMode, false)(
           request,
           appConfig(application),
           messages(application)
@@ -95,7 +95,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, CheckMode, false)(request, appConfig(application), messages(application)).toString
       }
     }
 

@@ -64,8 +64,8 @@ class DashboardController @Inject() (
       logger.error(
         "read subscription failed as no valid Json was returned from the controller"
       )
-      Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-    }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(isAgent = request.isAgent))
+    }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent)))
 
   }
 }

@@ -12,7 +12,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
 
-GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None, isAgent: Boolean ?= false)
 
 GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
@@ -118,7 +118,7 @@ GET         /errors/eis                                                         
 GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
 GET         /error/page-not-found                                                       controllers.ErrorController.pageNotFoundLoad
 
-GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
+GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad(isAgent: Boolean ?= false)
 
 GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
 

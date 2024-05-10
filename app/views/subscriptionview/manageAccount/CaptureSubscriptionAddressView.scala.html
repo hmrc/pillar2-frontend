@@ -33,9 +33,9 @@
 )
 
 
-@(form: Form[_], mode: Mode, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, countryOptions: Seq[InputOption], isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
+@layout(pageTitle = title(form, messages("subscriptionAddress.title")),  titleUrlLink = isAgent) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit, 'autoComplete -> "off") {

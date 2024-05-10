@@ -50,7 +50,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)
@@ -74,7 +74,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)

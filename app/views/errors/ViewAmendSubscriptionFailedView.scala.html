@@ -20,9 +20,9 @@ layout: templates.Layout
 )
 
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent:Boolean)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false, titleUrlLink = isAgent) {
 <h1 class="govuk-heading-xl">@messages("viewAmendSubscriptionFailed.heading")</h1>
 
 <p class="govuk-body">@messages("viewAmendSubscriptionFailed.message1")</p>

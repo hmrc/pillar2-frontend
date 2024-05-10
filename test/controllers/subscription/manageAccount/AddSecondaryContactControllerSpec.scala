@@ -57,7 +57,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name", CheckMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), "name", CheckMode, false)(
           request,
           appConfig(application),
           messages(application)
@@ -84,7 +84,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "name", NormalMode, false)(request, appConfig(application), messages(application)).toString
       }
     }
     "must redirect to book mark page for a GET if no previous existing data is found" in {

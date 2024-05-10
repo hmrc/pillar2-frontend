@@ -56,10 +56,10 @@ class ContactCaptureTelephoneDetailsController @Inject() (
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, mode, contactName))
+      Ok(view(preparedForm, mode, contactName, request.isAgent))
 
     })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent)))
 
   }
 
@@ -71,7 +71,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName, request.isAgent))),
             value =>
               for {
                 updatedAnswers <-
@@ -80,7 +80,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
               } yield Redirect(navigator.nextPage(SubPrimaryCapturePhonePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent))))
   }
 
 }

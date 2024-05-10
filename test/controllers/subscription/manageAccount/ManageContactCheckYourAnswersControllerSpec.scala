@@ -170,7 +170,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(false).url
       }
 
       "redirect to the journey recovery if no pillar2 reference is found" in {

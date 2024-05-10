@@ -54,7 +54,7 @@ class ContactByTelephoneController @Inject() (
           case Some(v) => form.fill(v)
           case None    => form
         }
-        Ok(view(preparedForm, mode, contactName))
+        Ok(view(preparedForm, mode, contactName, request.isAgent))
 
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -69,7 +69,7 @@ class ContactByTelephoneController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName, request.isAgent))),
             {
               case nominatePrimaryContactNumber @ true =>
                 for {
@@ -85,7 +85,7 @@ class ContactByTelephoneController @Inject() (
             }
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent))))
 
   }
 }

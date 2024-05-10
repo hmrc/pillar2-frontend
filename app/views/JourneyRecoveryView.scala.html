@@ -20,9 +20,9 @@ layout: templates.Layout,
 govukButton: GovukButton
 )
 
-@(scenario: String, url: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(scenario: String, url: Option[String] = None, isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages(s"journeyRecovery.$scenario.title")), showBackLink = scenario != "bookmarkPrevention") {
+@layout(pageTitle = titleNoForm(messages(s"journeyRecovery.$scenario.title")), showBackLink = scenario != "bookmarkPrevention", titleUrlLink = isAgent) {
 <h1 class="govuk-heading-xl">@messages(s"journeyRecovery.$scenario.heading")</h1>
 <p class="govuk-body">
  You must <a class="govuk-link" href="@url.getOrElse(controllers.routes.IndexController.onPageLoad.url)">

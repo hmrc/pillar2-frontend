@@ -51,14 +51,14 @@ class ContactNameComplianceController @Inject() (
       case Some(v) => form.fill(v)
       case None    => form
     }
-    Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode, request.isAgent))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, request.isAgent))),
         value =>
           for {
             updatedAnswers <-

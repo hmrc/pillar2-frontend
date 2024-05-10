@@ -30,9 +30,9 @@
 )
 
 
-@(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, userName: String, isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactCaptureTelephoneDetails.title"))) {
+@layout(pageTitle = title(form, messages("contactCaptureTelephoneDetails.title")), titleUrlLink = isAgent) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit) {

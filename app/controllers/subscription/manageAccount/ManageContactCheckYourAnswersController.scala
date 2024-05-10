@@ -72,7 +72,7 @@ class ManageContactCheckYourAnswersController @Inject() (
       rows = Seq(ContactCorrespondenceAddressSummary.row(request.subscriptionLocalData, countryOptions)).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-    Ok(view(primaryContactList, secondaryContactList, address))
+    Ok(view(primaryContactList, secondaryContactList, address, request.isAgent))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
@@ -81,9 +81,9 @@ class ManageContactCheckYourAnswersController @Inject() (
       _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
     } yield Redirect(controllers.routes.DashboardController.onPageLoad))
       .recover { case UnexpectedResponse =>
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(request.isAgent))
       }
-      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent)))
   }
 
 }

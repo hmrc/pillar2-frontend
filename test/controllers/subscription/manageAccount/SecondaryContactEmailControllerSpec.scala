@@ -24,7 +24,7 @@ import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{SubAddSecondaryContactPage, SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -53,7 +53,11 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, CheckMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, CheckMode, "name", false)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -75,7 +79,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), NormalMode, "name", false)(
           request,
           appConfig(application),
           messages(application)
@@ -100,7 +104,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, CheckMode, "name")(
+        contentAsString(result) mustEqual view(boundForm, CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)

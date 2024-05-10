@@ -54,7 +54,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(false), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)
@@ -79,7 +79,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), CheckMode, "name", false)(
           request,
           appConfig(application),
           messages(application)
@@ -104,7 +104,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, CheckMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, CheckMode, "name", false)(request, appConfig(application), messages(application)).toString
       }
     }
     "redirect to bookmark page if previous page not answered" in {

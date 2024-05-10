@@ -52,8 +52,8 @@ class AddSecondaryContactController @Inject() (
     (for {
       subscriptionLocalData <- request.maybeSubscriptionLocalData
       contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
-    } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, mode)))
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, mode, request.isAgent)))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -63,7 +63,7 @@ class AddSecondaryContactController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode, request.isAgent))),
             {
               case wantsToNominateSecondaryContact @ true =>
                 for {
@@ -82,7 +82,7 @@ class AddSecondaryContactController @Inject() (
             }
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent))))
   }
 
 }

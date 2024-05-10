@@ -129,7 +129,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
     "redirect to dashboard page if they successfully amend their data" in {

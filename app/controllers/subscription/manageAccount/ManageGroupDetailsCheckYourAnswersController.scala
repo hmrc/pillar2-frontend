@@ -66,9 +66,9 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
     } yield Redirect(controllers.routes.DashboardController.onPageLoad))
       .recover { case UnexpectedResponse =>
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(isAgent = request.isAgent))
       }
-      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad(isAgent = request.isAgent)))
   }
 
 }

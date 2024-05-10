@@ -28,9 +28,9 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactName.title"))) {
+@layout(pageTitle = title(form, messages("secondaryContactName.title")), titleUrlLink = isAgent) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit) {

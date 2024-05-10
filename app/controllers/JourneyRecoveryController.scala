@@ -37,7 +37,7 @@ class JourneyRecoveryController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = Action { implicit request =>
+  def onPageLoad(continueUrl: Option[RedirectUrl] = None, isAgent: Boolean = false): Action[AnyContent] = Action { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val safeUrl: Option[String] = continueUrl.flatMap { unsafeUrl =>
@@ -56,7 +56,7 @@ class JourneyRecoveryController @Inject() (
       case None                                      => ("startAgain", None)
     }
 
-    Ok(journeyRecoveryView(scenario, url))
+    Ok(journeyRecoveryView(scenario, url, isAgent))
   }
 
   private def shouldPreventBookmarking(request: Request[_]): Boolean =
