@@ -41,15 +41,11 @@ class MakeAPaymentDashboardController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val findIfAgent = request.isAgent match {
-      case true => "/asa/"
-      case _    => ""
-    }
     Pillar2Reference
       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
       .orElse(request.userAnswers.get(PlrReferencePage))
       .map { pillar2Id =>
-        Ok(view(pillar2Id, findIfAgent))
+        Ok(view(pillar2Id, request.isAgent))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 

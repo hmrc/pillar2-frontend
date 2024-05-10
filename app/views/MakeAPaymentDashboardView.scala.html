@@ -26,7 +26,7 @@
     govukDetails : GovukDetails
 )
 
-@(plrID: String, titleUrl:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(plrID: String, isAgent:Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 
 @howItWorksInformation= {
@@ -71,7 +71,7 @@ firstCellIsHeader = true
 @layout(
     pageTitle    = titleNoForm(messages("payment.dashboard.title")),
     showBackLink = true,
-    titleUrlLink = titleUrl
+    titleUrlLink = isAgent
 ) {
 
 
