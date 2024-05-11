@@ -79,7 +79,6 @@ class RegistrationConnectorSpec extends SpecBase {
       }
 
       "return InternalServerError for EIS returns Error status" in {
-        //import uk.gov.hmrc.http.HttpReads.Implicits.readRaw is needed in the class for this tests to pass
         val errorStatus: Int = errorCodes.sample.value
         stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 

@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import services.SubscriptionService
 import utils.FutureConverter.FutureOps
 import viewmodels.govuk.SummaryListFluency
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -230,7 +231,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
     "onSubmit" should {
-      import play.api.inject.bind
       val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
       lazy val jr                     = controllers.routes.JourneyRecoveryController.onPageLoad().url
       lazy val uc                     = controllers.routes.UnderConstructionController.onPageLoad.url

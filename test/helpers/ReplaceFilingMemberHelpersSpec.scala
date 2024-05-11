@@ -170,6 +170,7 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", telephone = None, emailAddress = "email")
         val ua = emptyUserAnswers
           .setOrException(RfmAddSecondaryContactPage, true)
+          .setOrException(RfmSecondaryPhonePreferencePage, false)
           .setOrException(RfmSecondaryCapturePhonePage, "12312123")
           .setOrException(RfmSecondaryContactNamePage, "name")
           .setOrException(RfmSecondaryEmailPage, "email")

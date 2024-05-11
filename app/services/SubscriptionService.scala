@@ -254,8 +254,6 @@ class SubscriptionService @Inject() (
           }
       )
 
-  /** //important to throw an exception here as otherwise None will be passed for filing member details when creating the amend object
-    */
   private def getNewFilingMemberDetails(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[FilingMemberAmendDetails] =
     userAnswers
       .get(RfmUkBasedPage)

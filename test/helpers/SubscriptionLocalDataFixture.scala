@@ -24,11 +24,11 @@ import models.{MneOrDomestic, NonUKAddress, Verifier}
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
-  private val upCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
+  private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val upeDetailsAmend =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
   private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  val filingMemberAmendDetails = FilingMemberAmendDetails(
+  val filingMemberAmendDetails: FilingMemberAmendDetails = FilingMemberAmendDetails(
     addNewFilingMember = true,
     safeId = "someSafeId",
     customerIdentification1 = Some("CRN"),
@@ -36,7 +36,7 @@ trait SubscriptionLocalDataFixture {
     organisationName = "Company"
   )
 
-  val emptySubscriptionLocalData = SubscriptionLocalData(
+  val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "",
@@ -54,7 +54,7 @@ trait SubscriptionLocalDataFixture {
   val subscriptionData: SubscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = upCorrespondenceAddress,
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
@@ -70,7 +70,7 @@ trait SubscriptionLocalDataFixture {
   val amendData: AmendSubscription = AmendSubscription(
     upeDetails = upeDetailsAmend,
     accountingPeriod = AccountingPeriodAmend(currentDate, currentDate),
-    upeCorrespAddressDetails = upCorrespondenceAddress,
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = Some(contactDetails),
     filingMemberDetails = Some(filingMemberAmendDetails)

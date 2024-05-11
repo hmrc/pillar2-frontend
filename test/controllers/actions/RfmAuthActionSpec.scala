@@ -47,7 +47,7 @@ class RfmAuthActionSpec extends SpecBase {
     Enrolments(Set.empty)
 
   val id:      String = UUID.randomUUID().toString
-  val groupID: String = UUID.randomUUID().toString
+  val groupId: String = UUID.randomUUID().toString
 
   class Harness(rfmAuthAction: RfmIdentifierAction) {
     def onPageLoad(): Action[AnyContent] = rfmAuthAction(_ => Results.Ok)
@@ -55,14 +55,14 @@ class RfmAuthActionSpec extends SpecBase {
 
   "RfmAuthAction" when {
 
-    "when the user is logged in as an Organisation User with a Pillar2 enrolment" must {
+    "the user is logged in as an Organisation User with a Pillar2 enrolment" must {
 
-      "must fail and redirect to already enrolled screen" in {
+      "fail and redirect to already enrolled screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ Some(groupID) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -79,14 +79,14 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user is logged in as an Organisation User with no Pillar2 enrolment" must {
+    "the user is logged in as an Organisation User with no Pillar2 enrolment" must {
 
-      "must succeed and continue" in {
+      "succeed and continue" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some(id) ~ Some(groupID) ~ noEnrolments ~ Some(Organisation) ~ Some(User)))
+          .thenReturn(Future.successful(Some(id) ~ Some(groupId) ~ noEnrolments ~ Some(Organisation) ~ Some(User)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -102,9 +102,9 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user is logged in as an Organisation Assistant" must {
+    "the user is logged in as an Organisation Assistant" must {
 
-      "must fail and redirect to standard organisation screen" in {
+      "fail and redirect to standard organisation screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -126,9 +126,9 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user is logged in as an Individual" must {
+    "the user is logged in as an Individual" must {
 
-      "must fail and redirect to individual screen" in {
+      "fail and redirect to individual screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -150,9 +150,9 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user is logged in as an Agent" must {
+    "the user is logged in as an Agent" must {
 
-      "must fail and redirect to agent screen" in {
+      "fail and redirect to agent screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -174,9 +174,9 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user is logged in and unable to retrieve a valid affinity group" must {
+    "the user is logged in and unable to retrieve a valid affinity group" must {
 
-      "must fail and redirect to unauthorised screen" in {
+      "fail and redirect to unauthorised screen" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -198,9 +198,9 @@ class RfmAuthActionSpec extends SpecBase {
       }
     }
 
-    "when the user hasn't logged in" must {
+    "the user hasn't logged in" must {
 
-      "must redirect the user to log in " in {
+      "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -220,7 +220,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user's session has expired" must {
 
-      "must redirect the user to log in " in {
+      "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -240,7 +240,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user doesn't have sufficient enrolments" must {
 
-      "must redirect the user to the unauthorised page" in {
+      "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -260,7 +260,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user doesn't have sufficient confidence level" must {
 
-      "must redirect the user to the unauthorised page" in {
+      "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -281,7 +281,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user used an unaccepted auth provider" must {
 
-      "must redirect the user to the unauthorised page" in {
+      "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -301,7 +301,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user has an unsupported affinity group" must {
 
-      "must redirect the user to the unauthorised page" in {
+      "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -322,7 +322,7 @@ class RfmAuthActionSpec extends SpecBase {
 
     "the user has an unsupported credential role" must {
 
-      "must redirect the user to the unauthorised page" in {
+      "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 

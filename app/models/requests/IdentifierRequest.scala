@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.Enrolment
 case class IdentifierRequest[A](
   request:    Request[A],
   userId:     String,
-  groupID:    Option[String] = None,
+  groupId:    Option[String] = None,
   enrolments: Set[Enrolment] = Set.empty,
   isAgent:    Boolean = false
 ) extends WrappedRequest[A](request)

@@ -81,11 +81,7 @@ trait ReplaceFilingMemberHelpers {
 
   private def getSecondaryTelephone: Option[String] =
     get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
-      if (nominated) {
-        get(RfmSecondaryCapturePhonePage)
-      } else {
-        None
-      }
+      if (nominated) get(RfmSecondaryCapturePhonePage) else None
     }
 
   def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
@@ -107,11 +103,7 @@ trait ReplaceFilingMemberHelpers {
 
   private def getPrimaryTelephone: Option[String] =
     get(RfmContactByTelephonePage).flatMap { nominated =>
-      if (nominated) {
-        get(RfmCapturePrimaryTelephonePage)
-      } else {
-        None
-      }
+      if (nominated) get(RfmCapturePrimaryTelephonePage) else None
     }
 
 }

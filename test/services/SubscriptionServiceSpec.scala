@@ -389,7 +389,6 @@ class SubscriptionServiceSpec extends SpecBase {
     }
     "amendFilingMemberDetails" when {
       "return done if the amend subscription is successful and delete userAnswers" in {
-        import play.api.inject.bind
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)

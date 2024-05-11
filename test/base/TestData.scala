@@ -68,6 +68,29 @@ trait TestData {
 
        """.stripMargin
 
+  val validRegistrationWithIdResponse2: String =
+    s"""{
+       |            "companyProfile" : {
+       |                "companyName" : "Test Example Company Name",
+       |                "companyNumber" : "76543210",
+       |                "dateOfIncorporation" : "2010-12-12",
+       |                "unsanitisedCHROAddress" : {
+       |                    "address_line_1" : "Address Line 1",
+       |                    "address_line_2" : "Address Line 2",
+       |                    "locality" : "Town",
+       |                    "postal_code" : "AB12 3CD",
+       |                    "region" : "Region"
+       |                }
+       |            },
+       |            "ctutr" : "1234567890",
+       |            "identifiersMatch" : true,
+       |            "registration" : {
+       |                "registrationStatus" : "REGISTERED"
+       |            }
+       |  }
+
+       """.stripMargin
+
   val registrationNotCalledLimited: String =
     s"""{
        |            "companyProfile" : {

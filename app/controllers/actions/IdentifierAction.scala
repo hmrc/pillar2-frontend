@@ -55,8 +55,8 @@ class AuthenticatedIdentifierAction @Inject() (
         Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
       ) {
 
-        case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments)))
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+          Future.successful(Right(IdentifierRequest(request, internalId, Some(groupId), enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
