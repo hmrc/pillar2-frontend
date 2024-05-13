@@ -15,85 +15,66 @@
  *@
 
 @import config.FrontendAppConfig
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        h: heading,
+        h2: HeadingH2,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        sectionBreak: SectionBreak,
+        inactiveStatusBanner: InactiveStatusBanner
 )
 
-@(organisationName: String, registrationDate: String, plrReference: String, inactiveStatus: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, plrReference: String, inactiveStatus: Boolean, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("dashboard.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(if(agentView) messages("dashboard.agent.title") else messages("dashboard.title")), showBackLink = false) {
 
-@if(inactiveStatus){
-<div class="govuk-notification-banner" role="region"
-     aria-labelledby="govuk-notification-banner-title"
-     data-module="govuk-notification-banner">
- <div class="govuk-notification-banner__header">
-  <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-   Important
-  </h2>
- </div>
- <div class="govuk-notification-banner__content">
-  <p class="govuk-notification-banner__heading">
-   @messages("dashboard.inactive.message")
-   <a class="govuk-notification-banner__link" href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax" rel="noreferrer noopener" target="_blank">@messages("dashboard.inactive.link")</a>
-   @messages("dashboard.inactive.message2")
-  </p>
- </div>
-</div>
-}
+    @if(inactiveStatus) {
+        @inactiveStatusBanner()
+    }
 
- <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@messages("dashboard.heading")</h1>
- <br>
- <span class="govuk-caption-m">@messages("dashboard.topTaxes") @plrReference </span>
- <br>
- <span class="govuk-caption-m">@messages("dashboard.registrationDate") @registrationDate</span>
- <br>
- <span class="govuk-caption-m">@messages("dashboard.upe") @organisationName</span>
+    @if(agentView) {
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.accountLink"), linkUrl = appConfig.asaHomepageUrl)
+    }
 
- <br>
- <br>
+    @h(if(agentView) messages("dashboard.agent.heading") else messages("dashboard.heading"), "govuk-heading-l govuk-!-margin-bottom-7")
 
-  <!--PAY YOUR TUT SECTION-->
-@if( appConfig.showPaymentsSection) {
- <h2 class="govuk-heading-m">@messages("dashboard.payments")</h2>
+    @p(messages("dashboard.topTaxes", plrReference))
+    @p(messages("dashboard.registrationDate", registrationDate))
+    @p(messages("dashboard.upe", organisationName), classes = "govuk-body govuk-!-margin-bottom-7")
 
- <p class="govuk-body">@messages("dashboard.noPayment")</p>
+    @if(agentView) {
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
+    }
+    <!--PAY YOUR TUT SECTION-->
+    @if(appConfig.showPaymentsSection) {
+        @h2(messages("dashboard.payments"), size = "m")
+        @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
- <p class="govuk-body"><a class="govuk-link" href="@controllers.routes.MakeAPaymentDashboardController.onPageLoad">
- @messages("dashboard.voluntaryPayment")</a></p>
+        <!--
+        @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
+        -->
+        <!--
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestPayment"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
+        -->
 
-<!-- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">-->
-<!-- @messages("dashboard.paymentHistory")-->
-<!-- </a></p>-->
+        @sectionBreak()
+    }
 
-<!-- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/under-construction">-->
-<!-- @messages("dashboard.requestPayment")-->
-<!-- </a></p>-->
+    <!--MANAGE YOUR TUT SECTION-->
+    @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
 
-<!-- <hr class="govuk-section-break govuk-section-break&#45;&#45;l govuk-section-break&#45;&#45;visible">-->
-}
-  <!--MANAGE YOUR TUT SECTION-->
- <h2 class="govuk-heading-m">@messages("dashboard.manageAccount")</h2>
+    @sectionBreak()
 
- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/manage-account/contact-details/summary ">
- @messages("dashboard.contactDetails")</a>
- </p>
-
- <p class="govuk-body"><a class="govuk-link" href="/report-pillar2-top-up-taxes/manage-account/account-details/summary ">
- @messages("dashboard.groupDetails")</a>
- </p>
-
- <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
- <p class="govuk-body"> @messages("dashboard.p1")</p>
-
- <p class="govuk-body"> @messages("dashboard.p2") <strong>@messages("dashboard.p3")</strong></p>
- <p class="govuk-body"> @messages("dashboard.p4")</p>
-
- <p class="govuk-body">@messages("dashboard.p5")
-  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax" >@messages("dashboard.link")</a>.
- </p>
+    @p(messages("dashboard.p1"))
+    @p(messages("dashboard.p2", "</strong>", "<strong>"))
+    @p(messages("dashboard.p3"))
+    @paragraphMessageWithLink(message1 = Some(messages("dashboard.p4")), linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank")
 
 }

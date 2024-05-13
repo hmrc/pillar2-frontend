@@ -20,11 +20,16 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmEmailAddressFormProvider
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{FmContactEmailPage, FmContactNamePage}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmEmailAddressView
+
+import scala.concurrent.Future
 
 class NfmEmailAddressControllerSpec extends SpecBase {
 
@@ -110,6 +115,23 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("emailAddress", "test@test.com")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url
       }
     }
   }

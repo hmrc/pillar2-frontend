@@ -142,7 +142,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad().url
       }
     }
 

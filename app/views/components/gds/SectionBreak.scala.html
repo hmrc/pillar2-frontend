@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@this()
 
-import forms.mappings.Mappings
-import models.Confirmation
-import play.api.data.Form
-import play.api.data.Forms.set
+@()
 
-import javax.inject.Inject
-
-class RfmStartPageFormProvider @Inject() extends Mappings {
-
-  def apply(errorKey: String): Form[Set[Confirmation]] =
-    Form(
-      "confirmation" -> set(enumerable[Confirmation](errorKey)).verifying(nonEmptySet(errorKey))
-    )
-
-}
+<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">

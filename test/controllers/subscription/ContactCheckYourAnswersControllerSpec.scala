@@ -17,7 +17,7 @@
 package controllers.subscription
 
 import base.SpecBase
-import models.NonUKAddress
+import models.{NonUKAddress, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -29,7 +29,7 @@ import viewmodels.govuk.SummaryListFluency
 import scala.concurrent.Future
 
 class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-  val subDataWithAddress = emptyUserAnswers
+  val subDataWithAddress: UserAnswers = emptyUserAnswers
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -41,7 +41,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
 
-  val subDataWithoutAddress = emptyUserAnswers
+  val subDataWithoutAddress: UserAnswers = emptyUserAnswers
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
@@ -82,6 +82,16 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "redirect to tasklist on page on form submission" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TaskListController.onPageLoad.url)
       }
     }
 

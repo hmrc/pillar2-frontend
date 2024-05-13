@@ -23,6 +23,7 @@ import forms.AddSecondaryContactFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubPrimaryEmailPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,7 +47,7 @@ class AddSecondaryContactController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
