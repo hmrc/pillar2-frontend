@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
-import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView}
+import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView, AgentErrorView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,6 +43,7 @@ class AgentController @Inject() (
   clientPillarIdView:        AgentClientPillarIdView,
   clientConfirmView:         AgentClientConfirmDetailsView,
   clientNoMatchView:         AgentClientNoMatch,
+  agentErrorView:            AgentErrorView,
   identify:                  AgentIdentifierAction,
   featureAction:             FeatureFlagActionFactory,
   getData:                   DataRetrievalAction,
@@ -100,7 +101,7 @@ class AgentController @Inject() (
         .mapN { (clientPillar2Id, clientUpeName) =>
           Future successful Ok(clientConfirmView(clientUpeName, clientPillar2Id))
         }
-        .getOrElse(Future successful Redirect(routes.UnderConstructionController.onPageLoad)) // PIL-922
+        .getOrElse(Future successful Redirect(routes.AgentController.onPageLoadError))
     }
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
@@ -113,4 +114,9 @@ class AgentController @Inject() (
     implicit request =>
       Ok(clientNoMatchView())
   }
+
+  def onPageLoadError: Action[AnyContent] =
+    featureAction.asaAccessAction { implicit request =>
+      Ok(agentErrorView())
+    }
 }

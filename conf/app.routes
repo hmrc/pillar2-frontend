@@ -449,6 +449,7 @@ POST       /asa/input-pillar-2-id                       controllers.AgentControl
 GET        /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
 POST       /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
 GET        /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+GET        /asa/error/system                            controllers.AgentController.onPageLoadError
 
 GET         /replace-filing-member/security/saving-progress                     controllers.rfm.RfmSaveProgressInformController.onPageLoad
 
