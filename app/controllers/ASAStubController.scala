@@ -27,7 +27,6 @@ import views.html.ASAStubView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-
 class ASAStubController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   val userAnswersConnectors: UserAnswersConnectors,
