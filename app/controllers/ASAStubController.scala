@@ -25,7 +25,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ASAStubView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
+
 
 class ASAStubController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
@@ -35,7 +36,7 @@ class ASAStubController @Inject() (
   featureAction:             FeatureFlagActionFactory,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction
-)(implicit appConfig:        FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig:        FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

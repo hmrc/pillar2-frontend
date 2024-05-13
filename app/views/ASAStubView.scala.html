@@ -27,7 +27,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("asa.agent.title "))) {
+@layout(pageTitle = titleNoForm(messages("asa.agent.title"))) {
   @formHelper(action = controllers.routes.AgentController.onPageLoadClientPillarId, 'autoComplete -> "off") {
      @heading(messages("asa.agent.heading"), "govuk-heading-l")
      @paragraphBody(messages("asa.agent.p1"))
