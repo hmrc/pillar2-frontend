@@ -46,10 +46,14 @@ class GenUrlServiceSpec extends SpecBase {
       "generate url for replace filing member" in {
         genUrl.generateUrl("/replace-filing-member", false) mustEqual None
       }
+      "generate url for navigated back to Pillar2 dashboard for agent " in {
+        genUrl.generateUrl("/pillar2-top-up-tax-home?clientPillar2Id=XMPLR0012345674&agentView=true", true, "XMPLR0012345674").getOrElse() mustEqual
+          controllers.routes.DashboardController.onPageLoad(Some("XMPLR0012345674"), true).url
+      }
+
       "generate url for replace filing member  with  authorised false" in {
         genUrl.generateUrl("/replace-filing-member", true) mustEqual None
       }
-
       "generate url for ASA" in {
         genUrl.generateUrl("/asa/", true).getOrElse("") mustEqual appConfig.asaHomePageUrl
       }

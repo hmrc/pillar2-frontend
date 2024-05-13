@@ -21,11 +21,19 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 class GenUrlService @Inject() (val appConfig: FrontendAppConfig) {
 
-  def generateUrl(url: String, authorised: Boolean): Option[String] =
-    (url.contains("/asa/"), authorised, url.contains("/replace-filing-member")) match {
-      case (_, _, true)         => None
-      case (true, true, false)  => Some(appConfig.asaHomePageUrl)
-      case (false, true, false) => Some(controllers.routes.IndexController.onPageLoad.url)
-      case (_, _, _)            => Some(appConfig.startPagePillar2Url)
+  def generateUrl(url: String, authorised: Boolean, plrReference: String = ""): Option[String] =
+    (
+      url.contains("/asa/"),
+      authorised,
+      url.contains("/replace-filing-member"),
+      url.contains("clientPillar2Id"),
+      url.contains("agentView=true")
+    ) match {
+      case (false, true, false, true, true) =>
+        Some(controllers.routes.DashboardController.onPageLoad(Some(plrReference), true).url)
+      case (_, _, true, _, _)         => None
+      case (true, true, false, _, _)  => Some(appConfig.asaHomePageUrl)
+      case (false, true, false, _, _) => Some(controllers.routes.IndexController.onPageLoad.url)
+      case _                          => Some(appConfig.startPagePillar2Url)
     }
 }
