@@ -31,7 +31,8 @@ import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core._
 import views.html.rfm.AgentView
 import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView}
 
@@ -49,6 +50,8 @@ class AgentControllerSpec extends SpecBase {
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
   )
+
+  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 
   "Default Agent View" must {
     "must return OK and the correct view for a GET" in {
@@ -310,27 +313,29 @@ class AgentControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.DashboardController
+          .onPageLoad(clientPillar2Id = Some("XMPLR0123456789"), agentView = true)
+          .url
       }
 
     }
 
     "return error page if enrolments are found for agent but there is no organisation enrolment for that pillar 2 id" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
 
       running(application) {
 
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.failed(InsufficientEnrolments("HMRC-PILLAR2-ORG")))
 
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails("XMPLR0123456789").url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoadError.url
       }
     }
 

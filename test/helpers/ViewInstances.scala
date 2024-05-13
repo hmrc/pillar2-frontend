@@ -91,6 +91,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val span                     = new Span
   val paragraphMessageWithLink = new ParagraphMessageWithLink
   val sectionHeader            = new sectionHeader
+  val sectionBreak             = new SectionBreak
+  val inactiveStatusBanner     = new InactiveStatusBanner
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -191,6 +193,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
-  val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
+  val viewDashboardView: DashboardView =
+    new DashboardView(pillar2layout, govukButton, heading, h2, paragraphBody, paragraphMessageWithLink, sectionBreak, inactiveStatusBanner)
 
 }

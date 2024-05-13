@@ -79,7 +79,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     (for {
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
       _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
-    } yield Redirect(controllers.routes.DashboardController.onPageLoad))
+    } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
       .recover { case UnexpectedResponse =>
         Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }

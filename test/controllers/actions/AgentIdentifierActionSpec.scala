@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import config.FrontendAppConfig
-import controllers.actions.AgentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, defaultAgentPredicate}
+import controllers.actions.AgentIdentifierAction.{HMRC_PILLAR2_ORG_KEY, defaultAgentPredicate}
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
@@ -30,15 +30,11 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.Future
 
 class AgentIdentifierActionSpec extends SpecBase {
 
-  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
-  val pillar2Enrolment: Enrolments =
-    Enrolments(Set(Enrolment(HMRC_AS_AGENT_KEY, List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
   class Harness(authAction: AgentIdentifierAction, predicate: Predicate = defaultAgentPredicate) {
     def onPageLoad(): Action[AnyContent] = authAction.agentIdentify(predicate)(implicit request => Results.Ok)
   }
@@ -52,8 +48,8 @@ class AgentIdentifierActionSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-            .thenReturn(Future.successful(Some("id") ~ pillar2Enrolment ~ Some(Agent) ~ None))
+          when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+            .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
 
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -150,8 +146,8 @@ class AgentIdentifierActionSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(None ~ pillar2Enrolment ~ Some(Agent) ~ None))
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(None ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -263,8 +259,8 @@ class AgentIdentifierActionSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ pillar2Enrolment ~ Some(Organisation) ~ None))
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Organisation) ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -284,8 +280,8 @@ class AgentIdentifierActionSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ pillar2Enrolment ~ Some(Individual) ~ None))
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Individual) ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]

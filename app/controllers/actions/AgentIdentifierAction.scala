@@ -82,4 +82,8 @@ object AgentIdentifierAction {
   private[controllers] val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
 
   private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY)
+
+  val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
+    AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY) and
+      Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
 }
