@@ -38,8 +38,7 @@
 
   @paragraphBody(messages("rfm.amendAPIFailure.p2", link(
    text = messages("rfm.amendAPIFailure.p2.link"),
-   //Change to CYA page when 768 is complete
-   call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
+   call = Call("GET", controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url),
    fullStop = true
   )))
 }
