@@ -19,7 +19,7 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.AgentController.VerifyAgentClientPredicate
+import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
 import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
@@ -28,9 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.{AuthProviders, Enrolment}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
 import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView}
@@ -109,17 +106,11 @@ class AgentController @Inject() (
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
       implicit request =>
-        Future successful Redirect(routes.UnderConstructionController.onPageLoad) // PIL-503
+        Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
     implicit request =>
       Ok(clientNoMatchView())
   }
-}
-
-object AgentController {
-  val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    AuthProviders(GovernmentGateway) and Enrolment("HMRC-AS-AGENT") and
-      Enrolment("HMRC-PILLAR2-ORG").withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
 }

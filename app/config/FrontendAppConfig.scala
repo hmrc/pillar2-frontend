@@ -45,6 +45,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val rfmSecurityLoginContinueUrl: String = configuration.get[String]("urls.rfmSecurityLoginContinue")
   val signOutUrl:                  String = configuration.get[String]("urls.signOut")
   val startPagePillar2Url:         String = configuration.get[String]("urls.startPagePillar2")
+  val asaHomepageUrl:              String = configuration.get[String]("urls.asaHomepage")
 
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
