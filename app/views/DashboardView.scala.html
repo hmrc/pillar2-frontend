@@ -37,7 +37,7 @@
     }
 
     @if(agentView) {
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.accountLink"), linkUrl = appConfig.asaHomepageUrl)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.accountLink"), linkUrl = appConfig.asaHomePageUrl)
     }
 
     @h(if(agentView) messages("dashboard.agent.heading") else messages("dashboard.heading"), "govuk-heading-l govuk-!-margin-bottom-7")
