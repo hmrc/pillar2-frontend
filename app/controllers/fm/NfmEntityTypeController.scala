@@ -24,6 +24,7 @@ import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
 import pages.{FmEntityTypePage, FmRegisteredInUKPage}
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -50,7 +51,7 @@ class NfmEntityTypeController @Inject() (
     with I18nSupport
     with Logging {
 
-  val form = formProvider()
+  val form: Form[EntityType] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     request.userAnswers
@@ -59,10 +60,12 @@ class NfmEntityTypeController @Inject() (
         request.userAnswers
           .get(FmEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType == EntityType.Other) {
+            if (!ukBased & entityType == EntityType.Other) { // TODO Check logic - would have to be registered in the UK to get to this page
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                updatedAnswers <- Future.fromTry(
+                                    request.userAnswers.set(FmRegisteredInUKPage, true)
+                                  ) // TODO - Check logic - should we be setting this to true on page load ?
+                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Ok(view(form.fill(entityType), mode))
             } else {
               Future.successful(Ok(view(form.fill(entityType), mode)))

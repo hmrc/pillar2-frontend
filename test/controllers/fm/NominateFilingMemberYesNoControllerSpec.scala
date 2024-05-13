@@ -17,11 +17,13 @@
 package controllers.fm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.NominateFilingMemberYesNoFormProvider
-import models.{NormalMode, UKAddress}
+import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +36,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
   val formProvider = new NominateFilingMemberYesNoFormProvider()
 
   val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
-  val completeUpeJourney = emptyUserAnswers
+  val completeUpeJourney: UserAnswers = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, false)
     .setOrException(UpeNameRegistrationPage, "name")
     .setOrException(UpeRegisteredAddressPage, UkAddress)
@@ -75,7 +77,6 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -96,6 +97,22 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[NominateFilingMemberYesNoView]
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString()
+      }
+    }
+
+    "must redirect to next page when valid data is submitted" in {
+      val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("nominateFilingMember", "true"))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode).url
       }
     }
 

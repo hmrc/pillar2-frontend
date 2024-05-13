@@ -20,14 +20,15 @@ import base.SpecBase
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
 
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
-  val form         = new ContactUPEByTelephoneFormProvider()
-  val formProvider = form("sad")
+  val form = new ContactUPEByTelephoneFormProvider()
+  val formProvider: Form[Boolean] = form("sad")
 
   "Can we contact UPE by Telephone Controller" when {
 

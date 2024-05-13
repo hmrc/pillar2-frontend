@@ -19,16 +19,20 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmContactNameFormProvider
-import models.{NonUKAddress, NormalMode}
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.fmview.NfmContactNameView
 
+import scala.concurrent.Future
+
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
-  val nonUkAddress: NonUKAddress = NonUKAddress("this", None, "over", None, None, countryCode = "AR")
   "NFMContactName Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
@@ -97,6 +101,22 @@ class NfmContactNameControllerSpec extends SpecBase {
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+    "must redirect to next page when valid data is submitted" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url
       }
     }
   }

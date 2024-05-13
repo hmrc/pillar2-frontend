@@ -28,7 +28,7 @@ object ReviewAndSubmitSection extends Section {
 
   override def progress(answers: UserAnswers): SectionStatus = {
     import answers._
-    answers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactDetailStatus) match {
+    answers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactsStatus) match {
       case RowStatus.NotStarted => NotStarted
       case _                    => CannotStart
     }
