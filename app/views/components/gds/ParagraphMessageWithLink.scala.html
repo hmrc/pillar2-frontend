@@ -16,6 +16,13 @@
 
 @this()
 
-@(message1: Option[String] = None, linkMessage: String, message2: Option[String] = None, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link")
+@( message1: Option[String] = None,
+   linkMessage: String,
+   message2: Option[String] = None,
+   linkUrl: String,
+   classes: String = "govuk-body",
+   linkClass: String = "govuk-link",
+   linkFullStop: Boolean = false
+)
 
-<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl">@linkMessage</a> @message2.map{message => @Html(message)}</p>
+<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message => @Html(message)}</p>
