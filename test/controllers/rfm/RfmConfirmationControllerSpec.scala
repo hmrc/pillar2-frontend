@@ -17,10 +17,8 @@
 package controllers.rfm
 
 import base.SpecBase
-import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -55,7 +53,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk))))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RfmConfirmationView]
@@ -110,6 +108,15 @@ class RfmConfirmationControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      }
+    }
+    "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
