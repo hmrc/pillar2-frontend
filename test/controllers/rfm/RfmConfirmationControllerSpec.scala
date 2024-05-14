@@ -20,7 +20,7 @@ import base.SpecBase
 import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.SubMneOrDomesticPage
+import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,7 +32,7 @@ import views.html.rfm.RfmConfirmationView
 
 import scala.concurrent.Future
 
-class rfmConfirmationControllerSpec extends SpecBase {
+class RfmConfirmationControllerSpec extends SpecBase {
   val dateHelper = new ViewHelpers()
   "RfmConfirmation Controller" when {
     val enrolments: Set[Enrolment] = Set(
@@ -45,7 +45,7 @@ class rfmConfirmationControllerSpec extends SpecBase {
         state = "activated"
       )
     )
-    "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
+    "must return OK and the correct view with content" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
@@ -66,9 +66,34 @@ class rfmConfirmationControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+
+        contentAsString(result) must include(
+          "Replace filing member successful"
+        )
+        contentAsString(result) must include(
+          "Filing member was replaced on"
+        )
+        contentAsString(result) must include(
+          "As the new filing member, you have taken over the obligations to:"
+        )
+        contentAsString(result) must include(
+          "act as HMRC's primary contact in relation to the group's Pillar 2 top-up tax compliance"
+        )
+        contentAsString(result) must include(
+          "ensure your group's Pillar 2 top-up taxes account accurately reflects their records."
+        )
+        contentAsString(result) must include(
+          "If you fail to meet your obligations as a filing member, you may be liable for penalties."
+        )
+        contentAsString(result) must include(
+          "What happens next"
+        )
+        contentAsString(result) must include(
+          "You can now"
+        )
+
       }
     }
-
     "must return OK and the correct view for a GET - rfm feature false" in {
 
       val ua = emptyUserAnswers
@@ -82,46 +107,11 @@ class rfmConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
-    "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
-        val view        = application.injector.instanceOf[RfmConfirmationView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678", currentDate.toString())(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
-      }
-    }
-
-//    "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//      running(application) {
-//        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-//        val result  = route(application, request).value
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-//      }
-//    }
   }
 }
