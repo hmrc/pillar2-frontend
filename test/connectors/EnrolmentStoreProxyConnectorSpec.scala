@@ -17,10 +17,12 @@
 package connectors
 
 import base.SpecBase
+import models.EnrolmentRequest.{KnownFacts, KnownFactsParameters, KnownFactsResponse}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
+import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.libs.json.Json
 
 class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
@@ -30,56 +32,52 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
     )
     .build()
   lazy val connector: EnrolmentStoreProxyConnector = app.injector.instanceOf[EnrolmentStoreProxyConnector]
-  val enrolmentStoreProxyUrl    = "/enrolment-store-proxy/enrolment-store/enrolments"
-  val enrolmentStoreProxy200Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~xxx200/groups"
-  val enrolmentStoreProxy204Url = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~xxx204/groups"
+  private val getIdsUrl = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-PILLAR2-ORG~PLRID~200/groups"
 
-  val enrolmentStoreProxyResponseJson: String =
-    """{
-      |  "principalGroupIds": [
-      |    "ABCEDEFGI1234567",
-      |    "ABCEDEFGI1234568"
-      |  ],
-      |  "delegatedGroupIds": [
-      |    "ABCEDEFGI1234567",
-      |    "ABCEDEFGI1234568"
-      |  ]
-      |}""".stripMargin
+  private val getKnownFactsUrl = "/enrolment-store-proxy/enrolment-store/enrolments"
 
-  val enrolmentStoreProxyResponseNoPrincipalIdJson: String =
-    """{
-      |  "principalGroupIds": []
-      |}""".stripMargin
+  val groupIds     = GroupIds(principalGroupIds = "ABCEDEFGI1234567", delegatedGroupIds = Seq("ABCEDEFGI1234568"))
+  val jsonGroupIds = Json.toJson(groupIds).toString()
 
-  "EnrolmentStoreProxyConnector when calling enrolmentStatus" when {
+  private val errorCodes: Gen[Int] =
+    Gen.oneOf(Seq(BAD_REQUEST, FORBIDDEN, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_GATEWAY, GATEWAY_TIMEOUT, SERVICE_UNAVAILABLE))
 
-    "return 200 and a enrolmentStatus response when already enrolment exists" in {
-      val plrRef = "xxx200"
-      stubGet(enrolmentStoreProxy200Url, OK, enrolmentStoreProxyResponseJson)
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe true
+  "EnrolmentStoreProxyConnector when calling enrolment store" when {
+
+    "getGroupIds" should {
+      "return group IDs associated with an enrolment if 200 response is received" in {
+
+        stubGet(getIdsUrl, OK, jsonGroupIds)
+        val result = connector.getGroupIds("200")
+        result.futureValue mustBe Some(groupIds)
+      }
+
+      "return None for any non-200 status received for this API" in {
+        stubGet(getIdsUrl, errorCodes.sample.value, "")
+        val result = connector.getGroupIds("200")
+        result.futureValue mustBe None
+
+      }
     }
-
-    "return 204 and a enrolmentStatus response when no enrolment exists" in {
-      val plrRef = "xxx204"
-      stubGet(enrolmentStoreProxy204Url, NO_CONTENT, "")
-
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
-    }
-
-    "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
-      val plrRef = "xxx204"
-      stubGet(enrolmentStoreProxy204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
-      val result = connector.enrolmentExists(plrRef)
-      result.futureValue mustBe false
-    }
-
-    "return 404 and a enrolmentStatus response when invalid or malfromed URL" in {
-      val plrRef = "xxx404"
-      stubGet(enrolmentStoreProxy204Url, NOT_FOUND, "")
-      intercept[IllegalStateException](await(connector.enrolmentExists(plrRef)))
-
+    "getKnownFacts" should {
+      "return an identifier and two verifiers using a valid pillar 2 reference" in {
+        stubResponse(getKnownFactsUrl, OK, expectedKnownFactsResponse)
+        val requestParameters = Json.parse(knownFactsRequest).as[KnownFactsParameters]
+        val expectedResponse  = Json.parse(expectedKnownFactsResponse).as[KnownFactsResponse]
+        val result            = connector.getKnownFacts(requestParameters)
+        result.futureValue mustEqual expectedResponse
+      }
+      "return failed response in case of a non-200 response from tax enrolment" in {
+        stubResponse(getKnownFactsUrl, errorCodes.sample.value, "")
+        val result = connector.getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts("PLRID", "id"))))
+        result.failed.futureValue mustBe InternalIssueError
+      }
+      "return failed response in case of a js result error in the body received from tax enrolments" in {
+        stubResponse(getKnownFactsUrl, OK, badKnownFactsResponse)
+        val requestParameters = Json.parse(knownFactsRequest).as[KnownFactsParameters]
+        val result            = connector.getKnownFacts(requestParameters)
+        result.failed.futureValue mustEqual UnexpectedJsResult
+      }
     }
 
   }

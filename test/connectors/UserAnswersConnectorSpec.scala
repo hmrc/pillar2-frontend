@@ -16,7 +16,9 @@
 
 package connectors
 
+import akka.Done
 import base.SpecBase
+import models.InternalIssueError
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -62,6 +64,19 @@ class UserAnswersConnectorSpec extends SpecBase {
         stubGet(s"$apiUrl/user-cache/registration-subscription/id", errorCodes.sample.value, testData.toString())
         val result = connector.getUserAnswer("id")
         result.failed.futureValue mustBe models.InternalIssueError
+      }
+    }
+
+    "remove" should {
+      "return Done in case of a 200 response " in {
+        stubDelete(s"$apiUrl/user-cache/registration-subscription/id", OK, "")
+        val result = connector.remove("id")
+        result.futureValue mustEqual Done
+      }
+      "return failure in case of a non-200 response " in {
+        stubDelete(s"$apiUrl/user-cache/registration-subscription/id", errorCodes.sample.value, "")
+        val result = connector.remove("id")
+        result.failed.futureValue mustEqual InternalIssueError
       }
     }
 

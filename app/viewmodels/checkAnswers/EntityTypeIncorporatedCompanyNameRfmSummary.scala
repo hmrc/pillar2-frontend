@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.RfmGRSResponsePage
+import pages.RfmGRSUkLimitedPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,19 +29,17 @@ object EntityTypeIncorporatedCompanyNameRfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
-      .get(RfmGRSResponsePage)
-      .flatMap { grs =>
-        grs.incorporatedEntityRegistrationData.map { answer =>
-          val value = HtmlFormat.escape(answer.companyProfile.companyName).toString
-          SummaryListRowViewModel(
-            key = "entityType.companyName.checkYourAnswersLabel",
-            value = ValueViewModel(HtmlContent(value)),
-            actions = Seq(
-              ActionItemViewModel("site.change", controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("entityType.Rfm.change.hidden"))
-                .withCssClass("govuk-!-display-none-print")
-            )
+      .get(RfmGRSUkLimitedPage)
+      .map { incorporatedEntityRegistrationData =>
+        val value = HtmlFormat.escape(incorporatedEntityRegistrationData.companyProfile.companyName).toString
+        SummaryListRowViewModel(
+          key = "entityType.companyName.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("entityType.Rfm.change.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
-        }
+        )
       }
 }

@@ -34,7 +34,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {

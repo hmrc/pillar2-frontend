@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmNameRegistrationFormProvider
-import models.{CheckMode, Mode, NormalMode}
-import pages.RfmNameRegistrationPage
+import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
+import pages.RfmNameRegistrationPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmNameRegistrationView

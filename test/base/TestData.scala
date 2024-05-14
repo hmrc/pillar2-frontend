@@ -68,6 +68,29 @@ trait TestData {
 
        """.stripMargin
 
+  val validRegistrationWithIdResponse2: String =
+    s"""{
+       |            "companyProfile" : {
+       |                "companyName" : "Test Example Company Name",
+       |                "companyNumber" : "76543210",
+       |                "dateOfIncorporation" : "2010-12-12",
+       |                "unsanitisedCHROAddress" : {
+       |                    "address_line_1" : "Address Line 1",
+       |                    "address_line_2" : "Address Line 2",
+       |                    "locality" : "Town",
+       |                    "postal_code" : "AB12 3CD",
+       |                    "region" : "Region"
+       |                }
+       |            },
+       |            "ctutr" : "1234567890",
+       |            "identifiersMatch" : true,
+       |            "registration" : {
+       |                "registrationStatus" : "REGISTERED"
+       |            }
+       |  }
+
+       """.stripMargin
+
   val registrationNotCalledLimited: String =
     s"""{
        |            "companyProfile" : {
@@ -209,5 +232,56 @@ trait TestData {
        |  }
 
        """.stripMargin
+
+  val expectedKnownFactsResponse: String =
+    """
+      |{
+      |    "service": "HMRC-PILLAR2-ORG",
+      |    "enrolments": [{
+      |        "identifiers": [{
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }],
+      |        "verifiers": [{
+      |            "key": "NonUKPostalCode",
+      |            "value": "SE1232113"
+      |        },
+      |        {
+      |            "key": "CountryCode",
+      |            "value": "AR"
+      |        }]
+      |    }]
+      |}
+      |""".stripMargin
+
+  val badKnownFactsResponse: String =
+    """
+      |{
+      |    "enrolments": [{
+      |        "identifiers": [{
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }],
+      |        "verifiers": [{
+      |            "value": "SE1232113"
+      |        },
+      |        {
+      |            "value": "AR"
+      |        }]
+      |    }]
+      |}
+      |""".stripMargin
+  val knownFactsRequest: String =
+    """
+      |{
+      |    "service": "HMRC-PILLAR2-ORG",
+      |    "knownFacts": [
+      |        {
+      |            "key": "PLRID",
+      |            "value": "XLMP123456789"
+      |        }
+      |    ]
+      |}
+      |""".stripMargin
 
 }

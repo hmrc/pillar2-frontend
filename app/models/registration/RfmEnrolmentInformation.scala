@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.registration
 
-import play.api.libs.json.{Json, OFormat}
+import models.EnrolmentInfo
+import models.subscription.AmendSubscription
 
-case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
-
-object GroupIds {
-  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
-}
+case class RfmEnrolmentInformation(amendData: AmendSubscription, enrolmentInfo: EnrolmentInfo)

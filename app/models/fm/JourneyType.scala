@@ -26,26 +26,3 @@ object JourneyType {
   case object ReplaceFilingMember extends JourneyType
 
 }
-
-sealed trait TaskListType
-object TaskListType {
-  case object ultimateParent extends TaskListType {
-    val value: String = this.toString
-  }
-
-  case object filingMember extends TaskListType {
-    val value: String = this.toString
-  }
-
-  case object groupDetail extends TaskListType {
-    val value: String = this.toString
-  }
-
-  case object contactDetails extends TaskListType {
-    val value: String = this.toString
-  }
-
-  case object cya extends TaskListType {
-    val value: String = this.toString
-  }
-}

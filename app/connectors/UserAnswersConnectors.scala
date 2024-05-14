@@ -16,11 +16,14 @@
 
 package connectors
 
+import akka.Done
 import models.{InternalIssueError, UserAnswers}
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import utils.FutureConverter.FutureOps
+
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,7 +61,10 @@ class UserAnswersConnectors @Inject() (
       }
     }
 
-  def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] =
-    httpClient.DELETE[HttpResponse](s"$url/user-cache/registration-subscription/$id")
+  def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[Done] =
+    httpClient.DELETE[HttpResponse](s"$url/user-cache/registration-subscription/$id").flatMap { response =>
+      if (response.status == OK) Done.toFuture else Future.failed(InternalIssueError)
+
+    }
 
 }

@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{Json, OFormat, OWrites}
 
 case class Identifier(key: String, value: String)
 
@@ -54,5 +54,31 @@ object EnrolmentRequest {
       "identifiers" -> enrolmentRequest.identifiers,
       "verifiers"   -> enrolmentRequest.verifiers
     )
+  }
+
+  case class AllocateEnrolmentParameters(
+    userId:       String,
+    friendlyName: String = "Allocate pillar 2 enrolment to new filing member",
+    `type`:       String = "principal",
+    verifiers:    Seq[Verifier]
+  )
+
+  object AllocateEnrolmentParameters {
+    implicit val format: OFormat[AllocateEnrolmentParameters] = Json.format[AllocateEnrolmentParameters]
+  }
+
+  case class KnownFacts(key: String, value: String)
+  object KnownFacts {
+    implicit val format: OFormat[KnownFacts] = Json.format[KnownFacts]
+  }
+
+  case class KnownFactsParameters(service: String = "HMRC-PILLAR2-ORG", knownFacts: Seq[KnownFacts])
+  object KnownFactsParameters {
+    implicit val format: OFormat[KnownFactsParameters] = Json.format[KnownFactsParameters]
+  }
+
+  case class KnownFactsResponse(service: String = "HMRC-PILLAR2-ORG", enrolments: Seq[EnrolmentRequest])
+  object KnownFactsResponse {
+    implicit val format: OFormat[KnownFactsResponse] = Json.format[KnownFactsResponse]
   }
 }

@@ -32,7 +32,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 trait IdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
@@ -51,20 +50,19 @@ class AuthenticatedIdentifierAction @Inject() (
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val enrolmentKey: String = config.enrolmentKey
-
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
+      .retrieve(
+        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
+      ) {
 
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+          Future.successful(Right(IdentifierRequest(request, internalId, Some(groupId), enrolments = enrolments.enrolments)))
 
         case _ ~ _ ~ Some(Organisation) ~ _ =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _      => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>

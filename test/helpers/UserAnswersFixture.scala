@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
+import models.grs.{EntityType, GrsRegistrationData, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
@@ -32,17 +32,17 @@ trait UserAnswersFixture extends TryValues {
   val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   private val ukAddress = UKAddress(
-    addressLine1 = "Line1",
+    addressLine1 = "1 drive",
     addressLine2 = None,
-    addressLine3 = "Line3",
+    addressLine3 = "la la land",
     addressLine4 = None,
-    postalCode = "M19AGS",
-    countryCode = "GB"
+    postalCode = "m19hgs",
+    countryCode = "AB"
   )
-  val nonUkAddress: NonUKAddress = NonUKAddress(
-    addressLine1 = "Line1",
+  val nonUkAddress = NonUKAddress(
+    addressLine1 = "1 drive",
     addressLine2 = None,
-    addressLine3 = "Line3",
+    addressLine3 = "la la land",
     addressLine4 = None,
     postalCode = None,
     countryCode = "US"
@@ -68,6 +68,22 @@ trait UserAnswersFixture extends TryValues {
           failures = None
         )
       )
+    )
+  )
+  private val rfmLimitedGrsResponse: IncorporatedEntityRegistrationData = IncorporatedEntityRegistrationData(
+    companyProfile = CompanyProfile(
+      companyName = "ABC Limited",
+      companyNumber = "1234",
+      dateOfIncorporation = LocalDate.now(),
+      unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
+    ),
+    ctutr = "1234567890",
+    identifiersMatch = true,
+    businessVerification = None,
+    registration = GrsRegistrationResult(
+      registrationStatus = RegistrationStatus.Registered,
+      registeredBusinessPartnerId = Some("XB0000000000001"),
+      failures = None
     )
   )
 
@@ -107,7 +123,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
     .setOrException(RfmUkBasedPage, true)
     .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(RfmGRSResponsePage, grsResponse)
+    .setOrException(RfmGRSUkLimitedPage, rfmLimitedGrsResponse)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
     .setOrException(RfmContactByTelephonePage, true)
@@ -537,6 +553,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(UpeGRSResponsePage, grsResponse)
+
+  val rfmGrsData: GrsRegistrationData = GrsRegistrationData(companyId = "someSafeId", companyName = "Company", utr = "UTR", crn = "CRN")
 
   val allSectionsCompleted: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
 
-case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
+case object RfmSafeIdPage extends QuestionPage[String] {
 
-object GroupIds {
-  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmSafeId"
 }
