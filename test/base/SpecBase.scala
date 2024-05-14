@@ -39,7 +39,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -74,6 +75,10 @@ trait SpecBase
   implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
+
+  type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  val pillar2AgentEnrolment: Enrolments =
+    Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
 
   def countOccurrences(src: String, tgt: String): Int =
     src.sliding(tgt.length).count(window => window == tgt)
