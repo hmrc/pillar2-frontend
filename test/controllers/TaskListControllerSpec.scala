@@ -30,6 +30,7 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages._
 import play.api
 import play.api.inject
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -67,9 +68,14 @@ class TaskListControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
         val result = route(application, request).value
@@ -137,9 +143,16 @@ class TaskListControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -161,9 +174,16 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(FmGRSResponsePage, grsResponse)
         .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -180,9 +200,16 @@ class TaskListControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -199,9 +226,16 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, accountingPeriod)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -222,9 +256,16 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -245,9 +286,17 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
-      val application = applicationBuilder(Some(userAnswers)).build()
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -263,9 +312,16 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, accountingPeriod)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -290,13 +346,18 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual OK
 
         val controller             = application.injector.instanceOf[TaskListController]
@@ -332,13 +393,18 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(FmPhonePreferencePage, false)
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual OK
 
         val controller             = application.injector.instanceOf[TaskListController]
@@ -370,13 +436,18 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubPrimaryPhonePreferencePage, false)
         .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
 
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual OK
 
         val controller         = application.injector.instanceOf[TaskListController]
@@ -414,13 +485,18 @@ class TaskListControllerSpec extends SpecBase {
           .setOrException(FmContactEmailPage, "test@test.com")
           .setOrException(FmPhonePreferencePage, false)
 
-        val application = applicationBuilder(Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[SessionRepository].toInstance(mockSessionRepository),
+            inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
-
-          val result = route(application, request).value
-
+          val result  = route(application, request).value
           status(result) mustEqual OK
 
           val controller             = application.injector.instanceOf[TaskListController]

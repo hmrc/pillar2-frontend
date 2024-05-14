@@ -58,11 +58,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
 
     "return to recovery page if any part is missing for check answer page" in {
-
+      val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmCorpPosition))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
         .build()
       running(application) {
-
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -71,10 +76,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
 
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
-
+      val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
         .build()
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -112,10 +123,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
 
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - NoId" in {
-
+      val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmNoID))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
         .build()
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -155,10 +172,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
 
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions" in {
-
+      val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmID))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
         .build()
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -207,10 +230,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     }
 
     "return OK and the correct view if an answer is provided to every New RFM No ID journey questions" in {
-
+      val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmNoID))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
         .build()
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
