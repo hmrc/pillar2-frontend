@@ -287,7 +287,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
         }
       }
       "redirect to Journey recovery if no contact detail is found for the new filing member" in {

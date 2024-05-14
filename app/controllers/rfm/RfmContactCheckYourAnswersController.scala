@@ -117,7 +117,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       _          <- OptionT.liftF(sessionRepository.set(dataToSave))
     } yield {
       logger.info("successfully replaced filing member")
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
     })
       .recover {
         case InternalIssueError =>
