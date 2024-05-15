@@ -27,7 +27,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
 
   val navigator = new AmendSubscriptionNavigator
 
-  private lazy val contactCYA  = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad
+  private lazy val contactCYA  = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
   private lazy val groupCYA    = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
   private lazy val jr          = controllers.routes.JourneyRecoveryController.onPageLoad()

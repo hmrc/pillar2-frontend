@@ -32,7 +32,7 @@ class AmendSubscriptionNavigator @Inject() {
   private lazy val groupDetailCheckYourAnswerRoute: Call =
     controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
   private lazy val contactDetailCheckYourAnswersRoute =
-    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
 
   private val checkRouteMap: Page => SubscriptionLocalData => Call = {
     case SubMneOrDomesticPage            => _ => groupDetailCheckYourAnswerRoute

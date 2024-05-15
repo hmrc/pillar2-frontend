@@ -63,7 +63,7 @@ class CaptureSubscriptionAddressController @Inject() (
               Future.fromTry(request.subscriptionLocalData.set(SubRegisteredAddressPage, value))
             _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
 
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
+          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad())
       )
 
   }

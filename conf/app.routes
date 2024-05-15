@@ -227,8 +227,8 @@ POST        /manage-account/account-details/summary               controllers.su
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
-GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
-POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
+GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)
 
 
 GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)

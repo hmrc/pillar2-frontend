@@ -118,9 +118,11 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(7).text()       must include("View and amend contact details")
-      elements.get(7).attr("href") must include(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-      elements.get(8).text()       must include("View and amend group details")
+      elements.get(7).text() must include("View and amend contact details")
+      elements.get(7).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
+      )
+      elements.get(8).text() must include("View and amend group details")
       elements.get(8).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       )
@@ -204,9 +206,11 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(9).text()       must include("View and amend contact details")
-      elements.get(9).attr("href") must include(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-      elements.get(10).text()      must include("View and amend group details")
+      elements.get(9).text() must include("View and amend contact details")
+      elements.get(9).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(Some(plrRef)).url
+      )
+      elements.get(10).text() must include("View and amend group details")
       elements.get(10).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       )
