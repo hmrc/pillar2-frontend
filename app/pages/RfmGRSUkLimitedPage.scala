@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+import models.registration.IncorporatedEntityRegistrationData
+import play.api.libs.json.JsPath
 
-case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
+case object RfmGRSUkLimitedPage extends QuestionPage[IncorporatedEntityRegistrationData] {
 
-object GroupIds {
-  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RfmGRSUkLimited"
 }

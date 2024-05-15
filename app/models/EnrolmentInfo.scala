@@ -16,6 +16,8 @@
 
 package models
 
+import models.registration._
+
 case class EnrolmentInfo(
   ctUtr:         Option[String] = None,
   crn:           Option[String] = None,
@@ -24,13 +26,13 @@ case class EnrolmentInfo(
   plrId:         String
 ) {
   def convertToEnrolmentRequest: EnrolmentRequest =
-    EnrolmentRequest(identifiers = Seq(Identifier("PLRID", plrId)), verifiers = buildVerifiers)
+    EnrolmentRequest(identifiers = Seq(Identifier(Pillar2Identifier.toString, plrId)), verifiers = buildVerifiers)
 
   def buildVerifiers: Seq[Verifier] =
-    buildOptionalVerifier(ctUtr, "CTUTR") ++
-      buildOptionalVerifier(crn, "CRN") ++
-      buildOptionalVerifier(nonUkPostcode, "NonUKPostalCode") ++
-      buildOptionalVerifier(countryCode, "CountryCode")
+    buildOptionalVerifier(ctUtr, UTR.toString) ++
+      buildOptionalVerifier(crn, CRN.toString) ++
+      buildOptionalVerifier(nonUkPostcode, NonUkPostCode.toString) ++
+      buildOptionalVerifier(countryCode, CountryCode.toString)
 
   def buildOptionalVerifier(optionalInfo: Option[String], key: String): Seq[Verifier] =
     optionalInfo

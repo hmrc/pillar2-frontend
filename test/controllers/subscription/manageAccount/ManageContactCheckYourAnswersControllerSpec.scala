@@ -141,7 +141,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+          when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
             .thenReturn(Future.successful(Done))
 
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
@@ -155,7 +155,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = enrolments)
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
-        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(UnexpectedResponse))
 
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)

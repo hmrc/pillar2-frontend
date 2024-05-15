@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package models.registration
 
-import models.registration.GrsResponse
-import play.api.libs.json.JsPath
+import models.WithName
 
-case object RfmGRSResponsePage extends QuestionPage[GrsResponse] {
+sealed trait KnownFactsKeys
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "rfmGRSResponse"
-}
+case object Pillar2Identifier extends WithName("PLRID") with KnownFactsKeys
+case object CRN extends WithName("CRN") with KnownFactsKeys
+case object UTR extends WithName("CTUTR") with KnownFactsKeys
+case object NonUkPostCode extends WithName("NonUKPostalCode") with KnownFactsKeys
+case object CountryCode extends WithName("CountryCode") with KnownFactsKeys

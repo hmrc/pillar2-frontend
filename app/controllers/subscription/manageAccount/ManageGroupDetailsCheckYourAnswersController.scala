@@ -63,7 +63,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     (for {
       referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
-      _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
+      _               <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
     } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
       .recover { case UnexpectedResponse =>
         Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)

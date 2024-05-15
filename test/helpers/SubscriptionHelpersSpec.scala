@@ -18,12 +18,9 @@ package helpers
 
 import base.SpecBase
 import models.registration._
-import models.rfm.RegistrationDate
-import models.{EnrolmentInfo, NonUKAddress, UKAddress}
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-
-import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
 
@@ -398,71 +395,6 @@ class SubscriptionHelpersSpec extends SpecBase {
 
         userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
       }
-    }
-
-    "SubscriptionHelpers.securityQuestionStatus" should {
-      val date = LocalDate.of(2024, 12, 31)
-      "return Completed when answers are provided to all security questions" in {
-
-        val userAnswers = emptyUserAnswers
-          .set(RfmPillar2ReferencePage, "12323212")
-          .success
-          .value
-          .set(RfmRegistrationDatePage, RegistrationDate(date))
-          .success
-          .value
-
-        userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
-      }
-
-      "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
-        val userAnswersInProgress = emptyUserAnswers
-          .set(RfmPillar2ReferencePage, "Security Check Answer")
-          .success
-          .value
-
-        userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
-      }
-
-      "return NotStarted when answers are not provided to any of the security questions" in {
-        val userAnswers = emptyUserAnswers
-
-        userAnswers.securityQuestionStatus mustEqual RowStatus.NotStarted
-      }
-
-    }
-
-    "SubscriptionHelpers.rfmNoIdQuestionStatus" should {
-      val name = "nfm name"
-      val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
-      "return Completed when answers are provided to all security questions" in {
-
-        val userAnswers = emptyUserAnswers
-          .set(RfmNameRegistrationPage, name)
-          .success
-          .value
-          .set(RfmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-
-        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.Completed
-      }
-
-      "return InProgress when an answer is provided to rfmNfmNameRegistrationPage and not to rfmNfmRegisteredAddressPage" in {
-        val userAnswersInProgress = emptyUserAnswers
-          .set(RfmNameRegistrationPage, name)
-          .success
-          .value
-
-        userAnswersInProgress.rfmNoIdQuestionStatus mustEqual RowStatus.InProgress
-      }
-
-      "return NotStarted when answers are not provided to any of the rfm NoId questions" in {
-        val userAnswers = emptyUserAnswers
-
-        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.NotStarted
-      }
-
     }
 
   }

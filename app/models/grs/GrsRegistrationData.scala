@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.grs
 
 import play.api.libs.json.{Json, OFormat}
 
-case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
+case class GrsRegistrationData(companyId: String, companyName: String, utr: String, crn: String)
 
-object GroupIds {
-  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
+object GrsRegistrationData {
+  implicit val format: OFormat[GrsRegistrationData] = Json.format[GrsRegistrationData]
 }
