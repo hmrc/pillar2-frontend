@@ -16,7 +16,7 @@
 
 package services
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.InternalIssueError

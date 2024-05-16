@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.Done
+import org.apache.pekko.Done
 import config.FrontendAppConfig
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
 import play.api.Logging

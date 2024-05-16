@@ -16,7 +16,7 @@
 
 package services
 
-import akka.Done
+import org.apache.pekko.Done
 import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
 import models.fm.JourneyType
 import models.subscription._

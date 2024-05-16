@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.Done
+import org.apache.pekko.Done
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
