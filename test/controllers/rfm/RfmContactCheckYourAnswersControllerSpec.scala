@@ -264,8 +264,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     "onSubmit" should {
       val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
-      lazy val jr                     = controllers.routes.JourneyRecoveryController.onPageLoad().url
-      lazy val uc                     = controllers.routes.UnderConstructionController.onPageLoad.url
+      lazy val journeyRecovery        = controllers.routes.JourneyRecoveryController.onPageLoad().url
+      lazy val underConstruction      = controllers.routes.UnderConstructionController.onPageLoad.url
+      lazy val amendApiFailure        = controllers.rfm.routes.AmendApiFailureController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
       "redirect to under construction page in case of a successful replace filing member" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
@@ -287,7 +288,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual underConstruction
         }
       }
       "redirect to Journey recovery if no contact detail is found for the new filing member" in {
@@ -296,7 +297,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual jr
+          redirectLocation(result).value mustEqual journeyRecovery
         }
       }
       "redirect to Journey recovery if no group ID is found for the new filing member" in {
@@ -305,7 +306,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual jr
+          redirectLocation(result).value mustEqual journeyRecovery
         }
       }
       "redirect to journey recovery page if new filing member uk based page value cannot be found" in {
@@ -326,10 +327,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual jr
+          redirectLocation(result).value mustEqual journeyRecovery
         }
       }
-      "redirect to under construction page if registering new filing member fails" in {
+      "redirect to amend api failure page if registering new filing member fails" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -349,10 +350,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual amendApiFailure
         }
       }
-      "redirect to under construction page if deallocating old filing member fails" in {
+      "redirect to amend api failure page if deallocating old filing member fails" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -370,10 +371,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual amendApiFailure
         }
       }
-      "redirect to under construction page if allocating an enrolment to the new filing member fails" in {
+      "redirect to amend api failure page if allocating an enrolment to the new filing member fails" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -394,7 +395,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual amendApiFailure
         }
       }
 
@@ -416,7 +417,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to under construction page if read subscription fails" in {
+      "redirect to amend api failure page if read subscription fails" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -434,11 +435,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual amendApiFailure
         }
       }
 
-      "redirect to under construction page if amend subscription fails" in {
+      "redirect to amend api failure page if amend subscription fails" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -458,7 +459,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(InternalIssueError))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual uc
+          redirectLocation(result).value mustEqual amendApiFailure
         }
       }
 

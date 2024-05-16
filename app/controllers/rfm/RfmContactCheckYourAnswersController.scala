@@ -122,7 +122,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       .recover {
         case InternalIssueError =>
           logger.warn("Replace filing member failed")
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
         case _: Exception =>
           logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
