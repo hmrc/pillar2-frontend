@@ -20,9 +20,8 @@ import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.RfmEntityTypeFormProvider
-import models.{Mode, UserType}
 import models.grs.EntityType
-import navigation.ReplaceFilingMemberNavigator
+import models.{Mode, UserType}
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport

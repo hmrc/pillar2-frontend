@@ -40,7 +40,9 @@ case object RfmUkBasedPage extends QuestionPage[Boolean] {
       userAnswers
         .remove(RfmEntityTypePage)
         .flatMap(
-          _.remove(RfmGRSResponsePage)
+          _.remove(RfmGRSUkPartnershipPage).flatMap(
+            _.remove(RfmGRSUkLimitedPage)
+          )
         )
     } else {
       super.cleanup(value, userAnswers)

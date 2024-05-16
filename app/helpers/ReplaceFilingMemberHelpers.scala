@@ -16,7 +16,8 @@
 
 package helpers
 
-import models.{EnrolmentInfo, UserAnswers}
+import models.UserAnswers
+import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import pages._
 import utils.RowStatus
 
@@ -45,5 +46,64 @@ trait ReplaceFilingMemberHelpers {
       case _                                                                   => false
     }
   }
+
+  def securityQuestionStatus: RowStatus = {
+    val first  = get(RfmPillar2ReferencePage).isDefined
+    val second = get(RfmRegistrationDatePage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
+
+  def rfmNoIdQuestionStatus: RowStatus = {
+    val first  = get(RfmNameRegistrationPage).isDefined
+    val second = get(RfmRegisteredAddressPage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
+    }
+  }
+
+  def getSecondaryContact: Option[ContactDetailsType] =
+    get(RfmAddSecondaryContactPage).flatMap { nominated =>
+      if (nominated) {
+        for {
+          secondaryName  <- get(RfmSecondaryContactNamePage)
+          secondaryEmail <- get(RfmSecondaryEmailPage)
+        } yield ContactDetailsType(name = secondaryName, telephone = getSecondaryTelephone, emailAddress = secondaryEmail)
+      } else {
+        None
+      }
+    }
+
+  private def getSecondaryTelephone: Option[String] =
+    get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
+      if (nominated) get(RfmSecondaryCapturePhonePage) else None
+    }
+
+  def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
+    for {
+      referenceNumber   <- get(RfmPillar2ReferencePage)
+      corporatePosition <- get(RfmCorporatePositionPage)
+      primaryName       <- get(RfmPrimaryContactNamePage)
+      email             <- get(RfmPrimaryContactEmailPage)
+      address           <- get(RfmContactAddressPage)
+    } yield NewFilingMemberDetail(
+      plrReference = referenceNumber,
+      corporatePosition = corporatePosition,
+      contactName = primaryName,
+      contactEmail = email,
+      phoneNumber = getPrimaryTelephone,
+      address = address,
+      secondaryContactInformation = getSecondaryContact
+    )
+
+  private def getPrimaryTelephone: Option[String] =
+    get(RfmContactByTelephonePage).flatMap { nominated =>
+      if (nominated) get(RfmCapturePrimaryTelephonePage) else None
+    }
 
 }

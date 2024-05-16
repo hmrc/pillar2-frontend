@@ -15,18 +15,22 @@
  */
 
 package controllers.rfm
-import javax.inject.Inject
+import cats.data.OptionT
+import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.{Mode, UserAnswers}
+import models.{InternalIssueError, UserAnswers}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
@@ -35,11 +39,13 @@ class RfmContactCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  subscriptionService:      SubscriptionService,
   view:                     RfmContactCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
@@ -76,8 +82,39 @@ class RfmContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = rfmIdentify.async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad.url))
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+    (for {
+      newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+      subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
+      _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+      upeEnrolmentInfo <- OptionT.liftF(
+                            subscriptionService.getUltimateParentEnrolmentInformation(
+                              subscriptionData = subscriptionData,
+                              pillar2Reference = newFilingMemberInformation.plrReference,
+                              request.userId
+                            )
+                          )
+      groupId <- OptionT.fromOption[Future](request.groupId)
+      _ <- OptionT.liftF(
+             subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
+           )
+      amendData <- OptionT.liftF(
+                     subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+                   )
+      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+    } yield {
+      logger.info("successfully replaced filing member")
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    })
+      .recover {
+        case InternalIssueError =>
+          logger.warn("Replace filing member failed")
+          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        case _: Exception =>
+          logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
   private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =

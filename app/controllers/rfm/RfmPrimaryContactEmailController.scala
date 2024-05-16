@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

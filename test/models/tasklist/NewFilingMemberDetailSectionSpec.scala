@@ -23,7 +23,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ContactDetailSectionSpec extends ContactDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class NewFilingMemberDetailSectionSpec extends NewFilingMemberDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "toRequiredSection" should {
     "call the correct url" in {
@@ -66,7 +66,7 @@ class ContactDetailSectionSpec extends ContactDetailSectionFixture with Matchers
   }
 }
 
-protected trait ContactDetailSectionFixture extends SpecBase {
+protected trait NewFilingMemberDetailSectionFixture extends SpecBase {
 
   val progressScenarios = Table(
     ("assertion", "input", "result"),
