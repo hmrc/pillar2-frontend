@@ -15,23 +15,8 @@
  */
 
 package services
-
-import akka.Done
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.{EnrolmentConnector, EnrolmentStoreProxyConnector, RegistrationConnector, SubscriptionConnector}
-import models.InternalIssueError
-import models.registration.RegistrationInfo
-import models.subscription._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages._
-import play.api.inject.bind
-import play.api.test.Helpers.running
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
 
 class GenUrlServiceSpec extends SpecBase {
 
