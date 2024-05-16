@@ -16,7 +16,7 @@
 
 package controllers.rfm
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
