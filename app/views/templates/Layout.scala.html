@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 @import play.twirl.api.Html
-
+@import services.GenUrlService
 @this(
     govukLayout: GovukLayout,
     govukBackLink: GovukBackLink,
@@ -32,11 +32,13 @@
     autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
     hmrcScripts: HmrcScripts,
     betaBanner: StandardBetaBanner,
-    stylesheets: Stylesheets
+    stylesheets: Stylesheets,
+    serviceUrl:GenUrlService
 )
 
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, plrReference: String="")(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
 
 @scripts = {
     @hmrcScripts()
@@ -94,7 +96,7 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = if (request.uri.contains("/replace-filing-member/")) None else (if (authorised) Some(routes.IndexController.onPageLoad.url) else Some(appConfig.startPagePillar2Url)),
+        serviceUrl  = serviceUrl.generateUrl(request.uri, authorised, plrReference),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),
