@@ -124,7 +124,7 @@ class DashboardViewSpec extends ViewSpecBase {
       )
       elements.get(8).text() must include("View and amend group details")
       elements.get(8).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       )
 
     }
@@ -212,7 +212,7 @@ class DashboardViewSpec extends ViewSpecBase {
       )
       elements.get(10).text() must include("View and amend group details")
       elements.get(10).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some(plrRef)).url
       )
     }
 

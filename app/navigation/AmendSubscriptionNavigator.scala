@@ -27,10 +27,11 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AmendSubscriptionNavigator @Inject() {
 
+  // TODO - pass client id
   def nextPage(page: Page, mode: Mode = CheckMode, subscriptionUserAnswers: SubscriptionLocalData): Call =
     checkRouteMap(page)(subscriptionUserAnswers)
   private lazy val groupDetailCheckYourAnswerRoute: Call =
-    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
   private lazy val contactDetailCheckYourAnswersRoute =
     controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
 

@@ -219,8 +219,8 @@ POST       /manage-account/contact-details/change-second-contact     controllers
 
 GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
 
-GET        /manage-account/account-details/summary                controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad
-POST        /manage-account/account-details/summary               controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit
+GET        /manage-account/account-details/summary                controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+POST       /manage-account/account-details/summary                controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)
 
 
 
