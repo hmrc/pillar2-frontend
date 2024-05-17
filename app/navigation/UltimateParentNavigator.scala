@@ -21,7 +21,7 @@ import controllers.routes
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import pages._
-import models.{NormalMode, _}
+import models.{NormalMode, CheckMode, _ }
 
 @Singleton
 class UltimateParentNavigator @Inject() {
@@ -46,6 +46,7 @@ class UltimateParentNavigator @Inject() {
   }
   private def domesticOrNotRouteInNormalMode(userAnswers: UserAnswers): Call =
     domesticOrNotRoute(userAnswers, NormalMode)
+
   private def domesticOrNotRouteInCheckMode(userAnswers: UserAnswers): Call =
     domesticOrNotRoute(userAnswers, CheckMode)
 
