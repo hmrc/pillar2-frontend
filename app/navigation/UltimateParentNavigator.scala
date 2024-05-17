@@ -35,7 +35,7 @@ class UltimateParentNavigator @Inject() {
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private val normalRoutes: Page => UserAnswers => Call = {
-    case UpeRegisteredInUKPage    => domesticOrNotRouteInNormalMode
+    case UpeRegisteredInUKPage    => ua => domesticOrNotRoute(ua, NormalMode)
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
@@ -44,11 +44,6 @@ class UltimateParentNavigator @Inject() {
     case UpeCapturePhonePage      => _ => upeCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
   }
-  private def domesticOrNotRouteInNormalMode(userAnswers: UserAnswers): Call =
-    domesticOrNotRoute(userAnswers, NormalMode)
-
-  private def domesticOrNotRouteInCheckMode(userAnswers: UserAnswers): Call =
-    domesticOrNotRoute(userAnswers, CheckMode)
 
   private def domesticOrNotRoute(userAnswers: UserAnswers, mode: Mode) =
     userAnswers
@@ -75,7 +70,7 @@ class UltimateParentNavigator @Inject() {
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case UpeRegisteredInUKPage    => domesticOrNotRouteInCheckMode
+    case UpeRegisteredInUKPage    => ua => domesticOrNotRoute(ua, CheckMode)
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode)
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(CheckMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode)
