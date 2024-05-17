@@ -21,7 +21,7 @@ import controllers.routes
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import pages._
-import models.{NormalMode, CheckMode, _ }
+import models.{CheckMode, NormalMode, _}
 
 @Singleton
 class UltimateParentNavigator @Inject() {
