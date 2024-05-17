@@ -21,7 +21,7 @@ import controllers.routes
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import pages._
-import models._
+import models.{NormalMode, _}
 
 @Singleton
 class UltimateParentNavigator @Inject() {
@@ -35,7 +35,7 @@ class UltimateParentNavigator @Inject() {
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private val normalRoutes: Page => UserAnswers => Call = {
-    case UpeRegisteredInUKPage    => domesticOrNotRoute
+    case UpeRegisteredInUKPage    => domesticOrNotRouteInNormalMode
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
@@ -44,15 +44,19 @@ class UltimateParentNavigator @Inject() {
     case UpeCapturePhonePage      => _ => upeCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
   }
+  private def domesticOrNotRouteInNormalMode(userAnswers: UserAnswers): Call =
+    domesticOrNotRoute(userAnswers, NormalMode)
+  private def domesticOrNotRouteInCheckMode(userAnswers: UserAnswers): Call =
+    domesticOrNotRoute(userAnswers, CheckMode)
 
-  private def domesticOrNotRoute(userAnswers: UserAnswers): Call =
+  private def domesticOrNotRoute(userAnswers: UserAnswers, mode: Mode) =
     userAnswers
       .get(UpeRegisteredInUKPage)
       .map { ukBased =>
         if (ukBased) {
-          controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)
+          controllers.registration.routes.EntityTypeController.onPageLoad(mode)
         } else {
-          controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
+          controllers.registration.routes.UpeNameRegistrationController.onPageLoad(mode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
@@ -70,8 +74,13 @@ class UltimateParentNavigator @Inject() {
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case UpePhonePreferencePage => telephoneCheckRouteLogic
-    case _                      => whichCheckYourAnswerPageContact
+    case UpeRegisteredInUKPage    => domesticOrNotRouteInCheckMode
+    case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode)
+    case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(CheckMode)
+    case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode)
+    case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode)
+    case UpePhonePreferencePage   => telephoneCheckRouteLogic
+    case _                        => whichCheckYourAnswerPageContact
   }
 
   private def whichCheckYourAnswerPageContact(userAnswers: UserAnswers): Call =

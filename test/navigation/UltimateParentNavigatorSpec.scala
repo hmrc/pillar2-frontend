@@ -97,22 +97,29 @@ class UltimateParentNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe upeCYA
       }
-
-      "go to UPE CYA page from name registration page" in {
+      "go to entity type page if they are a uk based entity" in {
+        navigator.nextPage(UpeRegisteredInUKPage, CheckMode, emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true)) mustBe
+          controllers.registration.routes.EntityTypeController.onPageLoad(CheckMode)
+      }
+      "go to name registration page if they are a non-uk entity" in {
+        navigator.nextPage(UpeRegisteredInUKPage, CheckMode, emptyUserAnswers.setOrException(UpeRegisteredInUKPage, false)) mustBe
+          controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode)
+      }
+      "go to address page from name registration page" in {
         navigator.nextPage(UpeNameRegistrationPage, CheckMode, emptyUserAnswers.setOrException(UpeNameRegistrationPage, "s")) mustBe
-          upeCYA
+          controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode)
       }
-      "go to UPE CYA page from address page" in {
+      "go to contact name page from address page" in {
         navigator.nextPage(UpeRegisteredAddressPage, CheckMode, emptyUserAnswers.setOrException(UpeRegisteredAddressPage, ukAddress)) mustBe
-          upeCYA
+          controllers.registration.routes.UpeContactNameController.onPageLoad(CheckMode)
       }
-      "go to UPE CYA page from contact name page" in {
+      "go to contact email page from contact name page" in {
         navigator.nextPage(UpeContactNamePage, CheckMode, emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington")) mustBe
-          upeCYA
+          controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode)
       }
-      "go to UPE CYA page from contact email page" in {
+      "go to telephone preference page from contact email page" in {
         navigator.nextPage(UpeContactEmailPage, CheckMode, emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")) mustBe
-          upeCYA
+          controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode)
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
@@ -130,23 +137,6 @@ class UltimateParentNavigatorSpec extends SpecBase {
       "go to UPE CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, false)) mustBe
           upeCYA
-      }
-      "go to submit and review CYA page from name registration page if all mandatory questions have been answered" in {
-        val ua = emptyUserAnswers.setOrException(UpeNameRegistrationPage, "s").setOrException(CheckYourAnswersLogicPage, true)
-        navigator.nextPage(UpeNameRegistrationPage, CheckMode, ua) mustBe submitAndReview
-      }
-      "go to submit and review CYA page from address page  if all mandatory questions have been answered" in {
-        val ua = emptyUserAnswers.setOrException(UpeRegisteredAddressPage, ukAddress).setOrException(CheckYourAnswersLogicPage, true)
-        navigator.nextPage(UpeRegisteredAddressPage, CheckMode, ua) mustBe submitAndReview
-      }
-      "go to submit and review CYA page from contact name page if all mandatory questions have been answered" in {
-        val ua = emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington").setOrException(CheckYourAnswersLogicPage, true)
-        navigator.nextPage(UpeContactNamePage, CheckMode, ua) mustBe submitAndReview
-      }
-      "go to submit and review CYA page from contact email page  if all mandatory questions have been answered" in {
-        val ua = emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com").setOrException(CheckYourAnswersLogicPage, true)
-        navigator.nextPage(UpeContactEmailPage, CheckMode, ua) mustBe submitAndReview
-
       }
       "go to submit and review CYA page if they have chosen not to nominate a contact number  if all mandatory questions have been answered" in {
         val ua = emptyUserAnswers.setOrException(UpePhonePreferencePage, false).setOrException(CheckYourAnswersLogicPage, true)
