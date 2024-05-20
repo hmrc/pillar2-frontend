@@ -83,8 +83,8 @@ class ManageContactCheckYourAnswersController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](clientPillar2Id)
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
-        _ <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+        _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
         .recover { case UnexpectedResponse =>
           Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         }

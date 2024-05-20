@@ -153,7 +153,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
 
-        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.failed(UnexpectedResponse))
 
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
@@ -193,7 +193,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
       running(application) {
-        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(Done))
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value

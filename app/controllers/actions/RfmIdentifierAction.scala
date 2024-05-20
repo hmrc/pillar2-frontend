@@ -32,7 +32,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
 trait RfmIdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
@@ -52,28 +51,30 @@ class RfmAuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
+      .retrieve(
+        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
+      ) {
 
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+        case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           // (Admin is deprecated, Admin and User are equivalent. see auth-client)
           // https://github.com/hmrc/auth-client/blob/main/src-common/main/scala/uk/gov/hmrc/auth/core/model.scala#L143
           if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
-            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Organisation:User already enrolled login attempt")
+            logger.info("Rfm - Organisation:User already enrolled login attempt")
             Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {
-            Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+            Future.successful(Right(IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments)))
           }
         case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Organisation:Assistant login attempt")
+          logger.info("Rfm -Organisation:Assistant login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.StandardOrganisationController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Individual login attempt")
+          logger.info("Rfm -Individual login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Agent login attempt")
+          logger.info("Rfm - Agent login attempt")
           Future.successful(Left(Redirect(controllers.routes.AgentController.onPageLoad)))
         case _ =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Rfm - Unable to retrieve internal id or affinity group")
+          logger.warn("Rfm Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>

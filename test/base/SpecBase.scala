@@ -101,11 +101,8 @@ trait SpecBase
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        Future.successful(Right(IdentifierRequest(request, "internalId")))
-      }
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+        Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"))))
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -115,8 +112,7 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        val identifierRequest = IdentifierRequest(request, "internalId", enrolments.getOrElse(Set.empty))
+        val identifierRequest = IdentifierRequest(request, "internalId", Some("groupID"), enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }
     }
@@ -124,6 +120,7 @@ trait SpecBase
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
+    groupID:               Option[String] = None,
     subscriptionLocalData: Option[SubscriptionLocalData] = None,
     additionalData:        Map[String, Any] = Map.empty
   ): GuiceApplicationBuilder =

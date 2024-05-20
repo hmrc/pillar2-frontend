@@ -1077,6 +1077,11 @@ bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
 bta.eacd.p1 = screen owned by EACD
 
+
+asa.agent.title = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
+
 havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
@@ -1149,6 +1154,12 @@ agent.noMatch.title = Your client’s details did not match HMRC records
 agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
 agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
+
+agent.error.title = Sorry, there is a problem with the service
+agent.error.heading = Sorry, there is a problem with the service
+agent.error.p1 = Please try again later.
+agent.error.link = Return to your Agent Services Account
+###############################################
 
 rfm.saveProgressInform.title = Saving progress
 rfm.saveProgressInform.heading = Saving progress

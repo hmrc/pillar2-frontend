@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, Mode, NormalMode}
+import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
 import play.api.i18n.I18nSupport

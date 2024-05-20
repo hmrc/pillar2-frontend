@@ -16,21 +16,34 @@
 
 package helpers
 
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.requests.SubscriptionDataRequest
-import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails}
-import models.{MneOrDomestic, NonUKAddress}
+import models.rfm.CorporatePosition
+import models.subscription._
+import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
-
-import java.time.LocalDate
 import viewmodels.govuk.summarylist.SummaryListViewModel
 
+import java.time.LocalDate
+
 trait SubscriptionLocalDataFixture {
+  private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
+  private val upeDetailsAmend =
+    UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
+  private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
+  val filingMemberAmendDetails: FilingMemberAmendDetails = FilingMemberAmendDetails(
+    addNewFilingMember = true,
+    safeId = "someSafeId",
+    customerIdentification1 = Some("CRN"),
+    customerIdentification2 = Some("UTR"),
+    organisationName = "Company"
+  )
 
-  lazy val currentDate = LocalDate.now()
+  lazy val currentDate: LocalDate = LocalDate.now()
 
-  val emptySubscriptionLocalData = SubscriptionLocalData(
+  val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "",
@@ -63,12 +76,35 @@ trait SubscriptionLocalDataFixture {
   val subscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("line1", None, None, None, None, "GB"),
-    primaryContactDetails = ContactDetailsType("name", None, "email"),
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
     accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
     accountStatus = Some(AccountStatus(false))
+  )
+
+  val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
+    userId = "id",
+    verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))
+  )
+
+  val amendData: AmendSubscription = AmendSubscription(
+    upeDetails = upeDetailsAmend,
+    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate),
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
+    secondaryContactDetails = Some(contactDetails),
+    filingMemberDetails = Some(filingMemberAmendDetails)
+  )
+  val replaceFilingMemberData: NewFilingMemberDetail = NewFilingMemberDetail(
+    plrReference = "plrReference",
+    corporatePosition = CorporatePosition.Upe,
+    contactName = "shadow",
+    contactEmail = "shadow@fiend.com",
+    phoneNumber = Some("dota2"),
+    address = NonUKAddress("middle", None, "lane", None, None, "obv"),
+    secondaryContactInformation = Some(contactDetails)
   )
 
   def subscriptionDataGroupSummaryList(

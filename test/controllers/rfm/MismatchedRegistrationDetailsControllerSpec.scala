@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.{IndividualView, MismatchedRegistrationDateView}
+import views.html.rfm.MismatchedRegistrationDateView
 
 class MismatchedRegistrationDetailsControllerSpec extends SpecBase {
 

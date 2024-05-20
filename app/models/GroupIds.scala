@@ -16,12 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{Json, OFormat}
 
-import scala.collection.Seq
-
-case class GroupIds(principalGroupIds: Seq[String], delegatedGroupIds: Seq[String])
+case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
 
 object GroupIds {
-  implicit val reads: Reads[GroupIds] = Json.reads[GroupIds]
+  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
 }

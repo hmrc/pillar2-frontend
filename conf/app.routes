@@ -342,7 +342,7 @@ POST       /bta/pillar2-id                                                   con
 GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
 POST       /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
-
+GET        /asa/home                                                         controllers.ASAStubController.onPageLoad
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
 
@@ -449,6 +449,7 @@ POST       /asa/input-pillar-2-id                       controllers.AgentControl
 GET        /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
 POST       /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
 GET        /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+GET        /asa/error/system                            controllers.AgentController.onPageLoadError
 
 GET         /replace-filing-member/security/saving-progress                     controllers.rfm.RfmSaveProgressInformController.onPageLoad
 

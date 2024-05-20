@@ -17,7 +17,6 @@
 package connectors
 
 import base.SpecBase
-import models.fm.JourneyType
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -71,36 +70,58 @@ class RegistrationConnectorSpec extends SpecBase {
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
   private val safeID = "XE1111123456789"
   "RegistrationConnector" when {
-    "return safeId for Upe Register without Id is successful" in {
+    "registerUltimateParent" should {
+      "return safeId for Upe Register without Id is successful" in {
 
-      stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
-      val result = connector.register("id", JourneyType.UltimateParent)
-      result.futureValue mustBe safeID
+        stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
+        val result = connector.registerUltimateParent("id")
+        result.futureValue mustBe safeID
+      }
+
+      "return InternalServerError for EIS returns Error status" in {
+        val errorStatus: Int = errorCodes.sample.value
+        stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
+
+        val result = connector.registerUltimateParent("id")
+        result.failed.futureValue mustBe models.InternalIssueError
+      }
+    }
+    "registerFilingMember" should {
+      "return safeId for a filing member when successful" in {
+
+        stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
+        val result = connector.registerFilingMember("id")
+        result.futureValue mustBe safeID
+      }
+
+      "return InternalServerError for EIS returns Error status for FM register withoutId" in {
+        val errorStatus: Int = errorCodes.sample.value
+        stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
+
+        val result = connector.registerFilingMember("id")
+        result.failed.futureValue mustBe models.InternalIssueError
+
+      }
+    }
+    "registerNewFilingMember" should {
+
+      "return safeId for a filing member when successful" in {
+
+        stubResponse(s"$apiUrl/rfm/registration/id", OK, businessWithoutIdJsonResponse)
+        val result = connector.registerNewFilingMember("id")
+        result.futureValue mustBe safeID
+      }
+
+      "return InternalServerError for EIS returns Error status for FM register withoutId" in {
+        val errorStatus: Int = errorCodes.sample.value
+        stubResponse(s"$apiUrl/rfm/registration/id", errorStatus, businessWithoutIdJsonResponse)
+
+        val result = connector.registerNewFilingMember("id")
+        result.failed.futureValue mustBe models.InternalIssueError
+
+      }
     }
 
-    "return InternalServerError for EIS returns Error status" in {
-      //import uk.gov.hmrc.http.HttpReads.Implicits.readRaw is needed in the class for this tests to pass
-      val errorStatus: Int = errorCodes.sample.value
-      stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
-
-      val result = connector.register("id", JourneyType.UltimateParent)
-      result.failed.futureValue mustBe models.InternalIssueError
-    }
-    "return safeId for a filing member when successful" in {
-
-      stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
-      val result = connector.register("id", JourneyType.FilingMember)
-      result.futureValue mustBe safeID
-    }
-
-    "return InternalServerError for EIS returns Error status for FM register withoutId" in {
-      val errorStatus: Int = errorCodes.sample.value
-      stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
-
-      val result = connector.register("id", JourneyType.FilingMember)
-      result.failed.futureValue mustBe models.InternalIssueError
-
-    }
   }
 
 }

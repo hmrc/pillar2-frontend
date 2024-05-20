@@ -34,14 +34,14 @@ class DataRequiredActionImpl @Inject() (implicit val executionContext: Execution
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     logger.debug(
-      s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
+      s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"
     )
 
     request.userAnswers match {
       case None =>
-        Future.successful(Right(DataRequest(request.request, request.userId, UserAnswers("12345"), request.enrolments)))
+        Future.successful(Right(DataRequest(request.request, request.userId, request.groupId, UserAnswers("12345"), request.enrolments)))
       case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, data, request.enrolments)))
+        Future.successful(Right(DataRequest(request.request, request.userId, request.groupId, data, request.enrolments)))
     }
   }
 
