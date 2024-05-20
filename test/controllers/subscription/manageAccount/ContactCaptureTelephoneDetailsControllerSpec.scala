@@ -18,13 +18,14 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.ContactCaptureTelephoneDetailsFormProvider
-import models.CheckMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsView
@@ -35,7 +36,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
 
-  "ContactCaptureTelephoneDetails Controller for View Contact details" when {
+  "ContactCaptureTelephoneDetails Controller for Organisation View Contact details" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers =
@@ -43,14 +44,14 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name"), "name", None)(
           request,
           appConfig(application),
           messages(application)
@@ -67,14 +68,14 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), CheckMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", None)(
           request,
           appConfig(application),
           messages(application)
@@ -92,7 +93,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit().url)
             .withFormUrlEncodedBody(("value", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -103,7 +104,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -114,8 +115,135 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "must redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad().url)
         val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+  }
+
+  "ContactCaptureTelephoneDetails Controller for Agent View Contact details" when {
+
+    "must return OK and the correct view for a GET if page previously not answered" in {
+      val userAnswers =
+        emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("name"), "name", Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page previously answered" in {
+      val userAnswers =
+        emptySubscriptionLocalData
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123132")
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+    "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
+      val userAnswersSubCapturePhone =
+        emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubCapturePhone))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request =
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit(Some(PlrReference)).url)
+            .withFormUrlEncodedBody(("value", "33333222" * 100))
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "redirect to bookmark page if previous page not answered" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+
+    }
+    "must redirect to journey recovery if no primary contact name is found for POST" in {
+      val application = applicationBuilder()
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          POST,
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

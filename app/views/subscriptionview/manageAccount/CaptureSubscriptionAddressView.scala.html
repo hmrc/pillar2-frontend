@@ -33,12 +33,12 @@
 )
 
 
-@(form: Form[_], mode: Mode, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], countryOptions: Seq[InputOption], clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

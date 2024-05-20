@@ -18,16 +18,22 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
+import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
+import play.api.mvc.AnyContent
 import viewmodels.checkAnswers.manageAccount.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+
+  private val plrReference: Some[String] = Some("XMPLR0123456789")
 
   val page = inject[ManageGroupDetailsCheckYourAnswersView]
 
-  val view      = Jsoup.parse(page(subscriptionDataGroupSummaryList(messages), None)(request, appConfig, messages).toString())
-  val agentView = Jsoup.parse(page(subscriptionDataGroupSummaryList(messages), Some("XMPLR0123456789"))(request, appConfig, messages).toString())
+  val view      = Jsoup.parse(page(subscriptionDataGroupSummaryList(), None)(request, appConfig, messages).toString())
+  val agentView = Jsoup.parse(page(subscriptionDataGroupSummaryList(plrReference), Some("XMPLR0123456789"))(request, appConfig, messages).toString())
 
   "Manage Group Details Check Your Answers View" should {
 
@@ -54,7 +60,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
       agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url
+        controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(plrReference).url
       )
 
       val ap      = "Group’s current consolidated accounting period"
@@ -68,7 +74,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
       agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
+        controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad(plrReference).url
       )
 
       val startDate = "Start date"

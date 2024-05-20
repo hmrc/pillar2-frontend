@@ -18,23 +18,24 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.GroupAccountingPeriodFormProvider
+import models.MneOrDomestic
 import models.subscription.AccountingPeriod
-import models.{CheckMode, MneOrDomestic}
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.mvc.{Call, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class GroupAccountingPeriodControllerSpec extends SpecBase {
@@ -43,7 +44,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   val startDate    = LocalDate.of(2023, 12, 31)
   val endDate      = LocalDate.of(2025, 12, 31)
 
-  "GroupAccountingPeriod Controller for View Contact details" when {
+  "GroupAccountingPeriod Controller for Organisation View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -51,13 +52,13 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod), clientPillar2Id = None)(
           request,
           appConfig(application),
           messages(application)
@@ -72,13 +73,13 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(date), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), clientPillar2Id = None)(
           request,
           appConfig(application),
           messages(application)
@@ -91,7 +92,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       val request =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url)
+        FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
@@ -102,7 +103,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, CheckMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -141,7 +142,149 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubAccountingPeriodPage, CheckMode, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubAccountingPeriodPage, clientPillar2Id = None, expectedUserAnswers)
+      }
+    }
+
+  }
+
+  "GroupAccountingPeriod Controller for Agent View Contact details" when {
+
+    "must return OK and the correct view for a GET if no previous data is found" in {
+      val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod),
+          clientPillar2Id = Some(PlrReference)
+        )(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if page has previously been answered" in {
+
+      val date = AccountingPeriod(startDate, endDate)
+      val ua   = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        )
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), clientPillar2Id = Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      val request =
+        FakeRequest(
+          POST,
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+        )
+          .withFormUrlEncodedBody(("value", "invalid value"))
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must update subscription data and redirect to the next page" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      val someDate    = LocalDate.of(2024, 1, 1)
+      val userAnswers = emptySubscriptionLocalData
+
+      val expectedUserAnswers = userAnswers.setOrException(SubAccountingPeriodPage, AccountingPeriod(someDate, someDate.plusMonths(5), None))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+        )
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          POST,
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+        )
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "1",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "1",
+            "endDate.month"   -> "6",
+            "endDate.year"    -> "2024"
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubAccountingPeriodPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
       }
     }
 

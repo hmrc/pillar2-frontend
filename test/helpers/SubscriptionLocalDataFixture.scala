@@ -16,6 +16,7 @@
 
 package helpers
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails}
 import models.{MneOrDomestic, NonUKAddress}
 import play.api.i18n.Messages
@@ -70,35 +71,44 @@ trait SubscriptionLocalDataFixture {
     accountStatus = Some(AccountStatus(false))
   )
 
-  def subscriptionDataGroupSummaryList(implicit messages: Messages) = SummaryListViewModel(
+  def subscriptionDataGroupSummaryList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
     rows = Seq(
-      MneOrDomesticSummary.row(someSubscriptionLocalData),
-      GroupAccountingPeriodSummary.row(someSubscriptionLocalData),
-      GroupAccountingPeriodStartDateSummary.row(someSubscriptionLocalData),
-      GroupAccountingPeriodEndDateSummary.row(someSubscriptionLocalData)
+      MneOrDomesticSummary.row(maybeClientPillar2Id),
+      GroupAccountingPeriodSummary.row(maybeClientPillar2Id),
+      GroupAccountingPeriodStartDateSummary.row(),
+      GroupAccountingPeriodEndDateSummary.row()
     ).flatten
   )
 
-  def subscriptionDataPrimaryContactList(implicit messages: Messages) = SummaryListViewModel(
+  def subscriptionDataPrimaryContactList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
     rows = Seq(
-      ContactNameComplianceSummary.row(someSubscriptionLocalData),
-      ContactEmailAddressSummary.row(someSubscriptionLocalData),
-      ContactByTelephoneSummary.row(someSubscriptionLocalData),
-      ContactCaptureTelephoneDetailsSummary.row(someSubscriptionLocalData)
+      ContactNameComplianceSummary.row(maybeClientPillar2Id),
+      ContactEmailAddressSummary.row(maybeClientPillar2Id),
+      ContactByTelephoneSummary.row(maybeClientPillar2Id),
+      ContactCaptureTelephoneDetailsSummary.row(maybeClientPillar2Id)
     ).flatten
   )
 
-  def subscriptionDataSecondaryContactList(implicit messages: Messages) = SummaryListViewModel(
+  def subscriptionDataSecondaryContactList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
     rows = Seq(
-      AddSecondaryContactSummary.row(someSubscriptionLocalData),
-      SecondaryContactNameSummary.row(someSubscriptionLocalData),
-      SecondaryContactEmailSummary.row(someSubscriptionLocalData),
-      SecondaryTelephonePreferenceSummary.row(someSubscriptionLocalData),
-      SecondaryTelephoneSummary.row(someSubscriptionLocalData)
+      AddSecondaryContactSummary.row(maybeClientPillar2Id),
+      SecondaryContactNameSummary.row(maybeClientPillar2Id),
+      SecondaryContactEmailSummary.row(maybeClientPillar2Id),
+      SecondaryTelephonePreferenceSummary.row(maybeClientPillar2Id),
+      SecondaryTelephoneSummary.row(maybeClientPillar2Id)
     ).flatten
   )
 
-  def subscriptionDataAddress(countryOptions: CountryOptions)(implicit messages: Messages) = SummaryListViewModel(
-    rows = Seq(ContactCorrespondenceAddressSummary.row(someSubscriptionLocalData, countryOptions)).flatten
+  def subscriptionDataAddress(countryOptions: CountryOptions, maybeClientPillar2Id: Option[String] = None)(implicit
+    messages:                                 Messages,
+    request:                                  SubscriptionDataRequest[_]
+  ) = SummaryListViewModel(
+    rows = Seq(ContactCorrespondenceAddressSummary.row(maybeClientPillar2Id, countryOptions)).flatten
   )
 }

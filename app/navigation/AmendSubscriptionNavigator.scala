@@ -28,85 +28,85 @@ import javax.inject.{Inject, Singleton}
 class AmendSubscriptionNavigator @Inject() {
 
   // TODO - pass client id
-  def nextPage(page: Page, mode: Mode = CheckMode, subscriptionUserAnswers: SubscriptionLocalData): Call =
-    checkRouteMap(page)(subscriptionUserAnswers)
-  private lazy val groupDetailCheckYourAnswerRoute: Call =
-    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
-  private lazy val contactDetailCheckYourAnswersRoute =
-    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
+  def nextPage(page: Page, clientPillar2Id: Option[String] = None, subscriptionUserAnswers: SubscriptionLocalData): Call =
+    checkRouteMap(page)(clientPillar2Id)(subscriptionUserAnswers)
+  private lazy val groupDetailCheckYourAnswerRoute: Option[String] => Call = (maybeClientId: Option[String]) =>
+    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(maybeClientId)
+  private lazy val contactDetailCheckYourAnswersRoute: Option[String] => Call = (maybeClientId: Option[String]) =>
+    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(maybeClientId)
 
-  private val checkRouteMap: Page => SubscriptionLocalData => Call = {
-    case SubMneOrDomesticPage            => _ => groupDetailCheckYourAnswerRoute
-    case SubAccountingPeriodPage         => _ => groupDetailCheckYourAnswerRoute
-    case SubPrimaryContactNamePage       => _ => contactDetailCheckYourAnswersRoute
-    case SubPrimaryEmailPage             => _ => contactDetailCheckYourAnswersRoute
-    case SubPrimaryPhonePreferencePage   => primaryTelephoneCheckRouteLogic
-    case SubPrimaryCapturePhonePage      => _ => contactDetailCheckYourAnswersRoute
-    case SubAddSecondaryContactPage      => addSecondaryContactCheckRoute
-    case SubSecondaryContactNamePage     => emailOrCYA
-    case SubSecondaryEmailPage           => phonePrefOrCYA
-    case SubSecondaryPhonePreferencePage => secondaryTelephoneCheckRouteLogic
-    case SubSecondaryCapturePhonePage    => _ => contactDetailCheckYourAnswersRoute
-    case SubRegisteredAddressPage        => _ => contactDetailCheckYourAnswersRoute
-    case _                               => _ => routes.IndexController.onPageLoad
+  private val checkRouteMap: Page => Option[String] => SubscriptionLocalData => Call = {
+    case SubMneOrDomesticPage            => id => _ => groupDetailCheckYourAnswerRoute(id)
+    case SubAccountingPeriodPage         => id => _ => groupDetailCheckYourAnswerRoute(id)
+    case SubPrimaryContactNamePage       => id => _ => contactDetailCheckYourAnswersRoute(id)
+    case SubPrimaryEmailPage             => id => _ => contactDetailCheckYourAnswersRoute(id)
+    case SubPrimaryPhonePreferencePage   => id => data => primaryTelephoneCheckRouteLogic(id, data)
+    case SubPrimaryCapturePhonePage      => id => _ => contactDetailCheckYourAnswersRoute(id)
+    case SubAddSecondaryContactPage      => id => data => addSecondaryContactCheckRoute(id, data)
+    case SubSecondaryContactNamePage     => id => data => emailOrCYA(id, data)
+    case SubSecondaryEmailPage           => id => data => phonePrefOrCYA(id, data)
+    case SubSecondaryPhonePreferencePage => id => data => secondaryTelephoneCheckRouteLogic(id, data)
+    case SubSecondaryCapturePhonePage    => id => _ => contactDetailCheckYourAnswersRoute(id)
+    case SubRegisteredAddressPage        => id => _ => contactDetailCheckYourAnswersRoute(id)
+    case _                               => _ => _ => routes.IndexController.onPageLoad
   }
 
-  private def phonePrefOrCYA(subscriptionUserAnswers: SubscriptionLocalData): Call =
+  private def phonePrefOrCYA(maybeClientId: Option[String], subscriptionUserAnswers: SubscriptionLocalData): Call =
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryPhonePreferencePage).isEmpty) {
           controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad()
         } else {
-          contactDetailCheckYourAnswersRoute
+          contactDetailCheckYourAnswersRoute(maybeClientId)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def emailOrCYA(subscriptionUserAnswers: SubscriptionLocalData): Call =
+  private def emailOrCYA(maybeClientId: Option[String], subscriptionUserAnswers: SubscriptionLocalData): Call =
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryEmailPage).isEmpty) {
           controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad()
         } else {
-          contactDetailCheckYourAnswersRoute
+          contactDetailCheckYourAnswersRoute(maybeClientId)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def addSecondaryContactCheckRoute(subscriptionUserAnswers: SubscriptionLocalData): Call =
+  private def addSecondaryContactCheckRoute(maybeClientId: Option[String], subscriptionUserAnswers: SubscriptionLocalData): Call =
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryContactNamePage).isEmpty) {
           controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
         } else {
-          contactDetailCheckYourAnswersRoute
+          contactDetailCheckYourAnswersRoute(maybeClientId)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def primaryTelephoneCheckRouteLogic(subscriptionUserAnswers: SubscriptionLocalData): Call =
+  private def primaryTelephoneCheckRouteLogic(maybeClientId: Option[String], subscriptionUserAnswers: SubscriptionLocalData): Call =
     subscriptionUserAnswers
       .get(SubPrimaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad()
         } else {
-          contactDetailCheckYourAnswersRoute
+          contactDetailCheckYourAnswersRoute(maybeClientId)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def secondaryTelephoneCheckRouteLogic(subscriptionUserAnswers: SubscriptionLocalData): Call =
+  private def secondaryTelephoneCheckRouteLogic(maybeClientId: Option[String], subscriptionUserAnswers: SubscriptionLocalData): Call =
     subscriptionUserAnswers
       .get(SubSecondaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubSecondaryCapturePhonePage).isEmpty) {
           controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad()
         } else {
-          contactDetailCheckYourAnswersRoute
+          contactDetailCheckYourAnswersRoute(maybeClientId)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

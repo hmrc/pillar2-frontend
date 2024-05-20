@@ -53,10 +53,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
-          MneOrDomesticSummary.row(request.subscriptionLocalData),
-          GroupAccountingPeriodSummary.row(request.subscriptionLocalData),
-          GroupAccountingPeriodStartDateSummary.row(request.subscriptionLocalData),
-          GroupAccountingPeriodEndDateSummary.row(request.subscriptionLocalData)
+          MneOrDomesticSummary.row(clientPillar2Id),
+          GroupAccountingPeriodSummary.row(clientPillar2Id),
+          GroupAccountingPeriodStartDateSummary.row(),
+          GroupAccountingPeriodEndDateSummary.row()
         ).flatten
       )
       Ok(view(list, clientPillar2Id))

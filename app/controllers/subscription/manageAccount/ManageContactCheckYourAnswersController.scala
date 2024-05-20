@@ -53,40 +53,42 @@ class ManageContactCheckYourAnswersController @Inject() (
     (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
       val primaryContactList = SummaryListViewModel(
         rows = Seq(
-          ContactNameComplianceSummary.row(request.subscriptionLocalData),
-          ContactEmailAddressSummary.row(request.subscriptionLocalData),
-          ContactByTelephoneSummary.row(request.subscriptionLocalData),
-          ContactCaptureTelephoneDetailsSummary.row(request.subscriptionLocalData)
+          ContactNameComplianceSummary.row(clientPillar2Id),
+          ContactEmailAddressSummary.row(clientPillar2Id),
+          ContactByTelephoneSummary.row(clientPillar2Id),
+          ContactCaptureTelephoneDetailsSummary.row(clientPillar2Id)
         ).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
       val secondaryContactList = SummaryListViewModel(
         rows = Seq(
-          AddSecondaryContactSummary.row(request.subscriptionLocalData),
-          SecondaryContactNameSummary.row(request.subscriptionLocalData),
-          SecondaryContactEmailSummary.row(request.subscriptionLocalData),
-          SecondaryTelephonePreferenceSummary.row(request.subscriptionLocalData),
-          SecondaryTelephoneSummary.row(request.subscriptionLocalData)
+          AddSecondaryContactSummary.row(clientPillar2Id),
+          SecondaryContactNameSummary.row(clientPillar2Id),
+          SecondaryContactEmailSummary.row(clientPillar2Id),
+          SecondaryTelephonePreferenceSummary.row(clientPillar2Id),
+          SecondaryTelephoneSummary.row(clientPillar2Id)
         ).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
       val address = SummaryListViewModel(
-        rows = Seq(ContactCorrespondenceAddressSummary.row(request.subscriptionLocalData, countryOptions)).flatten
+        rows = Seq(ContactCorrespondenceAddressSummary.row(clientPillar2Id, countryOptions)).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
       Ok(view(primaryContactList, secondaryContactList, address, clientPillar2Id))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData) async {
-    implicit request =>
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) async { implicit request =>
       (for {
-        referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
-        _               <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
+        referenceNumber <- OptionT
+                             .fromOption[Future](clientPillar2Id)
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
+        _ <- OptionT.liftF(subscriptionService.amendSubscription(request.userId, referenceNumber, request.subscriptionLocalData))
       } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
         .recover { case UnexpectedResponse =>
           Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-  }
+    }
 
 }

@@ -18,16 +18,22 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
+import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
+import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+
+  private val plrReference: Some[String] = Some("XMPLR0123456789")
 
   val page = inject[ManageContactCheckYourAnswersView]
 
   val view = Jsoup.parse(
-    page(subscriptionDataPrimaryContactList, subscriptionDataSecondaryContactList, subscriptionDataAddress(inject[CountryOptions]), None)(
+    page(subscriptionDataPrimaryContactList(), subscriptionDataSecondaryContactList(), subscriptionDataAddress(inject[CountryOptions]), None)(
       request,
       appConfig,
       messages
@@ -36,10 +42,10 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
   )
   val agentView = Jsoup.parse(
     page(
-      subscriptionDataPrimaryContactList,
-      subscriptionDataSecondaryContactList,
-      subscriptionDataAddress(inject[CountryOptions]),
-      Some("XMPLR0123456789")
+      subscriptionDataPrimaryContactList(plrReference),
+      subscriptionDataSecondaryContactList(plrReference),
+      subscriptionDataAddress(inject[CountryOptions], plrReference),
+      plrReference
     )(request, appConfig, messages).toString()
   )
 
@@ -67,13 +73,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe contactName
       view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe contactNameValue
       view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe contactName
       agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe contactNameValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(plrReference).url
       )
 
       val emailAddress      = "Email address"
@@ -81,13 +87,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe emailAddress
       view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe emailAddressValue
       view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe emailAddress
       agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe emailAddressValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad(plrReference).url
       )
 
       val contactTelephone      = "Can we contact by telephone?"
@@ -95,13 +101,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
       view.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad(plrReference).url
       )
 
       val telephone      = "Telephone number"
@@ -109,13 +115,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
       view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(plrReference).url
       )
     }
 
@@ -130,13 +136,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       view.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
       view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       agentView.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad(plrReference).url
       )
 
       val secondContact      = "Second contact name"
@@ -144,13 +150,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       view.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
       view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       agentView.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(plrReference).url
       )
 
       val emailAddress      = "Second contact email address"
@@ -158,13 +164,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(6).text() mustBe emailAddress
       view.getElementsByClass("govuk-summary-list__value").get(6).text() mustBe emailAddressValue
       view.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(6).text() mustBe emailAddress
       agentView.getElementsByClass("govuk-summary-list__value").get(6).text() mustBe emailAddressValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(plrReference).url
       )
 
       val contactTelephone      = "Can we contact by telephone?"
@@ -172,13 +178,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
       view.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       agentView.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(plrReference).url
       )
 
       val telephone      = "Second contact telephone number"
@@ -192,7 +198,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       agentView.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe telephone
       agentView.getElementsByClass("govuk-summary-list__value").get(8).text() mustBe telephoneValue
       agentView.getElementsByClass("govuk-summary-list__actions").get(8).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad().url
+        controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad(plrReference).url
       )
     }
 
@@ -207,13 +213,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       view.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe address
       view.getElementsByClass("govuk-summary-list__value").get(9).text() must include(addressValue)
       view.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url
       )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe address
       agentView.getElementsByClass("govuk-summary-list__value").get(9).text() must include(addressValue)
       agentView.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad(plrReference).url
       )
     }
 

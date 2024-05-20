@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.ContactEmailAddressFormProvider
 import models.Mode
 import navigation.AmendSubscriptionNavigator
@@ -34,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactEmailAddressController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -44,38 +45,40 @@ class ContactEmailAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    request.maybeSubscriptionLocalData
-      .flatMap { subscriptionLocalData =>
-        subscriptionLocalData
-          .get(SubPrimaryContactNamePage)
-          .map { contactName =>
-            val form = formProvider(contactName)
-            Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), mode, contactName))
-          }
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+      request.maybeSubscriptionLocalData
+        .flatMap { subscriptionLocalData =>
+          subscriptionLocalData
+            .get(SubPrimaryContactNamePage)
+            .map { contactName =>
+              val form = formProvider(contactName)
+              Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), contactName, clientPillar2Id))
+            }
+        }
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.subscriptionLocalData
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryEmailPage, value))
-                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-              } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      request.subscriptionLocalData
+        .get(SubPrimaryContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, clientPillar2Id))),
+              value =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.subscriptionLocalData.set(SubPrimaryEmailPage, value))
+                  _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, clientPillar2Id, updatedAnswers))
+            )
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }
 
 }
