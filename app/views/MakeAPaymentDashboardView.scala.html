@@ -25,7 +25,8 @@
     govukTable : GovukTable,
     govukDetails : GovukDetails,
     h2: HeadingH2,
-    p: paragraphBody
+    p: paragraphBody,
+    heading: heading,
 )
 
 @(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -33,7 +34,7 @@
     pageTitle    = titleNoForm(messages("payment.dashboard.title")),
     showBackLink = true
 ) {
-        <h1 class="govuk-heading-l">@messages("payment.dashboard.header")</h1>
+            @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
             @h2(messages("payment.dashboard.header2"), size = "m")
             @p(messages("payment.dashboard.message1"))
             @p(messages("payment.dashboard.message2"))
