@@ -16,79 +16,35 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
-
+@import views.html.components.gds._
 @this(
     layout: templates.Layout,
     govukButton: GovukButton,
     govukWarningText: GovukWarningText,
     govukInsetText : GovukInsetText,
     govukTable : GovukTable,
-    govukDetails : GovukDetails
+    govukDetails : GovukDetails,
+    h2: HeadingH2,
+    p: paragraphBody
 )
 
 @(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
-
-@howItWorksInformation= {
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content1")</p>
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content2")</p>
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content3")</p>
-}
-
-
-
-@overseasBankDetails= {        @govukTable(Table(
-rows= Seq(Seq(
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_11"))
-),
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_12"))
-)
-),
-Seq(
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_21"))
-),
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_22"))
-)),
-Seq(
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_31"))
-),
-TableRow(
-content= Text(messages("payment.dashboard.table2.row_32"))
-))
-),
-caption= Some(messages("payment.dashboard.table2.caption")),
-captionClasses= "govuk-table__caption--m govuk-!-margin-bottom-5",
-firstCellIsHeader = true
-))
-}
-
-
 @layout(
     pageTitle    = titleNoForm(messages("payment.dashboard.title")),
     showBackLink = true
 ) {
-
-
         <h1 class="govuk-heading-l">@messages("payment.dashboard.header")</h1>
-        <h2 class="govuk-heading-m">@messages("payment.dashboard.header2")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message1")</p>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message2")</p>
-        <h2 class="govuk-heading-m">@messages("payment.dashboard.header3")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message3")</p>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message4")</p>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message5")</p>
+            @h2(messages("payment.dashboard.header2"), size = "m")
+            @p(messages("payment.dashboard.message1"))
+            @p(messages("payment.dashboard.message2"))
+            @h2(messages("payment.dashboard.header3"), size = "m")
+            @p(messages("payment.dashboard.message3"))
+            @p(messages("payment.dashboard.message4"))
+            @p(messages("payment.dashboard.message5"))
         @govukWarningText(WarningText(
         iconFallbackText = Some(messages("payment.dashboard.site.warning", plrID)),
         content = HtmlContent(messages("payment.dashboard.warning.message", plrID))
         ))
-
-
-
         @govukTable(Table(
             rows= Seq(Seq(
                 TableRow(
@@ -113,7 +69,7 @@ firstCellIsHeader = true
                 content= Text(messages("payment.dashboard.table.row_31"))
                 ))
                 ),
-                caption= Some(messages("payment.dashboard.table.outsideUK.caption")),
+                caption= Some(messages("payment.dashboard.table.caption")),
                 captionClasses= "govuk-table__caption--m govuk-!-margin-bottom-5",
                 firstCellIsHeader = true
                 ))
@@ -142,7 +98,7 @@ firstCellIsHeader = true
                             content= Text(messages("payment.dashboard.table2.row_32"))
                         ))
                 ),
-                caption= Some(messages("payment.dashboard.table.caption")),
+                caption= Some(messages("payment.dashboard.table.outsideUK.caption")),
                 captionClasses= "govuk-table__caption--m govuk-!-margin-bottom-5",
                 firstCellIsHeader = true
             ))
