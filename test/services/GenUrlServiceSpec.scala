@@ -15,6 +15,7 @@
  */
 
 package services
+
 import base.SpecBase
 import config.FrontendAppConfig
 

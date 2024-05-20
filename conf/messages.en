@@ -1155,6 +1155,12 @@ agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
 agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
 
+agent.error.title = Sorry, there is a problem with the service
+agent.error.heading = Sorry, there is a problem with the service
+agent.error.p1 = Please try again later.
+agent.error.link = Return to your Agent Services Account
+###############################################
+
 rfm.saveProgressInform.title = Saving progress
 rfm.saveProgressInform.heading = Saving progress
 rfm.saveProgressInform.heading.caption = Replace filing member
