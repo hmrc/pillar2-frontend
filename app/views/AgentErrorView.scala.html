@@ -14,18 +14,21 @@
  * limitations under the License.
  *@
 
-@this()
+@import config.FrontendAppConfig
+@import views.html.components.gds._
 
-@( message1: Option[String] = None,
-   linkMessage: String,
-   message2: Option[String] = None,
-   linkUrl: String,
-   classes: String = "govuk-body",
-   linkClass: String = "govuk-link",
-   linkRel: String = "",
-   target: String = "_self",
-   linkFullStop: Boolean = false,
-   fullStop: Boolean = false
+@this(
+        layout: templates.Layout,
+        h: heading,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message => @Html(message)}@if(fullStop)(".")</p>
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+    @layout(pageTitle = titleNoForm(messages("agent.error.title"))) {
+
+        @h(messages("agent.error.heading"), classes = "govuk-heading-l")
+        @p(messages("agent.error.p1"))
+        @paragraphMessageWithLink(linkMessage = messages("agent.error.link"), linkUrl = appConfig.asaHomePageUrl)
+    }

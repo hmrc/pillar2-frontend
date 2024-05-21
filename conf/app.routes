@@ -1,458 +1,460 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                                              hmrcfrontend.Routes
+->          /hmrc-frontend                                                                           hmrcfrontend.Routes
 
-GET         /                                                                           controllers.IndexController.onPageLoad
-GET         /check-progress/register-your-group                                  controllers.TaskListController.onPageLoad
-
-
-GET         /assets/*file                                                               controllers.Assets.versioned(path="/public", file: Asset)
-
-GET         /language/:lang                                                             controllers.LanguageSwitchController.switchToLanguage(lang: String)
-
-GET         /refresh-session                                                            controllers.KeepAliveController.keepAlive
-
-GET         /error/restart-error                                                        controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
-
-GET         /review-submit/check-answers                                                controllers.CheckYourAnswersController.onPageLoad
-POST        /review-submit/check-answers                                                controllers.CheckYourAnswersController.onSubmit
-GET         /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/match-hmrc-records                                       controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/change-match-hmrc-records                                controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = CheckMode)
-
-GET         /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-name                         controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-name                  controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-name                  controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = CheckMode)
-
-GET         /business-matching/ultimate-parent/no-id/input-address                      controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-address                      controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-address               controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-address               controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET         /business-matching/ultimate-parent/no-id/input-business-name                controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-business-name                controllers.registration.UpeContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-business-name         controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-business-name         controllers.registration.UpeContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /                                                                                        controllers.IndexController.onPageLoad
+GET         /check-progress/register-your-group                                                      controllers.TaskListController.onPageLoad
 
 
-GET         /business-matching/ultimate-parent/no-id/input-email                        controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-email                        controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-email                 controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-email                 controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /assets/*file                                                                            controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/change-registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/change-registered-in-uk                         controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = CheckMode)
+GET         /language/:lang                                                                          controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
+GET         /refresh-session                                                                         controllers.KeepAliveController.keepAlive
 
+GET         /error/restart-error                                                                     controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/nominate                                   controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/change-nominate                            controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/change-nominate                            controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
+GET         /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onPageLoad
+POST        /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onSubmit
+GET         /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/change-match-hmrc-records                                             controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/change-match-hmrc-records                                             controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = CheckMode)
 
+GET         /business-matching/ultimate-parent/no-id/input-name                                      controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-name                                      controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-name                               controllers.registration.UpeNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-name                               controllers.registration.UpeNameRegistrationController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/ultimate-parent/no-id/telephone                          controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/telephone                          controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-telephone                   controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/input-address                                   controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-address                                   controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-address                            controllers.registration.UpeRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-address                            controllers.registration.UpeRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/filing-member/no-id/check-answers                         controllers.fm.NfmCheckYourAnswersController.onPageLoad
-
-
-GET         /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-telephone                    controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-telephone             controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-telephone             controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
-GET         /business-matching/ultimate-parent/no-id/check-answers                      controllers.registration.UpeCheckYourAnswersController.onPageLoad
+GET         /business-matching/ultimate-parent/no-id/input-business-name                             controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-business-name                             controllers.registration.UpeContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-business-name                      controllers.registration.UpeContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-business-name                      controllers.registration.UpeContactNameController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onPageLoad
-POST        /eligibility/activities-within-the-uk                                       controllers.eligibility.BusinessActivityUKController.onSubmit
+GET         /business-matching/ultimate-parent/no-id/input-email                                     controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-email                                     controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-email                              controllers.registration.UpeContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-email                              controllers.registration.UpeContactEmailController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/ultimate-parent/registered-in-uk                                      controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/registered-in-uk                                      controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/change-registered-in-uk                               controllers.registration.UPERegisteredInUKConfirmationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/change-registered-in-uk                               controllers.registration.UPERegisteredInUKConfirmationController.onSubmit(mode: Mode = CheckMode)
+
+
+
+GET         /business-matching/filing-member/nominate                                                controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/nominate                                                controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/change-nominate                                         controllers.fm.NominateFilingMemberYesNoController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/change-nominate                                         controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /business-matching/ultimate-parent/no-id/telephone                                       controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/telephone                                       controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
+
+GET         /business-matching/filing-member/no-id/check-answers                                     controllers.fm.NfmCheckYourAnswersController.onPageLoad
+
+
+GET         /business-matching/ultimate-parent/no-id/input-telephone                                 controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-telephone                                 controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-telephone                          controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-telephone                          controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/check-answers                                   controllers.registration.UpeCheckYourAnswersController.onPageLoad
+
+
+GET         /eligibility/activities-within-the-uk                                                    controllers.eligibility.BusinessActivityUKController.onPageLoad
+POST        /eligibility/activities-within-the-uk                                                    controllers.eligibility.BusinessActivityUKController.onSubmit
 
 GET         /eligibility/group-consolidated-annual-revenues                                          controllers.eligibility.TurnOverEligibilityController.onPageLoad
 POST        /eligibility/group-consolidated-annual-revenues                                          controllers.eligibility.TurnOverEligibilityController.onSubmit
 
-GET         /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onPageLoad
-POST        /eligibility/confirmation                                                   controllers.eligibility.EligibilityConfirmationController.onSubmit
+GET         /eligibility/confirmation                                                                controllers.eligibility.EligibilityConfirmationController.onPageLoad
+POST        /eligibility/confirmation                                                                controllers.eligibility.EligibilityConfirmationController.onSubmit
 
 
-GET         /grs-return/normalmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
-GET         /grs-return/normalmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
-GET         /grs-return/normalmode/rfm                                                   controllers.registration.GrsReturnController.continueRfm(journeyId)
+GET         /grs-return/normalmode/upe                                                               controllers.registration.GrsReturnController.continueUpe(journeyId)
+GET         /grs-return/normalmode/fm                                                                controllers.registration.GrsReturnController.continueFm(journeyId)
+GET         /grs-return/normalmode/rfm                                                               controllers.registration.GrsReturnController.continueRfm(journeyId)
 
-GET         /grs-return/checkmode/upe                                                  controllers.registration.GrsReturnController.continueUpe(journeyId)
-GET         /grs-return/checkmode/fm                                                   controllers.registration.GrsReturnController.continueFm(journeyId)
-GET         /grs-return/checkmode/rfm                                                   controllers.registration.GrsReturnController.continueRfm(journeyId)
+GET         /grs-return/checkmode/upe                                                                controllers.registration.GrsReturnController.continueUpe(journeyId)
+GET         /grs-return/checkmode/fm                                                                 controllers.registration.GrsReturnController.continueFm(journeyId)
+GET         /grs-return/checkmode/rfm                                                                controllers.registration.GrsReturnController.continueRfm(journeyId)
 
 
-GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
-GET         /under-construction-error                                                   controllers.UnderConstructionController.onPageLoadError
+GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-error                                                                controllers.UnderConstructionController.onPageLoadError
 
-GET         /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onPageLoad
-POST        /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onSubmit
+GET         /eligibility/upe                                                                         controllers.eligibility.GroupTerritoriesController.onPageLoad
+POST        /eligibility/upe                                                                         controllers.eligibility.GroupTerritoriesController.onSubmit
 
-GET         /eligibility/nfm                                                            controllers.eligibility.RegisteringNfmForThisGroupController.onPageLoad
-POST        /eligibility/nfm                                                            controllers.eligibility.RegisteringNfmForThisGroupController.onSubmit
+GET         /eligibility/nfm                                                                         controllers.eligibility.RegisteringNfmForThisGroupController.onPageLoad
+POST        /eligibility/nfm                                                                         controllers.eligibility.RegisteringNfmForThisGroupController.onSubmit
 
 
-GET         /eligibility/service-not-suitable/not-upe-or-nfm                            controllers.eligibility.KbMnIneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/not-upe-or-nfm                                         controllers.eligibility.KbMnIneligibleController.onPageLoad
 
-GET         /eligibility/service-not-suitable/not-active-in-uk                          controllers.eligibility.KbUKIneligibleController.onPageLoad
-GET         /eligibility/service-not-suitable/under-750-million                          controllers.eligibility.Kb750IneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/not-active-in-uk                                       controllers.eligibility.KbUKIneligibleController.onPageLoad
+GET         /eligibility/service-not-suitable/under-750-million                                      controllers.eligibility.Kb750IneligibleController.onPageLoad
 
-GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
-GET         /account/sign-out-survey                                                    controllers.auth.AuthController.signOut
-GET         /account/sign-out                                                           controllers.auth.AuthController.signOutNoSurvey
-GET         /account/signed-out                                                         controllers.auth.SignedOutController.onPageLoad
+GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
+GET         /account/sign-out-survey                                                                 controllers.auth.AuthController.signOut
+GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey
+GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad
 
-GET         /unauthorised                                                               controllers.UnauthorisedController.onPageLoad
-GET         /unauthorised/standard-user                                                 controllers.UnauthorisedWrongRoleController.onPageLoad
-GET         /unauthorised/individual                                                    controllers.UnauthorisedIndividualAffinityController.onPageLoad
-GET         /unauthorised/agent                                                         controllers.UnauthorisedAgentAffinityController.onPageLoad
-GET         /display-error                                                              controllers.ErrorController.onPageLoad
-GET         /errors/eis                                                                 controllers.subscription.SubscriptionFailedController.onPageLoad
-GET         /error/incomplete                                                           controllers.subscription.InprogressTaskListController.onPageLoad
-GET         /error/page-not-found                                                       controllers.ErrorController.pageNotFoundLoad
+GET         /unauthorised                                                                            controllers.UnauthorisedController.onPageLoad
+GET         /unauthorised/standard-user                                                              controllers.UnauthorisedWrongRoleController.onPageLoad
+GET         /unauthorised/individual                                                                 controllers.UnauthorisedIndividualAffinityController.onPageLoad
+GET         /unauthorised/agent                                                                      controllers.UnauthorisedAgentAffinityController.onPageLoad
+GET         /display-error                                                                           controllers.ErrorController.onPageLoad
+GET         /errors/eis                                                                              controllers.subscription.SubscriptionFailedController.onPageLoad
+GET         /error/incomplete                                                                        controllers.subscription.InprogressTaskListController.onPageLoad
+GET         /error/page-not-found                                                                    controllers.ErrorController.pageNotFoundLoad
 
-GET         /error/view                                                                 controllers.ViewAmendSubscriptionFailedController.onPageLoad
+GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
-GET         /error/group-registered                                                     controllers.AlreadyRegisteredController.onPageLoad
+GET         /error/group-registered                                                                  controllers.AlreadyRegisteredController.onPageLoad
 
-GET        /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/ultimate-parent/uk-based/entity-type                         controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/ultimate-parent/uk-based/change-entity-type                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/ultimate-parent/uk-based/change-entity-type                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/uk-based/change-entity-type                           controllers.registration.EntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/uk-based/change-entity-type                           controllers.registration.EntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/registered-in-uk                            controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/change-registered-in-uk                     controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/change-registered-in-uk                     controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/registered-in-uk                                        controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/registered-in-uk                                        controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/change-registered-in-uk                                 controllers.fm.IsNfmUKBasedController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/change-registered-in-uk                                 controllers.fm.IsNfmUKBasedController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-name                            controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-name                            controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-name                     controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-name                     controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-name                                        controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-name                                        controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-name                                 controllers.fm.NfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-name                                 controllers.fm.NfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-address                         controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-address                         controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-address                  controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-address                  controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-address                                     controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-address                                     controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-address                              controllers.fm.NfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-address                              controllers.fm.NfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /business-matching/filing-member/no-id/input-business-name                   controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-business-name                   controllers.fm.NfmContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-business-name            controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-business-name            controllers.fm.NfmContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-business-name                               controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-business-name                               controllers.fm.NfmContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-business-name                        controllers.fm.NfmContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-business-name                        controllers.fm.NfmContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-email                           controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-email                           controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-email                    controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-email                                       controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-email                                       controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-email                                controllers.fm.NfmEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-email                                controllers.fm.NfmEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/uk-based/entity-type                          controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/uk-based/entity-type                          controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/uk-based/change-entity-type                   controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/uk-based/change-entity-type                   controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/uk-based/entity-type                                    controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/uk-based/entity-type                                    controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/uk-based/change-entity-type                             controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/uk-based/change-entity-type                             controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/telephone                             controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-telephone                      controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-telephone                      controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/telephone                                         controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/telephone                                         controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-telephone                                  controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-telephone                                  controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /business-matching/filing-member/no-id/input-telephone                       controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /business-matching/filing-member/no-id/change-input-telephone                controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-telephone                                   controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-telephone                                   controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-telephone                            controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-telephone                            controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
-POST        /further-details/accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET         /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
-POST        /further-details/change-accounting-period                  controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /further-details/accounting-period                                                       controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /further-details/accounting-period                                                       controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET         /further-details/change-accounting-period                                                controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /further-details/change-accounting-period                                                controllers.subscription.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
-GET         /further-details/group-status                        controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
-POST        /further-details/group-status                        controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
-GET         /further-details/change-group-status                 controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
-POST       /further-details/change-group-status                  controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
+GET         /further-details/group-status                                                            controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = NormalMode)
+POST        /further-details/group-status                                                            controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = NormalMode)
+GET         /further-details/change-group-status                                                     controllers.subscription.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST        /further-details/change-group-status                                                     controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
-POST        /manage-account/further-details/change-accounting-period            controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
-GET         /manage-account/further-details/change-group-status                 controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/further-details/change-group-status                  controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details                             controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details                            controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details                                                                         controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
-GET         /contact-details/change-content                             controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-content                             controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/change-content                                                          controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-content                                                          controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details/primary-contact                       controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/primary-contact                       controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-primary-contact                controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-primary-contact                 controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/primary-contact                                                         controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/primary-contact                                                         controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-primary-contact                                                  controllers.subscription.UseContactPrimaryController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-primary-contact                                                  controllers.subscription.UseContactPrimaryController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/input-name                       controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-input-name                controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/input-name                                                              controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-name                                                              controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-name                                                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-name                                                       controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-name   controllers.subscription.manageAccount.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
-POST        /manage-account/contact-details/change-input-name    controllers.subscription.manageAccount.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-contact                        controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-contact                 controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-contact                  controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-contact                                                          controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-contact                                                          controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-contact                                                   controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-contact                                                   controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-contact     controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/contact-details/change-second-contact     controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
 
 
-GET        /further-details/check-answers                         controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
+GET         /further-details/check-answers                                                           controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
 
-GET        /manage-account/account-details/summary                controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad
-POST        /manage-account/account-details/summary               controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit
+GET         /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+POST        /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit
 
 
 
-GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
-POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
+GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
-GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
-POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
+GET         /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
+POST        /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
 
 
-GET        /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/input-email                            controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-input-email                     controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/input-email                                                             controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-email                                                             controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-email                                                      controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-email                                                      controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-input-email       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/contact-details/change-input-email        controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/telephone                            controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-telephone                     controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/telephone                                                               controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/telephone                                                               controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-telephone       controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/contact-details/change-telephone        controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/input-telephone                       controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-input-telephone                controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/input-telephone                                                         controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-telephone                                                         controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-telephone                controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /manage-account/contact-details/change-input-telephone                controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-name                        controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-name                 controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-input-name                                                       controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-input-name                                                       controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/contact-details/change-second-input-name                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-second-input-name                                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-second-input-name                                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /contact-details/second-input-email                        controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-email                       controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-email                  controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-email                 controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-input-email                                                      controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-input-email                                                      controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-input-email                                               controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-input-email                                               controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET       /manage-account/contact-details/change-second-input-email       controllers.subscription.manageAccount.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST      /manage-account/contact-details/change-second-input-email        controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-telephone                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-telephone                  controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST      /contact-details/change-second-telephone                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-telephone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-telephone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-telephone   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST      /manage-account/contact-details/change-second-telephone    controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-second-telephone                                  controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-second-telephone                                  controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/second-input-telephone                        controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-second-input-telephone                 controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-second-input-telephone                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-input-telephone                                                  controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-input-telephone                                                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-telephone     controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /manage-account/contact-details/change-second-input-telephone      controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 
 
-GET        /review-submit/confirmation                                       controllers.RegistrationConfirmationController.onPageLoad
+GET         /review-submit/confirmation                                                              controllers.RegistrationConfirmationController.onPageLoad
 
-GET        /contact-details/input-address                        controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details/input-address                       controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /contact-details/change-input-address                controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /contact-details/change-input-address                  controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/input-address                                                           controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-address                                                           controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-address                                                    controllers.subscription.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-address                                                    controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /manage-account/contact-details/address/change-input                controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
-POST      /manage-account/contact-details/address/change-input                  controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/contact-details/address/change-input                                     controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/contact-details/address/change-input                                     controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
+GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
 
-GET        /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
-GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
-GET        /replace-filing-member/business-matching/filing-member/uk-based/error/fail                  controllers.GrsRegistrationNotCalledController.onPageLoadRfm
+GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
+GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm
+GET         /replace-filing-member/business-matching/filing-member/uk-based/error/fail               controllers.GrsRegistrationNotCalledController.onPageLoadRfm
 
 
-GET        /business-matching/ultimate-parent/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadUpe
-GET        /business-matching/filing-member/uk-based/error/mismatching-details                 controllers.GrsRegistrationFailedController.onPageLoadNfm
-GET        /replace-filing-member/business-matching/filing-member/uk-based/error/no-match      controllers.GrsRegistrationFailedController.onPageLoadRfm
+GET         /business-matching/ultimate-parent/uk-based/error/mismatching-details                    controllers.GrsRegistrationFailedController.onPageLoadUpe
+GET         /business-matching/filing-member/uk-based/error/mismatching-details                      controllers.GrsRegistrationFailedController.onPageLoadNfm
+GET         /replace-filing-member/business-matching/filing-member/uk-based/error/no-match           controllers.GrsRegistrationFailedController.onPageLoadRfm
 
-GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
+GET         /errors/return                                                                           controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
-GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
-GET        /replace-filing-member/authenticate                                  controllers.rfm.AuthenticateController.rfmAuthenticate
-GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
-GET        /replace-filing-member/error/standard-organisation                   controllers.rfm.StandardOrganisationController.onPageLoad
-GET        /replace-filing-member/error/individual                              controllers.rfm.IndividualController.onPageLoad
-GET        /replace-filing-member/error/agent-sign-in                           controllers.AgentController.onPageLoad
+GET         /replace-filing-member/start                                                             controllers.rfm.StartPageController.onPageLoad
+GET         /replace-filing-member/authenticate                                                      controllers.rfm.AuthenticateController.rfmAuthenticate
+GET         /replace-filing-member/error/duplicate-registration                                      controllers.rfm.AlreadyEnrolledController.onPageLoad
+GET         /replace-filing-member/error/standard-organisation                                       controllers.rfm.StandardOrganisationController.onPageLoad
+GET         /replace-filing-member/error/individual                                                  controllers.rfm.IndividualController.onPageLoad
+GET         /replace-filing-member/error/agent-sign-in                                               controllers.AgentController.onPageLoad
 
-GET        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/change-input-name           controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = CheckMode)
 
-GET        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/input-address               controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/change-input-address        controllers.rfm.RfmRegisteredAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /bta/register                                                     controllers.bta.NoPlrIdGuidanceController.onPageLoad
-GET        /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
-POST       /bta/pillar2-id                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
-GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
-POST       /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
-GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
-GET        /asa/home                                                         controllers.ASAStubController.onPageLoad
-GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
+GET         /bta/register                                                                            controllers.bta.NoPlrIdGuidanceController.onPageLoad
+GET         /bta/pillar2-id                                                                          controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = NormalMode)
+POST        /bta/pillar2-id                                                                          controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = NormalMode)
+GET         /bta/change-pillar2-id                                                                   controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
+POST        /bta/change-pillar2-id                                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
+GET         /bta/eacd                                                                                controllers.bta.EACDStubController.onPageLoad
+GET         /asa/home                                                                                controllers.ASAStubController.onPageLoad
+GET         /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
 
-GET        /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/corporate-position                           controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/change-corporate-position                    controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/change-corporate-position                    controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/change-corporate-position                                         controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/change-corporate-position                                         controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/security/change-enter-pillar-2-id            controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/security/change-enter-pillar-2-id                                 controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/security/change-enter-pillar-2-id                                 controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = CheckMode)
 
-GET         /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/security/registration-date                controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/security/change-registration-date        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/security/registration-date                                        controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/security/registration-date                                        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
 
-GET         /replace-filing-member/contact-details/content                     controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
+GET         /replace-filing-member/contact-details/content                                           controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
 
 
-GET         /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/input-name                  controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-input-name          controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/input-name                                        controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-name                                        controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-name                                 controllers.rfm.RfmPrimaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-name                                 controllers.rfm.RfmPrimaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
 
 
-GET         /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/input-email                  controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-input-email           controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/input-email                                       controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-email                                       controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-email                                controllers.rfm.RfmPrimaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-email                                controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/telephone                 controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-telephone          controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/telephone                                         controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/telephone                                         controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-telephone                                  controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-telephone                                  controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/input-telephone                 controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-input-telephone          controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/input-telephone                                   controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-telephone                                   controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-telephone                            controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-telephone                            controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /payment/pay                                                        controllers.MakeAPaymentDashboardController.onPageLoad
+GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad
 
-GET         /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/security/check-answers                    controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
-GET         /replace-filing-member/security/change-check-answers             controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
-GET        /replace-filing-member/error/no-match                          controllers.rfm.MismatchedRegistrationDetailsController.onPageLoad
+GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
+GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+GET         /replace-filing-member/error/no-match                                                    controllers.rfm.MismatchedRegistrationDetailsController.onPageLoad
 
-GET        /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/check-answers                    controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/business-matching/filing-member/no-id/change-check-answers             controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/check-answers               controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/check-answers               controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/filing-member/no-id/change-check-answers        controllers.rfm.RfmCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/filing-member/no-id/change-check-answers        controllers.rfm.RfmCheckYourAnswersController.onSubmit(mode: Mode = CheckMode)
 
-GET         /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/business-matching/content                                       controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/business-matching/change-content                                controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = CheckMode)
-GET         /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/business-matching/registered-in-uk                              controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/business-matching/change-registered-in-uk                       controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/content                                         controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/content                                         controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-content                                  controllers.rfm.CheckNewFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-content                                  controllers.rfm.CheckNewFilingMemberController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/registered-in-uk                                controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/registered-in-uk                                controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/change-registered-in-uk                         controllers.rfm.UkBasedFilingMemberController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/change-registered-in-uk                         controllers.rfm.UkBasedFilingMemberController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/business-matching/filing-member/uk-based/org-type                        controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/business-matching/filing-member/uk-based/change-org-type                 controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/business-matching/filing-member/uk-based/org-type                 controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/business-matching/filing-member/uk-based/org-type                 controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/business-matching/filing-member/uk-based/change-org-type          controllers.rfm.RfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/business-matching/filing-member/uk-based/change-org-type          controllers.rfm.RfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/contact-details/second-contact                        controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/contact-details/second-input-name                     controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/contact-details/second-input-name                     controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/contact-details/second-input-email                    controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/contact-details/second-input-email                    controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/contact-details/second-telephone                      controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/contact-details/second-telephone                      controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /replace-filing-member/contact-details/second-input-telephone               	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /replace-filing-member/contact-details/second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-contact                                    controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-contact                                    controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-input-name                                 controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-input-name                                 controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-input-email                                controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-input-email                                controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-telephone                                  controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-telephone                                  controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-input-telephone                            controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-input-telephone                            controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
 
-GET        /replace-filing-member/contact-details/change-second-contact                        	controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/contact-details/change-second-contact                        	controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
-GET        /replace-filing-member/contact-details/change-second-input-name                     	controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/contact-details/change-second-input-name                     	controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
-GET        /replace-filing-member/contact-details/change-second-input-email                    	controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/contact-details/change-second-input-email                    	controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
-GET        /replace-filing-member/contact-details/change-second-telephone                      	controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/contact-details/change-second-telephone                      	controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
-GET        /replace-filing-member/contact-details/change-second-input-telephone             	controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /replace-filing-member/contact-details/change-second-input-telephone              	controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-contact                             controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-contact                             controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-input-name                          controllers.rfm.RfmSecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-input-name                          controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-input-email                         controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-input-email                         controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-telephone                           controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-telephone                           controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-input-telephone                     controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-input-telephone                     controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /replace-filing-member/review-submit/check-answers                                   controllers.rfm.RfmContactCheckYourAnswersController.onPageLoad
-POST       /replace-filing-member/review-submit/check-answers                                   controllers.rfm.RfmContactCheckYourAnswersController.onSubmit
+GET         /replace-filing-member/review-submit/check-answers                                       controllers.rfm.RfmContactCheckYourAnswersController.onPageLoad
+POST        /replace-filing-member/review-submit/check-answers                                       controllers.rfm.RfmContactCheckYourAnswersController.onSubmit
 
-GET        /replace-filing-member/error/cannot-return                                   controllers.rfm.RfmCannotReturnAfterConfirmationController.onPageLoad
+GET         /replace-filing-member/error/cannot-return                                               controllers.rfm.RfmCannotReturnAfterConfirmationController.onPageLoad
 
-GET        /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
-POST       /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId
-GET        /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
-POST       /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
-GET        /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+GET         /asa/input-pillar-2-id                                                                   controllers.AgentController.onPageLoadClientPillarId
+POST        /asa/input-pillar-2-id                                                                   controllers.AgentController.onSubmitClientPillarId
+GET         /asa/confirm                                                                             controllers.AgentController.onPageLoadConfirmClientDetails
+POST        /asa/confirm                                                                             controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
+GET         /asa/error/no-match                                                                      controllers.AgentController.onPageLoadNoClientMatch
+GET         /asa/error/system                                                                        controllers.AgentController.onPageLoadError
+GET         /asa/error/not-authorised                                                                controllers.AgentController.onPageLoadUnauthorised
 
-GET         /replace-filing-member/security/saving-progress                     controllers.rfm.RfmSaveProgressInformController.onPageLoad
+GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 
 
 GET        /replace-filing-member/review-submit/confirmation                                     controllers.rfm.RfmConfirmationController.onPageLoad
