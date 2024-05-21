@@ -53,7 +53,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
 
     "table caption for account details" in {
       val tCaption = makePaymentDashboardView.getElementsByClass("govuk-table__caption")
-      tCaption.get(0).text must include("HMRC's bank details for UK payments")
+      tCaption.get(0).text must include("HMRC’s bank details for UK payments")
       tCaption.get(1).text must include("HMRC’s bank details for payments outside the UK")
 
     }
@@ -63,7 +63,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
         "Payments can only be made by bank transfer."
       )
       element.get(2).text() must include(
-        "To make a bank transfer, you can visit your bank's website, use their mobile app, call the number at the back of your card or go to a branch. You will need to provide your bank with HMRC’s bank details."
+        "To make a bank transfer, you can visit your bank’s website, use their mobile app, call the number at the back of your card or go to a branch. You will need to provide your bank with HMRC’s bank details."
       )
       element.get(3).text() must include(
         "Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays."
