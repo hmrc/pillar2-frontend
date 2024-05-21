@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.AgentIdentifierAction.{HMRC_PILLAR2_ORG_KEY, defaultAgentPredicate}
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
+import controllers.subscription.manageAccount.identifierAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -30,6 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.Future
 
@@ -136,7 +138,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoadError.url
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadUnauthorised.url
       }
     }
 
@@ -312,6 +314,54 @@ class AgentIdentifierActionSpec extends SpecBase {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnderConstructionController.onPageLoad.url)
+      }
+    }
+  }
+
+  "identifierAction" must {
+    "choose the correct action if client pillar2 id is present" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+        val agentIdentifierAction: AgentIdentifierAction         = new AgentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)(ec)
+        val authAction:            AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)(ec)
+
+        val result = identifierAction(Some(PlrReference), agentIdentifierAction, authAction)(implicit request =>
+          Results.Ok(s"Is Agent: ${request.isAgent}")
+        )(FakeRequest())
+
+        contentAsString(result) mustBe "Is Agent: true"
+      }
+    }
+
+    "choose the correct action if client pillar2 id is not present" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .build()
+      type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+
+      running(application) {
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Some("id") ~ Some("id") ~ Enrolments(Set.empty) ~ Some(Organisation) ~ Some(User)))
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+        val agentIdentifierAction: AgentIdentifierAction         = new AgentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)(ec)
+        val authAction:            AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)(ec)
+
+        val result =
+          identifierAction(None, agentIdentifierAction, authAction)(implicit request => Results.Ok(s"Is Agent: ${request.isAgent}"))(FakeRequest())
+
+        contentAsString(result) mustBe "Is Agent: false"
       }
     }
   }

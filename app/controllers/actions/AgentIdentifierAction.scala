@@ -64,7 +64,7 @@ class AgentIdentifierAction @Inject() (
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
-            Left(Redirect(routes.UnderConstructionController.onPageLoadError))
+            Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
           case _: InternalError => Left(Redirect(routes.AgentController.onPageLoadError))
           case _: AuthorisationException =>
             Left(Redirect(routes.UnderConstructionController.onPageLoad))

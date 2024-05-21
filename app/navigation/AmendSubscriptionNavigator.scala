@@ -27,7 +27,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AmendSubscriptionNavigator @Inject() {
 
-  // TODO - pass client id
   def nextPage(page: Page, clientPillar2Id: Option[String] = None, subscriptionUserAnswers: SubscriptionLocalData): Call =
     checkRouteMap(page)(clientPillar2Id)(subscriptionUserAnswers)
   private lazy val groupDetailCheckYourAnswerRoute: Option[String] => Call = (maybeClientId: Option[String]) =>
