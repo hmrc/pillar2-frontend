@@ -43,7 +43,7 @@
             @p(messages("payment.dashboard.message4"))
             @p(messages("payment.dashboard.message5"))
         @govukWarningText(WarningText(
-        iconFallbackText = Some(messages("payment.dashboard.site.warning", plrID)),
+        iconFallbackText = Some(messages("site.warning")),
         content = HtmlContent(messages("payment.dashboard.warning.message", plrID))
         ))
         @govukTable(Table(

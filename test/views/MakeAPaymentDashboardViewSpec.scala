@@ -46,9 +46,12 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have warning text" in {
-      val wText = makePaymentDashboardView.getElementsByClass("govuk-warning-text__assistive")
+      val wText = makePaymentDashboardView.getElementsByClass("govuk-warning-text__text")
       wText.text must include("You must use 12345678 as your payment reference. We need this to match your payment.")
-
+    }
+    "have warning fallback text" in {
+      val wText = makePaymentDashboardView.getElementsByClass("govuk-warning-text__assistive")
+      wText.text must include("Warning")
     }
 
     "table caption for account details" in {

@@ -182,7 +182,6 @@ payment.dashboard.message4= CHAPS payments usually reach HMRC the same working d
 payment.dashboard.message5= Bacs payments usually take 3 working days.
 payment.dashboard.timeline-summary= How long it takes
 payment.dashboard.timeline-content1= Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays.
-payment.dashboard.site.warning= You must use {0} as your payment reference. We need this to match your payment.
 payment.dashboard.warning.message = You must use {0} as your payment reference. We need this to match your payment.
 payment.dashboard.outsideUK-summary= Make a payment from outside the UK
 payment.dashboard.table.row_11= 08 32 10
@@ -192,7 +191,7 @@ payment.dashboard.table.row_12= Sort code
 payment.dashboard.table.row_22= Account number
 payment.dashboard.table.row_32= Account name
 payment.dashboard.table.caption= HMRC’s bank details for UK payments
-
+site.warning = Warning
 payment.dashboard.table.outsideUK.caption= HMRC’s bank details for payments outside the UK
 payment.dashboard.table2.row_12= BARCGB22
 payment.dashboard.table2.row_11= Bank identifier code (BIC)
