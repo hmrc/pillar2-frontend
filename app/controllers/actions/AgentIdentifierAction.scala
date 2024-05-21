@@ -54,20 +54,20 @@ class AgentIdentifierAction @Inject() (
             case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ =>
               Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments, isAgent = true)))
             case _ ~ _ ~ Some(Organisation) ~ _ =>
-              Future.successful(Left(Redirect(routes.UnderConstructionController.onPageLoad))) // PIL-922
+              Future.successful(Left(Redirect(routes.UnderConstructionController.onPageLoad)))
             case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
             case _ =>
               logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
-              Future.successful(Left(Redirect(routes.UnderConstructionController.onPageLoad))) // PIL-922
+              Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
           } recover {
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
-            Left(Redirect(routes.UnderConstructionController.onPageLoadError)) // PIL-505
-          case _: InternalError => Left(Redirect(routes.UnderConstructionController.onPageLoadError)) // PIL-922
+            Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
+          case _: InternalError => Left(Redirect(routes.AgentController.onPageLoadError))
           case _: AuthorisationException =>
             Left(Redirect(routes.UnderConstructionController.onPageLoad))
-          case _ => Left(Redirect(routes.UnderConstructionController.onPageLoadError))
+          case _ => Left(Redirect(routes.AgentController.onPageLoadError))
         }
       }
 

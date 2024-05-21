@@ -188,7 +188,7 @@ class DashboardViewSpec extends ViewSpecBase {
       val element = agentDashboardView.getElementsByTag("a").get(6)
 
       element.text() must include("Agent Services Account")
-      element.attr("href") mustBe "#"
+      element.attr("href") mustBe "/report-pillar2-top-up-taxes/asa/home"
     }
 
     "have a link to change entered pillar2 id" in {

@@ -31,10 +31,10 @@ import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import views.html.rfm.AgentView
-import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView}
+import views.html._
 
 import scala.concurrent.Future
 
@@ -294,7 +294,7 @@ class AgentControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.AgentController.onPageLoadError.url
       }
     }
 
@@ -335,7 +335,7 @@ class AgentControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoadError.url
+        redirectLocation(result).value mustEqual routes.AgentController.onPageLoadUnauthorised.url
       }
     }
 
@@ -376,6 +376,75 @@ class AgentControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AgentClientNoMatch]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+  }
+
+  "Agent Error" must {
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+      }
+    }
+
+    "must return the correct view if the feature flag is true and user is agent" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AgentErrorView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+  }
+
+  "Agent Client Unauthorised" must {
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+      }
+    }
+
+    "must return the correct view if the feature flag is true and user is agent" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
+
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AgentClientUnauthorisedView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
