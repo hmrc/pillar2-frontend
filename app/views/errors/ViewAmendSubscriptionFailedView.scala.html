@@ -20,15 +20,15 @@ layout: templates.Layout
 )
 
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+@(clientPillar2Id: Option[String])(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false, maybeClientPillar2Id = clientPillar2Id) {
 <h1 class="govuk-heading-xl">@messages("viewAmendSubscriptionFailed.heading")</h1>
 
 <p class="govuk-body">@messages("viewAmendSubscriptionFailed.message1")</p>
 
 <div class="govuk-body">
- <a class="govuk-link" href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home">
+ <a class="govuk-link" href=@controllers.routes.DashboardController.onPageLoad(clientPillar2Id, if(clientPillar2Id.isDefined) Some(clientPillar2Id) else None)>
   @messages("viewAmendSubscriptionFailed.link")
  </a>
 </div>

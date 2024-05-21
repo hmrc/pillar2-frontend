@@ -32,7 +32,7 @@
 
 @(form: Form[_], clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {
+    @layout(pageTitle = title(form, messages("mneOrDomestic.title")), maybeClientPillar2Id = clientPillar2Id) {
 
         @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit(clientPillar2Id), 'autoComplete -> "off") {
 

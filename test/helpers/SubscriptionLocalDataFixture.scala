@@ -91,7 +91,7 @@ trait SubscriptionLocalDataFixture {
 
   val amendData: AmendSubscription = AmendSubscription(
     upeDetails = upeDetailsAmend,
-    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate),
+    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate.plusYears(1)),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = Some(contactDetails),

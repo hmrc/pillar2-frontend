@@ -31,7 +31,7 @@
 
 @(form: Form[_], userName: String, clientPillar2Id: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
+@layout(pageTitle = title(form, messages("contactByTelephone.title")), maybeClientPillar2Id = clientPillar2Id) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit(clientPillar2Id), 'autoComplete -> "off") {

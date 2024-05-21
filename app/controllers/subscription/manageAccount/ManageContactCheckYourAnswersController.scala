@@ -86,7 +86,7 @@ class ManageContactCheckYourAnswersController @Inject() (
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
       } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
         .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

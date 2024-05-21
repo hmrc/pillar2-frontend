@@ -90,7 +90,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(5).text                               must include("You have no payments due")
       elements.get(6).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
       organisationDashboardView
         .getElementsByTag("hr")
         .first()
@@ -224,7 +224,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(7).text                               must include("Your client has no payments due.")
       elements.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad(Some(plrRef)).url)
       agentDashboardView
         .getElementsByTag("hr")
         .first()

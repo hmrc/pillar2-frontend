@@ -30,7 +30,7 @@
 
 @(form: Form[_], UserName: String, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactEmailAddress.title"))) {
+@layout(pageTitle = title(form, messages("contactEmailAddress.title")), maybeClientPillar2Id = clientPillar2Id) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit(clientPillar2Id)) {

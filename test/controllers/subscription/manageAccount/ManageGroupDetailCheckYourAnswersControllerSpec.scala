@@ -160,7 +160,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(None).url
       }
     }
 
@@ -175,7 +175,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
       when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
-      when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
         .thenReturn(Future.failed(UnexpectedResponse))
 
       val request = FakeRequest(
@@ -185,7 +185,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       val result = route(application, request).value
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(Some("XMPLR0123456789")).url
     }
 
     "redirect to dashboard page if they successfully amend their data" in {
@@ -214,7 +214,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       running(application) {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
-        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(Done))
         val request = FakeRequest(
           POST,

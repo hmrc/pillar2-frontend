@@ -30,15 +30,20 @@ class GenUrlServiceSpec extends SpecBase {
       val genUrl = new GenUrlService(appConfig = new FrontendAppConfig(configuration, servicesConfig))
 
       "generate url for replace filing member" in {
-        genUrl.generateUrl("/replace-filing-member", false) mustEqual None
+        genUrl.generateUrl("/replace-filing-member", false) mustBe None
       }
       "generate url for navigated back to Pillar2 dashboard for agent " in {
-        genUrl.generateUrl("/pillar2-top-up-tax-home?clientPillar2Id=XMPLR0012345674&agentView=true", true, "XMPLR0012345674").getOrElse() mustEqual
+        genUrl
+          .generateUrl("/pillar2-top-up-tax-home?clientPillar2Id=XMPLR0012345674&agentView=true", true, Some("XMPLR0012345674"))
+          .getOrElse() mustEqual
+          controllers.routes.DashboardController.onPageLoad(Some("XMPLR0012345674"), true).url
+
+        genUrl.generateUrl("/pillar2-top-up-tax-home?clientPillar2Id=XMPLR0012345674", true, Some("XMPLR0012345674")).getOrElse() mustEqual
           controllers.routes.DashboardController.onPageLoad(Some("XMPLR0012345674"), true).url
       }
 
       "generate url for replace filing member  with  authorised false" in {
-        genUrl.generateUrl("/replace-filing-member", true) mustEqual None
+        genUrl.generateUrl("/replace-filing-member", true) mustBe None
       }
       "generate url for ASA" in {
         genUrl.generateUrl("/asa/", true).getOrElse("") mustEqual appConfig.asaHomePageUrl

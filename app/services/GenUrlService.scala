@@ -19,21 +19,20 @@ package services
 import config.FrontendAppConfig
 
 import javax.inject.Inject
-class GenUrlService @Inject() (val appConfig: FrontendAppConfig) {
+class GenUrlService @Inject() (val appConfig: FrontendAppConfig) { // TODO -delete
 
-  def generateUrl(url: String, authorised: Boolean, plrReference: String = ""): Option[String] =
+  def generateUrl(url: String, authorised: Boolean, clientPillar2Id: Option[String] = None): Option[String] =
     (
       url.contains("/asa/"),
       authorised,
       url.contains("/replace-filing-member"),
-      url.contains("clientPillar2Id"),
-      url.contains("agentView=true")
+      url.contains("clientPillar2Id")
     ) match {
-      case (false, true, false, true, true) =>
-        Some(controllers.routes.DashboardController.onPageLoad(Some(plrReference), true).url)
-      case (_, _, true, _, _)         => None
-      case (true, true, false, _, _)  => Some(appConfig.asaHomePageUrl)
-      case (false, true, false, _, _) => Some(controllers.routes.IndexController.onPageLoad.url)
-      case _                          => Some(appConfig.startPagePillar2Url)
+      case (false, true, false, true) =>
+        Some(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = true).url)
+      case (_, _, true, _)         => None
+      case (true, true, false, _)  => Some(appConfig.asaHomePageUrl)
+      case (false, true, false, _) => Some(controllers.routes.IndexController.onPageLoad.url)
+      case _                       => Some(appConfig.startPagePillar2Url)
     }
 }
