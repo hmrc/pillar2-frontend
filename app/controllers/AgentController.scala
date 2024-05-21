@@ -30,26 +30,27 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
-import views.html.{AgentClientConfirmDetailsView, AgentClientNoMatch, AgentClientPillarIdView, AgentErrorView}
+import views.html._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AgentController @Inject() (
-  val controllerComponents:  MessagesControllerComponents,
-  val userAnswersConnectors: UserAnswersConnectors,
-  subscriptionService:       SubscriptionService,
-  view:                      AgentView,
-  clientPillarIdView:        AgentClientPillarIdView,
-  clientConfirmView:         AgentClientConfirmDetailsView,
-  clientNoMatchView:         AgentClientNoMatch,
-  agentErrorView:            AgentErrorView,
-  identify:                  AgentIdentifierAction,
-  featureAction:             FeatureFlagActionFactory,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              AgentClientPillar2ReferenceFormProvider
-)(implicit appConfig:        FrontendAppConfig, ec: ExecutionContext)
+  val controllerComponents:    MessagesControllerComponents,
+  val userAnswersConnectors:   UserAnswersConnectors,
+  subscriptionService:         SubscriptionService,
+  view:                        AgentView,
+  clientPillarIdView:          AgentClientPillarIdView,
+  clientConfirmView:           AgentClientConfirmDetailsView,
+  clientNoMatchView:           AgentClientNoMatch,
+  agentErrorView:              AgentErrorView,
+  agentClientUnauthorisedView: AgentClientUnauthorisedView,
+  identify:                    AgentIdentifierAction,
+  featureAction:               FeatureFlagActionFactory,
+  getData:                     DataRetrievalAction,
+  requireData:                 DataRequiredAction,
+  formProvider:                AgentClientPillar2ReferenceFormProvider
+)(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -119,4 +120,10 @@ class AgentController @Inject() (
     featureAction.asaAccessAction { implicit request =>
       Ok(agentErrorView())
     }
+
+  def onPageLoadUnauthorised: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
+    implicit request =>
+      Ok(agentClientUnauthorisedView())
+  }
+
 }

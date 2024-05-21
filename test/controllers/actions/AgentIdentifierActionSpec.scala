@@ -136,7 +136,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoadError.url
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadUnauthorised.url
       }
     }
 
