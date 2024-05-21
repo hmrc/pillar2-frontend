@@ -14,6 +14,7 @@ site.confirm-and-continue = Confirm and continue
 site.manage.save-and-continue =  Save and return to homepage
 site.address.country.select = Select a country
 site.print = Print this page
+site.warning = Warning
 
 date.day = Day
 date.month = Month
@@ -191,7 +192,6 @@ payment.dashboard.table.row_12= Sort code
 payment.dashboard.table.row_22= Account number
 payment.dashboard.table.row_32= Account name
 payment.dashboard.table.caption= HMRC’s bank details for UK payments
-site.warning = Warning
 payment.dashboard.table.outsideUK.caption= HMRC’s bank details for payments outside the UK
 payment.dashboard.table2.row_12= BARCGB22
 payment.dashboard.table2.row_11= Bank identifier code (BIC)
