@@ -333,7 +333,7 @@ Kb750Ineligible.link = Find out more about who is eligible for Pillar 2 top-up t
 
 eligibilityconfirmation.title = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
-eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filling member.
+eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filing member.
 
 furtherGroupCheckYourAnswers.title = Check your answers for further group details
 furtherGroupCheckYourAnswers.heading = Check your answers for further group details
@@ -1161,6 +1161,11 @@ agent.error.title = Sorry, there is a problem with the service
 agent.error.heading = Sorry, there is a problem with the service
 agent.error.p1 = Please try again later.
 agent.error.link = Return to your Agent Services Account
+
+agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.p1 = You need to
+agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
 ###############################################
 
 rfm.saveProgressInform.title = Saving progress
