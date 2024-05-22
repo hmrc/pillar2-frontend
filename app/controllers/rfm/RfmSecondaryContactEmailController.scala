@@ -37,6 +37,7 @@ class RfmSecondaryContactEmailController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurity:             RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryContactEmailFormProvider,

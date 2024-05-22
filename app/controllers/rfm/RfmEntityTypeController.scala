@@ -41,6 +41,7 @@ class RfmEntityTypeController @Inject() (
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,
+  checkSecurity:                                     RfmSecurityQuestionCheckAction,
   requireData:                                       DataRequiredAction,
   formProvider:                                      RfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
@@ -51,7 +52,7 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
 

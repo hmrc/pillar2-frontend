@@ -18,7 +18,7 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,6 +28,7 @@ import views.html.rfm.RfmSaveProgressInformView
 class RfmSaveProgressInformController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
+  checkSecurity:            RfmSecurityQuestionCheckAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmSaveProgressInformView
@@ -35,7 +36,7 @@ class RfmSaveProgressInformController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {

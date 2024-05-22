@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RfmSecondaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
+  checkSecurity:             RfmSecurityQuestionCheckAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
@@ -46,7 +47,7 @@ class RfmSecondaryTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       (for {

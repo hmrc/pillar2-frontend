@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
+import controllers.actions.{DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,13 +28,15 @@ import scala.concurrent.ExecutionContext
 
 class RfmContactDetailsRegistrationController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
+  getData:                  DataRetrievalAction,
+  checkSecurity:            RfmSecurityQuestionCheckAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmContactDetailsRegistrationView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = rfmIdentify { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       Ok(view())

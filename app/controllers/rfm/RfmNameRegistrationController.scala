@@ -38,6 +38,7 @@ class RfmNameRegistrationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurityQuestions:    RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmNameRegistrationFormProvider,
@@ -49,18 +50,19 @@ class RfmNameRegistrationController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmNameRegistrationPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
+    (rfmIdentify andThen getData andThen checkSecurityQuestions andThen requireData).async { implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        val preparedForm = request.userAnswers.get(RfmNameRegistrationPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Future.successful(Ok(view(preparedForm, mode)))
+      } else {
+        Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
       }
-      Future.successful(Ok(view(preparedForm, mode)))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     form

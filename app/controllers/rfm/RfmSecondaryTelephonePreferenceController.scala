@@ -37,6 +37,7 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurityAnswers:      RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmSecondaryTelephonePreferenceFormProvider,
@@ -46,24 +47,25 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      (for {
-        _           <- request.userAnswers.get(RfmSecondaryEmailPage)
-        contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
-      } yield {
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode, contactName))
-      })
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityAnswers andThen requireData) {
+    implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        (for {
+          _           <- request.userAnswers.get(RfmSecondaryEmailPage)
+          contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
+        } yield {
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) match {
+            case Some(v) => form.fill(v)
+            case None    => form
+          }
+          Ok(view(preparedForm, mode, contactName))
+        })
+          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } else {
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

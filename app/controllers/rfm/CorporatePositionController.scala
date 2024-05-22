@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.{RfmSecurityQuestionCheckAction, _}
 import forms.RfmCorporatePositionFormProvider
 import navigation.ReplaceFilingMemberNavigator
 import models.Mode
@@ -37,6 +37,7 @@ class CorporatePositionController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurityAnswers:      RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
@@ -48,17 +49,18 @@ class CorporatePositionController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityAnswers andThen requireData) {
+    implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(view(preparedForm, mode))
+      } else {
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

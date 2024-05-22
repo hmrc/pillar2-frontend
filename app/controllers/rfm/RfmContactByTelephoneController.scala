@@ -37,6 +37,7 @@ class RfmContactByTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurityQuestions:    RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmContactByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -46,23 +47,24 @@ class RfmContactByTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      request.userAnswers
-        .get(RfmPrimaryContactNamePage)
-        .map { contactName =>
-          val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
-            case Some(v) => form.fill(v)
-            case None    => form
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityQuestions andThen requireData) {
+    implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        request.userAnswers
+          .get(RfmPrimaryContactNamePage)
+          .map { contactName =>
+            val form = formProvider(contactName)
+            val preparedForm = request.userAnswers.get(RfmContactByTelephonePage) match {
+              case Some(v) => form.fill(v)
+              case None    => form
+            }
+            Ok(view(preparedForm, mode, contactName))
           }
-          Ok(view(preparedForm, mode, contactName))
-        }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } else {
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      }
 
   }
 

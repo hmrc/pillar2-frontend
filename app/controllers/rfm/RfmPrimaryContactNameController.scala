@@ -37,6 +37,7 @@ class RfmPrimaryContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurity:             RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmPrimaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -48,17 +49,18 @@ class RfmPrimaryContactNameController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) {
+    implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, mode))
+      } else {
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
-      Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

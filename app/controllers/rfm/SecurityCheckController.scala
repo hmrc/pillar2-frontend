@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.SecurityCheckView
 
@@ -40,6 +41,7 @@ class SecurityCheckController @Inject() (
   requireData:               DataRequiredAction,
   formProvider:              RfmSecurityCheckFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
+  sessionRepository:         SessionRepository,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecurityCheckView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
@@ -69,9 +71,9 @@ class SecurityCheckController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _              <- sessionRepository.set(updatedAnswers)
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data)) //Do I actually need this
           } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
       )
   }
-
 }

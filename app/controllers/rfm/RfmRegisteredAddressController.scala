@@ -38,6 +38,7 @@ class RfmRegisteredAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurity:             RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              RfmRegisteredAddressFormProvider,
@@ -50,7 +51,7 @@ class RfmRegisteredAddressController @Inject() (
 
   val form: Form[NonUKAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       request.userAnswers

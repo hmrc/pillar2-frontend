@@ -106,4 +106,14 @@ trait ReplaceFilingMemberHelpers {
       if (nominated) get(RfmCapturePrimaryTelephonePage) else None
     }
 
+  def rfmAnsweredSecurityQuestions: Boolean = {
+    val isReferenceDefined = get(RfmPillar2ReferencePage).isDefined
+    val isDateDefined      = get(RfmRegistrationDatePage).isDefined
+
+    (isReferenceDefined, isDateDefined) match {
+      case (true, true) => true
+      case _            => false
+    }
+  }
+
 }

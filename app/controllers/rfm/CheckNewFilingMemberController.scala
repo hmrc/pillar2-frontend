@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
+import controllers.actions.{DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,13 +29,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckNewFilingMemberController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
+  checkSecurityQuestions:   RfmSecurityQuestionCheckAction,
+  getData:                  DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     CheckNewFilingMemberView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = rfmIdentify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityQuestions) { implicit request =>
     if (appConfig.rfmAccessEnabled) {
       Ok(view(mode))
     } else {

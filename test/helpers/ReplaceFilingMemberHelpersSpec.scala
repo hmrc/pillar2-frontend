@@ -308,7 +308,27 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
           .setOrException(RfmCapturePrimaryTelephonePage, "12312")
         ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
       }
+
+      "Security Questions Answered" should {
+        "Return true if both questions have been answered" in {
+          val date = LocalDate.of(2024, 1, 31)
+          val userAnswers = rfmCorpPosition
+            .setOrException(RfmPillar2ReferencePage, "PILLAR2REFERENC")
+            .setOrException(RfmRegistrationDatePage, RegistrationDate(date))
+          userAnswers.rfmAnsweredSecurityQuestions mustBe true
+        }
+        "Return false if either question has not been answered" in {
+          val userAnswers = rfmCorpPosition
+            .remove(RfmPillar2ReferencePage)
+            .success
+            .value
+            .remove(RfmRegistrationDatePage)
+            .success
+            .value
+          userAnswers.rfmAnsweredSecurityQuestions mustBe false
+
+        }
+      }
     }
   }
-
 }

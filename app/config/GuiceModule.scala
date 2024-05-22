@@ -34,6 +34,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRetrievalAction]).to(classOf[SubscriptionDataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRequiredAction]).to(classOf[SubscriptionDataRequiredActionImpl]).asEagerSingleton()
+    bind(classOf[RfmSecurityQuestionCheckAction]).to(classOf[RfmSecurityQuestionCheckActionImpl]).asEagerSingleton()
 
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()

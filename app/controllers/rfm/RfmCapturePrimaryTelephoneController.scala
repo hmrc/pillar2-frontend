@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -37,6 +37,7 @@ class RfmCapturePrimaryTelephoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurityQuestions:    RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -46,25 +47,26 @@ class RfmCapturePrimaryTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      (for {
-        _           <- request.userAnswers.get(RfmContactByTelephonePage)
-        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
-      } yield {
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityQuestions andThen requireData) {
+    implicit request =>
+      val rfmAccessEnabled = appConfig.rfmAccessEnabled
+      if (rfmAccessEnabled) {
+        (for {
+          _           <- request.userAnswers.get(RfmContactByTelephonePage)
+          contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
+        } yield {
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
 
-        Ok(view(preparedForm, mode, contactName))
-      })
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+          Ok(view(preparedForm, mode, contactName))
+        })
+          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } else {
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      }
 
   }
 

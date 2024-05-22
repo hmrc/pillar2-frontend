@@ -29,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.GroupRegistrationDateReportView
 
@@ -40,6 +41,7 @@ class GroupRegistrationDateReportController @Inject() (
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  sessionRepository:         SessionRepository,
   formProvider:              GroupRegistrationDateReportFormProvider,
   navigator:                 ReplaceFilingMemberNavigator,
   val controllerComponents:  MessagesControllerComponents,
@@ -71,6 +73,7 @@ class GroupRegistrationDateReportController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
+            _              <- sessionRepository.set(updatedAnswers)
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )

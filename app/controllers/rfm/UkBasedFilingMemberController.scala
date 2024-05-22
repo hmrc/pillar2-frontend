@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -38,6 +38,7 @@ class UkBasedFilingMemberController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
+  checkSecurity:             RfmSecurityQuestionCheckAction,
   requireData:               DataRequiredAction,
   navigator:                 ReplaceFilingMemberNavigator,
   formProvider:              NFMRegisteredInUKConfirmationFormProvider,
@@ -49,7 +50,7 @@ class UkBasedFilingMemberController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {

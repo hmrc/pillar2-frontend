@@ -18,7 +18,7 @@ package controllers.rfm
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -39,6 +39,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   getData:                  DataRetrievalAction,
   rfmIdentify:              RfmIdentifierAction,
+  checkSecurity:            RfmSecurityQuestionCheckAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   subscriptionService:      SubscriptionService,
@@ -50,7 +51,7 @@ class RfmContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData).async { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
 
     val rfmEnabled = appConfig.rfmAccessEnabled

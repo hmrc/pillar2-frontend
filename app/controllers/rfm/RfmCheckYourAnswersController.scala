@@ -18,7 +18,7 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmCheckYourAnswersPage
@@ -36,6 +36,7 @@ import scala.concurrent.Future
 class RfmCheckYourAnswersController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
+  checkSecurityQuestions:   RfmSecurityQuestionCheckAction,
   requireData:              DataRequiredAction,
   navigator:                ReplaceFilingMemberNavigator,
   val controllerComponents: MessagesControllerComponents,
@@ -45,23 +46,24 @@ class RfmCheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
-      val list = SummaryListViewModel(
-        rows = Seq(
-          RfmNameRegistrationSummary.row(request.userAnswers),
-          RfmRegisteredAddressSummary.row(request.userAnswers, countryOptions)
-        ).flatten
-      )
-      if (request.userAnswers.rfmNoIdQuestionStatus == RowStatus.Completed) {
-        Ok(view(mode, list))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurityQuestions andThen requireData) {
+    implicit request =>
+      val rfmEnabled = appConfig.rfmAccessEnabled
+      if (rfmEnabled) {
+        val list = SummaryListViewModel(
+          rows = Seq(
+            RfmNameRegistrationSummary.row(request.userAnswers),
+            RfmRegisteredAddressSummary.row(request.userAnswers, countryOptions)
+          ).flatten
+        )
+        if (request.userAnswers.rfmNoIdQuestionStatus == RowStatus.Completed) {
+          Ok(view(mode, list))
+        } else {
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
