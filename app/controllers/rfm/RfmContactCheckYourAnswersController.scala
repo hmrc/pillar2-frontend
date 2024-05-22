@@ -21,9 +21,11 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.InternalIssueError
 import models.requests.DataRequest
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,6 +44,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   subscriptionService:      SubscriptionService,
+  sessionRepository:        SessionRepository,
   view:                     RfmContactCheckYourAnswersView,
   countryOptions:           CountryOptions
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -49,23 +52,31 @@ class RfmContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
 
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-      Ok(
-        view(
-          request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-          request.userAnswers.rfmPrimaryContactList,
-          request.userAnswers.rfmSecondaryContactList,
-          address
-        )
-      )
+      sessionRepository.get(request.userId).map { optionalUserAnswer =>
+        (for {
+          userAnswer <- optionalUserAnswer
+          _          <- userAnswer.get(PlrReferencePage)
+        } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+          .getOrElse(
+            Ok(
+              view(
+                request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                request.userAnswers.rfmPrimaryContactList,
+                request.userAnswers.rfmSecondaryContactList,
+                address
+              )
+            )
+          )
+      }
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Future(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
@@ -97,7 +108,9 @@ class RfmContactCheckYourAnswersController @Inject() (
       amendData <- OptionT.liftF(
                      subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
                    )
-      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+      _          <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+      dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
+      _          <- OptionT.liftF(sessionRepository.set(dataToSave))
     } yield {
       logger.info("successfully replaced filing member")
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
