@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models.grs
 
-import forms.mappings.Mappings
-import models.Confirmation
-import play.api.data.Form
-import play.api.data.Forms.set
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+case class GrsRegistrationData(companyId: String, companyName: String, utr: String, crn: String)
 
-class RfmStartPageFormProvider @Inject() extends Mappings {
-
-  def apply(errorKey: String): Form[Set[Confirmation]] =
-    Form(
-      "confirmation" -> set(enumerable[Confirmation](errorKey)).verifying(nonEmptySet(errorKey))
-    )
-
+object GrsRegistrationData {
+  implicit val format: OFormat[GrsRegistrationData] = Json.format[GrsRegistrationData]
 }

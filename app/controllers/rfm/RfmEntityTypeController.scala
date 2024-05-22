@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.RfmEntityTypeFormProvider
-import models.{Mode, UserType}
 import models.grs.EntityType
+import models.{Mode, UserType}
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -54,6 +54,7 @@ class RfmEntityTypeController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
+
       request.userAnswers
         .get(RfmUkBasedPage)
         .map { ukBased =>
@@ -98,6 +99,7 @@ class RfmEntityTypeController @Inject() (
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Rfm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+
             case EntityType.Other =>
               for {
                 updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, false))

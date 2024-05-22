@@ -57,14 +57,6 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
-  val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
   val filingMember =
     FilingMember(
       isNfmRegisteredInUK = false,
@@ -149,13 +141,13 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+          when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
             .thenReturn(Future.successful(Done))
 
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
         }
       }
 
@@ -163,7 +155,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = enrolments)
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
-        when(mockSubscriptionService.amendSubscription(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(UnexpectedResponse))
 
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)

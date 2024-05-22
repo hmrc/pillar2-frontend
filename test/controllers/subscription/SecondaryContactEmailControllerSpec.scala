@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,8 +34,8 @@ import scala.concurrent.Future
 
 class SecondaryContactEmailControllerSpec extends SpecBase {
 
-  val form         = new SecondaryContactEmailFormProvider()
-  val formProvider = form("name")
+  val form = new SecondaryContactEmailFormProvider()
+  val formProvider: Form[String] = form("name")
 
   "SecondaryContactEmail Controller" when {
 

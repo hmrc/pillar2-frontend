@@ -16,12 +16,13 @@
 
 package controllers
 
+import akka.Done
 import base.SpecBase
-import connectors.{EnrolmentConnector, UserAnswersConnectors}
+import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -31,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HttpResponse
 import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
@@ -43,14 +43,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val plrReference = "XE1111123456789"
 
   private val date = LocalDate.now()
-  private val nonUkAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "AB"
-  )
   private val ukAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
@@ -238,11 +230,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
         val application = applicationBuilder(None)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
@@ -251,7 +245,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
     "on submit method" should {
-      val mockHttpResponse = HttpResponse(OK, "")
       "redirect to confirmation page in case of a success response" in {
 
         val userAnswer = defaultUserAnswer
@@ -264,13 +257,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
         running(application) {
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
@@ -302,12 +295,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
         running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
@@ -329,12 +322,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-            bind[EnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
         running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(mockHttpResponse))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
 

@@ -16,20 +16,29 @@
 
 package controllers.rfm
 
+import akka.Done
 import base.SpecBase
-import models.UserAnswers
+import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.rfm.CorporatePosition
+import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
+import models.{InternalIssueError, UserAnswers, Verifier}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.SubscriptionService
+import utils.FutureConverter.FutureOps
 import viewmodels.govuk.SummaryListFluency
+import play.api.inject.bind
+
+import scala.concurrent.Future
 
 class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" when {
 
     "must redirect to correct view when rfm feature false" in {
-      val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryContactNamePage, "sad")
       val application = applicationBuilder(userAnswers = Some(rfmID))
         .configure(
           Seq(
@@ -45,21 +54,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
-
-    "return to recovery page if any part is missing for check answer page" in {
-
-      val application = applicationBuilder(userAnswers = Some(rfmCorpPosition))
-        .build()
-      running(application) {
-
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
-      }
-    }
-
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
+
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
         .build()
       running(application) {
@@ -220,35 +216,187 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Address")
       }
     }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(RfmPrimaryContactNamePage, "name")
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
+    "onSubmit" should {
+      val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
+      lazy val jr                     = controllers.routes.JourneyRecoveryController.onPageLoad().url
+      lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
+      lazy val uc                     = controllers.routes.UnderConstructionController.onPageLoad.url
+      val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
+      "redirect to under construction page in case of a successful replace filing member" in {
+        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
       }
-    }
-
-    "must redirect to the 'under construction' page when valid data is submitted" in {
-      val userAnswers = rfmID
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+      "redirect to Journey recovery if no group ID is found for the new filing member" in {
+        val ua = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val application = applicationBuilder(userAnswers = Some(ua), groupID = None)
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual jr
+        }
       }
-    }
+      "redirect to journey recovery page if new filing member uk basedpage value cannot be found" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.failed(new Exception("no rfm uk based")))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual jr
+        }
+      }
+      "redirect to under construction page if registering new filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")), groupID = Some("id"))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
+      }
+      "redirect to under construction page if deallocating old filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
+      }
+      "redirect to under construction page if allocating an enrolment to the new filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
+            .thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
+      }
 
+      "redirect to under construction page if read subscription fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
+      }
+
+      "redirect to under construction page if amend subscription fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(InternalIssueError))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual uc
+        }
+      }
+      "redirect to incomplete data page if they have only partially completed their application" in {
+        val application = applicationBuilder(userAnswers = None).build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual incompleteData
+        }
+      }
+
+    }
   }
 }

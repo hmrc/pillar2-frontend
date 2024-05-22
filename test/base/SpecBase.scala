@@ -39,7 +39,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -75,6 +76,10 @@ trait SpecBase
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
 
+  type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  val pillar2AgentEnrolment: Enrolments =
+    Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
+
   def countOccurrences(src: String, tgt: String): Int =
     src.sliding(tgt.length).count(window => window == tgt)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -87,11 +92,8 @@ trait SpecBase
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        Future.successful(Right(IdentifierRequest(request, "internalId")))
-      }
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+        Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"))))
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -101,8 +103,7 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        val identifierRequest = IdentifierRequest(request, "internalId", enrolments.getOrElse(Set.empty))
+        val identifierRequest = IdentifierRequest(request, "internalId", Some("groupID"), enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }
     }
@@ -110,6 +111,7 @@ trait SpecBase
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
+    groupID:               Option[String] = None,
     subscriptionLocalData: Option[SubscriptionLocalData] = None,
     additionalData:        Map[String, Any] = Map.empty
   ): GuiceApplicationBuilder =
@@ -127,7 +129,6 @@ trait SpecBase
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[IdentifierAction].qualifiedWith("AgentIdentifier").to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))

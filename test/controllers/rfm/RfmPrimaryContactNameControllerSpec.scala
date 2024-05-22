@@ -35,9 +35,10 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider()
 
-  "RFM UPE Name Registration controller" when {
+  "RfmPrimaryContactNameController Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when RFM access is enabled" in {
+
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -54,19 +55,20 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and populate the view correctly when the question has been previously answered" in {
-      val userAnswers = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "name")
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val pageAnswer = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "alex")
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        val view    = application.injector.instanceOf[RfmPrimaryContactNameView]
+
+        val view = application.injector.instanceOf[RfmPrimaryContactNameView]
+
+        val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -74,8 +76,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when rfm feature is set to false" in {
-
+    "must redirect to Under Construction page if RFM access is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -91,12 +92,11 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted" in {
+    "must redirect to primary email address page with valid data" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -124,12 +124,17 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider().bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[RfmPrimaryContactNameView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 

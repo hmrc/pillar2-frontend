@@ -17,15 +17,16 @@
 package controllers.rfm
 
 import base.SpecBase
+import models.{InternalIssueError, NormalMode}
 import models.rfm.RegistrationDate
 import models.rfm.RegistrationDate._
 import models.{InternalIssueError, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
+import play.api.{Configuration, inject}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, inject}
 import services.SubscriptionService
 import viewmodels.govuk.SummaryListFluency
 
@@ -100,7 +101,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url
         }
       }
 

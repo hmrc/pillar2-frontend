@@ -16,45 +16,173 @@
 
 package helpers
 
-import models.UserAnswers
-import models.rfm.CorporatePosition.{NewNfm, Upe}
+import models.{GovUKMarginBottom9, UserAnswers}
+import models.rfm.CorporatePosition
+import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import pages._
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utils.RowStatus
+import utils.countryOptions.CountryOptions
+import viewmodels.checkAnswers.{EntityTypeIncorporatedCompanyNameRfmSummary, EntityTypeIncorporatedCompanyRegRfmSummary, EntityTypeIncorporatedCompanyUtrRfmSummary, EntityTypePartnershipCompanyNameRfmSummary, EntityTypePartnershipCompanyRegRfmSummary, EntityTypePartnershipCompanyUtrRfmSummary, RfmAddSecondaryContactSummary, RfmCapturePrimaryTelephoneSummary, RfmContactByTelephoneSummary, RfmCorporatePositionSummary, RfmNameRegistrationSummary, RfmPrimaryContactEmailSummary, RfmPrimaryContactNameSummary, RfmRegisteredAddressSummary, RfmSecondaryContactEmailSummary, RfmSecondaryContactNameSummary, RfmSecondaryTelephonePreferenceSummary, RfmSecondaryTelephoneSummary}
+import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait ReplaceFilingMemberHelpers {
 
   self: UserAnswers =>
 
-  def rfmContactDetailStatus: Boolean = {
-    val p1 = get(RfmPrimaryContactNamePage).isDefined
-    val p2 = get(RfmPrimaryContactEmailPage).isDefined
-    val p3 = get(RfmContactByTelephonePage).getOrElse(false)
-    val p4 = get(RfmCapturePrimaryTelephonePage).isDefined
-    val s1 = get(RfmAddSecondaryContactPage).getOrElse(false)
-    val s2 = get(RfmSecondaryContactNamePage).isDefined
-    val s3 = get(RfmSecondaryEmailPage).isDefined
-    val s4 = get(RfmSecondaryPhonePreferencePage).getOrElse(false)
-    val s5 = get(RfmSecondaryCapturePhonePage).isDefined
-    val a1 = get(RfmContactAddressPage).isDefined
-    (p1, p2, p3, p4, s1, s2, s3, s4, s5, a1) match {
-      case (true, true, true, true, true, true, true, true, true, true)        => true
-      case (true, true, true, true, true, true, true, false, false, true)      => true
-      case (true, true, false, false, true, true, true, true, true, true)      => true
-      case (true, true, false, false, false, false, false, false, false, true) => true
-      case (true, true, false, false, true, true, true, false, false, true)    => true
-      case (true, true, true, true, false, false, false, false, false, true)   => true
-      case _                                                                   => false
+  def securityQuestionStatus: RowStatus = {
+    val first  = get(RfmPillar2ReferencePage).isDefined
+    val second = get(RfmRegistrationDatePage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
     }
   }
 
-  def rfmNewFilingMemberDetailsStatus: Boolean = {
-    val corporatePosition   = get(RfmCorporatePositionPage).getOrElse(NewNfm)
-    val filingMemberName    = get(RfmNameRegistrationPage).isDefined
-    val filingMemberAddress = get(RfmRegisteredAddressPage).isDefined
-    (corporatePosition, filingMemberName, filingMemberAddress) match {
-      case (Upe, _, _)          => true
-      case (NewNfm, true, true) => true
-      case _                    => false
+  def rfmPrimaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      RfmPrimaryContactNameSummary.row(self),
+      RfmPrimaryContactEmailSummary.row(self),
+      RfmContactByTelephoneSummary.row(self),
+      RfmCapturePrimaryTelephoneSummary.row(self)
+    ).flatten
+  ).withCssClass(GovUKMarginBottom9.toString)
+
+  def rfmCorporatePositionSummaryList(countryOptions: CountryOptions)(implicit messages: Messages): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        RfmCorporatePositionSummary.row(self),
+        RfmNameRegistrationSummary.row(self),
+        RfmRegisteredAddressSummary.row(self, countryOptions),
+        EntityTypeIncorporatedCompanyNameRfmSummary.row(self),
+        EntityTypeIncorporatedCompanyRegRfmSummary.row(self),
+        EntityTypeIncorporatedCompanyUtrRfmSummary.row(self),
+        EntityTypePartnershipCompanyNameRfmSummary.row(self),
+        EntityTypePartnershipCompanyRegRfmSummary.row(self),
+        EntityTypePartnershipCompanyUtrRfmSummary.row(self)
+      ).flatten
+    ).withCssClass(GovUKMarginBottom9.toString)
+
+  def rfmSecondaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      RfmAddSecondaryContactSummary.row(self),
+      RfmSecondaryContactNameSummary.row(self),
+      RfmSecondaryContactEmailSummary.row(self),
+      RfmSecondaryTelephonePreferenceSummary.row(self),
+      RfmSecondaryTelephoneSummary.row(self)
+    ).flatten
+  ).withCssClass(GovUKMarginBottom9.toString)
+
+  def rfmNoIdQuestionStatus: RowStatus = {
+    val first  = get(RfmNameRegistrationPage).isDefined
+    val second = get(RfmRegisteredAddressPage).isDefined
+    (first, second) match {
+      case (true, true)  => RowStatus.Completed
+      case (true, false) => RowStatus.InProgress
+      case _             => RowStatus.NotStarted
     }
   }
+
+  def getSecondaryContact: Option[ContactDetailsType] =
+    get(RfmAddSecondaryContactPage).flatMap { nominated =>
+      if (nominated) {
+        for {
+          secondaryName  <- get(RfmSecondaryContactNamePage)
+          secondaryEmail <- get(RfmSecondaryEmailPage)
+        } yield ContactDetailsType(name = secondaryName, telephone = getSecondaryTelephone, emailAddress = secondaryEmail)
+      } else {
+        None
+      }
+    }
+
+  private def getSecondaryTelephone: Option[String] =
+    get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
+      if (nominated) get(RfmSecondaryCapturePhonePage) else None
+    }
+
+  def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
+    for {
+      referenceNumber   <- get(RfmPillar2ReferencePage)
+      corporatePosition <- get(RfmCorporatePositionPage)
+      primaryName       <- get(RfmPrimaryContactNamePage)
+      email             <- get(RfmPrimaryContactEmailPage)
+      address           <- get(RfmContactAddressPage)
+    } yield NewFilingMemberDetail(
+      plrReference = referenceNumber,
+      corporatePosition = corporatePosition,
+      contactName = primaryName,
+      contactEmail = email,
+      phoneNumber = getPrimaryTelephone,
+      address = address,
+      secondaryContactInformation = getSecondaryContact
+    )
+
+  private def getPrimaryTelephone: Option[String] =
+    get(RfmContactByTelephonePage).flatMap { nominated =>
+      if (nominated) get(RfmCapturePrimaryTelephonePage) else None
+    }
+
+  private def isAllSecondaryInfoProvided: Boolean =
+    get(RfmAddSecondaryContactPage)
+      .map { nominated =>
+        if (nominated) {
+          (for {
+            _         <- get(RfmSecondaryContactNamePage)
+            _         <- get(RfmSecondaryEmailPage)
+            nominated <- get(RfmSecondaryPhonePreferencePage)
+          } yield
+            if (nominated) {
+              get(RfmSecondaryCapturePhonePage).map(_ => true).getOrElse(false)
+            } else {
+              true
+            }).getOrElse(false)
+        } else {
+          true
+        }
+      }
+      .getOrElse(false)
+
+  private def isAllPrimaryContactInfoProvided: Boolean =
+    (for {
+      _                     <- get(RfmPrimaryContactNamePage)
+      _                     <- get(RfmPrimaryContactEmailPage)
+      _                     <- get(RfmContactAddressPage)
+      primaryPhoneNominated <- get(RfmContactByTelephonePage)
+    } yield
+      if (primaryPhoneNominated) {
+        get(RfmCapturePrimaryTelephonePage).map(_ => true).getOrElse(false)
+      } else {
+        true
+      }).getOrElse(false)
+
+  def isRfmJourneyCompleted: Boolean =
+    get(RfmCorporatePositionPage)
+      .map(corporatePosition =>
+        if (corporatePosition == CorporatePosition.Upe) {
+          if (isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+        } else {
+          if (isAllNewFilingMemberInfoProvided & isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+        }
+      )
+      .getOrElse(false)
+
+  private def isAllNewFilingMemberInfoProvided: Boolean =
+    get(RfmUkBasedPage)
+      .map { ukBased =>
+        if (ukBased) {
+          (for {
+            _ <- get(RfmEntityTypePage)
+            _ <- get(RfmGrsDataPage)
+          } yield true).getOrElse(false)
+        } else {
+          (for {
+            _ <- get(RfmNameRegistrationPage)
+            _ <- get(RfmRegisteredAddressPage)
+          } yield true).getOrElse(false)
+        }
+      }
+      .getOrElse(false)
 
 }

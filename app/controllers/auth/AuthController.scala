@@ -21,33 +21,54 @@ import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AuthController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  config:                   FrontendAppConfig,
-  sessionRepository:        SessionRepository,
-  identify:                 IdentifierAction
-)(implicit ec:              ExecutionContext)
+  val controllerComponents:   MessagesControllerComponents,
+  override val authConnector: AuthConnector,
+  config:                     FrontendAppConfig,
+  sessionRepository:          SessionRepository,
+  identify:                   IdentifierAction
+)(implicit ec:                ExecutionContext)
     extends FrontendBaseController
+    with AuthorisedFunctions
     with I18nSupport {
 
-  def signOut(): Action[AnyContent] = identify.async { implicit request =>
-    sessionRepository
-      .clear(request.userId)
+  def signOut(): Action[AnyContent] = Action.async { implicit request =>
+    authorised(AuthProviders(GovernmentGateway))
+      .retrieve(Retrievals.internalId) { case Some(internalId) =>
+        sessionRepository.clear(internalId)
+      }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
       }
+      .recover {
+        case _: NoActiveSession =>
+          Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+        case _: AuthorisationException =>
+          Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+      }
   }
 
-  def signOutNoSurvey(): Action[AnyContent] = identify.async { implicit request =>
-    sessionRepository
-      .clear(request.userId)
+  def signOutNoSurvey(): Action[AnyContent] = Action.async { implicit request =>
+    authorised(AuthProviders(GovernmentGateway))
+      .retrieve(Retrievals.internalId) { case Some(internalId) =>
+        sessionRepository.clear(internalId)
+      }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad.url)))
+      }
+      .recover {
+        case _: NoActiveSession =>
+          Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+        case _: AuthorisationException =>
+          Redirect(controllers.routes.UnauthorisedController.onPageLoad)
       }
   }
 }

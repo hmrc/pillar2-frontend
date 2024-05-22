@@ -90,6 +90,7 @@ GET         /grs-return/checkmode/rfm                                           
 
 
 GET         /under-construction                                                         controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-error                                                   controllers.UnderConstructionController.onPageLoadError
 
 GET         /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe                                                            controllers.eligibility.GroupTerritoriesController.onSubmit
@@ -226,10 +227,6 @@ POST        /manage-account/account-details/summary               controllers.su
 GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 POST        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
-
-
-GET        /contact-details/check-answers                  controllers.subscription.ContactCheckYourAnswersController.onPageLoad
-
 GET        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
 POST        /manage-account/contact-details/summary   controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
 
@@ -309,7 +306,7 @@ GET        /manage-account/contact-details/address/change-input                c
 POST      /manage-account/contact-details/address/change-input                  controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad
+GET        /pillar2-top-up-tax-home                                               controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
 
 GET        /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET        /business-matching/filing-member/uk-based/error/unable-to-confirm-details                 controllers.GrsRegistrationNotCalledController.onPageLoadNfm
@@ -323,7 +320,6 @@ GET        /replace-filing-member/business-matching/filing-member/uk-based/error
 GET        /errors/return                                                        controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
 GET        /replace-filing-member/start                                         controllers.rfm.StartPageController.onPageLoad
-POST       /replace-filing-member/start                                         controllers.rfm.StartPageController.onSubmit
 GET        /replace-filing-member/authenticate                                  controllers.rfm.AuthenticateController.rfmAuthenticate
 GET        /replace-filing-member/error/duplicate-registration                  controllers.rfm.AlreadyEnrolledController.onPageLoad
 GET        /replace-filing-member/error/standard-organisation                   controllers.rfm.StandardOrganisationController.onPageLoad
@@ -346,7 +342,7 @@ POST       /bta/pillar2-id                                                   con
 GET        /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onPageLoad(mode: Mode = CheckMode)
 POST       /bta/change-pillar2-id                                            controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET        /bta/eacd                                                         controllers.bta.EACDStubController.onPageLoad
-
+GET        /asa/home                                                         controllers.ASAStubController.onPageLoad
 GET        /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST       /replace-filing-member/security/enter-pillar2-id                    controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
 
@@ -449,3 +445,10 @@ POST       /replace-filing-member/review-submit/check-answers                   
 
 GET        /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
 POST       /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId
+GET        /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
+POST       /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
+GET        /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+GET        /asa/error/system                            controllers.AgentController.onPageLoadError
+
+GET         /replace-filing-member/security/saving-progress                     controllers.rfm.RfmSaveProgressInformController.onPageLoad
+

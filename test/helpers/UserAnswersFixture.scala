@@ -16,8 +16,8 @@
 
 package helpers
 
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.grs.{EntityType, GrsRegistrationData, GrsRegistrationResult, RegistrationStatus}
+import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
@@ -39,13 +39,13 @@ trait UserAnswersFixture extends TryValues {
     postalCode = "m19hgs",
     countryCode = "AB"
   )
-  private val nonUkAddress = NonUKAddress(
+  val nonUkAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
     addressLine4 = None,
     postalCode = None,
-    countryCode = "AB"
+    countryCode = "US"
   )
   private val email            = "hello@darkness.myoldFriend"
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
@@ -70,11 +70,27 @@ trait UserAnswersFixture extends TryValues {
       )
     )
   )
+  private val rfmLimitedGrsResponse: IncorporatedEntityRegistrationData = IncorporatedEntityRegistrationData(
+    companyProfile = CompanyProfile(
+      companyName = "ABC Limited",
+      companyNumber = "1234",
+      dateOfIncorporation = LocalDate.now(),
+      unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
+    ),
+    ctutr = "1234567890",
+    identifiersMatch = true,
+    businessVerification = None,
+    registration = GrsRegistrationResult(
+      registrationStatus = RegistrationStatus.Registered,
+      registeredBusinessPartnerId = Some("XB0000000000001"),
+      failures = None
+    )
+  )
 
-  val rfmCorpPosition = emptyUserAnswers
+  val rfmCorpPosition: UserAnswers = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
 
-  val rfmUpe = emptyUserAnswers
+  val rfmUpe: UserAnswers = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
@@ -87,7 +103,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
-  val rfmNoID = emptyUserAnswers
+  val rfmNoID: UserAnswers = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
     .setOrException(RfmUkBasedPage, false)
     .setOrException(RfmNameRegistrationPage, "name")
@@ -103,19 +119,11 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmSecondaryCapturePhonePage, "1234567891")
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
-  val rfmNewFilingMemberDetails = emptyUserAnswers
-    .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-    .setOrException(RfmUkBasedPage, false)
-    .setOrException(RfmNameRegistrationPage, "name")
-    .setOrException(RfmRegisteredAddressPage, nonUkAddress)
-
-  val rfmID = emptyUserAnswers
+  val rfmID: UserAnswers = emptyUserAnswers
     .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
     .setOrException(RfmUkBasedPage, true)
-    .setOrException(RfmNameRegistrationPage, "name")
-    .setOrException(RfmRegisteredAddressPage, nonUkAddress) //TODO - consider inheritance/traits with ukAddress and nonUkAddress
     .setOrException(RfmEntityTypePage, EntityType.UkLimitedCompany)
-    .setOrException(RfmGRSResponsePage, grsResponse)
+    .setOrException(RfmGRSUkLimitedPage, rfmLimitedGrsResponse)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
     .setOrException(RfmContactByTelephonePage, true)
@@ -129,7 +137,7 @@ trait UserAnswersFixture extends TryValues {
 
   val registrationDate: LocalDate = LocalDate.of(2024, 1, 31)
 
-  val upeInProgressUserAnswer = emptyUserAnswers
+  val upeInProgressUserAnswer: UserAnswers = emptyUserAnswers
     .set(UpeContactNamePage, "name")
     .success
     .value
@@ -146,7 +154,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeInProgressNoContactName = emptyUserAnswers
+  val upeInProgressNoContactName: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -163,7 +171,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeNoAddressFound = emptyUserAnswers
+  val upeNoAddressFound: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -177,7 +185,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeNoEmailFound = emptyUserAnswers
+  val upeNoEmailFound: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -191,7 +199,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeNoPhonePref = emptyUserAnswers
+  val upeNoPhonePref: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -205,7 +213,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upePhonePrefButNoPhoneNumber = emptyUserAnswers
+  val upePhonePrefButNoPhoneNumber: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -225,7 +233,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeCompletedNoPhoneNumber = emptyUserAnswers
+  val upeCompletedNoPhoneNumber: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -248,7 +256,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeCompletedGrsStatus = emptyUserAnswers
+  val upeCompletedGrsStatus: UserAnswers = emptyUserAnswers
     .set(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
@@ -262,7 +270,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeNoEntityType = emptyUserAnswers
+  val upeNoEntityType: UserAnswers = emptyUserAnswers
     .set(UpeGRSResponsePage, grsResponse)
     .success
     .value
@@ -273,7 +281,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val upeNoGrsResponseType = emptyUserAnswers
+  val upeNoGrsResponseType: UserAnswers = emptyUserAnswers
     .set(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
@@ -284,7 +292,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoNameReg = emptyUserAnswers
+  val fmNoNameReg: UserAnswers = emptyUserAnswers
     .set(FmContactNamePage, "name")
     .success
     .value
@@ -304,7 +312,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoContactName = emptyUserAnswers
+  val fmNoContactName: UserAnswers = emptyUserAnswers
     .set(FmNameRegistrationPage, "name")
     .success
     .value
@@ -324,7 +332,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoAddress = emptyUserAnswers
+  val fmNoAddress: UserAnswers = emptyUserAnswers
     .set(FmNameRegistrationPage, "name")
     .success
     .value
@@ -341,7 +349,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoEmail = emptyUserAnswers
+  val fmNoEmail: UserAnswers = emptyUserAnswers
     .set(FmNameRegistrationPage, "name")
     .success
     .value
@@ -358,7 +366,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoPhonePref = emptyUserAnswers
+  val fmNoPhonePref: UserAnswers = emptyUserAnswers
     .set(FmNameRegistrationPage, "name")
     .success
     .value
@@ -375,7 +383,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmPhonePrefNoPhoneNum = emptyUserAnswers
+  val fmPhonePrefNoPhoneNum: UserAnswers = emptyUserAnswers
     .set(FmNameRegistrationPage, "name")
     .success
     .value
@@ -398,7 +406,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmCompletedGrsResponse = emptyUserAnswers
+  val fmCompletedGrsResponse: UserAnswers = emptyUserAnswers
     .set(FmEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
@@ -415,7 +423,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoEntityType = emptyUserAnswers
+  val fmNoEntityType: UserAnswers = emptyUserAnswers
     .set(FmGRSResponsePage, grsResponse)
     .success
     .value
@@ -429,7 +437,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val fmNoGrsResponse = emptyUserAnswers
+  val fmNoGrsResponse: UserAnswers = emptyUserAnswers
     .set(FmEntityTypePage, EntityType.UkLimitedCompany)
     .success
     .value
@@ -443,7 +451,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val groupDetailCompleted = emptyUserAnswers
+  val groupDetailCompleted: UserAnswers = emptyUserAnswers
     .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
     .success
     .value
@@ -451,9 +459,9 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val groupDetailInProgress = emptyUserAnswers.set(SubMneOrDomesticPage, MneOrDomestic.Uk).success.value
+  val groupDetailInProgress: UserAnswers = emptyUserAnswers.set(SubMneOrDomesticPage, MneOrDomestic.Uk).success.value
 
-  val contactDetailCompleted = emptyUserAnswers
+  val contactDetailCompleted: UserAnswers = emptyUserAnswers
     .set(SubPrimaryContactNamePage, "name")
     .success
     .value
@@ -479,7 +487,7 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val contactDetailInProgress = emptyUserAnswers
+  val contactDetailInProgress: UserAnswers = emptyUserAnswers
     .set(SubPrimaryContactNamePage, "name")
     .success
     .value
@@ -499,15 +507,45 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
 
-  val groupStatusIsTrue = emptyUserAnswers
+  private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+  val subCompletedJourney: UserAnswers = emptyUserAnswers
+    .setOrException(UpeRegisteredInUKPage, true)
+    .setOrException(UpeGRSResponsePage, grsResponse)
+    .setOrException(UpeRegInformationPage, regData)
+    .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+    .setOrException(NominateFilingMemberPage, false)
+    .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+    .setOrException(SubAccountingPeriodPage, accountingPeriod)
+    .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
+    .setOrException(SubPrimaryContactNamePage, "primary name")
+    .setOrException(SubPrimaryEmailPage, "email@address.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "1234567890")
+    .setOrException(SubAddSecondaryContactPage, true)
+    .setOrException(SubSecondaryContactNamePage, "secondary name")
+    .setOrException(SubSecondaryEmailPage, "email@address.com")
+    .setOrException(SubSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryCapturePhonePage, "1234567891")
+    .setOrException(SubRegisteredAddressPage, nonUkAddress)
+
+  val groupPrimaryAndSecondaryContactData: UserAnswers = emptyUserAnswers
+    .setOrException(SubPrimaryContactNamePage, "primary name")
+    .setOrException(SubPrimaryEmailPage, "email@address.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "1234567890")
+    .setOrException(SubAddSecondaryContactPage, true)
+    .setOrException(SubSecondaryContactNamePage, "secondary name")
+    .setOrException(SubSecondaryEmailPage, "email@address.com")
+    .setOrException(SubSecondaryPhonePreferencePage, true)
+    .setOrException(SubSecondaryCapturePhonePage, "1234567891")
+    .setOrException(SubRegisteredAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
+  val groupStatusIsTrue: UserAnswers = emptyUserAnswers
     .setOrException(SubPrimaryPhonePreferencePage, false)
     .setOrException(SubAddSecondaryContactPage, false)
     .setOrException(SubRegisteredAddressPage, nonUkAddress)
 
-  val finalStatusIsTrue = emptyUserAnswers
-    .setOrException(SubPrimaryPhonePreferencePage, false)
-    .setOrException(SubAddSecondaryContactPage, false)
-    .setOrException(SubRegisteredAddressPage, nonUkAddress)
+  val finalStatusIsTrue: UserAnswers = groupPrimaryAndSecondaryContactData
     .setOrException(NominateFilingMemberPage, false)
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(GrsUpeStatusPage, RowStatus.Completed)
@@ -516,7 +554,9 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
     .setOrException(UpeGRSResponsePage, grsResponse)
 
-  val allSectionsCompleted = emptyUserAnswers
+  val rfmGrsData: GrsRegistrationData = GrsRegistrationData(companyId = "someSafeId", companyName = "Company", utr = "UTR", crn = "CRN")
+
+  val allSectionsCompleted: UserAnswers = emptyUserAnswers
     .set(UpeNameRegistrationPage, "name")
     .success
     .value
@@ -602,5 +642,6 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmContactByTelephonePage, true)
     .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, false)
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
 }

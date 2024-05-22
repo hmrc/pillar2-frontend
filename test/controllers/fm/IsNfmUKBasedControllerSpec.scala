@@ -31,6 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -112,7 +113,6 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
     "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
-      import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[NominatedFilingMemberNavigator]
@@ -144,6 +144,36 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
         verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
         verify(mockNavigator).nextPage(FmRegisteredInUKPage, NormalMode, expectedUserAnswers)
+      }
+    }
+
+    "must update the user answers and redirect to the next page when the user answers yes, unable to fetch GRS status, set GRS status in-progress" in {
+      val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "true")
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must update the user answers and redirect to the next page when the user answers no" in {
+      val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "false")
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url
       }
     }
 

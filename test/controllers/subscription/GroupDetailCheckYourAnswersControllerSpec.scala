@@ -51,7 +51,7 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
     }
 
-    "return OK and the correct view if an answer is provided to every question when UkAndOther  option is selected  " in {
+    "return OK and the correct view if an answer is provided to every question when UkAndOther option is selected  " in {
       val userAnswer = UserAnswers(userAnswersId)
         .set(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
         .success
@@ -68,5 +68,16 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         contentAsString(result) must include("Where are the entities in your group located?")
       }
     }
+
+    "redirect to in progress page if either MneOrDomestic or AccountingPeriod not answered " in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
+      }
+    }
+
   }
 }

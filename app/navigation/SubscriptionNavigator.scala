@@ -130,7 +130,7 @@ class SubscriptionNavigator @Inject() {
   private def secondaryContactNameRoute(userAnswers: UserAnswers): Call =
     if (!userAnswers.finalStatusCheck) {
       controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(CheckMode)
-    } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+    } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
       reviewAndSubmitCheckYourAnswers
     } else {
       contactDetailCheckYourAnswersRoute
@@ -139,7 +139,7 @@ class SubscriptionNavigator @Inject() {
   private def secondaryContactEmailRoute(userAnswers: UserAnswers): Call =
     if (!userAnswers.finalStatusCheck) {
       controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(CheckMode)
-    } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+    } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
       reviewAndSubmitCheckYourAnswers
     } else {
       contactDetailCheckYourAnswersRoute
@@ -165,7 +165,7 @@ class SubscriptionNavigator @Inject() {
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
           controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
-        } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {
           contactDetailCheckYourAnswersRoute
@@ -179,7 +179,7 @@ class SubscriptionNavigator @Inject() {
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(SubSecondaryCapturePhonePage).isEmpty) {
           controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(CheckMode)
-        } else if (userAnswers.finalStatusCheck & userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {
           contactDetailCheckYourAnswersRoute

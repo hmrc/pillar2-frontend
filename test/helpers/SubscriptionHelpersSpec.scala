@@ -18,12 +18,9 @@ package helpers
 
 import base.SpecBase
 import models.registration._
-import models.rfm.RegistrationDate
-import models.{EnrolmentInfo, NonUKAddress, UKAddress}
+import models.{EnrolmentInfo, UKAddress}
 import pages._
 import utils.RowStatus
-
-import java.time.LocalDate
 
 class SubscriptionHelpersSpec extends SpecBase {
 
@@ -31,97 +28,159 @@ class SubscriptionHelpersSpec extends SpecBase {
 
   "Subscription Helper" when {
 
-    "getUpe status" should {
+    "upe status" should {
+      "return in progress for invalid upe journey data identified at review and submit page" in {
+        val userAnswers = upeCompletedNoPhoneNumber
+          .set(UpePhonePreferencePage, false)
+          .success
+          .value
+          .set(UpeCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.upeStatus mustEqual RowStatus.InProgress
+      }
+    }
+
+    "fm status" should {
+      "return in progress for invalid fm journey data identified at review and submit page" in {
+        val userAnswers = fmPhonePrefNoPhoneNum
+          .set(FmPhonePreferencePage, false)
+          .success
+          .value
+          .set(FmCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.fmStatus mustEqual RowStatus.InProgress
+      }
+    }
+
+    "contacts status" should {
+      "return in progress for invalid contacts journey data identified at review and submit page" in {
+        val userAnswers = contactDetailCompleted
+          .set(SubPrimaryPhonePreferencePage, false)
+          .success
+          .value
+          .set(SubPrimaryCapturePhonePage, "1234567890")
+          .success
+          .value
+          .set(CheckYourAnswersLogicPage, true)
+          .success
+          .value
+        userAnswers.contactsStatus mustEqual RowStatus.InProgress
+      }
+    }
+
+    "upe final status" should {
 
       "return Not Started if no answer can be found to upe registered in UK" in {
         val userAnswer = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
-        userAnswer.upeStatus mustEqual RowStatus.NotStarted
+        userAnswer.upeFinalStatus mustEqual RowStatus.NotStarted
       }
       "return in progress if user is not registered in uk but no name reg can be found" in {
-        upeInProgressUserAnswer.upeStatus mustEqual RowStatus.InProgress
+        upeInProgressUserAnswer.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no contact name can be found" in {
-        upeInProgressNoContactName.upeStatus mustEqual RowStatus.InProgress
+        upeInProgressNoContactName.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no address can be found" in {
-        upeNoAddressFound.upeStatus mustEqual RowStatus.InProgress
+        upeNoAddressFound.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no email can be found" in {
-        upeNoEmailFound.upeStatus mustEqual RowStatus.InProgress
+        upeNoEmailFound.upeFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        upeNoPhonePref.upeStatus mustEqual RowStatus.InProgress
+        upeNoPhonePref.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered answered yes to phone preference page and no phone number can be found" in {
-        upePhonePrefButNoPhoneNumber.upeStatus mustEqual RowStatus.InProgress
+        upePhonePrefButNoPhoneNumber.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        upeCompletedNoPhoneNumber.upeStatus mustEqual RowStatus.Completed
+        upeCompletedNoPhoneNumber.upeFinalStatus mustEqual RowStatus.Completed
+      }
+
+      "return completed if user is not registered and answered no to phone preference page" in {
+        upeCompletedNoPhoneNumber
+          .set(UpePhonePreferencePage, false)
+          .success
+          .value
+          .upeFinalStatus mustEqual RowStatus.Completed
       }
 
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        upeCompletedGrsStatus.upeStatus mustEqual RowStatus.Completed
+        upeCompletedGrsStatus.upeFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        upeNoEntityType.upeStatus mustEqual RowStatus.InProgress
+        upeNoEntityType.upeFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        upeNoGrsResponseType.upeStatus mustEqual RowStatus.InProgress
+        upeNoGrsResponseType.upeFinalStatus mustEqual RowStatus.InProgress
       }
 
     }
 
-    "NFM status" should {
+    "fm final status" should {
 
       "return Not Started if no answer can be found to fm nominated" in {
         val userAnswer = emptyUserAnswers.set(FmContactNamePage, "name").success.value
-        userAnswer.fmStatus mustEqual RowStatus.NotStarted
+        userAnswer.fmFinalStatus mustEqual RowStatus.NotStarted
       }
       "return completed if no fm nominated" in {
         val userAnswer = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
-        userAnswer.fmStatus mustEqual RowStatus.Completed
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if fm is not registered in uk and no name reg can be found" in {
-        fmNoNameReg.fmStatus mustEqual RowStatus.InProgress
+        fmNoNameReg.fmFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return in progress if user is not registered in uk but no contact name can be found" in {
-        fmNoContactName.fmStatus mustEqual RowStatus.InProgress
+        fmNoContactName.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no address can be found" in {
-        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
-        fmNoAddress.fmStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmFinalStatus mustEqual RowStatus.InProgress
+        fmNoAddress.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no email can be found" in {
-        fmNoEmail.fmStatus mustEqual RowStatus.InProgress
+        fmNoEmail.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered in uk but no phone preference answer be found" in {
-        fmNoPhonePref.fmStatus mustEqual RowStatus.InProgress
+        fmNoPhonePref.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if user is not registered answered yes to phone preference page but no phone number can be found" in {
-        fmPhonePrefNoPhoneNum.fmStatus mustEqual RowStatus.InProgress
+        fmPhonePrefNoPhoneNum.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return completed if user is not registered answered yes to phone preference page but no phone number can be found" in {
         val userAnswer = fmPhonePrefNoPhoneNum
           .set(FmCapturePhonePage, "12312")
           .success
           .value
-        userAnswer.fmStatus mustEqual RowStatus.Completed
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
       }
-
+      "return completed if user is not registered answered no to phone preference page" in {
+        val userAnswer = fmPhonePrefNoPhoneNum
+          .set(FmPhonePreferencePage, false)
+          .success
+          .value
+        userAnswer.fmFinalStatus mustEqual RowStatus.Completed
+      }
       "return status from grs if they are uk based and data can be found for all required pages" in {
-        fmCompletedGrsResponse.fmStatus mustEqual RowStatus.Completed
+        fmCompletedGrsResponse.fmFinalStatus mustEqual RowStatus.Completed
       }
       "return in progress if no data can be found for entity type" in {
-        fmNoEntityType.fmStatus mustEqual RowStatus.InProgress
+        fmNoEntityType.fmFinalStatus mustEqual RowStatus.InProgress
       }
       "return in progress if no data can be found for grs response type" in {
-        fmNoGrsResponse.fmStatus mustEqual RowStatus.InProgress
+        fmNoGrsResponse.fmFinalStatus mustEqual RowStatus.InProgress
       }
 
     }
@@ -140,17 +199,17 @@ class SubscriptionHelpersSpec extends SpecBase {
       }
     }
 
-    "contact detail status" should {
+    "contacts final status" should {
       "return completed if an answer is provided to the right combination of pages" in {
-        contactDetailCompleted.contactDetailStatus mustEqual RowStatus.Completed
+        contactDetailCompleted.contactsFinalStatus mustEqual RowStatus.Completed
       }
 
       "return in progress if an answer is only provided to Mne or domestic page " in {
-        contactDetailInProgress.contactDetailStatus mustEqual RowStatus.InProgress
+        contactDetailInProgress.contactsFinalStatus mustEqual RowStatus.InProgress
       }
 
       "return Not start if no answer is provided to either of the pages" in {
-        emptyUserAnswers.contactDetailStatus mustEqual RowStatus.NotStarted
+        emptyUserAnswers.contactsFinalStatus mustEqual RowStatus.NotStarted
       }
     }
 
@@ -201,6 +260,7 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswer.getFmSafeID mustBe None
       }
     }
+
     "getUpeRegData" should {
       "return the Reg Data retrieved from GRS if the upe is registered in the UK" in {
         val userAnswer = emptyUserAnswers
@@ -222,8 +282,85 @@ class SubscriptionHelpersSpec extends SpecBase {
 
     "groupDetails status checker" should {
 
-      "return true if right combination of the contact details and the subscription address have been answered " in {
-        groupStatusIsTrue.groupDetailStatusChecker mustEqual true
+      "return true if all contact questions are answered " in {
+        groupPrimaryAndSecondaryContactData.contactsFinalStatusChecker mustEqual true
+      }
+      "return true if all primary contact question answered and no secondary contact by phone" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubSecondaryPhonePreferencePage, false)
+          .remove(SubSecondaryCapturePhonePage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustEqual true
+      }
+      "return true if no primary telephone contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData.setOrException(SubPrimaryPhonePreferencePage, false).contactsFinalStatusChecker mustEqual true
+      }
+      "return true if no primary & secondary telephone contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubPrimaryPhonePreferencePage, false)
+          .setOrException(SubSecondaryPhonePreferencePage, false)
+          .contactsFinalStatusChecker mustEqual true
+      }
+      "return true if primary telephone and no secondary contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubPrimaryPhonePreferencePage, false)
+          .setOrException(SubAddSecondaryContactPage, false)
+          .contactsFinalStatusChecker mustEqual true
+      }
+      "return true if no secondary contact and all other contact questions are answered" in {
+        groupPrimaryAndSecondaryContactData
+          .setOrException(SubAddSecondaryContactPage, false)
+          .contactsFinalStatusChecker mustEqual true
+      }
+      "return false if primary contact name is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryContactNamePage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustEqual false
+      }
+      "return false if primary contact email is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryEmailPage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
+      }
+      "return false if primary contact by telephone is true and primary telephone is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubPrimaryCapturePhonePage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
+      }
+      "return false if add secondary contact is true and secondary contact name is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryContactNamePage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
+      }
+      "return false if add secondary contact is true and secondary contact email is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryEmailPage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
+      }
+      "return false if secondary contact by telephone is true and secondary contact telephone is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubSecondaryCapturePhonePage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
+      }
+      "return false if contact address is not answered" in {
+        groupPrimaryAndSecondaryContactData
+          .remove(SubRegisteredAddressPage)
+          .success
+          .value
+          .contactsFinalStatusChecker mustBe false
       }
     }
 
@@ -258,71 +395,6 @@ class SubscriptionHelpersSpec extends SpecBase {
 
         userAnswer.createEnrolmentInfo("fakeID") mustEqual EnrolmentInfo(nonUkPostcode = Some("m19hgs"), countryCode = Some("AB"), plrId = "fakeID")
       }
-    }
-
-    "SubscriptionHelpers.securityQuestionStatus" should {
-      val date = LocalDate.of(2024, 12, 31)
-      "return Completed when answers are provided to all security questions" in {
-
-        val userAnswers = emptyUserAnswers
-          .set(RfmPillar2ReferencePage, "12323212")
-          .success
-          .value
-          .set(RfmRegistrationDatePage, RegistrationDate(date))
-          .success
-          .value
-
-        userAnswers.securityQuestionStatus mustEqual RowStatus.Completed
-      }
-
-      "return InProgress when an answer is provided to rfmSecurityCheckPage and not to rfmRegistrationDatePage" in {
-        val userAnswersInProgress = emptyUserAnswers
-          .set(RfmPillar2ReferencePage, "Security Check Answer")
-          .success
-          .value
-
-        userAnswersInProgress.securityQuestionStatus mustEqual RowStatus.InProgress
-      }
-
-      "return NotStarted when answers are not provided to any of the security questions" in {
-        val userAnswers = emptyUserAnswers
-
-        userAnswers.securityQuestionStatus mustEqual RowStatus.NotStarted
-      }
-
-    }
-
-    "SubscriptionHelpers.rfmNoIdQuestionStatus" should {
-      val name = "nfm name"
-      val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
-      "return Completed when answers are provided to all security questions" in {
-
-        val userAnswers = emptyUserAnswers
-          .set(RfmNameRegistrationPage, name)
-          .success
-          .value
-          .set(RfmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-
-        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.Completed
-      }
-
-      "return InProgress when an answer is provided to rfmNfmNameRegistrationPage and not to rfmNfmRegisteredAddressPage" in {
-        val userAnswersInProgress = emptyUserAnswers
-          .set(RfmNameRegistrationPage, name)
-          .success
-          .value
-
-        userAnswersInProgress.rfmNoIdQuestionStatus mustEqual RowStatus.InProgress
-      }
-
-      "return NotStarted when answers are not provided to any of the rfm NoId questions" in {
-        val userAnswers = emptyUserAnswers
-
-        userAnswers.rfmNoIdQuestionStatus mustEqual RowStatus.NotStarted
-      }
-
     }
 
   }

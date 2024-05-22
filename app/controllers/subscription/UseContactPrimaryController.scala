@@ -27,6 +27,7 @@ import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
 import navigation.SubscriptionNavigator
 import pages._
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -54,7 +55,7 @@ class UseContactPrimaryController @Inject() (
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {

@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.UserAnswers
-import pages.RfmGRSResponsePage
+import pages.RfmGRSUkPartnershipPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,14 +27,12 @@ import viewmodels.implicits._
 object EntityTypePartnershipCompanyUtrRfmSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RfmGRSResponsePage).flatMap { grs =>
-      grs.partnershipEntityRegistrationData.flatMap { answer =>
-        answer.sautr.map { sautr =>
-          SummaryListRowViewModel(
-            key = "entityType.companyUtr.checkYourAnswersLabel",
-            value = ValueViewModel(HtmlContent(sautr))
-          )
-        }
+    answers.get(RfmGRSUkPartnershipPage).flatMap { partnershipEntityRegistrationData =>
+      partnershipEntityRegistrationData.sautr.map { sautr =>
+        SummaryListRowViewModel(
+          key = "entityType.companyUtr.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(sautr))
+        )
       }
     }
 }

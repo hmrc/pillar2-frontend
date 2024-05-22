@@ -17,23 +17,24 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.GroupIds
+import models.EnrolmentRequest.{KnownFactsParameters, KnownFactsResponse}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
 import play.api.Logging
-import play.api.http.Status.NO_CONTENT
+import play.api.http.Status.OK
+import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.FutureConverter.FutureOps
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Pillar2SessionKeys
 
-class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+@Singleton
+class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
-  def enrolmentExists(plrReference: String)(implicit
-    hc:                             HeaderCarrier,
-    ec:                             ExecutionContext
-  ): Future[Boolean] = {
+  def getGroupIds(plrReference: String)(implicit
+    hc:                         HeaderCarrier
+  ): Future[Option[GroupIds]] = {
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     http
@@ -41,21 +42,30 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
         submissionUrl
       )(rds = readRaw, hc = hc, ec = ec)
       .map {
-        case response if response.status == NO_CONTENT => false
-        case response if is2xx(response.status) =>
+        case response if response.status == OK =>
           response.json
             .asOpt[GroupIds]
-            .exists(groupIds =>
-              if (groupIds.principalGroupIds.nonEmpty) {
-                true
-              } else {
-                false
-              }
-            )
         case response =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Enrolment response not formed. ${response.status} response status")
-          throw new IllegalStateException()
+          logger.warn(s"Enrolment response not formed. ${response.status} response status")
+          None
       }
 
+  }
+
+  def getKnownFacts(knownFacts: KnownFactsParameters)(implicit hc: HeaderCarrier): Future[KnownFactsResponse] = {
+    val submissionUrl = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments"
+    http.POST[KnownFactsParameters, HttpResponse](submissionUrl, knownFacts).flatMap { response =>
+      if (response.status == OK) {
+        response.json.validate[KnownFactsResponse] match {
+          case JsSuccess(correctResponse, _) => correctResponse.toFuture
+          case JsError(_) =>
+            logger.error("Known facts response from tax enrolment received in unexpected json form")
+            Future.failed(UnexpectedJsResult)
+        }
+      } else {
+        logger.warn(s"get known facts returned an unexpected response : ${response.status} with body ${response.body}")
+        Future.failed(InternalIssueError)
+      }
+    }
   }
 }

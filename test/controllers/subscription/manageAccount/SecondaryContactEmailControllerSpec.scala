@@ -24,7 +24,7 @@ import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{SubAddSecondaryContactPage, SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call

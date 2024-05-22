@@ -16,7 +16,9 @@
 
 package helpers
 
+import config.FrontendAppConfig
 import play.api.i18n.DefaultLangs
+import services.GenUrlService
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config._
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
@@ -64,8 +66,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val hmrcScripts        = new HmrcScripts(assetsConfig)
   val hmrcTimeoutDilogue = new HmrcTimeoutDialog
 
-  val languageUtils = new LanguageUtils(new DefaultLangs(), configuration)
-
+  val languageUtils            = new LanguageUtils(new DefaultLangs(), configuration)
   val govukHint                = new GovukHint
   val govukRadios              = new GovukRadios(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
   val govukInput               = new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel)
@@ -91,6 +92,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val span                     = new Span
   val paragraphMessageWithLink = new ParagraphMessageWithLink
   val sectionHeader            = new sectionHeader
+  val sectionBreak             = new SectionBreak
+  val inactiveStatusBanner     = new InactiveStatusBanner
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -119,7 +122,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new HmrcAccessibleAutocompleteJavascript(assetsConfig),
     hmrcScripts,
     new StandardBetaBanner,
-    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig))
+    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig)),
+    new GenUrlService(appConfig = new FrontendAppConfig(configuration, servicesConfig))
   )
 
   val viewGroupTerritories: GroupTerritoriesView =
@@ -191,6 +195,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
-  val viewDashboardView: DashboardView = new DashboardView(pillar2layout, govukButton)
+  val viewDashboardView: DashboardView =
+    new DashboardView(pillar2layout, govukButton, heading, h2, paragraphBody, paragraphMessageWithLink, sectionBreak, inactiveStatusBanner)
 
 }

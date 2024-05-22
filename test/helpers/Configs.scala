@@ -17,6 +17,7 @@
 package helpers
 
 import com.typesafe.config.ConfigFactory
+import config.FrontendAppConfig
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

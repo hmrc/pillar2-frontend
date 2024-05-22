@@ -16,4 +16,16 @@
 
 package models.subscription
 
+import models.NonUKAddress
+import models.rfm.CorporatePosition
+
 case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])
+case class NewFilingMemberDetail(
+  plrReference:                String,
+  corporatePosition:           CorporatePosition,
+  contactName:                 String,
+  contactEmail:                String,
+  phoneNumber:                 Option[String],
+  address:                     NonUKAddress,
+  secondaryContactInformation: Option[ContactDetailsType]
+)

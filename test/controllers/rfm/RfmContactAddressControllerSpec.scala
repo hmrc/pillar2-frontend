@@ -46,7 +46,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include(
-          "What address do you want to use as the filing member&#x27;s contact address?"
+          "What address do you want to use as the filing member’s contact address?"
         )
         contentAsString(result) must include(
           "Address line 1"
