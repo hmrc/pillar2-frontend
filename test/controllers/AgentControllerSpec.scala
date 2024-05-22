@@ -430,7 +430,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must return the correct view if the feature flag is true and user is agent" in {
+    "must return the correct view if the feature flag is true" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
         .build()
@@ -451,4 +451,69 @@ class AgentControllerSpec extends SpecBase {
       }
     }
   }
+
+  "Agent Individual Error" must {
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadIndividualError.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+      }
+    }
+
+    "must return the correct view if the feature flag is true and user is agent" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadIndividualError.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AgentIndividualErrorView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+  }
+
+  "Agent Organisation Error" must {
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadOrganisationError.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+      }
+    }
+
+    "must return the correct view if the feature flag is true" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.AgentController.onPageLoadOrganisationError.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AgentOrganisationErrorView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+  }
+
 }
