@@ -32,7 +32,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfm.amendAPIFailure.title"))) {
+@layout(pageTitle = titleNoForm(messages("rfm.amendAPIFailure.title")), showBackLink = false) {
   @heading(messages("rfm.amendAPIFailure.heading"), "govuk-heading-l")
   @paragraphBody(messages("rfm.amendAPIFailure.p1"))
 
