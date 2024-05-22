@@ -105,6 +105,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(UpeContactEmailPage, "some@email.com")
     .setOrException(UpePhonePreferencePage, true)
     .setOrException(UpeCapturePhonePage, "12312321")
+
   private val upId = emptyUserAnswers
     .setOrException(NominateFilingMemberPage, true)
     .setOrException(UpeRegisteredInUKPage, true)
@@ -125,11 +126,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "on page load method " should {
 
       "return OK and the correct view if an answer is provided to every contact detail question" in {
+        val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(subData))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
 
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
@@ -144,11 +150,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided to every ultimate parent question" in {
+        val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upNoID))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
@@ -158,12 +169,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
         }
       }
-      "return OK and the correct view if an answer is provided to every Filing member question" in {
 
+      "return OK and the correct view if an answer is provided to every Filing member question" in {
+        val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmNoID))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
@@ -177,11 +193,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided with limited company upe" in {
-
+        val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upId))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
@@ -202,11 +222,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided with limited company nfm" in {
-
+        val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmId))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
