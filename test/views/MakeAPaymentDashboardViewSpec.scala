@@ -43,6 +43,9 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       val h2 = makePaymentDashboardView.getElementsByTag("h2")
       h2.get(0).text() must include("How to make a payment")
       h2.get(1).text() must include("How long it takes to receive payments")
+      h2.get(2).text() must include("HMRC’s bank details for UK payments")
+      h2.get(3).text() must include("HMRC’s bank details for payments outside the UK")
+
     }
 
     "have warning text" in {
@@ -54,12 +57,6 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       wText.text must include("Warning")
     }
 
-    "table caption for account details" in {
-      val tCaption = makePaymentDashboardView.getElementsByClass("govuk-table__caption")
-      tCaption.get(0).text must include("HMRC’s bank details for UK payments")
-      tCaption.get(1).text must include("HMRC’s bank details for payments outside the UK")
-
-    }
     "have pillar 2 information" in {
       val element = makePaymentDashboardView.getElementsByTag("p")
       element.get(1).text() must include(
