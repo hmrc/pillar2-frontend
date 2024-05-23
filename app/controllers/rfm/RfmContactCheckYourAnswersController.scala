@@ -19,7 +19,7 @@ import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -120,7 +120,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     })
       .recover {
-        case InternalIssueError =>
+        case InternalIssueError | UnexpectedResponse =>
           logger.warn("Replace filing member failed")
           Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
         case _: Exception =>

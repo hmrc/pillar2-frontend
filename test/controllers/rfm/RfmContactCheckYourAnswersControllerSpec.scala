@@ -21,7 +21,7 @@ import base.SpecBase
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
-import models.{InternalIssueError, UserAnswers, Verifier}
+import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
 import connectors.UserAnswersConnectors
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -393,6 +393,29 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             )
           ).thenReturn(Future.successful(amendData))
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual amendApiFailure
+        }
+      }
+      "redirect to amend api failure page if amend filing details fails" in {
+        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+            .thenReturn(allocateEnrolmentParameters)
+          when(
+            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+              any()
+            )
+          ).thenReturn(Future.successful(amendData))
+          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(UnexpectedResponse))
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual amendApiFailure
