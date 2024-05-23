@@ -16,7 +16,7 @@
 
 package services
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}

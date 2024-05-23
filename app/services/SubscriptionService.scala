@@ -16,7 +16,7 @@
 
 package services
 
-import akka.Done
+import org.apache.pekko.Done
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
