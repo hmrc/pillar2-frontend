@@ -57,6 +57,26 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       wText.text must include("Warning")
     }
 
+    "have account label" in {
+      val accountText = makePaymentDashboardView.getElementsByTag("dt")
+      accountText.get(0).text() must include("Sort code")
+      accountText.get(1).text() must include("Account number")
+      accountText.get(2).text() must include("Account name")
+      accountText.get(3).text() must include("Bank identifier code (BIC)")
+      accountText.get(4).text() must include("Account number (IBAN)")
+      accountText.get(5).text() must include("Account name")
+    }
+
+    "have account information" in {
+      val accountText = makePaymentDashboardView.getElementsByTag("dd")
+      accountText.get(0).text() must include("08 32 10")
+      accountText.get(1).text() must include("12001020")
+      accountText.get(2).text() must include("HMRC Shipley")
+      accountText.get(3).text() must include("BARCGB22")
+      accountText.get(4).text() must include("GB03BARC 20114783977692")
+      accountText.get(5).text() must include("HMRC Shipley")
+    }
+
     "have pillar 2 information" in {
       val element = makePaymentDashboardView.getElementsByTag("p")
       element.get(1).text() must include(
