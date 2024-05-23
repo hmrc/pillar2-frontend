@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import models.InternalIssueError
 import org.scalacheck.Gen

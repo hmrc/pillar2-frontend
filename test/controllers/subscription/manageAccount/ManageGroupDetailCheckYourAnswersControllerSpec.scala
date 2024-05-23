@@ -16,7 +16,7 @@
 
 package controllers.subscription.manageAccount
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
