@@ -394,9 +394,12 @@ POST        /replace-filing-member/contact-details/address/change-input         
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad
 
-
-
 GET         /repayment/before-you-start                                                              controllers.payment.RequestRefundBeforeStartController.onPageLoad
+
+GET          /repayment/amount                                                                       controllers.payment.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
+POST         /repayment/amount                                                                       controllers.payment.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
+GET          /repayment/change-amount                                                                controllers.payment.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
+POST         /repayment/change-amount                                                                controllers.payment.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
 
 
 

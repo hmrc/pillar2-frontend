@@ -16,38 +16,41 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
-
+@import views.html.components.gds._
 @this(
     layout: templates.Layout,
     govukButton: GovukButton,
     govukWarningText: GovukWarningText,
     govukInsetText : GovukInsetText,
     govukTable : GovukTable,
-    govukDetails : GovukDetails
+    govukDetails : GovukDetails,
+    h2: HeadingH2,
+    p: paragraphBody,
+    heading: heading,
+    bulletList: bulletList,
 )
 
 @(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 
-@howItWorksInformation= {
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content1")</p>
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content2")</p>
-<p class="govuk-body" >@messages("payment.dashboard.timeline-content3")</p>
-}
-
-
-
-
 @layout(
-    pageTitle    = titleNoForm(messages("payment.dashboard.title")),
+    pageTitle    = titleNoForm(messages("payment.requestRefundBeforeStart.title")),
     showBackLink = true
 ) {
+    @heading(messages("payment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
+    @h2(messages("payment.requestRefundBeforeStart.header2"), size = "m")
+    @p(messages("payment.requestRefundBeforeStart.p1"))
+    @h2(messages("payment.requestRefundBeforeStart.header2"), size = "m")
+    @p(messages("payment.requestRefundBeforeStart.p2"))
+    @h2(messages("payment.requestRefundBeforeStart.header3"), size = "m")
+    @bulletList(items = List(
+        Html(messages("payment.requestRefundBeforeStart.li1")),
+        Html(messages("payment.requestRefundBeforeStart.li2")),
+        Html(messages("payment.requestRefundBeforeStart.li3")),
+        Html(messages("payment.requestRefundBeforeStart.li4"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
-        <h1 class="govuk-heading-l">@messages("payment.dashboard.header")</h1>
-        @govukInsetText(InsetText(content = Text(messages("payment.dashboard.insetText"))))
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message1")</p>
-        <h2 class="govuk-heading-m">@messages("payment.dashboard.header2")</h2>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message2")</p>
-        <p class="govuk-body govuk-!-margin-bottom-5" >@messages("payment.dashboard.message3")</p>
-
+    @govukButton(
+        ButtonViewModel(messages("payment.requestRefundBeforeStart.header")).asLink(controllers.payment.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+    )
 }

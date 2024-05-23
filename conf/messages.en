@@ -199,6 +199,18 @@ payment.dashboard.table2.row_32= HMRC Shipley
 payment.dashboard.table2.row_31= Account name
 payment.dashboard.table2.caption= HMRC’s overseas bank details
 
+payment.requestRefundBeforeStart.title = Request a refund
+payment.requestRefundBeforeStart.header = Request a refund
+payment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you think you paid too much Pillar 2 top-up tax.
+payment.requestRefundBeforeStart.header2 = Deadline for refund request
+payment.requestRefundBeforeStart.p2 = The submission deadline for a refund request is 4 years after the end date of the accounting period in respect of which the payment was made.
+payment.requestRefundBeforeStart.header3 = Before you start
+payment.requestRefundBeforeStart.p3 = You will need the following details:
+payment.requestRefundBeforeStart.li1 = refund amount
+payment.requestRefundBeforeStart.li2 = reason for your refund request
+payment.requestRefundBeforeStart.li3 = bank account details
+payment.requestRefundBeforeStart.li4 = contact details for someone we can contact about this request
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
