@@ -20,7 +20,7 @@ import akka.Done
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
-import models.UnexpectedResponse
+import models.InternalIssueError
 import models.subscription._
 import org.scalacheck.Gen
 import play.api.Application
@@ -165,7 +165,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         val json = Json.parse(successfulAmendObject).as[AmendSubscription]
         stubResponseForPutRequest(s"$amendSubscription/$id", errorCodes.sample.value, None)
         val result = connector.amendSubscription(id, json)
-        result.failed.futureValue mustEqual UnexpectedResponse
+        result.failed.futureValue mustEqual InternalIssueError
       }
     }
   }

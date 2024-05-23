@@ -118,7 +118,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .flatMap { response =>
         response.status match {
           case OK => Done.toFuture
-          case _  => Future.failed(UnexpectedResponse)
+          case _  => Future.failed(InternalIssueError)
         }
       }
 }
