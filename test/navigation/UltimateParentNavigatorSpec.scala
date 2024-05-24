@@ -97,7 +97,18 @@ class UltimateParentNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe upeCYA
       }
-
+      "go to entity type page if they are a uk based entity" in {
+        navigator.nextPage(UpeRegisteredInUKPage, CheckMode, emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true)) mustBe
+          controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)
+      }
+      "go to name registration page if they are a non-uk entity" in {
+        navigator.nextPage(UpeRegisteredInUKPage, CheckMode, emptyUserAnswers.setOrException(UpeRegisteredInUKPage, false)) mustBe
+          controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
+      }
+      "go to journey recovery if no answer for UpeRegisteredInUK page can be found" in {
+        navigator.nextPage(UpeRegisteredInUKPage, CheckMode, emptyUserAnswers) mustBe
+          jr
+      }
       "go to UPE CYA page from name registration page" in {
         navigator.nextPage(UpeNameRegistrationPage, CheckMode, emptyUserAnswers.setOrException(UpeNameRegistrationPage, "s")) mustBe
           upeCYA
