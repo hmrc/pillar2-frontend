@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-object Validation {
-  final val NAME_REGEX = "^[A-Za-z0-9 ,.()/&'-]*$"
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX   = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
-  final val BIC_SWIFT_REGEX = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
-  final val IBAN_REGEX      = "^GB[0-9]{2}[A-Z]{4}[0-9]{14}$"
+import models.repayments.NonUKBank
+import play.api.libs.json.JsPath
 
+case object NonUKBankPage extends QuestionPage[NonUKBank] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "nonUKBank"
 }

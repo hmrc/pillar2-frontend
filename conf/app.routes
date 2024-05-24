@@ -457,3 +457,8 @@ GET         /asa/error/not-authorised                                           
 
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 
+GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
+
+GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
