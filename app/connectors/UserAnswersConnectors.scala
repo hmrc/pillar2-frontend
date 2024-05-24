@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.Done
+import org.apache.pekko.Done
 import models.{InternalIssueError, UserAnswers}
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue}

@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.Done
+import org.apache.pekko.Done
 import config.FrontendAppConfig
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}

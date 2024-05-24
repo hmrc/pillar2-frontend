@@ -16,7 +16,7 @@
 
 package controllers
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
