@@ -17,12 +17,12 @@
 package controllers.payment
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.{SubscriptionConnector}
 import controllers.actions._
 import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
-import pages.RfmPrimaryContactNamePage
+import pages.{PaymentRefundAmountPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -34,10 +34,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
+  val subscriptionConnector: SubscriptionConnector,
   rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
+  getData:                   SubscriptionDataRetrievalAction,
+  requireData:               SubscriptionDataRequiredAction,
   formProvider:              RfmPrimaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RfmPrimaryContactNameView,
@@ -49,9 +49,9 @@ class RequestRefundAmountController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
+    val refundEnabled = appConfig.requestRefundEnabled
+    if (refundEnabled) {
+      val preparedForm = request.subscriptionLocalData.get(PaymentRefundAmountPage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -69,10 +69,10 @@ class RequestRefundAmountController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future
-                .fromTry(request.userAnswers.set(RfmPrimaryContactNamePage, value))
-            _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmPrimaryContactNamePage, mode, updatedAnswers))
+              Future.fromTry(request.subscriptionLocalData.set(PaymentRefundAmountPage, value))
+            _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+
+          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
 

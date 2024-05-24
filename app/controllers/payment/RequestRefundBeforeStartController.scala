@@ -17,38 +17,29 @@
 package controllers.payment
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.PlrReferencePage
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
-import views.html.MakeAPaymentDashboardView
 import views.html.payment.RequestRefundBeforeStartView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
-
 class RequestRefundBeforeStartController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundBeforeStartView,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  sessionRepository:        SessionRepository
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Pillar2Reference
-      .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-      .orElse(request.userAnswers.get(PlrReferencePage))
-      .map { pillar2Id =>
-        Ok(view(pillar2Id))
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+    val refundEnabled = appConfig.requestRefundEnabled
+    if (refundEnabled) {
+      Ok(view())
+    } else {
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 }
