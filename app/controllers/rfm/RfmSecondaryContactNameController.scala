@@ -23,6 +23,7 @@ import forms.RfmSecondaryContactNameFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,7 +47,7 @@ class RfmSecondaryContactNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled

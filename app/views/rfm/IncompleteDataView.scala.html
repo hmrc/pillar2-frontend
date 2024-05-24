@@ -15,14 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
-@import views.html.components.gds.ParagraphMessageWithLink
+@import views.html.components.gds.{ParagraphMessageWithLink, heading}
 
 @this(
         layout: templates.Layout,
         heading: heading,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        link: link
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)

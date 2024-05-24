@@ -15,14 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
+@import views.html.components.gds.{heading, ParagraphMessageWithLink}
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         heading: heading,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        link: link
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
