@@ -19,8 +19,8 @@ import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
-import models.InternalIssueError
 import models.requests.DataRequest
+import models.{InternalIssueError, UnexpectedResponse}
 import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -116,13 +116,13 @@ class RfmContactCheckYourAnswersController @Inject() (
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     })
       .recover {
-        case InternalIssueError =>
+        case InternalIssueError | UnexpectedResponse =>
           logger.warn("Replace filing member failed")
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
         case _: Exception =>
           logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 
 }

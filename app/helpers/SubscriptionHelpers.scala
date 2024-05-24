@@ -221,7 +221,7 @@ trait SubscriptionHelpers {
     get(NominateFilingMemberPage).flatMap(nominated =>
       if (nominated) {
         get(FmRegisteredInUKPage).flatMap { ukBased =>
-          if (ukBased) get(FmSafeIDPage) else None
+          if (ukBased) get(FmSafeIDPage) else get(FmNonUKSafeIDPage)
         }
       } else {
         None
@@ -230,7 +230,7 @@ trait SubscriptionHelpers {
 
   def getUpeSafeID: Option[String] =
     get(UpeRegisteredInUKPage).flatMap { ukBased =>
-      if (ukBased) get(UpeRegInformationPage).map(regInfo => regInfo.safeId) else None
+      if (ukBased) get(UpeRegInformationPage).map(regInfo => regInfo.safeId) else get(UpeNonUKSafeIDPage)
     }
 
   def createEnrolmentInfo(plpID: String): EnrolmentInfo =

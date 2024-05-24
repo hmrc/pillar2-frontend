@@ -244,7 +244,7 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswer.getFmSafeID mustBe Some("12323212")
       }
 
-      "return none if fm is non-uk based" in {
+      "return none if fm is non-uk based and safe id is not set" in {
         val userAnswer = emptyUserAnswers
           .set(NominateFilingMemberPage, true)
           .success
@@ -253,6 +253,20 @@ class SubscriptionHelpersSpec extends SpecBase {
           .success
           .value
         userAnswer.getFmSafeID mustBe None
+      }
+
+      "return id if fm is non-uk based and safe id is set" in {
+        val userAnswer = emptyUserAnswers
+          .set(NominateFilingMemberPage, true)
+          .success
+          .value
+          .set(FmRegisteredInUKPage, false)
+          .success
+          .value
+          .set(FmNonUKSafeIDPage, "12323212")
+          .success
+          .value
+        userAnswer.getFmSafeID mustBe Some("12323212")
       }
 
       "return none if no filing member is nominated" in {
@@ -273,10 +287,22 @@ class SubscriptionHelpersSpec extends SpecBase {
         userAnswer.getUpeSafeID mustBe Some("567")
       }
 
-      "return none if upe is non-uk based" in {
+      "return none if upe is non-uk based and safe id is not set" in {
         val userAnswer = emptyUserAnswers.set(UpeRegisteredInUKPage, false).success.value
 
         userAnswer.getUpeSafeID mustBe None
+      }
+
+      "return id if upe is non-uk based and safe id is set" in {
+        val userAnswer = emptyUserAnswers
+          .set(UpeRegisteredInUKPage, false)
+          .success
+          .value
+          .set(UpeNonUKSafeIDPage, "12323212")
+          .success
+          .value
+
+        userAnswer.getUpeSafeID mustBe Some("12323212")
       }
     }
 

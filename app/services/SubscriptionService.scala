@@ -16,13 +16,13 @@
 
 package services
 
-import akka.Done
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
+import org.apache.pekko.Done
 import pages._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,12 +42,14 @@ class SubscriptionService @Inject() (
 
   def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     for {
-      upeSafeId       <- registerUpe(userAnswers)
-      fmnSafeId       <- registerNfm(userAnswers)
-      plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, fmnSafeId))
+      upeSafeId     <- registerUpe(userAnswers)
+      latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
+      updatedAnswers = latestAnswers.getOrElse(userAnswers)
+      nfmSafeId       <- registerNfm(updatedAnswers)
+      plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
       enrolmentExists <- enrolmentExists(plrRef)
       _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)
-      enrolmentInfo = userAnswers.createEnrolmentInfo(plrRef)
+      enrolmentInfo = updatedAnswers.createEnrolmentInfo(plrRef)
       _ <- enrolmentConnector.enrolAndActivate(enrolmentInfo)
     } yield plrRef
 
@@ -85,14 +87,24 @@ class SubscriptionService @Inject() (
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
-      .getOrElse(registrationConnector.registerUltimateParent(userAnswers.id))
+      .getOrElse {
+        for {
+          safeId         <- registrationConnector.registerUltimateParent(userAnswers.id)
+          updatedAnswers <- Future.fromTry(userAnswers.set(UpeNonUKSafeIDPage, safeId))
+          _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        } yield safeId
+      }
 
   private def registerNfm(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[String]] =
     userAnswers.getFmSafeID
       .map(safeId => Future.successful(Some(safeId)))
       .getOrElse {
         if (userAnswers.get(NominateFilingMemberPage).contains(true)) {
-          registrationConnector.registerFilingMember(userAnswers.id).map(Some(_))
+          for {
+            safeId         <- registrationConnector.registerFilingMember(userAnswers.id)
+            updatedAnswers <- Future.fromTry(userAnswers.set(FmNonUKSafeIDPage, safeId))
+            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield Some(safeId)
         } else {
           Future.successful(None)
         }

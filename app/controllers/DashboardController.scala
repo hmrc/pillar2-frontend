@@ -58,8 +58,8 @@ class DashboardController @Inject() (
       (for {
         userAnswers <-
           if (agentView) OptionT.fromOption[Future](Option(request.userAnswers)) else OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- if (agentView) OptionT.fromOption[Future](clientPillar2Id)
-                           else OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments))
+        referenceNumber <- if (agentView) { OptionT.fromOption[Future](clientPillar2Id) }
+                           else { OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)) }
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(
@@ -81,8 +81,8 @@ class DashboardController @Inject() (
   private def identifierAction(agentView: Boolean, clientPillar2Id: Option[String]): ActionBuilder[IdentifierRequest, AnyContent] =
     clientPillar2Id
       .map { id =>
-        if (agentView) featureAction.asaAccessAction andThen agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id))
-        else identify
+        if (agentView) { featureAction.asaAccessAction andThen agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id)) }
+        else { identify }
       }
       .getOrElse(identify)
 }

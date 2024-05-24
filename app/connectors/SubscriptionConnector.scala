@@ -16,11 +16,11 @@
 
 package connectors
 
-import akka.Done
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
+import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
@@ -46,7 +46,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           response.json.as[SuccessResponse].success.plrReference.toFuture
         case conflictResponse if conflictResponse.status.equals(CONFLICT) => Future.failed(DuplicateSubmissionError)
         case errorResponse =>
+          logger.debug(
+            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
+              s"and fmSafeId ${subscriptionRequestParameters.fmSafeId}"
+          )
+
           logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
+
           Future.failed(InternalIssueError)
       }
 
