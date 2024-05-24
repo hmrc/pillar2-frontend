@@ -23,7 +23,7 @@ import views.html.rfm.JourneyRecoveryView
 
 class RfmJourneyRecoveryControllerSpec extends SpecBase {
 
-  "AmendApiFailure Controller" when {
+  "Rfm Journey Recovery Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
