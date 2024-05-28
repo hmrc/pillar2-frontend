@@ -89,6 +89,9 @@ class RfmConfirmationControllerSpec extends SpecBase {
         contentAsString(result) must include(
           "You can now"
         )
+        contentAsString(result) must include(
+          currentDate.toString()
+        )
 
       }
     }
