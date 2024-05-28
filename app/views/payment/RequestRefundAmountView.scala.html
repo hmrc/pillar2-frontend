@@ -30,22 +30,19 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.rfmPrimaryContactName.title"))) {
+@layout(pageTitle = title(form, messages("payment.requestRefundAmount.title"))) {
 
-@formHelper(action = controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(mode)) {
+@formHelper(action = controllers.payment.routes.RequestRefundAmountController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("rfm.rfmPrimaryContactName.caption"))
-
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeading(Large)
-            )
-            .withHint(Hint(content = Text(messages("rfm.rfmPrimaryContactName.hint"))))
+                label = LabelViewModel(messages("payment.requestRefundAmount.header")).asPageHeading(Large)
+            ).withPrefix(PrefixOrSuffix(content = Text("£")))
             .withWidth(TwoThirds)
         )
 

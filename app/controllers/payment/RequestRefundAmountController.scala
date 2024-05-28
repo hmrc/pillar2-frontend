@@ -17,38 +17,36 @@
 package controllers.payment
 
 import config.FrontendAppConfig
-import connectors.{SubscriptionConnector}
+import connectors.SubscriptionConnector
 import controllers.actions._
-import forms.RfmPrimaryContactNameFormProvider
+import forms.{RequestRefundAmountFormProvider}
 import models.{Mode, NormalMode}
-import navigation.ReplaceFilingMemberNavigator
-import pages.{PaymentRefundAmountPage}
+import pages.PaymentRefundAmountPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmPrimaryContactNameView
+import views.html.payment.RequestRefundAmountView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  rfmIdentify:               RfmIdentifierAction,
+  identify:                  IdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
-  formProvider:              RfmPrimaryContactNameFormProvider,
+  formProvider:              RequestRefundAmountFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryContactNameView,
-  navigator:                 ReplaceFilingMemberNavigator
+  view:                      RequestRefundAmountView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
       val preparedForm = request.subscriptionLocalData.get(PaymentRefundAmountPage) match {
@@ -61,7 +59,7 @@ class RequestRefundAmountController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

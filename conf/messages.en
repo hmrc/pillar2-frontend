@@ -211,6 +211,12 @@ payment.requestRefundBeforeStart.li2 = reason for your refund request
 payment.requestRefundBeforeStart.li3 = bank account details
 payment.requestRefundBeforeStart.li4 = contact details for someone we can contact about this request
 
+payment.requestRefundAmount.title = Enter your requested refund amount in pounds
+payment.requestRefundAmount.header = Enter your requested refund amount in pounds
+payment.requestRefundAmount.error.required = Enter your requested refund amount in pounds
+payment.requestRefundAmount.error.length = Refund amount must be 160 characters or less
+payment.requestRefundAmount.messages.error.format =  Refund amount must only use numbers 0-9, commas and full stops
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
