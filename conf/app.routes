@@ -457,3 +457,5 @@ GET         /asa/error/not-authorised                                           
 
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 
+
+GET        /replace-filing-member/review-submit/confirmation                                     controllers.rfm.RfmConfirmationController.onPageLoad
