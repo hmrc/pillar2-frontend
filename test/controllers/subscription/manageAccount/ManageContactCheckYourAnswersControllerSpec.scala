@@ -18,6 +18,7 @@ package controllers.subscription.manageAccount
 
 import org.apache.pekko.Done
 import base.SpecBase
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
@@ -26,6 +27,7 @@ import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
@@ -108,8 +110,39 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "Contact details"
+        )
+        contentAsString(result) must include(
+          "Second contact"
+        )
+        contentAsString(result) must include(
+          "Contact address"
+        )
+      }
+    }
+
+    "return OK and correct view if an Agent" in {
+      val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
+            .onPageLoad(clientPillar2Id = Some("XMPLR0012345678"))
+            .url
+        )
+        val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include(
           "Contact details"
@@ -126,7 +159,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     "redirect to bookmark page if address page not answered" in {
       val application = applicationBuilder(subscriptionLocalData = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -134,6 +167,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
+
     "onSubmit" should {
       "trigger amend subscription API if all data is available for contact detail" in {
 
@@ -144,7 +178,30 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
             .thenReturn(Future.successful(Done))
 
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
+        }
+      }
+
+      "trigger amend subscription API for Agent if all data is available for contact detail" in {
+
+        val application = applicationBuilder(subscriptionLocalData = Some(amendSubscription), enrolments = enrolments)
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .build()
+
+        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+        running(application) {
+          when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+            .thenReturn(Future.successful(Done))
+
+          when(mockAgentIdentifierAction.agentIdentify(any()))
+            .thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
@@ -158,11 +215,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(UnexpectedResponse))
 
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
 
       "redirect to the journey recovery if no pillar2 reference is found" in {
@@ -170,7 +227,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustBe SEE_OTHER

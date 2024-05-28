@@ -29,7 +29,8 @@
         showBackLink = false,
         showSignOut = false,
         timeout = false,
-        authorised = false
+        authorised = false,
+        bannerUrl = Some("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
     ) {
         @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
 

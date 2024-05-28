@@ -36,6 +36,7 @@ import utils.Pillar2SessionKeys
 
 import scala.concurrent.{ExecutionContext, Future}
 
+//noinspection ScalaStyle
 class AgentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,

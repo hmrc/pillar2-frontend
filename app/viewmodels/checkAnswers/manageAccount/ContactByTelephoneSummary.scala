@@ -32,6 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryPhonePreferencePage
 import play.api.i18n.Messages
@@ -41,15 +42,18 @@ import viewmodels.implicits._
 
 object ContactByTelephoneSummary {
 
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    data.get(SubPrimaryPhonePreferencePage).map { answer =>
+  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    request.subscriptionLocalData.get(SubPrimaryPhonePreferencePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
         key = "contactByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad(maybeClientPillar2Id).url
+          )
             .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
         )
       )

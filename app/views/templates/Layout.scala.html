@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 @import play.twirl.api.Html
-@import services.GenUrlService
 @this(
     govukLayout: GovukLayout,
     govukBackLink: GovukBackLink,
@@ -32,12 +31,11 @@
     autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
     hmrcScripts: HmrcScripts,
     betaBanner: StandardBetaBanner,
-    stylesheets: Stylesheets,
-    serviceUrl:GenUrlService
+    stylesheets: Stylesheets
 )
 
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, plrReference: String="")(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 
 @scripts = {
@@ -96,7 +94,7 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = serviceUrl.generateUrl(request.uri, authorised, plrReference),
+        serviceUrl  = bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner(maybeClientPillar2Id).url)),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),

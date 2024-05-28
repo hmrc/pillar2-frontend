@@ -32,7 +32,7 @@ class ViewAmendSubscriptionFailedController @Inject() (val controllerComponents:
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view())
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] = Action { implicit request =>
+    Ok(view(clientPillar2Id))
   }
 }

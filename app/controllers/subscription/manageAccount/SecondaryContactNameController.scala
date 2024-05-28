@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondaryContactNameController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -47,25 +48,27 @@ class SecondaryContactNameController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
-      case Some(v) => form.fill(v)
-      case None    => form
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+      val preparedForm = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
+      }
+      Ok(view(preparedForm, clientPillar2Id))
     }
-    Ok(view(preparedForm, mode))
-  }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryContactNamePage, value))
-            _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-          } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryContactNamePage, value))
+              _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+            } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, clientPillar2Id, updatedAnswers))
+        )
+    }
 
 }
