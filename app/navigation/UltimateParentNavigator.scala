@@ -45,7 +45,7 @@ class UltimateParentNavigator @Inject() {
     case _                        => _ => routes.IndexController.onPageLoad
   }
 
-  private def domesticOrNotRoute(userAnswers: UserAnswers): Call =
+  private def domesticOrNotRoute(userAnswers: UserAnswers) =
     userAnswers
       .get(UpeRegisteredInUKPage)
       .map { ukBased =>
@@ -70,6 +70,7 @@ class UltimateParentNavigator @Inject() {
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case UpeRegisteredInUKPage  => domesticOrNotRoute
     case UpePhonePreferencePage => telephoneCheckRouteLogic
     case _                      => whichCheckYourAnswerPageContact
   }
