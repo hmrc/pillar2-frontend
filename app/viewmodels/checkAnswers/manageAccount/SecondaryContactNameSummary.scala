@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubSecondaryContactNamePage
 import play.api.i18n.Messages
@@ -26,13 +27,16 @@ import viewmodels.implicits._
 
 object SecondaryContactNameSummary {
 
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    data.get(SubSecondaryContactNamePage).map { answer =>
+  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    request.subscriptionLocalData.get(SubSecondaryContactNamePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactName.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(maybeClientPillar2Id).url
+          )
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )
       )

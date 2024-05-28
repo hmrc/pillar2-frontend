@@ -17,9 +17,14 @@
 package helpers
 
 import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
-import models.subscription.{AccountStatus, AccountingPeriod, AccountingPeriodAmend, AmendSubscription, ContactDetailsType, FilingMemberAmendDetails, NewFilingMemberDetail, SubscriptionData, SubscriptionLocalData, UpeCorrespAddressDetails, UpeDetails, UpeDetailsAmend}
+import models.subscription._
 import models.{MneOrDomestic, NonUKAddress, Verifier}
+import play.api.i18n.Messages
+import utils.countryOptions.CountryOptions
+import viewmodels.checkAnswers.manageAccount._
+import viewmodels.govuk.summarylist.SummaryListViewModel
 
 import java.time.LocalDate
 
@@ -36,6 +41,8 @@ trait SubscriptionLocalDataFixture {
     organisationName = "Company"
   )
 
+  lazy val currentDate: LocalDate = LocalDate.now()
+
   val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -50,15 +57,30 @@ trait SubscriptionLocalDataFixture {
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
   )
-  lazy val currentDate: LocalDate = LocalDate.now()
-  val subscriptionData: SubscriptionData = SubscriptionData(
+
+  val someSubscriptionLocalData = SubscriptionLocalData(
+    subMneOrDomestic = MneOrDomestic.Uk,
+    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+  )
+
+  val subscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(currentDate, currentDate),
+    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
     accountStatus = Some(AccountStatus(false))
   )
 
@@ -69,7 +91,7 @@ trait SubscriptionLocalDataFixture {
 
   val amendData: AmendSubscription = AmendSubscription(
     upeDetails = upeDetailsAmend,
-    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate),
+    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate.plusYears(1)),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = Some(contactDetails),
@@ -83,5 +105,46 @@ trait SubscriptionLocalDataFixture {
     phoneNumber = Some("dota2"),
     address = NonUKAddress("middle", None, "lane", None, None, "obv"),
     secondaryContactInformation = Some(contactDetails)
+  )
+
+  def subscriptionDataGroupSummaryList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
+    rows = Seq(
+      MneOrDomesticSummary.row(maybeClientPillar2Id),
+      GroupAccountingPeriodSummary.row(maybeClientPillar2Id),
+      GroupAccountingPeriodStartDateSummary.row(),
+      GroupAccountingPeriodEndDateSummary.row()
+    ).flatten
+  )
+
+  def subscriptionDataPrimaryContactList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
+    rows = Seq(
+      ContactNameComplianceSummary.row(maybeClientPillar2Id),
+      ContactEmailAddressSummary.row(maybeClientPillar2Id),
+      ContactByTelephoneSummary.row(maybeClientPillar2Id),
+      ContactCaptureTelephoneDetailsSummary.row(maybeClientPillar2Id)
+    ).flatten
+  )
+
+  def subscriptionDataSecondaryContactList(
+    maybeClientPillar2Id: Option[String] = None
+  )(implicit messages:    Messages, request: SubscriptionDataRequest[_]) = SummaryListViewModel(
+    rows = Seq(
+      AddSecondaryContactSummary.row(maybeClientPillar2Id),
+      SecondaryContactNameSummary.row(maybeClientPillar2Id),
+      SecondaryContactEmailSummary.row(maybeClientPillar2Id),
+      SecondaryTelephonePreferenceSummary.row(maybeClientPillar2Id),
+      SecondaryTelephoneSummary.row(maybeClientPillar2Id)
+    ).flatten
+  )
+
+  def subscriptionDataAddress(countryOptions: CountryOptions, maybeClientPillar2Id: Option[String] = None)(implicit
+    messages:                                 Messages,
+    request:                                  SubscriptionDataRequest[_]
+  ) = SummaryListViewModel(
+    rows = Seq(ContactCorrespondenceAddressSummary.row(maybeClientPillar2Id, countryOptions)).flatten
   )
 }

@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondaryTelephoneController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -45,40 +46,42 @@ class SecondaryTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    (for {
-      contactName <- request.subscriptionLocalData.get(SubSecondaryContactNamePage)
-      _           <- request.subscriptionLocalData.get(SubSecondaryPhonePreferencePage)
-    } yield {
-      val form = formProvider(contactName)
-      val preparedForm = request.subscriptionLocalData.get(SubSecondaryCapturePhonePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode, contactName))
-
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.subscriptionLocalData
-      .get(SubSecondaryContactNamePage)
-      .map { contactName =>
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+      (for {
+        contactName <- request.subscriptionLocalData.get(SubSecondaryContactNamePage)
+        _           <- request.subscriptionLocalData.get(SubSecondaryPhonePreferencePage)
+      } yield {
         val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryCapturePhonePage, value))
-                _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-              } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, mode, updatedAnswers))
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
+        val preparedForm = request.subscriptionLocalData.get(SubSecondaryCapturePhonePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, clientPillar2Id, contactName))
+
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+    }
+
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      request.subscriptionLocalData
+        .get(SubSecondaryContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, contactName))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryCapturePhonePage, value))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubSecondaryCapturePhonePage, clientPillar2Id, updatedAnswers))
+            )
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }
 
 }

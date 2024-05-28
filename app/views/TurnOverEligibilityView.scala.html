@@ -30,7 +30,7 @@
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false, authorised = false) {
+@layout(pageTitle = title(form, messages("turnOverEligibility.title")), showSignOut = false, timeout = false, authorised = false, bannerUrl = Some("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")) {
 
 
     @formHelper(action = eligibility.routes.TurnOverEligibilityController.onSubmit, 'autoComplete -> "off") {

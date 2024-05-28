@@ -20,7 +20,7 @@ import cats.data.OptionT
 import com.google.inject.Inject
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
 import play.api.Logging
@@ -36,6 +36,7 @@ import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersVi
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
+  agentIdentifierAction:    AgentIdentifierAction,
   getData:                  SubscriptionDataRetrievalAction,
   requireData:              SubscriptionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
@@ -48,42 +49,46 @@ class ManageContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val primaryContactList = SummaryListViewModel(
-      rows = Seq(
-        ContactNameComplianceSummary.row(request.subscriptionLocalData),
-        ContactEmailAddressSummary.row(request.subscriptionLocalData),
-        ContactByTelephoneSummary.row(request.subscriptionLocalData),
-        ContactCaptureTelephoneDetailsSummary.row(request.subscriptionLocalData)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+      val primaryContactList = SummaryListViewModel(
+        rows = Seq(
+          ContactNameComplianceSummary.row(clientPillar2Id),
+          ContactEmailAddressSummary.row(clientPillar2Id),
+          ContactByTelephoneSummary.row(clientPillar2Id),
+          ContactCaptureTelephoneDetailsSummary.row(clientPillar2Id)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val secondaryContactList = SummaryListViewModel(
-      rows = Seq(
-        AddSecondaryContactSummary.row(request.subscriptionLocalData),
-        SecondaryContactNameSummary.row(request.subscriptionLocalData),
-        SecondaryContactEmailSummary.row(request.subscriptionLocalData),
-        SecondaryTelephonePreferenceSummary.row(request.subscriptionLocalData),
-        SecondaryTelephoneSummary.row(request.subscriptionLocalData)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val secondaryContactList = SummaryListViewModel(
+        rows = Seq(
+          AddSecondaryContactSummary.row(clientPillar2Id),
+          SecondaryContactNameSummary.row(clientPillar2Id),
+          SecondaryContactEmailSummary.row(clientPillar2Id),
+          SecondaryTelephonePreferenceSummary.row(clientPillar2Id),
+          SecondaryTelephoneSummary.row(clientPillar2Id)
+        ).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    val address = SummaryListViewModel(
-      rows = Seq(ContactCorrespondenceAddressSummary.row(request.subscriptionLocalData, countryOptions)).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      val address = SummaryListViewModel(
+        rows = Seq(ContactCorrespondenceAddressSummary.row(clientPillar2Id, countryOptions)).flatten
+      ).withCssClass("govuk-!-margin-bottom-9")
 
-    Ok(view(primaryContactList, secondaryContactList, address))
-  }
+      Ok(view(primaryContactList, secondaryContactList, address, clientPillar2Id))
+    }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    (for {
-      referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
-      _               <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-    } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
-      .recover { case UnexpectedResponse =>
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-      }
-      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-  }
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) async { implicit request =>
+      (for {
+        referenceNumber <- OptionT
+                             .fromOption[Future](clientPillar2Id)
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
+        _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+        .recover { case UnexpectedResponse =>
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+        }
+        .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+    }
 
 }
