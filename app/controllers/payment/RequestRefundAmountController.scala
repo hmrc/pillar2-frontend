@@ -17,15 +17,16 @@
 package controllers.payment
 
 import config.FrontendAppConfig
-import connectors.SubscriptionConnector
+import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.RequestRefundAmountFormProvider
-import models.{Mode, NormalMode}
-import pages.PaymentRefundAmountPage
+import models.{Mode, NormalMode, UserAnswers}
+import pages.{PaymentRefundAmountPage, PlrReferencePage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.payment.RequestRefundAmountView
 
@@ -33,29 +34,30 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
+  val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RequestRefundAmountFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      RequestRefundAmountView
+  view:                      RequestRefundAmountView,
+  sessionRepository:         SessionRepository
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
-      val preparedForm = request.userAnswers..get(PaymentRefundAmountPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
+      sessionRepository.get(request.userId).map { OptionalUserAnswers =>
+        val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(request.userId)).get(PaymentRefundAmountPage)
+        val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+        Ok(view(preparedForm, mode))
       }
-      Ok(view(preparedForm, mode))
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
@@ -66,10 +68,7 @@ class RequestRefundAmountController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <-
-              Future.fromTry(request.userAnswers.set(PaymentRefundAmountPage, value))
-            _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-
+            _ <- sessionRepository.set(UserAnswers(request.userAnswers.id).setOrException(PaymentRefundAmountPage, value))
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       )
   }
