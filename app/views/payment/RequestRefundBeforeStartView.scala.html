@@ -32,17 +32,16 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-
 @layout(
     pageTitle    = titleNoForm(messages("payment.requestRefundBeforeStart.title")),
     showBackLink = true
 ) {
     @heading(messages("payment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
-    @h2(messages("payment.requestRefundBeforeStart.header2"), size = "m")
     @p(messages("payment.requestRefundBeforeStart.p1"))
     @h2(messages("payment.requestRefundBeforeStart.header2"), size = "m")
     @p(messages("payment.requestRefundBeforeStart.p2"))
     @h2(messages("payment.requestRefundBeforeStart.header3"), size = "m")
+    @p(messages("payment.requestRefundBeforeStart.p3"))
     @bulletList(items = List(
         Html(messages("payment.requestRefundBeforeStart.li1")),
         Html(messages("payment.requestRefundBeforeStart.li2")),

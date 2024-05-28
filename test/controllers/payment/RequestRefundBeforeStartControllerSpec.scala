@@ -18,27 +18,18 @@ package controllers.payment
 
 import base.SpecBase
 import models.UserAnswers
-import models.rfm.RegistrationDate
-import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmSaveProgressInformView
-
-import java.time.LocalDate
+import views.html.payment.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartControllerSpec extends SpecBase {
 
   "Rfm Save Progress inform Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val plrReference = "XE1111123456789"
-      val date         = LocalDate.of(2024, 12, 31)
-      val testConfig   = Configuration("features.requestRefundEnabled" -> true)
+      val testConfig = Configuration("features.requestRefundEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
-        .set(RfmPillar2ReferencePage, plrReference)
-        .success
-        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()
@@ -47,11 +38,10 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.payment.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[RfmSaveProgressInformView]
+        val view   = application.injector.instanceOf[RequestRefundBeforeStartView]
 
         status(result) mustEqual OK
-        contentAsString(result) must include("Request a refund ")
+        contentAsString(result) must include("Request a refund")
         contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
@@ -72,9 +62,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.payment.routes.RequestRefundBeforeStartController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }

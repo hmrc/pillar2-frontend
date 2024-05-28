@@ -27,14 +27,12 @@ import javax.inject.Inject
 class RequestRefundBeforeStartController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RequestRefundBeforeStartView,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction
+  view:                     RequestRefundBeforeStartView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = identify { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
       Ok(view())
