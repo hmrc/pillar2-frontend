@@ -30,7 +30,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("KBMnIneligible.title")), showSignOut = false, timeout = false, authorised = false) {
+    pageTitle    = titleNoForm(messages("KBMnIneligible.title")), showSignOut = false, timeout = false, authorised = false, bannerUrl = Some("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")) {
         @heading(messages("KBMnIneligible.heading"), "govuk-heading-l")
 
         @paragraphBody(messages("KBMnIneligible.p1"))
