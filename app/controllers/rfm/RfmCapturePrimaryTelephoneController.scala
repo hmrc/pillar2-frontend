@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmCapturePrimaryTelephonePage, RfmContactByTelephonePage, RfmPrimaryContactNamePage}
+import pages.{RfmCapturePrimaryTelephonePage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,17 +49,14 @@ class RfmCapturePrimaryTelephoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      (for {
-        _           <- request.userAnswers.get(RfmContactByTelephonePage)
-        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
-      } yield {
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+      request.userAnswers
+        .get(RfmPrimaryContactNamePage)
+        .map { contactName =>
+          val form         = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage).map(form.fill).getOrElse(form)
+          Ok(view(preparedForm, mode, contactName))
         }
-        Ok(view(preparedForm, mode, contactName))
-      }).getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }

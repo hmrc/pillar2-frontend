@@ -98,20 +98,6 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to JourneyRecoveryController if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None)
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
-      }
-    }
-
     "must redirect to RFM Secondary Email page with updated valid data" in {
       val ua = emptyUserAnswers
         .setOrException(RfmSecondaryContactNamePage, "name")

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmSecondaryTelephoneFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
+import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -49,18 +49,13 @@ class RfmSecondaryTelephoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      (for {
-        contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
-        _           <- request.userAnswers.get(RfmSecondaryPhonePreferencePage)
-      } yield {
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RfmSecondaryCapturePhonePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
+      request.userAnswers
+        .get(RfmSecondaryContactNamePage)
+        .map { contactName =>
+          val form         = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RfmSecondaryCapturePhonePage).map(form.fill).getOrElse(form)
+          Ok(view(preparedForm, mode, contactName))
         }
-        Ok(view(preparedForm, mode, contactName))
-
-      })
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)

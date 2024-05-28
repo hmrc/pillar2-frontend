@@ -52,16 +52,8 @@ class RfmSecondaryContactNameController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      (for {
-        _ <- request.userAnswers.get(RfmAddSecondaryContactPage)
-        _ <- request.userAnswers.get(RfmPrimaryContactNamePage)
-      } yield {
-        val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode))
-      }).getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+      val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage).map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
