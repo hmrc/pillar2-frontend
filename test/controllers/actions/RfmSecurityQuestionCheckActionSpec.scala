@@ -33,7 +33,7 @@ import services.SubscriptionService
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class RfmCheckSecurityActionSpec extends SpecBase {
+class RfmSecurityQuestionCheckActionSpec extends SpecBase {
 
   class Harness(sessionRepository: SessionRepository, subscriptionService: SubscriptionService, appConfig: FrontendAppConfig)
       extends RfmSecurityQuestionCheckActionImpl(sessionRepository, subscriptionService, appConfig) {
@@ -48,7 +48,7 @@ class RfmCheckSecurityActionSpec extends SpecBase {
 
   "Rfm check security questions action" must {
     "redirect the user to the mismatch page" when {
-      "there are missing answers in session for the RFM security questions" in {
+      "there are missing answers in session for the RFM security questions in the session cache" in {
         val application = applicationBuilder().build()
 
         when(mockSessionRepository.get(any())) thenReturn Future.successful(None)
@@ -74,9 +74,67 @@ class RfmCheckSecurityActionSpec extends SpecBase {
       }
     }
 
-    "allow the user to continue with the journey" when {
-      "when both questions have been answered in the session" in {
+    "redirect the user to the mismatch page" when {
+      "when there is a mismatch between what is returned from read subscription and the session repository" in {
         val application = applicationBuilder(Some(sessionRepositoryUserAnswers)).build()
+
+        val testUserAnswers = sessionRepositoryUserAnswers
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.of(2024, 2, 28)))
+
+        when(mockSessionRepository.get(sessionRepositoryUserAnswers.id)) thenReturn Future.successful(Some(testUserAnswers))
+        when(mockSubscriptionService.readSubscription(any())(any())) thenReturn Future.successful(subscriptionData)
+
+        running(application) {
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val action    = new Harness(mockSessionRepository, mockSubscriptionService, appConfig)
+          val result: Future[Result] = action
+            .callFilter(
+              OptionalDataRequest(
+                FakeRequest(),
+                sessionRepositoryUserAnswers.id,
+                groupId = None,
+                Some(testUserAnswers)
+              )
+            )
+            .map(res => res.get)
+
+          status(result) mustBe 303
+          redirectLocation(result) mustBe Some(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url)
+        }
+      }
+    }
+
+    "allow the user to continue with the journey" when {
+      "when both questions have been answered in session and correspond with the answers stored" in {
+        val application = applicationBuilder(Some(sessionRepositoryUserAnswers)).build()
+        when(mockSessionRepository.get(sessionRepositoryUserAnswers.id)) thenReturn Future.successful(Some(sessionRepositoryUserAnswers))
+        when(mockSubscriptionService.readSubscription(any())(any())) thenReturn Future.successful(subscriptionData)
+
+        running(application) {
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val action    = new Harness(mockSessionRepository, mockSubscriptionService, appConfig)
+          val result: Future[Option[Result]] = action.callFilter(
+            OptionalDataRequest(
+              FakeRequest(),
+              sessionRepositoryUserAnswers.id,
+              groupId = None,
+              Some(sessionRepositoryUserAnswers)
+            )
+          )
+
+          result.futureValue mustBe None
+        }
+      }
+    }
+    "allow the user to continue with the journey" when {
+      "when the rfm feature flag is set to false" in {
+        val application = applicationBuilder(Some(sessionRepositoryUserAnswers))
+          .configure(
+            Seq(
+              "features.rfmAccessEnabled" -> false
+            ): _*
+          )
+          .build()
         when(mockSessionRepository.get(sessionRepositoryUserAnswers.id)) thenReturn Future.successful(Some(sessionRepositoryUserAnswers))
         when(mockSubscriptionService.readSubscription(any())(any())) thenReturn Future.successful(subscriptionData)
 
