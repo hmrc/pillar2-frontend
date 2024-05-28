@@ -19,7 +19,7 @@ package controllers.payment
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
-import forms.{RequestRefundAmountFormProvider}
+import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import pages.PaymentRefundAmountPage
 import play.api.i18n.I18nSupport
@@ -35,8 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class RequestRefundAmountController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
   formProvider:              RequestRefundAmountFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RequestRefundAmountView
@@ -49,7 +49,7 @@ class RequestRefundAmountController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
-      val preparedForm = request.subscriptionLocalData.get(PaymentRefundAmountPage) match {
+      val preparedForm = request.userAnswers..get(PaymentRefundAmountPage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -67,7 +67,7 @@ class RequestRefundAmountController @Inject() (
         value =>
           for {
             updatedAnswers <-
-              Future.fromTry(request.subscriptionLocalData.set(PaymentRefundAmountPage, value))
+              Future.fromTry(request.userAnswers.set(PaymentRefundAmountPage, value))
             _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
 
           } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)

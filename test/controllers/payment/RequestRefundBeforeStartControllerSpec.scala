@@ -39,28 +39,19 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         .set(RfmPillar2ReferencePage, plrReference)
         .success
         .value
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .configure(testConfig)
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.payment.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RfmSaveProgressInformView]
 
         status(result) mustEqual OK
-        contentAsString(result) must include("Replace filing member")
-        contentAsString(result) must include("Saving progress")
-        contentAsString(result) must include(
-          "From this point, the information you enter will be saved as you progress." +
-            " If you sign out, the information you have already entered will be saved for 28 days." +
-            " After that time you will need to enter all of the information again."
-        )
+        contentAsString(result) must include("Request a refund ")
         contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
@@ -69,36 +60,18 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "Send to recovery page if directly hit this page and no answer provided to security related questions" in {
-      val date = LocalDate.of(2024, 12, 31)
-      val userAnswer = UserAnswers(userAnswersId)
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-
-      }
-    }
-
-    "must redirect to Under Construction page if RFM access is disabled" in {
+    "must redirect to Under Construction page if requestRefundEnabled is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
-            "features.rfmAccessEnabled" -> false
+            "features.requestRefundEnabled" -> false
           ): _*
         )
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.payment.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         val result = route(application, request).value
 

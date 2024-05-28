@@ -36,7 +36,7 @@ case class SubscriptionLocalData(
   subSecondaryCapturePhone:    Option[String],
   subSecondaryPhonePreference: Option[Boolean],
   subRegisteredAddress:        NonUKAddress,
-  paymentRefundAmount:         Option[String]
+  paymentRefundAmount:         Option[BigDecimal]
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)
