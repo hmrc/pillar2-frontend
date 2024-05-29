@@ -25,7 +25,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
-
 import javax.inject.Inject
 
 class MakeAPaymentDashboardController @Inject() (
