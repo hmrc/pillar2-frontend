@@ -17,16 +17,17 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.NonUKBankFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
+import models.repayments.NonUKBank
 import pages.NonUKBankPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.NonUKBankView
 
@@ -34,38 +35,53 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NonUKBankController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              NonUKBankFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      NonUKBankView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             NonUKBankFormProvider,
+  sessionRepository:        SessionRepository,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     NonUKBankView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NonUKBank] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NonUKBankPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+    val refundEnabled = appConfig.requestRefundEnabled
+    if (refundEnabled) {
+      hc.sessionId
+        .map(_.value)
+        .map { sessionID =>
+          sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+            val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(NonUKBankPage)
+            val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+            Ok(view(preparedForm, mode))
+          }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    } else {
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
-
-    Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
-      )
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(NonUKBankPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 }

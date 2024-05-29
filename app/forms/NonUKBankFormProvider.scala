@@ -17,11 +17,11 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import mapping.Constants
 import models.repayments.NonUKBank
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.mapping
 
 class NonUKBankFormProvider @Inject() extends Mappings {
 
@@ -29,24 +29,24 @@ class NonUKBankFormProvider @Inject() extends Mappings {
     mapping(
       "bankName" -> text("repayments.nonUKBank.error.bankName.required")
         .verifying(
-          maxLength(40, "repayments.nonUKBank.error.bankName.length")
+          maxLength(Constants.MAX_LENGTH_40, "repayments.nonUKBank.error.bankName.length")
         ),
       "nameOnBankAccount" -> text("repayments.nonUKBank.error.nameOnBankAccount.required")
         .verifying(
-          maxLength(60, "repayments.nonUKBank.error.nameOnBankAccount.length")
+          maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length")
         ),
       "bic" -> text("repayments.nonUKBank.error.bic.required")
         .verifying(
           firstError(
-            minLength(8, "repayments.nonUKBank.error.bic.length"),
-            maxLength(11, "repayments.nonUKBank.error.bic.length"),
+            minLength(Constants.MIN_LENGTH_8, "repayments.nonUKBank.error.bic.length"),
+            maxLength(Constants.MAX_LENGTH_11, "repayments.nonUKBank.error.bic.length"),
             regexp(Validation.BIC_SWIFT_REGEX, "repayments.nonUKBank.error.bic.format")
           )
         ),
       "iban" -> text("repayments.nonUKBank.error.iban.required")
         .verifying(
           firstError(
-            maxLength(34, "repayments.nonUKBank.error.iban.length"),
+            maxLength(Constants.MAX_LENGTH_34, "repayments.nonUKBank.error.iban.length"),
             regexp(Validation.IBAN_REGEX, "repayments.nonUKBank.error.iban.format")
           )
         )
