@@ -272,7 +272,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadOrganisationError.url)
       }
     }
 
@@ -293,7 +293,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedIndividualAffinityController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadIndividualError.url)
       }
     }
   }
