@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.payment
+package controllers.repayment
 
 import config.FrontendAppConfig
-import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions._
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode, UserAnswers}
-import pages.{PaymentRefundAmountPage, PlrReferencePage, SubMneOrDomesticPage}
+import pages.PaymentRefundAmountPage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,15 +32,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              RequestRefundAmountFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RequestRefundAmountView,
-  sessionRepository:         SessionRepository
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  formProvider:             RequestRefundAmountFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RequestRefundAmountView,
+  sessionRepository:        SessionRepository
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

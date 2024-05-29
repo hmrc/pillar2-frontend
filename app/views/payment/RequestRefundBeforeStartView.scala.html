@@ -33,23 +33,23 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("payment.requestRefundBeforeStart.title")),
+    pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
     showBackLink = true
 ) {
-    @heading(messages("payment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
-    @p(messages("payment.requestRefundBeforeStart.p1"))
-    @h2(messages("payment.requestRefundBeforeStart.header2"), size = "m")
-    @p(messages("payment.requestRefundBeforeStart.p2"))
-    @h2(messages("payment.requestRefundBeforeStart.header3"), size = "m")
-    @p(messages("payment.requestRefundBeforeStart.p3"))
+    @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
+    @p(messages("repayment.requestRefundBeforeStart.p1"))
+    @h2(messages("repayment.requestRefundBeforeStart.header2"), size = "m")
+    @p(messages("repayment.requestRefundBeforeStart.p2"))
+    @h2(messages("repayment.requestRefundBeforeStart.header3"), size = "m")
+    @p(messages("repayment.requestRefundBeforeStart.p3"))
     @bulletList(items = List(
-        Html(messages("payment.requestRefundBeforeStart.li1")),
-        Html(messages("payment.requestRefundBeforeStart.li2")),
-        Html(messages("payment.requestRefundBeforeStart.li3")),
-        Html(messages("payment.requestRefundBeforeStart.li4"))
+        Html(messages("repayment.requestRefundBeforeStart.li1")),
+        Html(messages("repayment.requestRefundBeforeStart.li2")),
+        Html(messages("repayment.requestRefundBeforeStart.li3")),
+        Html(messages("repayment.requestRefundBeforeStart.li4"))
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("payment.requestRefundBeforeStart.header")).asLink(controllers.payment.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayment.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
     )
 }

@@ -17,23 +17,15 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants
+import mapping.Constants._
 import play.api.data.Form
-
 import javax.inject.Inject
 
 class RequestRefundAmountFormProvider @Inject() extends Mappings {
-  // private val currencyRegex = """^[A-Z0-9 )/(\-*#+]*$"""
-  // /^(([1-9]{1,3}(,\d{3})*(\.\d{2})?)|(0\.[1-9]\d)|(0\.0[1-9]))$/
-  private val currencyRegex = """^(([1-9]{1,3}(,\d{3})*(\.\d{2})?)|(0\.[1-9]\d)|(0\.0[1-9]))$"""
-  val minValue              = -99999999999.99
-  val maxValue              = 99999999999.99
   def apply(): Form[BigDecimal] =
     Form(
-      "value" -> bigDecimal("payment.requestRefundAmount.error.required")
-        // .verifying(maxLength(Constants.MAX_LENGTH_160, "payment.requestRefundAmount.error.length"))
-        // .verifying(regexp(currencyRegex, "payment.requestRefundAmount.messages.error.format"))
-        .verifying(minimumValue[BigDecimal](minValue, "payment.requestRefundAmount.error.minVale"))
-        .verifying(maximumValue[BigDecimal](maxValue, "payment.requestRefundAmount.error.maxValue"))
+      "value" -> bigDecimal("repayment.requestRefundAmount.error.required", "repayment.requestRefundAmount.messages.error.format")
+        .verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRefundAmount.error.minVale"))
+        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRefundAmount.error.maxValue"))
     )
 }
