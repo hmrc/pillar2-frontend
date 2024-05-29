@@ -51,26 +51,40 @@ class RequestRefundAmountController @Inject() (
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
-      sessionRepository.get(request.userId).map { OptionalUserAnswers =>
-        val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(request.userId)).get(PaymentRefundAmountPage)
-        val preparedForm = userAnswer.map(form.fill).getOrElse(form)
-        Ok(view(preparedForm, mode))
-      }
+      hc.sessionId
+        .map(_.value)
+        .map { sessionID =>
+          sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+            val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(PaymentRefundAmountPage)
+            val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+            Ok(view(preparedForm, mode))
+          }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     } else {
       Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            _ <- sessionRepository.set(UserAnswers(request.userAnswers.id).setOrException(PaymentRefundAmountPage, value))
-          } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-      )
+    hc.sessionId
+      .map(_.value)
+      .map { sessionID =>
+        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswer.set(PaymentRefundAmountPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            )
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
 }
