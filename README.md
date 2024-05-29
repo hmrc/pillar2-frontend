@@ -38,10 +38,10 @@ To run the unit tests:
 
 To check code coverage:
 
-    sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport  
+    sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport   
 To run Integration tests:
 
-    sbt it:test
+    sbt it/test
 
 ### Eligibility question
 

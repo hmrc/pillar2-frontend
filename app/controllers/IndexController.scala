@@ -18,18 +18,28 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:   MessagesControllerComponents,
+  override val authConnector: AuthConnector,
+  identify:                   IdentifierAction
+)(implicit appConfig:         FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with AuthorisedFunctions
+    with Logging {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     if (request.enrolments.exists(_.key == appConfig.enrolmentKey)) {
@@ -39,5 +49,29 @@ class IndexController @Inject() (
     }
 
   }
+
+  def onPageLoadBanner(clientPillar2Id: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
+    authorised(AuthProviders(GovernmentGateway))
+      .retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
+        case Some(Organisation) ~ e if hasPillarEnrolment(e) =>
+          Future successful Redirect(routes.DashboardController.onPageLoad())
+        case Some(Organisation) ~ _ => Future successful Redirect(routes.TaskListController.onPageLoad)
+        case Some(Agent) ~ e if e.enrolments.exists(_.key == "HMRC-AS-AGENT") && clientPillar2Id.isDefined =>
+          Future successful Redirect(
+            routes.DashboardController.onPageLoad(clientPillar2Id, clientPillar2Id.isDefined)
+          )
+        case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
+        case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+      }
+      .recover {
+        case _: NoActiveSession =>
+          Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        case _: AuthorisationException =>
+          Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+      }
+  }
+
+  private def hasPillarEnrolment(e: Enrolments) =
+    e.enrolments.exists(_.key == appConfig.enrolmentKey)
 
 }

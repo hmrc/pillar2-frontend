@@ -106,7 +106,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
 
       }
     }
@@ -115,15 +115,16 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(None))
         when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-
-        val result = route(application, request).value
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -180,7 +181,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(Some("id")).url
       }
     }
 

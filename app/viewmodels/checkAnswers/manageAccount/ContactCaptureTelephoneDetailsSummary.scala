@@ -32,6 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryCapturePhonePage
 import play.api.i18n.Messages
@@ -43,9 +44,9 @@ import viewmodels.implicits._
 
 object ContactCaptureTelephoneDetailsSummary {
 
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    if (data.subPrimaryPhonePreference) {
-      data.get(SubPrimaryCapturePhonePage).map { answer =>
+  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    if (request.subscriptionLocalData.subPrimaryPhonePreference) {
+      request.subscriptionLocalData.get(SubPrimaryCapturePhonePage).map { answer =>
         val value = ValueViewModel(
           HtmlContent(
             HtmlFormat.escape(answer)
@@ -55,7 +56,10 @@ object ContactCaptureTelephoneDetailsSummary {
           key = "contactCaptureTelephoneDetails.checkYourAnswersLabel",
           value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+            ActionItemViewModel(
+              "site.change",
+              controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(maybeClientPillar2Id).url
+            )
               .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
           )
         )

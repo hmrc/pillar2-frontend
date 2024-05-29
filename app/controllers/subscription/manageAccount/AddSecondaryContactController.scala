@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddSecondaryContactController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   formProvider:              AddSecondaryContactFormProvider,
@@ -48,41 +49,43 @@ class AddSecondaryContactController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    (for {
-      subscriptionLocalData <- request.maybeSubscriptionLocalData
-      contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
-    } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, mode)))
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-  }
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+      (for {
+        subscriptionLocalData <- request.maybeSubscriptionLocalData
+        contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
+      } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, clientPillar2Id)))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.subscriptionLocalData
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-            {
-              case wantsToNominateSecondaryContact @ true =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
-                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers))
-              case wantsToNominateSecondaryContact @ false =>
-                for {
-                  updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
-                  updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubSecondaryContactNamePage))
-                  updatedAnswers2 <- Future.fromTry(updatedAnswers1.remove(SubSecondaryEmailPage))
-                  updatedAnswers3 <- Future.fromTry(updatedAnswers2.remove(SubSecondaryPhonePreferencePage))
-                  updatedAnswers4 <- Future.fromTry(updatedAnswers3.remove(SubSecondaryCapturePhonePage))
-                  _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers4))
-                } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, mode, updatedAnswers4))
-            }
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      request.subscriptionLocalData
+        .get(SubPrimaryContactNamePage)
+        .map { contactName =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, clientPillar2Id))),
+              {
+                case wantsToNominateSecondaryContact @ true =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                    _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                  } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, clientPillar2Id, updatedAnswers))
+                case wantsToNominateSecondaryContact @ false =>
+                  for {
+                    updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubSecondaryContactNamePage))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.remove(SubSecondaryEmailPage))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.remove(SubSecondaryPhonePreferencePage))
+                    updatedAnswers4 <- Future.fromTry(updatedAnswers3.remove(SubSecondaryCapturePhonePage))
+                    _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers4))
+                  } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, clientPillar2Id, updatedAnswers4))
+              }
+            )
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }
 
 }

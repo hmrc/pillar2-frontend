@@ -17,7 +17,8 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.subscription.manageAccount.identifierAction
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,6 +29,7 @@ import javax.inject.Inject
 
 class MakeAPaymentDashboardController @Inject() (
   identify:                 IdentifierAction,
+  agentIdentifierAction:    AgentIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     MakeAPaymentDashboardView,
   getData:                  DataRetrievalAction,
@@ -36,14 +38,18 @@ class MakeAPaymentDashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Pillar2Reference
-      .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-      .orElse(request.userAnswers.get(PlrReferencePage))
-      .map { pillar2Id =>
-        Ok(view(pillar2Id))
-      }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+      clientPillar2Id
+        .orElse(
+          Pillar2Reference
+            .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+        )
+        .orElse(request.userAnswers.get(PlrReferencePage))
+        .map { pillar2Id =>
+          Ok(view(pillar2Id, clientPillar2Id))
+        }
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-  }
+    }
 }

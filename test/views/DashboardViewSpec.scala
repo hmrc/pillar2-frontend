@@ -90,7 +90,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(5).text                               must include("You have no payments due")
       elements.get(6).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
       organisationDashboardView
         .getElementsByTag("hr")
         .first()
@@ -118,11 +118,13 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(7).text()       must include("View and amend contact details")
-      elements.get(7).attr("href") must include(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-      elements.get(8).text()       must include("View and amend group details")
+      elements.get(7).text() must include("View and amend contact details")
+      elements.get(7).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
+      )
+      elements.get(8).text() must include("View and amend group details")
       elements.get(8).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       )
 
     }
@@ -204,11 +206,13 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(9).text()       must include("View and amend contact details")
-      elements.get(9).attr("href") must include(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-      elements.get(10).text()      must include("View and amend group details")
+      elements.get(9).text() must include("View and amend contact details")
+      elements.get(9).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(Some(plrRef)).url
+      )
+      elements.get(10).text() must include("View and amend group details")
       elements.get(10).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some(plrRef)).url
       )
     }
 
@@ -220,7 +224,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(7).text                               must include("Your client has no payments due.")
       elements.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad(Some(plrRef)).url)
       agentDashboardView
         .getElementsByTag("hr")
         .first()

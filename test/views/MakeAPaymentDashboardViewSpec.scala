@@ -27,7 +27,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
 
   val makePaymentDashboardView =
-    Jsoup.parse(page("12345678")(request, appConfig, messages).toString())
+    Jsoup.parse(page("12345678", Some("Pillar2id"))(request, appConfig, messages).toString())
 
   "Make A Payment Dashboard View" should {
     "have a title" in {

@@ -32,6 +32,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryEmailPage
 import play.api.i18n.Messages
@@ -43,18 +44,21 @@ import viewmodels.implicits._
 
 object ContactEmailAddressSummary {
 
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    data.get(SubPrimaryEmailPage).map { _ =>
+  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    request.subscriptionLocalData.get(SubPrimaryEmailPage).map { _ =>
       val value = ValueViewModel(
         HtmlContent(
-          HtmlFormat.escape(data.subPrimaryEmail)
+          HtmlFormat.escape(request.subscriptionLocalData.subPrimaryEmail)
         )
       )
       SummaryListRowViewModel(
         key = "contactEmailAddress.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad(maybeClientPillar2Id).url
+          )
             .withVisuallyHiddenText(messages("contactEmailAddress.change.hidden"))
         )
       )

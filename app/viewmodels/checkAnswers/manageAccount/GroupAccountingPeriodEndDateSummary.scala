@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
@@ -28,8 +29,8 @@ import viewmodels.implicits._
 
 object GroupAccountingPeriodEndDateSummary {
   val dateHelper = new ViewHelpers()
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    data.get(SubAccountingPeriodPage).map { answer =>
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    request.subscriptionLocalData.get(SubAccountingPeriodPage).map { answer =>
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",

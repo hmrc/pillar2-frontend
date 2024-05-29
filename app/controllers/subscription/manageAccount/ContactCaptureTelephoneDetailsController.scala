@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactCaptureTelephoneDetailsController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -45,42 +46,44 @@ class ContactCaptureTelephoneDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    (for {
-      subscriptionLocalData <- request.maybeSubscriptionLocalData
-      _                     <- subscriptionLocalData.get(SubPrimaryPhonePreferencePage)
-      contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
-    } yield {
-      val form = formProvider(contactName)
-      val preparedForm = subscriptionLocalData.get(SubPrimaryCapturePhonePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode, contactName))
-
-    })
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    request.subscriptionLocalData
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+      (for {
+        subscriptionLocalData <- request.maybeSubscriptionLocalData
+        _                     <- subscriptionLocalData.get(SubPrimaryPhonePreferencePage)
+        contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
+      } yield {
         val form = formProvider(contactName)
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.subscriptionLocalData.set(SubPrimaryCapturePhonePage, value))
-                _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-              } yield Redirect(navigator.nextPage(SubPrimaryCapturePhonePage, mode, updatedAnswers))
-          )
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
+        val preparedForm = subscriptionLocalData.get(SubPrimaryCapturePhonePage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
+        }
+        Ok(view(preparedForm, contactName, clientPillar2Id))
+
+      })
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+    }
+
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      request.subscriptionLocalData
+        .get(SubPrimaryContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, clientPillar2Id))),
+              value =>
+                for {
+                  updatedAnswers <-
+                    Future.fromTry(request.subscriptionLocalData.set(SubPrimaryCapturePhonePage, value))
+                  _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubPrimaryCapturePhonePage, clientPillar2Id, updatedAnswers))
+            )
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }
 
 }

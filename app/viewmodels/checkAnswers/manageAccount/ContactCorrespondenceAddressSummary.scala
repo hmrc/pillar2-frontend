@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubRegisteredAddressPage
 import play.api.i18n.Messages
@@ -27,8 +28,11 @@ import viewmodels.implicits._
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(data: SubscriptionLocalData, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
-    data
+  def row(maybeClientPillar2Id: Option[String], countryOptions: CountryOptions)(implicit
+    messages:                   Messages,
+    request:                    SubscriptionDataRequest[_]
+  ): Option[SummaryListRow] =
+    request.subscriptionLocalData
       .get(SubRegisteredAddressPage)
       .map { answer =>
         val country = countryOptions.getCountryNameFromCode(answer.countryCode)
@@ -38,7 +42,7 @@ object ContactCorrespondenceAddressSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad(maybeClientPillar2Id).url
             )
               .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
           )

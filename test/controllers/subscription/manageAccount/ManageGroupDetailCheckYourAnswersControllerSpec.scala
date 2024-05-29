@@ -16,14 +16,17 @@
 
 package controllers.subscription.manageAccount
 
-import akka.Done
+import org.apache.pekko.Done
 import base.SpecBase
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.inject
+import play.api.inject.bind
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
@@ -70,6 +73,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         state = "activated"
       )
     )
+
     "onPageLoad" should {
       "return OK and the correct view if an answer is provided to every question " in {
         val userAnswer = emptySubscriptionLocalData
@@ -78,8 +82,34 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Group details")
+          contentAsString(result) must include("Where are the entities in your group located?")
+        }
+      }
+
+      "return OK and the correct view for Agent if an answer is provided to every question " in {
+        val userAnswer = emptySubscriptionLocalData
+          .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+          .setOrException(SubAccountingPeriodPage, date)
+
+        val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
+          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .build()
+
+        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+        running(application) {
+          when(mockAgentIdentifierAction.agentIdentify(any()))
+            .thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+          val request = FakeRequest(
+            GET,
+            controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some("XMPLR0123456789")).url
+          )
+          val result = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
           contentAsString(result) must include("Where are the entities in your group located?")
@@ -96,7 +126,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .value
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
@@ -104,13 +134,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         }
       }
     }
+
     "onSubmit" should {
       "redirect to journey recovery if no pillar2 reference is found" in {
         val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -125,13 +156,38 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.failed(UnexpectedResponse))
 
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(None).url
       }
     }
+
+    "redirect Agent to error page if a an unexpected response is received from ETMP/BE" in {
+      val application =
+        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .build()
+
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+        .thenReturn(Future.failed(UnexpectedResponse))
+
+      val request = FakeRequest(
+        POST,
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit(Some("XMPLR0123456789")).url
+      )
+      val result = route(application, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(Some("XMPLR0123456789")).url
+    }
+
     "redirect to dashboard page if they successfully amend their data" in {
       val application = applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers), enrolments = enrolments)
         .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -139,10 +195,34 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       running(application) {
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(Done))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad().url
+      }
+    }
+
+    "redirect Agent to dashboard page if they successfully amend their data" in {
+      val application =
+        applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers), enrolments = pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .build()
+
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(Done))
+        val request = FakeRequest(
+          POST,
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit(Some("XMPLR0123456789")).url
+        )
+        val result = route(application, request).value
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad(Some("XMPLR0123456789"), agentView = true).url
       }
     }
 
