@@ -58,7 +58,7 @@ trait SubscriptionLocalDataFixture {
     subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
   )
 
-   val someSubscriptionLocalData = SubscriptionLocalData(
+  val someSubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "John",
