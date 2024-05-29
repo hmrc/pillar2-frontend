@@ -26,10 +26,10 @@
         h2: HeadingH2
 )
 
-@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = false) {
-    @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
+@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = false, maybeClientPillar2Id = clientPillar2Id) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit(clientPillar2Id)) {
 
             @h1(messages("manageContactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
 

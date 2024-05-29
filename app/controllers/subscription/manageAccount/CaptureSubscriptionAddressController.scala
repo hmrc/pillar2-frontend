@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.Mode
 import pages.SubRegisteredAddressPage
@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CaptureSubscriptionAddressController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
   identify:                  IdentifierAction,
+  agentIdentifierAction:     AgentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   formProvider:              CaptureSubscriptionAddressFormProvider,
@@ -47,25 +48,28 @@ class CaptureSubscriptionAddressController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
-    Ok(view(preparedForm, mode, countryOptions.options()))
-  }
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+      val preparedForm =
+        request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
+      Ok(view(preparedForm, countryOptions.options(), clientPillar2Id))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options()))),
-        value =>
-          for {
-            updatedAnswers <-
-              Future.fromTry(request.subscriptionLocalData.set(SubRegisteredAddressPage, value))
-            _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, countryOptions.options(), clientPillar2Id))),
+          value =>
+            for {
+              updatedAnswers <-
+                Future.fromTry(request.subscriptionLocalData.set(SubRegisteredAddressPage, value))
+              _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
 
-          } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad)
-      )
+            } yield Redirect(controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(clientPillar2Id))
+        )
 
-  }
+    }
 
 }

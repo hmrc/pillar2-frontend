@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.manageAccount
 
+import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
@@ -26,13 +27,16 @@ import viewmodels.implicits._
 
 object GroupAccountingPeriodSummary {
 
-  def row(data: SubscriptionLocalData)(implicit messages: Messages): Option[SummaryListRow] =
-    data.get(SubAccountingPeriodPage).map { _ =>
+  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+    request.subscriptionLocalData.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent("")),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad(maybeClientPillar2Id).url
+          )
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )
       ).withCssClass("no-border-bottom")

@@ -16,9 +16,7 @@
 
 package helpers
 
-import config.FrontendAppConfig
 import play.api.i18n.DefaultLangs
-import services.GenUrlService
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config._
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
@@ -123,8 +121,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new HmrcAccessibleAutocompleteJavascript(assetsConfig),
     hmrcScripts,
     new StandardBetaBanner,
-    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig)),
-    new GenUrlService(appConfig = new FrontendAppConfig(configuration, servicesConfig))
+    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig))
   )
 
   val viewGroupTerritories: GroupTerritoriesView =

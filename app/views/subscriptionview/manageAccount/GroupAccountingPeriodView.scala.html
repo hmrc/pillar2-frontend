@@ -29,12 +29,12 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title"))) {
+@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")), maybeClientPillar2Id = clientPillar2Id) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit(clientPillar2Id), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))

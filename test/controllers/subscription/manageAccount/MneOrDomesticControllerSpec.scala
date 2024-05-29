@@ -18,15 +18,17 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.MneOrDomesticFormProvider
-import models.{CheckMode, MneOrDomestic, NormalMode}
+import models.MneOrDomestic
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.SubMneOrDomesticPage
+import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.mvc.{Call, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,7 +40,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
   val formProvider = new MneOrDomesticFormProvider()
 
-  "MneOrDomestic Controller" when {
+  "MneOrDomesticController for Organisations" should {
 
     "must return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = emptySubscriptionLocalData
@@ -49,14 +51,14 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), CheckMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), clientPillar2Id = None)(
           request,
           appConfig(application),
           messages(application)
@@ -68,12 +70,16 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -83,7 +89,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val result = route(application, request).value
 
@@ -119,7 +125,123 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubMneOrDomesticPage, CheckMode, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubMneOrDomesticPage, clientPillar2Id = None, expectedUserAnswers)
+      }
+    }
+
+  }
+
+  "MneOrDomesticController for Agents" should {
+
+    "must return OK and the correct view for a GET when previous data is found" in {
+      val userAnswer = emptySubscriptionLocalData
+        .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .success
+        .value
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request =
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[MneOrDomesticView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), clientPillar2Id = Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when no previous data is found" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request =
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url)
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[MneOrDomesticView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = Some(PlrReference))(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+
+        val request =
+          FakeRequest(
+            POST,
+            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          )
+            .withFormUrlEncodedBody(("value", "invalid value"))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "must update subscription data and redirect to the next page" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptySubscriptionLocalData
+
+      val expectedUserAnswers = userAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+        )
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+        val request =
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit(clientPillar2Id = Some(PlrReference)).url)
+            .withFormUrlEncodedBody("value" -> "uk")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubMneOrDomesticPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
       }
     }
 
