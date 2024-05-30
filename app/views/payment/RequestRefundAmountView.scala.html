@@ -28,11 +28,11 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("repayment.requestRefundAmount.title"))) {
 
-@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(mode)) {
+@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(mode, clientPillar2Id)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

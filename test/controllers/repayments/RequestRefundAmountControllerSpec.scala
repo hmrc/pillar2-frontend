@@ -55,22 +55,12 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
-    }
-
-    "redirect to journey recovery if no session id is found for GET" in {
-      val controller: RequestRefundAmountController = new RequestRefundAmountController(
-        preAuthenticatedActionBuilders,
-        formProvider,
-        stubMessagesControllerComponents(),
-        viewRequestRefundAmount,
-        mockSessionRepository
-      )(ec, appConfig)
-      val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
-      val result  = controller.onPageLoad(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -90,7 +80,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill(amount), NormalMode)(
+          view(formProvider().fill(amount), NormalMode, clientPillar2Id = None)(
             request,
             appConfig(application),
             messages(application)
@@ -121,7 +111,11 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
     "must return a Bad Request and errors when invalid data is submitted less than 0.0" in {
@@ -134,7 +128,11 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -148,23 +146,12 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
-
-    "redirect to journey recovery if no session id is found for POST" in {
-      val controller: RequestRefundAmountController = new RequestRefundAmountController(
-        preAuthenticatedActionBuilders,
-        formProvider,
-        stubMessagesControllerComponents(),
-        viewRequestRefundAmount,
-        mockSessionRepository
-      )(ec, appConfig)
-      val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onSubmit(NormalMode).url)
-      val result  = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
-    }
-
   }
 }

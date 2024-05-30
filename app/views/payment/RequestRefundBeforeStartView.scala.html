@@ -50,6 +50,6 @@
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode, clientPillar2Id).url)
     )
 }

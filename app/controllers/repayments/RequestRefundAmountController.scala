@@ -18,6 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode, UserAnswers}
 import pages.PaymentRefundAmountPage
@@ -36,50 +37,54 @@ class RequestRefundAmountController @Inject() (
   formProvider:             RequestRefundAmountFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundAmountView,
-  sessionRepository:        SessionRepository
+  sessionRepository:        SessionRepository,
+  agentIdentifierAction:    AgentIdentifierAction,
+  getData:                  SubscriptionDataRetrievalAction
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = identify.async { implicit request =>
-    val refundEnabled = appConfig.requestRefundEnabled
-    if (refundEnabled) {
+  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData).async { implicit request =>
+      val refundEnabled = appConfig.requestRefundEnabled
+      if (refundEnabled) {
+        hc.sessionId
+          .map(_.value)
+          .map { sessionID =>
+            sessionRepository.get(sessionID).map { OptionalUserAnswers =>
+              val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(PaymentRefundAmountPage)
+              val preparedForm = userAnswer.map(form.fill).getOrElse(form)
+              Ok(view(preparedForm, mode, clientPillar2Id))
+            }
+          }
+          .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      } else {
+        Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+      }
+    }
+
+  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData).async { implicit request =>
       hc.sessionId
         .map(_.value)
         .map { sessionID =>
-          sessionRepository.get(sessionID).map { OptionalUserAnswers =>
-            val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(PaymentRefundAmountPage)
-            val preparedForm = userAnswer.map(form.fill).getOrElse(form)
-            Ok(view(preparedForm, mode))
+          sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
+            val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, clientPillar2Id))),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(userAnswer.set(PaymentRefundAmountPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+              )
           }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
-    hc.sessionId
-      .map(_.value)
-      .map { sessionID =>
-        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
-          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(userAnswer.set(PaymentRefundAmountPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-            )
-        }
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-  }
 
 }
