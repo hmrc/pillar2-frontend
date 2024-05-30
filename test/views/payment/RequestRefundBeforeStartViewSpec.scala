@@ -26,7 +26,7 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
   val page = inject[RequestRefundBeforeStartView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page("12345678", Some("Pillar2id"))(request, appConfig, messages).toString())
 
   "Request Refund Before Start View" should {
 

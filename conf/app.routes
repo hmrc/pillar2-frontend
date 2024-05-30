@@ -396,7 +396,7 @@ POST        /replace-filing-member/contact-details/address/change-input         
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
-GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
 GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
 POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)

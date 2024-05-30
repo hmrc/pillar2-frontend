@@ -17,9 +17,13 @@
 package controllers.rfm
 
 import base.SpecBase
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.inject
 import play.api.inject.bind
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -33,18 +37,18 @@ import scala.concurrent.Future
 class RfmConfirmationControllerSpec extends SpecBase {
   val dateHelper = new ViewHelpers()
   "RfmConfirmation Controller" when {
-    val enrolments: Set[Enrolment] = Set(
-      Enrolment(
-        key = "HMRC-PILLAR2-ORG",
-        identifiers = Seq(
-          EnrolmentIdentifier("PLRID", "12345678"),
-          EnrolmentIdentifier("UTR", "ABC12345")
-        ),
-        state = "activated"
-      )
-    )
-    "must return OK and the correct view with content" in {
 
+    "must return OK and the correct view with content" in {
+      val enrolments: Set[Enrolment] = Set(
+        Enrolment(
+          key = "HMRC-PILLAR2-ORG",
+          identifiers = Seq(
+            EnrolmentIdentifier("PLRID", "12345678"),
+            EnrolmentIdentifier("UTR", "ABC12345")
+          ),
+          state = "activated"
+        )
+      )
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -114,8 +118,17 @@ class RfmConfirmationControllerSpec extends SpecBase {
       }
     }
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+        )
+        .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
       running(application) {
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
