@@ -27,6 +27,7 @@ import views.html._
 import views.html.components.gds._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.fmview._
+import views.html.payment.RequestRefundAmountView
 import views.html.registrationview._
 import views.html.rfm.RfmEntityTypeView
 import views.html.subscriptionview._
@@ -194,5 +195,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val viewDashboardView: DashboardView =
     new DashboardView(pillar2layout, govukButton, heading, h2, paragraphBody, paragraphMessageWithLink, sectionBreak, inactiveStatusBanner)
+
+  val viewRequestRefundAmount: RequestRefundAmountView =
+    new RequestRefundAmountView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
 
 }

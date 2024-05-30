@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.repayment
+package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -33,8 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
   identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
   formProvider:             RequestRefundAmountFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundAmountView,
@@ -45,7 +43,7 @@ class RequestRefundAmountController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = identify.async { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
       hc.sessionId
@@ -63,7 +61,7 @@ class RequestRefundAmountController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
     hc.sessionId
       .map(_.value)
       .map { sessionID =>

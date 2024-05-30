@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.repayment
+package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction

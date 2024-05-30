@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.repayment
+package controllers.repayments
 
 import base.SpecBase
 import models.UserAnswers
@@ -35,7 +35,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayment.routes.RequestRefundBeforeStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[RequestRefundBeforeStartView]
@@ -61,7 +61,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayment.routes.RequestRefundBeforeStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
