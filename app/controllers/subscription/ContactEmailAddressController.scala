@@ -73,7 +73,7 @@ class ContactEmailAddressController @Inject() (
             value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers set (SubPrimaryEmailPage, value))
+                  Future.fromTry(request.userAnswers.set(SubPrimaryEmailPage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, mode, updatedAnswers))
           )

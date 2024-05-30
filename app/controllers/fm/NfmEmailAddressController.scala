@@ -69,7 +69,7 @@ class NfmEmailAddressController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers set (FmContactEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmContactEmailPage, value))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(navigator.nextPage(FmContactEmailPage, mode, updatedAnswers))
           )

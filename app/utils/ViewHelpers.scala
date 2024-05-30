@@ -19,7 +19,6 @@ import com.ibm.icu.text.SimpleDateFormat
 import com.ibm.icu.util.{TimeZone, ULocale}
 import play.api.Logging
 import play.api.i18n.Messages
-
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 import java.util.Date
@@ -32,11 +31,11 @@ class ViewHelpers @Inject() extends Logging {
   def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
     dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
 
-  def formatDateGDSTimeStamp(date: LocalDateTime)(implicit messages: Messages): String =
+  def formatDateGDSTimeStamp(date: LocalDateTime): String =
     date.format(DateTimeFormatter.ofPattern("d MMMM y, HH:mma").withZone(ZoneId.of("UTC")))
-  def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM y")
+  private def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM y")
 
-  val defaultTimeZone: TimeZone = TimeZone.getTimeZone("Europe/London")
+  private val defaultTimeZone: TimeZone = TimeZone.getTimeZone("Europe/London")
 
   private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
     val uLocale = new ULocale(messages.lang.code)

@@ -17,7 +17,6 @@
 package viewmodels.checkAnswers.manageAccount
 
 import models.requests.SubscriptionDataRequest
-import models.subscription.SubscriptionLocalData
 import pages.SubSecondaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

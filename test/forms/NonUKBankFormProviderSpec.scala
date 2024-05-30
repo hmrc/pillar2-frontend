@@ -82,7 +82,6 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
     val fieldName   = "bic"
     val requiredKey = "repayments.nonUKBank.error.bic.required"
     val lengthKey   = "repayments.nonUKBank.error.bic.length"
-    val formatKey   = "repayments.nonUKBank.error.bic.format"
     val regex       = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
     val maxLength   = 11
 

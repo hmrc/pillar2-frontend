@@ -22,7 +22,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
 import models.{InternalIssueError, Mode}
-import models.NormalMode
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +31,6 @@ import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (

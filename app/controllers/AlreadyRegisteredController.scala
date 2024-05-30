@@ -23,10 +23,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.AlreadyRegisteredView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class AlreadyRegisteredController @Inject() (val controllerComponents: MessagesControllerComponents, view: AlreadyRegisteredView)(implicit
-  ec:                                                                  ExecutionContext,
   appConfig:                                                           FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {

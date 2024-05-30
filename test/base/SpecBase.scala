@@ -42,7 +42,6 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.{ExecutionContext, Future}

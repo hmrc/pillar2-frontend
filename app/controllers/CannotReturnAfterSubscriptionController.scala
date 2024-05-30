@@ -24,13 +24,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CannotReturnAfterSubscriptionView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class CannotReturnAfterSubscriptionController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     CannotReturnAfterSubscriptionView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

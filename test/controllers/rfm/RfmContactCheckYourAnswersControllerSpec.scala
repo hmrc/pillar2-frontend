@@ -265,7 +265,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     "onSubmit" should {
       val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
       lazy val journeyRecovery        = controllers.routes.JourneyRecoveryController.onPageLoad().url
-      lazy val underConstruction      = controllers.routes.UnderConstructionController.onPageLoad.url
       lazy val amendApiFailure        = controllers.rfm.routes.AmendApiFailureController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
       "redirect to under construction page in case of a successful replace filing member" in {

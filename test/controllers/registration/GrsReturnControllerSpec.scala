@@ -18,10 +18,8 @@ package controllers.registration
 
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import models.RichJsValue
 import models.grs.RegistrationStatus.{Registered, RegistrationNotCalled}
-import models.grs.VerificationStatus.Fail
-import models.grs.{BusinessVerificationResult, EntityType, GrsRegistrationResult}
+import models.grs.{EntityType, GrsRegistrationResult}
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

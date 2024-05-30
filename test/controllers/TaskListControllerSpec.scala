@@ -34,7 +34,6 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.SubscriptionService
 import utils.RowStatus
 
 import java.time.LocalDate
