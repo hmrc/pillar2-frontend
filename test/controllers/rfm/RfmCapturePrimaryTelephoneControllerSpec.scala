@@ -194,7 +194,7 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
       }
     }
 
@@ -204,7 +204,7 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
       }
     }
 

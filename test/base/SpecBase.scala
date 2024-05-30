@@ -16,8 +16,6 @@
 
 package base
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.Materializer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
@@ -26,6 +24,8 @@ import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, View
 import models.UserAnswers
 import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -42,7 +42,6 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
