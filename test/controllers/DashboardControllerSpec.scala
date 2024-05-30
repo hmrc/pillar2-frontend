@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import connectors.SubscriptionConnector
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import generators.ModelGenerators
 import models.subscription._

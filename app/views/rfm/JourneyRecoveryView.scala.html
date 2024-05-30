@@ -15,21 +15,22 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
+@import views.html.components.gds.{heading, ParagraphMessageWithLink}
 
 @this(
         layout: templates.Layout,
-        h: heading,
-        p: paragraphBody,
-        link: link,
+        govukButton: GovukButton,
+        heading: heading,
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = titleNoForm(messages("agent.unauthorised.title"))) {
-
-        @h(messages("agent.unauthorised.heading"), classes = "govuk-heading-l")
-
-        @paragraphMessageWithLink(message1 = Some(messages("agent.unauthorised.p1")), linkMessage = messages("agent.unauthorised.link"), linkUrl = appConfig.asaHomePageUrl, linkFullStop = true)
-    }
+@layout(
+    pageTitle = titleNoForm(messages("rfm.journeyRecoveryView.title")),
+    authorised = false,
+    showBackLink = false
+) {
+    @heading(messages("rfm.journeyRecoveryView.heading"), "govuk-heading-l")
+    @paragraphMessageWithLink(Some(messages("rfm.journeyRecoveryView.paragraphStart")), messages("rfm.journeyRecoveryView.link.text"),None, controllers.rfm.routes.StartPageController.onPageLoad.url,linkFullStop= true )
+}

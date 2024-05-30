@@ -1079,6 +1079,16 @@ rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
 rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
+rfm.journeyRecoveryView.title = There has been an error
+rfm.journeyRecoveryView.heading = There has been an error
+rfm.journeyRecoveryView.paragraphStart = You can go back to
+rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
+rfm.incompleteDataView.title = You have an incomplete task
+rfm.incompleteDataView.heading = You have an incomplete task
+rfm.incompleteDataView.paragraphStart = You can go back to
+rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
 rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
 rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 top-up taxes account.
 rfm.cannotReturnAfterConfirmation.p2 = You can now
@@ -1196,6 +1206,26 @@ agent.unauthorised.title = You have not been authorised to report this client’
 agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
 agent.unauthorised.p1 = You need to
 agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
+
+agent.individual.title = Sorry, you’re unable to use this service
+agent.individual.heading = Sorry, you’re unable to use this service
+agent.individual.p1 = You’ve signed in with an individual account.
+agent.individual.p2 = Only users with an agent services account can use this service.
+agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.individual.bullet.p1.link = sign in via agent services
+agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.individual.bullet.p2.link = request authorisation on agent services
+agent.individual.link = Find out more about who can report for Pillar 2 top-up taxes
+
+agent.organisation.title = Sorry, you’re unable to use this service
+agent.organisation.heading = Sorry, you’re unable to use this service
+agent.organisation.p1 = You’ve signed in with an organisations account.
+agent.organisation.p2 = Only users with an agent services account can use this service.
+agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.organisation.bullet.p1.link = sign in via agent services
+agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.organisation.bullet.p2.link = request authorisation on agent services
+agent.organisation.link = Find out more about who can report for Pillar 2 top-up taxes
 ###############################################
 
 rfm.saveProgressInform.title = Saving progress

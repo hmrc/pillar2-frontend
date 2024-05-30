@@ -16,13 +16,13 @@
 
 package controllers.rfm
 
-import org.apache.pekko.Done
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
-import connectors.UserAnswersConnectors
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -30,9 +30,9 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.SubscriptionService
 import utils.FutureConverter.FutureOps
-import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -56,25 +56,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
-
-    "return to recovery page if any part is missing for check answer page" in {
-      val sessionRepositoryUserAnswers = UserAnswers("id")
-      val application = applicationBuilder(userAnswers = Some(rfmCorpPosition))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
-        )
-        .build()
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
       val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
@@ -264,7 +245,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     "onSubmit" should {
       val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
-      lazy val journeyRecovery        = controllers.routes.JourneyRecoveryController.onPageLoad().url
+      lazy val journeyRecovery        = controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+      lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
       lazy val underConstruction      = controllers.routes.UnderConstructionController.onPageLoad.url
       lazy val amendApiFailure        = controllers.rfm.routes.AmendApiFailureController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
@@ -291,27 +273,30 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
         }
       }
-      "redirect to Journey recovery if no contact detail is found for the new filing member" in {
+      "redirect to incomplete task error page if no contact detail is found for the new filing member" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual journeyRecovery
+          redirectLocation(result).value mustEqual incompleteData
         }
       }
       "redirect to Journey recovery if no group ID is found for the new filing member" in {
-        val application = applicationBuilder(userAnswers = Some(defaultRfmData), groupID = None).build()
+        val ua = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val application = applicationBuilder(userAnswers = Some(ua), groupID = None)
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
         running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual journeyRecovery
         }
       }
-      "redirect to journey recovery page if new filing member uk based page value cannot be found" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to journey recovery page if new filing member uk basedpage value cannot be found" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -330,9 +315,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual journeyRecovery
         }
       }
-      "redirect to amend api failure page if registering new filing member fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to under construction page if registering new filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")), groupID = Some("id"))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -353,9 +337,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual amendApiFailure
         }
       }
-      "redirect to amend api failure page if deallocating old filing member fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to under construction page if deallocating old filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -374,9 +357,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual amendApiFailure
         }
       }
-      "redirect to amend api failure page if allocating an enrolment to the new filing member fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to under construction page if allocating an enrolment to the new filing member fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -399,7 +381,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
       "redirect to amend api failure page if amend filing details fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        val completeUserAnswers = defaultRfmData
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .setOrException(RfmPillar2ReferencePage, "id")
+
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
@@ -440,9 +425,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to amend api failure page if read subscription fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to under construction page if read subscription fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -462,9 +446,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to amend api failure page if amend subscription fails" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+      "redirect to under construction page if amend subscription fails" in {
+        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
@@ -483,6 +466,15 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual amendApiFailure
+        }
+      }
+      "redirect to incomplete data page if they have only partially completed their application" in {
+        val application = applicationBuilder(userAnswers = None).build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual incompleteData
         }
       }
 

@@ -16,11 +16,11 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
+import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}

@@ -26,7 +26,7 @@ import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, MessagesRequest}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
@@ -45,6 +45,8 @@ class AgentController @Inject() (
   clientNoMatchView:           AgentClientNoMatch,
   agentErrorView:              AgentErrorView,
   agentClientUnauthorisedView: AgentClientUnauthorisedView,
+  agentIndividualErrorView:    AgentIndividualErrorView,
+  agentOrganisationErrorView:  AgentOrganisationErrorView,
   identify:                    AgentIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
   getData:                     DataRetrievalAction,
@@ -124,6 +126,14 @@ class AgentController @Inject() (
   def onPageLoadUnauthorised: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
     implicit request =>
       Ok(agentClientUnauthorisedView())
+  }
+
+  def onPageLoadIndividualError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+    Ok(agentIndividualErrorView())
+  }
+
+  def onPageLoadOrganisationError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+    Ok(agentOrganisationErrorView())
   }
 
 }
