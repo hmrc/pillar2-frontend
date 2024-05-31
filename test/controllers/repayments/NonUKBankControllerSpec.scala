@@ -59,20 +59,6 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to journey recovery if no session id is found for GET" in {
-      val controller: NonUKBankController = new NonUKBankController(
-        preAuthenticatedActionBuilders,
-        formProvider,
-        mockSessionRepository,
-        stubMessagesControllerComponents(),
-        viewNonUKBank
-      )(ec, appConfig)
-      val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
-      val result  = controller.onPageLoad(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -126,20 +112,6 @@ class NonUKBankControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
-    }
-
-    "redirect to journey recovery if no session id is found for POST" in {
-      val controller: NonUKBankController = new NonUKBankController(
-        preAuthenticatedActionBuilders,
-        formProvider,
-        mockSessionRepository,
-        stubMessagesControllerComponents(),
-        viewNonUKBank
-      )(ec, appConfig)
-      val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
-      val result  = controller.onSubmit(NormalMode)()(request)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
   }

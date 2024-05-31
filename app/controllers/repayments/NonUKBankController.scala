@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
 import forms.NonUKBankFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import models.repayments.NonUKBank
 import pages.NonUKBankPage
 import play.api.data.Form
@@ -37,6 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonUKBankController @Inject() (
   identify:                 IdentifierAction,
   formProvider:             NonUKBankFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     NonUKBankView
@@ -46,42 +48,30 @@ class NonUKBankController @Inject() (
 
   val form: Form[NonUKBank] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData) { implicit request =>
     val refundEnabled = appConfig.requestRefundEnabled
     if (refundEnabled) {
-      hc.sessionId
-        .map(_.value)
-        .map { sessionID =>
-          sessionRepository.get(sessionID).map { OptionalUserAnswers =>
-            val userAnswer   = OptionalUserAnswers.getOrElse(UserAnswers(sessionID)).get(NonUKBankPage)
-            val preparedForm = userAnswer.map(form.fill).getOrElse(form)
-            Ok(view(preparedForm, mode))
-          }
-        }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
     } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
-    hc.sessionId
-      .map(_.value)
-      .map { sessionID =>
-        sessionRepository.get(sessionID).flatMap { optionalUserAnswer =>
-          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(userAnswer.set(NonUKBankPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(routes.UnderConstructionController.onPageLoad)
-            )
-        }
-      }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(routes.UnderConstructionController.onPageLoad)
+      )
   }
+
 }
