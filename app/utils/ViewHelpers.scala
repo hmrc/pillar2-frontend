@@ -31,9 +31,6 @@ class ViewHelpers @Inject() extends Logging {
   //only for date like Sunday 25 January 2015
   def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
     dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
-
-  def formatDateGDSTimeStamp(date: LocalDateTime)(implicit messages: Messages): String =
-    date.format(DateTimeFormatter.ofPattern("d MMMM y, HH:mma").withZone(ZoneId.of("UTC")))
   def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM y")
 
   val defaultTimeZone: TimeZone = TimeZone.getTimeZone("Europe/London")

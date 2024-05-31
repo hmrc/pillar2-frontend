@@ -18,7 +18,6 @@ package controllers.rfm
 
 import base.SpecBase
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
-import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject
@@ -37,18 +36,18 @@ import scala.concurrent.Future
 class RfmConfirmationControllerSpec extends SpecBase {
   val dateHelper = new ViewHelpers()
   "RfmConfirmation Controller" when {
-
-    "must return OK and the correct view with content" in {
-      val enrolments: Set[Enrolment] = Set(
-        Enrolment(
-          key = "HMRC-PILLAR2-ORG",
-          identifiers = Seq(
-            EnrolmentIdentifier("PLRID", "12345678"),
-            EnrolmentIdentifier("UTR", "ABC12345")
-          ),
-          state = "activated"
-        )
+    val enrolments: Set[Enrolment] = Set(
+      Enrolment(
+        key = "HMRC-PILLAR2-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier("PLRID", "12345678"),
+          EnrolmentIdentifier("UTR", "ABC12345")
+        ),
+        state = "activated"
       )
+    )
+    "must return OK and the correct view with content" in {
+
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -59,7 +58,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDSTimeStamp(java.time.LocalDateTime.now))
+        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
@@ -73,16 +72,19 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "Replace filing member successful"
         )
         contentAsString(result) must include(
-          "Filing member was replaced on"
+          "Your group’s filing member was replaced on"
         )
         contentAsString(result) must include(
           "As the new filing member, you have taken over the obligations to:"
         )
         contentAsString(result) must include(
-          "act as HMRC's primary contact in relation to the group's Pillar 2 top-up tax compliance"
+          "act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance"
         )
         contentAsString(result) must include(
-          "ensure your group's Pillar 2 top-up taxes account accurately reflects their records."
+          "submit your group’s Pillar 2 top-up tax returns"
+        )
+        contentAsString(result) must include(
+          "ensure your group’s Pillar 2 top-up taxes account accurately reflects their records."
         )
         contentAsString(result) must include(
           "If you fail to meet your obligations as a filing member, you may be liable for penalties."
