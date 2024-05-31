@@ -1237,12 +1237,12 @@ repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK6016133
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
-rfmConfirmation.reg-date =  Filing member was replaced on
+rfmConfirmation.reg-date =  Your group’s filing member was replaced on
 rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
 rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
-rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 top-up tax compliance
-rfmConfirmation.li2 = submit your group''s Pillar 2 top-up tax returns
-rfmConfirmation.li3 = ensure your group''s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
 rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0} {1}

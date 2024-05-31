@@ -17,9 +17,12 @@
 package controllers.rfm
 
 import base.SpecBase
+import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.inject
 import play.api.inject.bind
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -55,7 +58,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDSTimeStamp(java.time.LocalDateTime.now))
+        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
         val view        = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
@@ -69,16 +72,19 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "Replace filing member successful"
         )
         contentAsString(result) must include(
-          "Filing member was replaced on"
+          "Your group’s filing member was replaced on"
         )
         contentAsString(result) must include(
           "As the new filing member, you have taken over the obligations to:"
         )
         contentAsString(result) must include(
-          "act as HMRC's primary contact in relation to the group's Pillar 2 top-up tax compliance"
+          "act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance"
         )
         contentAsString(result) must include(
-          "ensure your group's Pillar 2 top-up taxes account accurately reflects their records."
+          "submit your group’s Pillar 2 top-up tax returns"
+        )
+        contentAsString(result) must include(
+          "ensure your group’s Pillar 2 top-up taxes account accurately reflects their records."
         )
         contentAsString(result) must include(
           "If you fail to meet your obligations as a filing member, you may be liable for penalties."
@@ -114,12 +120,17 @@ class RfmConfirmationControllerSpec extends SpecBase {
       }
     }
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+      val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+        )
         .build()
+      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
       running(application) {
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
