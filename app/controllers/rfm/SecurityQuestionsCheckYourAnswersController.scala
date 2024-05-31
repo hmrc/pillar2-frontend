@@ -56,7 +56,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
         Ok(view(mode, list))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
@@ -77,7 +77,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       .recover { case InternalIssueError =>
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 
   }
 

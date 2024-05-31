@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,16 +50,13 @@ class RfmAddSecondaryContactController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      (for {
-        _           <- request.userAnswers.get(RfmPrimaryContactEmailPage)
-        contactName <- request.userAnswers.get(RfmPrimaryContactNamePage)
-      } yield {
-        val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) match {
-          case Some(value) => form.fill(value)
-          case None        => form
+      request.userAnswers
+        .get(RfmPrimaryContactNamePage)
+        .map { contactName =>
+          val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage).map(form.fill).getOrElse(form)
+          Ok(view(preparedForm, contactName, mode))
         }
-        Ok(view(preparedForm, contactName, mode))
-      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -80,6 +77,6 @@ class RfmAddSecondaryContactController @Inject() (
               } yield Redirect(navigator.nextPage(RfmAddSecondaryContactPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 }

@@ -16,7 +16,6 @@
 
 package controllers
 
-import org.apache.pekko.Done
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
@@ -24,6 +23,7 @@ import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddre
 import models.subscription.AccountingPeriod
 import models.tasklist.SectionStatus
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper

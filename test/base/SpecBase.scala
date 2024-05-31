@@ -16,8 +16,6 @@
 
 package base
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.Materializer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
@@ -26,6 +24,8 @@ import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, View
 import models.UserAnswers
 import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

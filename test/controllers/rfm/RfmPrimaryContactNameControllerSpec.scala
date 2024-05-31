@@ -18,35 +18,37 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmSecondaryContactNameFormProvider
+import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
+import pages.RfmPrimaryContactNamePage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmSecondaryContactNameView
+import views.html.rfm.RfmPrimaryContactNameView
 
 import scala.concurrent.Future
 
-class RfmSecondaryContactNameControllerSpec extends SpecBase {
+class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
-  val formProvider = new RfmSecondaryContactNameFormProvider()
+  val formProvider = new RfmPrimaryContactNameFormProvider()
 
-  "SecondaryContactName Controller" when {
+  "RfmPrimaryContactNameController Controller" when {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua          = emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, true).setOrException(RfmPrimaryContactNamePage, "asd")
-      val application = applicationBuilder(Some(ua)).build()
+    "must return OK and the correct view for a GET when RFM access is enabled" in {
+
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmSecondaryContactNameView]
+        val view = application.injector.instanceOf[RfmPrimaryContactNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
@@ -54,21 +56,19 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua = emptyUserAnswers
-        .setOrException(RfmSecondaryContactNamePage, "name")
-        .setOrException(RfmAddSecondaryContactPage, true)
-        .setOrException(RfmPrimaryContactNamePage, "asd")
-      val application = applicationBuilder(Some(ua)).build()
+      val pageAnswer = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "alex")
+
+      val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[RfmSecondaryContactNameView]
+        val view = application.injector.instanceOf[RfmPrimaryContactNameView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -76,8 +76,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under-construction page when rfm feature is set to false" in {
-
+    "must redirect to Under Construction page if RFM access is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -88,23 +87,18 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
       }
     }
 
-    "must redirect to RFM Secondary Email page with updated valid data" in {
-      val ua = emptyUserAnswers
-        .setOrException(RfmSecondaryContactNamePage, "name")
-        .setOrException(RfmAddSecondaryContactPage, true)
-        .setOrException(RfmPrimaryContactNamePage, "asd")
+    "must redirect to primary email address page with valid data" in {
 
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
@@ -113,28 +107,29 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> "alexy")
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "name")
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None)
+        .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactNameController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[RfmSecondaryContactNameView]
+        val view = application.injector.instanceOf[RfmPrimaryContactNameView]
 
         val result = route(application, request).value
 

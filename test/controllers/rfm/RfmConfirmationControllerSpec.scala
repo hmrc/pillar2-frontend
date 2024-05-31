@@ -114,8 +114,12 @@ class RfmConfirmationControllerSpec extends SpecBase {
       }
     }
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
       running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER

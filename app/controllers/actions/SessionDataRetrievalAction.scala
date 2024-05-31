@@ -24,7 +24,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataRetrievalActionImpl @Inject() (
-  val sessionRepository: SessionRepository
+  val sessionRepository:         SessionRepository
 )(implicit val executionContext: ExecutionContext)
     extends SessionDataRetrievalAction {
 
@@ -33,7 +33,7 @@ class SessionDataRetrievalActionImpl @Inject() (
 }
 
 class SessionDataRetrievalActionProvider @Inject() (
-  val sessionRepository: SessionRepository
+  val sessionRepository:         SessionRepository
 )(implicit val executionContext: ExecutionContext)
     extends ActionTransformer[IdentifierRequest, SessionOptionalDataRequest] {
 
