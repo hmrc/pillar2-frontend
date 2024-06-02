@@ -40,6 +40,7 @@ class NonUKBankController @Inject() (
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
   view:                     NonUKBankView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -48,18 +49,14 @@ class NonUKBankController @Inject() (
 
   val form: Form[NonUKBank] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData) { implicit request =>
-    val refundEnabled = appConfig.requestRefundEnabled
-    if (refundEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData() andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(NonUKBankPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData).async { implicit request =>
     form

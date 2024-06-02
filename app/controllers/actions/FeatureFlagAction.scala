@@ -28,7 +28,8 @@ class FeatureFlagActionFactory @Inject() (configuration: Configuration, controll
   ec:                                                    ExecutionContext
 ) {
 
-  def asaAccessAction: ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("asaAccessEnabled")
+  def asaAccessAction:        ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("asaAccessEnabled")
+  def repaymentsAccessAction: ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("repaymentsAccessEnabled")
 
   private def actionStart: ActionBuilder[MessagesRequest, AnyContent] =
     controllerComponents.messagesActionBuilder.compose(controllerComponents.actionBuilder)
