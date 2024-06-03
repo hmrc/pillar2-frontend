@@ -45,8 +45,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
         running(application) {
+          when(mockSessionRepository.get(userAnswer.id)) thenReturn Future.successful(Some(userAnswer))
           val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
 

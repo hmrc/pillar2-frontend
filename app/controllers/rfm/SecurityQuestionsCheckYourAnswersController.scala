@@ -24,6 +24,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import models.rfm.RegistrationDate
 import models.subscription.SubscriptionData
 import models.{InternalIssueError, Mode, UserAnswers}
+import org.apache.pekko.pattern.FutureRef
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,22 +50,26 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      val list = SummaryListViewModel(
-        rows = Seq(
-          RfmSecurityCheckSummary.row(request.userAnswers),
-          RfmRegistrationDateSummary.row(request.userAnswers)
-        ).flatten
-      )
-      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
-        Ok(view(mode, list))
-      } else {
-        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      sessionRepository.get(request.userId).map {
+        case Some(userAnswers: UserAnswers) =>
+          val list = SummaryListViewModel(
+            rows = Seq(
+              RfmSecurityCheckSummary.row(userAnswers),
+              RfmRegistrationDateSummary.row(userAnswers)
+            ).flatten
+          )
+          if (userAnswers.securityQuestionStatus == RowStatus.Completed) {
+            Ok(view(mode, list))
+          } else {
+            Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+          }
+        case None => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
     } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
   }
 
