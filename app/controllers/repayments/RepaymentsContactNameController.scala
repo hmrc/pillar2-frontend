@@ -17,16 +17,17 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
-//import controllers.routes
+import controllers.routes
 import forms.RepaymentsContactNameFormProvider
 import models.Mode
+import models.repayments.RepaymentsContactName
 import pages.RepaymentsContactNamePage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsContactNameView
 
@@ -34,37 +35,39 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject()(
-  val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
   formProvider:              RepaymentsContactNameFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RepaymentsContactNameView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[RepaymentsContactName] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData() andThen requireSessionData) { implicit request =>
+      val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
     }
-    Ok(view(preparedForm, mode))
-  }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
-      )
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(routes.UnderConstructionController.onPageLoad)
+        )
   }
 }

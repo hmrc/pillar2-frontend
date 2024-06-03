@@ -1238,3 +1238,10 @@ repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
+
+repayments.contactName.title = What is the name of the person or team we should contact about the refund request?
+repayments.contactName.heading = What is the name of the person or team we should contact about the refund request?
+repayments.contactName.heading.caption
+repayments.contactName.hint
+repayments.contactName.error.contactName.required =
+repayments.contactName.error.contactName.length =

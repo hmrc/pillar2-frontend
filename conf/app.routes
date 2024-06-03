@@ -474,3 +474,9 @@ POST       /repayment/non-uk-details                                            
 
 GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
+
+GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
+
+GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)

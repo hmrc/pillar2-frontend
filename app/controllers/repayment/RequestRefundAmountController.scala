@@ -31,7 +31,8 @@ import views.html.payment.RequestRefundAmountView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestRefundAmountController @Inject() (
+class
+  RequestRefundAmountController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
