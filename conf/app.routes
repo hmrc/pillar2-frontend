@@ -469,8 +469,8 @@ GET         /asa/error/organisation                                             
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
 
-GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
+GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 

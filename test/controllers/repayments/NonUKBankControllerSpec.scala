@@ -40,7 +40,7 @@ class NonUKBankControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
@@ -50,11 +50,11 @@ class NonUKBankControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val view    = application.injector.instanceOf[NonUKBankView]
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -69,12 +69,12 @@ class NonUKBankControllerSpec extends SpecBase {
               Some(emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")))
             )
           )
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val view    = application.injector.instanceOf[NonUKBankView]
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill(NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")), NormalMode)(
+          view(formProvider().fill(NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")), None, NormalMode)(
             request,
             appConfig(application),
             messages(application)
@@ -89,7 +89,7 @@ class NonUKBankControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(
               "bankName"          -> "BankName",
               "nameOnBankAccount" -> "Name",
@@ -106,13 +106,13 @@ class NonUKBankControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
         val view      = application.injector.instanceOf[NonUKBankView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
