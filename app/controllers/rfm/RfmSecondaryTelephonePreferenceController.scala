@@ -53,12 +53,12 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
       if (rfmAccessEnabled) {
         request.userAnswers
           .get(RfmSecondaryContactNamePage)
-        .map { contactName =>
-          val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) .map(form.fill).getOrElse(form)
+          .map { contactName =>
+            val form         = formProvider(contactName)
+            val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage).map(form.fill).getOrElse(form)
 
-          Ok(view(preparedForm, mode, contactName))
-        }
+            Ok(view(preparedForm, mode, contactName))
+          }
           .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
       } else {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)

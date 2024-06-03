@@ -26,6 +26,7 @@ import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, inject}
+import repositories.SessionRepository
 import services.SubscriptionService
 import viewmodels.govuk.SummaryListFluency
 
@@ -91,8 +92,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
         running(application) {
+          when(mockSessionRepository.get(userAnswer.id)) thenReturn Future.successful(Some(userAnswer))
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
             .withFormUrlEncodedBody()
@@ -111,8 +114,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
         running(application) {
+          when(mockSessionRepository.get(userAnswer.id)) thenReturn Future.successful(Some(userAnswer))
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
@@ -128,8 +133,10 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
         running(application) {
+          when(mockSessionRepository.get(userAnswer.id)) thenReturn Future.successful(Some(userAnswer))
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 

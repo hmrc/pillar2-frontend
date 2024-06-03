@@ -72,7 +72,6 @@ class SecurityCheckController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data)) //Do I actually need this
           } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
       )
   }

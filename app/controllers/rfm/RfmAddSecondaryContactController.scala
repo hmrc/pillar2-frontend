@@ -54,11 +54,12 @@ class RfmAddSecondaryContactController @Inject() (
       if (rfmAccessEnabled) {
         request.userAnswers
           .get(RfmPrimaryContactNamePage)
-        .map { contactName =>
-          val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage) .map(form.fill).getOrElse(form)
+          .map { contactName =>
+            val preparedForm = request.userAnswers.get(RfmAddSecondaryContactPage).map(form.fill).getOrElse(form)
 
-          Ok(view(preparedForm, contactName, mode))
-        }.getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+            Ok(view(preparedForm, contactName, mode))
+          }
+          .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
       } else {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }

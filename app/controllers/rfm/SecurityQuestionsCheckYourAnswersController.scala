@@ -21,11 +21,13 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import models.rfm.RegistrationDate
 import models.subscription.SubscriptionData
-import models.{InternalIssueError, Mode}
+import models.{InternalIssueError, Mode, UserAnswers}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -40,6 +42,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   subscriptionService:      SubscriptionService,
+  sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     SecurityQuestionsCheckYourAnswersView
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
@@ -67,9 +70,10 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     (for {
-      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
-      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
-      readData: SubscriptionData <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
+      data:                  UserAnswers      <- OptionT(sessionRepository.get(request.userId))
+      inputPillar2Reference: String           <- OptionT.fromOption[Future](data.get(RfmPillar2ReferencePage))
+      inputRegistrationDate: RegistrationDate <- OptionT.fromOption[Future](data.get(RfmRegistrationDatePage))
+      readData:              SubscriptionData <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
     } yield
       if (readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)

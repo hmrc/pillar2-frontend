@@ -74,7 +74,6 @@ class GroupRegistrationDateReportController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )
   }

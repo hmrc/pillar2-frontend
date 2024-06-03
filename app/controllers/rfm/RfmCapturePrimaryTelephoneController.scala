@@ -53,12 +53,12 @@ class RfmCapturePrimaryTelephoneController @Inject() (
       if (rfmAccessEnabled) {
         request.userAnswers
           .get(RfmPrimaryContactNamePage)
-        .map { contactName =>
-          val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage) .map(form.fill).getOrElse(form)
+          .map { contactName =>
+            val form         = formProvider(contactName)
+            val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage).map(form.fill).getOrElse(form)
 
-          Ok(view(preparedForm, mode, contactName))
-        }
+            Ok(view(preparedForm, mode, contactName))
+          }
           .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
       } else {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
