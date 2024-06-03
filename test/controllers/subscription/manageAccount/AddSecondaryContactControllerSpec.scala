@@ -20,7 +20,6 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.AddSecondaryContactFormProvider
-import models.{CheckMode, NormalMode}
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo

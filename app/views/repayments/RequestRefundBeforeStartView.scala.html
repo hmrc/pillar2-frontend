@@ -30,7 +30,7 @@
     bulletList: bulletList,
 )
 
-@(plrID: String, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@( clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),

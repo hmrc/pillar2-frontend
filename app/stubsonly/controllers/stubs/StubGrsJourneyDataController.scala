@@ -28,9 +28,7 @@ import stubsonly.models.GrsStubFormData
 import stubsonly.utils.Base64Utils
 import stubsonly.views.html.StubGrsRegistrationDataView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class StubGrsJourneyDataController @Inject() (
@@ -39,7 +37,7 @@ class StubGrsJourneyDataController @Inject() (
   getData:                  DataRetrievalAction,
   grsStubFormProvider:      GrsStubFormProvider,
   view:                     StubGrsRegistrationDataView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with GrsStubData
     with I18nSupport {

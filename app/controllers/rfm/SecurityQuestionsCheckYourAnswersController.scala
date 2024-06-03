@@ -31,7 +31,6 @@ import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (

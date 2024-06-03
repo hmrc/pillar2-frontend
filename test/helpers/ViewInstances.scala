@@ -27,8 +27,8 @@ import views.html._
 import views.html.components.gds._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.fmview._
-import views.html.payment.RequestRefundAmountView
 import views.html.registrationview._
+import views.html.repayments.RequestRefundAmountView
 import views.html.rfm.RfmEntityTypeView
 import views.html.subscriptionview._
 import views.html.templates._

@@ -26,7 +26,7 @@ import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.payment.RequestRefundAmountView
+import views.html.repayments.RequestRefundAmountView
 
 import scala.concurrent.Future
 
@@ -36,15 +36,14 @@ class RequestRefundAmountControllerSpec extends SpecBase {
 
   "RequestRefundAmount Controller" when {
 
-    "must redirect to Under Construction page if requestRefundEnabled is disabled" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(Seq("features.requestRefundEnabled" -> false): _*)
+    "must redirect to error page if the feature flag is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
     }
 

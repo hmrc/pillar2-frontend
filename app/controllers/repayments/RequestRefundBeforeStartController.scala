@@ -17,14 +17,12 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
-import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
-import views.html.payment.RequestRefundBeforeStartView
+import views.html.repayments.RequestRefundBeforeStartView
 
 import javax.inject.Inject
 class RequestRefundBeforeStartController @Inject() (
@@ -32,28 +30,20 @@ class RequestRefundBeforeStartController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundBeforeStartView,
   agentIdentifierAction:    AgentIdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  featureAction:            FeatureFlagActionFactory
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
-      val refundEnabled = appConfig.requestRefundEnabled
-      if (refundEnabled) {
-        clientPillar2Id
-          .orElse(
-            Pillar2Reference
-              .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-          )
-          .orElse(request.userAnswers.get(PlrReferencePage))
-          .map { pillar2Id =>
-            Ok(view(pillar2Id, clientPillar2Id))
-          }
-          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      } else {
-        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-      }
+    (featureAction.repaymentsAccessAction andThen (identifierAction(
+      clientPillar2Id,
+      agentIdentifierAction,
+      identify
+    ) andThen getSessionData() andThen requireSessionData)) { implicit request =>
+      Ok(view(clientPillar2Id))
     }
+
 }

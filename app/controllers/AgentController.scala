@@ -24,9 +24,10 @@ import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetri
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, MessagesRequest}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
@@ -58,7 +59,7 @@ class AgentController @Inject() (
 
   import identify._
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view()).withNewSession
@@ -109,8 +110,7 @@ class AgentController @Inject() (
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
-      implicit request =>
-        Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
+      Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {

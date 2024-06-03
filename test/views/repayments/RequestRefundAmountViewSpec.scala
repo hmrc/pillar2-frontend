@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package views.payment
+package views.repayments
 
 import base.ViewSpecBase
 import forms.RequestRefundAmountFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import views.html.payment.{RequestRefundAmountView, RequestRefundBeforeStartView}
+import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
   val formProvider = new RequestRefundAmountFormProvider

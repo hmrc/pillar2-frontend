@@ -23,15 +23,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.StartPageRegistrationView
-
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class StartPageRegistrationController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageRegistrationView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -39,7 +38,7 @@ class StartPageRegistrationController @Inject() (
     Ok(view(mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
     Future.successful(Redirect(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode)))
   }
 }

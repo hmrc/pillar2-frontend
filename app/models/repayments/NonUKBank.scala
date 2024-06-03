@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package helpers
+package models.repayments
 
-import com.typesafe.config.ConfigFactory
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json._
 
-trait Configs {
+case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: String, iban: String)
 
-  def configuration: Configuration = Configuration(ConfigFactory.parseResources("application.conf"))
-
-  def environment: Environment = Environment.simple()
-
-  def servicesConfig = new ServicesConfig(configuration)
-
+object NonUKBank {
+  implicit val format: OFormat[NonUKBank] = Json.format[NonUKBank]
 }

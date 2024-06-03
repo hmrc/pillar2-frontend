@@ -40,7 +40,7 @@ class UnderConstructionController @Inject() (
     Ok(errorView())
   }
 
-  def onPageLoadClear: Action[AnyContent] = Action { implicit request =>
+  def onPageLoadClear: Action[AnyContent] = Action {
     Redirect(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad).withNewSession
   }
 

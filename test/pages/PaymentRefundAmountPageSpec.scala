@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package helpers
+package pages
 
-import com.typesafe.config.ConfigFactory
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import models.RefundAmount
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-trait Configs {
+class PaymentRefundAmountPageSpec extends PageBehaviours {
 
-  def configuration: Configuration = Configuration(ConfigFactory.parseResources("application.conf"))
+  "PaymentRefundAmountPage" - {
 
-  def environment: Environment = Environment.simple()
+    beRetrievable[RefundAmount](PaymentRefundAmountPage)
 
-  def servicesConfig = new ServicesConfig(configuration)
+    beSettable[RefundAmount](PaymentRefundAmountPage)
 
+    beRemovable[RefundAmount](PaymentRefundAmountPage)
+  }
 }

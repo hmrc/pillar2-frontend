@@ -19,7 +19,6 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.GroupAccountingPeriodFormProvider
-import models.Mode
 import models.subscription.AccountingPeriod
 import navigation.AmendSubscriptionNavigator
 import pages.SubAccountingPeriodPage

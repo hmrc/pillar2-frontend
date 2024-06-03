@@ -16,25 +16,22 @@
 
 package controllers.actions
 
-import models.requests.{OptionalSubscriptionDataRequest, SubscriptionDataRequest}
+import models.UserAnswers
+import models.requests.{SessionDataRequest, SessionOptionalDataRequest}
 import play.api.Logging
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext)
-    extends SubscriptionDataRequiredAction
-    with Logging {
+class SessionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends SessionDataRequiredAction with Logging {
 
-  override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-    request.maybeSubscriptionLocalData match {
+  override protected def refine[A](request: SessionOptionalDataRequest[A]): Future[Either[Result, SessionDataRequest[A]]] =
+    request.userAnswers match {
       case None =>
-        Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        Future.successful(Right(SessionDataRequest(request.request, request.userId, UserAnswers(request.userId))))
       case Some(data) =>
-        Future.successful(Right(SubscriptionDataRequest(request.request, request.userId, data, request.enrolments)))
+        Future.successful(Right(SessionDataRequest(request.request, request.userId, data)))
     }
-
 }
 
-trait SubscriptionDataRequiredAction extends ActionRefiner[OptionalSubscriptionDataRequest, SubscriptionDataRequest]
+trait SessionDataRequiredAction extends ActionRefiner[SessionOptionalDataRequest, SessionDataRequest]
