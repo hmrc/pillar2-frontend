@@ -393,6 +393,14 @@ GET         /replace-filing-member/contact-details/address/input                
 POST        /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/error/incomplete-task                            controllers.rfm.RfmIncompleteDataController.onPageLoad
+
+GET         /replace-filing-member/error/restart-error                              controllers.rfm.RfmJourneyRecoveryController.onPageLoad
+
+GET         /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
@@ -455,6 +463,8 @@ POST        /asa/confirm                                                        
 GET         /asa/error/no-match                                                                      controllers.AgentController.onPageLoadNoClientMatch
 GET         /asa/error/system                                                                        controllers.AgentController.onPageLoadError
 GET         /asa/error/not-authorised                                                                controllers.AgentController.onPageLoadUnauthorised
+GET         /asa/error/individual                                                                    controllers.AgentController.onPageLoadIndividualError
+GET         /asa/error/organisation                                                                  controllers.AgentController.onPageLoadOrganisationError
 
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 

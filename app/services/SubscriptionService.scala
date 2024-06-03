@@ -16,13 +16,13 @@
 
 package services
 
-import org.apache.pekko.Done
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
+import org.apache.pekko.Done
 import pages._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier

@@ -73,8 +73,7 @@ class RfmEntityTypeController @Inject() (
             }
             .getOrElse(Future.successful(Ok(view(form, mode))))
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
+        .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
     } else {
       Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }

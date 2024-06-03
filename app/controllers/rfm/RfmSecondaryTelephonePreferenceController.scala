@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmSecondaryTelephonePreferenceFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage}
+import pages.{RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -51,18 +51,15 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
     implicit request =>
       val rfmAccessEnabled = appConfig.rfmAccessEnabled
       if (rfmAccessEnabled) {
-        (for {
-          _           <- request.userAnswers.get(RfmSecondaryEmailPage)
-          contactName <- request.userAnswers.get(RfmSecondaryContactNamePage)
-        } yield {
+        request.userAnswers
+          .get(RfmSecondaryContactNamePage)
+        .map { contactName =>
           val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) match {
-            case Some(v) => form.fill(v)
-            case None    => form
-          }
+          val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage) .map(form.fill).getOrElse(form)
+
           Ok(view(preparedForm, mode, contactName))
-        })
-          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+          .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
       } else {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
@@ -84,6 +81,6 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
               } yield Redirect(navigator.nextPage(RfmSecondaryPhonePreferencePage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 }

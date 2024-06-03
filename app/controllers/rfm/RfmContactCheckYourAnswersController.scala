@@ -19,13 +19,15 @@ import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction, RfmSecurityQuestionCheckAction}
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SubscriptionService
+import models.requests.DataRequest
+import models.{InternalIssueError, UnexpectedResponse}
 import pages.PlrReferencePage
+import play.api.Logging
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
+import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -52,27 +54,9 @@ class RfmContactCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen checkSecurity andThen requireData).async { implicit request =>
-    implicit val userAnswers: UserAnswers = request.userAnswers
-
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      val rfmPrimaryContactList = SummaryListViewModel(
-        rows = Seq(
-          RfmPrimaryContactNameSummary.row(request.userAnswers),
-          RfmPrimaryContactEmailSummary.row(request.userAnswers),
-          RfmContactByTelephoneSummary.row(request.userAnswers),
-          RfmCapturePrimaryTelephoneSummary.row(request.userAnswers)
-        ).flatten
-      ).withCssClass("govuk-!-margin-bottom-9")
-      val rfmSecondaryContactList = SummaryListViewModel(
-        rows = Seq(
-          RfmAddSecondaryContactSummary.row(request.userAnswers),
-          RfmSecondaryContactNameSummary.row(request.userAnswers),
-          RfmSecondaryContactEmailSummary.row(request.userAnswers),
-          RfmSecondaryTelephonePreferenceSummary.row(request.userAnswers),
-          RfmSecondaryTelephoneSummary.row(request.userAnswers)
-        ).flatten
-      ).withCssClass("govuk-!-margin-bottom-9")
+
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
@@ -82,11 +66,14 @@ class RfmContactCheckYourAnswersController @Inject() (
           _          <- userAnswer.get(PlrReferencePage)
         } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
           .getOrElse(
-            if (request.userAnswers.rfmContactDetailStatus) {
-              Ok(view(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address))
-            } else {
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-            }
+            Ok(
+              view(
+                request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                request.userAnswers.rfmPrimaryContactList,
+                request.userAnswers.rfmSecondaryContactList,
+                address
+              )
+            )
           )
       }
     } else {
@@ -95,6 +82,15 @@ class RfmContactCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+    if (request.userAnswers.isRfmJourneyCompleted) {
+      replaceFilingMemberDetails(request)
+    } else {
+      Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
+    }
+
+  }
+
+  private def replaceFilingMemberDetails(request: DataRequest[AnyContent])(implicit hc: HeaderCarrier): Future[Result] =
     (for {
       newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
       subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
@@ -126,24 +122,8 @@ class RfmContactCheckYourAnswersController @Inject() (
           Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
         case _: Exception =>
           logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-  }
-
-  private def rfmCorporatePositionSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
-    SummaryListViewModel(
-      rows = Seq(
-        RfmCorporatePositionSummary.row(userAnswers),
-        RfmNameRegistrationSummary.row(userAnswers),
-        RfmRegisteredAddressSummary.row(userAnswers, countryOptions),
-        EntityTypeIncorporatedCompanyNameRfmSummary.row(userAnswers),
-        EntityTypeIncorporatedCompanyRegRfmSummary.row(userAnswers),
-        EntityTypeIncorporatedCompanyUtrRfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyNameRfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyRegRfmSummary.row(userAnswers),
-        EntityTypePartnershipCompanyUtrRfmSummary.row(userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 
 }

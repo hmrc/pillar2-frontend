@@ -16,36 +16,20 @@
 
 package helpers
 
-import models.UserAnswers
+import models.{GovUKMarginBottom9, UserAnswers}
+import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import pages._
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.RowStatus
+import utils.countryOptions.CountryOptions
+import viewmodels.checkAnswers.{EntityTypeIncorporatedCompanyNameRfmSummary, EntityTypeIncorporatedCompanyRegRfmSummary, EntityTypeIncorporatedCompanyUtrRfmSummary, EntityTypePartnershipCompanyNameRfmSummary, EntityTypePartnershipCompanyRegRfmSummary, EntityTypePartnershipCompanyUtrRfmSummary, RfmAddSecondaryContactSummary, RfmCapturePrimaryTelephoneSummary, RfmContactByTelephoneSummary, RfmCorporatePositionSummary, RfmNameRegistrationSummary, RfmPrimaryContactEmailSummary, RfmPrimaryContactNameSummary, RfmRegisteredAddressSummary, RfmSecondaryContactEmailSummary, RfmSecondaryContactNameSummary, RfmSecondaryTelephonePreferenceSummary, RfmSecondaryTelephoneSummary}
+import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait ReplaceFilingMemberHelpers {
 
   self: UserAnswers =>
-
-  def rfmContactDetailStatus: Boolean =
-    (
-      get(RfmPrimaryContactNamePage).isDefined,
-      get(RfmPrimaryContactEmailPage).isDefined,
-      get(RfmContactByTelephonePage),
-      get(RfmCapturePrimaryTelephonePage).isDefined,
-      get(RfmAddSecondaryContactPage),
-      get(RfmSecondaryContactNamePage).isDefined,
-      get(RfmSecondaryEmailPage).isDefined,
-      get(RfmSecondaryPhonePreferencePage),
-      get(RfmSecondaryCapturePhonePage).isDefined,
-      get(RfmContactAddressPage).isDefined
-    ) match {
-      case (true, true, Some(true), true, Some(true), true, true, Some(true), true, true)     => true
-      case (true, true, Some(true), true, Some(true), true, true, Some(false), false, true)   => true
-      case (true, true, Some(true), true, Some(false), false, false, None, false, true)       => true
-      case (true, true, Some(false), false, Some(true), true, true, Some(true), true, true)   => true
-      case (true, true, Some(false), false, Some(true), true, true, Some(false), false, true) => true
-      case (true, true, Some(false), false, Some(false), false, false, None, false, true)     => true
-      case _                                                                                  => false
-    }
 
   def securityQuestionStatus: RowStatus = {
     val first  = get(RfmPillar2ReferencePage).isDefined
@@ -56,6 +40,40 @@ trait ReplaceFilingMemberHelpers {
       case _             => RowStatus.NotStarted
     }
   }
+
+  def rfmPrimaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      RfmPrimaryContactNameSummary.row(self),
+      RfmPrimaryContactEmailSummary.row(self),
+      RfmContactByTelephoneSummary.row(self),
+      RfmCapturePrimaryTelephoneSummary.row(self)
+    ).flatten
+  ).withCssClass(GovUKMarginBottom9.toString)
+
+  def rfmCorporatePositionSummaryList(countryOptions: CountryOptions)(implicit messages: Messages): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        RfmCorporatePositionSummary.row(self),
+        RfmNameRegistrationSummary.row(self),
+        RfmRegisteredAddressSummary.row(self, countryOptions),
+        EntityTypeIncorporatedCompanyNameRfmSummary.row(self),
+        EntityTypeIncorporatedCompanyRegRfmSummary.row(self),
+        EntityTypeIncorporatedCompanyUtrRfmSummary.row(self),
+        EntityTypePartnershipCompanyNameRfmSummary.row(self),
+        EntityTypePartnershipCompanyRegRfmSummary.row(self),
+        EntityTypePartnershipCompanyUtrRfmSummary.row(self)
+      ).flatten
+    ).withCssClass(GovUKMarginBottom9.toString)
+
+  def rfmSecondaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      RfmAddSecondaryContactSummary.row(self),
+      RfmSecondaryContactNameSummary.row(self),
+      RfmSecondaryContactEmailSummary.row(self),
+      RfmSecondaryTelephonePreferenceSummary.row(self),
+      RfmSecondaryTelephoneSummary.row(self)
+    ).flatten
+  ).withCssClass(GovUKMarginBottom9.toString)
 
   def rfmNoIdQuestionStatus: RowStatus = {
     val first  = get(RfmNameRegistrationPage).isDefined
@@ -105,6 +123,67 @@ trait ReplaceFilingMemberHelpers {
     get(RfmContactByTelephonePage).flatMap { nominated =>
       if (nominated) get(RfmCapturePrimaryTelephonePage) else None
     }
+
+  private def isAllSecondaryInfoProvided: Boolean =
+    get(RfmAddSecondaryContactPage)
+      .map { nominated =>
+        if (nominated) {
+          (for {
+            _         <- get(RfmSecondaryContactNamePage)
+            _         <- get(RfmSecondaryEmailPage)
+            nominated <- get(RfmSecondaryPhonePreferencePage)
+          } yield
+            if (nominated) {
+              get(RfmSecondaryCapturePhonePage).map(_ => true).getOrElse(false)
+            } else {
+              true
+            }).getOrElse(false)
+        } else {
+          true
+        }
+      }
+      .getOrElse(false)
+
+  private def isAllPrimaryContactInfoProvided: Boolean =
+    (for {
+      _                     <- get(RfmPrimaryContactNamePage)
+      _                     <- get(RfmPrimaryContactEmailPage)
+      _                     <- get(RfmContactAddressPage)
+      primaryPhoneNominated <- get(RfmContactByTelephonePage)
+    } yield
+      if (primaryPhoneNominated) {
+        get(RfmCapturePrimaryTelephonePage).map(_ => true).getOrElse(false)
+      } else {
+        true
+      }).getOrElse(false)
+
+  def isRfmJourneyCompleted: Boolean =
+    get(RfmCorporatePositionPage)
+      .map(corporatePosition =>
+        if (corporatePosition == CorporatePosition.Upe) {
+          if (isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+        } else {
+          if (isAllNewFilingMemberInfoProvided & isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+        }
+      )
+      .getOrElse(false)
+
+  private def isAllNewFilingMemberInfoProvided: Boolean =
+    get(RfmUkBasedPage)
+      .map { ukBased =>
+        if (ukBased) {
+          (for {
+            _ <- get(RfmEntityTypePage)
+            _ <- get(RfmGrsDataPage)
+          } yield true).getOrElse(false)
+        } else {
+          (for {
+            _ <- get(RfmNameRegistrationPage)
+            _ <- get(RfmRegisteredAddressPage)
+          } yield true).getOrElse(false)
+        }
+      }
+      .getOrElse(false)
 
   def rfmAnsweredSecurityQuestions: Boolean = {
     val isReferenceDefined = get(RfmPillar2ReferencePage).isDefined

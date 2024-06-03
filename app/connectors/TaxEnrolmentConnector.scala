@@ -16,10 +16,10 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import config.FrontendAppConfig
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
+import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.{CREATED, NO_CONTENT}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw

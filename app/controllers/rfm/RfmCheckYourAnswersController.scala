@@ -30,7 +30,6 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
-
 import scala.concurrent.Future
 
 class RfmCheckYourAnswersController @Inject() (
@@ -59,7 +58,7 @@ class RfmCheckYourAnswersController @Inject() (
         if (request.userAnswers.rfmNoIdQuestionStatus == RowStatus.Completed) {
           Ok(view(mode, list))
         } else {
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
         }
       } else {
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)

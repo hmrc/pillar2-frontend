@@ -60,7 +60,7 @@ class RfmSecondaryContactEmailController @Inject() (
           }
           Ok(view(preparedForm, mode, contactName))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -82,7 +82,7 @@ class RfmSecondaryContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(RfmSecondaryEmailPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 
 }

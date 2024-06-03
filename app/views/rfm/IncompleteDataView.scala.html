@@ -15,21 +15,27 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
+@import views.html.components.gds.{ParagraphMessageWithLink, heading}
 
 @this(
         layout: templates.Layout,
-        h: heading,
-        p: paragraphBody,
-        link: link,
+        heading: heading,
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = titleNoForm(messages("agent.unauthorised.title"))) {
-
-        @h(messages("agent.unauthorised.heading"), classes = "govuk-heading-l")
-
-        @paragraphMessageWithLink(message1 = Some(messages("agent.unauthorised.p1")), linkMessage = messages("agent.unauthorised.link"), linkUrl = appConfig.asaHomePageUrl, linkFullStop = true)
-    }
+@layout(
+    pageTitle = titleNoForm(messages("rfm.incompleteDataView.title")),
+    authorised = false,
+    showBackLink = false
+) {
+    @heading(messages("rfm.incompleteDataView.heading"), "govuk-heading-l")
+    @paragraphMessageWithLink(
+        Some(messages("rfm.incompleteDataView.paragraphStart")),
+        messages("rfm.incompleteDataView.link.text"),
+        None,
+        controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url,
+        linkFullStop= true
+    )
+}

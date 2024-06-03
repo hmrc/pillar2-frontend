@@ -63,7 +63,7 @@ class RfmRegisteredAddressController @Inject() (
           }
           Ok(view(preparedForm, mode, name, countryOptions.options()))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -85,7 +85,7 @@ class RfmRegisteredAddressController @Inject() (
               } yield Redirect(navigator.nextPage(RfmRegisteredAddressPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 
 }

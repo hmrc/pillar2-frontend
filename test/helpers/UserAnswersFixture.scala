@@ -642,5 +642,6 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmContactByTelephonePage, true)
     .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, false)
+    .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
 
 }
