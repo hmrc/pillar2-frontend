@@ -19,7 +19,6 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.SecondaryTelephoneFormProvider
-import models.Mode
 import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport

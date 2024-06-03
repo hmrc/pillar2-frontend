@@ -60,7 +60,7 @@ class AuditService @Inject() (
     val emptyString = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
-      .getOrElse("", "", "")
+      .getOrElse(("", "", ""))
     val companyAddress = responseReceived.companyProfile
       .map(data => data.unsanitisedCHROAddress)
       .fold(
@@ -128,7 +128,7 @@ class AuditService @Inject() (
     val emptyString = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
-      .getOrElse("", "", "")
+      .getOrElse(("", "", ""))
     val companyAddress = responseReceived.companyProfile
       .map(data => data.unsanitisedCHROAddress)
       .fold(

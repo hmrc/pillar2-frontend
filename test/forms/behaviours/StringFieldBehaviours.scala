@@ -35,7 +35,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
 
       forAll(regexWithMaxLength(maxLength, regex) -> "longString") { string =>
         val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-        result.errors must contain atLeastOneOf (lengthError, formatError)
+        result.errors must contain.atLeastOneOf(lengthError, formatError)
       }
     }
 }

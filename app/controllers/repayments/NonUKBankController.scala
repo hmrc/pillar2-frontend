@@ -17,16 +17,17 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.routes
 import forms.NonUKBankFormProvider
 import models.Mode
+import models.repayments.NonUKBank
 import pages.NonUKBankPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.NonUKBankView
 
@@ -34,29 +35,30 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NonUKBankController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              NonUKBankFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      NonUKBankView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             NonUKBankFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     NonUKBankView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NonUKBank] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(NonUKBankPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData() andThen requireSessionData) { implicit request =>
+      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
     }
 
-    Ok(view(preparedForm, mode))
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -64,8 +66,9 @@ class NonUKBankController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
   }
+
 }

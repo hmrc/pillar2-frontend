@@ -19,9 +19,9 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
-import models.Mode
 import navigation.AmendSubscriptionNavigator
 import pages.SubSecondaryContactNamePage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -46,7 +46,7 @@ class SecondaryContactNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>

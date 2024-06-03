@@ -19,7 +19,6 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.ContactNameComplianceFormProvider
-import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubPrimaryContactNamePage

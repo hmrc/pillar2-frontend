@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.AddSecondaryContactFormProvider
-import models.Mode
 import navigation.AmendSubscriptionNavigator
 import pages._
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,7 +47,7 @@ class AddSecondaryContactController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
