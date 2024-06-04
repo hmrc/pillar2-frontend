@@ -58,7 +58,7 @@ class RfmPrimaryContactEmailController @Inject() (
           }
           Ok(view(preparedForm, mode, username))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
@@ -79,6 +79,6 @@ class RfmPrimaryContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(RfmPrimaryContactEmailPage, mode, updatedAnswers))
           )
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 }

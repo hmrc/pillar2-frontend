@@ -23,15 +23,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CheckNewFilingMemberView
-
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class CheckNewFilingMemberController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     CheckNewFilingMemberView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -43,7 +42,7 @@ class CheckNewFilingMemberController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async {
     Future.successful(Redirect(controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(mode)))
   }
 }

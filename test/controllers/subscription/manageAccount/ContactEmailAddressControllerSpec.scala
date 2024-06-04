@@ -20,9 +20,8 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.ContactEmailAddressFormProvider
-import models.CheckMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, when}
+import org.mockito.Mockito.when
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.inject.bind
 import play.api.mvc.PlayBodyParsers

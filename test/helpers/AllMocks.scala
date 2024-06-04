@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -49,6 +49,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockSessionRepository:                       SessionRepository                       = mock[SessionRepository]
   val mockNavigator:                               UltimateParentNavigator                 = mock[UltimateParentNavigator]
   val mockDataRetrievalAction:                     DataRetrievalAction                     = mock[DataRetrievalAction]
+  val mockSubscriptionDataRetrievalAction:         SubscriptionDataRetrievalAction         = mock[SubscriptionDataRetrievalAction]
   val mockDataRequiredAction:                      DataRequiredAction                      = mock[DataRequiredAction]
   val mockSubscriptionService:                     SubscriptionService                     = mock[SubscriptionService]
   val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]

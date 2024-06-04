@@ -33,7 +33,6 @@
 package viewmodels.checkAnswers.manageAccount
 
 import models.requests.SubscriptionDataRequest
-import models.subscription.SubscriptionLocalData
 import pages.SubPrimaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat

@@ -393,18 +393,16 @@ GET         /replace-filing-member/contact-details/address/input                
 POST        /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/address/change-input                              controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/error/incomplete-task                            controllers.rfm.RfmIncompleteDataController.onPageLoad
+
+GET         /replace-filing-member/error/restart-error                              controllers.rfm.RfmJourneyRecoveryController.onPageLoad
+
+GET         /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/address/input                      controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-
-GET         /repayment/before-you-start                                                              controllers.repayment.RequestRefundBeforeStartController.onPageLoad
-
-GET          /repayment/amount                                                                       controllers.repayment.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
-POST         /repayment/amount                                                                       controllers.repayment.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
-GET          /repayment/change-amount                                                                controllers.repayment.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
-POST         /repayment/change-amount                                                                controllers.repayment.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
-
-
-
 GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
 GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
@@ -464,8 +462,11 @@ POST        /asa/confirm                                                        
 GET         /asa/error/no-match                                                                      controllers.AgentController.onPageLoadNoClientMatch
 GET         /asa/error/system                                                                        controllers.AgentController.onPageLoadError
 GET         /asa/error/not-authorised                                                                controllers.AgentController.onPageLoadUnauthorised
+GET         /asa/error/individual                                                                    controllers.AgentController.onPageLoadIndividualError
+GET         /asa/error/organisation                                                                  controllers.AgentController.onPageLoadOrganisationError
 
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
+GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
 
 GET        /replace-filing-member/review-submit/confirmation                                     controllers.rfm.RfmConfirmationController.onPageLoad
 
@@ -480,3 +481,10 @@ POST       /repayment/contact-details/input-name                                
 
 GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+
+GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
+POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
+GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
+POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode,  clientPillar2Id: Option[String] ?= None)

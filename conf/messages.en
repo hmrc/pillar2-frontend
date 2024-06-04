@@ -218,7 +218,8 @@ repayment.requestRefundAmount.header = Enter your requested refund amount in pou
 repayment.requestRefundAmount.error.required = Enter your requested refund amount in pounds
 repayment.requestRefundAmount.error.length = Refund amount must be 160 characters or less
 repayment.requestRefundAmount.messages.error.format =  Refund amount must only use numbers 0-9, commas and full stops
-
+repayment.requestRefundAmount.error.minValue = Value entered should not be less than £0.00
+repayment.requestRefundAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -1078,6 +1079,16 @@ rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
 rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 
+rfm.journeyRecoveryView.title = There has been an error
+rfm.journeyRecoveryView.heading = There has been an error
+rfm.journeyRecoveryView.paragraphStart = You can go back to
+rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
+rfm.incompleteDataView.title = You have an incomplete task
+rfm.incompleteDataView.heading = You have an incomplete task
+rfm.incompleteDataView.paragraphStart = You can go back to
+rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+
 rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
 rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 top-up taxes account.
 rfm.cannotReturnAfterConfirmation.p2 = You can now
@@ -1195,6 +1206,26 @@ agent.unauthorised.title = You have not been authorised to report this client’
 agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
 agent.unauthorised.p1 = You need to
 agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
+
+agent.individual.title = Sorry, you’re unable to use this service
+agent.individual.heading = Sorry, you’re unable to use this service
+agent.individual.p1 = You’ve signed in with an individual account.
+agent.individual.p2 = Only users with an agent services account can use this service.
+agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.individual.bullet.p1.link = sign in via agent services
+agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.individual.bullet.p2.link = request authorisation on agent services
+agent.individual.link = Find out more about who can report for Pillar 2 top-up taxes
+
+agent.organisation.title = Sorry, you’re unable to use this service
+agent.organisation.heading = Sorry, you’re unable to use this service
+agent.organisation.p1 = You’ve signed in with an organisations account.
+agent.organisation.p2 = Only users with an agent services account can use this service.
+agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.organisation.bullet.p1.link = sign in via agent services
+agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.organisation.bullet.p2.link = request authorisation on agent services
+agent.organisation.link = Find out more about who can report for Pillar 2 top-up taxes
 ###############################################
 
 rfm.saveProgressInform.title = Saving progress
@@ -1245,3 +1276,19 @@ repayments.contactName.heading.caption
 repayments.contactName.hint
 repayments.contactName.error.contactName.required =
 repayments.contactName.error.contactName.length =
+
+rfmConfirmation.title = Replace filing member successful
+rfmConfirmation.rfmComplete = Replace filing member successful
+rfmConfirmation.reg-date =  Your group’s filing member was replaced on
+rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
+rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfmConfirmation.next = What happens next
+rfmConfirmation.now = You can now {0} {1}
+rfmConfirmation.now.group = on behalf of your group.
+rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.whatDidYouThink = What did you think of this service
+rfmConfirmation.print = Print this page

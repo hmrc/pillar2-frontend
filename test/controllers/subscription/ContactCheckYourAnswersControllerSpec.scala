@@ -17,7 +17,7 @@
 package controllers.subscription
 
 import base.SpecBase
-import models.{NonUKAddress, NormalMode, UserAnswers}
+import models.{NonUKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._

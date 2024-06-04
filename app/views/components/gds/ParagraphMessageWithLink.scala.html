@@ -24,8 +24,7 @@
    linkClass: String = "govuk-link",
    linkRel: String = "",
    target: String = "_self",
-   linkFullStop: Boolean = false,
-   fullStop: Boolean = false
+   linkFullStop: Boolean = false
 )
 
-<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message => @Html(message)}@if(fullStop)(".")</p>
+<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message => @Html(message)}</p>

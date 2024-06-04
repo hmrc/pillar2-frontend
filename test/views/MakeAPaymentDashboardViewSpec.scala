@@ -17,16 +17,14 @@
 package views
 
 import base.ViewSpecBase
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import views.html.{DashboardView, MakeAPaymentDashboardView}
+import org.jsoup.nodes.Document
+import views.html.MakeAPaymentDashboardView
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
 
-  val makePaymentDashboardView =
+  val makePaymentDashboardView: Document =
     Jsoup.parse(page("12345678", Some("Pillar2id"))(request, appConfig, messages).toString())
 
   "Make A Payment Dashboard View" should {

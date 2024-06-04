@@ -24,6 +24,7 @@ import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetri
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,6 +46,8 @@ class AgentController @Inject() (
   clientNoMatchView:           AgentClientNoMatch,
   agentErrorView:              AgentErrorView,
   agentClientUnauthorisedView: AgentClientUnauthorisedView,
+  agentIndividualErrorView:    AgentIndividualErrorView,
+  agentOrganisationErrorView:  AgentOrganisationErrorView,
   identify:                    AgentIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
   getData:                     DataRetrievalAction,
@@ -56,7 +59,7 @@ class AgentController @Inject() (
 
   import identify._
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view()).withNewSession
@@ -107,8 +110,7 @@ class AgentController @Inject() (
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
-      implicit request =>
-        Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
+      Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
@@ -124,6 +126,14 @@ class AgentController @Inject() (
   def onPageLoadUnauthorised: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
     implicit request =>
       Ok(agentClientUnauthorisedView())
+  }
+
+  def onPageLoadIndividualError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+    Ok(agentIndividualErrorView())
+  }
+
+  def onPageLoadOrganisationError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+    Ok(agentOrganisationErrorView())
   }
 
 }

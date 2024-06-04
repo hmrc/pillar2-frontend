@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package views.payment
+package views.repayments
 
 import base.ViewSpecBase
 import forms.RequestRefundAmountFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import views.html.payment.{RequestRefundAmountView, RequestRefundBeforeStartView}
+import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
   val formProvider = new RequestRefundAmountFormProvider
   val mode         = NormalMode
   val page         = inject[RequestRefundAmountView]
 
-  val view = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page(formProvider(), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString())
 
   "Request Refund Amount View" should {
 

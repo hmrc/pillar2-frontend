@@ -30,8 +30,6 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
-
 class ContactCheckYourAnswersController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
@@ -40,7 +38,7 @@ class ContactCheckYourAnswersController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactCheckYourAnswersView,
   countryOptions:            CountryOptions
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:        FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -74,7 +72,7 @@ class ContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     Redirect(controllers.routes.TaskListController.onPageLoad)
   }
 }

@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.CaptureSubscriptionAddressFormProvider
-import models.Mode
+import models.NonUKAddress
 import pages.SubRegisteredAddressPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,7 +47,7 @@ class CaptureSubscriptionAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NonUKAddress] = formProvider()
 
   def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>

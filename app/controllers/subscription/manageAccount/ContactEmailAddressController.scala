@@ -19,7 +19,6 @@ import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.ContactEmailAddressFormProvider
-import models.Mode
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.i18n.I18nSupport
