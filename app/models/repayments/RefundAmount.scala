@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.repayments.NonUKBank
-import play.api.libs.json.JsPath
+import play.api.libs.json.Json
 
-case object NonUKBankPage extends QuestionPage[NonUKBank] {
+case class RefundAmount(amount: BigDecimal)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "nonUKBank"
+object RefundAmount {
+  implicit val format = Json.format[RefundAmount]
 }

@@ -30,7 +30,7 @@
     bulletList: bulletList,
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@( clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
@@ -50,6 +50,6 @@
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayment.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode, clientPillar2Id).url)
     )
 }

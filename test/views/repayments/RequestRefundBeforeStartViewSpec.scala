@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package views.payment
+package views.repayments
 
 import base.ViewSpecBase
-import controllers.routes
 import org.jsoup.Jsoup
-import views.html.AgentClientConfirmDetailsView
-import views.html.payment.RequestRefundBeforeStartView
+import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
   val page = inject[RequestRefundBeforeStartView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page(Some("Pillar2id"))(request, appConfig, messages).toString())
 
   "Request Refund Before Start View" should {
 

@@ -218,7 +218,8 @@ repayment.requestRefundAmount.header = Enter your requested refund amount in pou
 repayment.requestRefundAmount.error.required = Enter your requested refund amount in pounds
 repayment.requestRefundAmount.error.length = Refund amount must be 160 characters or less
 repayment.requestRefundAmount.messages.error.format =  Refund amount must only use numbers 0-9, commas and full stops
-
+repayment.requestRefundAmount.error.minValue = Value entered should not be less than £0.00
+repayment.requestRefundAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -1231,6 +1232,22 @@ rfm.saveProgressInform.title = Saving progress
 rfm.saveProgressInform.heading = Saving progress
 rfm.saveProgressInform.heading.caption = Replace filing member
 rfm.saveProgressInform.p1 = From this point, the information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
+
+rfmConfirmation.title = Replace filing member successful
+rfmConfirmation.rfmComplete = Replace filing member successful
+rfmConfirmation.reg-date =  Filing member was replaced on
+rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
+rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group''s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group''s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfmConfirmation.next = What happens next
+rfmConfirmation.now = You can now {0} {1}
+rfmConfirmation.now.group = on behalf of your group.
+rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.whatDidYouThink = What did you think of this service
+rfmConfirmation.print = Print this page
 
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details

@@ -30,7 +30,7 @@ object Constants {
   final val MAX_LENGTH_105              = 105
   final val MAX_LENGTH_132              = 132
   final val MAX_LENGTH_160              = 160
-  final val MIN_AMOUNT                  = -99999999999.99
+  final val MIN_AMOUNT                  = 0.0
   final val MAX_AMOUNT                  = 99999999999.99
   final val MAX_LENGTH_200              = 200
   final val EQUAL_LENGTH_15             = 15

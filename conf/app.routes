@@ -403,16 +403,6 @@ GET         /replace-filing-member/contact-details/address/change-input         
 POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-
-GET         /repayment/before-you-start                                                              controllers.repayment.RequestRefundBeforeStartController.onPageLoad
-
-GET          /repayment/amount                                                                       controllers.repayment.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
-POST         /repayment/amount                                                                       controllers.repayment.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
-GET          /repayment/change-amount                                                                controllers.repayment.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
-POST         /repayment/change-amount                                                                controllers.repayment.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
-
-
-
 GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
 GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
@@ -495,3 +485,9 @@ POST       /repayment/contact-details/input-email                               
 GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
 
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+
+GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
+POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
+GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
+POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode,  clientPillar2Id: Option[String] ?= None)
