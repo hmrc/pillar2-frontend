@@ -19,39 +19,39 @@ package controllers.repayments
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
-import forms.RepaymentsContactNameFormProvider
+import forms.RepaymentsContactEmailFormProvider
 import models.Mode
-import models.repayments.RepaymentsContactName
-import pages.RepaymentsContactNamePage
+import models.repayments.RepaymentsContactEmail
+import pages.RepaymentsContactEmailPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.RepaymentsContactNameView
+import views.html.repayments.RepaymentsContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepaymentsContactNameController @Inject() (
+class RepaymentsContactEmailController @Inject() (
   identify:                 IdentifierAction,
-  formProvider:             RepaymentsContactNameFormProvider,
+  formProvider:             RepaymentsContactEmailFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactNameView
+  view:                     RepaymentsContactEmailView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[RepaymentsContactName] = formProvider()
+  val form: Form[RepaymentsContactEmail] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData() andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
+      val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -65,7 +65,7 @@ class RepaymentsContactNameController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(routes.UnderConstructionController.onPageLoad)
       )
