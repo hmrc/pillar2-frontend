@@ -18,22 +18,18 @@ package forms
 
 import forms.mappings.Mappings
 import mapping.Constants
-import models.repayments.RepaymentsContactName
 import play.api.data.Form
-import play.api.data.Forms._
-
 import javax.inject.Inject
 
 class RepaymentsContactNameFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[RepaymentsContactName] = Form(
-    mapping(
+  def apply(): Form[String] =
+    Form(
       "contactName" -> text("repayments.contactName.error.contactName.required")
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_100, "repayments.contactName.error.contactName.length")
           )
         )
-    )(RepaymentsContactName.apply)(RepaymentsContactName.unapply)
-  )
+    )
 }

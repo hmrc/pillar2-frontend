@@ -18,16 +18,13 @@ package forms
 
 import forms.mappings.Mappings
 import mapping.Constants
-import models.repayments.RepaymentsContactEmail
 import play.api.data.Form
-import play.api.data.Forms._
 
 import javax.inject.Inject
 
 class RepaymentsContactEmailFormProvider @Inject() extends Mappings {
-
-  def apply(contactName: String): Form[RepaymentsContactEmail] = Form(
-    mapping(
+  def apply(contactName: String): Form[String] =
+    Form(
       "contactEmail" -> text("repayments.contactEmail.error.contactEmail.required", Seq(contactName))
         .verifying(
           firstError(
@@ -35,6 +32,5 @@ class RepaymentsContactEmailFormProvider @Inject() extends Mappings {
             regexp(Validation.EMAIL_REGEX, "repayments.contactEmail.error.contactEmail.format")
           )
         )
-    )(RepaymentsContactEmail.apply)(RepaymentsContactEmail.unapply)
-  )
+    )
 }

@@ -17,11 +17,11 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
+import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
 import models.Mode
-import models.repayments.RepaymentsContactName
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -35,39 +35,50 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject() (
-  identify:                 IdentifierAction,
-  formProvider:             RepaymentsContactNameFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  featureAction:            FeatureFlagActionFactory,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactNameView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                  IdentifierAction,
+  val userAnswersConnectors: UserAnswersConnectors,
+  formProvider:              RepaymentsContactNameFormProvider,
+  getSessionData:            SessionDataRetrievalAction,
+  requireSessionData:        SessionDataRequiredAction,
+  agentIdentifierAction:     AgentIdentifierAction,
+  sessionRepository:         SessionRepository,
+  featureAction:             FeatureFlagActionFactory,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      RepaymentsContactNameView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[RepaymentsContactName] = formProvider()
+  val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData() andThen requireSessionData) { implicit request =>
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identifierAction(
+      clientPillar2Id,
+      agentIdentifierAction,
+      identify
+    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, clientPillar2Id, mode))
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData() andThen requireSessionData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(routes.UnderConstructionController.onPageLoad)
-      )
-  }
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+    (identifierAction(
+      clientPillar2Id,
+      agentIdentifierAction,
+      identify
+    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, mode))
+        )
+    }
 }
