@@ -18,8 +18,8 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.NonUKBankFormProvider
-import models.repayments.NonUKBank
 import models.NormalMode
+import models.repayments.NonUKBank
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.NonUKBankPage
@@ -28,6 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.repayments.NonUKBankView
+
 import scala.concurrent.Future
 
 class NonUKBankControllerSpec extends SpecBase {
@@ -59,16 +60,12 @@ class NonUKBankControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val application = applicationBuilder(None)
+      val ua = emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any()))
-          .thenReturn(
-            Future.successful(
-              Some(emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")))
-            )
-          )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val view    = application.injector.instanceOf[NonUKBankView]
         val result  = route(application, request).value

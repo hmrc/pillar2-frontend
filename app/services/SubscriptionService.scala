@@ -75,6 +75,15 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
+  def matchingPillar2Records(id: String, sessionPillar2Id: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
+      maybeUserAnswers
+        .flatMap(userAnswers =>
+          userAnswers.get(RfmPillar2ReferencePage).map(backendPillar2Id => if (sessionPillar2Id.equals(backendPillar2Id)) true else false)
+        )
+        .getOrElse(false)
+
+    }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier
   ): Future[Done] =

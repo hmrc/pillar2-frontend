@@ -20,13 +20,16 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmCorporatePositionFormProvider
-import navigation.ReplaceFilingMemberNavigator
 import models.Mode
-import pages.RfmCorporatePositionPage
+import models.rfm.CorporatePosition
+import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CorporatePositionView
 
@@ -36,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CorporatePositionController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
+  sessionRepository:         SessionRepository,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   formProvider:              RfmCorporatePositionFormProvider,
@@ -46,7 +50,7 @@ class CorporatePositionController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[CorporatePosition] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
@@ -62,15 +66,26 @@ class CorporatePositionController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        corporatePosition =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, corporatePosition))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-          } yield Redirect(navigator.nextPage(RfmCorporatePositionPage, mode, updatedAnswers))
-      )
+    sessionRepository.get(request.userId).flatMap { maybeSessionUserAnswers =>
+      request.userAnswers
+        .get(RfmPillar2ReferencePage)
+        .orElse(maybeSessionUserAnswers.flatMap(sessionUserAnswers => sessionUserAnswers.get(RfmPillar2ReferencePage)))
+        .map { pillar2Id =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+              corporatePosition =>
+                for {
+                  updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, corporatePosition))
+                  updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmPillar2ReferencePage, pillar2Id))
+                  _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                } yield Redirect(navigator.nextPage(RfmCorporatePositionPage, mode, updatedAnswers1))
+            )
+        }
+        .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+    }
+
   }
+
 }

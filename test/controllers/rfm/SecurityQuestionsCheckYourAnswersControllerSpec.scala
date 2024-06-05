@@ -17,9 +17,11 @@
 package controllers.rfm
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.rfm.RegistrationDate
 import models.rfm.RegistrationDate._
 import models.{InternalIssueError, NormalMode}
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -84,7 +86,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       }
     }
     "onSubmit" should {
-      "redirect to corporate position group page if registration date match our records" in {
+      "redirect to corporate position group page if registration date match our records with the same pillar2 ID" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
           .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
@@ -94,6 +96,30 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .build()
         running(application) {
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.matchingPillar2Records(any(), any())(any())).thenReturn(Future.successful(true))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+            .withFormUrlEncodedBody()
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url
+        }
+      }
+
+      "redirect to corporate position group page if registration date match our records with new pillar2 ID with no prepopulated data" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.matchingPillar2Records(any(), any())(any())).thenReturn(Future.successful(false))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
             .withFormUrlEncodedBody()
 
@@ -114,6 +140,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .build()
         running(application) {
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.matchingPillar2Records(any(), any())(any())).thenReturn(Future.successful(true))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
           val result = route(application, request).value

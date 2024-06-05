@@ -56,7 +56,7 @@ class NonUKBankController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(NonUKBankPage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -69,7 +69,7 @@ class NonUKBankController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
