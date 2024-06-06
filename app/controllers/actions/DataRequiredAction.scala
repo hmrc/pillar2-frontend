@@ -20,18 +20,12 @@ import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Pillar2SessionKeys
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataRequiredAction with Logging {
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     logger.debug(
       s"DataRequiredAction called for user: ${request.userId} with userAnswers: ${request.userAnswers}"

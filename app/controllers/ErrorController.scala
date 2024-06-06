@@ -23,12 +23,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.{ErrorTemplate, PageNotFound}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class ErrorController @Inject() (val controllerComponents: MessagesControllerComponents, ErrorView: ErrorTemplate, pageNotFoundView: PageNotFound)(
-  implicit
-  ec:        ExecutionContext,
-  appConfig: FrontendAppConfig
+  implicit appConfig:                                      FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

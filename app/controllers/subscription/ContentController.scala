@@ -23,7 +23,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.ContentView
-
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -39,7 +38,7 @@ class ContentController @Inject() (
     Ok(view())
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
     Future.successful(Redirect(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode)))
   }
 }

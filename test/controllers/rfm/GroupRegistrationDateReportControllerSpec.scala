@@ -59,11 +59,6 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     "must return OK and the correct view for Group Registration Date " in {
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -82,11 +77,6 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
       val date = RegistrationDate(startDate)
       val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, date)
       val application = applicationBuilder(Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -104,11 +94,6 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
@@ -132,11 +117,6 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       val request =

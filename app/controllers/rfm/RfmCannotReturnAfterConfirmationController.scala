@@ -22,15 +22,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmCannotReturnAfterConfirmationView
-
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class RfmCannotReturnAfterConfirmationController @Inject() (
   rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmCannotReturnAfterConfirmationView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

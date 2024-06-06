@@ -20,16 +20,21 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
-import models.rfm.CorporatePosition
+import models.rfm.{CorporatePosition, RegistrationDate}
+import navigation.ReplaceFilingMemberNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.RfmCorporatePositionPage
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.inject
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.rfm.CorporatePositionView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CorporatePositionControllerSpec extends SpecBase {
@@ -98,15 +103,19 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
-
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
 
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.Upe.toString)
@@ -120,15 +129,19 @@ class CorporatePositionControllerSpec extends SpecBase {
 
     "must redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
 
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
+        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
 
@@ -140,11 +153,17 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
         .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -152,6 +171,57 @@ class CorporatePositionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+      }
+    }
+    "redirect to journey recovery if no data is found in sessionRepository or the BE database" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future(None))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+      }
+    }
+    "must get the pillar2 ID from the backend database if it exists there and no data is found in the frontend repository and save the relevant data" in {
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[ReplaceFilingMemberNavigator]
+
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[ReplaceFilingMemberNavigator].toInstance(mockNavigator),
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockSessionRepository.get(any())).thenReturn(Future(None))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "newNfm"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockUserAnswersConnectors).save(eqTo(ua.id), eqTo(ua.data))(any())
+        verify(mockNavigator).nextPage(RfmCorporatePositionPage, NormalMode, ua)
       }
     }
 

@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat, OWrites}
 case class Identifier(key: String, value: String)
 
 object Identifier {
-  implicit val format = Json.format[Identifier]
+  implicit val format: OFormat[Identifier] = Json.format[Identifier]
 
   implicit lazy val writes: OWrites[Identifier] = OWrites[Identifier] { identifier =>
     Json.obj(
@@ -34,7 +34,7 @@ object Identifier {
 case class Verifier(key: String, value: String)
 
 object Verifier {
-  implicit val format = Json.format[Verifier]
+  implicit val format: OFormat[Verifier] = Json.format[Verifier]
 
   implicit lazy val writes: OWrites[Verifier] = OWrites[Verifier] { verifier =>
     Json.obj(
@@ -47,7 +47,7 @@ object Verifier {
 case class EnrolmentRequest(identifiers: Seq[Identifier], verifiers: Seq[Verifier])
 
 object EnrolmentRequest {
-  implicit val format = Json.format[EnrolmentRequest]
+  implicit val format: OFormat[EnrolmentRequest] = Json.format[EnrolmentRequest]
 
   implicit lazy val writes: OWrites[EnrolmentRequest] = OWrites[EnrolmentRequest] { enrolmentRequest =>
     Json.obj(

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmSecondaryContactNameFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage, RfmSecondaryContactNamePage}
+import pages.RfmSecondaryContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat

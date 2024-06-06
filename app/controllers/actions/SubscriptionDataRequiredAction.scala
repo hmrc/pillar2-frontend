@@ -20,10 +20,6 @@ import models.requests.{OptionalSubscriptionDataRequest, SubscriptionDataRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,16 +27,13 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
     extends SubscriptionDataRequiredAction
     with Logging {
 
-  override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] = {
-
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+  override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
     request.maybeSubscriptionLocalData match {
       case None =>
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       case Some(data) =>
         Future.successful(Right(SubscriptionDataRequest(request.request, request.userId, data, request.enrolments)))
     }
-  }
 
 }
 

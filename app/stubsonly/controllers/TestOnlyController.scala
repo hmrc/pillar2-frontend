@@ -47,11 +47,11 @@ class TestOnlyController @Inject() (
     testOnlyConnector.clearCurrentData(request.userId).map(httpResponse => Ok(httpResponse.body))
   }
 
-  def getRegistrationData(): Action[AnyContent] = (identity andThen getData) { implicit request =>
+  def getRegistrationData: Action[AnyContent] = (identity andThen getData) { implicit request =>
     Ok(Json.toJson(request.userAnswers))
   }
 
-  def getAllRecords(): Action[AnyContent] = Action.async { implicit request =>
+  def getAllRecords: Action[AnyContent] = Action.async { implicit request =>
     testOnlyConnector.getAllRecords().map(httpResponse => Ok((httpResponse.json)))
   }
 
@@ -80,7 +80,7 @@ class TestOnlyController @Inject() (
 
   }
 
-  def clearSession: Action[AnyContent] = Action { implicit request =>
+  def clearSession: Action[AnyContent] = Action {
     Redirect(controllers.eligibility.routes.GroupTerritoriesController.onPageLoad).withNewSession
   }
 
