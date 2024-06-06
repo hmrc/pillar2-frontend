@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.registration.RegistrationInfo
-import models.rfm.CorporatePosition
+import models.rfm.{CorporatePosition, RegistrationDate}
 import models.subscription._
 import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
 import org.apache.pekko.Done
@@ -34,6 +34,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionServiceSpec extends SpecBase {
@@ -732,14 +733,17 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "matchingPillar2Records" when {
-      "return true if the pillar2 records in FE and BE database match" in {
-        val userAnswers = emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "matchingPillar2Id")
+      val registrationDate = RegistrationDate(LocalDate.now())
+      "return true if the pillar2 and reg date records in FE and BE database match" in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, "matchingPillar2Id")
+          .setOrException(RfmRegistrationDatePage, registrationDate)
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val result = service.matchingPillar2Records("id", "matchingPillar2Id")
+        val result = service.matchingPillar2Records("id", "matchingPillar2Id", registrationDate)
         result.futureValue mustEqual true
       }
       "return false if pillar2 records in FE and BE database do not match" in {
@@ -749,7 +753,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val result = service.matchingPillar2Records("id", "pillar2Frontend")
+        val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.futureValue mustEqual false
       }
       "return false if no data can be found in the BE database" in {
@@ -758,7 +762,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(None))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val result = service.matchingPillar2Records("id", "pillar2Frontend")
+        val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.futureValue mustEqual false
       }
       "return failed results if call to BE database fails" in {
@@ -767,7 +771,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val result = service.matchingPillar2Records("id", "pillar2Frontend")
+        val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.failed.futureValue mustEqual InternalIssueError
       }
     }

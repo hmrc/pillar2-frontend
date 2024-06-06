@@ -68,12 +68,13 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
-      inputPillar2Reference  <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
-      inputRegistrationDate  <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
-      readData               <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
-      matchingPillar2Records <- OptionT.liftF(subscriptionService.matchingPillar2Records(request.userId, inputPillar2Reference))
+      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
+      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
+      readData              <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
+      matchingPillar2Records <-
+        OptionT.liftF(subscriptionService.matchingPillar2Records(request.userId, inputPillar2Reference, inputRegistrationDate))
     } yield
-      if (matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
+      if (matchingPillar2Records) {
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
       } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
         userAnswersConnectors.remove(request.userId)

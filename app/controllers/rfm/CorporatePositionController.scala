@@ -23,7 +23,7 @@ import forms.RfmCorporatePositionFormProvider
 import models.Mode
 import models.rfm.CorporatePosition
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage}
+import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -67,22 +67,21 @@ class CorporatePositionController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userId).flatMap { maybeSessionUserAnswers =>
-      request.userAnswers
-        .get(RfmPillar2ReferencePage)
-        .orElse(maybeSessionUserAnswers.flatMap(sessionUserAnswers => sessionUserAnswers.get(RfmPillar2ReferencePage)))
-        .map { pillar2Id =>
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-              corporatePosition =>
-                for {
-                  updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, corporatePosition))
-                  updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmPillar2ReferencePage, pillar2Id))
-                  _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-                } yield Redirect(navigator.nextPage(RfmCorporatePositionPage, mode, updatedAnswers1))
-            )
-        }
+      (for {
+        pillar2Id        <- maybeSessionUserAnswers.map(_.get(RfmPillar2ReferencePage)).getOrElse(request.userAnswers.get(RfmPillar2ReferencePage))
+        registrationDate <- maybeSessionUserAnswers.map(_.get(RfmRegistrationDatePage)).getOrElse(request.userAnswers.get(RfmRegistrationDatePage))
+      } yield form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          corporatePosition =>
+            for {
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmCorporatePositionPage, corporatePosition))
+              updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmPillar2ReferencePage, pillar2Id))
+              updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(RfmRegistrationDatePage, registrationDate))
+              _               <- userAnswersConnectors.save(updatedAnswers2.id, Json.toJson(updatedAnswers2.data))
+            } yield Redirect(navigator.nextPage(RfmCorporatePositionPage, mode, updatedAnswers2))
+        ))
         .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
     }
 

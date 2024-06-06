@@ -19,7 +19,7 @@ package services
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
-import models.rfm.CorporatePosition
+import models.rfm.{CorporatePosition, RegistrationDate}
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
 import org.apache.pekko.Done
@@ -75,14 +75,21 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  def matchingPillar2Records(id: String, sessionPillar2Id: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: RegistrationDate)(implicit
+    hc:                          HeaderCarrier
+  ): Future[Boolean] =
     userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
-      maybeUserAnswers
-        .flatMap(userAnswers =>
-          userAnswers.get(RfmPillar2ReferencePage).map(backendPillar2Id => if (sessionPillar2Id.equals(backendPillar2Id)) true else false)
-        )
-        .getOrElse(false)
-
+      (for {
+        backendPillar2Id        <- maybeUserAnswers.flatMap(_.get(RfmPillar2ReferencePage))
+        backendRegistrationDate <- maybeUserAnswers.flatMap(_.get(RfmRegistrationDatePage))
+      } yield
+        if (
+          backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate.isEqual(sessionRegistrationDate.rfmRegistrationDate)
+        ) {
+          true
+        } else {
+          false
+        }).getOrElse(false)
     }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier

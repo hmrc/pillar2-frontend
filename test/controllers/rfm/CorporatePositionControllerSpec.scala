@@ -20,12 +20,12 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
-import models.rfm.CorporatePosition
+import models.rfm.{CorporatePosition, RegistrationDate}
 import navigation.ReplaceFilingMemberNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage}
+import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -34,6 +34,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.rfm.CorporatePositionView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CorporatePositionControllerSpec extends SpecBase {
@@ -102,7 +103,9 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
-      val ua = emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
@@ -126,7 +129,9 @@ class CorporatePositionControllerSpec extends SpecBase {
 
     "must redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
 
-      val ua = emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
@@ -148,7 +153,9 @@ class CorporatePositionControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
@@ -192,6 +199,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
