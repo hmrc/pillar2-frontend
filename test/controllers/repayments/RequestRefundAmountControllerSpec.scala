@@ -21,7 +21,7 @@ import forms.RequestRefundAmountFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.PaymentRefundAmountPage
+import pages.RepaymentsRefundAmountPage
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -71,7 +71,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(
             Future.successful(
-              Some(emptyUserAnswers.setOrException(PaymentRefundAmountPage, amount))
+              Some(emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount))
             )
           )
         val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)

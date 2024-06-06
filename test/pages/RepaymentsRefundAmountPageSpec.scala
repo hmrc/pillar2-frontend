@@ -19,14 +19,14 @@ package pages
 import org.scalacheck.ScalacheckShapeless.derivedArbitrary
 import pages.behaviours.PageBehaviours
 
-class PaymentRefundAmountPageSpec extends PageBehaviours {
+class RepaymentsRefundAmountPageSpec extends PageBehaviours {
 
   "PaymentRefundAmountPage" - {
 
-    beRetrievable[BigDecimal](PaymentRefundAmountPage)
+    beRetrievable[BigDecimal](RepaymentsRefundAmountPage)
 
-    beSettable[BigDecimal](PaymentRefundAmountPage)
+    beSettable[BigDecimal](RepaymentsRefundAmountPage)
 
-    beRemovable[BigDecimal](PaymentRefundAmountPage)
+    beRemovable[BigDecimal](RepaymentsRefundAmountPage)
   }
 }

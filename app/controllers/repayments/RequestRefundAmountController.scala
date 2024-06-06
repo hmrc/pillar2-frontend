@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
-import pages.PaymentRefundAmountPage
+import pages.RepaymentsRefundAmountPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -55,7 +55,7 @@ class RequestRefundAmountController @Inject() (
       agentIdentifierAction,
       identify
     ) andThen getSessionData() andThen requireSessionData)) { implicit request =>
-      val preparedForm = request.userAnswers.get(PaymentRefundAmountPage) match {
+      val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -74,7 +74,7 @@ class RequestRefundAmountController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, clientPillar2Id))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(PaymentRefundAmountPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
         )
