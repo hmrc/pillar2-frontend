@@ -18,7 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.RequestRefundAmountFormProvider
-import models.{NormalMode, RefundAmount}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.PaymentRefundAmountPage
@@ -63,7 +63,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val amount = RefundAmount(9.99)
+      val amount = BigDecimal(9.99)
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -122,8 +122,8 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", -9.toString))
-        val boundForm = formProvider().bind(Map("value" -> -9.toString))
+            .withFormUrlEncodedBody(("value", "-9"))
+        val boundForm = formProvider().bind(Map("value" -> "-9"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST

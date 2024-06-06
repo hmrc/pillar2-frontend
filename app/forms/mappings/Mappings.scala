@@ -46,6 +46,12 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[Boolean] =
     of(booleanFormatter(requiredKey, invalidKey, args))
 
+  protected def currency(
+    requiredKey:     String = "error.required",
+    invalidCurrency: String = "error.invalidNumeric"
+  ): FieldMapping[BigDecimal] =
+    of(currencyFormatter(requiredKey, invalidCurrency))
+
   protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid", args: Seq[String] = Seq.empty)(implicit
     ev:                                    Enumerable[A]
   ): FieldMapping[A] =

@@ -22,6 +22,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import pages.PaymentRefundAmountPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,7 +47,7 @@ class RequestRefundAmountController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[BigDecimal] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(

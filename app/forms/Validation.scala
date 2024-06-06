@@ -24,5 +24,5 @@ object Validation {
   final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
   final val BIC_SWIFT_REGEX = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
   final val IBAN_REGEX      = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
-
+  final val MONETARY_REGEX  = """^-?(\d*(\.\d{1,2})?)$"""
 }
