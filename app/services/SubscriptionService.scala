@@ -82,14 +82,8 @@ class SubscriptionService @Inject() (
       (for {
         backendPillar2Id        <- maybeUserAnswers.flatMap(_.get(RfmPillar2ReferencePage))
         backendRegistrationDate <- maybeUserAnswers.flatMap(_.get(RfmRegistrationDatePage))
-      } yield
-        if (
-          backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate.isEqual(sessionRegistrationDate.rfmRegistrationDate)
-        ) {
-          true
-        } else {
-          false
-        }).getOrElse(false)
+      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate
+        .isEqual(sessionRegistrationDate.rfmRegistrationDate)).getOrElse(false)
     }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier
