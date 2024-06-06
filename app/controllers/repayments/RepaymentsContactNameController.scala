@@ -17,11 +17,10 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -35,17 +34,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject() (
-  identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  formProvider:              RepaymentsContactNameFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsContactNameFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsContactNameView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -78,7 +76,7 @@ class RepaymentsContactNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, mode))
+            } yield Redirect(controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, NormalMode))
         )
     }
 }

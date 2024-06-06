@@ -33,6 +33,7 @@ import scala.concurrent.Future
 class RepaymentsContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider()
+  val form         = formProvider()
 
   "Repayments Contact Name Controller" when {
 
@@ -56,7 +57,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), None, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -92,14 +93,15 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onSubmit(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(
-              "value" -> "ABC Limited"
-            )
+          FakeRequest(
+            POST,
+            controllers.repayments.routes.RepaymentsContactNameController.onSubmit(clientPillar2Id = None, NormalMode).url
+          )
+            .withFormUrlEncodedBody("contactName" -> "ABC Limited")
         val result = route(application, request).value
+
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode).url
       }
     }
 
