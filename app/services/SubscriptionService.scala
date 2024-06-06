@@ -24,6 +24,7 @@ import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
@@ -38,7 +39,8 @@ class SubscriptionService @Inject() (
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
-)(implicit ec:                  ExecutionContext) {
+)(implicit ec:                  ExecutionContext)
+    extends Logging {
 
   def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     for {
@@ -70,8 +72,10 @@ class SubscriptionService @Inject() (
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(readSubscriptionResponse) =>
+        logger.info(s"readSubscription - $readSubscriptionResponse")
         Future.successful(readSubscriptionResponse)
-      case _ =>
+      case error =>
+        logger.warn(s"readSubscription - $error")
         Future.failed(InternalIssueError)
     }
 
@@ -240,8 +244,12 @@ class SubscriptionService @Inject() (
 
   def deallocateEnrolment(plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
-      case Some(groupIds) => enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds, plrReference = plrReference)
-      case _              => Future.failed(InternalIssueError)
+      case Some(groupIds) =>
+        logger.info(s"deallocateEnrolment - $groupIds")
+        enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds, plrReference = plrReference)
+      case error =>
+        logger.warn(s"deallocateEnrolment - $error")
+        Future.failed(InternalIssueError)
     }
 
   def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
