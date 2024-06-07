@@ -17,10 +17,9 @@
 package generators
 
 trait StringGenerators {
-  def randomStringGenerator(n: Int): String = {
+  def randomStringGenerator(n: Int): String =
     n match {
       case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n-1).toString
+      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1).toString
     }
-  }
 }
