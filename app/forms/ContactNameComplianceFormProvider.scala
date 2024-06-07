@@ -28,6 +28,5 @@ class ContactNameComplianceFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("contactNameCompliance.error.required")
         .verifying(maxLength(Constants.MAX_LENGTH_160, "contactNameCompliance.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "contactNameCompliance.error.invalid"))
     )
 }
