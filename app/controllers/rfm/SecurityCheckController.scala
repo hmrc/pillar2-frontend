@@ -17,7 +17,6 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmSecurityCheckFormProvider
 import models.{Mode, NormalMode}
@@ -25,8 +24,8 @@ import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.SecurityCheckView
 
@@ -34,34 +33,31 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityCheckController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              RfmSecurityCheckFormProvider,
-  navigator:                 ReplaceFilingMemberNavigator,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecurityCheckView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  sessionRepository:        SessionRepository,
+  rfmIdentify:              RfmIdentifierAction,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  formProvider:             RfmSecurityCheckFormProvider,
+  navigator:                ReplaceFilingMemberNavigator,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     SecurityCheckView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
+      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -69,7 +65,7 @@ class SecurityCheckController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
       )
   }

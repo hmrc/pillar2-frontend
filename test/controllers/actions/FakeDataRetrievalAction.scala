@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest, OptionalSubscriptionDataRequest}
+import models.requests.{IdentifierRequest, OptionalDataRequest, OptionalSubscriptionDataRequest, SessionOptionalDataRequest}
 import models.subscription.SubscriptionLocalData
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,4 +38,13 @@ class FakeSubscriptionDataRetrievalAction(dataToReturn: Option[SubscriptionLocal
 
   override protected implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+}
+
+class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends SessionDataRetrievalAction {
+  override protected implicit val executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
+
+  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
+    Future(SessionOptionalDataRequest(request.request, request.userId, dataToReturn))
+
 }

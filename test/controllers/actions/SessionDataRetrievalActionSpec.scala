@@ -22,11 +22,12 @@ import models.requests.{IdentifierRequest, SessionOptionalDataRequest}
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+
 import scala.concurrent.Future
 
 class SessionDataRetrievalActionSpec extends SpecBase {
 
-  class Harness(sessionRepository: SessionRepository) extends SessionDataRetrievalActionProvider(sessionRepository) {
+  class Harness(sessionRepository: SessionRepository) extends SessionDataRetrievalActionImpl(sessionRepository)(ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] = transform(request)
   }
 

@@ -50,13 +50,13 @@ final case class SubscriptionDataRequest[A](
   enrolments:            Set[Enrolment]
 ) extends WrappedRequest[A](request)
 
-case class SessionDataRequest[A](
+final case class SessionDataRequest[A](
   request:     Request[A],
   userId:      String,
   userAnswers: UserAnswers
 ) extends WrappedRequest[A](request)
 
-case class SessionOptionalDataRequest[A](
+final case class SessionOptionalDataRequest[A](
   request:     Request[A],
   userId:      String,
   userAnswers: Option[UserAnswers]

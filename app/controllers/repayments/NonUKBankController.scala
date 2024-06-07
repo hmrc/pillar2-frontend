@@ -18,65 +18,67 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
-import forms.RequestRefundAmountFormProvider
-import models.{Mode, NormalMode}
-import pages.RepaymentsRefundAmountPage
+import forms.NonUKBankFormProvider
+import models.Mode
+import models.repayments.NonUKBank
+import pages.NonUKBankPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.RequestRefundAmountView
+import views.html.repayments.NonUKBankView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestRefundAmountController @Inject() (
+class NonUKBankController @Inject() (
   identify:                 IdentifierAction,
-  formProvider:             RequestRefundAmountFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RequestRefundAmountView,
+  formProvider:             NonUKBankFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
-  agentIdentifierAction:    AgentIdentifierAction
+  val controllerComponents: MessagesControllerComponents,
+  view:                     NonUKBankView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[BigDecimal] = formProvider()
+  val form: Form[NonUKBank] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
+      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode, clientPillar2Id))
+      Ok(view(preparedForm, clientPillar2Id, mode))
     }
 
-  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+    (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData andThen requireSessionData)).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, clientPillar2Id))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(routes.UnderConstructionController.onPageLoad)
         )
     }
 

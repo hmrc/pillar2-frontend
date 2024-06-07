@@ -58,7 +58,7 @@ trait Formatters extends Transforms with Constraints {
 
       private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]) =
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
         baseFormatter
           .bind(key, data)
           .right
@@ -68,7 +68,7 @@ trait Formatters extends Transforms with Constraints {
             case _       => Left(Seq(FormError(key, invalidKey, args)))
           }
 
-      def unbind(key: String, value: Boolean) = Map(key -> value.toString)
+      def unbind(key: String, value: Boolean): Map[String, String] = Map(key -> value.toString)
     }
 
   private[mappings] def optionalPostcodeFormatter(
@@ -97,25 +97,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value.getOrElse(""))
   }
 
-  private[mappings] def bigDecimalFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[BigDecimal] =
-    new Formatter[BigDecimal] {
-      private val baseFormatter = stringFormatter(requiredKey)
-
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
-        baseFormatter
-          .bind(key, data)
-          .map(_.replace(",", ""))
-          .flatMap { s =>
-            Try(BigDecimal(s)) match {
-              case Success(x) => Right(x)
-              case Failure(_) => Left(Seq(FormError(key, invalidKey, args)))
-            }
-          }
-
-      override def unbind(key: String, value: BigDecimal): Map[String, String] =
-        baseFormatter.unbind(key, value.toString)
-    }
-
   private[mappings] def currencyFormatter(
     requiredKey:     String,
     invalidCurrency: String,
@@ -132,10 +113,8 @@ trait Formatters extends Transforms with Constraints {
           .map(_.replace(",", "").replace(" ", ""))
           .flatMap {
             case s if onlyOnePound(s) =>
-              // more than one £ symbol
               Left(Seq(FormError(key, invalidCurrency, args)))
             case s if !s.replace("£", "").matches(MONETARY_REGEX) =>
-              // more than 2 dp
               Left(Seq(FormError(key, invalidCurrency, args)))
             case s =>
               nonFatalCatch
