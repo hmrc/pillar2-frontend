@@ -43,6 +43,7 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
       )(rds = readRaw, hc = hc, ec = ec)
       .map {
         case response if response.status == OK =>
+          logger.info(s"getGroupIds - success")
           response.json
             .asOpt[GroupIds]
         case response =>
