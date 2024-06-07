@@ -28,6 +28,9 @@ trait Mappings extends Formatters with Constraints {
   protected def pillar2Id(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(pillar2IdFormatter(errorKey, args))
 
+  protected def bankAccount(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(bankAccountFormatter(errorKey, args))
+
   protected def int(
     requiredKey:    String = "error.required",
     wholeNumberKey: String = "error.wholeNumber",
