@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import models.grs.EntityType
-import org.scalacheck.{Arbitrary, Gen}
+import models.UkOrAbroadBankAccount
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class UkBankAccountOrForeignBankAccountSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryUkOrAbroadBankAccount: Arbitrary[UkOrAbroadBankAccount] =
-    Arbitrary {
-      Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
-    }
+  "UkOrAbroadBankAccountPage" - {
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
+    beRetrievable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
+    beSettable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
 
+    beRemovable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+  }
 }

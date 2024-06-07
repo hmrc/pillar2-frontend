@@ -31,7 +31,7 @@ import views.html.rfm.UkBasedFilingMemberView
 
 import scala.concurrent.Future
 
-class UkBasedFilingMemberControllerSpec extends SpecBase {
+class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
 
   val formProvider = new NFMRegisteredInUKConfirmationFormProvider()
 
