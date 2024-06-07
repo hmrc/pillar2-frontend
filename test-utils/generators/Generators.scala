@@ -136,11 +136,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     genIntersperseString(numberGen.toString, ",")
   }
 
-  private def arbitraryBigDecimalWithMax2DecimalPlaces: Gen[BigDecimal] =
-    Gen
-      .chooseNum(Double.MinValue, Double.MaxValue)
-      .map(d => BigDecimal(d).setScale(2, RoundingMode.HALF_UP))
-
   def decimalsBelowValue(value: BigDecimal): Gen[BigDecimal] =
     arbitraryBigDecimalWithMax2DecimalPlaces suchThat (_ < value)
 
@@ -150,4 +145,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def decimalsOutsideRange(min: BigDecimal, max: BigDecimal): Gen[BigDecimal] =
     arbitraryBigDecimalWithMax2DecimalPlaces suchThat (x => x < min - 1 || x > max + 1)
 
+  private def arbitraryBigDecimalWithMax2DecimalPlaces: Gen[BigDecimal] =
+    Gen
+      .chooseNum(Double.MinValue, Double.MaxValue)
+      .map(d => BigDecimal(d).setScale(2, RoundingMode.HALF_UP))
 }
