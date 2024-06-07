@@ -33,39 +33,38 @@ import views.html.repayments.UkOrAbroadBankAccountView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UkOrAbroadBankAccountController @Inject()(
-                                                 sessionRepository: SessionRepository,
-                                                 identify: IdentifierAction,
-                                                 getData: DataRetrievalAction,
-                                                 featureAction:            FeatureFlagActionFactory,
-                                                 requireData: DataRequiredAction,
-                                                 navigator: RepaymentNavigator,
-                                                 formProvider: UkOrAbroadBankAccountFormProvider,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: UkOrAbroadBankAccountView
-                                               )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class UkOrAbroadBankAccountController @Inject() (
+  sessionRepository:        SessionRepository,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  featureAction:            FeatureFlagActionFactory,
+  requireData:              DataRequiredAction,
+  navigator:                RepaymentNavigator,
+  formProvider:             UkOrAbroadBankAccountFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     UkOrAbroadBankAccountView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.repaymentsAccessAction
-    andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode))
+    andThen identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (featureAction.repaymentsAccessAction
-    andThen identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
+    andThen identify andThen getData andThen requireData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UkOrAbroadBankAccountPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, mode, updatedAnswers))
       )
   }

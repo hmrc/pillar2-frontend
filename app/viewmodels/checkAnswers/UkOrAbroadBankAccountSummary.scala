@@ -25,25 +25,23 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UkOrAbroadBankAccountSummary  {
+object UkOrAbroadBankAccountSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UkOrAbroadBankAccountPage).map {
-      answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"ukOrAbroadBankAccount.$answer"))
-          )
+    answers.get(UkOrAbroadBankAccountPage).map { answer =>
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(messages(s"ukOrAbroadBankAccount.$answer"))
         )
+      )
 
-        SummaryListRowViewModel(
-          key     = "ukOrAbroadBankAccount.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("ukOrAbroadBankAccount.change.hidden"))
-          )
+      SummaryListRowViewModel(
+        key = "ukOrAbroadBankAccount.checkYourAnswersLabel",
+        value = value,
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("ukOrAbroadBankAccount.change.hidden"))
         )
+      )
     }
 }

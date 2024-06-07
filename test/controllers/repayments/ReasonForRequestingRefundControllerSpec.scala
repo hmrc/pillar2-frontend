@@ -36,9 +36,7 @@ import scala.concurrent.Future
 
 class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
-
   val formProvider = new ReasonForRequestingRefundFormProvider()
-
 
   "ReasonForRequestingRefund Controller" when {
 
@@ -65,32 +63,35 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET,controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
 
         val view = application.injector.instanceOf[ReasonForRequestingRefundView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(request, appConfig(application),messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "redirect to pageNotFoundLoad if feature flag is off" in {
 
       val application = applicationBuilder()
-        .configure("features.repaymentsAccessEnabled"-> false).build()
+        .configure("features.repaymentsAccessEnabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-       redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
+        redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
       }
     }
-
-
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -108,7 +109,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application),messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
     "must update the user answers and redirect to the next page when the user answers has provided a valid answer" in {
@@ -132,7 +133,6 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", "valid reason"))
-
 
         val result = route(application, request).value
 

@@ -22,8 +22,8 @@ import play.api.data.FormError
 class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "reasonForRequestingRefund.error.required"
-  val lengthKey = "reasonForRequestingRefund.error.length"
-  val maxLength = 100
+  val lengthKey   = "reasonForRequestingRefund.error.length"
+  val maxLength   = 200
 
   val form = new ReasonForRequestingRefundFormProvider()()
 

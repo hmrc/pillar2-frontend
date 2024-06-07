@@ -33,39 +33,38 @@ import views.html.repayments.ReasonForRequestingRefundView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonForRequestingRefundController @Inject()(
-                                                     val sessionRepository: SessionRepository,
-                                                     identify: IdentifierAction,
-                                                     getData: SessionDataRetrievalAction,
-                                                     navigator: RepaymentNavigator,
-                                                     featureAction: FeatureFlagActionFactory,
-                                                     requireData: SessionDataRequiredAction,
-                                                     formProvider: ReasonForRequestingRefundFormProvider,
-                                                     val controllerComponents: MessagesControllerComponents,
-                                                     view: ReasonForRequestingRefundView
-                                                   )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class ReasonForRequestingRefundController @Inject() (
+  val sessionRepository:    SessionRepository,
+  identify:                 IdentifierAction,
+  getData:                  SessionDataRetrievalAction,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  requireData:              SessionDataRequiredAction,
+  formProvider:             ReasonForRequestingRefundFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     ReasonForRequestingRefundView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.repaymentsAccessAction
-    andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode))
+    andThen identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (featureAction.repaymentsAccessAction
-    andThen identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
+    andThen identify andThen getData andThen requireData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForRequestingRefundPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ReasonForRequestingRefundPage, mode, updatedAnswers))
       )
   }

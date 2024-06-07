@@ -32,10 +32,8 @@ class UkBankAccountOrForeignBankAccountSpec extends AnyFreeSpec with Matchers wi
 
       val gen = Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
 
-      forAll(gen) {
-        ukOrAbroadBankAccount =>
-
-          JsString(ukOrAbroadBankAccount.toString).validate[UkOrAbroadBankAccount].asOpt.value mustEqual ukOrAbroadBankAccount
+      forAll(gen) { ukOrAbroadBankAccount =>
+        JsString(ukOrAbroadBankAccount.toString).validate[UkOrAbroadBankAccount].asOpt.value mustEqual ukOrAbroadBankAccount
       }
     }
 
@@ -43,10 +41,8 @@ class UkBankAccountOrForeignBankAccountSpec extends AnyFreeSpec with Matchers wi
 
       val gen = arbitrary[String] suchThat (!UkOrAbroadBankAccount.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[UkOrAbroadBankAccount] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[UkOrAbroadBankAccount] mustEqual JsError("error.invalid")
       }
     }
 
@@ -54,10 +50,8 @@ class UkBankAccountOrForeignBankAccountSpec extends AnyFreeSpec with Matchers wi
 
       val gen = Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
 
-      forAll(gen) {
-        ukOrAbroadBankAccount =>
-
-          Json.toJson(ukOrAbroadBankAccount) mustEqual JsString(ukOrAbroadBankAccount.toString)
+      forAll(gen) { ukOrAbroadBankAccount =>
+        Json.toJson(ukOrAbroadBankAccount) mustEqual JsString(ukOrAbroadBankAccount.toString)
       }
     }
   }

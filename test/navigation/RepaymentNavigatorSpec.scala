@@ -25,9 +25,8 @@ class RepaymentNavigatorSpec extends SpecBase {
 
   val navigator = new RepaymentNavigator
 
-
-  private lazy val journeyRecovery             = routes.JourneyRecoveryController.onPageLoad()
-  private lazy val underConstruction             = routes.UnderConstructionController.onPageLoad
+  private lazy val journeyRecovery   = routes.JourneyRecoveryController.onPageLoad()
+  private lazy val underConstruction = routes.UnderConstructionController.onPageLoad
   "Navigator" when {
 
     "in Normal mode" must {
@@ -38,20 +37,24 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
       "go to type of bank account page after submitting their reason for requesting a refund" in {
-        navigator.nextPage(ReasonForRequestingRefundPage, NormalMode, emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "because")) mustBe
+        navigator.nextPage(
+          ReasonForRequestingRefundPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "because")
+        ) mustBe
           controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
       }
       "go to under construction page if they choose a UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode,userAnswers ) mustBe underConstruction
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe underConstruction
       }
       "go to non-UK bank account page if they choose a non-UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode,userAnswers ) mustBe
-          controllers.repayments.routes.NonUKBankController.onPageLoad(mode =NormalMode)
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
       }
       "go to journey recovery page if they somehow manage to submit an empty form" in {
-        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode,emptyUserAnswers ) mustBe journeyRecovery
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
     }
@@ -63,7 +66,6 @@ class RepaymentNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
-
 
     }
   }

@@ -35,7 +35,7 @@ class RepaymentNavigator @Inject() {
   private val normalRoutes: Page => UserAnswers => Call = {
     case ReasonForRequestingRefundPage => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
     case UkOrAbroadBankAccountPage     => ukOrAbroadBankAccountLogic
-    case _                        => _ => routes.IndexController.onPageLoad
+    case _                             => _ => routes.IndexController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogic(userAnswers: UserAnswers): Call =
@@ -50,10 +50,6 @@ class RepaymentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-
-
-
-  private val checkRouteMap: Page => UserAnswers => Call = _   => _ => routes.IndexController.onPageLoad
-
+  private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.IndexController.onPageLoad
 
 }

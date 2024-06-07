@@ -34,14 +34,9 @@ import views.html.repayments.UkOrAbroadBankAccountView
 
 import scala.concurrent.Future
 
-
 class UkOrAbroadBankAccountControllerSpec extends SpecBase {
 
-
   val formProvider = new UkOrAbroadBankAccountFormProvider()
-
-
-
 
   "UkOrAbroadBankAccount Controller" when {
 
@@ -75,26 +70,28 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head),
-          NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "redirect to pageNotFoundLoad if feature flag is off" in {
 
       val application = applicationBuilder()
-        .configure("features.repaymentsAccessEnabled"-> false).build()
+        .configure("features.repaymentsAccessEnabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
       }
     }
-
-
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -138,7 +135,6 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "nonUkBankAccount"))
 
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -147,7 +143,6 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         verify(mockNavigator).nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers)
       }
     }
-
 
   }
 }

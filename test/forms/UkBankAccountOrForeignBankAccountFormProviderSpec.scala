@@ -26,13 +26,13 @@ class UkBankAccountOrForeignBankAccountFormProviderSpec extends OptionFieldBehav
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "ukOrAbroadBankAccount.error.required"
 
     behave like optionsField[UkOrAbroadBankAccount](
       form,
       fieldName,
-      validValues  = UkOrAbroadBankAccount.values,
+      validValues = UkOrAbroadBankAccount.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 
