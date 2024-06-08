@@ -53,7 +53,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
   def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
     http.POST[AllocateEnrolmentParameters, HttpResponse](allocateOrDeallocateUrl(groupId, plrReference), body).flatMap {
       case success if success.status == CREATED =>
-        logger.info(s"allocateEnrolment - success")
+        logger.info(s"allocateEnrolment success for groupId -$groupId")
         Done.toFuture
       case failure =>
         logger.error(
@@ -65,7 +65,9 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
   def revokeEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] = {
     val completeUrl = allocateOrDeallocateUrl(groupId = groupId, plrReference = plrReference)
     http.DELETE(completeUrl) flatMap {
-      case success if success.status == NO_CONTENT => Done.toFuture
+      case success if success.status == NO_CONTENT =>
+        logger.info(s"Successfully deleted the enrolment for groupId- $groupId")
+        Done.toFuture
       case failure =>
         logger.error(
           s"Revoke enrolments call to tax enrolments failed with status ${failure.status} and body:  ${failure.body}"

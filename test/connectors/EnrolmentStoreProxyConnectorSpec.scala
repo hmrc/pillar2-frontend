@@ -36,7 +36,7 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
   private val getKnownFactsUrl = "/enrolment-store-proxy/enrolment-store/enrolments"
 
-  val groupIds     = GroupIds(principalGroupIds = "ABCEDEFGI1234567", delegatedGroupIds = Seq("ABCEDEFGI1234568"))
+  val groupIds     = GroupIds(principalGroupIds = Seq("ABCEDEFGI1234567"), delegatedGroupIds = Seq("ABCEDEFGI1234568"))
   val jsonGroupIds = Json.toJson(groupIds).toString()
 
   private val errorCodes: Gen[Int] =
