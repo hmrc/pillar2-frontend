@@ -18,7 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.RepaymentsContactEmailFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
