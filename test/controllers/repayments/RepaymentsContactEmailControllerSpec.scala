@@ -130,7 +130,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("contactEmail", "a@c"))
         val boundForm = formProvider("ABC Limited").bind(Map("contactEmail" -> "a@c"))
         val view      = application.injector.instanceOf[RepaymentsContactEmailView]
@@ -141,6 +141,35 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must redirect to Recovery page if the previous page is not answered" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "Journey Recovery when no data found for contact name in POST" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
+        .withFormUrlEncodedBody("contactEmail" -> "alll@gmail.com")
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
