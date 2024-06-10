@@ -19,10 +19,10 @@ package controllers.repayments
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
+import navigation.RepaymentNavigator
 import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -42,6 +42,7 @@ class RepaymentsContactEmailController @Inject() (
   requireSessionData:        SessionDataRequiredAction,
   agentIdentifierAction:     AgentIdentifierAction,
   sessionRepository:         SessionRepository,
+  navigator:                 RepaymentNavigator,
   featureAction:             FeatureFlagActionFactory,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RepaymentsContactEmailView
@@ -85,7 +86,7 @@ class RepaymentsContactEmailController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

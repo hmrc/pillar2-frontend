@@ -21,6 +21,7 @@ import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
 import models.{Mode, NormalMode}
+import navigation.RepaymentNavigator
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,6 +41,7 @@ class RepaymentsContactNameController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
   view:                     RepaymentsContactNameView
