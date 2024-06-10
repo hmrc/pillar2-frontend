@@ -24,7 +24,6 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
 import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
-//import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,8 +58,11 @@ class RepaymentsContactEmailController @Inject() (
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>
-          val form         = formProvider(username)
-          val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage).map(email => form.fill(email)).getOrElse(form)
+          val form = formProvider(username)
+          val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage) match {
+            case Some(value) => form.fill(value)
+            case None        => form
+          }
           Ok(view(preparedForm, clientPillar2Id, mode, username))
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

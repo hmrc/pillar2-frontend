@@ -97,7 +97,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
             POST,
             controllers.repayments.routes.RepaymentsContactNameController.onSubmit(clientPillar2Id = None, NormalMode).url
           )
-            .withFormUrlEncodedBody("contactName" -> "ABC Limited")
+            .withFormUrlEncodedBody("value" -> "ABC Limited")
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
