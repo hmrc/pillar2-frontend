@@ -210,4 +210,48 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "XMPLR0123456789"
     }
   }
+
+  "bankAccount" - {
+    val testForm: Form[String] =
+      Form(
+        "value" -> bankAccount()
+      )
+
+    "must bind a valid account id" in {
+      val result = testForm.bind(Map("value" -> "HBUKGB4B"))
+      result.get mustEqual "HBUKGB4B"
+    }
+
+    "must bind a valid account id which contains spaces and lowercase characters" in {
+      val result = testForm.bind(Map("value" -> " Hb UK gB4 b "))
+      result.get mustEqual "HBUKGB4B"
+    }
+
+    "must not bind an empty string as a account id" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a string of whitespace only as an account id" in {
+      val result = testForm.bind(Map("value" -> " \t"))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must return a custom error message" in {
+      val form   = Form("value" -> text("custom.error"))
+      val result = form.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "custom.error"))
+    }
+
+    "must unbind a valid account id" in {
+      val result = testForm.fill("HBUKGB4B")
+      result.apply("value").value.value mustEqual "HBUKGB4B"
+    }
+  }
+
 }

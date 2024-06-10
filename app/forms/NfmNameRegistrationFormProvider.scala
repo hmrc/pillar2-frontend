@@ -27,6 +27,5 @@ class NfmNameRegistrationFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("nfmNameRegistration.error.required")
         .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "nfmNameRegistration.error.invalid"))
     )
 }

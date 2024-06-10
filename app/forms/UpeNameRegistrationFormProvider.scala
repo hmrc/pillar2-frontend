@@ -27,6 +27,5 @@ class UpeNameRegistrationFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("upeNameRegistration.error.required")
         .verifying(maxLength(Constants.MAX_LENGTH_105, "upeNameRegistration.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "upeNameRegistration.error.invalid"))
     )
 }
