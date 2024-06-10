@@ -275,7 +275,10 @@ class SubscriptionService @Inject() (
         subscriptionData.upeDetails.customerIdentification2
           .map { utr =>
             logger.info(s"getUltimateParentEnrolmentInformation utr: - $utr")
-            AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            val enrolementParameter =
+              AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            logger.info(s"getUltimateParentEnrolmentInformation With Id enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
           }
           .map(Future.successful)
       }
@@ -284,7 +287,10 @@ class SubscriptionService @Inject() (
           .getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts(Pillar2Identifier.toString, pillar2Reference))))
           .map { knownFacts =>
             logger.info(s"getUltimateParentEnrolmentInformation knownFacts: - $knownFacts")
-            AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            val enrolementParameter = AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            logger.info(s"getUltimateParentEnrolmentInformation With Id enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
+
           }
       )
 
