@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RfmConfirmationController @Inject() (
   getData:                  DataRetrievalAction,
-  rfmIdentify:              RfmIdentifierAction,
+  identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
@@ -43,7 +43,7 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
   val dateHelper = new ViewHelpers()
 
-  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
