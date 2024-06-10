@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
+import generators.StringGenerators
 import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
 import models.requests.IdentifierRequest
@@ -67,7 +68,8 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with WireMockServerHandler
     with UserAnswersFixture
-    with SubscriptionLocalDataFixture {
+    with SubscriptionLocalDataFixture
+    with StringGenerators {
 
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
