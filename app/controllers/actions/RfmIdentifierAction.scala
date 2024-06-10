@@ -52,25 +52,30 @@ class RfmAuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(
-        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
+        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments
+          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
       ) {
 
-        case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
+        case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
           // (Admin is deprecated, Admin and User are equivalent. see auth-client)
           // https://github.com/hmrc/auth-client/blob/main/src-common/main/scala/uk/gov/hmrc/auth/core/model.scala#L143
           if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
             logger.info("Rfm - Organisation:User already enrolled login attempt")
             Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {
-            Future.successful(Right(IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments)))
+            Future.successful(
+              Right(
+                IdentifierRequest(request, internalId, Some(groupID), enrolments = enrolments.enrolments, userIdForEnrolment = credentials.providerId)
+              )
+            )
           }
-        case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
+        case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) ~ _ =>
           logger.info("Rfm -Organisation:Assistant login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.StandardOrganisationController.onPageLoad)))
-        case _ ~ _ ~ Some(Individual) ~ _ =>
+        case _ ~ _ ~ Some(Individual) ~ _ ~ _ =>
           logger.info("Rfm -Individual login attempt")
           Future.successful(Left(Redirect(controllers.rfm.routes.IndividualController.onPageLoad)))
-        case _ ~ _ ~ Some(Agent) ~ _ =>
+        case _ ~ _ ~ Some(Agent) ~ _ ~ _ =>
           logger.info("Rfm - Agent login attempt")
           Future.successful(Left(Redirect(controllers.routes.AgentController.onPageLoad)))
         case _ =>
