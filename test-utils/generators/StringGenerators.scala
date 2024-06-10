@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package generators
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import mapping.Constants
-import javax.inject.Inject
-
-class NfmContactNameFormProvider @Inject() extends Mappings {
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmContactName.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmContactName.error.length"))
-    )
+trait StringGenerators {
+  def randomStringGenerator(n: Int): String =
+    n match {
+      case 1 => util.Random.nextPrintableChar.toString
+      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1).toString
+    }
 }

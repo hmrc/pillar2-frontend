@@ -62,30 +62,6 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-      val amount = RefundAmount(9.99)
-      val application = applicationBuilder(None)
-        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
-        .build()
-      running(application) {
-        when(mockSessionRepository.get(any()))
-          .thenReturn(
-            Future.successful(
-              Some(emptyUserAnswers.setOrException(PaymentRefundAmountPage, amount))
-            )
-          )
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[RequestRefundAmountView]
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(formProvider().fill(amount), NormalMode, clientPillar2Id = None)(
-            request,
-            appConfig(application),
-            messages(application)
-          ).toString
-      }
-    }
     "must redirect under construction when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {

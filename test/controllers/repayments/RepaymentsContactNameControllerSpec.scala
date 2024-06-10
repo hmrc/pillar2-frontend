@@ -62,7 +62,9 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val application = applicationBuilder(None)
+      val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {

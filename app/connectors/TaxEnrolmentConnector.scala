@@ -40,7 +40,9 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def enrolAndActivate(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
     http.PUT[EnrolmentRequest, HttpResponse](enrolAndActivateUrl, enrolmentInfo.convertToEnrolmentRequest) flatMap {
-      case success if is2xx(success.status) => Done.toFuture
+      case success if is2xx(success.status) =>
+        logger.info(s"enrolAndActivate - success")
+        Done.toFuture
       case failure =>
         logger.error(
           s" Error in creating and activating a new enrolment with status  ${failure.status} and body: ${failure.body}"
@@ -50,7 +52,9 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
     http.POST[AllocateEnrolmentParameters, HttpResponse](allocateOrDeallocateUrl(groupId, plrReference), body).flatMap {
-      case success if success.status == CREATED => Done.toFuture
+      case success if success.status == CREATED =>
+        logger.info(s"allocateEnrolment success for groupId -$groupId")
+        Done.toFuture
       case failure =>
         logger.error(
           s" Allocating an enrolment to a new filing member failed with status ${failure.status} and body: ${failure.body}"
@@ -61,7 +65,9 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
   def revokeEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] = {
     val completeUrl = allocateOrDeallocateUrl(groupId = groupId, plrReference = plrReference)
     http.DELETE(completeUrl) flatMap {
-      case success if success.status == NO_CONTENT => Done.toFuture
+      case success if success.status == NO_CONTENT =>
+        logger.info(s"Successfully deleted the enrolment for groupId- $groupId")
+        Done.toFuture
       case failure =>
         logger.error(
           s"Revoke enrolments call to tax enrolments failed with status ${failure.status} and body:  ${failure.body}"

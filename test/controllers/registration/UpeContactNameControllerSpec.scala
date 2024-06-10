@@ -94,8 +94,10 @@ class UpeContactNameControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request   = FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url).withFormUrlEncodedBody("value" -> "<>")
-        val boundForm = formProvider().bind(Map("value" -> "<>"))
+        val stringInput = randomStringGenerator(201)
+        val request =
+          FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url).withFormUrlEncodedBody("value" -> stringInput)
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[UpeContactNameView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST

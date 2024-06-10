@@ -85,7 +85,7 @@ trait SubscriptionLocalDataFixture {
   )
 
   val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
-    userId = "id",
+    userId = "plrId",
     verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))
   )
 

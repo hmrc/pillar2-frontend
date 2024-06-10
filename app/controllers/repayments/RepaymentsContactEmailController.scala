@@ -53,7 +53,7 @@ class RepaymentsContactEmailController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>
@@ -72,7 +72,7 @@ class RepaymentsContactEmailController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { name =>
