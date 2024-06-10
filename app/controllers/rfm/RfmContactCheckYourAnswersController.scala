@@ -98,7 +98,7 @@ class RfmContactCheckYourAnswersController @Inject() (
                             subscriptionService.getUltimateParentEnrolmentInformation(
                               subscriptionData = subscriptionData,
                               pillar2Reference = newFilingMemberInformation.plrReference,
-                              request.userId
+                              request.userIdForEnrolment
                             )
                           )
       groupId <- OptionT.fromOption[Future](request.groupId)
