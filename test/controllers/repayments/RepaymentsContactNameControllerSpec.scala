@@ -97,7 +97,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
             POST,
             controllers.repayments.routes.RepaymentsContactNameController.onSubmit(clientPillar2Id = None, NormalMode).url
           )
-            .withFormUrlEncodedBody("value" -> "ABC Limited")
+            .withFormUrlEncodedBody("contactName" -> "ABC Limited")
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -110,7 +110,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("contactName", ""))
         val boundForm = formProvider().bind(Map("value" -> ""))
         val view      = application.injector.instanceOf[RepaymentsContactNameView]
         val result    = route(application, request).value

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation.RepaymentNavigator
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
@@ -78,7 +78,7 @@ class RepaymentsContactNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, NormalMode))
+            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
         )
     }
 }

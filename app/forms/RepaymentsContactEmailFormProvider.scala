@@ -23,9 +23,9 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class RepaymentsContactEmailFormProvider @Inject() extends Mappings {
-  def apply(userName: String): Form[String] =
+  def apply(contactName: String): Form[String] =
     Form(
-      "emailAddress" -> text("repayments.contactEmail.error.contactEmail.required", Seq(userName))
+      "contactEmail" -> text("repayments.contactEmail.error.contactEmail.required", Seq(contactName))
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_100, "repayments.contactEmail.error.contactEmail.length"),

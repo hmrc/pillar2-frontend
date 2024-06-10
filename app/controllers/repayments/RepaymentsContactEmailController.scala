@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactEmailFormProvider
@@ -35,18 +34,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactEmailController @Inject() (
-  identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  formProvider:              RepaymentsContactEmailFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  navigator:                 RepaymentNavigator,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsContactEmailView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsContactEmailFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsContactEmailView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -86,7 +84,7 @@ class RepaymentsContactEmailController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

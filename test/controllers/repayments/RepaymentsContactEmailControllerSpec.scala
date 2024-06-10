@@ -114,7 +114,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", "hello@bye.com"))
+            .withFormUrlEncodedBody(("contactEmail", "hello@bye.com"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -131,8 +131,8 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", "a@c"))
-        val boundForm = formProvider("ABC Limited").bind(Map("emailAddress" -> "a@c"))
+            .withFormUrlEncodedBody(("contactEmail", "a@c"))
+        val boundForm = formProvider("ABC Limited").bind(Map("contactEmail" -> "a@c"))
         val view      = application.injector.instanceOf[RepaymentsContactEmailView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
