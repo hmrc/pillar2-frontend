@@ -16,18 +16,11 @@
 
 package pages
 
-import models.repayments.NonUKBank
-import org.scalacheck.ScalacheckShapeless.derivedArbitrary
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class NonUKBankPageSpec extends PageBehaviours {
+case object RepaymentsRefundAmountPage extends QuestionPage[BigDecimal] {
 
-  "NonUKBankPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[NonUKBank](NonUKBankPage)
-
-    beSettable[NonUKBank](NonUKBankPage)
-
-    beRemovable[NonUKBank](NonUKBankPage)
-  }
+  override def toString: String = "refundAmount"
 }
