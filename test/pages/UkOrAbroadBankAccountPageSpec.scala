@@ -16,11 +16,17 @@
 
 package pages
 
-import play.api.libs.json.JsPath
+import models.UkOrAbroadBankAccount
+import pages.behaviours.PageBehaviours
 
-case object ReasonForRequestingRefundPage extends QuestionPage[String] {
+class UkBankAccountOrForeignBankAccountSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "UkOrAbroadBankAccountPage" - {
 
-  override def toString: String = "reasonForRequestingRefund"
+    beRetrievable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+
+    beSettable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+
+    beRemovable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+  }
 }

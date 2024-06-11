@@ -16,11 +16,12 @@
 
 package pages
 
+import models.UkOrAbroadBankAccount
 import play.api.libs.json.JsPath
 
-case object ReasonForRequestingRefundPage extends QuestionPage[String] {
+case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "reasonForRequestingRefund"
+  override def toString: String = "ukOrAbroadBankAccount"
 }

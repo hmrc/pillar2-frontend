@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object ReasonForRequestingRefundPage extends QuestionPage[String] {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.UkOrAbroadBankAccount
 
-  override def path: JsPath = JsPath \ toString
+class UkOrAbroadBankAccountFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "reasonForRequestingRefund"
+  def apply(): Form[UkOrAbroadBankAccount] =
+    Form(
+      "value" -> enumerable[UkOrAbroadBankAccount]("ukOrAbroadBankAccount.error.required")
+    )
 }

@@ -16,11 +16,16 @@
 
 package pages
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object ReasonForRequestingRefundPage extends QuestionPage[String] {
+class ReasonForRequestingRefundPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "ReasonForRequestingRefundPage" - {
 
-  override def toString: String = "reasonForRequestingRefund"
+    beRetrievable[String](ReasonForRequestingRefundPage)
+
+    beSettable[String](ReasonForRequestingRefundPage)
+
+    beRemovable[String](ReasonForRequestingRefundPage)
+  }
 }

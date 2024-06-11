@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object ReasonForRequestingRefundPage extends QuestionPage[String] {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  override def path: JsPath = JsPath \ toString
+class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "reasonForRequestingRefund"
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("reasonForRequestingRefund.error.required")
+        .verifying(maxLength(200, "reasonForRequestingRefund.error.length"))
+    )
 }

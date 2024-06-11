@@ -22,6 +22,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryUkOrAbroadBankAccount: Arbitrary[UkOrAbroadBankAccount] =
+    Arbitrary {
+      Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
+    }
+
   implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
     Arbitrary {
       Gen.oneOf(MneOrDomestic.values.toSeq)
