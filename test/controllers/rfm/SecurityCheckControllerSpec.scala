@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmPillar2ReferencePage
@@ -27,6 +27,7 @@ import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.rfm.SecurityCheckView
 
 import scala.concurrent.Future
@@ -38,14 +39,7 @@ class SecurityCheckControllerSpec extends SpecBase {
   "RFM Security Check controller" must {
 
     "return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
-        .build()
+      val application = applicationBuilder().build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
@@ -61,8 +55,7 @@ class SecurityCheckControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET - rfm feature false" in {
 
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val application = applicationBuilder()
         .configure(
           Seq(
             "features.rfmAccessEnabled" -> false
@@ -81,19 +74,35 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to the group registration date report page when valid data is submitted" in {
+    "return ok with correct view if page previously answered" in {
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
+      val userAnswers = emptyUserAnswers.set(RfmPillar2ReferencePage, "plrID").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
+        val view    = application.injector.instanceOf[SecurityCheckView]
+        val result  = route(application, request).value
+        contentAsString(result) mustEqual view(formProvider().fill("plrID"), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+        status(result) mustEqual OK
+
+      }
+    }
+
+    "redirect to the group registration date report page when valid data is submitted" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
@@ -110,11 +119,6 @@ class SecurityCheckControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -209,11 +213,6 @@ class SecurityCheckControllerSpec extends SpecBase {
     "redirect to the Group Registration Date Report page when valid data is submitted in modes other than CheckMode" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -226,27 +225,6 @@ class SecurityCheckControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "prefill the form with an existing value from user answers on a GET request" in {
-
-      val existingValue = "someExistingValue"
-
-      val userAnswers = emptyUserAnswers.set(RfmPillar2ReferencePage, existingValue).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .configure(Seq("features.rfmAccessEnabled" -> true): _*)
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        contentAsString(result) must include(s"""value="$existingValue"""")
       }
     }
 

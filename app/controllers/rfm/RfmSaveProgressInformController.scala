@@ -22,7 +22,6 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifi
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressInformController @Inject() (
@@ -38,11 +37,7 @@ class RfmSaveProgressInformController @Inject() (
   def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
-      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
-        Ok(view())
-      } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+      Ok(view())
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }

@@ -17,14 +17,12 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
+import navigation.RepaymentNavigator
 import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
-//import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,17 +34,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactEmailController @Inject() (
-  identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  formProvider:              RepaymentsContactEmailFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsContactEmailView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsContactEmailFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsContactEmailView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -55,12 +53,15 @@ class RepaymentsContactEmailController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>
-          val form         = formProvider(username)
-          val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage).map(email => form.fill(email)).getOrElse(form)
+          val form = formProvider(username)
+          val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage) match {
+            case Some(value) => form.fill(value)
+            case None        => form
+          }
           Ok(view(preparedForm, clientPillar2Id, mode, username))
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -71,7 +72,7 @@ class RepaymentsContactEmailController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { name =>
@@ -83,7 +84,7 @@ class RepaymentsContactEmailController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

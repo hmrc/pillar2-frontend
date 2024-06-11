@@ -17,8 +17,11 @@
 package controllers.actions
 
 import models.requests.{IdentifierRequest, SessionOptionalDataRequest}
+import play.api.Logging
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,23 +29,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class SessionDataRetrievalActionImpl @Inject() (
   val sessionRepository:         SessionRepository
 )(implicit val executionContext: ExecutionContext)
-    extends SessionDataRetrievalAction {
+    extends SessionDataRetrievalAction
+    with Logging {
 
-  override def apply(): ActionTransformer[IdentifierRequest, SessionOptionalDataRequest] =
-    new SessionDataRetrievalActionProvider(sessionRepository)
-}
-
-class SessionDataRetrievalActionProvider @Inject() (
-  val sessionRepository:         SessionRepository
-)(implicit val executionContext: ExecutionContext)
-    extends ActionTransformer[IdentifierRequest, SessionOptionalDataRequest] {
-
-  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
-    sessionRepository.get(request.userId).map {
-      SessionOptionalDataRequest(request.request, request.userId, _)
+  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    sessionRepository.get(request.userId).map { maybeUserAnswers =>
+      SessionOptionalDataRequest(request.request, request.userId, maybeUserAnswers)
     }
+  }
+
 }
 
-trait SessionDataRetrievalAction {
-  def apply(): ActionTransformer[IdentifierRequest, SessionOptionalDataRequest]
-}
+trait SessionDataRetrievalAction extends ActionTransformer[IdentifierRequest, SessionOptionalDataRequest]

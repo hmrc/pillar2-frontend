@@ -42,7 +42,7 @@ class RequestRefundBeforeStartController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData)) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
       Ok(view(clientPillar2Id))
     }
 

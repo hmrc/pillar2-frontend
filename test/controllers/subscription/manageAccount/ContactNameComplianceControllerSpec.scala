@@ -80,11 +80,12 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       running(application) {
+        val stringInput = randomStringGenerator(161)
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", stringInput))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
 
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
@@ -160,13 +161,14 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
 
       running(application) {
+        val stringInput = randomStringGenerator(161)
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(Some(PlrReference)).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", stringInput))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
 
         val view = application.injector.instanceOf[ContactNameComplianceView]
 

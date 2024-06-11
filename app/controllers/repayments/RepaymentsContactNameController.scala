@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
+import navigation.RepaymentNavigator
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,6 +41,7 @@ class RepaymentsContactNameController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
   view:                     RepaymentsContactNameView
@@ -54,7 +56,7 @@ class RepaymentsContactNameController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -67,7 +69,7 @@ class RepaymentsContactNameController @Inject() (
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -76,7 +78,7 @@ class RepaymentsContactNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, NormalMode))
+            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
         )
     }
 }

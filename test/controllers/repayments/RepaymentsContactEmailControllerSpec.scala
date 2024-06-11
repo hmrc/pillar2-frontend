@@ -33,8 +33,9 @@ import scala.concurrent.Future
 class RepaymentsContactEmailControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactEmailFormProvider()
+  val form         = formProvider("ABC Limited")
 
-  "Repayments Contact Name Controller" when {
+  "Repayments Contact Email Controller" when {
 
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
@@ -49,15 +50,21 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET" in {
-      val ua          = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
       running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
         val request =
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val view   = application.injector.instanceOf[RepaymentsContactEmailView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("ABC Limited"), None, NormalMode, "ABC Limited")(
+        contentAsString(result) mustEqual view(form, None, NormalMode, "ABC Limited")(
           request,
           appConfig(application),
           messages(application)
@@ -80,7 +87,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(
             Future.successful(
-              Some(emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com"))
+              Some(ua)
             )
           )
         val request =
@@ -89,7 +96,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider("ABC Limited").fill("hello@bye.com"), None, NormalMode, "ABC Limited")(
+          view(form.fill("hello@bye.com"), None, NormalMode, "ABC Limited")(
             request,
             appConfig(application),
             messages(application)
@@ -111,21 +118,21 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactEmailController
-          .onPageLoad(clientPillar2Id = None, NormalMode)
-          .url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("emailAddress", "a@c"))
-        val boundForm = formProvider("ABC Limited").bind(Map("emailAddress" -> "a@c"))
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody(("contactEmail", "a@c"))
+        val boundForm = formProvider("ABC Limited").bind(Map("contactEmail" -> "a@c"))
         val view      = application.injector.instanceOf[RepaymentsContactEmailView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -134,6 +141,35 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must redirect to Recovery page if the previous page is not answered" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+      }
+    }
+
+    "Journey Recovery when no data found for contact name in POST" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
+        .withFormUrlEncodedBody("contactEmail" -> "alll@gmail.com")
+      running(application) {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

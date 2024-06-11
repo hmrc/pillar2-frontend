@@ -18,6 +18,7 @@ package connectors
 
 import models.{InternalIssueError, UserAnswers}
 import org.apache.pekko.Done
+import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -31,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserAnswersConnectors @Inject() (
   @Named("pillar2Url") pillar2BaseUrl: String,
   httpClient:                          HttpClient
-)(implicit ec:                         ExecutionContext) {
+)(implicit ec:                         ExecutionContext)
+    extends Logging {
   private val url = s"$pillar2BaseUrl/report-pillar2-top-up-taxes"
 
   def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =

@@ -19,11 +19,12 @@ package services
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
-import models.rfm.CorporatePosition
+import models.rfm.{CorporatePosition, RegistrationDate}
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
@@ -38,7 +39,8 @@ class SubscriptionService @Inject() (
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
-)(implicit ec:                  ExecutionContext) {
+)(implicit ec:                  ExecutionContext)
+    extends Logging {
 
   def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     for {
@@ -70,11 +72,23 @@ class SubscriptionService @Inject() (
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(readSubscriptionResponse) =>
+        logger.info(s"readSubscription success: - $readSubscriptionResponse")
         Future.successful(readSubscriptionResponse)
-      case _ =>
+      case error =>
+        logger.warn(s"readSubscription error: - $error")
         Future.failed(InternalIssueError)
     }
 
+  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: RegistrationDate)(implicit
+    hc:                          HeaderCarrier
+  ): Future[Boolean] =
+    userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
+      (for {
+        backendPillar2Id        <- maybeUserAnswers.flatMap(_.get(RfmPillar2ReferencePage))
+        backendRegistrationDate <- maybeUserAnswers.flatMap(_.get(RfmRegistrationDatePage))
+      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate
+        .isEqual(sessionRegistrationDate.rfmRegistrationDate)).getOrElse(false)
+    }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier
   ): Future[Done] =
@@ -240,8 +254,13 @@ class SubscriptionService @Inject() (
 
   def deallocateEnrolment(plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
-      case Some(groupIds) => enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds, plrReference = plrReference)
-      case _              => Future.failed(InternalIssueError)
+      case Some(groupIds) =>
+        logger.info(s"deallocateEnrolment groupIds: - $groupIds")
+        // There should be only one principle group Ids. As per requirement.
+        enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds.head, plrReference = plrReference)
+      case error =>
+        logger.warn(s"deallocateEnrolment error: - $error")
+        Future.failed(InternalIssueError)
     }
 
   def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
@@ -252,9 +271,14 @@ class SubscriptionService @Inject() (
   ): Future[AllocateEnrolmentParameters] =
     subscriptionData.upeDetails.customerIdentification1
       .flatMap { crn =>
+        logger.info(s"getUltimateParentEnrolmentInformation crn: - $crn")
         subscriptionData.upeDetails.customerIdentification2
           .map { utr =>
-            AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            logger.info(s"getUltimateParentEnrolmentInformation utr: - $utr")
+            val enrolementParameter =
+              AllocateEnrolmentParameters(userId = pillar2Reference, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            logger.info(s"getUltimateParentEnrolmentInformation WithId enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
           }
           .map(Future.successful)
       }
@@ -262,7 +286,11 @@ class SubscriptionService @Inject() (
         enrolmentStoreProxyConnector
           .getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts(Pillar2Identifier.toString, pillar2Reference))))
           .map { knownFacts =>
-            AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            logger.info(s"getUltimateParentEnrolmentInformation knownFacts: - $knownFacts")
+            val enrolementParameter = AllocateEnrolmentParameters(userId = pillar2Reference, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            logger.info(s"getUltimateParentEnrolmentInformation WithoutId enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
+
           }
       )
 
@@ -306,8 +334,10 @@ class SubscriptionService @Inject() (
     userAnswers:        UserAnswers
   )(implicit hc:        HeaderCarrier): Future[AmendSubscription] =
     if (filingMemberDetail.corporatePosition == CorporatePosition.Upe) {
+      logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
       setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
     } else {
+      logger.info("createAmendObjectForReplacingFilingMember - call replaceOldFilingMember")
       getNewFilingMemberDetails(userAnswers).map(newFilingMember =>
         replaceOldFilingMember(
           requiredInfo = filingMemberDetail,

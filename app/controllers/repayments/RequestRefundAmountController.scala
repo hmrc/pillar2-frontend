@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, RefundAmount}
 import pages.PaymentRefundAmountPage
 import play.api.i18n.I18nSupport
+import play.api.data.Form
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -46,14 +47,14 @@ class RequestRefundAmountController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[RefundAmount] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData)) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
       val preparedForm = request.userAnswers.get(PaymentRefundAmountPage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -62,11 +63,11 @@ class RequestRefundAmountController @Inject() (
     }
 
   def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
+    (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData)).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

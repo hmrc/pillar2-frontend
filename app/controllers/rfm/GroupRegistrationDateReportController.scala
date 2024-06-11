@@ -17,7 +17,6 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
@@ -27,8 +26,8 @@ import pages.RfmRegistrationDatePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.GroupRegistrationDateReportView
 
@@ -36,34 +35,31 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class GroupRegistrationDateReportController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              GroupRegistrationDateReportFormProvider,
-  navigator:                 ReplaceFilingMemberNavigator,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      GroupRegistrationDateReportView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  sessionRepository:        SessionRepository,
+  rfmIdentify:              RfmIdentifierAction,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  formProvider:             GroupRegistrationDateReportFormProvider,
+  navigator:                ReplaceFilingMemberNavigator,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     GroupRegistrationDateReportView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def form: Form[RegistrationDate] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
+      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -71,7 +67,7 @@ class GroupRegistrationDateReportController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
-            _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )
   }
