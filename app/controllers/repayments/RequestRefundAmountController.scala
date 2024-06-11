@@ -57,7 +57,7 @@ class RequestRefundAmountController @Inject() (
     ) andThen getSessionData andThen requireSessionData)) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
-        case Some(value) => form.fill(value)
+        case Some(value) => form.fill(value.setScale(2))
       }
       Ok(view(preparedForm, mode, clientPillar2Id))
     }
