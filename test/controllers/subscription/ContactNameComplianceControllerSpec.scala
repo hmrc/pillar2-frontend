@@ -92,11 +92,12 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
+        val stringInput = randomStringGenerator(161)
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "<>"))
+            .withFormUrlEncodedBody(("value", stringInput))
 
-        val boundForm = formProvider().bind(Map("value" -> "<>"))
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[ContactNameComplianceView]
 
         val result = route(application, request).value

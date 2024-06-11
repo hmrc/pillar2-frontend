@@ -90,11 +90,12 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+        val stringInput = randomStringGenerator(106)
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "<>"))
+            .withFormUrlEncodedBody(("value", stringInput))
 
-        val boundForm = formProvider().bind(Map("value" -> "<>"))
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
 
         val view = application.injector.instanceOf[NfmNameRegistrationView]
 

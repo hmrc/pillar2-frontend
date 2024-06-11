@@ -21,7 +21,7 @@ import models.EnrolmentRequest.{KnownFactsParameters, KnownFactsResponse}
 import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
 import play.api.Logging
 import play.api.http.Status.OK
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.FutureConverter.FutureOps
@@ -44,8 +44,10 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
       .map {
         case response if response.status == OK =>
           logger.info(s"getGroupIds - success")
-          response.json
+          val groupIds = response.json
             .asOpt[GroupIds]
+          logger.info(s"gerGroupIds -response -${Json.toJson(groupIds)}")
+          groupIds
         case response =>
           logger.warn(s"Enrolment response not formed. ${response.status} response status")
           None
@@ -57,6 +59,7 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
     val submissionUrl = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments"
     http.POST[KnownFactsParameters, HttpResponse](submissionUrl, knownFacts).flatMap { response =>
       if (response.status == OK) {
+        logger.info("getKnownFacts - received ok status")
         response.json.validate[KnownFactsResponse] match {
           case JsSuccess(correctResponse, _) => correctResponse.toFuture
           case JsError(_) =>
