@@ -26,6 +26,5 @@ class UpeContactNameFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("upe-input-business-name.error.required")
         .verifying(maxLength(Constants.MAX_LENGTH_200, "upe-input-business-name.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "upe-input-business-name.error.invalid"))
     )
 }

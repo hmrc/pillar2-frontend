@@ -256,7 +256,8 @@ class SubscriptionService @Inject() (
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
       case Some(groupIds) =>
         logger.info(s"deallocateEnrolment groupIds: - $groupIds")
-        enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds, plrReference = plrReference)
+        // There should be only one principle group Ids. As per requirement.
+        enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds.head, plrReference = plrReference)
       case error =>
         logger.warn(s"deallocateEnrolment error: - $error")
         Future.failed(InternalIssueError)
@@ -274,7 +275,10 @@ class SubscriptionService @Inject() (
         subscriptionData.upeDetails.customerIdentification2
           .map { utr =>
             logger.info(s"getUltimateParentEnrolmentInformation utr: - $utr")
-            AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            val enrolementParameter =
+              AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
+            logger.info(s"getUltimateParentEnrolmentInformation WithId enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
           }
           .map(Future.successful)
       }
@@ -283,7 +287,10 @@ class SubscriptionService @Inject() (
           .getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts(Pillar2Identifier.toString, pillar2Reference))))
           .map { knownFacts =>
             logger.info(s"getUltimateParentEnrolmentInformation knownFacts: - $knownFacts")
-            AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            val enrolementParameter = AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            logger.info(s"getUltimateParentEnrolmentInformation WithoutId enrolment parameter - ${Json.toJson(enrolementParameter)}")
+            enrolementParameter
+
           }
       )
 

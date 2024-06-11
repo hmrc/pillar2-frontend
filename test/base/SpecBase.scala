@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
+import generators.StringGenerators
 import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, ViewInstances}
 import models.UserAnswers
 import models.requests.IdentifierRequest
@@ -40,7 +41,7 @@ import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -67,7 +68,8 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with WireMockServerHandler
     with UserAnswersFixture
-    with SubscriptionLocalDataFixture {
+    with SubscriptionLocalDataFixture
+    with StringGenerators {
 
   implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:           HeaderCarrier     = HeaderCarrier()
@@ -77,7 +79,7 @@ trait SpecBase
 
   val PlrReference = "XMPLR0123456789"
 
-  type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
   val pillar2AgentEnrolment: Enrolments =
     Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
 
@@ -101,7 +103,7 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
-        Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"))))
+        Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId")))
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -111,7 +113,8 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        val identifierRequest = IdentifierRequest(request, "internalId", Some("groupID"), enrolments.getOrElse(Set.empty))
+        val identifierRequest =
+          IdentifierRequest(request, "internalId", Some("groupID"), enrolments.getOrElse(Set.empty), userIdForEnrolment = "userId")
         Future.successful(Right(identifierRequest))
       }
     }

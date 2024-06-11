@@ -27,6 +27,5 @@ class SecondaryContactNameFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("secondaryContactName.error.required")
         .verifying(maxLength(Constants.MAX_LENGTH_160, "secondaryContactName.error.length"))
-        .verifying(regexp(Validation.NAME_REGEX, "secondaryContactName.error.invalid"))
     )
 }

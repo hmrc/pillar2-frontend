@@ -94,9 +94,10 @@ class NfmContactNameControllerSpec extends SpecBase {
     "must return a Bad Request when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
+        val stringInput = randomStringGenerator(106)
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", "<>"))
-        val boundForm = formProvider().bind(Map("value" -> "<>"))
+          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", stringInput))
+        val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[NfmContactNameView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST

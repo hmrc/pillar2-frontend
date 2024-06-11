@@ -22,11 +22,10 @@ import play.api.data.FormError
 
 class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey  = "upeNameRegistration.error.required"
-  val lengthKey    = "upeNameRegistration.error.length"
-  val maxLength    = Constants.MAX_LENGTH_105
-  val regexPattern = Validation.NAME_REGEX
-  val form         = new UpeNameRegistrationFormProvider()()
+  val requiredKey = "upeNameRegistration.error.required"
+  val lengthKey   = "upeNameRegistration.error.length"
+  val maxLength   = Constants.MAX_LENGTH_105
+  val form        = new UpeNameRegistrationFormProvider()()
 
   ".value" - {
 
@@ -35,7 +34,7 @@ class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyRegexConformingStringWithMaxLength(regexPattern, maxLength)
+      stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLength(
@@ -43,7 +42,7 @@ class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(longStringsConformingToRegex(regexPattern, maxLength + 1))
+      generator = Some(stringsWithMinLength(maxLength + 1))
     )
 
     behave like mandatoryField(

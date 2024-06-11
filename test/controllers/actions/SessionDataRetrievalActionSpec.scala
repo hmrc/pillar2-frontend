@@ -41,7 +41,7 @@ class SessionDataRetrievalActionSpec extends SpecBase {
         when(sessionRepository.get("id")) thenReturn Future(None)
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"))).futureValue
+        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
 
         result.userAnswers must not be defined
       }
@@ -55,7 +55,7 @@ class SessionDataRetrievalActionSpec extends SpecBase {
         when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"))).futureValue
+        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
         result.userAnswers mustBe defined
       }
     }

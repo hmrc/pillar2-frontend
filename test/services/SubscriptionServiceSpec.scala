@@ -42,7 +42,7 @@ class SubscriptionServiceSpec extends SpecBase {
   val id           = "testId"
   val plrReference = "testPlrRef"
   val expectedGroupIdReturned: Future[Some[GroupIds]] =
-    Future.successful(Some(GroupIds(principalGroupIds = "groupID", delegatedGroupIds = Seq.empty)))
+    Future.successful(Some(GroupIds(principalGroupIds = Seq("groupID"), delegatedGroupIds = Seq.empty)))
   val mockTaxEnrolmentConnector: TaxEnrolmentConnector = mock[TaxEnrolmentConnector]
 
   "SubscriptionService" must {
