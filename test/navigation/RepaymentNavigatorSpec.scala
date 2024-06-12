@@ -37,6 +37,20 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
+      "must go to Repayments contact email page from Repayments contact name page" in {
+        navigator.nextPage(RepaymentsContactNamePage, NormalMode, emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited")) mustBe
+          controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+      }
+
+      "must go to Under construction page from Repayments contact email page" in {
+        navigator.nextPage(
+          RepaymentsContactEmailPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
+        ) mustBe
+          underConstruction
+      }
+
     }
 
     "in Check mode" must {
