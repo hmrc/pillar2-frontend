@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
 import pages.UkOrAbroadBankAccountPage
