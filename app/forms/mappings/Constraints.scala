@@ -21,11 +21,9 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 
-import scala.util.{Success, Try}
-
 trait Constraints {
 
-  private val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+  val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
   protected def country(countryOptions: CountryOptions, errorKey: String)(implicit messages: Messages): Constraint[String] =
@@ -132,13 +130,4 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
-
-  protected def greaterThanZero(errorKey: String): Constraint[String] =
-    Constraint { input =>
-      Try(BigDecimal(input)) match {
-        case Success(value) if value > 0 => Valid
-        case _                           => Invalid(errorKey)
-      }
-    }
-
 }

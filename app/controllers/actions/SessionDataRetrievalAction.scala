@@ -32,10 +32,12 @@ class SessionDataRetrievalActionImpl @Inject() (
     extends SessionDataRetrievalAction
     with Logging {
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
+  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionRepository.get(request.userId).map { maybeUserAnswers =>
       SessionOptionalDataRequest(request.request, request.userId, maybeUserAnswers)
     }
+  }
 
 }
 
