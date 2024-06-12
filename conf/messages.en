@@ -1308,3 +1308,12 @@ requestRefundAmount.checkYourAnswersLabel = Refund amount
 requestRefundAmount.change.hidden = the refund amount
 reasonForRequestingRefund.checkYourAnswersLabel = Reason for refund request
 reasonForRequestingRefund.change.hidden = Change the reason for the refund request
+
+repaymentsContactName.checkYourAnswersLabel = Contact name
+repaymentsContactName.change.hidden = the contact name
+repaymentsContactEmail.checkYourAnswersLabel = Email address
+repaymentsContactEmail.change.hidden = the contact email address
+repaymentsContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+repaymentsContactByTelephone.change.hidden = can we contact by telephone?
+repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
+repaymentsTelephoneDetails.change.hidden = the telephone number

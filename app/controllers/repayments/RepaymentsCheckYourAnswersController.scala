@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.repayments.{NonUKBankBicOrSwiftCodeSummary, NonUKBankIbanSummary, NonUKBankNameOnAccountSummary, NonUKBankNameSummary, ReasonForRequestingRefundSummary, RequestRefundAmountSummary, UkOrAbroadBankAccountSummary}
+import viewmodels.checkAnswers.repayments.{NonUKBankBicOrSwiftCodeSummary, NonUKBankIbanSummary, NonUKBankNameOnAccountSummary, NonUKBankNameSummary, ReasonForRequestingRefundSummary, RepaymentsContactByTelephoneSummary, RepaymentsContactEmailSummary, RepaymentsContactNameSummary, RepaymentsTelephoneDetailsSummary, RequestRefundAmountSummary, UkOrAbroadBankAccountSummary}
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
@@ -90,7 +90,12 @@ class RepaymentsCheckYourAnswersController @Inject() (
 
   private def contactDetailsList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
-      rows = Seq().empty
+      rows = Seq(
+        RepaymentsContactNameSummary.row(userAnswers),
+        RepaymentsContactEmailSummary.row(userAnswers),
+        RepaymentsContactByTelephoneSummary.row(userAnswers),
+        RepaymentsTelephoneDetailsSummary.row(userAnswers)
+      ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
   private def listBankAccountDetails(implicit messages: Messages, userAnswers: UserAnswers) =
