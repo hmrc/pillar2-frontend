@@ -28,7 +28,7 @@ import views.html.components.gds._
 import views.html.eligibilityview.EligibilityConfirmationView
 import views.html.fmview._
 import views.html.registrationview._
-import views.html.repayments.NonUKBankView
+import views.html.repayments.RequestRefundAmountView
 import views.html.rfm.RfmEntityTypeView
 import views.html.subscriptionview._
 import views.html.templates._
@@ -196,7 +196,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewDashboardView: DashboardView =
     new DashboardView(pillar2layout, govukButton, heading, h2, paragraphBody, paragraphMessageWithLink, sectionBreak, inactiveStatusBanner)
 
-  val viewNonUKBank: NonUKBankView =
-    new NonUKBankView(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton, heading)
+  val viewRequestRefundAmount: RequestRefundAmountView =
+    new RequestRefundAmountView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
 
 }
