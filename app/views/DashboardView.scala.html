@@ -55,12 +55,12 @@
             @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
             @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad(if(agentView) Some(plrReference) else None).url)
 
-        <!--
-        @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
-        -->
-
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(if(agentView) Some(plrReference) else None).url)
-
+            <!--
+            @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
+            -->
+            <!--
+            @paragraphMessageWithLink(linkMessage = messages("dashboard.requestPayment"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
+            -->
 
             @sectionBreak()
         }
