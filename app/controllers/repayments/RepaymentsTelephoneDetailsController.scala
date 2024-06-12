@@ -19,10 +19,11 @@ package controllers.repayments
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
+import forms.RepaymentsTelephoneDetailsFormProvider
 import models.Mode
-import pages.{RepaymentsTelephoneDetailsPage, RepaymentsContactByTelephonePage, RepaymentsContactNamePage}
+import navigation.RepaymentNavigator
+import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage, RepaymentsTelephoneDetailsPage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,19 +34,20 @@ import views.html.repayments.RepaymentsTelephoneDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepaymentsTelephoneDetailsController @Inject()(
-                                                      identify: IdentifierAction,
-                                                      val userAnswersConnectors: UserAnswersConnectors,
-                                                      formProvider: RepaymentsTelephoneDetailsFormProvider,
-                                                      getSessionData: SessionDataRetrievalAction,
-                                                      requireSessionData: SessionDataRequiredAction,
-                                                      agentIdentifierAction: AgentIdentifierAction,
-                                                      sessionRepository: SessionRepository,
-                                                      featureAction: FeatureFlagActionFactory,
-                                                      val controllerComponents: MessagesControllerComponents,
-                                                      view: RepaymentsTelephoneDetailsView
-                                                    )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class RepaymentsTelephoneDetailsController @Inject() (
+  identify:                  IdentifierAction,
+  val userAnswersConnectors: UserAnswersConnectors,
+  formProvider:              RepaymentsTelephoneDetailsFormProvider,
+  getSessionData:            SessionDataRetrievalAction,
+  requireSessionData:        SessionDataRequiredAction,
+  agentIdentifierAction:     AgentIdentifierAction,
+  sessionRepository:         SessionRepository,
+  navigator:                 RepaymentNavigator,
+  featureAction:             FeatureFlagActionFactory,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      RepaymentsTelephoneDetailsView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
@@ -53,18 +55,18 @@ class RepaymentsTelephoneDetailsController @Inject()(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       (for {
-        _ <- request.userAnswers.get(RepaymentsContactByTelephonePage)
+        _           <- request.userAnswers.get(RepaymentsContactByTelephonePage)
         contactName <- request.userAnswers.get(RepaymentsContactNamePage)
       } yield {
         val form = formProvider(contactName)
         val preparedForm = request.userAnswers.get(RepaymentsTelephoneDetailsPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode, contactName))
+        Ok(view(preparedForm, clientPillar2Id, mode, contactName))
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
@@ -74,7 +76,7 @@ class RepaymentsTelephoneDetailsController @Inject()(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { name =>
@@ -84,9 +86,9 @@ class RepaymentsTelephoneDetailsController @Inject()(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode, name))),
               nominated =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsTelephoneDetails, nominated))
-                  _ <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsTelephoneDetailsPage, nominated))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(RepaymentsTelephoneDetailsPage, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

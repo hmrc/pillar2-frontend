@@ -19,11 +19,11 @@ package controllers.repayments
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactByTelephoneFormProvider
 import models.Mode
-import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsContactByTelephonePage}
+import navigation.RepaymentNavigator
+import pages.{RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import views.html.repayments.RepaymentsContactByTelephoneView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepaymentsContactByTelephoneController @Inject()(
+class RepaymentsContactByTelephoneController @Inject() (
   identify:                  IdentifierAction,
   val userAnswersConnectors: UserAnswersConnectors,
   formProvider:              RepaymentsContactByTelephoneFormProvider,
@@ -42,6 +42,7 @@ class RepaymentsContactByTelephoneController @Inject()(
   requireSessionData:        SessionDataRequiredAction,
   agentIdentifierAction:     AgentIdentifierAction,
   sessionRepository:         SessionRepository,
+  navigator:                 RepaymentNavigator,
   featureAction:             FeatureFlagActionFactory,
   val controllerComponents:  MessagesControllerComponents,
   view:                      RepaymentsContactByTelephoneView
@@ -54,7 +55,7 @@ class RepaymentsContactByTelephoneController @Inject()(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData) { implicit request =>
+    ) andThen getSessionData andThen requireSessionData) { implicit request =>
       (for {
         _           <- request.userAnswers.get(RepaymentsContactEmailPage)
         contactName <- request.userAnswers.get(RepaymentsContactNamePage)
@@ -65,7 +66,7 @@ class RepaymentsContactByTelephoneController @Inject()(
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode, contactName))
+        Ok(view(preparedForm, clientPillar2Id, mode, contactName))
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
@@ -75,7 +76,7 @@ class RepaymentsContactByTelephoneController @Inject()(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData() andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { name =>
@@ -87,7 +88,7 @@ class RepaymentsContactByTelephoneController @Inject()(
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactByTelephonePage, nominated))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(routes.UnderConstructionController.onPageLoad)
+                } yield Redirect(navigator.nextPage(RepaymentsContactByTelephonePage, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

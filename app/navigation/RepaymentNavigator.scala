@@ -33,11 +33,24 @@ class RepaymentNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
   private val normalRoutes: Page => UserAnswers => Call = {
-    case RepaymentsContactNamePage  => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
-    case RepaymentsContactEmailPage => _ => routes.UnderConstructionController.onPageLoad
-    case _                          => _ => routes.IndexController.onPageLoad
+    case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+    case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
+    case RepaymentsContactByTelephonePage => telephonePreferenceNormalMode
+    case RepaymentsTelephoneDetailsPage   => _ => routes.UnderConstructionController.onPageLoad
+    case _                                => _ => routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.IndexController.onPageLoad
+
+  private def telephonePreferenceNormalMode(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RepaymentsContactByTelephonePage)
+      .map {
+        case true =>
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(None, NormalMode)
+        case false =>
+          routes.UnderConstructionController.onPageLoad
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
 }

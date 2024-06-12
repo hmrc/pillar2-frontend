@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+import scala.util.Try
 
-class RepaymentsContactByTelephoneFormProvider @Inject() extends Mappings {
-  def apply(contactName: String): Form[Boolean] =
-    Form(
-      "value" -> boolean("repayments.contactByTelephone.error.required", args = Seq(contactName))
-    )
+case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "repaymentsContactByPhone"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmCapturePrimaryTelephonePage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }
