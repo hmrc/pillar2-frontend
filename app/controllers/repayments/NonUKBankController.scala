@@ -78,7 +78,7 @@ class NonUKBankController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(controllers.repayments.routes.ExistingContactDetailsController.onPageLoad(clientPillar2Id))
         )
     }
 

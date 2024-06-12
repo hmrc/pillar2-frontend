@@ -1229,6 +1229,14 @@ repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
 
+repayments.existingContactDetails.title = Contact details
+repayments.existingContactDetails.heading = Contact details
+repayments.existingContactDetails.h2 = Do you want to use these details for this refund request?
+repayments.existingContactDetails.error.required = Select yes if you want to use these details for this refund request
+repayments.existingContactDetails.name = Name
+repayments.existingContactDetails.email = Email
+repayments.existingContactDetails.telephone = Telephone
+
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
 rfmConfirmation.reg-date =  Your group’s filing member was replaced on
