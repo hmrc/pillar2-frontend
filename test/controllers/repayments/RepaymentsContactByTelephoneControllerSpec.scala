@@ -17,32 +17,32 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.RepaymentsContactEmailFormProvider
+import forms.RepaymentsContactByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
+import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage}
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.repayments.RepaymentsContactEmailView
+import views.html.repayments.RepaymentsContactByTelephoneView
 
 import scala.concurrent.Future
 
-class RepaymentsContactEmailControllerSpec extends SpecBase {
+class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
 
-  val formProvider = new RepaymentsContactEmailFormProvider()
+  val formProvider = new RepaymentsContactByTelephoneFormProvider()
   val form         = formProvider("ABC Limited")
 
-  "Repayments Contact Email Controller" when {
+  "Repayments Contact By Telephone Controller" when {
 
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
@@ -60,8 +60,8 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
-        val view   = application.injector.instanceOf[RepaymentsContactEmailView]
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactByTelephoneView]
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, None, NormalMode, "ABC Limited")(
@@ -77,7 +77,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         .set(RepaymentsContactNamePage, "ABC Limited")
         .success
         .value
-        .set(RepaymentsContactEmailPage, "hello@bye.com")
+        .set(RepaymentsContactByTelephonePage, true)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -91,12 +91,12 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
             )
           )
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
-        val view   = application.injector.instanceOf[RepaymentsContactEmailView]
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactByTelephoneView]
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form.fill("hello@bye.com"), None, NormalMode, "ABC Limited")(
+          view(form.fill(true), None, NormalMode, "ABC Limited")(
             request,
             appConfig(application),
             messages(application)
@@ -104,7 +104,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next Page when valid data is submitted" in {
+    "must redirect to Repayments Telephone Details page when valid data with values Yes is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -113,12 +113,30 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("contactEmail", "hello@bye.com"))
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode).url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(None, NormalMode).url
+      }
+    }
+
+    "must redirect to Repayments Telephone Details page when valid data with values No is submitted" in {
+      val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
@@ -130,10 +148,10 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
-            .withFormUrlEncodedBody(("contactEmail", "a@c"))
-        val boundForm = formProvider("ABC Limited").bind(Map("contactEmail" -> "a@c"))
-        val view      = application.injector.instanceOf[RepaymentsContactEmailView]
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val boundForm = formProvider("ABC Limited").bind(Map("value" -> ""))
+        val view      = application.injector.instanceOf[RepaymentsContactByTelephoneView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, None, NormalMode, "ABC Limited")(
@@ -151,25 +169,24 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
-    "Journey Recovery when no data found for contact name in POST" in {
-
+    "must redirect to Recovery page if the previous page is not answered on Submit" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(clientPillar2Id = None, NormalMode).url)
-        .withFormUrlEncodedBody("contactEmail" -> "alll@gmail.com")
-      running(application) {
-        val result = route(application, request).value
 
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 

@@ -23,7 +23,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactByTelephoneFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
-import pages.{RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage}
+import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -56,18 +56,16 @@ class RepaymentsContactByTelephoneController @Inject() (
       agentIdentifierAction,
       identify
     ) andThen getSessionData andThen requireSessionData) { implicit request =>
-      (for {
-        _           <- request.userAnswers.get(RepaymentsContactEmailPage)
-        contactName <- request.userAnswers.get(RepaymentsContactNamePage)
-      } yield {
-        val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(RepaymentsContactByTelephonePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+      request.userAnswers
+        .get(RepaymentsContactNamePage)
+        .map { contactName =>
+          val form = formProvider(contactName)
+          val preparedForm = request.userAnswers.get(RepaymentsContactByTelephonePage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, clientPillar2Id, mode, contactName))
         }
-
-        Ok(view(preparedForm, clientPillar2Id, mode, contactName))
-      })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
