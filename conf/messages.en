@@ -1258,7 +1258,7 @@ reasonForRequestingRefund.title = Why are you requesting a refund?
 reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
 reasonForRequestingRefund.error.hint = For example, you made a mistake on a Self Assessment tax return or your circumstances have changed.
-reasonForRequestingRefund.error.length = Reason for refund request must be 200 characters or less
+reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
 
 ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
 ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?

@@ -26,6 +26,6 @@ class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("reasonForRequestingRefund.error.required")
-        .verifying(maxLength(200, "reasonForRequestingRefund.error.length"))
+        .verifying(maxLength(250, "reasonForRequestingRefund.error.length"))
     )
 }

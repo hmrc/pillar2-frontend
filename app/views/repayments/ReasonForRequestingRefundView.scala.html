@@ -25,29 +25,32 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], clientPillar2Id: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("reasonForRequestingRefund.title")),bannerUrl= Some(controllers.routes.DashboardController.onPageLoad().url) ) {
 
-    @formHelper(action = controllers.repayments.routes.ReasonForRequestingRefundController.onSubmit) {
+    @formHelper(action = controllers.repayments.routes.ReasonForRequestingRefundController.onSubmit(clientPillar2Id, mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @govukCharacterCount(CharacterCount(
-                id = "value",
-                name= "value",
-                maxWords= Some(200),
-                hint =Some(Hint(content = Text(messages("reasonForRequestingRefund.error.hint")))),
-                errorMessage = form.errors match {
+            id = "value",
+            name= "value",
+            value = form("value").value,
+            maxLength= Some(250),
+            hint =Some(Hint(content = Text(messages("reasonForRequestingRefund.error.hint")))),
+            errorMessage = form.errors match {
                 case Nil => None
-                case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString)))},
-                label = Label(
+                case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString)))
+            },
+            label = Label(
                 isPageHeading = true,
                 classes = "govuk-label--l",
                 content = messages("reasonForRequestingRefund.heading")
-                    )))
+            )
+        ))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

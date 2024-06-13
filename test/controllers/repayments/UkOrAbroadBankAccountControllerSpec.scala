@@ -45,14 +45,15 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UkOrAbroadBankAccountView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -63,14 +64,15 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
 
         val view = application.injector.instanceOf[UkOrAbroadBankAccountView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head), None, NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -85,8 +87,9 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
@@ -99,7 +102,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
@@ -109,7 +112,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -117,7 +120,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[RepaymentNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any(), any(), any())).thenReturn(expectedNextPage)
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val userAnswers = emptyUserAnswers
@@ -132,7 +135,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "nonUkBankAccount"))
 
         val result = route(application, request).value
@@ -140,7 +143,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSessionRepository).set(eqTo(userAnswers))
-        verify(mockNavigator).nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers)
+        verify(mockNavigator).nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers)
       }
     }
 
