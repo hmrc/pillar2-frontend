@@ -57,7 +57,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), None, NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Select what type of account the refund will be sent to")
       }
 

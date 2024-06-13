@@ -44,7 +44,9 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
 
       "have a hint description" in {
-        view.getElementsByClass("govuk-hint").get(0).text must include("For example, you made a mistake on a Self Assessment tax return or your circumstances have changed.")
+        view.getElementsByClass("govuk-hint").get(0).text must include(
+          "For example, you made a mistake on a Self Assessment tax return or your circumstances have changed."
+        )
       }
 
       "have a character count" in {
@@ -61,7 +63,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), None, NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter why you are requesting a refund")
       }
 
@@ -72,10 +74,11 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
     "too many characters entered and page submitted" should {
 
-      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), None, NormalMode)(request, appConfig, messages).toString())
+      val view: Document =
+        Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), None, NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Reason for refund request must be 250 characters or less")
       }
 
