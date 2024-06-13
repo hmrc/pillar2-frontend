@@ -183,7 +183,8 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
