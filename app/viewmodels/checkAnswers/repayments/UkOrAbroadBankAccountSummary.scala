@@ -27,7 +27,7 @@ import viewmodels.implicits._
 
 object UkOrAbroadBankAccountSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(maybeClientPillar2Id: Option[String], answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(UkOrAbroadBankAccountPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
@@ -39,7 +39,10 @@ object UkOrAbroadBankAccountSummary {
         key = "ukOrAbroadBankAccount.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(CheckMode).url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(maybeClientPillar2Id, CheckMode).url
+          )
             .withVisuallyHiddenText(messages("ukOrAbroadBankAccount.change.hidden"))
         )
       )

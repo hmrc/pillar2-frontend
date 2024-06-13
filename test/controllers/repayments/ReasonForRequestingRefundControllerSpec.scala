@@ -45,14 +45,15 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad.url)
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id = None, NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ReasonForRequestingRefundView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -63,14 +64,15 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id = None, NormalMode).url)
 
         val view = application.injector.instanceOf[ReasonForRequestingRefundView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("answer"), None, NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -85,8 +87,9 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
@@ -99,7 +102,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -109,14 +112,14 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, None, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
     "must update the user answers and redirect to the next page when the user answers has provided a valid answer" in {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[RepaymentNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any(), any(), any())).thenReturn(expectedNextPage)
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val userAnswers = emptyUserAnswers
@@ -131,7 +134,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad().url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "valid reason"))
 
         val result = route(application, request).value
@@ -139,7 +142,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSessionRepository).set(eqTo(userAnswers))
-        verify(mockNavigator).nextPage(ReasonForRequestingRefundPage, NormalMode, userAnswers)
+        verify(mockNavigator).nextPage(ReasonForRequestingRefundPage, None, NormalMode, userAnswers)
       }
     }
 

@@ -23,7 +23,7 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "reasonForRequestingRefund.error.required"
   val lengthKey   = "reasonForRequestingRefund.error.length"
-  val maxLength   = 200
+  val maxLength   = 250
 
   val form = new ReasonForRequestingRefundFormProvider()()
 
