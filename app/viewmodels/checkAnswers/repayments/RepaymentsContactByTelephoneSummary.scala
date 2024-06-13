@@ -27,7 +27,6 @@ object RepaymentsContactByTelephoneSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsContactByTelephonePage).map { answer =>
-      println("************$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*****" + answer)
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "repaymentsContactByTelephone.checkYourAnswersLabel",

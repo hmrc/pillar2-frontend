@@ -1259,8 +1259,8 @@ repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on accou
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on account
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT code
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel.hidden =  the BIC or SWIFT code
-repayments.nonUKBank.summary.iban.checkYourAnswersLabel = BIC or SWIFT code
-repayments.nonUKBank.summary.iban.checkYourAnswersLabel.hidden =  the BIC or SWIFT code
+repayments.nonUKBank.summary.iban.checkYourAnswersLabel = IBAN
+repayments.nonUKBank.summary.iban.checkYourAnswersLabel.hidden = the IBAN
 
 
 rfmConfirmation.title = Replace filing member successful
