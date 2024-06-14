@@ -33,8 +33,8 @@ class RepaymentNavigator @Inject() {
       checkRouteMap(page)(clientPillar2Id)(userAnswers)
   }
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage    => _ => _ => routes.UnderConstructionController.onPageLoad
-    case _                             => id => _ => routes.IndexController.onPageLoad
+    case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
+    case _                          => id => _ => routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => Option[String] => UserAnswers => Call = _ => _ => _ => routes.IndexController.onPageLoad
