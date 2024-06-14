@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models.repayments
 
-object Validation {
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX   = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX = "^[0-9 +()]{0,25}$"
-  final val BIC_SWIFT_REGEX = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
-  final val IBAN_REGEX      = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
-  final val MONETARY_REGEX  = """^-?(\d*(\.\d{1,2})?)$"""
+import play.api.libs.json.{Json, OFormat}
+
+final case class RefundAmount(amount: BigDecimal)
+
+object RefundAmount {
+  implicit val format: OFormat[RefundAmount] = Json.format[RefundAmount]
 }

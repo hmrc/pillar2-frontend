@@ -403,7 +403,6 @@ GET         /replace-filing-member/contact-details/address/change-input         
 POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-
 GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
 GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
@@ -468,6 +467,13 @@ GET         /asa/error/organisation                                             
 
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
+
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+
+GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
 GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
