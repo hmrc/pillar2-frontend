@@ -17,20 +17,18 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants._
-import models.RefundAmount
+import mapping.Constants.{MAX_AMOUNT, MIN_AMOUNT}
 import play.api.data.Form
-import play.api.data.Forms.mapping
 
 import javax.inject.Inject
 
 class RequestRefundAmountFormProvider @Inject() extends Mappings {
-  def apply(): Form[RefundAmount] =
+  def apply(): Form[BigDecimal] =
     Form(
-      mapping(
-        "value" -> bigDecimal("repayment.requestRefundAmount.error.required", "repayment.requestRefundAmount.messages.error.format")
-          .verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRefundAmount.error.minValue"))
-          .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRefundAmount.error.maxValue"))
-      )(RefundAmount.apply)(RefundAmount.unapply)
+      "value" -> currency(
+        requiredKey = "repayment.requestRefundAmount.error.required",
+        invalidCurrency = "repayment.requestRefundAmount.error.format"
+      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRefundAmount.error.minValue"))
+        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRefundAmount.error.maxValue"))
     )
 }

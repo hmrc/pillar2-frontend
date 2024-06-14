@@ -20,8 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
-import models.{Mode, NormalMode, RefundAmount}
-import pages.PaymentRefundAmountPage
+import models.{Mode, NormalMode}
+import navigation.RepaymentNavigator
+import pages.RepaymentsRefundAmountPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.data.Form
 import play.api.libs.json.Format.GenericFormat
@@ -38,6 +40,7 @@ class RequestRefundAmountController @Inject() (
   formProvider:             RequestRefundAmountFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundAmountView,
+  navigator:                RepaymentNavigator,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
@@ -47,36 +50,36 @@ class RequestRefundAmountController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[RefundAmount] = formProvider()
+  val form: Form[BigDecimal] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
     ) andThen getSessionData andThen requireSessionData)) { implicit request =>
-      val preparedForm = request.userAnswers.get(PaymentRefundAmountPage) match {
+      val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
-        case Some(value) => form.fill(value)
+        case Some(value) => form.fill(value.setScale(2))
       }
       Ok(view(preparedForm, mode, clientPillar2Id))
     }
 
-  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+    ) andThen getSessionData andThen requireSessionData)).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, clientPillar2Id))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(PaymentRefundAmountPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
 

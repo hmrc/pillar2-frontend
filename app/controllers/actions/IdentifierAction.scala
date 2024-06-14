@@ -52,16 +52,27 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(
-        Retrievals.internalId and Retrievals.groupIdentifier and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole
+        Retrievals.internalId and Retrievals.groupIdentifier
+          and Retrievals.allEnrolments and Retrievals.affinityGroup
+          and Retrievals.credentialRole and Retrievals.credentials
       ) {
 
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, Some(groupId), enrolments = enrolments.enrolments)))
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
+          Future.successful(
+            Right(
+              IdentifierRequest(
+                request,
+                internalId,
+                Some(groupId),
+                enrolments = enrolments.enrolments,
+                userIdForEnrolment = credentials.get.providerId
+              )
+            )
+          )
 
-        case _ ~ _ ~ Some(Organisation) ~ _ =>
-          Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
-        case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
-        case _ ~ _ ~ Some(Agent) ~ _      => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
+        case _ ~ _ ~ Some(Organisation) ~ _ ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
+        case _ ~ _ ~ Some(Individual) ~ _ ~ _   => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
+        case _ ~ _ ~ Some(Agent) ~ _ ~ _        => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {

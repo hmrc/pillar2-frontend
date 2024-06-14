@@ -18,13 +18,13 @@ package views.repayments
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
-  val page = inject[RequestRefundBeforeStartView]
-
-  val view = Jsoup.parse(page(Some("Pillar2id"))(request, appConfig, messages).toString())
+  val page: RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
+  val view: Document                     = Jsoup.parse(page(Some("Pillar2id"))(request, appConfig, messages).toString())
 
   "Request Refund Before Start View" should {
 

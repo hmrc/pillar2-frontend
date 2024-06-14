@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.repayments
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
-case class RefundAmount(amount: BigDecimal)
+final case class RefundAmount(amount: BigDecimal)
 
 object RefundAmount {
-  implicit val format = Json.format[RefundAmount]
+  implicit val format: OFormat[RefundAmount] = Json.format[RefundAmount]
 }

@@ -16,18 +16,18 @@
 
 package pages
 
-import models.RefundAmount
+import models.repayments.NonUKBank
 import org.scalacheck.ScalacheckShapeless.derivedArbitrary
 import pages.behaviours.PageBehaviours
 
-class PaymentRefundAmountPageSpec extends PageBehaviours {
+class NonUKBankPageSpec extends PageBehaviours {
 
-  "PaymentRefundAmountPage" - {
+  "NonUKBankPage" - {
 
-    beRetrievable[RefundAmount](PaymentRefundAmountPage)
+    beRetrievable[NonUKBank](NonUKBankPage)
 
-    beSettable[RefundAmount](PaymentRefundAmountPage)
+    beSettable[NonUKBank](NonUKBankPage)
 
-    beRemovable[RefundAmount](PaymentRefundAmountPage)
+    beRemovable[NonUKBank](NonUKBankPage)
   }
 }

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.Enrolment
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-case class IdentifierRequest[A](
-  request:            Request[A],
-  userId:             String,
-  groupId:            Option[String] = None,
-  enrolments:         Set[Enrolment] = Set.empty,
-  isAgent:            Boolean = false,
-  userIdForEnrolment: String
-) extends WrappedRequest[A](request)
+class RepaymentsRefundAmountPageSpec extends PageBehaviours {
+
+  "PaymentRefundAmountPage" - {
+
+    beRetrievable[BigDecimal](RepaymentsRefundAmountPage)
+
+    beSettable[BigDecimal](RepaymentsRefundAmountPage)
+
+    beRemovable[BigDecimal](RepaymentsRefundAmountPage)
+  }
+}

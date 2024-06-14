@@ -16,12 +16,11 @@
 
 package pages
 
-import models.RefundAmount
 import play.api.libs.json.JsPath
 
-case object PaymentRefundAmountPage extends QuestionPage[RefundAmount] {
+case object RepaymentsRefundAmountPage extends QuestionPage[BigDecimal] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "paymentRefundAmount"
+  override def toString: String = "refundAmount"
 }
