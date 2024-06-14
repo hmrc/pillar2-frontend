@@ -113,18 +113,24 @@ class ExistingContactDetailsController @Inject() (
                 value match {
                   case true =>
                     for {
-                      updatedAnswers  <- Future.fromTry(request.userAnswers.set(ExistingContactDetailsPage, value))
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(ExistingContactDetailsPage, value))
+                      //TODO: Update to use RepaymentsContactNamePage when 964 is merged
                       updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactName))
+                      //TODO: Update to use RepaymentsContactEmailPage when 964 is merged
                       updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactEmail))
+                      //TODO: Update to use RepaymentsPhonePreferencePage when 965 is merged
                       updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, telephonePerf))
+                      //TODO: Update to use RepaymentsCapturePhonePage when 965 is merged
                       updatedAnswers4 <-
                         Future.fromTry(contactTelephone.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                       _ <- sessionRepository.set(updatedAnswers4)
+                      //TODO: Update to redirect to Contact Name page when PIL-964 is merged
                     } yield Redirect(routes.UnderConstructionController.onPageLoad)
                   case false =>
                     for {
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(ExistingContactDetailsPage, value))
                       _              <- sessionRepository.set(updatedAnswers)
+                      //TODO: Update to redirect to CYA page when PIL-148 is merged
                     } yield Redirect(routes.UnderConstructionController.onPageLoad)
                 }
             )

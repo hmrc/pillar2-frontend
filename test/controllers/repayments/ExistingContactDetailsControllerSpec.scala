@@ -178,6 +178,7 @@ class ExistingContactDetailsControllerSpec extends SpecBase {
       }
     }
 
+    //TODO: Update test to redirect to CYA page when PIL-148 is merged
     "must redirect to under construction when true is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, contactName)
@@ -189,7 +190,7 @@ class ExistingContactDetailsControllerSpec extends SpecBase {
         .overrides(
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[SessionRepository].toInstance(mockSessionRepository)
-      )
+        )
         .build()
 
       when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(ua)))
@@ -207,6 +208,7 @@ class ExistingContactDetailsControllerSpec extends SpecBase {
       }
     }
 
+    //TODO: Update test to redirect to Contact name page when PIL-964 is merged
     "must redirect to under construction when false is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, contactName)
