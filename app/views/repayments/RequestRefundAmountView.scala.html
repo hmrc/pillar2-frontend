@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("repayment.requestRefundAmount.title"))) {
 
-@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(mode, clientPillar2Id), 'autoComplete -> "off") {
+@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(clientPillar2Id, mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

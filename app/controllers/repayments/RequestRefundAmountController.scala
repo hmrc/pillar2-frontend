@@ -21,6 +21,7 @@ import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
+import navigation.RepaymentNavigator
 import pages.RepaymentsRefundAmountPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -38,6 +39,7 @@ class RequestRefundAmountController @Inject() (
   formProvider:             RequestRefundAmountFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundAmountView,
+  navigator:                RepaymentNavigator,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
@@ -49,7 +51,7 @@ class RequestRefundAmountController @Inject() (
 
   val form: Form[BigDecimal] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -62,7 +64,7 @@ class RequestRefundAmountController @Inject() (
       Ok(view(preparedForm, mode, clientPillar2Id))
     }
 
-  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -76,7 +78,7 @@ class RequestRefundAmountController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
 
