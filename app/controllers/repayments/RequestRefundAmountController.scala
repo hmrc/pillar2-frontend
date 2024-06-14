@@ -39,12 +39,12 @@ class RequestRefundAmountController @Inject() (
   formProvider:             RequestRefundAmountFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundAmountView,
+  navigator:                RepaymentNavigator,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
-  agentIdentifierAction:    AgentIdentifierAction,
-  navigator:                RepaymentNavigator
+  agentIdentifierAction:    AgentIdentifierAction
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

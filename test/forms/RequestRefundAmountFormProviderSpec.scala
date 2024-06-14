@@ -30,7 +30,7 @@ class RequestRefundAmountFormProviderSpec extends DecimalFieldBehaviours with St
   val maximum     = 99999999999.99
   val minimum     = 0.0
 
-  val validDataGenerator: Gen[String] = decimalInRangeWithCommas(minimum.toDouble, maximum)
+  val validDataGenerator: Gen[String] = decimalInRangeWithCommas(minimum, maximum)
 
   val formProvider = new RequestRefundAmountFormProvider()
   private val form: Form[BigDecimal] = formProvider()
