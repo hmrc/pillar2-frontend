@@ -92,7 +92,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode).url
       }
     }
 

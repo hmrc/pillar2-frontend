@@ -21,7 +21,8 @@ import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
-import pages.RepaymentsRefundAmountPage
+import navigation.RepaymentNavigator
+import pages.{RepaymentsRefundAmountPage, UkOrAbroadBankAccountPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -42,7 +43,8 @@ class RequestRefundAmountController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
-  agentIdentifierAction:    AgentIdentifierAction
+  agentIdentifierAction:    AgentIdentifierAction,
+  navigator:                RepaymentNavigator
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -76,7 +78,10 @@ class RequestRefundAmountController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad)
+            } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, clientPillar2Id, mode, updatedAnswers))
+//            yield Redirect(
+//              controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = mode, clientPillar2Id = clientPillar2Id)
+//            )
         )
     }
 
