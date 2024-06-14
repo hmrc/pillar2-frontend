@@ -66,7 +66,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
         } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
           .getOrElse(
             Ok(
-              view(listRefund, listBankAccountDetails, contactDetailsList)
+              view(listRefund(clientPillar2Id), listBankAccountDetails, contactDetailsList)
             )
           )
       }
@@ -109,10 +109,10 @@ class RepaymentsCheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listRefund(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listRefund(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
-        RequestRefundAmountSummary.row(userAnswers),
+        RequestRefundAmountSummary.row(userAnswers, clientPillar2Id),
         ReasonForRequestingRefundSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")

@@ -23,7 +23,8 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
-import pages.NonUKBankPage
+import navigation.RepaymentNavigator
+import pages.{NonUKBankPage, RepaymentsRefundAmountPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -44,7 +45,8 @@ class NonUKBankController @Inject() (
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView
+  view:                     NonUKBankView,
+  navigator:                RepaymentNavigator
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -78,7 +80,7 @@ class NonUKBankController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(navigator.nextPage(NonUKBankPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
 
