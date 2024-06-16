@@ -31,11 +31,15 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class AgentIdentifierActionSpec extends SpecBase {
+
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   class Harness(authAction: AgentIdentifierAction, predicate: Predicate = defaultAgentPredicate) {
     def onPageLoad(): Action[AnyContent] = authAction.agentIdentify(predicate)(implicit request => Results.Ok)
@@ -51,7 +55,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
         running(application) {
           when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
-            .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
+            .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType))))
 
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -149,7 +153,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
       running(application) {
         when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(None ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
+          .thenReturn(Future.successful(None ~ pillar2AgentEnrolment ~ Some(Agent) ~ None ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -262,7 +266,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
       running(application) {
         when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Organisation) ~ None))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Organisation) ~ None ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -283,7 +287,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
       running(application) {
         when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Individual) ~ None))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Individual) ~ None ~ None))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -326,7 +330,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
       running(application) {
         when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None))
+          .thenReturn(Future.successful(Some("id") ~ pillar2AgentEnrolment ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType))))
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
@@ -346,11 +350,15 @@ class AgentIdentifierActionSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+      type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
       running(application) {
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Some("id") ~ Some("id") ~ Enrolments(Set.empty) ~ Some(Organisation) ~ Some(User)))
+          .thenReturn(
+            Future.successful(
+              Some("id") ~ Some("id") ~ Enrolments(Set.empty) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]

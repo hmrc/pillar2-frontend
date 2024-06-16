@@ -210,4 +210,119 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "XMPLR0123456789"
     }
   }
+
+  "currency" - {
+    val testForm = Form(
+      "value" -> currency()
+    )
+
+    "bind a valid option with no decimals" in {
+      val result = testForm.bind(Map("value" -> "123"))
+      result.get mustEqual BigDecimal.valueOf(123)
+    }
+
+    "bind a valid option with decimals" in {
+      val result = testForm.bind(Map("value" -> "123.12"))
+      result.get mustEqual BigDecimal.valueOf(123.12)
+    }
+
+    "bind a valid option with a pound sign at the start" in {
+      val result = testForm.bind(Map("value" -> "£123.12"))
+      result.get mustEqual BigDecimal.valueOf(123.12)
+    }
+
+    "bind a valid option with spaces" in {
+      val result = testForm.bind(Map("value" -> "£123   12 2"))
+      result.get mustEqual BigDecimal.valueOf(123122)
+    }
+
+    "bind a valid option with commas" in {
+      val result = testForm.bind(Map("value" -> "£1,1,123.12"))
+      result.get mustEqual BigDecimal.valueOf(11123.12)
+    }
+
+    "bind a valid option with a pound sign at the end" in {
+      val result = testForm.bind(Map("value" -> "123.12£"))
+      result.get mustEqual BigDecimal.valueOf(123.12)
+    }
+
+    "successfully sanitise input with commas" in {
+      val result = testForm.bind(Map("value" -> "£,123,"))
+      result.get mustEqual BigDecimal.valueOf(123)
+    }
+
+    "successfully bind the highest number" in {
+      val result = testForm.bind(Map("value" -> "99999999999.99"))
+      result.get mustEqual BigDecimal.valueOf(99999999999.99)
+    }
+
+    "fail to bind invalid input with different currency symbol" in {
+      val result = testForm.bind(Map("value" -> "$123.12345"))
+      result.errors must contain(FormError("value", "error.invalidNumeric"))
+    }
+
+    "fail to bind invalid input with multiple decimal points" in {
+      val result = testForm.bind(Map("value" -> "£123.12.12"))
+      result.errors must contain(FormError("value", "error.invalidNumeric"))
+    }
+
+    "fail to bind invalid input with pound sign on both ends" in {
+      val result = testForm.bind(Map("value" -> "£123.12£"))
+      result.errors must contain(FormError("value", "error.invalidNumeric"))
+    }
+
+    "not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "unbind a valid value" in {
+      val result = testForm.fill(BigDecimal.valueOf(12.12))
+      result.apply("value").value.value mustEqual "12.12"
+    }
+  }
+
+  "bankAccount" - {
+    val testForm: Form[String] =
+      Form(
+        "value" -> bankAccount()
+      )
+
+    "must bind a valid account id" in {
+      val result = testForm.bind(Map("value" -> "HBUKGB4B"))
+      result.get mustEqual "HBUKGB4B"
+    }
+
+    "must bind a valid account id which contains spaces and lowercase characters" in {
+      val result = testForm.bind(Map("value" -> " Hb UK gB4 b "))
+      result.get mustEqual "HBUKGB4B"
+    }
+
+    "must not bind an empty string as a account id" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a string of whitespace only as an account id" in {
+      val result = testForm.bind(Map("value" -> " \t"))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must return a custom error message" in {
+      val form   = Form("value" -> text("custom.error"))
+      val result = form.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "custom.error"))
+    }
+
+    "must unbind a valid account id" in {
+      val result = testForm.fill("HBUKGB4B")
+      result.apply("value").value.value mustEqual "HBUKGB4B"
+    }
+  }
+
 }

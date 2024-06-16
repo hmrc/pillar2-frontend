@@ -19,7 +19,7 @@ package pages
 import models.UkOrAbroadBankAccount
 import pages.behaviours.PageBehaviours
 
-class UkBankAccountOrForeignBankAccountSpec extends PageBehaviours {
+class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
 
   "UkOrAbroadBankAccountPage" - {
 

@@ -118,12 +118,12 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(7).text() must include("View and amend contact details")
-      elements.get(7).attr("href") must include(
+      elements.get(8).text() must include("View and amend contact details")
+      elements.get(8).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
       )
-      elements.get(8).text() must include("View and amend group details")
-      elements.get(8).attr("href") must include(
+      elements.get(9).text() must include("View and amend group details")
+      elements.get(9).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       )
 
@@ -132,16 +132,16 @@ class DashboardViewSpec extends ViewSpecBase {
     "have pillar 2 information" in {
       val element = organisationDashboardView.getElementsByTag("p")
 
-      element.get(9).text() must include(
+      element.get(10).text() must include(
         "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
       )
-      element.get(10).text() must include(
+      element.get(11).text() must include(
         "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
       )
-      element.get(11).text() must include(
+      element.get(12).text() must include(
         "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
       )
-      element.get(12).text() must include(
+      element.get(13).text() must include(
         "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
       )
     }
@@ -206,12 +206,17 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(9).text() must include("View and amend contact details")
+
+      elements.get(9).text() must include("Request a refund")
       elements.get(9).attr("href") must include(
+        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some("XMPLR0012345678")).url
+      )
+      elements.get(10).text() must include("View and amend contact details")
+      elements.get(10).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(Some(plrRef)).url
       )
-      elements.get(10).text() must include("View and amend group details")
-      elements.get(10).attr("href") must include(
+      elements.get(11).text() must include("View and amend group details")
+      elements.get(11).attr("href") must include(
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some(plrRef)).url
       )
     }
@@ -249,16 +254,16 @@ class DashboardViewSpec extends ViewSpecBase {
     "have pillar 2 information" in {
       val element = agentDashboardView.getElementsByTag("p")
 
-      element.get(11).text() must include(
+      element.get(12).text() must include(
         "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
       )
-      element.get(12).text() must include(
+      element.get(13).text() must include(
         "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
       )
-      element.get(13).text() must include(
+      element.get(14).text() must include(
         "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
       )
-      element.get(14).text() must include(
+      element.get(15).text() must include(
         "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
       )
     }

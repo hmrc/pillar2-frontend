@@ -19,7 +19,11 @@ package forms.mappings
 import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
+
 import scala.util.{Failure, Success, Try}
+import forms.Validation.MONETARY_REGEX
+
+import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters extends Transforms with Constraints {
   private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
@@ -49,12 +53,25 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  private[mappings] def bankAccountFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      data.get(key) match {
+        case None                      => Left(Seq(FormError(key, errorKey, args)))
+        case Some(s) if s.trim.isEmpty => Left(Seq(FormError(key, errorKey, args)))
+        case Some(s)                   => Right(s.toUpperCase.replace(" ", ""))
+      }
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
+  }
+
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
     new Formatter[Boolean] {
 
       private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]) =
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
         baseFormatter
           .bind(key, data)
           .right
@@ -64,7 +81,7 @@ trait Formatters extends Transforms with Constraints {
             case _       => Left(Seq(FormError(key, invalidKey, args)))
           }
 
-      def unbind(key: String, value: Boolean) = Map(key -> value.toString)
+      def unbind(key: String, value: Boolean): Map[String, String] = Map(key -> value.toString)
     }
 
   private[mappings] def optionalPostcodeFormatter(
@@ -92,6 +109,36 @@ trait Formatters extends Transforms with Constraints {
     override def unbind(key: String, value: Option[String]): Map[String, String] =
       Map(key -> value.getOrElse(""))
   }
+
+  private[mappings] def currencyFormatter(
+    requiredKey:     String,
+    invalidCurrency: String,
+    args:            Seq[String] = Seq.empty
+  ): Formatter[BigDecimal] =
+    new Formatter[BigDecimal] {
+
+      private val baseFormatter = stringFormatter(requiredKey)
+      def onlyOnePound: String => Boolean = input => !List(-1, 0, input.length - 1).contains(input.indexOf("£")) | input.count(_ == '£') > 1
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", "").replace(" ", ""))
+          .flatMap {
+            case s if onlyOnePound(s) =>
+              Left(Seq(FormError(key, invalidCurrency, args)))
+            case s if !s.replace("£", "").matches(MONETARY_REGEX) =>
+              Left(Seq(FormError(key, invalidCurrency, args)))
+            case s =>
+              nonFatalCatch
+                .either(BigDecimal(s.replace("£", "")))
+                .left
+                .map(_ => Seq(FormError(key, invalidCurrency, args)))
+          }
+
+      override def unbind(key: String, value: BigDecimal): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
 
   private[mappings] def mandatoryPostcodeFormatter(
     requiredKey:      String,

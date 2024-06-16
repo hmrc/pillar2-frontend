@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models.repayments
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import mapping.Constants
-import javax.inject.Inject
+import play.api.libs.json.{Json, OFormat}
 
-class NfmContactNameFormProvider @Inject() extends Mappings {
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nfmContactName.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmContactName.error.length"))
-    )
+final case class RefundAmount(amount: BigDecimal)
+
+object RefundAmount {
+  implicit val format: OFormat[RefundAmount] = Json.format[RefundAmount]
 }

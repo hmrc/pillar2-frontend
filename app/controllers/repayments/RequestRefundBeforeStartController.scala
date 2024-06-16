@@ -14,32 +14,36 @@
  * limitations under the License.
  */
 
-package controllers.rfm
+package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
+import controllers.actions._
+import controllers.subscription.manageAccount.identifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.RfmCannotReturnAfterConfirmationView
+import views.html.repayments.RequestRefundBeforeStartView
 
 import javax.inject.Inject
-
-class RfmCannotReturnAfterConfirmationController @Inject() (
-  Identify:                 IdentifierAction,
+class RequestRefundBeforeStartController @Inject() (
+  identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RfmCannotReturnAfterConfirmationView
+  view:                     RequestRefundBeforeStartView,
+  agentIdentifierAction:    AgentIdentifierAction,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  featureAction:            FeatureFlagActionFactory
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Identify { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Ok(view())
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen (identifierAction(
+      clientPillar2Id,
+      agentIdentifierAction,
+      identify
+    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
+      Ok(view(clientPillar2Id))
     }
-  }
 
 }

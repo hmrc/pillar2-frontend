@@ -28,6 +28,9 @@ trait Mappings extends Formatters with Constraints {
   protected def pillar2Id(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(pillar2IdFormatter(errorKey, args))
 
+  protected def bankAccount(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(bankAccountFormatter(errorKey, args))
+
   protected def int(
     requiredKey:    String = "error.required",
     wholeNumberKey: String = "error.wholeNumber",
@@ -43,6 +46,12 @@ trait Mappings extends Formatters with Constraints {
     args:        Seq[String] = Seq.empty
   ): FieldMapping[Boolean] =
     of(booleanFormatter(requiredKey, invalidKey, args))
+
+  protected def currency(
+    requiredKey:     String = "error.required",
+    invalidCurrency: String = "error.invalidNumeric"
+  ): FieldMapping[BigDecimal] =
+    of(currencyFormatter(requiredKey, invalidCurrency))
 
   protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid", args: Seq[String] = Seq.empty)(implicit
     ev:                                    Enumerable[A]
