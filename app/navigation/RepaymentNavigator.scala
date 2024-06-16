@@ -47,7 +47,7 @@ class RepaymentNavigator @Inject() {
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
           routes.UnderConstructionController.onPageLoad
         } else {
-          controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
+          controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
