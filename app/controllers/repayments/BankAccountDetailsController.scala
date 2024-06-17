@@ -66,7 +66,7 @@ class BankAccountDetailsController @Inject() (
       Ok(view(preparedForm, clientPillar2Id, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] = {
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -83,5 +83,4 @@ class BankAccountDetailsController @Inject() (
             } yield Redirect(routes.UnderConstructionController.onPageLoad)
         )
     }
-  }
 }

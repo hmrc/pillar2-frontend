@@ -20,8 +20,6 @@ import models.requests.{IdentifierRequest, SessionOptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
