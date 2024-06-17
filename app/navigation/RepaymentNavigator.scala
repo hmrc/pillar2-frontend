@@ -32,12 +32,13 @@ class RepaymentNavigator @Inject() {
     case CheckMode =>
       checkRouteMap(page)(clientPillar2Id)(userAnswers)
   }
+
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
     case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
     case UkOrAbroadBankAccountPage     => id => data => ukOrAbroadBankAccountLogic(id, data)
-    case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case _                             => id => _ => routes.IndexController.onPageLoad
+    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
+    case NonUKBankPage                 => id => _ => controllers.routes.UnderConstructionController.onPageLoad
+    case _                             => _ => _ => routes.IndexController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
@@ -47,7 +48,7 @@ class RepaymentNavigator @Inject() {
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
           routes.UnderConstructionController.onPageLoad
         } else {
-          controllers.repayments.routes.NonUKBankController.onPageLoad(maybeClientId, mode = NormalMode)
+          controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

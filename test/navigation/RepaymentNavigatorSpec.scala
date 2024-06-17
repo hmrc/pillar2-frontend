@@ -27,12 +27,12 @@ class RepaymentNavigatorSpec extends SpecBase {
 
   private lazy val journeyRecovery   = routes.JourneyRecoveryController.onPageLoad()
   private lazy val underConstruction = routes.UnderConstructionController.onPageLoad
+
   "Navigator" when {
 
     "in Normal mode" must {
 
       "must go from a page that doesn't exist in the route map to Index" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
@@ -56,6 +56,12 @@ class RepaymentNavigatorSpec extends SpecBase {
       }
       "go to journey recovery page if they somehow manage to submit an empty form" in {
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
+        case object UnknownPage extends Page
+        navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+      }
+      "go to under construction page from request refund amount page" in {
+        val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
+        navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe underConstruction
       }
 
     }
@@ -63,11 +69,11 @@ class RepaymentNavigatorSpec extends SpecBase {
     "in Check mode" must {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
     }
+
   }
 }
