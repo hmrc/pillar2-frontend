@@ -23,6 +23,7 @@ import forms.ContactByTelephoneFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -51,7 +52,7 @@ class ContactByTelephoneController @Inject() (
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
         val form = formProvider(contactName)
-        val preparedForm = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
+        val preparedForm: Form[Boolean] = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
           case Some(v) => form.fill(v)
           case None    => form
         }

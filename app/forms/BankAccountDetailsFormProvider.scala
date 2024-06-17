@@ -1,0 +1,55 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package forms
+
+import forms.mappings.Mappings
+import models.repayments.BankAccountDetails
+import play.api.data.Form
+import play.api.data.Forms.mapping
+
+import javax.inject.Inject
+
+class BankAccountDetailsFormProvider @Inject() extends Mappings {
+  private val bankNameMaxLength          = 40
+  private val accountHolderNameMaxLength = 60
+  private val sortCodeRegex              = """^[0-9]{6}$"""
+  private val accountNumberRegex         = """^[0-9]{6,8}$"""
+  def apply(): Form[BankAccountDetails] = Form(
+    mapping(
+      "bankName" ->
+        text("repayments.bank-account-details.bankError")
+          .verifying(
+            maxLength(bankNameMaxLength, "repayments.bank-account-details.bankNameFormatError")
+          ),
+      "accountHolderName" ->
+        text("repayments.bank-account-details.accountError")
+          .verifying(
+            maxLength(accountHolderNameMaxLength, "repayments.bank-account-details.accountNameFormatError")
+          ),
+      "sortCode" ->
+        text("repayments.bank-account-details.sortCodeError")
+          .verifying(
+            regexp(sortCodeRegex, "repayments.bank-account-details.sortCodeFormatError")
+          ),
+      "accountNumber" ->
+        text("repayments.bank-account-details.accountNumberError")
+          .verifying(
+            regexp(accountNumberRegex, "repayments.bank-account-details.accountNumberFormatError")
+          )
+    )(BankAccountDetails.apply)(BankAccountDetails.unapply)
+  )
+}

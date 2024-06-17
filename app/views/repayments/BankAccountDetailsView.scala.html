@@ -1,0 +1,82 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import viewmodels.InputWidth._
+@import views.html.components.gds._
+
+@this(
+        layout: templates.Layout,
+        h: heading,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        govukErrorSummary: GovukErrorSummary,
+        bulletList: bulletList,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF,
+        govukInput: GovukInput
+)
+
+@(form: Form[_], clientPillar2Id: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+    @layout(pageTitle = title(form, messages("repayments.bank-account-details.title")), maybeClientPillar2Id = clientPillar2Id) {
+
+        @formHelper(action = controllers.repayments.routes.BankAccountDetailsController.onSubmit(clientPillar2Id)) {
+
+            @if(form.errors.nonEmpty) {
+                @govukErrorSummary(ErrorSummaryViewModel(form))
+            }
+
+            @h(messages("repayments.bank-account-details.heading"), classes = "govuk-heading-l")
+
+            @govukInput(
+                InputViewModel(
+                    field = form("bankName"),
+                    label = LabelViewModel(messages("repayments.bank-account-details.bankName"))
+                )
+                .withWidth(Full)
+            )
+            @govukInput(
+                InputViewModel(
+                    field = form("accountHolderName"),
+                    label = LabelViewModel(messages("repayments.bank-account-details.accountName"))
+                )
+                .withWidth(Full)
+                .withHint(Hint(content = Text(messages("repayments.bank-account-details.accountName.hintText"))))
+            )
+            @govukInput(
+                InputViewModel(
+                    field = form("sortCode"),
+                    label = LabelViewModel(messages("repayments.bank-account-details.sortCode"))
+                )
+                .withWidth(Fixed5)
+                .withHint(Hint(content = Text(messages("repayments.bank-account-details.sortCode.hintText"))))
+            )
+            @govukInput(
+                InputViewModel(
+                    field = form("accountNumber"),
+                    label = LabelViewModel(messages("repayments.bank-account-details.accountNumber"))
+                )
+                .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("repayments.bank-account-details.accountNumber.hintText"))))
+            )
+
+            @govukButton(
+                ButtonViewModel(messages("site.continue"))
+            )
+
+        }
+    }

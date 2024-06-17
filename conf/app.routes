@@ -480,3 +480,5 @@ POST       /repayment/non-uk-details                                            
 GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
+GET        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
