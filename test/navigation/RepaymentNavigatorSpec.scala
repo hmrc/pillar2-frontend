@@ -59,9 +59,10 @@ class RepaymentNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
-      "go to under construction page from request refund amount page" in {
+      "go to reason for requesting a refund page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
-        navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe underConstruction
+        navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
       }
 
     }
