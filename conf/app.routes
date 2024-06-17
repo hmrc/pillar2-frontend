@@ -470,11 +470,6 @@ GET         /replace-filing-member/review-submit/confirmation                   
 
 GET        /replace-filing-member/review-submit/confirmation                                     controllers.rfm.RfmConfirmationController.onPageLoad
 
-GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-
 GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
@@ -497,7 +492,12 @@ POST       /repayment/contact-details/change-input-telephone                    
 
 GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
-GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
-POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
-GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
-POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode,  clientPillar2Id: Option[String] ?= None)
+GET        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
+GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)

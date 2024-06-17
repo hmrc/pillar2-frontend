@@ -18,10 +18,11 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.RequestRefundAmountFormProvider
-import models.{NormalMode, RefundAmount}
+
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.PaymentRefundAmountPage
+import pages.RepaymentsRefundAmountPage
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,7 +41,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
@@ -50,7 +51,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -62,11 +63,32 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       }
     }
 
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val amount = BigDecimal(9.99)
+      val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(ua)))
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[RequestRefundAmountView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(amount), NormalMode, clientPillar2Id = None)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "must redirect under construction when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onSubmit(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(
               "value" -> "99.9"
             )
@@ -80,7 +102,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]
@@ -97,9 +119,9 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", -9.toString))
-        val boundForm = formProvider().bind(Map("value" -> -9.toString))
+          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+            .withFormUrlEncodedBody(("value", "-9"))
+        val boundForm = formProvider().bind(Map("value" -> "-9"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -115,7 +137,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id = None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "99,999,9999,999.99.99"))
         val boundForm = formProvider().bind(Map("value" -> "99,999,9999,999.99.99"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]

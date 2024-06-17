@@ -84,7 +84,7 @@ class RepaymentsContactEmailController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, None, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

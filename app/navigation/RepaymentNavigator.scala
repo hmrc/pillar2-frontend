@@ -26,21 +26,22 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class RepaymentNavigator @Inject() {
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, clientPillar2Id: Option[String] = None, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)
+      normalRoutes(page)(clientPillar2Id)(userAnswers)
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)
-  }
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
-    case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
-    case RepaymentsContactByTelephonePage => telephonePreferenceNormalMode
-    case RepaymentsTelephoneDetailsPage   => _ => routes.UnderConstructionController.onPageLoad
-    case _                                => _ => routes.IndexController.onPageLoad
+      checkRouteMap(page)(clientPillar2Id)(userAnswers)
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.IndexController.onPageLoad
+  private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
+    case RepaymentsContactNamePage        => _ => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+    case RepaymentsContactEmailPage       => _ => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
+    case RepaymentsContactByTelephonePage => _ => telephonePreferenceNormalMode
+    case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
+    case _                                => id => _ => routes.IndexController.onPageLoad
+  }
+
+  private val checkRouteMap: Page => Option[String] => UserAnswers => Call = _ => _ => _ => routes.IndexController.onPageLoad
 
   private def telephonePreferenceNormalMode(userAnswers: UserAnswers): Call =
     userAnswers

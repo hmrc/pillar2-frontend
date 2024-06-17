@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import mapping.Constants
-import play.api.data.Form
-import javax.inject.Inject
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-class RepaymentsContactNameFormProvider @Inject() extends Mappings {
+class RepaymentsRefundAmountPageSpec extends PageBehaviours {
 
-  def apply(): Form[String] =
-    Form(
-      "contactName" -> text("repayments.contactName.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_100, "repayments.contactName.error.length"))
-    )
+  "PaymentRefundAmountPage" - {
+
+    beRetrievable[BigDecimal](RepaymentsRefundAmountPage)
+
+    beSettable[BigDecimal](RepaymentsRefundAmountPage)
+
+    beRemovable[BigDecimal](RepaymentsRefundAmountPage)
+  }
 }

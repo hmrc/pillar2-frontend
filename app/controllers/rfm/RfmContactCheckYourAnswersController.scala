@@ -18,7 +18,7 @@ package controllers.rfm
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
 import models.requests.DataRequest
 import models.{InternalIssueError, UnexpectedResponse}
 import pages.PlrReferencePage
@@ -41,6 +41,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   getData:                  DataRetrievalAction,
   rfmIdentify:              RfmIdentifierAction,
+  Identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   subscriptionService:      SubscriptionService,
@@ -52,7 +53,7 @@ class RfmContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
 
@@ -98,7 +99,7 @@ class RfmContactCheckYourAnswersController @Inject() (
                             subscriptionService.getUltimateParentEnrolmentInformation(
                               subscriptionData = subscriptionData,
                               pillar2Reference = newFilingMemberInformation.plrReference,
-                              request.userId
+                              request.userIdForEnrolment
                             )
                           )
       groupId <- OptionT.fromOption[Future](request.groupId)

@@ -51,12 +51,25 @@ class AgentIdentifierAction @Inject() (
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
         authorised(agentPredicate)
-          .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
-            case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
-              Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments, isAgent = true)))
-            case _ ~ _ ~ Some(Organisation) ~ _ =>
+          .retrieve(
+            Retrievals.internalId and Retrievals.allEnrolments
+              and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
+          ) {
+            case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+              Future.successful(
+                Right(
+                  IdentifierRequest(
+                    request,
+                    internalId,
+                    enrolments = enrolments.enrolments,
+                    isAgent = true,
+                    userIdForEnrolment = credentials.providerId
+                  )
+                )
+              )
+            case _ ~ _ ~ Some(Organisation) ~ _ ~ _ =>
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadOrganisationError)))
-            case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
+            case _ ~ _ ~ Some(Individual) ~ _ ~ _ => Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
             case _ =>
               logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
