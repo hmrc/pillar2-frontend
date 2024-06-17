@@ -86,7 +86,7 @@ class RepaymentsContactByTelephoneController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactByTelephonePage, nominated))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(RepaymentsContactByTelephonePage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(RepaymentsContactByTelephonePage, clientPillar2Id, mode, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

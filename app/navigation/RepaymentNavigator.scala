@@ -34,8 +34,8 @@ class RepaymentNavigator @Inject() {
   }
 
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsContactNamePage        => _ => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
-    case RepaymentsContactEmailPage       => _ => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
+    case RepaymentsContactNamePage  => _ => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+    case RepaymentsContactEmailPage => _ => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
     case RepaymentsContactByTelephonePage => _ => telephonePreferenceNormalMode
     case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
     case _                                => id => _ => routes.IndexController.onPageLoad
