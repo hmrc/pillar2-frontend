@@ -18,39 +18,86 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentsContactNameFormProvider
-import models.NormalMode
+import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.repayments.RepaymentsContactNameView
 
 class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider
-  val page         = inject[RepaymentsContactNameView]
-
-  val view = Jsoup.parse(page(formProvider(), None, NormalMode)(request, appConfig, messages).toString())
+  val mode: Mode = NormalMode
+  val page = inject[RepaymentsContactNameView]
 
   "Repayments Contact Name View" should {
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact " +
-          "about the refund request?"
-      )
+    "page loaded" should {
+
+      val view: Document = Jsoup.parse(page(formProvider(), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString())
+
+      "have a title" in {
+        view.getElementsByTag("title").text must include(
+          "What is the name of the person or team we should contact " +
+            "about the refund request?"
+        )
+      }
+
+      "have a heading" in {
+        view.getElementsByTag("h1").text must include(
+          "What is the name of the person or team we should contact " +
+            "about the refund request?"
+        )
+      }
+
+      "have a hint" in {
+        view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
+      }
+
+      "have a button" in {
+        view.getElementsByClass("govuk-button").text must include("Continue")
+      }
+
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact " +
-          "about the refund request?"
-      )
+    "nothing entered and page submitted" should {
+
+      val view: Document =
+        Jsoup.parse(page(formProvider().bind(Map("contactName" -> "")), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString())
+
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+          "Enter name of the person or team we should contact for this refund request"
+        )
+      }
+
+      "have an input error" in {
+        view.getElementsByClass("govuk-error-message").text must include("Enter name of the person or team we should contact for this refund request")
+      }
+
     }
 
-    "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
+    "value entered exceeds character limit" should {
+
+      val contactName = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+
+      val view: Document =
+        Jsoup.parse(
+          page(formProvider().bind(Map("contactName" -> contactName)), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString()
+        )
+
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+          "Name of the contact person or team must be 100 characters or less"
+        )
+      }
+
+      "have an input error" in {
+        view.getElementsByClass("govuk-error-message").text must include("Name of the contact person or team must be 100 characters or less")
+      }
+
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
-    }
   }
 }
