@@ -27,7 +27,7 @@
 
 @(form: Form[_], clientPillar2Id: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("reasonForRequestingRefund.title")),bannerUrl= Some(controllers.routes.DashboardController.onPageLoad().url) ) {
+@layout(pageTitle = title(form, messages("reasonForRequestingRefund.title")), maybeClientPillar2Id = clientPillar2Id) {
 
     @formHelper(action = controllers.repayments.routes.ReasonForRequestingRefundController.onSubmit(clientPillar2Id, mode), 'autoComplete -> "off") {
 
