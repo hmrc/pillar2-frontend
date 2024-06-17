@@ -35,7 +35,7 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
-      "must go to under construction page from request refund amount page" in {
+      "must go to next page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
         navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe underConstruction
       }
@@ -57,7 +57,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
         ) mustBe
-          underConstruction
+          controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
       }
 
     }
