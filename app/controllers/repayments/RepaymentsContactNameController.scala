@@ -41,8 +41,8 @@ class RepaymentsContactNameController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
-  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
+  navigator:                RepaymentNavigator,
   val controllerComponents: MessagesControllerComponents,
   view:                     RepaymentsContactNameView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
