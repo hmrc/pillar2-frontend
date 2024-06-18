@@ -80,7 +80,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
     "value entered exceeds character limit" should {
 
-      val contactEmail = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA@gmail.com"
+      val contactEmail = "".padTo(100, 'A').concat("gmail.com")
 
       val view: Document =
         Jsoup.parse(

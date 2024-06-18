@@ -79,7 +79,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
     "value entered exceeds character limit" should {
 
-      val contactName = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      val contactName = "".padTo(101, 'A')
 
       val view: Document =
         Jsoup.parse(
