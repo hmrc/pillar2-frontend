@@ -50,7 +50,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
       }
 
-      "must go to Under construction page from Repayments contact email page" in {
+      "must go to next page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           None,
@@ -58,6 +58,36 @@ class RepaymentNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
         ) mustBe
           controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
+      }
+
+      "must go to Repayments Telephone Details page from Repayments Contact By Telephone page when True" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, true)
+        ) mustBe
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(None, NormalMode)
+      }
+
+      "must go to UnderConstruction page from Repayments Contact By Telephone page when False" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
+        ) mustBe
+          underConstruction
+      }
+
+      "must go to UnderConstruction page from Repayments Telephone Details page" in {
+        navigator.nextPage(
+          RepaymentsTelephoneDetailsPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "12345")
+        ) mustBe
+          underConstruction
       }
 
     }

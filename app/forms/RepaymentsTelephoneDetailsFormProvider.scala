@@ -23,14 +23,13 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class RepaymentsTelephoneDetailsFormProvider @Inject() extends Mappings {
-  private val phoneNumberLength = 50
-  private val phoneRegex        = """^[A-Z0-9 )/(\-*#+]*$"""
+
   def apply(contactName: String): Form[String] =
     Form(
       "telephoneNumber" -> text("repayments.telephoneDetails.error.required", Seq(contactName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_100, "repayments.telephoneDetails.error.length"),
+            maxLength(Constants.MAX_LENGTH_50, "repayments.telephoneDetails.error.length"),
             regexp(Validation.TELEPHONE_REGEX, "repayments.telephoneDetails.error.format")
           )
         )
