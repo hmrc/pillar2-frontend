@@ -1,0 +1,55 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
+@import views.html.components.gds._
+@this(
+    layout: templates.Layout,
+    govukButton: GovukButton,
+    govukWarningText: GovukWarningText,
+    govukInsetText : GovukInsetText,
+    govukTable : GovukTable,
+    govukDetails : GovukDetails,
+    h2: HeadingH2,
+    p: paragraphBody,
+    heading: heading,
+    bulletList: bulletList,
+)
+
+@( clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(
+    pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
+    showBackLink = true
+) {
+    @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
+    @p(messages("repayment.requestRefundBeforeStart.p1"))
+    @h2(messages("repayment.requestRefundBeforeStart.header2"), size = "m")
+    @p(messages("repayment.requestRefundBeforeStart.p2"))
+    @h2(messages("repayment.requestRefundBeforeStart.header3"), size = "m")
+    @p(messages("repayment.requestRefundBeforeStart.p3"))
+    @bulletList(items = List(
+        Html(messages("repayment.requestRefundBeforeStart.li1")),
+        Html(messages("repayment.requestRefundBeforeStart.li2")),
+        Html(messages("repayment.requestRefundBeforeStart.li3")),
+        Html(messages("repayment.requestRefundBeforeStart.li4"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+
+    @govukButton(
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id, NormalMode).url)
+    )
+}
