@@ -66,7 +66,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
         } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
           .getOrElse(
             Ok(
-              view(listRefund(clientPillar2Id), listBankAccountDetails, contactDetailsList)
+              view(listRefund(clientPillar2Id), listBankAccountDetails(clientPillar2Id), contactDetailsList(clientPillar2Id))
             )
           )
       }
@@ -88,24 +88,24 @@ class RepaymentsCheckYourAnswersController @Inject() (
       }
     }
 
-  private def contactDetailsList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
-        RepaymentsContactNameSummary.row(userAnswers),
-        RepaymentsContactEmailSummary.row(userAnswers),
-        RepaymentsContactByTelephoneSummary.row(userAnswers),
-        RepaymentsTelephoneDetailsSummary.row(userAnswers)
+        RepaymentsContactNameSummary.row(userAnswers, clientPillar2Id),
+        RepaymentsContactEmailSummary.row(userAnswers, clientPillar2Id),
+        RepaymentsContactByTelephoneSummary.row(userAnswers, clientPillar2Id),
+        RepaymentsTelephoneDetailsSummary.row(userAnswers, clientPillar2Id)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listBankAccountDetails(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listBankAccountDetails(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
-        UkOrAbroadBankAccountSummary.row(userAnswers),
-        NonUKBankNameSummary.row(userAnswers),
-        NonUKBankNameOnAccountSummary.row(userAnswers),
-        NonUKBankBicOrSwiftCodeSummary.row(userAnswers),
-        NonUKBankIbanSummary.row(userAnswers)
+        UkOrAbroadBankAccountSummary.row(userAnswers, clientPillar2Id),
+        NonUKBankNameSummary.row(userAnswers, clientPillar2Id),
+        NonUKBankNameOnAccountSummary.row(userAnswers, clientPillar2Id),
+        NonUKBankBicOrSwiftCodeSummary.row(userAnswers, clientPillar2Id),
+        NonUKBankIbanSummary.row(userAnswers, clientPillar2Id)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
@@ -113,7 +113,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     SummaryListViewModel(
       rows = Seq(
         RequestRefundAmountSummary.row(userAnswers, clientPillar2Id),
-        ReasonForRequestingRefundSummary.row(userAnswers)
+        ReasonForRequestingRefundSummary.row(userAnswers, clientPillar2Id)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 

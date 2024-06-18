@@ -480,6 +480,16 @@ POST       /repayment/contact-details/input-email                               
 GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
+GET        /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
+GET        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
 GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
 GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode,clientPillar2Id: Option[String] ?= None)
