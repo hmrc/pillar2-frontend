@@ -25,10 +25,6 @@ import play.api.data.Forms.mapping
 import javax.inject.Inject
 
 class BankAccountDetailsFormProvider @Inject() extends Mappings {
-  private val bankNameMaxLength          = 40
-  private val accountHolderNameMaxLength = 60
-  private val sortCodeRegex              = """^[0-9]{6}$"""
-  private val accountNumberRegex         = """^[0-9]{6,8}$"""
   def apply(): Form[BankAccountDetails] = Form(
     mapping(
       "bankName" ->
@@ -46,7 +42,7 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
           .verifying(
             firstError(
               equalLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.lengthError"),
-              regexp(sortCodeRegex, "repayments.bank-account-details.sortCodeFormatError")
+              regexp(Validation.SORT_CODE_REGEX, "repayments.bank-account-details.sortCodeFormatError")
             )
           ),
       "accountNumber" ->
@@ -55,7 +51,7 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
             firstError(
               minLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.accountNumberLengthError"),
               maxLength(Constants.MIN_LENGTH_8, "repayments.bank-account-details.accountNumberLengthError"),
-              regexp(accountNumberRegex, "repayments.bank-account-details.accountNumberFormatError")
+              regexp(Validation.ACCOUNT_NUMBER_REGEX, "repayments.bank-account-details.accountNumberFormatError")
             )
           )
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
