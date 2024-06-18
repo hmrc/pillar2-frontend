@@ -26,13 +26,13 @@ import viewmodels.implicits._
 
 object RepaymentsContactNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsContactNamePage).map { answer =>
       SummaryListRowViewModel(
         key = "repaymentsContactName.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.repayments.routes.RequestRefundAmountController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id, CheckMode).url)
             .withVisuallyHiddenText(messages("repaymentsContactName.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )

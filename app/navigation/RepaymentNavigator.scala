@@ -37,8 +37,11 @@ class RepaymentNavigator @Inject() {
     case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
     case UkOrAbroadBankAccountPage     => id => data => ukOrAbroadBankAccountLogic(id, data)
     case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
-    case NonUKBankPage                 => id => _ => controllers.routes.UnderConstructionController.onPageLoad
-    case _                             => _ => _ => routes.IndexController.onPageLoad
+    case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
+    case RepaymentsContactNamePage     => _ => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+    case RepaymentsContactEmailPage    => _ => _ => routes.UnderConstructionController.onPageLoad
+
+    case _ => _ => _ => routes.IndexController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
@@ -54,10 +57,13 @@ class RepaymentNavigator @Inject() {
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case RepaymentsRefundAmountPage => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case NonUKBankPage              => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case _                          => id => _ => routes.IndexController.onPageLoad // may need to change
+    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case UkOrAbroadBankAccountPage     => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case _                             => id => _ => routes.IndexController.onPageLoad // may need to change
   }
 
 }

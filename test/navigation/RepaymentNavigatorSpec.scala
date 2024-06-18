@@ -65,6 +65,26 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
       }
 
+      "must go to Repayments contact email page from Repayments contact name page" in {
+        navigator.nextPage(
+          RepaymentsContactNamePage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited")
+        ) mustBe
+          controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+      }
+
+      "must go to Under construction page from Repayments contact email page" in {
+        navigator.nextPage(
+          RepaymentsContactEmailPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
+        ) mustBe
+          underConstruction
+      }
+
     }
 
     "in Check mode" must {
