@@ -16,6 +16,7 @@
 
 package forms
 
+import _root_.mapping.Constants
 import forms.mappings.Mappings
 import models.repayments.BankAccountDetails
 import play.api.data.Form
@@ -33,22 +34,29 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
       "bankName" ->
         text("repayments.bank-account-details.bankError")
           .verifying(
-            maxLength(bankNameMaxLength, "repayments.bank-account-details.bankNameFormatError")
+            maxLength(Constants.MAX_LENGTH_40, "repayments.bank-account-details.bankNameFormatError")
           ),
       "accountHolderName" ->
         text("repayments.bank-account-details.accountError")
           .verifying(
-            maxLength(accountHolderNameMaxLength, "repayments.bank-account-details.accountNameFormatError")
+            maxLength(Constants.MAX_LENGTH_60, "repayments.bank-account-details.accountNameFormatError")
           ),
       "sortCode" ->
         text("repayments.bank-account-details.sortCodeError")
           .verifying(
-            regexp(sortCodeRegex, "repayments.bank-account-details.sortCodeFormatError")
+            firstError(
+              equalLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.lengthError"),
+              regexp(sortCodeRegex, "repayments.bank-account-details.sortCodeFormatError")
+            )
           ),
       "accountNumber" ->
         text("repayments.bank-account-details.accountNumberError")
           .verifying(
-            regexp(accountNumberRegex, "repayments.bank-account-details.accountNumberFormatError")
+            firstError(
+              minLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.accountNumberLengthError"),
+              maxLength(Constants.MIN_LENGTH_8, "repayments.bank-account-details.accountNumberLengthError"),
+              regexp(accountNumberRegex, "repayments.bank-account-details.accountNumberFormatError")
+            )
           )
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )

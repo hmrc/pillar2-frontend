@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package models.repayments
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+import models.repayments.BankAccountDetails
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-final case class BankAccountDetails(
-  bankName:      String,
-  accountName:   String,
-  sortCode:      String,
-  accountNumber: String
-)
+class BankAccountDetailsPageSpec extends PageBehaviours {
 
-object BankAccountDetails {
-  implicit val format: OFormat[BankAccountDetails] = Json.format[BankAccountDetails]
+  "BankAccountDetailsPage" - {
+
+    beRetrievable[BankAccountDetails](BankAccountDetailsPage)
+
+    beSettable[BankAccountDetails](BankAccountDetailsPage)
+
+    beRemovable[BankAccountDetails](BankAccountDetailsPage)
+  }
 }

@@ -24,6 +24,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
+import navigation.RepaymentNavigator
 import pages.BankAccountDetailsPage
 import play.api.Logging
 import play.api.data.Form
@@ -44,6 +45,7 @@ class BankAccountDetailsController @Inject() (
   sessionRepository:        SessionRepository,
   formProvider:             BankAccountDetailsFormProvider,
   featureAction:            FeatureFlagActionFactory,
+  navigator:                RepaymentNavigator,
   val controllerComponents: MessagesControllerComponents,
   view:                     BankAccountDetailsView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -80,7 +82,7 @@ class BankAccountDetailsController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(routes.UnderConstructionController.onPageLoad)
+            } yield Redirect(navigator.nextPage(BankAccountDetailsPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
 }

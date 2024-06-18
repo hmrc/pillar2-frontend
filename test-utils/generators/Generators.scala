@@ -105,9 +105,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .suchThat(_.length > minLength)
       .map(_.padTo(minLength + 1, 'a'))
 
-  def regexWithMaxLength(maxLength: Int, regex: String): Gen[String] =
+  def regexWithMaxLength(maxLength: Int, genLimit: Int, regex: String): Gen[String] =
     for {
-      length      <- choose(1, maxLength)
+      length      <- choose(maxLength, genLimit)
       regexString <- Gen.listOfN(length, RegexpGen.from(regex))
     } yield regexString.mkString
   def stringsLongerThan(minLength: Int): Gen[String] = for {

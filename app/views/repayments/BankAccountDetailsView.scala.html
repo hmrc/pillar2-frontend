@@ -34,7 +34,7 @@
 
     @layout(pageTitle = title(form, messages("repayments.bank-account-details.title")), maybeClientPillar2Id = clientPillar2Id) {
 
-        @formHelper(action = controllers.repayments.routes.BankAccountDetailsController.onSubmit(clientPillar2Id)) {
+        @formHelper(action = controllers.repayments.routes.BankAccountDetailsController.onSubmit(clientPillar2Id, mode)) {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -34,6 +34,7 @@ class RepaymentNavigator @Inject() {
   }
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
     case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
+    case BankAccountDetailsPage     => _ => _ => routes.UnderConstructionController.onPageLoad
     case _                          => id => _ => routes.IndexController.onPageLoad
   }
 

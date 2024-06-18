@@ -18,7 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.BankAccountDetailsFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.repayments.BankAccountDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -41,7 +41,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
@@ -51,7 +51,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = None).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode).url)
         val view    = application.injector.instanceOf[BankAccountDetailsView]
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -67,7 +67,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = None).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode).url)
         val view    = application.injector.instanceOf[BankAccountDetailsView]
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -87,7 +87,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(None, NormalMode).url)
             .withFormUrlEncodedBody(
               "bankName"          -> "TestBankName",
               "accountHolderName" -> "TestAccountHolderBankName",
@@ -105,7 +105,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
         val view      = application.injector.instanceOf[BankAccountDetailsView]
