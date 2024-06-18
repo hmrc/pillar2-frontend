@@ -35,21 +35,21 @@ class RepaymentNavigator @Inject() {
 
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
     case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
-    case RepaymentsContactNamePage  => _ => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
-    case RepaymentsContactEmailPage => _ => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(None, NormalMode)
-    case RepaymentsContactByTelephonePage => _ => telephonePreferenceNormalMode
+    case RepaymentsContactNamePage  => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
+    case RepaymentsContactEmailPage => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
+    case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
     case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
-    case _                                => id => _ => routes.IndexController.onPageLoad
+    case _                                => _ => _ => routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => Option[String] => UserAnswers => Call = _ => _ => _ => routes.IndexController.onPageLoad
 
-  private def telephonePreferenceNormalMode(userAnswers: UserAnswers): Call =
+  private def telephonePreferenceNormalMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
     userAnswers
       .get(RepaymentsContactByTelephonePage)
       .map {
         case true =>
-          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(None, NormalMode)
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id = maybeClientId, NormalMode)
         case false =>
           routes.UnderConstructionController.onPageLoad
       }
