@@ -34,7 +34,7 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
-    showBackLink = true
+    maybeClientPillar2Id = clientPillar2Id
 ) {
     @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
     @p(messages("repayment.requestRefundBeforeStart.p1"))
