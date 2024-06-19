@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsTelephoneDetailsFormProvider
@@ -35,18 +34,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsTelephoneDetailsController @Inject() (
-  identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  formProvider:              RepaymentsTelephoneDetailsFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  navigator:                 RepaymentNavigator,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsTelephoneDetailsView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsTelephoneDetailsFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsTelephoneDetailsView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -84,9 +82,9 @@ class RepaymentsTelephoneDetailsController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode, name))),
-              nominated =>
+              telephoneNumber =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsTelephoneDetailsPage, nominated))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsTelephoneDetailsPage, telephoneNumber))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(RepaymentsTelephoneDetailsPage, clientPillar2Id, mode, updatedAnswers))
             )

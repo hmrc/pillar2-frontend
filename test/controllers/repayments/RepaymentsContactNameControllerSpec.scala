@@ -22,6 +22,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RepaymentsContactNamePage
+import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -33,7 +34,7 @@ import scala.concurrent.Future
 class RepaymentsContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider()
-  val form         = formProvider()
+  val form: Form[String] = formProvider()
 
   "Repayments Contact Name Controller" when {
 

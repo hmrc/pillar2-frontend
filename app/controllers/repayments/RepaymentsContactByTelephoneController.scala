@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactByTelephoneFormProvider
@@ -35,18 +34,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactByTelephoneController @Inject() (
-  identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  formProvider:              RepaymentsContactByTelephoneFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  navigator:                 RepaymentNavigator,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsContactByTelephoneView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsContactByTelephoneFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsContactByTelephoneView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
