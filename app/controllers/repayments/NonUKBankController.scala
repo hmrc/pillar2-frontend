@@ -23,6 +23,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
+import navigation.RepaymentNavigator
 import pages.NonUKBankPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -44,6 +45,7 @@ class NonUKBankController @Inject() (
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
+  navigator:                RepaymentNavigator,
   view:                     NonUKBankView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -78,7 +80,7 @@ class NonUKBankController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.repayments.routes.ExistingContactDetailsController.onPageLoad(clientPillar2Id))
+            } yield Redirect(navigator.nextPage(NonUKBankPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
 
