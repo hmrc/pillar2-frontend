@@ -1358,3 +1358,26 @@ repaymentsContactByTelephone.checkYourAnswersLabel = Can we contact by telephone
 repaymentsContactByTelephone.change.hidden = can we contact by telephone?
 repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
 repaymentsTelephoneDetails.change.hidden = the telephone number
+
+repayments.bank-account-details.title = Bank account details
+repayments.bank-account-details.heading = Bank account details
+repayments.bank-account-details.bankName = Name of the bank
+repayments.bank-account-details.accountName = Name on the account
+repayments.bank-account-details.accountName.hintText = Must be a UK business account.
+repayments.bank-account-details.sortCode = Sort Code
+repayments.bank-account-details.sortCode.hintText = Must be 6 digits.
+repayments.bank-account-details.accountNumber = Account number
+repayments.bank-account-details.accountNumber.hintText = Must be between 6 and 8 digits.
+
+repayments.bank-account-details.bankError = Enter the name of the bank
+repayments.bank-account-details.accountError = Enter the name on the account.
+repayments.bank-account-details.sortCodeError = Enter the sort code.
+repayments.bank-account-details.accountNumberError = Enter the account number
+
+repayments.bank-account-details.sortCodeFormatError = Enter a valid sort code like 309430
+repayments.bank-account-details.accountNumberFormatError = Enter a valid account number like 00733445
+
+repayments.bank-account-details.bankNameFormatError = The name of the bank must be 40 characters or less
+repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
+repayments.bank-account-details.lengthError = Sort code must be 6 digits
+repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
