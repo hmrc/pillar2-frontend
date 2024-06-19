@@ -66,6 +66,7 @@ class RepaymentNavigator @Inject() {
     case RepaymentsContactEmailPage       => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
     case RepaymentsContactByTelephonePage => id => data => telephonePreferenceCheckMode(id, data)
     case RepaymentsTelephoneDetailsPage   => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case _                                => _ => _ => routes.IndexController.onPageLoad
   }
 
   private def telephonePreferenceNormalMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
