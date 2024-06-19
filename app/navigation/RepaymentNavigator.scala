@@ -34,13 +34,27 @@ class RepaymentNavigator @Inject() {
   }
 
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
-    case RepaymentsContactNamePage  => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
-    case RepaymentsContactEmailPage => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
+    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
+    case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
+    case UkOrAbroadBankAccountPage     => id => data => ukOrAbroadBankAccountLogic(id, data)
+    case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
+    case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
     case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
     case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
     case _                                => _ => _ => routes.IndexController.onPageLoad
   }
+
+  private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(UkOrAbroadBankAccountPage)
+      .map { ukOrAbroad =>
+        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+          routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => Option[String] => UserAnswers => Call = _ => _ => _ => routes.IndexController.onPageLoad
 
