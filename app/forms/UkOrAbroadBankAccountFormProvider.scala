@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
-import models.grs.EntityType
-import org.scalacheck.{Arbitrary, Gen}
+import javax.inject.Inject
 
-trait ModelGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.UkOrAbroadBankAccount
 
-  implicit lazy val arbitraryUkOrAbroadBankAccount: Arbitrary[UkOrAbroadBankAccount] =
-    Arbitrary {
-      Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
-    }
+class UkOrAbroadBankAccountFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
-    Arbitrary {
-      Gen.oneOf(MneOrDomestic.values.toSeq)
-    }
-
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
-    Arbitrary {
-      Gen.oneOf(EntityType.values.toSeq)
-    }
-
+  def apply(): Form[UkOrAbroadBankAccount] =
+    Form(
+      "value" -> enumerable[UkOrAbroadBankAccount]("ukOrAbroadBankAccount.error.required")
+    )
 }

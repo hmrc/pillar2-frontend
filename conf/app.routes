@@ -480,3 +480,13 @@ POST       /repayment/non-uk-details                                            
 GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
+
+GET        /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/change-reason                  controllers.repayments.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/change-reason                  controllers.repayments.ReasonForRequestingRefundController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
+GET        /repayment/method                         controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+POST       /repayment/method                         controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
+GET        /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+POST       /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
