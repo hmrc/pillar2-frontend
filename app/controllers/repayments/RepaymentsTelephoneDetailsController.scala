@@ -34,17 +34,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsTelephoneDetailsController @Inject() (
-  identify:                  IdentifierAction,
-  formProvider:              RepaymentsTelephoneDetailsFormProvider,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  sessionRepository:         SessionRepository,
-  navigator:                 RepaymentNavigator,
-  featureAction:             FeatureFlagActionFactory,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RepaymentsTelephoneDetailsView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  formProvider:             RepaymentsTelephoneDetailsFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  agentIdentifierAction:    AgentIdentifierAction,
+  sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
+  featureAction:            FeatureFlagActionFactory,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RepaymentsTelephoneDetailsView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
