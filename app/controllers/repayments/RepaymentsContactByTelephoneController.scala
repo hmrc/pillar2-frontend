@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactByTelephoneFormProvider
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactByTelephoneController @Inject() (
   identify:                  IdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
   formProvider:              RepaymentsContactByTelephoneFormProvider,
   getSessionData:            SessionDataRetrievalAction,
   requireSessionData:        SessionDataRequiredAction,

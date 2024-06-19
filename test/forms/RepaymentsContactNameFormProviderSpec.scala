@@ -22,12 +22,12 @@ import play.api.data.FormError
 
 class RepaymentsContactNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "repayments.contactName.error.required"
-  val lengthKey   = "repayments.contactName.error.length"
-  val maxLength   = Constants.MAX_LENGTH_100
-  val form        = new RepaymentsContactNameFormProvider()
+  val requiredKey    = "repayments.contactName.error.required"
+  val lengthKey      = "repayments.contactName.error.length"
+  val maxLength: Int = Constants.MAX_LENGTH_100
+  val form           = new RepaymentsContactNameFormProvider()
 
-  ".value" - {
+  ".contactName" - {
 
     val fieldName = "contactName"
 

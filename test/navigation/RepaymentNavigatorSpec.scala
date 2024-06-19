@@ -50,7 +50,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
       }
 
-      "must go to next page from Repayments contact email page" in {
+      "must go to Repayments Contact By Telephone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           None,
