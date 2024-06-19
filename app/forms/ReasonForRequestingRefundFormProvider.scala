@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-import scala.util.Try
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "repaymentsContactByPhone"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("reasonForRequestingRefund.error.required")
+        .verifying(maxLength(250, "reasonForRequestingRefund.error.length"))
+    )
 }

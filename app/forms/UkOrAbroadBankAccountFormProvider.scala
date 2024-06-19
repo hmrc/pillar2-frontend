@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-import scala.util.Try
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.UkOrAbroadBankAccount
 
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+class UkOrAbroadBankAccountFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "repaymentsContactByPhone"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+  def apply(): Form[UkOrAbroadBankAccount] =
+    Form(
+      "value" -> enumerable[UkOrAbroadBankAccount]("ukOrAbroadBankAccount.error.required")
+    )
 }

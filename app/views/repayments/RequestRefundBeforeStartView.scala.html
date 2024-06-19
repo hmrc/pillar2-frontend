@@ -34,7 +34,7 @@
 
 @layout(
     pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
-    showBackLink = true
+    maybeClientPillar2Id = clientPillar2Id
 ) {
     @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
     @p(messages("repayment.requestRefundBeforeStart.p1"))
@@ -50,6 +50,6 @@
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(clientPillar2Id, NormalMode).url)
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode, clientPillar2Id).url)
     )
 }

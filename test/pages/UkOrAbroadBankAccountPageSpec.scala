@@ -16,22 +16,17 @@
 
 package pages
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import models.UkOrAbroadBankAccount
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
 
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+  "UkOrAbroadBankAccountPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
 
-  override def toString: String = "repaymentsContactByPhone"
+    beSettable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+    beRemovable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+  }
 }

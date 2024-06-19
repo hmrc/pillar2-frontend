@@ -22,7 +22,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import views.html.rfm.UkBasedFilingMemberView
 
-class UkBasedFilingMemberViewSpec extends ViewSpecBase {
+class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
 
   val formProvider = new NFMRegisteredInUKConfirmationFormProvider
   val page         = inject[UkBasedFilingMemberView]

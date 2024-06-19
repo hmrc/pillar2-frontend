@@ -19,66 +19,62 @@ package controllers.repayments
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
-import forms.RepaymentsContactNameFormProvider
-import models.{Mode, NormalMode}
+import forms.ReasonForRequestingRefundFormProvider
+import models.Mode
 import navigation.RepaymentNavigator
-import pages.RepaymentsContactNamePage
+import pages.ReasonForRequestingRefundPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.RepaymentsContactNameView
+import views.html.repayments.ReasonForRequestingRefundView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepaymentsContactNameController @Inject() (
+class ReasonForRequestingRefundController @Inject() (
+  val sessionRepository:    SessionRepository,
   identify:                 IdentifierAction,
-  formProvider:             RepaymentsContactNameFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
-  sessionRepository:        SessionRepository,
+  getData:                  SessionDataRetrievalAction,
   navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
+  requireData:              SessionDataRequiredAction,
+  formProvider:             ReasonForRequestingRefundFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactNameView
+  view:                     ReasonForRequestingRefundView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
       identify
-    ) andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+    ) andThen getData andThen requireData) { implicit request =>
+      val preparedForm = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, clientPillar2Id, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
-    (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, clientPillar2Id, mode, updatedAnswers))
-        )
-    }
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] = (identifierAction(
+    clientPillar2Id,
+    agentIdentifierAction,
+    identify
+  ) andThen getData andThen requireData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForRequestingRefundPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(ReasonForRequestingRefundPage, clientPillar2Id, mode, updatedAnswers))
+      )
+  }
 }

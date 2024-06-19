@@ -16,22 +16,16 @@
 
 package pages
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class ReasonForRequestingRefundPageSpec extends PageBehaviours {
 
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+  "ReasonForRequestingRefundPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[String](ReasonForRequestingRefundPage)
 
-  override def toString: String = "repaymentsContactByPhone"
+    beSettable[String](ReasonForRequestingRefundPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+    beRemovable[String](ReasonForRequestingRefundPage)
+  }
 }

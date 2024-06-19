@@ -34,15 +34,38 @@ class RepaymentNavigator @Inject() {
   }
 
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
-    case RepaymentsContactNamePage  => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
-    case RepaymentsContactEmailPage => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
+    case ReasonForRequestingRefundPage    => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
+    case UkOrAbroadBankAccountPage        => id => data => ukOrAbroadBankAccountLogic(id, data)
+    case RepaymentsRefundAmountPage       => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
+    case NonUKBankPage                    => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
+    case RepaymentsContactNamePage        => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
+    case RepaymentsContactEmailPage       => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
     case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
     case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
     case _                                => _ => _ => routes.IndexController.onPageLoad
   }
 
-  private val checkRouteMap: Page => Option[String] => UserAnswers => Call = _ => _ => _ => routes.IndexController.onPageLoad
+  private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(UkOrAbroadBankAccountPage)
+      .map { ukOrAbroad =>
+        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+          routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private val checkRouteMap: Page => Option[String] => UserAnswers => Call = {
+    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case UkOrAbroadBankAccountPage     => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case _                             => id => _ => routes.IndexController.onPageLoad // may need to change
+  }
 
   private def telephonePreferenceNormalMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
     userAnswers

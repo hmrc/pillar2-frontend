@@ -16,22 +16,11 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+case object ReasonForRequestingRefundPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "repaymentsContactByPhone"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+  override def toString: String = "reasonForRequestingRefund"
 }
