@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
-import models.{Mode, UserAnswers}
+import models.UserAnswers
 import pages.{CheckYourAnswersLogicPage, PlrReferencePage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -30,7 +30,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.repayments.{NonUKBankBicOrSwiftCodeSummary, NonUKBankIbanSummary, NonUKBankNameOnAccountSummary, NonUKBankNameSummary, ReasonForRequestingRefundSummary, RepaymentsContactByTelephoneSummary, RepaymentsContactEmailSummary, RepaymentsContactNameSummary, RepaymentsTelephoneDetailsSummary, RequestRefundAmountSummary, UkOrAbroadBankAccountSummary}
+import viewmodels.checkAnswers.repayments.{NonUKBankBicOrSwiftCodeSummary,
+  NonUKBankIbanSummary, NonUKBankNameOnAccountSummary, NonUKBankNameSummary,
+  ReasonForRequestingRefundSummary, RepaymentsContactByTelephoneSummary, RepaymentsContactEmailSummary,
+  RepaymentsContactNameSummary, RepaymentsTelephoneDetailsSummary, RequestRefundAmountSummary, UkOrAbroadBankAccountSummary}
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 

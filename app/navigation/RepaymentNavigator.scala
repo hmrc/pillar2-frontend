@@ -34,16 +34,15 @@ class RepaymentNavigator @Inject() {
   }
 
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
+    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
     case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
     case UkOrAbroadBankAccountPage     => id => data => ukOrAbroadBankAccountLogic(id, data)
-    case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
     case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
-    case RepaymentsRefundAmountPage => _ => _ => routes.UnderConstructionController.onPageLoad
-    case BankAccountDetailsPage     => _ => _ => routes.UnderConstructionController.onPageLoad
+    case BankAccountDetailsPage        => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
     case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
     case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
     case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
-    case RepaymentsTelephoneDetailsPage   => _ => _ => routes.UnderConstructionController.onPageLoad
+    case RepaymentsTelephoneDetailsPage   => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
     case _                                => _ => _ => routes.IndexController.onPageLoad
   }
 
@@ -52,7 +51,7 @@ class RepaymentNavigator @Inject() {
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         } else {
           controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         }
@@ -76,7 +75,7 @@ class RepaymentNavigator @Inject() {
         case true =>
           controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id = maybeClientId, NormalMode)
         case false =>
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(clientPillar2Id = maybeClientId)
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
