@@ -6,7 +6,7 @@ import connectors.UserAnswersConnectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.data.Form
-import models.Mode
+import models.{Mode, $className$}
 import pages.$className$Page
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +27,7 @@ class $className$Controller @Inject()(
                                         view: $className$View
                                       )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)  extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Set[$className]] = formProvider()
+  val form: Form[Set[$className$]] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

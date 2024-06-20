@@ -28,7 +28,7 @@ echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  import models.$className ";\
+    print "  import models.$className$ ";\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
