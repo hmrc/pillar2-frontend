@@ -84,7 +84,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect under construction when valid data is submitted" in {
+    "must redirect to reason for requesting when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -94,7 +94,9 @@ class RequestRefundAmountControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.ReasonForRequestingRefundController
+          .onPageLoad(clientPillar2Id = None, NormalMode)
+          .url
       }
     }
 
