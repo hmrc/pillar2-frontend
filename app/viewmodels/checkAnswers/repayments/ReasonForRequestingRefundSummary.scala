@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{ReasonForRequestingRefundPage, SubPrimaryContactNamePage}
+import pages.ReasonForRequestingRefundPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

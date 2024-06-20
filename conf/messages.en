@@ -1272,7 +1272,7 @@ repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK6016133
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
-repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on account
+repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on bank account
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT code
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel.hidden =  the BIC or SWIFT code
 repayments.nonUKBank.summary.iban.checkYourAnswersLabel = IBAN
@@ -1335,7 +1335,7 @@ ukOrAbroadBankAccount.ukBankAccount = UK bank account
 ukOrAbroadBankAccount.nonUkBankAccount = Non-UK bank account
 ukOrAbroadBankAccount.checkYourAnswersLabel = What type of account will the refund be sent to?
 ukOrAbroadBankAccount.error.required = Select what type of account the refund will be sent to
-ukOrAbroadBankAccount.change.hidden = the type of account
+ukOrAbroadBankAccount.change.hidden = what type of account will the refund be sent to?
 
 
 repaymentsCheckYourAnswers.heading = Check your answers before submitting your refund request

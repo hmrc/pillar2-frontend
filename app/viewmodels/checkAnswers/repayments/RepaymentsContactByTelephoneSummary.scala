@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{RepaymentsContactByTelephonePage, RfmContactByTelephonePage}
+import pages.RepaymentsContactByTelephonePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._

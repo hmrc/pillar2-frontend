@@ -83,10 +83,10 @@ class RepaymentNavigator @Inject() {
   private def telephonePreferenceCheckMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
     userAnswers
       .get(RepaymentsContactByTelephonePage)
-      .map {
-        case true =>
+      .map { PhoneNumber =>
+        if (PhoneNumber & userAnswers.get(RepaymentsTelephoneDetailsPage).isEmpty) {
           controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id = maybeClientId, CheckMode)
-        case false =>
+        } else
           controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(clientPillar2Id = maybeClientId)
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

@@ -17,11 +17,10 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{FmRegisteredAddressPage, NonUKBankPage}
+import pages.NonUKBankPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

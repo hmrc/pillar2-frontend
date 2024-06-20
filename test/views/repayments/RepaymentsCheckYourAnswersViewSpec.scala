@@ -31,7 +31,7 @@ import views.html.repayments.RepaymentsCheckYourAnswersView
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
-  val amount = BigDecimal(9.99)
+  val amount: BigDecimal = BigDecimal(9.99)
   val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "answer for reason")
