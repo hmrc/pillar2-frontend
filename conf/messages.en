@@ -1291,3 +1291,36 @@ repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
+
+rfmConfirmation.title = Replace filing member successful
+rfmConfirmation.rfmComplete = Replace filing member successful
+rfmConfirmation.reg-date =  Your group’s filing member was replaced on
+rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
+rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfmConfirmation.next = What happens next
+rfmConfirmation.now = You can now {0} {1}
+rfmConfirmation.now.group = on behalf of your group.
+rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.whatDidYouThink = What did you think of this service
+rfmConfirmation.print = Print this page
+
+ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
+ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?
+
+reasonForRequestingRefund.title = Why are you requesting a refund?
+reasonForRequestingRefund.heading = Why are you requesting a refund?
+reasonForRequestingRefund.error.required = Enter why you are requesting a refund
+reasonForRequestingRefund.error.hint = For example, you made a mistake on a Self Assessment tax return or your circumstances have changed.
+reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
+
+ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
+ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?
+ukOrAbroadBankAccount.ukBankAccount = UK bank account
+ukOrAbroadBankAccount.nonUkBankAccount = Non-UK bank account
+ukOrAbroadBankAccount.checkYourAnswersLabel = UkOrAbroadRepayment
+ukOrAbroadBankAccount.error.required = Select what type of account the refund will be sent to
+ukOrAbroadBankAccount.change.hidden = UkOrAbroadBankAccount
