@@ -24,8 +24,8 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
 
   ".bankName" - {
     val fieldName   = "bankName"
-    val requiredKey = "repayments.bank-account-details.bankError"
-    val lengthKey   = "repayments.bank-account-details.bankNameFormatError"
+    val requiredKey = "repayments.bankAccountDetails.bankError"
+    val lengthKey   = "repayments.bankAccountDetails.bankNameFormatError"
     val maxLength   = 40
 
     behave like fieldThatBindsValidData(
@@ -51,8 +51,8 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
   ".accountHolderName" - {
 
     val fieldName   = "accountHolderName"
-    val requiredKey = "repayments.bank-account-details.accountError"
-    val lengthKey   = "repayments.bank-account-details.accountNameFormatError"
+    val requiredKey = "repayments.bankAccountDetails.accountError"
+    val lengthKey   = "repayments.bankAccountDetails.accountNameFormatError"
     val maxLength   = 60
 
     behave like fieldThatBindsValidData(
@@ -77,9 +77,9 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
 
   ".sortCode" - {
     val fieldName     = "sortCode"
-    val requiredKey   = "repayments.bank-account-details.sortCodeError"
-    val lengthKey     = "repayments.bank-account-details.lengthError"
-    val formatKey     = "repayments.bank-account-details.sortCodeFormatError"
+    val requiredKey   = "repayments.bankAccountDetails.sortCodeError"
+    val lengthKey     = "repayments.bankAccountDetails.lengthError"
+    val formatKey     = "repayments.bankAccountDetails.sortCodeFormatError"
     val sortCodeRegex = """^[0-9]{6}$"""
     val maxLength     = 6
     val genLimit      = 10
@@ -110,8 +110,8 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
   ".accountNumber" - {
 
     val fieldName          = "accountNumber"
-    val requiredKey        = "repayments.bank-account-details.accountNumberError"
-    val lengthKey          = "repayments.bank-account-details.accountNumberLengthError"
+    val requiredKey        = "repayments.bankAccountDetails.accountNumberError"
+    val lengthKey          = "repayments.bankAccountDetails.accountNumberLengthError"
     val accountNumberRegex = """^[0-9]{6,8}$"""
     val maxLength          = 8
 
