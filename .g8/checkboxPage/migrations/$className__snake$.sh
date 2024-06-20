@@ -28,7 +28,7 @@ echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  import models.$className$Page ";\
+    print "  import models.$className ";\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
@@ -42,7 +42,6 @@ echo "Adding to PageGenerators"
 awk '/trait PageGenerators/ {\
     print;\
     print "";\
-    print "  import models.$className$Page ";\
     print "  implicit lazy val arbitrary$className$Page: Arbitrary[$className$Page.type] =";\
     print "    Arbitrary($className$Page)";\
     next }1' ../test-utils/generators/PageGenerators.scala > tmp && mv tmp ../test-utils/generators/PageGenerators.scala
@@ -51,7 +50,6 @@ echo "Adding to ModelGenerators"
 awk '/trait ModelGenerators/ {\
     print;\
     print "";\
-    print "  import models.$className$Page ";\
     print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
     print "    Arbitrary {";\
     print "      Gen.oneOf($className$.values)";\
@@ -61,7 +59,6 @@ awk '/trait ModelGenerators/ {\
 echo "Adding to UserAnswersGenerator"
 awk '/val generators/ {\
     print;\
-    print "  import models.$className$Page ";\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
