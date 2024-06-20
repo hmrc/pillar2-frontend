@@ -1283,8 +1283,8 @@ repayments.UKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
 repayments.UKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
 repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
 repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on account
-repayments.UKBank.summary.sortCode.checkYourAnswersLabel = the sort code
-repayments.UKBank.summary.sortCode.checkYourAnswersLabel.hidden =  Sort code
+repayments.UKBank.summary.sortCode.checkYourAnswersLabel = Sort code
+repayments.UKBank.summary.sortCode.checkYourAnswersLabel.hidden =  the sort code
 repayments.UKBank.summary.accNumber.checkYourAnswersLabel = Account number
 repayments.UKBank.summary.accNumber.checkYourAnswersLabel.hidden = the account number
 
