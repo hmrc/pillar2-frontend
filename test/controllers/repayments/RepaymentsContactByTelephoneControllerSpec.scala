@@ -22,6 +22,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage}
+import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -33,7 +34,7 @@ import scala.concurrent.Future
 class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactByTelephoneFormProvider()
-  val form         = formProvider("ABC Limited")
+  val form: Form[Boolean] = formProvider("ABC Limited")
 
   "Repayments Contact By Telephone Controller" when {
 
@@ -122,7 +123,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Telephone Details page when valid data with values No is submitted" in {
+    "must redirect to Under Construction page when valid data with values No is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -136,7 +137,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url
       }
     }
 

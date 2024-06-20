@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{RepaymentsContactByTelephonePage, RfmContactByTelephonePage}
+import pages.RepaymentsContactByTelephonePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -25,14 +25,17 @@ import viewmodels.implicits._
 
 object RepaymentsContactByTelephoneSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsContactByTelephonePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "repaymentsContactByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(CheckMode).url)
+          ActionItemViewModel(
+            "site.change",
+            controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id, CheckMode).url
+          )
             .withVisuallyHiddenText(messages("repaymentsContactByTelephone.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )

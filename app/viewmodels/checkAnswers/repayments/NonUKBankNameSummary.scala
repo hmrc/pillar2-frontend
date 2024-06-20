@@ -17,17 +17,16 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{FmRegisteredAddressPage, NonUKBankPage}
+import pages.NonUKBankPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object NonUKBankNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(NonUKBankPage)
       .map { answer =>
@@ -35,7 +34,7 @@ object NonUKBankNameSummary {
           key = "repayments.nonUKBank.summary.bankName.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(answer.bankName)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(mode = CheckMode).url)
+            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id, CheckMode).url)
               .withVisuallyHiddenText(messages("repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
