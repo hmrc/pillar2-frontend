@@ -2,9 +2,14 @@ package controllers
 
 import base.SpecBase
 import forms.$className$FormProvider
+import connectors.UserAnswersConnectors
 import models.{NormalMode, $className$, UserAnswers}
 import pages.$className$Page
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -16,23 +21,9 @@ class $className$ControllerSpec extends SpecBase {
 
 
   val formProvider = new $className$FormProvider()
-
-  def controller(): $className$Controller =
-    new $className$Controller(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      view$className$
-    )
-
-
-
   "$className$ Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -49,7 +40,7 @@ class $className$ControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, $className$.values.toSet).success.value
 
@@ -69,7 +60,7 @@ class $className$ControllerSpec extends SpecBase {
     }
 
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -89,5 +80,26 @@ class $className$ControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to under construction page in case of a valid submission and save the relevant data" in {
+      val expectedUserAnswers = emptyUserAnswers.setOrException($className$Page, Set($className$.values.head))
+      val application = applicationBuilder(userAnswers = Some(expectedUserAnswers))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value[0]", $className$.values.head.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+      }
+    }
   }
 }

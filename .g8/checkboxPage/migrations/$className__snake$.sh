@@ -24,22 +24,46 @@ echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/message
 
 
 
+echo "Adding to UserAnswersEntryGenerators"
+awk '/trait UserAnswersEntryGenerators/ {\
+    print;\
+    print "";\
+    print "  import models.$className$Page ";\
+    print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
+    print "    Arbitrary {";\
+    print "      for {";\
+    print "        page  <- arbitrary[$className$Page.type]";\
+    print "        value <- arbitrary[$className$].map(Json.toJson(_))";\
+    print "      } yield (page, value)";\
+    print "    }";\
+    next }1' ../test-utils/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test-utils/generators/UserAnswersEntryGenerators.scala
+
+echo "Adding to PageGenerators"
+awk '/trait PageGenerators/ {\
+    print;\
+    print "";\
+    print "  import models.$className$Page ";\
+    print "  implicit lazy val arbitrary$className$Page: Arbitrary[$className$Page.type] =";\
+    print "    Arbitrary($className$Page)";\
+    next }1' ../test-utils/generators/PageGenerators.scala > tmp && mv tmp ../test-utils/generators/PageGenerators.scala
+
 echo "Adding to ModelGenerators"
 awk '/trait ModelGenerators/ {\
     print;\
     print "";\
+    print "  import models.$className$Page ";\
     print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
     print "    Arbitrary {";\
     print "      Gen.oneOf($className$.values)";\
     print "    }";\
     next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
 
-echo "Adding to ViewInstances"
-awk '/trait ViewInstances/ {\
+echo "Adding to UserAnswersGenerator"
+awk '/val generators/ {\
     print;\
-    print "";\
-    print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukCheckboxes, govukButton)";\
-    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
+    print "  import models.$className$Page ";\
+    print "    arbitrary[($className$Page.type, JsValue)] ::";\
+    next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
+
 
 echo "Migration $className;format="snake"$ completed"
