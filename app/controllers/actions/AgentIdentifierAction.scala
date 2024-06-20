@@ -56,6 +56,7 @@ class AgentIdentifierAction @Inject() (
               and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
           ) {
             case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+              logger.info(s"Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
               Future.successful(
                 Right(
                   IdentifierRequest(
@@ -77,11 +78,17 @@ class AgentIdentifierAction @Inject() (
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
+            logger.info(s"Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
             Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
-          case _: InternalError => Left(Redirect(routes.AgentController.onPageLoadError))
-          case _: AuthorisationException =>
+          case _: InternalError =>
+            logger.info(s"Internal error for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
+          case e: AuthorisationException =>
+            logger.info(s"AuthorisationException for Agent due to ${e.reason}")
             Left(Redirect(routes.UnderConstructionController.onPageLoad))
-          case _ => Left(Redirect(routes.AgentController.onPageLoadError))
+          case _ =>
+            logger.info(s"Error returned from auth for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
         }
       }
 
@@ -98,6 +105,5 @@ object AgentIdentifierAction {
   private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway)
 
   val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY) and
-      Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
+    Enrolment(HMRC_AS_AGENT_KEY) and Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
 }
