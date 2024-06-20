@@ -28,30 +28,30 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[BankAccountDetails] = Form(
     mapping(
       "bankName" ->
-        text("repayments.bank-account-details.bankError")
+        text("repayments.bankAccountDetails.bankError")
           .verifying(
-            maxLength(Constants.MAX_LENGTH_40, "repayments.bank-account-details.bankNameFormatError")
+            maxLength(Constants.MAX_LENGTH_40, "repayments.bankAccountDetails.bankNameFormatError")
           ),
       "accountHolderName" ->
-        text("repayments.bank-account-details.accountError")
+        text("repayments.bankAccountDetails.accountError")
           .verifying(
-            maxLength(Constants.MAX_LENGTH_60, "repayments.bank-account-details.accountNameFormatError")
+            maxLength(Constants.MAX_LENGTH_60, "repayments.bankAccountDetails.accountNameFormatError")
           ),
       "sortCode" ->
-        text("repayments.bank-account-details.sortCodeError")
+        text("repayments.bankAccountDetails.sortCodeError")
           .verifying(
             firstError(
-              equalLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.lengthError"),
-              regexp(Validation.SORT_CODE_REGEX, "repayments.bank-account-details.sortCodeFormatError")
+              equalLength(Constants.MIN_LENGTH_6, "repayments.bankAccountDetails.lengthError"),
+              regexp(Validation.SORT_CODE_REGEX, "repayments.bankAccountDetails.sortCodeFormatError")
             )
           ),
       "accountNumber" ->
-        text("repayments.bank-account-details.accountNumberError")
+        text("repayments.bankAccountDetails.accountNumberError")
           .verifying(
             firstError(
-              minLength(Constants.MIN_LENGTH_6, "repayments.bank-account-details.accountNumberLengthError"),
-              maxLength(Constants.MIN_LENGTH_8, "repayments.bank-account-details.accountNumberLengthError"),
-              regexp(Validation.ACCOUNT_NUMBER_REGEX, "repayments.bank-account-details.accountNumberFormatError")
+              minLength(Constants.MIN_LENGTH_6, "repayments.bankAccountDetails.accountNumberLengthError"),
+              maxLength(Constants.MIN_LENGTH_8, "repayments.bankAccountDetails.accountNumberLengthError"),
+              regexp(Validation.ACCOUNT_NUMBER_REGEX, "repayments.bankAccountDetails.accountNumberFormatError")
             )
           )
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)

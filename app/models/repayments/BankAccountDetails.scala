@@ -18,12 +18,7 @@ package models.repayments
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class BankAccountDetails(
-  bankName:      String,
-  accountName:   String,
-  sortCode:      String,
-  accountNumber: String
-)
+final case class BankAccountDetails(bankName: String, nameOnBankAccount: String, sortCode: String, accountNumber: String)
 
 object BankAccountDetails {
   implicit val format: OFormat[BankAccountDetails] = Json.format[BankAccountDetails]

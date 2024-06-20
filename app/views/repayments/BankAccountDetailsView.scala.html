@@ -21,10 +21,7 @@
 @this(
         layout: templates.Layout,
         h: heading,
-        p: paragraphBody,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
         govukErrorSummary: GovukErrorSummary,
-        bulletList: bulletList,
         govukButton: GovukButton,
         formHelper: FormWithCSRF,
         govukInput: GovukInput
@@ -32,7 +29,7 @@
 
 @(form: Form[_], clientPillar2Id: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = title(form, messages("repayments.bank-account-details.title")), maybeClientPillar2Id = clientPillar2Id) {
+    @layout(pageTitle = title(form, messages("repayments.bankAccountDetails.title")), maybeClientPillar2Id = clientPillar2Id) {
 
         @formHelper(action = controllers.repayments.routes.BankAccountDetailsController.onSubmit(clientPillar2Id, mode)) {
 
@@ -40,38 +37,38 @@
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
-            @h(messages("repayments.bank-account-details.heading"), classes = "govuk-heading-l")
+            @h(messages("repayments.bankAccountDetails.heading"), classes = "govuk-heading-l")
 
             @govukInput(
                 InputViewModel(
                     field = form("bankName"),
-                    label = LabelViewModel(messages("repayments.bank-account-details.bankName"))
+                    label = LabelViewModel(messages("repayments.bankAccountDetails.bankName"))
                 )
                 .withWidth(Full)
             )
             @govukInput(
                 InputViewModel(
                     field = form("accountHolderName"),
-                    label = LabelViewModel(messages("repayments.bank-account-details.accountName"))
+                    label = LabelViewModel(messages("repayments.bankAccountDetails.accountName"))
                 )
                 .withWidth(Full)
-                .withHint(Hint(content = Text(messages("repayments.bank-account-details.accountName.hintText"))))
+                .withHint(Hint(content = Text(messages("repayments.bankAccountDetails.accountName.hintText"))))
             )
             @govukInput(
                 InputViewModel(
                     field = form("sortCode"),
-                    label = LabelViewModel(messages("repayments.bank-account-details.sortCode"))
+                    label = LabelViewModel(messages("repayments.bankAccountDetails.sortCode"))
                 )
                 .withWidth(Fixed5)
-                .withHint(Hint(content = Text(messages("repayments.bank-account-details.sortCode.hintText"))))
+                .withHint(Hint(content = Text(messages("repayments.bankAccountDetails.sortCode.hintText"))))
             )
             @govukInput(
                 InputViewModel(
                     field = form("accountNumber"),
-                    label = LabelViewModel(messages("repayments.bank-account-details.accountNumber"))
+                    label = LabelViewModel(messages("repayments.bankAccountDetails.accountNumber"))
                 )
                 .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("repayments.bank-account-details.accountNumber.hintText"))))
+                .withHint(Hint(content = Text(messages("repayments.bankAccountDetails.accountNumber.hintText"))))
             )
 
             @govukButton(
