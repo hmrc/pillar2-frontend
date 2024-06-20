@@ -24,18 +24,18 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UKBankNameSummary {
+object UKBankAccNumberSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(BankAccountDetailsPage)
       .map { answer =>
         SummaryListRowViewModel(
-          key = "repayments.UKBank.summary.bankName.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.bankName)),
+          key = "repayments.UKBank.summary.accNumber.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(answer.sortCode)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode).url)
-              .withVisuallyHiddenText(messages("repayments.UKBank.summary.bankName.checkYourAnswersLabel.hidden"))
+              .withVisuallyHiddenText(messages("repayments.UKBank.summary.accNumber.checkYourAnswersLabel.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
         )
