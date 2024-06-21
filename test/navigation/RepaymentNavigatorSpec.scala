@@ -131,7 +131,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers
         ) mustBe
-          repaymentsQuestionsCYA
+          journeyRecovery
       }
 
       "must go to Repayments CYA page from Repayments Telephone Details page" in {
