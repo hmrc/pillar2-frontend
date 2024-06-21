@@ -18,6 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.RequestRefundAmountFormProvider
+
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -82,6 +83,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "must redirect to reason for requesting when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {

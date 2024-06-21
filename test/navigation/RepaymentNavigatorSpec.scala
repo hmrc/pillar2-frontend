@@ -32,10 +32,11 @@ class RepaymentNavigatorSpec extends SpecBase {
 
     "in Normal mode" must {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
+
       "go to type of bank account page after submitting their reason for requesting a refund" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
@@ -63,6 +64,32 @@ class RepaymentNavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
         navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe
           controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
+      }
+
+      "go to Repayments contact name page from Non-UK Bank Account page" in {
+        val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+        navigator.nextPage(NonUKBankPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
+      }
+
+      "go to Repayments contact email page from Repayments contact name page" in {
+        navigator.nextPage(
+          RepaymentsContactNamePage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited")
+        ) mustBe
+          controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
+      }
+
+      "go to Under construction page from Repayments contact email page" in {
+        navigator.nextPage(
+          RepaymentsContactEmailPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
+        ) mustBe
+          underConstruction
       }
 
     }

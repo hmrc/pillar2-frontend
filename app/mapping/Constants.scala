@@ -27,6 +27,7 @@ object Constants {
   final val MAX_LENGTH_34               = 34
   final val MAX_LENGTH_40               = 40
   final val MAX_LENGTH_60               = 60
+  final val MAX_LENGTH_100              = 100
   final val MAX_LENGTH_105              = 105
   final val MAX_LENGTH_132              = 132
   final val MAX_LENGTH_160              = 160
