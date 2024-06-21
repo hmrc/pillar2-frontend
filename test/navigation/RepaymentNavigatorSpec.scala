@@ -36,7 +36,12 @@ class RepaymentNavigatorSpec extends SpecBase {
 
       "must go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          None,
+          NormalMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad()
       }
       "go to type of bank account page after submitting their reason for requesting a refund" in {
         navigator.nextPage(
@@ -56,10 +61,22 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
           controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
       }
+
+      "go to journey recovery page id no bank account type is provided" in {
+        val userAnswers = emptyUserAnswers
+        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
+          journeyRecovery
+      }
+
       "go to journey recovery page if they somehow manage to submit an empty form" in {
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          None,
+          NormalMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad()
       }
       "go to reason for requesting a refund page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
@@ -107,6 +124,16 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
+      "must go to recovery  page from if incomplete info provided for telephone preference in normal mode" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          None,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
       "must go to Repayments CYA page from Repayments Telephone Details page" in {
         navigator.nextPage(
           RepaymentsTelephoneDetailsPage,
@@ -123,7 +150,12 @@ class RepaymentNavigatorSpec extends SpecBase {
       val amount = BigDecimal(9.99)
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          None,
+          CheckMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad()
       }
 
       "go to Repayment questions CYA page from Repayments Refund Amount page" in {
@@ -204,6 +236,16 @@ class RepaymentNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
         ) mustBe
           repaymentsQuestionsCYA
+      }
+
+      "go to recovery page if correct information is not provided for telephone preference" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          None,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe
+          journeyRecovery
       }
 
       "go to Repayment questions CYA page from repayments telephone detailsPage" in {
