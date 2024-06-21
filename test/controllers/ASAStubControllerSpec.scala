@@ -31,11 +31,6 @@ class ASAStubControllerSpec extends SpecBase {
   val agentEnrolments: Enrolments = Enrolments(
     Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None))
   )
-  val agentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
-    Set(
-      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)
-    )
-  )
 
   "Stub ASA Controller" must {
 
