@@ -18,7 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.BankAccountDetailsFormProvider
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 import models.repayments.BankAccountDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

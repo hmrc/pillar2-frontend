@@ -112,7 +112,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     val fieldName          = "accountNumber"
     val requiredKey        = "repayments.bankAccountDetails.accountNumberError"
     val lengthKey          = "repayments.bankAccountDetails.accountNumberLengthError"
-    val accountNumberRegex = """^[0-9]{6,8}$"""
+    val accountNumberRegex = """^[0-9]{8}$"""
     val maxLength          = 8
 
     behave like fieldThatBindsValidData(
