@@ -32,18 +32,15 @@ class $className$Controller @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
       val preparedForm = request.userAnswers.get($className$Page).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set($className$Page, value))
