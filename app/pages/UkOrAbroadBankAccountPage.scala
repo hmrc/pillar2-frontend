@@ -16,25 +16,12 @@
 
 package pages
 
-import models.{UkOrAbroadBankAccount, UserAnswers}
+import models.UkOrAbroadBankAccount
 import play.api.libs.json.JsPath
-
-import scala.util.Try
 
 case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "ukOrAbroadBankAccount"
-
-  override def cleanup(value: Option[UkOrAbroadBankAccount], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(UkOrAbroadBankAccount.UkBankAccount) =>
-        userAnswers
-          .remove(NonUKBankPage)
-
-      case Some(UkOrAbroadBankAccount.ForeignBankAccount) =>
-        userAnswers
-          .remove(BankAccountDetailsPage)
-    }
 }

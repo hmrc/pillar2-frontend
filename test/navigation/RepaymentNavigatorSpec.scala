@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import models._
-import models.repayments.NonUKBank
+import models.repayments._
 import pages._
 
 class RepaymentNavigatorSpec extends SpecBase {
@@ -38,10 +38,7 @@ class RepaymentNavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
-<<<<<<< HEAD
 
-=======
->>>>>>> PIL-148
       "go to type of bank account page after submitting their reason for requesting a refund" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
@@ -51,20 +48,29 @@ class RepaymentNavigatorSpec extends SpecBase {
         ) mustBe
           controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(None, NormalMode)
       }
-      "go to under construction page if they choose a UK bank account" in {
+
+      "go to UK Bank Account details page if they choose a UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe underConstruction
+        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode)
       }
+
       "go to non-UK bank account page if they choose a non-UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
           controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
       }
+
       "go to journey recovery page if they somehow manage to submit an empty form" in {
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
+
+      "go to journey recovery page from request refund amount page" in {
+        navigator.nextPage(RepaymentsContactByTelephonePage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
+      }
+
       "go to reason for requesting a refund page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
         navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe
@@ -160,6 +166,16 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
+      "go to Repayment questions CYA page from UK bank account details page" in {
+        navigator.nextPage(
+          BankAccountDetailsPage,
+          None,
+          CheckMode,
+          emptyUserAnswers.setOrException(BankAccountDetailsPage, BankAccountDetails("BankName", "Name", "123456", "12345678"))
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
       "go to Repayment questions CYA page from bank account details page" in {
         navigator.nextPage(
           NonUKBankPage,
@@ -218,6 +234,10 @@ class RepaymentNavigatorSpec extends SpecBase {
           emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "123456789")
         ) mustBe
           repaymentsQuestionsCYA
+      }
+
+      "go to journey recovery page from request refund amount page" in {
+        navigator.nextPage(RepaymentsContactByTelephonePage, None, CheckMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
     }

@@ -32,7 +32,7 @@ object UKBankNameOnAccountSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.accountName)),
+          value = ValueViewModel(HtmlContent(answer.nameOnBankAccount)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode).url)
               .withVisuallyHiddenText(messages("repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden"))
