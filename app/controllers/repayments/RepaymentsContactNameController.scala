@@ -19,25 +19,24 @@ package controllers.repayments
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
-import forms.NonUKBankFormProvider
+import forms.RepaymentsContactNameFormProvider
 import models.Mode
-import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsContactNamePage}
+import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.NonUKBankView
+import views.html.repayments.RepaymentsContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonUKBankController @Inject() (
+class RepaymentsContactNameController @Inject() (
   identify:                 IdentifierAction,
-  formProvider:             NonUKBankFormProvider,
+  formProvider:             RepaymentsContactNameFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
@@ -45,12 +44,12 @@ class NonUKBankController @Inject() (
   navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView
+  view:                     RepaymentsContactNameView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[NonUKBank] = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
@@ -58,7 +57,7 @@ class NonUKBankController @Inject() (
       agentIdentifierAction,
       identify
     ) andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
+      val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -77,10 +76,9 @@ class NonUKBankController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(NonUKBankPage, clientPillar2Id, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, clientPillar2Id, mode, updatedAnswers))
         )
     }
-
 }
