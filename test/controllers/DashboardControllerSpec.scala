@@ -50,7 +50,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
   val agentEnrolment: Set[Enrolment] =
     Set(
-      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
 
