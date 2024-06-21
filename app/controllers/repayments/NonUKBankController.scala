@@ -18,13 +18,14 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
 import pages.{NonUKBankPage, RepaymentsRefundAmountPage}
+import navigation.RepaymentNavigator
+import pages.{NonUKBankPage, RepaymentsContactNamePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat

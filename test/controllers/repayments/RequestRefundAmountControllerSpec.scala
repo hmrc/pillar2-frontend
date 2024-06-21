@@ -83,6 +83,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "must redirect to reason for requesting when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {

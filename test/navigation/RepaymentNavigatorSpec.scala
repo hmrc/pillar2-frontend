@@ -43,6 +43,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           UserAnswers("id")
         ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad()
       }
+
       "go to type of bank account page after submitting their reason for requesting a refund" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
@@ -82,6 +83,12 @@ class RepaymentNavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
         navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe
           controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
+      }
+
+      "go to Repayments contact name page from Non-UK Bank Account page" in {
+        val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+        navigator.nextPage(NonUKBankPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
       }
 
       "must go to Repayments contact email page from Repayments contact name page" in {
