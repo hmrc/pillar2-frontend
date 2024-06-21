@@ -105,5 +105,7 @@ object AgentIdentifierAction {
   private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway)
 
   val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
+    AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
+      .withIdentifier("PLRID", clientPillar2Id)
+      .withDelegatedAuthRule("pillar2-auth")
 }
