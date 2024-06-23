@@ -32,7 +32,7 @@ class RepaymentNavigatorSpec extends SpecBase {
 
     "in Normal mode" must {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
@@ -66,7 +66,13 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
       }
 
-      "must go to Repayments contact email page from Repayments contact name page" in {
+      "go to Repayments contact name page from Non-UK Bank Account page" in {
+        val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+        navigator.nextPage(NonUKBankPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
+      }
+
+      "go to Repayments contact email page from Repayments contact name page" in {
         navigator.nextPage(
           RepaymentsContactNamePage,
           None,
@@ -76,7 +82,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
       }
 
-      "must go to Repayments Contact By Telephone page from Repayments contact email page" in {
+      "go to Repayments Contact By Telephone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           None,
