@@ -8,6 +8,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$className$View
 import scala.concurrent.Future
+import play.api.inject.bind
 import play.api.libs.json.Json
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -83,7 +84,7 @@ class $className$ControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "0"))
-        val result = route(application, postRequest).value
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
