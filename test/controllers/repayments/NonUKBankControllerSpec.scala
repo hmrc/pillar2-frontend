@@ -79,7 +79,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect under construction when valid data is submitted" in {
+    "must redirect to Repayments Contact Name page when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

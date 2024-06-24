@@ -19,7 +19,6 @@ package controllers.repayments
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import forms.BankAccountDetailsFormProvider
 import models.Mode

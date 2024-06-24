@@ -129,7 +129,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
         "The name of the bank must be 40 characters or less " +
           "The name on the account must be 60 characters or less " +
           "Sort code must be 6 digits " +
-          "Account number must be between 6 and 8 digits"
+          "Account number must be 8 digits"
       )
     }
 
@@ -138,7 +138,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
         "Error: The name of the bank must be 40 characters or less " +
           "Error: The name on the account must be 60 characters or less " +
           "Error: Sort code must be 6 digits " +
-          "Error: Account number must be between 6 and 8 digits"
+          "Error: Account number must be 8 digits"
       )
     }
 

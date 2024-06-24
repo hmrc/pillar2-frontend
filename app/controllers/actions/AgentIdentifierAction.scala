@@ -18,7 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.AgentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, defaultAgentPredicate}
+import controllers.actions.AgentIdentifierAction.{HMRC_PILLAR2_ORG_KEY, defaultAgentPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -55,7 +55,8 @@ class AgentIdentifierAction @Inject() (
             Retrievals.internalId and Retrievals.allEnrolments
               and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
           ) {
-            case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+            case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
+              logger.info(s"Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
               Future.successful(
                 Right(
                   IdentifierRequest(
@@ -77,11 +78,17 @@ class AgentIdentifierAction @Inject() (
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
+            logger.info(s"Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
             Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
-          case _: InternalError => Left(Redirect(routes.AgentController.onPageLoadError))
-          case _: AuthorisationException =>
+          case _: InternalError =>
+            logger.info(s"Internal error for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
+          case e: AuthorisationException =>
+            logger.info(s"AuthorisationException for Agent due to ${e.reason}")
             Left(Redirect(routes.UnderConstructionController.onPageLoad))
-          case _ => Left(Redirect(routes.AgentController.onPageLoadError))
+          case _ =>
+            logger.info(s"Error returned from auth for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
         }
       }
 
@@ -95,9 +102,10 @@ object AgentIdentifierAction {
   private[controllers] val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
   private[controllers] val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
 
-  private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway)
+  private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY)
 
   val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY) and
-      Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
+    AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
+      .withIdentifier("PLRID", clientPillar2Id)
+      .withDelegatedAuthRule("pillar2-auth")
 }

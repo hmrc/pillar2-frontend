@@ -38,7 +38,7 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
             maxLength(Constants.MAX_LENGTH_60, "repayments.bankAccountDetails.accountNameFormatError")
           ),
       "sortCode" ->
-        text("repayments.bankAccountDetails.sortCodeError")
+        sortCode("repayments.bankAccountDetails.sortCodeError")
           .verifying(
             firstError(
               equalLength(Constants.MIN_LENGTH_6, "repayments.bankAccountDetails.lengthError"),
@@ -49,8 +49,7 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
         text("repayments.bankAccountDetails.accountNumberError")
           .verifying(
             firstError(
-              minLength(Constants.MIN_LENGTH_6, "repayments.bankAccountDetails.accountNumberLengthError"),
-              maxLength(Constants.MIN_LENGTH_8, "repayments.bankAccountDetails.accountNumberLengthError"),
+              equalLength(Constants.MIN_LENGTH_8, "repayments.bankAccountDetails.accountNumberLengthError"),
               regexp(Validation.ACCOUNT_NUMBER_REGEX, "repayments.bankAccountDetails.accountNumberFormatError")
             )
           )
