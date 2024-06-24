@@ -195,6 +195,26 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
+      "go to under construction  page from bank account type page id UK bank account type selected" in {
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          None,
+          CheckMode,
+          emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+        ) mustBe
+          underConstruction
+      }
+
+      "go to recovery  page from bank account type page if incomplete information is provided" in {
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          None,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe
+          journeyRecovery
+      }
+
       "go to Repayment questions CYA page from bank account details page" in {
         navigator.nextPage(
           NonUKBankPage,
