@@ -480,7 +480,7 @@ POST       /repayment/contact-details/input-email                               
 GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
-GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+GET        /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
 GET        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 POST       /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)

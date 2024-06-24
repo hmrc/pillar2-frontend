@@ -52,7 +52,7 @@ class RepaymentNavigator @Inject() {
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         } else {
           controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         }
