@@ -59,7 +59,7 @@
         @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
         -->
 
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(if(agentView) Some(plrReference) else None).url)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
 
             @sectionBreak()

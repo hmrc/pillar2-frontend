@@ -41,7 +41,7 @@ object UkOrAbroadBankAccountSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(maybeClientPillar2Id, CheckMode).url
+            controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(CheckMode).url
           )
             .withVisuallyHiddenText(messages("ukOrAbroadBankAccount.change.hidden"))
         )

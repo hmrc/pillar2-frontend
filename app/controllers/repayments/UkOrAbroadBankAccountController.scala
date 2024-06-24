@@ -18,7 +18,6 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.UkOrAbroadBankAccountFormProvider
 import models.{Mode, UkOrAbroadBankAccount}
 import navigation.RepaymentNavigator
@@ -36,8 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UkOrAbroadBankAccountController @Inject() (
   val sessionRepository:    SessionRepository,
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
+  identify:                 AmendAuthenticatedIdentifierAction,
   getData:                  SessionDataRetrievalAction,
   featureAction:            FeatureFlagActionFactory,
   requireData:              SessionDataRequiredAction,
@@ -51,31 +49,23 @@ class UkOrAbroadBankAccountController @Inject() (
 
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction
-      andThen identifierAction(
-        clientPillar2Id,
-        agentIdentifierAction,
-        identify
-      ) andThen getData andThen requireData) { implicit request =>
+      andThen identify andThen getData andThen requireData) { implicit request =>
       val preparedForm = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, clientPillar2Id, mode))
+      Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] = (identifierAction(
-    clientPillar2Id,
-    agentIdentifierAction,
-    identify
-  ) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UkOrAbroadBankAccountPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, clientPillar2Id, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, mode, updatedAnswers))
       )
   }
 }

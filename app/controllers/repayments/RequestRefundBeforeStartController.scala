@@ -18,7 +18,6 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,10 +25,9 @@ import views.html.repayments.RequestRefundBeforeStartView
 
 import javax.inject.Inject
 class RequestRefundBeforeStartController @Inject() (
-  identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundBeforeStartView,
-  agentIdentifierAction:    AgentIdentifierAction,
+  identify:                 AmendAuthenticatedIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   featureAction:            FeatureFlagActionFactory
@@ -37,13 +35,9 @@ class RequestRefundBeforeStartController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
-      Ok(view(clientPillar2Id))
+  def onPageLoad(): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      Ok(view())
     }
 
 }

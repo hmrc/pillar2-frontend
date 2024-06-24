@@ -86,7 +86,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onSubmit(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               "value" -> "99.9"
             )
