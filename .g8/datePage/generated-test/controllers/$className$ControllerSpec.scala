@@ -10,23 +10,24 @@ import pages.$className$Page
 import connectors.UserAnswersConnectors
 import play.api.test.FakeRequest
 import play.api.libs.json.Json
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import play.api.test.Helpers._
 import views.html.$className$View
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase {
-  val formProvider = new $className$FormProvider()
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  private val formProvider = new $className$FormProvider()
+  private val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  private lazy val $className;format="decap"$Route : String = routes.$className$Controller.onPageLoad(NormalMode).url
 
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
+  private def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
 
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
+  private def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, routes.$className$Controller.onPageLoad(NormalMode).url)
       .withFormUrlEncodedBody(
         "value.day"   -> validAnswer.getDayOfMonth.toString,

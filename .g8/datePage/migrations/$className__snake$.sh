@@ -22,7 +22,14 @@ echo "$className;format="decap"$.error.required.all = Enter the $className;forma
 echo "$className;format="decap"$.error.required.two = The $className;format="decap"$" must include {0} and {1} >> ../conf/messages.en
 echo "$className;format="decap"$.error.required = The $className;format="decap"$ must include {0}" >> ../conf/messages.en
 echo "$className;format="decap"$.error.invalid = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.day.nan = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.day.length = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.month.nan = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.month.length = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.year.nan = Enter a real $className$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.year.length = Enter a real $className$" >> ../conf/messages.en
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
+
 
 echo "Adding to ViewInstances"
 awk '/trait ViewInstances/ {\
