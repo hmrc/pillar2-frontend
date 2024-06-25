@@ -31,6 +31,7 @@ awk '/trait ModelGenerators/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
+    print "  import org.scalacheck.Arbitrary ;\
     print "    Arbitrary {";\
     print "      for {";\
     print "        $field1Name$ <- arbitrary[String]";\

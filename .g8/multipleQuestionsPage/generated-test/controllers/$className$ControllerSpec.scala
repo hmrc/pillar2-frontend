@@ -5,7 +5,6 @@ import forms.$className$FormProvider
 import models.{NormalMode, $className$, UserAnswers}
 import pages.$className$Page
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import scala.concurrent.Future
 import play.api.inject.bind
 import org.mockito.ArgumentMatchers.any
@@ -14,22 +13,12 @@ import org.mockito.Mockito.{verify, when}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$className$View
-
+import connectors.UserAnswersConnectors
 import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase {
 
   val formProvider = new $className$FormProvider()
-
-  private val validAnswer = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      $className$Page.toString -> Json.obj(
-        "$field1Name$" -> "value 1",
-        "$field2Name$" -> "value 2"
-      )
-    )
-  )
 
   "$className$ Controller" when {
 
@@ -50,7 +39,15 @@ class $className$ControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
+       val validAnswer = UserAnswers(
+        userAnswersId,
+        Json.obj(
+          $className$Page.toString -> Json.obj(
+            "$field1Name$" -> "value 1",
+            "$field2Name$" -> "value 2"
+          )
+        )
+      )
       val application = applicationBuilder(userAnswers = Some(validAnswer)).build()
 
       running(application) {
@@ -86,7 +83,7 @@ class $className$ControllerSpec extends SpecBase {
     }
 
     "redirect to under construction page in case of a valid submission and save the relevant data" in {
-      val expectedUserAnswers = emptyUserAnswers.setOrException($className$Page, validAnswer)
+      val expectedUserAnswers = emptyUserAnswers.setOrException($className$Page, $className$("value 1", "value 2"))
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
@@ -97,6 +94,8 @@ class $className$ControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody("$field1Name$" -> "value 1",
+              "$field2Name$" -> "value 2")
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
