@@ -82,9 +82,9 @@ class AgentIdentifierAction @Inject() (
           case _: InternalError =>
             logger.info(s"Internal error for Agent")
             Left(Redirect(routes.AgentController.onPageLoadError))
-          case e: AuthorisationException =>
+          case e: AuthorisationException if e.reason.contains("NO_RELATIONSHIP") =>
             logger.info(s"AuthorisationException for Agent due to ${e.reason}")
-            Left(Redirect(routes.UnderConstructionController.onPageLoad))
+            Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
           case _ =>
             logger.info(s"Error returned from auth for Agent")
             Left(Redirect(routes.AgentController.onPageLoadError))
