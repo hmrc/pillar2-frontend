@@ -12,6 +12,8 @@ import play.api.inject.bind
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
+import connectors.UserAnswersConnectors
+import play.api.libs.json.Json
 import views.html.$className$View
 
 
