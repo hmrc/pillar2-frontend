@@ -16,13 +16,22 @@
 
 package forms
 
-object Validation {
-  final val EMAIL_REGEX =
-    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX              = "^X[A-Z]PLR[0-9]{10}$"
-  final val TELEPHONE_REGEX            = "^[0-9 +()]{0,25}$"
-  final val REPAYMENTS_TELEPHONE_REGEX = "^[0-9 +()]{0,50}$"
-  final val BIC_SWIFT_REGEX            = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
-  final val IBAN_REGEX                 = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
-  final val MONETARY_REGEX             = """^-?(\d*(\.\d{1,2})?)$"""
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
+
+import javax.inject.Inject
+
+class RepaymentsTelephoneDetailsFormProvider @Inject() extends Mappings {
+
+  def apply(contactName: String): Form[String] =
+    Form(
+      "telephoneNumber" -> text("repayments.telephoneDetails.error.required", Seq(contactName))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_50, "repayments.telephoneDetails.error.length"),
+            regexp(Validation.REPAYMENTS_TELEPHONE_REGEX, "repayments.telephoneDetails.error.format")
+          )
+        )
+    )
 }

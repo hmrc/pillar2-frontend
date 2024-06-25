@@ -1276,6 +1276,18 @@ repayments.contactEmail.error.contactEmail.required = Enter an email address for
 repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
 repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
 
+repayments.contactByTelephone.title = Can we contact by telephone?
+repayments.contactByTelephone.heading = Can we contact {0} by telephone?
+repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
+repayments.contactByTelephone.error.required= Select yes if we can contact {0} by telephone
+
+repayments.telephoneDetails.title = What is the telephone number?
+repayments.telephoneDetails.heading = What is the telephone number for {0}?
+repayments.telephoneDetails.hint = For international numbers include the country code.
+repayments.telephoneDetails.error.required= Enter a telephone number for {0}
+repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
+repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
+
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
 rfmConfirmation.reg-date =  Your group’s filing member was replaced on
