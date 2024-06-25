@@ -56,7 +56,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     "have a hint description" in {
       view.getElementsByClass("govuk-hint").get(0).text must include("Must be a UK business account.")
       view.getElementsByClass("govuk-hint").get(1).text must include("Must be 6 digits.")
-      view.getElementsByClass("govuk-hint").get(2).text must include("Must be between 6 and 8 digits.")
+      view.getElementsByClass("govuk-hint").get(2).text must include("Must be 8 digits.")
     }
 
     "have a button" in {
@@ -79,8 +79,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Enter the name of the bank " +
-          "Enter the name on the account. " +
-          "Enter the sort code. " +
+          "Enter the name on the account " +
+          "Enter the sort code " +
           "Enter the account number"
       )
     }
@@ -88,8 +88,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     "have an input error" in {
       view.getElementsByClass("govuk-error-message").text must include(
         "Error: Enter the name of the bank " +
-          "Error: Enter the name on the account. " +
-          "Error: Enter the sort code. " +
+          "Error: Enter the name on the account " +
+          "Error: Enter the sort code " +
           "Error: Enter the account number"
       )
     }

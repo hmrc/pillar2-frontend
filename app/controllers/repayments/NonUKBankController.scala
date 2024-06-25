@@ -23,7 +23,7 @@ import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsContactNamePage}
+import pages.NonUKBankPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
