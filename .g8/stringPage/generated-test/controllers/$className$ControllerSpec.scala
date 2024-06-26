@@ -6,7 +6,6 @@ import models.{NormalMode, UserAnswers}
 import pages.$className$Page
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.$className$View
 import scala.concurrent.Future
 import play.api.inject.bind
