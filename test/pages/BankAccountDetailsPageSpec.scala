@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait StringGenerators {
-  def randomStringGenerator(n: Int): String =
-    n match {
-      case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
-    }
+import models.repayments.BankAccountDetails
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
+
+class BankAccountDetailsPageSpec extends PageBehaviours {
+
+  "BankAccountDetailsPage" - {
+
+    beRetrievable[BankAccountDetails](BankAccountDetailsPage)
+
+    beSettable[BankAccountDetails](BankAccountDetailsPage)
+
+    beRemovable[BankAccountDetails](BankAccountDetailsPage)
+  }
 }

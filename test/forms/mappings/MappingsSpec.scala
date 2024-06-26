@@ -325,4 +325,47 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     }
   }
 
+  "sortCode" - {
+    val testForm: Form[String] =
+      Form(
+        "value" -> sortCode()
+      )
+
+    "must bind a valid sort code" in {
+      val result = testForm.bind(Map("value" -> "123456"))
+      result.get mustEqual "123456"
+    }
+
+    "must bind a valid sort code which contains spaces and dashes" in {
+      val result = testForm.bind(Map("value" -> "1 - 2 3 - 4 5 6"))
+      result.get mustEqual "123456"
+    }
+
+    "must not bind an empty string as a sort code" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a string of whitespace only as a sort code" in {
+      val result = testForm.bind(Map("value" -> " \t"))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must return a custom error message" in {
+      val form   = Form("value" -> text("custom.error"))
+      val result = form.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "custom.error"))
+    }
+
+    "must unbind a valid account id" in {
+      val result = testForm.fill("123456")
+      result.apply("value").value.value mustEqual "123456"
+    }
+  }
+
 }
