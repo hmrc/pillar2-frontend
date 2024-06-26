@@ -56,8 +56,12 @@ class RepaymentNavigatorSpec extends SpecBase {
 
       "go to UK Bank Account details page if they choose a UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
-          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode)
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          None,
+          NormalMode,
+          userAnswers
+        ) mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode)
       }
 
       "go to non-UK bank account page if they choose a non-UK bank account" in {
