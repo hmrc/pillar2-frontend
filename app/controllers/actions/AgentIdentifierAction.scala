@@ -82,7 +82,7 @@ class AgentIdentifierAction @Inject() (
           case _: InternalError =>
             logger.info(s"Internal error for Agent")
             Left(Redirect(routes.AgentController.onPageLoadError))
-          case e: AuthorisationException if e.reason.contains("NO_RELATIONSHIP") =>
+          case e: AuthorisationException if e.reason.contains("HMRC-PILLAR2-ORG") =>
             logger.info(s"Relationship AuthorisationException for Agent due to ${e.reason}")
             Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
           case e: AuthorisationException =>
