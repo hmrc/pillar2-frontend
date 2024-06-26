@@ -1333,7 +1333,7 @@ repayments.contactEmail.error.contactEmail.format = Enter an email address in th
 
 repayments.contactByTelephone.title = Can we contact by telephone?
 repayments.contactByTelephone.heading = Can we contact {0} by telephone?
-repayments.contactByTelephone.hint = We will use this to contact you about this refund request.
+repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
 repayments.contactByTelephone.error.required= Select yes if we can contact {0} by telephone
 
 repayments.telephoneDetails.title = What is the telephone number?
