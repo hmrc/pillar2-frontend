@@ -80,7 +80,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect under construction when valid data is submitted" in {
+    "must redirect to the contact name controller when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
