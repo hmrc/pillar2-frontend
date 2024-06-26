@@ -53,7 +53,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     ) andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       Ok(
-        view(listRefund(clientPillar2Id), listBankAccountDetails(clientPillar2Id), contactDetailsList(clientPillar2Id))
+        view(listRefund(clientPillar2Id), listBankAccountDetails(clientPillar2Id), contactDetailsList(clientPillar2Id), clientPillar2Id)
       )
 
     }

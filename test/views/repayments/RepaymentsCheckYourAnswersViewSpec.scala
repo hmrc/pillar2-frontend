@@ -69,7 +69,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
   )
 
   val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
-  val view: Document = Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
+  val view: Document =
+    Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList, Some("1234"))(request, appConfig, messages).toString())
   "Repayments Check Your Answers View" should {
     "have a title" in {
       view.getElementsByTag("title").text must include("Check your answers before submitting your refund request")

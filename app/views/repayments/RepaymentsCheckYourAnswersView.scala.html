@@ -28,9 +28,9 @@
         para: paragraphBody
 )
 
-@(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title")), maybeClientPillar2Id = clientPillar2Id) {
 
 
     @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit()) {
