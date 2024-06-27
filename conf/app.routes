@@ -106,6 +106,7 @@ GET         /eligibility/service-not-suitable/not-active-in-uk                  
 GET         /eligibility/service-not-suitable/under-750-million                                      controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-repaymets                                                             controllers.UnderConstructionController.onPageLoadAgent(clientPillar2Id: Option[String] ?= None)
 GET         /account/sign-out-survey                                                                 controllers.auth.AuthController.signOut
 GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad
