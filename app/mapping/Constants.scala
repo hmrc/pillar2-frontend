@@ -21,6 +21,7 @@ object Constants {
   final val WELSH                       = "cy"
   final val UK_COUNTRY_CODE             = "GB"
   final val RFM_ADDRESS_MAX_LENGTH      = 35
+  final val MIN_LENGTH_6                = 6
   final val MIN_LENGTH_8                = 8
   final val MAX_LENGTH_11               = 11
   final val MAX_LENGTH_34               = 34

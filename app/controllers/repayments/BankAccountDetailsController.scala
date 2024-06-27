@@ -16,44 +16,43 @@
 
 package controllers.repayments
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
-import forms.NonUKBankFormProvider
+import forms.BankAccountDetailsFormProvider
 import models.Mode
-import models.repayments.NonUKBank
+import models.repayments.BankAccountDetails
 import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsRefundAmountPage}
-import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsContactNamePage}
-import pages.NonUKBankPage
+import pages.BankAccountDetailsPage
+import play.api.Logging
 import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.NonUKBankView
+import views.html.repayments.BankAccountDetailsView
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonUKBankController @Inject() (
+class BankAccountDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
-  formProvider:             NonUKBankFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
+  formProvider:             BankAccountDetailsFormProvider,
   featureAction:            FeatureFlagActionFactory,
+  navigator:                RepaymentNavigator,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView,
-  navigator:                RepaymentNavigator
+  view:                     BankAccountDetailsView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  val form: Form[NonUKBank] = formProvider()
+  val form: Form[BankAccountDetails] = formProvider()
 
   def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
@@ -61,9 +60,9 @@ class NonUKBankController @Inject() (
       agentIdentifierAction,
       identify
     ) andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      val preparedForm = request.userAnswers.get(BankAccountDetailsPage) match {
+        case None              => form
+        case Some(userAnswers) => form.fill(userAnswers)
       }
       Ok(view(preparedForm, clientPillar2Id, mode))
     }
@@ -80,10 +79,9 @@ class NonUKBankController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(NonUKBankPage, clientPillar2Id, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(BankAccountDetailsPage, clientPillar2Id, mode, updatedAnswers))
         )
     }
-
 }

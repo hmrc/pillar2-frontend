@@ -36,6 +36,7 @@ class RepaymentNavigator @Inject() {
   private val normalRoutes: Page => Option[String] => UserAnswers => Call = {
     case ReasonForRequestingRefundPage => id => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(id, NormalMode)
     case UkOrAbroadBankAccountPage     => id => data => ukOrAbroadBankAccountLogic(id, data)
+    case BankAccountDetailsPage        => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
     case RepaymentsRefundAmountPage    => id => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(id, NormalMode)
     case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
     case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
@@ -50,7 +51,7 @@ class RepaymentNavigator @Inject() {
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         } else {
           controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         }
@@ -62,7 +63,7 @@ class RepaymentNavigator @Inject() {
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = CheckMode)
         } else {
           controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(maybeClientId)
         }

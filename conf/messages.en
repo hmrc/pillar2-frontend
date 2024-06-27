@@ -1249,6 +1249,51 @@ rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up tax
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
+rfmConfirmation.title = Replace filing member successful
+rfmConfirmation.rfmComplete = Replace filing member successful
+rfmConfirmation.reg-date =  Your group’s filing member was replaced on
+rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
+rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfmConfirmation.next = What happens next
+rfmConfirmation.now = You can now {0} {1}
+rfmConfirmation.now.group = on behalf of your group.
+rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.whatDidYouThink = What did you think of this service
+rfmConfirmation.print = Print this page
+
+###################
+
+# - Repayments
+
+###################
+
+repayments.bankAccountDetails.title = Bank account details
+repayments.bankAccountDetails.heading = Bank account details
+repayments.bankAccountDetails.bankName = Name of the bank
+repayments.bankAccountDetails.accountName = Name on the account
+repayments.bankAccountDetails.accountName.hintText = Must be a UK business account.
+repayments.bankAccountDetails.sortCode = Sort Code
+repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits.
+repayments.bankAccountDetails.accountNumber = Account number
+repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits.
+
+repayments.bankAccountDetails.bankError = Enter the name of the bank
+repayments.bankAccountDetails.accountError = Enter the name on the account
+repayments.bankAccountDetails.sortCodeError = Enter the sort code
+repayments.bankAccountDetails.accountNumberError = Enter the account number
+
+repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
+repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
+
+repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
+repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
+repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
+repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
+
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
 repayments.nonUKBank.bankName = Name of the bank

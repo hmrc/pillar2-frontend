@@ -22,5 +22,8 @@ import controllers.actions.{AgentIdentifierAction, IdentifierAction}
 package object manageAccount {
 
   def identifierAction(clientPillar2Id: Option[String], agentIdentifierAction: AgentIdentifierAction, identify: IdentifierAction): IdentifierAction =
-    clientPillar2Id.map(id => agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id))).getOrElse(identify)
+    clientPillar2Id
+      .map(id => agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id)))
+      .getOrElse(identify)
+
 }

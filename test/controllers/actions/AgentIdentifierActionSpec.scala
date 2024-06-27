@@ -154,7 +154,11 @@ class AgentIdentifierActionSpec extends SpecBase {
         val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
         val authAction =
-          new AgentIdentifierAction(new FakeFailingAuthConnector(new FailedRelationship(msg = "NO_RELATIONSHIP")), appConfig, bodyParsers)(ec)
+          new AgentIdentifierAction(
+            new FakeFailingAuthConnector(FailedRelationship(msg = "NO_RELATIONSHIP;HMRC-PILLAR2-ORG")),
+            appConfig,
+            bodyParsers
+          )(ec)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
