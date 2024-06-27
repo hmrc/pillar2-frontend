@@ -63,7 +63,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad()))
+    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
   }
 
   private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =

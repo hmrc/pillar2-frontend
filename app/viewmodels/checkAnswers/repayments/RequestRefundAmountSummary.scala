@@ -30,7 +30,7 @@ object RequestRefundAmountSummary {
     answers.get(RepaymentsRefundAmountPage).map { answer =>
       SummaryListRowViewModel(
         key = "requestRefundAmount.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape("£" + answer.toString()).toString),
+        value = ValueViewModel(HtmlFormat.escape("£" + answer.setScale(2)).toString),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.repayments.routes.RequestRefundAmountController.onPageLoad(CheckMode, clientPillar2Id).url)
             .withVisuallyHiddenText(messages("requestRefundAmount.change.hidden"))
