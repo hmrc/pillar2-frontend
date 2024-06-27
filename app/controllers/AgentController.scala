@@ -24,6 +24,7 @@ import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetri
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -55,7 +56,7 @@ class AgentController @Inject() (
   formProvider:                AgentClientPillar2ReferenceFormProvider
 )(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport with Logging{
 
   import identify._
 

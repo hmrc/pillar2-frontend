@@ -45,7 +45,7 @@ class JourneyRecoveryController @Inject() (
         case Right(safeUrl) =>
           Some(safeUrl.url)
         case Left(message) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - $message")
+          logger.info(s"$message")
           None
       }
     }

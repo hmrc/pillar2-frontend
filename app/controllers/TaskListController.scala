@@ -61,7 +61,7 @@ class TaskListController @Inject() (
         case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
-            logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] Remove existing amend data from local database if exist")
+            logger.info("Remove existing amend data from local database if exist")
             Redirect(routes.TaskListController.onPageLoad)
           }
         case _ =>
