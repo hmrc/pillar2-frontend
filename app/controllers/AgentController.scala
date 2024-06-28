@@ -56,7 +56,8 @@ class AgentController @Inject() (
   formProvider:                AgentClientPillar2ReferenceFormProvider
 )(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport with Logging{
+    with I18nSupport
+    with Logging {
 
   import identify._
 

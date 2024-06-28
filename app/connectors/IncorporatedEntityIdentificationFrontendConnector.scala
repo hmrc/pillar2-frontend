@@ -33,8 +33,8 @@ trait IncorporatedEntityIdentificationFrontendConnector {
 }
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:    FrontendAppConfig,
-  httpClient:   HttpClient
+  appConfig:  FrontendAppConfig,
+  httpClient: HttpClient
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext

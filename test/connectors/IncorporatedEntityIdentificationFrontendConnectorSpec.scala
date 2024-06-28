@@ -31,7 +31,7 @@ import scala.concurrent.Future
 class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl                              = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
-  val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
+  val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
   private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
 
   "IncorporatedEntityIdentificationFrontendConnector" when {
