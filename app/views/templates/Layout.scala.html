@@ -94,7 +94,7 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner(maybeClientPillar2Id).url)),
+        serviceUrl  = if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner(maybeClientPillar2Id).url))),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),
