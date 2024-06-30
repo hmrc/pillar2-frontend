@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.{AgentIdentifierAction, AgentWithoutAuthIdentifierAction, AmendIdentifierAction, FakeIdentifierAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import org.mockito.ArgumentMatchers
@@ -31,11 +31,14 @@ import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import views.html.rfm.AgentView
 import views.html._
+import controllers.actions.TestAuthRetrievals.Ops
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class AgentControllerSpec extends SpecBase {
@@ -46,25 +49,26 @@ class AgentControllerSpec extends SpecBase {
   )
   val agentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
     Set(
-      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
   )
+  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
-  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "Default Agent View" must {
+
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
@@ -72,20 +76,14 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Enter And Submit Client Pillar 2 Id" must {
+
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
         .build()
 
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -93,20 +91,20 @@ class AgentControllerSpec extends SpecBase {
 
     "must return the correct view if the feature flag is true and user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentClientPillarIdView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentClientPillarIdView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(request, appConfig(application), messages(application)).toString
       }
@@ -119,20 +117,20 @@ class AgentControllerSpec extends SpecBase {
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentClientPillarIdView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentClientPillarIdView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("XMPLR0123456789"))(
           request,
@@ -148,23 +146,24 @@ class AgentControllerSpec extends SpecBase {
         .overrides(
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(any()))
+        .thenReturn(Future.successful(subscriptionData))
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(any()))
-          .thenReturn(Future.successful(subscriptionData))
-
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.AgentController.onPageLoadConfirmClientDetails.url
       }
@@ -176,23 +175,24 @@ class AgentControllerSpec extends SpecBase {
         .overrides(
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockSubscriptionService.readSubscription(any())(any()))
+        .thenReturn(Future.failed(InternalIssueError))
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockSubscriptionService.readSubscription(any())(any()))
-          .thenReturn(Future.failed(InternalIssueError))
-
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.AgentController.onPageLoadNoClientMatch.url
       }
@@ -203,22 +203,23 @@ class AgentControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
           .withFormUrlEncodedBody("value" -> "foobar")
-
         val result = route(application, request).value
         val view   = application.injector.instanceOf[AgentClientPillarIdView]
-
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(formProvider().bind(Map("value" -> "foobar")))(
           request,
@@ -230,20 +231,22 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Confirm Client Details" must {
+
     "redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadConfirmClientDetails.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -259,21 +262,20 @@ class AgentControllerSpec extends SpecBase {
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadConfirmClientDetails.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentClientConfirmDetailsView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentClientConfirmDetailsView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("Some Org", "XMPLR0123456789")(request, appConfig(application), messages(application)).toString
       }
@@ -281,59 +283,77 @@ class AgentControllerSpec extends SpecBase {
 
     "return to error page if the if client pillar 2 id and organisation name is not present in user answers" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadConfirmClientDetails.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.AgentController.onPageLoadError.url
       }
     }
 
     "return to agent dashboard view if agent organisation enrolment is present" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+      val userAnswer = emptyUserAnswers
+        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          ),
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolmentWithDelegatedAuth ~ Some(Agent) ~ Some(User) ~ Some(
+              Credentials(providerId, providerType)
+            )
+          )
+        )
 
       running(application) {
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolmentWithDelegatedAuth))
-
-        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails("XMPLR0123456789").url)
-
-        val result = route(application, request).value
-
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails(PlrReference).url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.DashboardController
-          .onPageLoad(clientPillar2Id = Some("XMPLR0123456789"), agentView = true)
+          .onPageLoad(clientPillar2Id = Some(PlrReference), agentView = true)
           .url
       }
 
     }
 
     "return error page if enrolments are found for agent but there is no organisation enrolment for that pillar 2 id" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      val userAnswer = emptyUserAnswers
+        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          ),
+          Future.failed(InsufficientEnrolments("HMRC-PILLAR2-ORG"))
+        )
+
       running(application) {
-
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-          .thenReturn(Future.failed(InsufficientEnrolments("HMRC-PILLAR2-ORG")))
-
-        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails("XMPLR0123456789").url)
-
-        val result = route(application, request).value
-
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails(PlrReference).url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.AgentController.onPageLoadUnauthorised.url
       }
@@ -344,18 +364,11 @@ class AgentControllerSpec extends SpecBase {
   "Agent No Client Match" must {
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -363,20 +376,20 @@ class AgentControllerSpec extends SpecBase {
 
     "must return the correct view if the feature flag is true and user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentClientNoMatch]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentClientNoMatch]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
@@ -390,9 +403,7 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -404,11 +415,8 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentErrorView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentErrorView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
@@ -422,9 +430,7 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -432,20 +438,20 @@ class AgentControllerSpec extends SpecBase {
 
     "must return the correct view if the feature flag is true" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentClientUnauthorisedView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentClientUnauthorisedView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
@@ -459,9 +465,7 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadIndividualError.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -473,11 +477,8 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadIndividualError.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentIndividualErrorView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentIndividualErrorView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
@@ -491,9 +492,7 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadOrganisationError.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -505,11 +504,8 @@ class AgentControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadOrganisationError.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AgentOrganisationErrorView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AgentOrganisationErrorView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }

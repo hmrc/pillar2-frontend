@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UkOrAbroadBankAccountController @Inject() (
   val sessionRepository:    SessionRepository,
-  identify:                 AmendAuthenticatedIdentifierAction,
+  identify:                 AmendIdentifierAction,
   getData:                  SessionDataRetrievalAction,
   featureAction:            FeatureFlagActionFactory,
   requireData:              SessionDataRequiredAction,

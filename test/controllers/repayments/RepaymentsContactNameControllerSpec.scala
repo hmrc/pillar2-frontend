@@ -17,32 +17,34 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.NonUKBankFormProvider
+import forms.RepaymentsContactNameFormProvider
 import models.NormalMode
-import models.repayments.NonUKBank
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.NonUKBankPage
+import pages.RepaymentsContactNamePage
+import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.repayments.NonUKBankView
+import views.html.repayments.RepaymentsContactNameView
 
 import scala.concurrent.Future
 
-class NonUKBankControllerSpec extends SpecBase {
+class RepaymentsContactNameControllerSpec extends SpecBase {
 
-  val formProvider = new NonUKBankFormProvider()
+  val formProvider = new RepaymentsContactNameFormProvider()
+  val form: Form[String] = formProvider()
 
-  "NonUKBank Controller" when {
+  "Repayments Contact Name Controller" when {
 
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
@@ -51,27 +53,35 @@ class NonUKBankControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[NonUKBankView]
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactNameView]
+        val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua = emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-        val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
-        val view    = application.injector.instanceOf[NonUKBankView]
-        val result  = route(application, request).value
+        when(mockSessionRepository.get(any()))
+          .thenReturn(
+            Future.successful(
+              Some(emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited"))
+            )
+          )
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactNameView]
+        val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill(NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")), NormalMode)(
+          view(formProvider().fill("ABC Limited"), NormalMode)(
             request,
             appConfig(application),
             messages(application)
@@ -79,23 +89,22 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Contact Name page when valid data is submitted" in {
+    "must redirect to Repayments Contact Email Controller when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              "bankName"          -> "BankName",
-              "nameOnBankAccount" -> "Name",
-              "bic"               -> "HBUKGB4B",
-              "iban"              -> "GB29NWBK60161331926819"
-            )
+          FakeRequest(
+            POST,
+            controllers.repayments.routes.RepaymentsContactNameController.onSubmit(NormalMode).url
+          )
+            .withFormUrlEncodedBody("contactName" -> "ABC Limited")
         val result = route(application, request).value
+
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode).url
       }
     }
 
@@ -103,10 +112,10 @@ class NonUKBankControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
-        val view      = application.injector.instanceOf[NonUKBankView]
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
+            .withFormUrlEncodedBody(("contactName", ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
+        val view      = application.injector.instanceOf[RepaymentsContactNameView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString

@@ -19,8 +19,7 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions.{AgentWithoutAuthIdentifierAction, AmendAuthIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
@@ -48,7 +47,8 @@ class AgentController @Inject() (
   agentClientUnauthorisedView: AgentClientUnauthorisedView,
   agentIndividualErrorView:    AgentIndividualErrorView,
   agentOrganisationErrorView:  AgentOrganisationErrorView,
-  identify:                    AgentIdentifierAction,
+  agentWithAuthIdentify:       AmendAuthIdentifierAction,
+  agentWithoutAuthIdentify:    AgentWithoutAuthIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
   getData:                     DataRetrievalAction,
   requireData:                 DataRequiredAction,
@@ -57,8 +57,6 @@ class AgentController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  import identify._
-
   val form: Form[String] = formProvider()
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
@@ -66,7 +64,7 @@ class AgentController @Inject() (
   }
 
   def onPageLoadClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
       val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -75,8 +73,8 @@ class AgentController @Inject() (
       Future.successful(Ok(clientPillarIdView(preparedForm)))
     }
 
-  def onSubmitClientPillarId: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async {
-    implicit request =>
+  def onSubmitClientPillarId: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -97,10 +95,10 @@ class AgentController @Inject() (
             }
           }
         )
-  }
+    }
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
       (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
         .mapN { (clientPillar2Id, clientUpeName) =>
           Future successful Ok(clientConfirmView(clientUpeName, clientPillar2Id))
@@ -109,24 +107,24 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
+    (featureAction.asaAccessAction andThen agentWithAuthIdentify andThen getData andThen requireData).async {
       Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
     }
 
-  def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoadNoClientMatch: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData) { implicit request =>
       Ok(clientNoMatchView())
-  }
+    }
 
   def onPageLoadError: Action[AnyContent] =
     featureAction.asaAccessAction { implicit request =>
       Ok(agentErrorView())
     }
 
-  def onPageLoadUnauthorised: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoadUnauthorised: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData) { implicit request =>
       Ok(agentClientUnauthorisedView())
-  }
+    }
 
   def onPageLoadIndividualError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
     Ok(agentIndividualErrorView())

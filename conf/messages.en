@@ -1226,6 +1226,22 @@ rfm.saveProgressInform.heading = Saving progress
 rfm.saveProgressInform.heading.caption = Replace filing member
 rfm.saveProgressInform.p1 = From this point, the information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
 
+rfmConfirmation.title = Replace filing member successful
+rfmConfirmation.rfmComplete = Replace filing member successful
+rfmConfirmation.reg-date =  Filing member was replaced on
+rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
+rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 top-up tax compliance
+rfmConfirmation.li2 = submit your group''s Pillar 2 top-up tax returns
+rfmConfirmation.li3 = ensure your group''s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
+rfmConfirmation.next = What happens next
+rfmConfirmation.now = You can now {0} {1}
+rfmConfirmation.now.group = on behalf of your group.
+rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.whatDidYouThink = What did you think of this service
+rfmConfirmation.print = Print this page
+
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
 repayments.nonUKBank.bankName = Name of the bank
@@ -1246,6 +1262,19 @@ repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
+
+repayments.contactName.title = What is the name of the person or team we should contact about the refund request?
+repayments.contactName.heading = What is the name of the person or team we should contact about the refund request?
+repayments.contactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
+repayments.contactName.error.required = Enter name of the person or team we should contact for this refund request
+repayments.contactName.error.length = Name of the contact person or team must be 100 characters or less
+
+repayments.contactEmail.title = What is the email address?
+repayments.contactEmail.heading = What is the email address for {0}?
+repayments.contactEmail.hint = We will only use this to contact you about this refund request.
+repayments.contactEmail.error.contactEmail.required = Enter an email address for {0}
+repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
+repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful

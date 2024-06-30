@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.DashboardView
@@ -29,10 +30,10 @@ class DashboardViewSpec extends ViewSpecBase {
   private val plrRef           = "XMPLR0012345678"
   private val date             = "1 June 2020"
 
-  val organisationDashboardView =
+  val organisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
 
-  val agentDashboardView =
+  val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {
@@ -209,7 +210,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(9).text() must include("Request a refund")
       elements.get(9).attr("href") must include(
-        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some("XMPLR0012345678")).url
+        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
       )
       elements.get(10).text() must include("View and amend contact details")
       elements.get(10).attr("href") must include(

@@ -27,7 +27,7 @@ import javax.inject.Inject
 class RequestRefundBeforeStartController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     RequestRefundBeforeStartView,
-  identify:                 AmendAuthenticatedIdentifierAction,
+  identify:                 AmendIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   featureAction:            FeatureFlagActionFactory

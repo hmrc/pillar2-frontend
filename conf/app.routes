@@ -475,11 +475,20 @@ POST         /repayment/amount                                                  
 GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
 POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
 
+GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
+
 GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
 POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
 GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
-
 
 GET        /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = NormalMode)
 POST       /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = NormalMode)

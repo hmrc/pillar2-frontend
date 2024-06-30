@@ -18,31 +18,31 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.ReasonForRequestingRefundFormProvider
+import forms.RepaymentsContactNameFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
-import pages.ReasonForRequestingRefundPage
+import pages.RepaymentsContactNamePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments.ReasonForRequestingRefundView
+import views.html.repayments.RepaymentsContactNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonForRequestingRefundController @Inject() (
-  val sessionRepository:    SessionRepository,
+class RepaymentsContactNameController @Inject() (
   identify:                 AmendIdentifierAction,
-  getData:                  SessionDataRetrievalAction,
+  formProvider:             RepaymentsContactNameFormProvider,
+  getSessionData:           SessionDataRetrievalAction,
+  requireSessionData:       SessionDataRequiredAction,
+  sessionRepository:        SessionRepository,
   navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
-  requireData:              SessionDataRequiredAction,
-  formProvider:             ReasonForRequestingRefundFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view:                     ReasonForRequestingRefundView
+  view:                     RepaymentsContactNameView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -50,21 +50,25 @@ class ReasonForRequestingRefundController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getData andThen requireData) { implicit request =>
-      val preparedForm = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
       Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForRequestingRefundPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ReasonForRequestingRefundPage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
+        )
+    }
 }

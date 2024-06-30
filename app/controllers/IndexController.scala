@@ -56,10 +56,8 @@ class IndexController @Inject() (
         case Some(Organisation) ~ e if hasPillarEnrolment(e) =>
           Future successful Redirect(routes.DashboardController.onPageLoad())
         case Some(Organisation) ~ _ => Future successful Redirect(routes.TaskListController.onPageLoad)
-        case Some(Agent) ~ e if e.enrolments.exists(_.key == "HMRC-AS-AGENT") && clientPillar2Id.isDefined =>
-          Future successful Redirect(
-            routes.DashboardController.onPageLoad(clientPillar2Id, clientPillar2Id.isDefined)
-          )
+        case Some(Agent) ~ _ if clientPillar2Id.isDefined =>
+          Future successful Redirect(routes.DashboardController.onPageLoad(clientPillar2Id, clientPillar2Id.isDefined))
         case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
         case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
       }

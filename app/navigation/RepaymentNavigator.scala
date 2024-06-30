@@ -37,6 +37,9 @@ class RepaymentNavigator @Inject() {
     case RepaymentsRefundAmountPage    => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode)
     case ReasonForRequestingRefundPage => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
     case UkOrAbroadBankAccountPage     => data => ukOrAbroadBankAccountLogic(data)
+    case NonUKBankPage                 => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
+    case RepaymentsContactNamePage     => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
+    case RepaymentsContactEmailPage    => _ => routes.UnderConstructionController.onPageLoad
     case _                             => _ => routes.IndexController.onPageLoad
   }
 

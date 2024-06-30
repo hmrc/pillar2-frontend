@@ -32,37 +32,61 @@ class RepaymentNavigatorSpec extends SpecBase {
 
     "in Normal mode" must {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
+
       "go to type of bank account page after submitting their reason for requesting a refund" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
-          None,
           NormalMode,
           emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "because")
         ) mustBe
-          controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(None, NormalMode)
+          controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
       }
       "go to under construction page if they choose a UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe underConstruction
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe underConstruction
       }
       "go to non-UK bank account page if they choose a non-UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, userAnswers) mustBe
-          controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode)
       }
       "go to journey recovery page if they somehow manage to submit an empty form" in {
-        navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
       "go to reason for requesting a refund page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
-        navigator.nextPage(RepaymentsRefundAmountPage, None, NormalMode, userAnswers) mustBe
-          controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = NormalMode)
+        navigator.nextPage(RepaymentsRefundAmountPage, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode)
+      }
+
+      "go to Repayments contact name page from Non-UK Bank Account page" in {
+        val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+        navigator.nextPage(NonUKBankPage, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
+      }
+
+      "go to Repayments contact email page from Repayments contact name page" in {
+        navigator.nextPage(
+          RepaymentsContactNamePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited")
+        ) mustBe
+          controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
+      }
+
+      "go to Under construction page from Repayments contact email page" in {
+        navigator.nextPage(
+          RepaymentsContactEmailPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
+        ) mustBe
+          underConstruction
       }
 
     }
@@ -71,7 +95,7 @@ class RepaymentNavigatorSpec extends SpecBase {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, None, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
     }

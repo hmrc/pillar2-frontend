@@ -85,7 +85,6 @@ trait SpecBase
 
   val pillar2AgentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
     Set(
-      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
     )
   )
@@ -141,6 +140,7 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
+        bind[AmendIdentifierAction].to[FakeAmendIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
         bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(userAnswers))

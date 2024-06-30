@@ -47,14 +47,14 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       running(application) {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some(PlrReference)).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[RequestRefundBeforeStartView]
 
         status(result) mustEqual OK
         contentAsString(result) must include("Request a refund")
-        contentAsString(result) mustEqual view(Some(PlrReference))(
+        contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
           messages(application)
@@ -66,7 +66,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some(PlrReference)).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
