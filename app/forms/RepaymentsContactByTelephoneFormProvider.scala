@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-trait StringGenerators {
-  def randomStringGenerator(n: Int): String =
-    n match {
-      case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
-    }
+import forms.mappings.Mappings
+import play.api.data.Form
+
+import javax.inject.Inject
+
+class RepaymentsContactByTelephoneFormProvider @Inject() extends Mappings {
+  def apply(contactName: String): Form[Boolean] =
+    Form(
+      "value" -> boolean("repayments.contactByTelephone.error.required", args = Seq(contactName))
+    )
 }

@@ -47,7 +47,11 @@ class RepaymentNavigatorSpec extends SpecBase {
       }
       "go to under construction page if they choose a UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe underConstruction
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          NormalMode,
+          userAnswers
+        ) mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode)
       }
       "go to non-UK bank account page if they choose a non-UK bank account" in {
         val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
@@ -80,11 +84,38 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
       }
 
-      "go to Under construction page from Repayments contact email page" in {
+      "go to Repayments Contact By Telephone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           NormalMode,
           emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
+        ) mustBe
+          controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode)
+      }
+
+      "must go to Repayments Telephone Details page from Repayments Contact By Telephone page when True" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, true)
+        ) mustBe
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(NormalMode)
+      }
+
+      "must go to UnderConstruction page from Repayments Contact By Telephone page when False" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
+        ) mustBe
+          underConstruction
+      }
+
+      "must go to UnderConstruction page from Repayments Telephone Details page" in {
+        navigator.nextPage(
+          RepaymentsTelephoneDetailsPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "12345")
         ) mustBe
           underConstruction
       }

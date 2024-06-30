@@ -22,15 +22,14 @@ import play.api.data.FormError
 
 class RepaymentsContactEmailFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey       = "repayments.contactEmail.error.contactEmail.required"
-  val lengthKey         = "repayments.contactEmail.error.contactEmail.length"
-  val formatKey         = "repayments.contactEmail.error.contactEmail.format"
-  val contactName       = "ABC Limited"
-  val maxLength         = Constants.MAX_LENGTH_100
+  val requiredKey = "repayments.contactEmail.error.contactEmail.required"
+  val lengthKey   = "repayments.contactEmail.error.contactEmail.length"
+  val contactName = "ABC Limited"
+  val maxLength: Int = Constants.MAX_LENGTH_100
   val validEmailAddress = "abc@cba.com"
   val form              = new RepaymentsContactEmailFormProvider()(contactName)
 
-  ".value" - {
+  ".contactEmail" - {
 
     val fieldName = "contactEmail"
 

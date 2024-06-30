@@ -63,7 +63,6 @@ class AmendIdentifierActionSpec extends SpecBase {
     def onPageLoad(): Action[AnyContent] = amendAuthAction(_ => Results.Ok)
   }
 
-
   "Amend Identifier Action" when {
 
     "Agent" when {
@@ -87,10 +86,10 @@ class AmendIdentifierActionSpec extends SpecBase {
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe OK
           }
         }
@@ -103,15 +102,16 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(InsufficientEnrolments())
+              ),
+              Future.failed(InsufficientEnrolments())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
           }
@@ -125,16 +125,17 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(InsufficientEnrolments(msg = HMRC_PILLAR2_ORG_KEY))
+              ),
+              Future.failed(InsufficientEnrolments(msg = HMRC_PILLAR2_ORG_KEY))
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
             val authAction =
               new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
             val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val result     = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadUnauthorised.url
           }
@@ -148,15 +149,16 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(InsufficientEnrolments(msg = "NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
+              ),
+              Future.failed(InsufficientEnrolments(msg = "NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadUnauthorised.url
           }
@@ -170,16 +172,17 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(InternalError())
+              ),
+              Future.failed(InternalError())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
             val authAction =
               new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
             val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val result     = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
           }
@@ -191,15 +194,16 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(new NoSuchElementException())
+              ),
+              Future.failed(new NoSuchElementException())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result     = controller.onPageLoad()(FakeRequest())
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
           }
@@ -213,15 +217,16 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(InsufficientEnrolments())
+              ),
+              Future.failed(InsufficientEnrolments())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result     = controller.onPageLoad()(FakeRequest())
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
           }
@@ -235,21 +240,21 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(UnsupportedAuthProvider())
+              ),
+              Future.failed(UnsupportedAuthProvider())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result     = controller.onPageLoad()(FakeRequest())
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
           }
         }
       }
-
 
       "unsupported affinity group" must {
         "redirect the user to the error page" in {
@@ -258,15 +263,16 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(UnsupportedAffinityGroup())
+              ),
+              Future.failed(UnsupportedAffinityGroup())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadError.url)
           }
@@ -338,7 +344,6 @@ class AmendIdentifierActionSpec extends SpecBase {
 //        }
 //      }
 
-
       "an unsupported credential role" must {
         "redirect the user to the error page" in {
 //          val application = applicationBuilder(userAnswers = None)
@@ -352,22 +357,22 @@ class AmendIdentifierActionSpec extends SpecBase {
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-              ), Future.failed(UnsupportedCredentialRole())
+              ),
+              Future.failed(UnsupportedCredentialRole())
             )
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result     = controller.onPageLoad()(FakeRequest())
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadError.url)
           }
         }
       }
     }
-
 
     "Organisation" when {
 
@@ -386,18 +391,16 @@ class AmendIdentifierActionSpec extends SpecBase {
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-            val appConfig = application.injector.instanceOf[FrontendAppConfig]
-            val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-            val controller = new Harness(authAction)
-            val result = controller.onPageLoad()(FakeRequest())
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe OK
           }
         }
       }
 
     }
-
-
 
     "the user hasn't logged in" must {
       "redirect the user to log in " in {
@@ -443,22 +446,17 @@ class AmendIdentifierActionSpec extends SpecBase {
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          val authAction = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
-          val controller = new Harness(authAction)
-          val result = controller.onPageLoad()(FakeRequest())
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+          val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+          val controller  = new Harness(authAction)
+          val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
         }
       }
     }
 
-
-
-
   }
-
-
 
 //  "AmendAuthAction" when {
 //

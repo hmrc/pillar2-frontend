@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait StringGenerators {
-  def randomStringGenerator(n: Int): String =
-    n match {
-      case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
-    }
+import pages.behaviours.PageBehaviours
+
+class RepaymentsTelephoneDetailsPageSpec extends PageBehaviours {
+
+  "RepaymentsTelephoneDetailsPage" - {
+
+    beRetrievable[String](RepaymentsTelephoneDetailsPage)
+
+    beSettable[String](RepaymentsTelephoneDetailsPage)
+
+    beRemovable[String](RepaymentsTelephoneDetailsPage)
+  }
 }

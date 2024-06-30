@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait StringGenerators {
-  def randomStringGenerator(n: Int): String =
-    n match {
-      case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
+import models.UserAnswers
+import play.api.libs.json.JsPath
+
+import scala.util.Try
+
+case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "repaymentsContactByPhone"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if (value.contains(false)) {
+      userAnswers
+        .remove(RfmCapturePrimaryTelephonePage)
+    } else {
+      super.cleanup(value, userAnswers)
     }
 }

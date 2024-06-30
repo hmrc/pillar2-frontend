@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait StringGenerators {
-  def randomStringGenerator(n: Int): String =
-    n match {
-      case 1 => util.Random.nextPrintableChar.toString
-      case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
-    }
+import play.api.libs.json.JsPath
+
+case object RepaymentsTelephoneDetailsPage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "repaymentsTelephoneDetails"
+
 }

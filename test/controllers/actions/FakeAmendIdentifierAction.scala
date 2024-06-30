@@ -23,7 +23,7 @@ import uk.gov.hmrc.auth.core.Enrolments
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAmendIdentifierAction @Inject()(bodyParsers: PlayBodyParsers, enrolments: Enrolments) extends AmendIdentifierAction {
+class FakeAmendIdentifierAction @Inject() (bodyParsers: PlayBodyParsers, enrolments: Enrolments) extends AmendIdentifierAction {
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
     Future.successful(Right(IdentifierRequest(request, "id", Some("groupID"), enrolments.enrolments, userIdForEnrolment = "userId")))
