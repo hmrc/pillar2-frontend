@@ -106,6 +106,7 @@ GET         /eligibility/service-not-suitable/not-active-in-uk                  
 GET         /eligibility/service-not-suitable/under-750-million                                      controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
+GET         /under-construction-repaymets                                                             controllers.UnderConstructionController.onPageLoadAgent(clientPillar2Id: Option[String] ?= None)
 GET         /account/sign-out-survey                                                                 controllers.auth.AuthController.signOut
 GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad
@@ -492,10 +493,10 @@ POST       /repayment/contact-details/change-input-telephone                    
 
 GET        /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
 
-GET        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode,clientPillar2Id: Option[String] ?= None)
+POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit( mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
+GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad( mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
+POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit( mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
 
 GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
@@ -516,3 +517,6 @@ GET        /repayment/method                         controllers.repayments.UkOr
 POST       /repayment/method                         controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 GET        /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
+GET         /repayment/check-answers-non-uk                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+POST        /repayment/check-answers-non-uk                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
@@ -41,8 +41,8 @@ class RepaymentsContactNameController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
-  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
+  navigator:                RepaymentNavigator,
   val controllerComponents: MessagesControllerComponents,
   view:                     RepaymentsContactNameView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -51,7 +51,7 @@ class RepaymentsContactNameController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -64,7 +64,7 @@ class RepaymentsContactNameController @Inject() (
       Ok(view(preparedForm, clientPillar2Id, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
     (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,

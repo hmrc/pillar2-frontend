@@ -80,9 +80,9 @@ class RepaymentsContactByTelephoneController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode, name))),
-              nominated =>
+              value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactByTelephonePage, nominated))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactByTelephonePage, value))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(RepaymentsContactByTelephonePage, clientPillar2Id, mode, updatedAnswers))
             )
