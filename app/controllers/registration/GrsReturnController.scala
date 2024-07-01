@@ -147,7 +147,7 @@ class GrsReturnController @Inject() (
         )
       }
     }
-    
+
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(FmEntityTypePage)
@@ -228,7 +228,6 @@ class GrsReturnController @Inject() (
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
-
 
   def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
