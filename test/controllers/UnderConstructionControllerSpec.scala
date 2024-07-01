@@ -41,7 +41,7 @@ class UnderConstructionControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET for repayments" in {
+    "must return OK and the correct view for a GET for agent in repayments" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
