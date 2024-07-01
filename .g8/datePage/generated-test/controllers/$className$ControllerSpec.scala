@@ -3,44 +3,31 @@ package controllers
 import java.time.{LocalDate, ZoneOffset}
 
 import base.SpecBase
+import play.api.inject.bind
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import pages.$className$Page
+import connectors.UserAnswersConnectors
 import play.api.test.FakeRequest
+import play.api.libs.json.Json
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import play.api.test.Helpers._
 import views.html.$className$View
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
-
+import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase {
+  private val formProvider = new $className$FormProvider()
+  private val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
 
+  private lazy val $className;format="decap"$Route : String = routes.$className$Controller.onPageLoad(NormalMode).url
 
-
-  def controller(): $className$Controller =
-    new $className$Controller(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      view$className$
-    )
-
-  val formProvider = new $className$FormProvider()
-
-
-
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
-
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
-
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
+  private def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, routes.$className$Controller.onPageLoad(NormalMode).url)
 
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
+  private def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, routes.$className$Controller.onPageLoad(NormalMode).url)
       .withFormUrlEncodedBody(
         "value.day"   -> validAnswer.getDayOfMonth.toString,
@@ -99,6 +86,24 @@ class $className$ControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to under construction page in case of a valid submission and save the relevant data" in {
+      val expectedUserAnswers = emptyUserAnswers.setOrException($className$Page, validAnswer)
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result = route(application, postRequest).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
       }
     }
 

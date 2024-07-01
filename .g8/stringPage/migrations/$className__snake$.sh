@@ -20,14 +20,4 @@ echo "$className;format="decap"$.checkYourAnswersLabel = $className;format="deca
 echo "$className;format="decap"$.error.required = Enter $className;format="decap"$" >> ../conf/messages.en
 echo "$className;format="decap"$.error.length = $className$ must be $maxLength$ characters or less" >> ../conf/messages.en
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
-
-
-echo "Adding to ViewInstances"
-awk '/trait ViewInstances/ {\
-    print;\
-    print "";\
-    print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)";\
-    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
-
 echo "Migration $className;format="snake"$ completed"

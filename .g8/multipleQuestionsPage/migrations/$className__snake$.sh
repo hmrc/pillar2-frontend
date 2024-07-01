@@ -31,6 +31,7 @@ awk '/trait ModelGenerators/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
+    print "  import org.scalacheck.Arbitrary ;\
     print "    Arbitrary {";\
     print "      for {";\
     print "        $field1Name$ <- arbitrary[String]";\
@@ -38,14 +39,6 @@ awk '/trait ModelGenerators/ {\
     print "      } yield $className$($field1Name$, $field2Name$)";\
     print "    }";\
     next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
-
-echo "Adding to ViewInstances"
-awk '/trait ViewInstances/ {\
-    print;\
-    print "";\
-    print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)";\
-    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
 
 echo "Migration $className;format="snake"$ completed"
 

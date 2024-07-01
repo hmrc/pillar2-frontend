@@ -3,37 +3,22 @@ package controllers
 import base.SpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, UltimateParentNavigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import pages.$className$Page
-import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.$className$View
-
 import scala.concurrent.Future
+import play.api.inject.bind
+import play.api.libs.json.Json
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
+import connectors.UserAnswersConnectors
 
 class $className$ControllerSpec extends SpecBase {
 
 
   val formProvider = new $className$FormProvider()
-
-  def controller(): $className$Controller =
-    new $className$Controller(
-      mockUserAnswersConnectors,
-      preAuthenticatedActionBuilders,
-      preDataRetrievalActionImpl,
-      preDataRequiredActionImpl,
-      formProvider,
-      stubMessagesControllerComponents(),
-      view$className$
-    )
-
-
   "$className$ Controller" when {
 
     "must return OK and the correct view for a GET" in {
@@ -89,6 +74,26 @@ class $className$ControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application),messages(application)).toString
+      }
+    }
+
+    "redirect to under construction page in case of a valid submission and save the relevant data" in {
+      val expectedUserAnswers = emptyUserAnswers.setOrException($className$Page, "someStringValue")
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "someStringValue"))
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
       }
     }
 
