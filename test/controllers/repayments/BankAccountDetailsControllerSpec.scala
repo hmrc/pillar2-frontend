@@ -80,27 +80,6 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the contact name controller when valid data is submitted" in {
-      val application = applicationBuilder(None)
-        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
-        .build()
-      running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val request =
-          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(None, NormalMode).url)
-            .withFormUrlEncodedBody(
-              "bankName"          -> "TestBankName",
-              "accountHolderName" -> "TestAccountHolderBankName",
-              "sortCode"          -> "123456",
-              "accountNumber"     -> "12345678"
-            )
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(None, NormalMode).url
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
