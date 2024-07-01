@@ -105,7 +105,7 @@ class GrsReturnController @Inject() (
         )
       }
     }
-
+  //noinspection ScalaStyle
   private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
     partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
       auditService.auditGrsReturnForLLP(data)
@@ -147,7 +147,7 @@ class GrsReturnController @Inject() (
         )
       }
     }
-
+  //noinspection ScalaStyle
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(FmEntityTypePage)
