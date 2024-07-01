@@ -20,6 +20,13 @@ To run locally:
 
 Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
 
+#### Bank Account Reputation (BARS)
+This service calls the BARS service within MDTP to verify business bank accounts as part of the pillar 2 repayments journey.
+We call [the verify business endpoint](https://github.com/hmrc/bank-account-reputation/blob/main/public/api/conf/1.0/docs/business/verify.md) to verify accounts, 
+because this is an external service in Local, Development and Staging we call directly call their stub. Information about handling BARS in different environments are detailed below
+- Local, Development and Staging uses the [bank-account-reputation-stub](https://github.com/hmrc/bank-account-reputation-stub). Refer to [the stub README for test data usage](https://github.com/hmrc/bank-account-reputation-stub?tab=readme-ov-file#personal-account-test-data)
+- QA environment, BARS is connected to their third parties test system. Any test data you use here will need to be aligned with the test data that the third party service holds
+- Producation calls the MDTP service
 
 ***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
 

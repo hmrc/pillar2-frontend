@@ -163,6 +163,32 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
+      "go to contact name page from partial account name page if user selects Yes" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, true)
+        ) mustBe controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(None, NormalMode)
+      }
+
+      "go to bank account details from partial account name page if user selects No" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, false)
+        ) mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(None, NormalMode)
+      }
+
+      "go to partial name page if bars returns a successful account verification with partial name given" in {
+        navigator.nextPage(
+          BarsAccountNamePartialPage,
+          None,
+          NormalMode,
+          emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "Partial Name")
+        ) mustBe controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(None)
+      }
     }
 
     "in Check mode" must {

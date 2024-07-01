@@ -18,20 +18,17 @@
 @import views.html.components.gds._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    heading: heading,
-    paragraphBody: paragraphBody,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        h: heading,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(clientPillar2Id: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("asa.agent.title"))) {
-     @heading(messages("asa.agent.heading"), "govuk-heading-l")
-     @paragraphBody(messages("asa.agent.p1"))
-     @govukButton(
-      ButtonViewModel(messages("site.continue")).asLink(controllers.routes.AgentController.onPageLoadClientPillarId.url)
-     )
+@layout(pageTitle = titleNoForm(messages("repayments.error.title"))) {
+
+    @h(messages("repayments.error.heading"), classes = "govuk-heading-l")
+    @p(messages("repayments.error.p1"))
+    @paragraphMessageWithLink(linkMessage = messages("repayments.error.p2.link"), linkUrl = routes.DashboardController.onPageLoad(clientPillar2Id, clientPillar2Id.isDefined).url)
 }
-

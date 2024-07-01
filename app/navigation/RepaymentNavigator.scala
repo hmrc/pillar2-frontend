@@ -41,9 +41,11 @@ class RepaymentNavigator @Inject() {
     case NonUKBankPage                 => id => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(id, NormalMode)
     case RepaymentsContactNamePage     => id => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(id, NormalMode)
     case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
-    case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
-    case RepaymentsTelephoneDetailsPage   => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case _                                => id => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(id)
+    case RepaymentsContactByTelephonePage     => id => data => telephonePreferenceNormalMode(id, data)
+    case RepaymentsTelephoneDetailsPage       => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
+    case RepaymentAccountNameConfirmationPage => id => ua => accountNamePartialRoute(id, ua)
+    case BarsAccountNamePartialPage           => id => _ => controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(id)
+    case _                                    => id => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(id)
   }
 
   private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
@@ -54,6 +56,18 @@ class RepaymentNavigator @Inject() {
           controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
         } else {
           controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def accountNamePartialRoute(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RepaymentAccountNameConfirmationPage)
+      .map { value =>
+        if (value) {
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(maybeClientId, NormalMode)
+        } else {
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(maybeClientId, NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
