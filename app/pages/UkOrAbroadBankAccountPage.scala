@@ -29,31 +29,9 @@ case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount
     if (value.contains(UkOrAbroadBankAccount.ForeignBankAccount)) {
       userAnswers
         .remove(BankAccountDetailsPage)
-        .flatMap(
-          _.remove(RepaymentsContactNamePage).flatMap(
-            _.remove(RepaymentsContactEmailPage).flatMap(
-              _.remove(UpeContactEmailPage).flatMap(
-                _.remove(RepaymentsContactByTelephonePage).flatMap(
-                  _.remove(RepaymentsTelephoneDetailsPage)
-                )
-              )
-            )
-          )
-        )
     } else if (value.contains(UkOrAbroadBankAccount.UkBankAccount)) {
       userAnswers
         .remove(NonUKBankPage)
-        .flatMap(
-          _.remove(RepaymentsContactNamePage).flatMap(
-            _.remove(RepaymentsContactEmailPage).flatMap(
-              _.remove(UpeContactEmailPage).flatMap(
-                _.remove(RepaymentsContactByTelephonePage).flatMap(
-                  _.remove(RepaymentsTelephoneDetailsPage)
-                )
-              )
-            )
-          )
-        )
     } else {
       super.cleanup(value, userAnswers)
     }

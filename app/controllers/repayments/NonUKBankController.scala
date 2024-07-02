@@ -23,9 +23,6 @@ import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsRefundAmountPage}
-import navigation.RepaymentNavigator
-import pages.{NonUKBankPage, RepaymentsContactNamePage}
 import pages.NonUKBankPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -45,10 +42,10 @@ class NonUKBankController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView,
-  navigator:                RepaymentNavigator
+  view:                     NonUKBankView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

@@ -79,11 +79,15 @@ class RepaymentsCheckYourAnswersController @Inject() (
   private def listBankAccountDetails(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
-        UkOrAbroadBankAccountSummary.row(userAnswers, clientPillar2Id),
-        NonUKBankNameSummary.row(userAnswers, clientPillar2Id),
-        NonUKBankNameOnAccountSummary.row(userAnswers, clientPillar2Id),
-        NonUKBankBicOrSwiftCodeSummary.row(userAnswers, clientPillar2Id),
-        NonUKBankIbanSummary.row(userAnswers, clientPillar2Id)
+        UkOrAbroadBankAccountSummary.row(userAnswers),
+        UKBankNameSummary.row(userAnswers),
+        UKBankNameOnAccountSummary.row(userAnswers),
+        UKBankSortCodeSummary.row(userAnswers),
+        UKBankAccNumberSummary.row(userAnswers),
+        NonUKBankNameSummary.row(userAnswers),
+        NonUKBankNameOnAccountSummary.row(userAnswers),
+        NonUKBankBicOrSwiftCodeSummary.row(userAnswers),
+        NonUKBankIbanSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
