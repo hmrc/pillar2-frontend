@@ -18,7 +18,6 @@ package pages
 
 import models.{UkOrAbroadBankAccount, UserAnswers}
 import play.api.libs.json.JsPath
-
 import scala.util.Try
 
 case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount] {
@@ -34,5 +33,7 @@ case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount
 
       case Some(UkOrAbroadBankAccount.ForeignBankAccount) =>
         userAnswers.remove(BankAccountDetailsPage)
+
+      case _ => super.cleanup(value, userAnswers)
     }
 }
