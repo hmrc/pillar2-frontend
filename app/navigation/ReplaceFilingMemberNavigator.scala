@@ -210,18 +210,9 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers
       .get(RfmCorporatePositionPage)
       .map { corporatePosition =>
-        if (corporatePosition == CorporatePosition.Upe) {
-          reviewAndSubmitCheckYourAnswers
-        } else {
-          userAnswers.get(RfmRegisteredAddressPage) match {
-            case Some(value) => reviewAndSubmitCheckYourAnswers
-            case _ =>
-              userAnswers.get(RfmEntityTypePage) match {
-                case Some(value) => reviewAndSubmitCheckYourAnswers
-                case _           => controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
-              }
-          }
-        }
+        if (!userAnswers.isRfmJourneyCompleted && corporatePosition == CorporatePosition.NewNfm) {
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
+        } else { reviewAndSubmitCheckYourAnswers }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 

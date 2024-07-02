@@ -229,7 +229,6 @@ class GrsReturnController @Inject() (
 
   }
 
-  //noinspection ScalaStyle
   def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
