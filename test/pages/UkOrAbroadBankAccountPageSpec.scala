@@ -16,7 +16,8 @@
 
 package pages
 
-import models.UkOrAbroadBankAccount
+import models.repayments.{BankAccountDetails, NonUKBank}
+import models.{UkOrAbroadBankAccount, UserAnswers}
 import pages.behaviours.PageBehaviours
 
 class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
@@ -28,5 +29,34 @@ class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
     beSettable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
 
     beRemovable[UkOrAbroadBankAccount](UkOrAbroadBankAccountPage)
+
+    "must remove NonUKBankPage when UkBankAccount is selected" in {
+      forAll { userAnswers: UserAnswers =>
+        val result = userAnswers
+          .set(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+          .success
+          .value
+          .set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+          .success
+          .value
+
+        result.get(NonUKBankPage) mustNot be(defined)
+      }
+    }
+
+    "must remove BankAccountDetailsPage when ForeignBankAccount is selected" in {
+      forAll { userAnswers: UserAnswers =>
+        val result = userAnswers
+          .set(BankAccountDetailsPage, BankAccountDetails("BankName", "Name", "123456", "12345678"))
+          .success
+          .value
+          .set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+          .success
+          .value
+
+        result.get(BankAccountDetailsPage) mustNot be(defined)
+      }
+    }
+
   }
 }

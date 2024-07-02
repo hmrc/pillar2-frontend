@@ -191,14 +191,14 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
-      "go to Repayment questions CYA page from bank account type page" in {
+      "go to bank account details page from bank account type page" in {
         navigator.nextPage(
           UkOrAbroadBankAccountPage,
           None,
           CheckMode,
           emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
         ) mustBe
-          repaymentsQuestionsCYA
+          controllers.repayments.routes.NonUKBankController.onPageLoad(mode = CheckMode)
       }
 
       "go to Repayment questions CYA page from UK bank account details page" in {

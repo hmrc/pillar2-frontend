@@ -59,18 +59,6 @@ class RepaymentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def ukOrAbroadBankAccountLogicCheckMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
-    userAnswers
-      .get(UkOrAbroadBankAccountPage)
-      .map { ukOrAbroad =>
-        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = CheckMode)
-        } else {
-          controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(maybeClientId)
-        }
-      }
-      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
-
   private val checkRouteMap: Page => Option[String] => UserAnswers => Call = {
     case RepaymentsRefundAmountPage       => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
     case ReasonForRequestingRefundPage    => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
@@ -83,6 +71,18 @@ class RepaymentNavigator @Inject() {
     case RepaymentsTelephoneDetailsPage   => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
     case _                                => id => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(id)
   }
+
+  private def ukOrAbroadBankAccountLogicCheckMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(UkOrAbroadBankAccountPage)
+      .map { ukOrAbroad =>
+        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = CheckMode)
+        } else {
+          controllers.repayments.routes.NonUKBankController.onPageLoad(clientPillar2Id = maybeClientId, mode = CheckMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private def telephonePreferenceNormalMode(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
     userAnswers
