@@ -34,14 +34,14 @@ class RepaymentNavigatorSpec extends SpecBase {
 
     "in Normal mode" must {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "must go from a page that doesn't exist in the route map to Repayments Start Page" in {
         case object UnknownPage extends Page
         navigator.nextPage(
           UnknownPage,
           None,
           NormalMode,
           UserAnswers("id")
-        ) mustBe routes.IndexController.onPageLoad
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(None)
       }
 
       "go to type of bank account page after submitting their reason for requesting a refund" in {
@@ -79,12 +79,6 @@ class RepaymentNavigatorSpec extends SpecBase {
       "go to journey recovery page if they somehow manage to submit an empty form" in {
         navigator.nextPage(UkOrAbroadBankAccountPage, None, NormalMode, emptyUserAnswers) mustBe journeyRecovery
         case object UnknownPage extends Page
-        navigator.nextPage(
-          UnknownPage,
-          None,
-          NormalMode,
-          UserAnswers("id")
-        ) mustBe routes.IndexController.onPageLoad
       }
 
       "go to journey recovery page from request refund amount page" in {
