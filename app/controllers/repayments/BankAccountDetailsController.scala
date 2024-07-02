@@ -23,13 +23,13 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
-import navigation.RepaymentNavigator
 import pages.BankAccountDetailsPage
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.BarsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.BankAccountDetailsView
 
@@ -42,9 +42,9 @@ class BankAccountDetailsController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   agentIdentifierAction:    AgentIdentifierAction,
   sessionRepository:        SessionRepository,
+  barsService:              BarsService,
   formProvider:             BankAccountDetailsFormProvider,
   featureAction:            FeatureFlagActionFactory,
-  navigator:                RepaymentNavigator,
   val controllerComponents: MessagesControllerComponents,
   view:                     BankAccountDetailsView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
@@ -77,11 +77,14 @@ class BankAccountDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
-          value =>
+          bankAccountDetails =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, bankAccountDetails))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(BankAccountDetailsPage, clientPillar2Id, mode, updatedAnswers))
+              result <-
+                barsService
+                  .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, clientPillar2Id, mode)
+            } yield result
         )
     }
 }
