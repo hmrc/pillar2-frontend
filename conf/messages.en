@@ -1384,7 +1384,7 @@ repaymentsCheckYourAnswers.bank.submit-p1 = By submitting these details, you are
 requestRefundAmount.checkYourAnswersLabel = Refund amount
 requestRefundAmount.change.hidden = the refund amount
 reasonForRequestingRefund.checkYourAnswersLabel = Reason for refund request
-reasonForRequestingRefund.change.hidden = Change the reason for the refund request
+reasonForRequestingRefund.change.hidden = the reason for the refund request
 
 repaymentsContactName.checkYourAnswersLabel = Contact name
 repaymentsContactName.change.hidden = the contact name

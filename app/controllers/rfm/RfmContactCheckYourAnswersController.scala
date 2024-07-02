@@ -113,12 +113,11 @@ class RfmContactCheckYourAnswersController @Inject() (
       dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
       _          <- OptionT.liftF(sessionRepository.set(dataToSave))
     } yield {
-      logger.info("successfully replaced filing member")
+      logger.info(s"successfully replaced filing member for group with id : $groupId ")
       Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
     })
       .recover {
         case InternalIssueError | UnexpectedResponse =>
-          logger.warn("Replace filing member failed")
           Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
         case _: Exception =>
           logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")

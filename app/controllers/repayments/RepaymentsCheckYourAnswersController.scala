@@ -53,7 +53,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     ) andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       Ok(
-        view(listRefund(clientPillar2Id), listBankAccountDetails(clientPillar2Id), contactDetailsList(clientPillar2Id))
+        view(listRefund(clientPillar2Id), listBankAccountDetails(clientPillar2Id), contactDetailsList(clientPillar2Id), clientPillar2Id)
       )
 
     }
@@ -63,7 +63,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad()))
+    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
   }
 
   private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =

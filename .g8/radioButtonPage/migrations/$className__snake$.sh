@@ -33,12 +33,4 @@ awk '/trait ModelGenerators/ {\
     print "    }";\
     next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
 
-echo "Adding to ViewInstances"
-awk '/trait ViewInstances/ {\
-    print;\
-    print "";\
-    print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukRadios, govukButton)";\
-    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
-
 echo "Migration $className;format="snake"$ completed"

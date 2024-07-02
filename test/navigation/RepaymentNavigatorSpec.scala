@@ -113,7 +113,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode)
       }
 
-      "go to Repayments Contact By Telephone page from Repayments contact email page" in {
+      "must go to Repayments Contact By Telephone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           None,
@@ -224,7 +224,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           CheckMode,
           emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
         ) mustBe
-          underConstruction
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode)
       }
 
       "go to recovery  page from bank account type page if incomplete information is provided" in {

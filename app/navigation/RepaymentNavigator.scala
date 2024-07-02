@@ -44,7 +44,7 @@ class RepaymentNavigator @Inject() {
     case RepaymentsContactEmailPage    => id => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(id, NormalMode)
     case RepaymentsContactByTelephonePage => id => data => telephonePreferenceNormalMode(id, data)
     case RepaymentsTelephoneDetailsPage   => id => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(id)
-    case _                                => _ => _ => routes.IndexController.onPageLoad
+    case _                                => id => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(id)
   }
 
   private def ukOrAbroadBankAccountLogic(maybeClientId: Option[String], userAnswers: UserAnswers): Call =
@@ -64,7 +64,7 @@ class RepaymentNavigator @Inject() {
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
         if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id = maybeClientId, mode = CheckMode)
         } else {
           controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad(maybeClientId)
         }

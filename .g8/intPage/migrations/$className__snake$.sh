@@ -24,13 +24,4 @@ echo "$className;format="decap"$.error.outOfRange = $className$ must be between 
 echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
 
 
-
-echo "Adding to ViewInstances"
-awk '/trait ViewInstances/ {\
-    print;\
-    print "";\
-    print "   val view$className$: $className$View =";\
-    print "    new $className$View(pillar2layout, formWithCSRF, govukErrorSummary, govukInput, govukButton)";\
-    next }1' ../test/helpers/ViewInstances.scala > tmp && mv tmp  ../test/helpers/ViewInstances.scala
-
 echo "Migration $className;format="snake"$ completed"

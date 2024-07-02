@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 import views.html.JourneyRecoveryView
 
 import javax.inject.Inject
@@ -45,7 +44,7 @@ class JourneyRecoveryController @Inject() (
         case Right(safeUrl) =>
           Some(safeUrl.url)
         case Left(message) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - $message")
+          logger.info(s"$message")
           None
       }
     }
