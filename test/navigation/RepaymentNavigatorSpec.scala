@@ -97,6 +97,12 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
       }
 
+      "go to Repayments contact name page from UK Bank Account page" in {
+        val userAnswers = emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+        navigator.nextPage(BankAccountDetailsPage, None, NormalMode, userAnswers) mustBe
+          controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
+      }
+
       "must go to Repayments contact email page from Repayments contact name page" in {
         navigator.nextPage(
           RepaymentsContactNamePage,
