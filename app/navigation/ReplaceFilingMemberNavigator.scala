@@ -211,7 +211,7 @@ class ReplaceFilingMemberNavigator @Inject() {
       .get(RfmCorporatePositionPage)
       .map { corporatePosition =>
         if (!userAnswers.isRfmJourneyCompleted && corporatePosition == CorporatePosition.NewNfm) {
-          controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode)
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         } else { reviewAndSubmitCheckYourAnswers }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

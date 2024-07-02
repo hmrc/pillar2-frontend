@@ -321,7 +321,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           CheckMode,
           emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         ) mustBe
-          controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode)
+          controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
       }
 
       "go to rfm UPE page from corporate position if ultimate parent entity is selected" in {
