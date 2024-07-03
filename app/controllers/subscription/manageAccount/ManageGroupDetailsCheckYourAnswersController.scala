@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AmendIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
 import play.api.Logging
@@ -35,7 +35,7 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,

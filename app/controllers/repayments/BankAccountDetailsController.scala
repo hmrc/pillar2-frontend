@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BankAccountDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,

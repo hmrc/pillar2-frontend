@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReasonForRequestingRefundController @Inject() (
   val sessionRepository:    SessionRepository,
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   getData:                  SessionDataRetrievalAction,
   navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,

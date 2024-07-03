@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryTelephonePreferenceController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,

@@ -20,7 +20,7 @@ import cats.data.OptionT
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AmendIdentifierAction, DataRetrievalAction}
+import controllers.actions.{DataRetrievalAction, EnrolmentIdentifierAction}
 import models.InternalIssueError
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   DataRetrievalAction,
   val subscriptionService:   SubscriptionService,
   val controllerComponents:  MessagesControllerComponents,
@@ -53,8 +53,6 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
-      println("***************************************************")
-      println("request.isAgent:" + request.isAgent)
       (for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- if (request.isAgent) {
@@ -71,7 +69,7 @@ class DashboardController @Inject() (
         )
       )).recover { case InternalIssueError =>
         logger.error(
-          "read subscription failed as no valid Json was returned from the controller"
+          "DashboardController - read subscription failed as no valid Json was returned from the controller"
         )
         Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))

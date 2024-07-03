@@ -33,7 +33,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactEmailController @Inject() (
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   formProvider:             RepaymentsContactEmailFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,

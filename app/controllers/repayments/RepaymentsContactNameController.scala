@@ -34,7 +34,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject() (
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   formProvider:             RepaymentsContactNameFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,

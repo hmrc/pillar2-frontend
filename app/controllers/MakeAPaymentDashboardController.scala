@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{AmendIdentifierAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, EnrolmentIdentifierAction}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,7 +28,7 @@ import views.html.MakeAPaymentDashboardView
 import javax.inject.Inject
 
 class MakeAPaymentDashboardController @Inject() (
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     MakeAPaymentDashboardView,
   getData:                  DataRetrievalAction,

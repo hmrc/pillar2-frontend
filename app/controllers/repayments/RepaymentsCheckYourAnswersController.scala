@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
   featureAction:            FeatureFlagActionFactory,

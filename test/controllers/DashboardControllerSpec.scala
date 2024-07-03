@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, AmendAuthIdentifierAction, FakeIdentifierAction}
+import controllers.actions.{AgentIdentifierAction, EnrolmentAuthIdentifierAction, FakeIdentifierAction}
 import generators.ModelGenerators
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
@@ -131,65 +131,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
 
     }
-
-    // TODO - fix
-//    "return OK and correct view for GET when has clientId and is agent" in {
-//      def injectedParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
-//      val application =
-//        applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
-//          .overrides(
-//            bind[SubscriptionService].toInstance(mockSubscriptionService),
-//            bind[AuthConnector].toInstance(mockAuthConnector),
-//            bind[SessionRepository].toInstance(mockSessionRepository),
-//            bind[AmendAuthIdentifierAction].toInstance(mockAmendAuthIdentifierAction)
-//          )
-//          .build()
-//      val id:           String = UUID.randomUUID().toString
-//      val providerId:   String = UUID.randomUUID().toString
-//      val providerType: String = UUID.randomUUID().toString
-//      val userAnswer = emptyUserAnswers
-//        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
-//
-//      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-//        .thenReturn(
-//          Future.successful(
-//            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-//          )
-//        )
-//      when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-//      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-//
-//      running(application) {
-//        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-//        val result  = route(application, request).value
-//        val view    = application.injector.instanceOf[DashboardView]
-//        when(mockAmendAuthIdentifierAction.refine(any())).thenReturn(
-//          Future.successful(
-//            Right(
-//              IdentifierRequest(
-//                request,
-//                "id",
-//                enrolments = enrolments,
-//                isAgent = true,
-//                userIdForEnrolment = "userId"
-//              )
-//            )
-//          )
-//        )
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(
-//          subscriptionData.upeDetails.organisationName,
-//          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-//          PlrReference,
-//          inactiveStatus = false,
-//          agentView = true
-//        )(
-//          request,
-//          appConfig(application),
-//          messages(application)
-//        ).toString
-//      }
-//    }
 
     "redirect to error page if no valid Js value is found from read subscription api when agent" in {
       val application =

@@ -38,7 +38,7 @@ class NonUKBankController @Inject() (
   formProvider:             NonUKBankFormProvider,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
-  identify:                 AmendIdentifierAction,
+  identify:                 EnrolmentIdentifierAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,

@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MneOrDomesticController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,

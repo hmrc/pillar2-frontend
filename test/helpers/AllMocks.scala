@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{AgentIdentifierAction, AgentWithoutAuthIdentifierAction, AmendAuthIdentifierAction, AmendIdentifierAction, DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, EnrolmentAuthIdentifierAction, EnrolmentIdentifierAction, EnrolmentWithoutAuthIdentifierAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -68,8 +68,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAuditService:                               AuditService                               = mock[AuditService]
   val mockEnrolmentConnector:                         TaxEnrolmentConnector                      = mock[TaxEnrolmentConnector]
   val mockAgentIdentifierAction:                      AgentIdentifierAction                      = mock[AgentIdentifierAction]
-  val mockAmendIdentifierAction:                      AmendIdentifierAction                      = mock[AmendIdentifierAction]
-  val mockAmendAuthIdentifierAction:                  AmendAuthIdentifierAction                  = mock[AmendAuthIdentifierAction]
+  val mockAmendIdentifierAction:                      EnrolmentIdentifierAction                  = mock[EnrolmentIdentifierAction]
+  val mockAmendAuthIdentifierAction:                  EnrolmentAuthIdentifierAction              = mock[EnrolmentAuthIdentifierAction]
 
   override protected def beforeEach(): Unit =
     Seq(

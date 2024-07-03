@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactEmailController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   navigator:                 AmendSubscriptionNavigator,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,

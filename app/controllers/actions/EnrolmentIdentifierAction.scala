@@ -17,7 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.actions.AmendIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
+import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
 import pages.AgentClientPillar2ReferencePage
@@ -38,19 +38,19 @@ import utils.Pillar2SessionKeys
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AmendIdentifierAction
+trait EnrolmentIdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
     with ActionBuilder[IdentifierRequest, AnyContent]
     with ActionFunction[Request, IdentifierRequest] {}
 
 @Singleton
-class AmendAuthIdentifierAction @Inject() (
+class EnrolmentAuthIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   sessionRepository:          SessionRepository,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)
-    extends AmendIdentifierAction
+    extends EnrolmentIdentifierAction
     with AuthorisedFunctions
     with Logging {
 
@@ -75,16 +75,16 @@ class AmendAuthIdentifierAction @Inject() (
             )
           )
         case Some(_) ~ _ ~ Some(Organisation) ~ Some(Assistant) ~ _ =>
-          logger.info("Amend - Organisation: Assistant login attempt")
+          logger.info("EnrolmentAuthIdentifierAction - Organisation: Assistant login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case Some(_) ~ _ ~ Some(Individual) ~ _ ~ _ =>
-          logger.info("Amend - Individual login attempt")
+          logger.info("EnrolmentAuthIdentifierAction - Individual login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case Some(_) ~ _ ~ Some(Agent) ~ _ ~ _ =>
-          logger.info("Amend - Unauthorised Agent login attempt")
+          logger.info("EnrolmentAuthIdentifierAction - Unauthorised Agent login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
-          logger.warn("Amend - Unable to retrieve internal id or affinity group")
+          logger.warn("EnrolmentAuthIdentifierAction - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
@@ -110,7 +110,7 @@ class AmendAuthIdentifierAction @Inject() (
                 and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
             ) {
               case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
-                logger.info(s"authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
+                logger.info(s"EnrolmentAuthIdentifierAction -authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
                 Future.successful(
                   Right(
                     IdentifierRequest(
@@ -123,29 +123,29 @@ class AmendAuthIdentifierAction @Inject() (
                   )
                 )
               case _ =>
-                logger.warn(s"authAsAgent - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+                logger.warn(s"EnrolmentAuthIdentifierAction - authAsAgent - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id")
                 Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
             } recover {
             case _: NoActiveSession =>
               Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
             case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
-              logger.info(s"authAsAgent - Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
+              logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
               Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
             case _: InternalError =>
-              logger.info(s"authAsAgent - Internal error for Agent")
+              logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Internal error for Agent")
               Left(Redirect(routes.AgentController.onPageLoadError))
             case e: AuthorisationException if e.reason.contains("HMRC-PILLAR2-ORG") =>
-              logger.info(s"authAsAgent - Relationship AuthorisationException for Agent due to ${e.reason}")
+              logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Relationship AuthorisationException for Agent due to ${e.reason}")
               Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
             case e: AuthorisationException =>
-              logger.info(s"authAsAgent - AuthorisationException for Agent due to ${e.reason}")
+              logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - AuthorisationException for Agent due to ${e.reason}")
               Left(Redirect(routes.AgentController.onPageLoadError))
             case _ =>
-              logger.info(s"authAsAgent - Error returned from auth for Agent")
+              logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Error returned from auth for Agent")
               Left(Redirect(routes.AgentController.onPageLoadError))
           }
         case _ =>
-          logger.info("authAsAgent - Insufficient enrolment for Agent")
+          logger.info("EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadUnauthorised)))
       }
     }
@@ -154,12 +154,12 @@ class AmendAuthIdentifierAction @Inject() (
 }
 
 @Singleton
-class AgentWithoutAuthIdentifierAction @Inject() (
+class EnrolmentWithoutAuthIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)
-    extends AmendIdentifierAction
+    extends EnrolmentIdentifierAction
     with AuthorisedFunctions
     with Logging {
 
@@ -171,7 +171,7 @@ class AgentWithoutAuthIdentifierAction @Inject() (
           and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
-          logger.info(s"ASA - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
+          logger.info(s"EnrolmentWithoutAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
           Future.successful(
             Right(
               IdentifierRequest(
@@ -184,19 +184,19 @@ class AgentWithoutAuthIdentifierAction @Inject() (
             )
           )
         case _ ~ _ ~ Some(Organisation) ~ _ ~ _ =>
-          logger.info("ASA - Organisation login attempt")
+          logger.info("EnrolmentWithoutAuthIdentifierAction - Organisation login attempt")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadOrganisationError)))
         case _ ~ _ ~ Some(Individual) ~ _ ~ _ =>
-          logger.info("ASA - Individual login attempt")
+          logger.info("EnrolmentWithoutAuthIdentifierAction - Individual login attempt")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
         case _ =>
-          logger.warn(s"ASA - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+          logger.warn(s"EnrolmentWithoutAuthIdentifierAction - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
       } recover {
       case _: NoActiveSession =>
         Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
       case _ =>
-        logger.info(s"ASA - Error returned from auth for Agent")
+        logger.info(s"EnrolmentWithoutAuthIdentifierAction - Error returned from auth for Agent")
         Left(Redirect(routes.AgentController.onPageLoadError))
     }
   }
@@ -205,7 +205,7 @@ class AgentWithoutAuthIdentifierAction @Inject() (
 
 }
 
-object AmendIdentifierAction {
+object EnrolmentIdentifierAction {
   private[controllers] val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
   private[controllers] val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   private[controllers] val ENROLMENT_IDENTIFIER = "PLRID"

@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddSecondaryContactController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   formProvider:              AddSecondaryContactFormProvider,

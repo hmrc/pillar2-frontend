@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ContactCaptureTelephoneDetailsController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,

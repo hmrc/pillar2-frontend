@@ -142,10 +142,7 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
-        bind[AmendIdentifierAction].to[FakeAmendIdentifierAction],
-//        bind[AmendIdentifierAction].toInstance(new FakeAmendIdentifierAction(injectedParsers, pillar2AgentEnrolment)),
-//        if (isAgent) bind[AmendIdentifierAction].toInstance(new FakeAmendIdentifierAction(injectedParsers, pillar2AgentEnrolment, isAgent))
-//        else bind[AmendIdentifierAction].to[FakeAmendIdentifierAction],
+        bind[EnrolmentIdentifierAction].to[FakeEnrolmentIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
         bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(userAnswers))

@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{AmendIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.NonUKAddress
 import pages.SubRegisteredAddressPage
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureSubscriptionAddressController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  AmendIdentifierAction,
+  identify:                  EnrolmentIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   formProvider:              CaptureSubscriptionAddressFormProvider,

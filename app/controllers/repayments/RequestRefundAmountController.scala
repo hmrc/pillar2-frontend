@@ -42,7 +42,7 @@ class RequestRefundAmountController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   featureAction:            FeatureFlagActionFactory,
-  identify:                 AmendIdentifierAction
+  identify:                 EnrolmentIdentifierAction
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

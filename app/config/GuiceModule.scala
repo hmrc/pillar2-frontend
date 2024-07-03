@@ -40,7 +40,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[RfmIdentifierAction]).to(classOf[RfmAuthenticatedIdentifierAction]).asEagerSingleton()
-    bind(classOf[AmendIdentifierAction]).to(classOf[AmendAuthIdentifierAction]).asEagerSingleton()
+    bind(classOf[EnrolmentIdentifierAction]).to(classOf[EnrolmentAuthIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
