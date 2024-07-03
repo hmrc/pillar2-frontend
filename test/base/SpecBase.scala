@@ -85,7 +85,6 @@ trait SpecBase
 
   val pillar2AgentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
     Set(
-      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
     )
   )

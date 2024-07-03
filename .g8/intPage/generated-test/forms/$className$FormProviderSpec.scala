@@ -2,6 +2,7 @@ package forms
 
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
+import scala.util.Random
 
 class $className$FormProviderSpec extends IntFieldBehaviours {
 
@@ -14,7 +15,7 @@ class $className$FormProviderSpec extends IntFieldBehaviours {
     val minimum = $minimum$
     val maximum = $maximum$
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = Random.between(minimum, maximum+1).toString
 
     behave like fieldThatBindsValidData(
       form,

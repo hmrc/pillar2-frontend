@@ -112,7 +112,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
   "the user doesn't have sufficient enrolments" must {
 
-    "must redirect the user to the unauthorised page" in {
+    "must redirect the user to the error page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -125,7 +125,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
       }
     }
 
@@ -138,6 +138,27 @@ class AgentIdentifierActionSpec extends SpecBase {
 
         val authAction =
           new AgentIdentifierAction(new FakeFailingAuthConnector(InsufficientEnrolments(msg = HMRC_PILLAR2_ORG_KEY)), appConfig, bodyParsers)(ec)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadUnauthorised.url
+      }
+    }
+
+    "must redirect to Org-agent relationship check failed page when there is an AuthorisationException no relationship between agent and organisation" in {
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction =
+          new AgentIdentifierAction(
+            new FakeFailingAuthConnector(FailedRelationship(msg = "NO_RELATIONSHIP;HMRC-PILLAR2-ORG")),
+            appConfig,
+            bodyParsers
+          )(ec)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -203,7 +224,7 @@ class AgentIdentifierActionSpec extends SpecBase {
   }
 
   "user does not satisfy predicate" must {
-    "redirect to unauthorised page" in {
+    "redirect to error page" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
@@ -215,14 +236,14 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
       }
     }
   }
 
   "the user used an unaccepted auth provider" must {
 
-    "must redirect the user to the unauthorised page" in {
+    "must redirect the user to the error page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -235,14 +256,14 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.AgentController.onPageLoadError.url
       }
     }
   }
 
   "the user has an unsupported affinity group" must {
 
-    "must redirect the user to the unauthorised page" in {
+    "must redirect the user to the error page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -255,7 +276,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadError.url)
       }
     }
 
@@ -304,7 +325,7 @@ class AgentIdentifierActionSpec extends SpecBase {
 
   "the user has an unsupported credential role" must {
 
-    "must redirect the user to the unauthorised page" in {
+    "must redirect the user to the error page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -317,7 +338,7 @@ class AgentIdentifierActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(routes.AgentController.onPageLoadError.url)
       }
     }
   }

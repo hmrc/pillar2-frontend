@@ -30,9 +30,9 @@
 
 @(form: Form[_], mode: Mode, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("repayment.requestRefundAmount.title"))) {
+@layout(pageTitle = title(form, messages("repayment.requestRefundAmount.title")), maybeClientPillar2Id = clientPillar2Id) {
 
-@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(clientPillar2Id, mode), 'autoComplete -> "off") {
+@formHelper(action = controllers.repayments.routes.RequestRefundAmountController.onSubmit(mode, clientPillar2Id), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

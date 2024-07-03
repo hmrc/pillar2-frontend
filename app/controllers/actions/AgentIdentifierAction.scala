@@ -32,11 +32,9 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//noinspection ScalaStyle
 class AgentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
@@ -56,6 +54,7 @@ class AgentIdentifierAction @Inject() (
               and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
           ) {
             case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+              logger.info(s"Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
               Future.successful(
                 Right(
                   IdentifierRequest(
@@ -71,17 +70,26 @@ class AgentIdentifierAction @Inject() (
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadOrganisationError)))
             case _ ~ _ ~ Some(Individual) ~ _ ~ _ => Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
             case _ =>
-              logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+              logger.warn(" Unable to retrieve internal id or affinity group")
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
           } recover {
           case _: NoActiveSession =>
             Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
           case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
+            logger.info(s"Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
             Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
-          case _: InternalError => Left(Redirect(routes.AgentController.onPageLoadError))
-          case _: AuthorisationException =>
-            Left(Redirect(routes.UnderConstructionController.onPageLoad))
-          case _ => Left(Redirect(routes.AgentController.onPageLoadError))
+          case _: InternalError =>
+            logger.info(s"Internal error for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
+          case e: AuthorisationException if e.reason.contains("HMRC-PILLAR2-ORG") =>
+            logger.info(s"Relationship AuthorisationException for Agent due to ${e.reason}")
+            Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
+          case e: AuthorisationException =>
+            logger.info(s"AuthorisationException for Agent due to ${e.reason}")
+            Left(Redirect(routes.AgentController.onPageLoadError))
+          case _ =>
+            logger.info(s"Error returned from auth for Agent")
+            Left(Redirect(routes.AgentController.onPageLoadError))
         }
       }
 
@@ -98,6 +106,7 @@ object AgentIdentifierAction {
   private[actions] val defaultAgentPredicate: Predicate = AuthProviders(GovernmentGateway)
 
   val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY) and
-      Enrolment(HMRC_PILLAR2_ORG_KEY).withIdentifier("PLRID", clientPillar2Id).withDelegatedAuthRule("pillar2-auth")
+    AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
+      .withIdentifier("PLRID", clientPillar2Id)
+      .withDelegatedAuthRule("pillar2-auth")
 }

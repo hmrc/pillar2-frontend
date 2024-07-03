@@ -21,7 +21,6 @@ import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
-import services.audit.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -34,9 +33,8 @@ trait IncorporatedEntityIdentificationFrontendConnector {
 }
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:    FrontendAppConfig,
-  httpClient:   HttpClient,
-  auditService: AuditService
+  appConfig:  FrontendAppConfig,
+  httpClient: HttpClient
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext

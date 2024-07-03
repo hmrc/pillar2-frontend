@@ -79,7 +79,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect under construction when valid data is submitted" in {
+    "must redirect to Repayments Contact Name page when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -95,7 +95,9 @@ class NonUKBankControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactNameController
+          .onPageLoad(clientPillar2Id = None, NormalMode)
+          .url
       }
     }
 

@@ -3,6 +3,7 @@ package controllers
 import controllers.actions._
 import forms.$className$FormProvider
 import connectors.UserAnswersConnectors
+import play.api.data.Form
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.Mode
@@ -26,16 +27,11 @@ class $className;format="cap"$Controller @Inject()(
                                                 view: $className$View
                                                 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
-    val form = formProvider()
+    val form : Form[Boolean] = formProvider()
 
     def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
        implicit request =>
-
-        val preparedForm = request.userAnswers.get($className$Page) match {
-               case None => form
-               case Some(value) => form.fill(value)
-       }
-
+        val preparedForm = request.userAnswers.get($className$Page).map(form.fill).getOrElse(form)
               Ok(view(preparedForm, mode))
   }
 

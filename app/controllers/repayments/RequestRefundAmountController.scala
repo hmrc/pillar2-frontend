@@ -22,7 +22,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
-import pages.RepaymentsRefundAmountPage
+import pages.{RepaymentsRefundAmountPage, UkOrAbroadBankAccountPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -51,7 +51,7 @@ class RequestRefundAmountController @Inject() (
 
   val form: Form[BigDecimal] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
+  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -64,7 +64,7 @@ class RequestRefundAmountController @Inject() (
       Ok(view(preparedForm, mode, clientPillar2Id))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
+  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen (identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -79,6 +79,9 @@ class RequestRefundAmountController @Inject() (
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, clientPillar2Id, mode, updatedAnswers))
+//            yield Redirect(
+//              controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(mode = mode, clientPillar2Id = clientPillar2Id)
+//            )
         )
     }
 
