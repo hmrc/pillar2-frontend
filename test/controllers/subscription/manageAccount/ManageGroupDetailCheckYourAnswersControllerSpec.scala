@@ -82,7 +82,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
@@ -107,7 +107,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
           val request = FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some("XMPLR0123456789")).url
+            controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
           )
           val result = route(application, request).value
           status(result) mustEqual OK
@@ -126,7 +126,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .value
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
@@ -141,7 +141,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -156,11 +156,11 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.failed(UnexpectedResponse))
 
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
       }
     }
 
@@ -180,12 +180,12 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
 
       val request = FakeRequest(
         POST,
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit(Some("XMPLR0123456789")).url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url
       )
       val result = route(application, request).value
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad(Some("XMPLR0123456789")).url
+      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
     }
 
     "redirect to dashboard page if they successfully amend their data" in {
@@ -195,10 +195,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       running(application) {
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(Done))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
       }
     }
 
@@ -218,11 +218,11 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .thenReturn(Future.successful(Done))
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit(Some("XMPLR0123456789")).url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url
         )
         val result = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad(Some("XMPLR0123456789"), agentView = true).url
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
       }
     }
 

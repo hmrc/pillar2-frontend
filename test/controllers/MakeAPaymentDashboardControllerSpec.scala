@@ -55,13 +55,13 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678", None)(
+        contentAsString(result) mustEqual view("12345678")(
           request,
           appConfig(application),
           messages(application)
@@ -84,13 +84,13 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad(Some(PlrReference)).url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(PlrReference, Some(PlrReference))(
+        contentAsString(result) mustEqual view(PlrReference)(
           request,
           appConfig(application),
           messages(application)
@@ -106,13 +106,13 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       running(application) {
 
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678", None)(
+        contentAsString(result) mustEqual view("12345678")(
           request,
           appConfig(application),
           messages(application)
@@ -127,7 +127,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       running(application) {
 
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

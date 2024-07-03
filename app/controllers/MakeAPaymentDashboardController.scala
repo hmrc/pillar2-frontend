@@ -17,19 +17,18 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.subscription.manageAccount.identifierAction
+import controllers.actions.{AmendIdentifierAction, DataRequiredAction, DataRetrievalAction}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
+
 import javax.inject.Inject
 
 class MakeAPaymentDashboardController @Inject() (
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
+  identify:                 AmendIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     MakeAPaymentDashboardView,
   getData:                  DataRetrievalAction,
@@ -38,18 +37,14 @@ class MakeAPaymentDashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
-      clientPillar2Id
-        .orElse(
-          Pillar2Reference
-            .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-        )
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
+      Pillar2Reference
+        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
         .orElse(request.userAnswers.get(PlrReferencePage))
         .map { pillar2Id =>
-          Ok(view(pillar2Id, clientPillar2Id))
+          Ok(view(pillar2Id))
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
     }
 }

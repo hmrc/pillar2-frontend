@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{SubAddSecondaryContactPage, SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Call, PlayBodyParsers}
 import play.api.test.FakeRequest
@@ -37,8 +38,8 @@ import scala.concurrent.Future
 
 class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
-  val form         = new SecondaryTelephonePreferenceFormProvider()
-  val formProvider = form("name")
+  val form = new SecondaryTelephonePreferenceFormProvider()
+  val formProvider: Form[Boolean] = form("name")
 
   "SecondaryTelephonePreference Controller for Organisation View Contact details" when {
 
@@ -49,14 +50,14 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -74,14 +75,14 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -96,7 +97,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider.bind(Map("value" -> ""))
@@ -106,7 +107,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -116,7 +117,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()
-      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad().url)
+      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url)
 
       running(application) {
         val result =
@@ -130,7 +131,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit().url)
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url)
         .withFormUrlEncodedBody("value" -> "true")
 
       running(application) {
@@ -146,7 +147,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -170,7 +171,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "false")
 
         val result = route(application, request).value
@@ -178,7 +179,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, clientPillar2Id = None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, expectedUserAnswers)
       }
     }
 
@@ -201,7 +202,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
         )
 
         val result = route(application, request).value
@@ -209,7 +210,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -235,7 +236,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
         )
 
         val result = route(application, request).value
@@ -243,7 +244,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -266,7 +267,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
           )
             .withFormUrlEncodedBody(("value", ""))
 
@@ -277,7 +278,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -293,7 +294,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       val request = FakeRequest(
         GET,
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
       )
 
       running(application) {
@@ -316,7 +317,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       val request = FakeRequest(
         POST,
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url
       )
         .withFormUrlEncodedBody("value" -> "true")
 
@@ -334,7 +335,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -365,7 +366,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url
         )
           .withFormUrlEncodedBody("value" -> "false")
 
@@ -374,7 +375,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, expectedUserAnswers)
       }
     }
 

@@ -19,14 +19,14 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentWithoutAuthIdentifierAction, AmendAuthIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions.{AgentWithoutAuthIdentifierAction, AmendAuthIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AgentView
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AgentController @Inject() (
   val controllerComponents:    MessagesControllerComponents,
   val userAnswersConnectors:   UserAnswersConnectors,
+  sessionRepository:           SessionRepository,
   subscriptionService:         SubscriptionService,
   view:                        AgentView,
   clientPillarIdView:          AgentClientPillarIdView,
@@ -50,8 +51,8 @@ class AgentController @Inject() (
   agentWithAuthIdentify:       AmendAuthIdentifierAction,
   agentWithoutAuthIdentify:    AgentWithoutAuthIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
-  getData:                     DataRetrievalAction,
-  requireData:                 DataRequiredAction,
+  getData:                     SessionDataRetrievalAction,
+  requireData:                 SessionDataRequiredAction,
   formProvider:                AgentClientPillar2ReferenceFormProvider
 )(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -82,10 +83,10 @@ class AgentController @Inject() (
           value => {
             val result = for {
               updatedAnswers     <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, value))
-              _                  <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              _                  <- sessionRepository.set(updatedAnswers)
               subscriptionData   <- subscriptionService.readSubscription(value)
               answersWithOrgName <- Future.fromTry(updatedAnswers.set(AgentClientOrganisationNamePage, subscriptionData.upeDetails.organisationName))
-              _                  <- userAnswersConnectors.save(answersWithOrgName.id, Json.toJson(answersWithOrgName.data))
+              _                  <- sessionRepository.set(answersWithOrgName)
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)
 
             result.recover { case InternalIssueError =>
@@ -108,7 +109,7 @@ class AgentController @Inject() (
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentWithAuthIdentify andThen getData andThen requireData).async {
-      Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
+      Future successful Redirect(routes.DashboardController.onPageLoad)
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =

@@ -34,8 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ContactNameComplianceController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
+  identify:                  AmendIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -47,28 +46,28 @@ class ContactNameComplianceController @Inject() (
     with I18nSupport {
   val form: Form[String] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData) { implicit request =>
       val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubPrimaryContactNamePage)) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, clientPillar2Id))
+      Ok(view(preparedForm))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <-
                 Future
                   .fromTry(request.subscriptionLocalData.set(SubPrimaryContactNamePage, value))
               _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubPrimaryContactNamePage, clientPillar2Id, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SubPrimaryContactNamePage, updatedAnswers))
         )
     }
 

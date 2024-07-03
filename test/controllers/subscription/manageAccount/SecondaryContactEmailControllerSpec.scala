@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{Call, PlayBodyParsers}
@@ -37,8 +38,8 @@ import scala.concurrent.Future
 
 class SecondaryContactEmailControllerSpec extends SpecBase {
 
-  val form         = new SecondaryContactEmailFormProvider()
-  val formProvider = form("name")
+  val form = new SecondaryContactEmailFormProvider()
+  val formProvider: Form[String] = form("name")
 
   "SecondaryContactEmail Controller for Organisation View Contact details" should {
 
@@ -47,14 +48,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -74,14 +75,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -98,7 +99,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
 
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
@@ -106,7 +107,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -118,7 +119,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
           .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {
@@ -133,7 +134,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request =
-        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
       running(application) {
         val result = route(application, request).value
@@ -148,7 +149,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers =
@@ -165,7 +166,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
 
         val result = route(application, request).value
@@ -173,7 +174,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryEmailPage, clientPillar2Id = None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryEmailPage, expectedUserAnswers)
       }
     }
 
@@ -194,7 +195,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
 
         val result = route(application, request).value
@@ -202,7 +203,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -230,7 +231,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
 
         val result = route(application, request).value
@@ -238,7 +239,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -261,7 +262,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
             .withFormUrlEncodedBody(("emailAddress", "12345"))
 
@@ -270,7 +271,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -288,7 +289,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val request =
         FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
         )
           .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
@@ -312,7 +313,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val request =
         FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
         )
 
       running(application) {
@@ -330,7 +331,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers =
@@ -353,7 +354,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url
           )
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
 
@@ -362,7 +363,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryEmailPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryEmailPage, expectedUserAnswers)
       }
     }
 

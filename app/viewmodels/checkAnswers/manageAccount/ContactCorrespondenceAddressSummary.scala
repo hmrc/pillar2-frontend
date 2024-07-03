@@ -27,9 +27,9 @@ import viewmodels.implicits._
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(maybeClientPillar2Id: Option[String], countryOptions: CountryOptions)(implicit
-    messages:                   Messages,
-    request:                    SubscriptionDataRequest[_]
+  def row(countryOptions: CountryOptions)(implicit
+    messages:             Messages,
+    request:              SubscriptionDataRequest[_]
   ): Option[SummaryListRow] =
     request.subscriptionLocalData
       .get(SubRegisteredAddressPage)
@@ -41,7 +41,7 @@ object ContactCorrespondenceAddressSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad(maybeClientPillar2Id).url
+              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
             )
               .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
           )

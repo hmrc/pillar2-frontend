@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AmendIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.ContactEmailAddressFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
@@ -32,8 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ContactEmailAddressController @Inject() (
   val subscriptionConnector: SubscriptionConnector,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
+  identify:                  AmendIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   navigator:                 AmendSubscriptionNavigator,
@@ -44,23 +43,23 @@ class ContactEmailAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData) { implicit request =>
       request.maybeSubscriptionLocalData
         .flatMap { subscriptionLocalData =>
           subscriptionLocalData
             .get(SubPrimaryContactNamePage)
             .map { contactName =>
               val form = formProvider(contactName)
-              Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), contactName, clientPillar2Id))
+              Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), contactName))
             }
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>
@@ -68,13 +67,13 @@ class ContactEmailAddressController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, clientPillar2Id))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
               value =>
                 for {
                   updatedAnswers <-
                     Future.fromTry(request.subscriptionLocalData.set(SubPrimaryEmailPage, value))
                   _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, clientPillar2Id, updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubPrimaryEmailPage, updatedAnswers))
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

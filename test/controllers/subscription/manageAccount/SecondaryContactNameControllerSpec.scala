@@ -46,14 +46,14 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -69,14 +69,14 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
 
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
           appConfig(application),
           messages(application)
@@ -91,7 +91,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val stringInput = randomStringGenerator(161)
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
             .withFormUrlEncodedBody(("value", stringInput))
 
         val boundForm = formProvider().bind(Map("value" -> stringInput))
@@ -101,7 +101,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -110,7 +110,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -126,7 +126,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "Keith")
 
         val result = route(application, request).value
@@ -134,7 +134,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryContactNamePage, clientPillar2Id = None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryContactNamePage, expectedUserAnswers)
       }
     }
 
@@ -154,7 +154,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
         )
 
         val result = route(application, request).value
@@ -162,7 +162,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -185,7 +185,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
         )
 
         val view = application.injector.instanceOf[SecondaryContactNameView]
@@ -193,7 +193,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
           appConfig(application),
           messages(application)
@@ -214,7 +214,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url
           )
             .withFormUrlEncodedBody(("value", stringInput))
 
@@ -225,7 +225,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(boundForm)(
           request,
           appConfig(application),
           messages(application)
@@ -236,7 +236,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
     "must update subscription data and redirect to the next page" in {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -257,7 +257,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url
         )
           .withFormUrlEncodedBody("value" -> "Keith")
 
@@ -266,7 +266,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryContactNamePage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryContactNamePage, expectedUserAnswers)
       }
     }
 

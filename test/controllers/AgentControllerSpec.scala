@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, AgentWithoutAuthIdentifierAction, AmendIdentifierAction, FakeIdentifierAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import org.mockito.ArgumentMatchers
@@ -27,7 +26,6 @@ import org.mockito.Mockito.when
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
@@ -37,6 +35,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import views.html.rfm.AgentView
 import views.html._
 import controllers.actions.TestAuthRetrievals.Ops
+import repositories.SessionRepository
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -91,15 +90,17 @@ class AgentControllerSpec extends SpecBase {
 
     "must return the correct view if the feature flag is true and user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-
+      val userAnswer = emptyUserAnswers
+        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
@@ -144,7 +145,7 @@ class AgentControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[SessionRepository].toInstance(mockSessionRepository),
           bind[SubscriptionService].toInstance(mockSubscriptionService),
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
@@ -156,7 +157,7 @@ class AgentControllerSpec extends SpecBase {
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(any()))
         .thenReturn(Future.successful(subscriptionData))
 
@@ -173,7 +174,7 @@ class AgentControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[SessionRepository].toInstance(mockSessionRepository),
           bind[SubscriptionService].toInstance(mockSubscriptionService),
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
@@ -185,7 +186,7 @@ class AgentControllerSpec extends SpecBase {
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSubscriptionService.readSubscription(any())(any()))
         .thenReturn(Future.failed(InternalIssueError))
 
@@ -202,7 +203,7 @@ class AgentControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[SessionRepository].toInstance(mockSessionRepository),
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
@@ -213,7 +214,7 @@ class AgentControllerSpec extends SpecBase {
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
@@ -307,10 +308,10 @@ class AgentControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
-      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
         .thenReturn(
           Future.successful(
@@ -327,9 +328,7 @@ class AgentControllerSpec extends SpecBase {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails(PlrReference).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController
-          .onPageLoad(clientPillar2Id = Some(PlrReference), agentView = true)
-          .url
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
       }
 
     }

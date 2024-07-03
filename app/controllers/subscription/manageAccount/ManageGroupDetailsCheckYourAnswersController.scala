@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AmendIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
 import play.api.Logging
@@ -35,8 +35,7 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
+  identify:                  AmendIdentifierAction,
   getData:                   SubscriptionDataRetrievalAction,
   requireData:               SubscriptionDataRequiredAction,
   val controllerComponents:  MessagesControllerComponents,
@@ -49,29 +48,27 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
-          MneOrDomesticSummary.row(clientPillar2Id),
-          GroupAccountingPeriodSummary.row(clientPillar2Id),
+          MneOrDomesticSummary.row(),
+          GroupAccountingPeriodSummary.row(),
           GroupAccountingPeriodStartDateSummary.row(),
           GroupAccountingPeriodEndDateSummary.row()
         ).flatten
       )
-      Ok(view(list, clientPillar2Id))
+      Ok(view(list))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) async { implicit request =>
       (for {
-        referenceNumber <- OptionT
-                             .fromOption[Future](clientPillar2Id)
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
+        referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
         .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

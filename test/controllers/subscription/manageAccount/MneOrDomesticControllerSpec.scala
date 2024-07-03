@@ -51,14 +51,14 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
           request,
           appConfig(application),
           messages(application)
@@ -70,12 +70,12 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -89,7 +89,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val result = route(application, request).value
 
@@ -102,7 +102,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -117,7 +117,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "uk")
 
         val result = route(application, request).value
@@ -125,7 +125,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubMneOrDomesticPage, clientPillar2Id = None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
 
@@ -148,14 +148,14 @@ class MneOrDomesticControllerSpec extends SpecBase {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
           request,
           appConfig(application),
           messages(application)
@@ -174,12 +174,12 @@ class MneOrDomesticControllerSpec extends SpecBase {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -200,7 +200,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
           )
             .withFormUrlEncodedBody(("value", "invalid value"))
         val result = route(application, request).value
@@ -214,7 +214,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -233,7 +233,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       running(application) {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit(clientPillar2Id = Some(PlrReference)).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
             .withFormUrlEncodedBody("value" -> "uk")
 
         val result = route(application, request).value
@@ -241,7 +241,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubMneOrDomesticPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
 

@@ -17,7 +17,6 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions.AmendIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
@@ -25,6 +24,7 @@ import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
+import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -34,6 +34,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +46,7 @@ trait AmendIdentifierAction
 @Singleton
 class AmendAuthIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
-  val userAnswersConnectors:  UserAnswersConnectors,
+  sessionRepository:          SessionRepository,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)
@@ -95,12 +96,12 @@ class AmendAuthIdentifierAction @Inject() (
   override def parser:                     BodyParser[AnyContent] = bodyParser
   override protected def executionContext: ExecutionContext       = ec
 
-  private def authAsAgent[A](
+  def authAsAgent[A](
     request:    Request[A],
     internalId: String
   ): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    userAnswersConnectors.getUserAnswer(internalId).flatMap { maybeUserAnswers =>
+    sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)) match {
         case Some(backEndClientPillar2Id) =>
           authorised(VerifyAgentClientPredicate(backEndClientPillar2Id))
@@ -155,7 +156,6 @@ class AmendAuthIdentifierAction @Inject() (
 @Singleton
 class AgentWithoutAuthIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
-  val userAnswersConnectors:  UserAnswersConnectors,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)

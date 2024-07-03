@@ -32,6 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -69,7 +70,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val userAnswer = emptyUserAnswers
         .setOrException(AgentClientPillar2ReferencePage, PlrReference)
@@ -82,12 +83,12 @@ class AmendIdentifierActionSpec extends SpecBase {
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe OK
@@ -97,7 +98,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "doesn't have sufficient enrolments" must {
         "redirect to the error page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -109,7 +110,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -120,7 +121,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "there is no relationship between agent and organisation" must {
         "redirect to Org-agent relationship check failed page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -133,7 +134,7 @@ class AmendIdentifierActionSpec extends SpecBase {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
             val authAction =
-              new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+              new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller = new Harness(authAction)
             val result     = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -144,7 +145,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "there is an AuthorisationException no relationship between agent and organisation" must {
         "redirect to Org-agent relationship check failed page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -156,7 +157,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -167,7 +168,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "internal error with auth service" must {
         "redirect to agent there is a problem page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -180,7 +181,7 @@ class AmendIdentifierActionSpec extends SpecBase {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
             val authAction =
-              new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+              new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller = new Harness(authAction)
             val result     = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -189,7 +190,7 @@ class AmendIdentifierActionSpec extends SpecBase {
         }
 
         "redirect to agent there is a problem page if an error outside service" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -201,7 +202,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -212,7 +213,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "does not satisfy predicate" must {
         "redirect to error page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -224,7 +225,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -235,7 +236,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "used an unaccepted auth provider" must {
         "redirect to error page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -247,7 +248,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -258,7 +259,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "unsupported affinity group" must {
         "redirect the user to the error page" in {
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -270,7 +271,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -346,13 +347,7 @@ class AmendIdentifierActionSpec extends SpecBase {
 
       "an unsupported credential role" must {
         "redirect the user to the error page" in {
-//          val application = applicationBuilder(userAnswers = None)
-//            .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
-//            .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-//            .build()
-//          val userAnswer = emptyUserAnswers
-//            .setOrException(AgentClientPillar2ReferencePage, PlrReference)
-          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -364,7 +359,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe SEE_OTHER
@@ -392,7 +387,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
             val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+            val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe OK
@@ -410,7 +405,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
           val authAction =
-            new AmendAuthIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), mockUserAnswersConnectors, appConfig, bodyParsers)(ec)
+            new AmendAuthIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), mockSessionRepository, appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -427,7 +422,7 @@ class AmendIdentifierActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
           val authAction =
-            new AmendAuthIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), mockUserAnswersConnectors, appConfig, bodyParsers)(ec)
+            new AmendAuthIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), mockSessionRepository, appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -447,7 +442,7 @@ class AmendIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockUserAnswersConnectors, appConfig, bodyParsers)
+          val authAction  = new AmendAuthIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER

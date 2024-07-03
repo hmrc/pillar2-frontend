@@ -26,7 +26,9 @@ import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
 import play.api.libs.json.Json
+import play.api.libs.typedmap.TypedMap
 import play.api.mvc.Call
+import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.RowStatus

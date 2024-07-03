@@ -43,7 +43,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
             ("addressLine2", "Drive"),
@@ -54,9 +54,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
           )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
-          .onPageLoad()
-          .url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
@@ -68,7 +66,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
       }
@@ -82,7 +80,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),
@@ -107,7 +105,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",
@@ -145,7 +143,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
         )
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -158,9 +156,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
-          .onPageLoad(Some(PlrReference))
-          .url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
@@ -179,7 +175,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
         )
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -201,7 +197,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
           )
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
@@ -234,7 +230,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
           )
             .withFormUrlEncodedBody(
               (

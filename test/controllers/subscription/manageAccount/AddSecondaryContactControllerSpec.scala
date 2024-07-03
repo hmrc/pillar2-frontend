@@ -51,14 +51,14 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name", clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -75,7 +75,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -85,7 +85,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -95,7 +95,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
+      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
 
       running(application) {
         val result =
@@ -109,7 +109,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
         .withFormUrlEncodedBody(
           "value" -> "true"
         )
@@ -128,7 +128,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -161,7 +161,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "false")
 
         val result = route(application, request).value
@@ -169,7 +169,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubAddSecondaryContactPage, None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubAddSecondaryContactPage, expectedUserAnswers)
       }
     }
 
@@ -193,14 +193,14 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad(Some(PlrReference)).url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name", clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider().fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -224,7 +224,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad(Some(PlrReference)).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -234,7 +234,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", clientPillar2Id = Some(PlrReference))(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -248,7 +248,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .build()
       val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
 
-      val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit(Some(PlrReference)).url)
+      val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
 
       running(application) {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
@@ -269,7 +269,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
       when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit(Some(PlrReference)).url)
+      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
         .withFormUrlEncodedBody(
           "value" -> "true"
         )
@@ -288,7 +288,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
@@ -326,7 +326,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       running(application) {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
 
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit(Some(PlrReference)).url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "false")
 
         val result = route(application, request).value
@@ -334,7 +334,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubAddSecondaryContactPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubAddSecondaryContactPage, expectedUserAnswers)
       }
     }
 
