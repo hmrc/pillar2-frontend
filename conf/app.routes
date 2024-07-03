@@ -307,7 +307,7 @@ GET        /manage-account/contact-details/address/change-input                 
 POST       /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id: Option[String] ?= None)
 
 
-GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
+GET         /pillar2-top-up-tax-home                                                                controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
 
 GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm
@@ -480,3 +480,6 @@ POST       /repayment/non-uk-details                                            
 GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 
+GET        /repayment/confirmation                   controllers.repayments.RepaymentConfirmationController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+
+GET        /repayment/error/return                   controllers.repayments.RepaymentErrorReturnController.onPageLoad(clientPillar2Id: Option[String] ?= None)
