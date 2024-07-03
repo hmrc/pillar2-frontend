@@ -1,5 +1,6 @@
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -24,7 +25,7 @@
         @govukInput(
             InputViewModel(
                 field = form("$field1Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$"))
+                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$")).asPageHeading(Large)
             )
             .withWidth(Full)
         )
@@ -32,7 +33,7 @@
         @govukInput(
             InputViewModel(
                 field = form("$field2Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$"))
+                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$")).asPageHeading(Large)
             )
             .withWidth(Full)
         )

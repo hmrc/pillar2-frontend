@@ -20,12 +20,9 @@ import config.FrontendAppConfig
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 import views.html.JourneyRecoveryView
 
 import javax.inject.Inject
@@ -38,14 +35,12 @@ class JourneyRecoveryController @Inject() (
     with Logging {
 
   def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = Action { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
     val safeUrl: Option[String] = continueUrl.flatMap { unsafeUrl =>
       unsafeUrl.getEither(OnlyRelative) match {
         case Right(safeUrl) =>
           Some(safeUrl.url)
         case Left(message) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - $message")
+          logger.info(s"$message")
           None
       }
     }

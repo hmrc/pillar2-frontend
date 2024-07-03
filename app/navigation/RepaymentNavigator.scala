@@ -42,8 +42,8 @@ class RepaymentNavigator @Inject() {
     case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
     case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode)
     case RepaymentsContactByTelephonePage => data => telephonePreferenceNormalMode(data)
-    case RepaymentsTelephoneDetailsPage   => _ => routes.UnderConstructionController.onPageLoad
-    case _                                => _ => routes.IndexController.onPageLoad
+    case RepaymentsTelephoneDetailsPage   => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case _                                => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogic(userAnswers: UserAnswers): Call =
@@ -58,7 +58,29 @@ class RepaymentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.IndexController.onPageLoad
+  private def ukOrAbroadBankAccountLogicCheckMode(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(UkOrAbroadBankAccountPage)
+      .map { ukOrAbroad =>
+        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode)
+        } else {
+          controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private val checkRouteMap: Page => UserAnswers => Call = {
+    case RepaymentsRefundAmountPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case ReasonForRequestingRefundPage    => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case UkOrAbroadBankAccountPage        => data => ukOrAbroadBankAccountLogicCheckMode(data)
+    case NonUKBankPage                    => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactByTelephonePage => data => telephonePreferenceCheckMode(data)
+    case RepaymentsTelephoneDetailsPage   => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case _                                => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+  }
 
   private def telephonePreferenceNormalMode(userAnswers: UserAnswers): Call =
     userAnswers
@@ -67,7 +89,17 @@ class RepaymentNavigator @Inject() {
         case true =>
           controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(NormalMode)
         case false =>
-          routes.UnderConstructionController.onPageLoad
+          controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def telephonePreferenceCheckMode(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(RepaymentsContactByTelephonePage)
+      .map { PhoneNumber =>
+        if (PhoneNumber & userAnswers.get(RepaymentsTelephoneDetailsPage).isEmpty) {
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(CheckMode)
+        } else { controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 

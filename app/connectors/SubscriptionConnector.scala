@@ -28,7 +28,6 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
-import utils.Pillar2SessionKeys
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,16 +41,15 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionRequestParameters)
       .flatMap {
         case response if is2xx(response.status) =>
-          logger.info(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription request is successful with status ${response.status} ")
+          logger.info(s" Subscription request is successful with status ${response.status} ")
           response.json.as[SuccessResponse].success.plrReference.toFuture
         case conflictResponse if conflictResponse.status.equals(CONFLICT) => Future.failed(DuplicateSubmissionError)
         case errorResponse =>
           logger.debug(
-            s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
+            s"[Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
               s"and fmSafeId ${subscriptionRequestParameters.fmSafeId}"
           )
-
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Subscription call failed with status ${errorResponse.status}")
+          logger.warn(s"Subscription call failed with status ${errorResponse.status}")
 
           Future.failed(InternalIssueError)
       }

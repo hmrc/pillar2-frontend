@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@import config.FrontendAppConfig
+@import views.html.components.gds._
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        heading: heading,
+        govukButton: GovukButton
+)
 
-import scala.util.Try
 
-case object RepaymentsContactByTelephonePage extends QuestionPage[Boolean] {
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-  override def path: JsPath = JsPath \ toString
+@layout(
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
 
-  override def toString: String = "repaymentsContactByPhone"
+    @heading(messages("under_construction.heading"))
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
-      userAnswers
-        .remove(RepaymentsTelephoneDetailsPage)
-    } else {
-      super.cleanup(value, userAnswers)
-    }
+    @govukButton(
+        ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
+    )
+
 }

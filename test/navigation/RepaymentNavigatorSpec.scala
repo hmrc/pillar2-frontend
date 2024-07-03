@@ -19,22 +19,28 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import models._
+import models.repayments.NonUKBank
 import pages._
 
 class RepaymentNavigatorSpec extends SpecBase {
 
   val navigator = new RepaymentNavigator
 
-  private lazy val journeyRecovery   = routes.JourneyRecoveryController.onPageLoad()
-  private lazy val underConstruction = routes.UnderConstructionController.onPageLoad
+  private lazy val journeyRecovery        = routes.JourneyRecoveryController.onPageLoad()
+  private lazy val underConstruction      = routes.UnderConstructionController.onPageLoad
+  private lazy val repaymentsQuestionsCYA = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
 
   "Navigator" when {
 
     "in Normal mode" must {
 
-      "go from a page that doesn't exist in the route map to Index" in {
+      "must go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          NormalMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
       }
 
       "go to type of bank account page after submitting their reason for requesting a refund" in {
@@ -58,10 +64,21 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe
           controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode)
       }
+
+      "go to journey recovery page id no bank account type is provided" in {
+        val userAnswers = emptyUserAnswers
+        navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, userAnswers) mustBe
+          journeyRecovery
+      }
+
       "go to journey recovery page if they somehow manage to submit an empty form" in {
         navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          NormalMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
       }
       "go to reason for requesting a refund page from request refund amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
@@ -75,7 +92,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
       }
 
-      "go to Repayments contact email page from Repayments contact name page" in {
+      "must go to Repayments contact email page from Repayments contact name page" in {
         navigator.nextPage(
           RepaymentsContactNamePage,
           NormalMode,
@@ -84,7 +101,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
       }
 
-      "go to Repayments Contact By Telephone page from Repayments contact email page" in {
+      "must go to Repayments Contact By Telephone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           NormalMode,
@@ -108,28 +125,148 @@ class RepaymentNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
         ) mustBe
-          underConstruction
+          repaymentsQuestionsCYA
       }
 
-      "must go to UnderConstruction page from Repayments Telephone Details page" in {
+      "must go to recovery  page from if incomplete info provided for telephone preference in normal mode" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe
+          journeyRecovery
+      }
+
+      "must go to Repayments CYA page from Repayments Telephone Details page" in {
         navigator.nextPage(
           RepaymentsTelephoneDetailsPage,
           NormalMode,
           emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "12345")
         ) mustBe
-          underConstruction
+          repaymentsQuestionsCYA
       }
 
     }
 
     "in Check mode" must {
-
+      val amount = BigDecimal(9.99)
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          CheckMode,
+          UserAnswers("id")
+        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+      }
+
+      "go to Repayment questions CYA page from Repayments Refund Amount page" in {
+        navigator.nextPage(
+          RepaymentsRefundAmountPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to Repayment questions CYA page from Reason For requesting refund page" in {
+        navigator.nextPage(
+          ReasonForRequestingRefundPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "any test reason")
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to Repayment questions CYA page from bank account type page" in {
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to under construction  page from bank account type page id UK bank account type selected" in {
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+        ) mustBe
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode)
+      }
+
+      "go to recovery  page from bank account type page if incomplete information is provided" in {
+        navigator.nextPage(
+          UkOrAbroadBankAccountPage,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe
+          journeyRecovery
+      }
+
+      "go to Repayment questions CYA page from bank account details page" in {
+        navigator.nextPage(
+          NonUKBankPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to Repayment questions CYA page from Repayments Contact Name page" in {
+        navigator.nextPage(
+          RepaymentsContactNamePage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC contact name")
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to Repayment questions CYA page from repayments Contact email page" in {
+        navigator.nextPage(
+          RepaymentsContactEmailPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@hello.com")
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to telephone details page if contact by answer yes" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, true)
+        ) mustBe
+          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(CheckMode)
+      }
+
+      "go to Repayment questions CYA page if contact by answer No" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
+        ) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to recovery page if correct information is not provided for telephone preference" in {
+        navigator.nextPage(
+          RepaymentsContactByTelephonePage,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe
+          journeyRecovery
+      }
+
+      "go to Repayment questions CYA page from repayments telephone detailsPage" in {
+        navigator.nextPage(
+          RepaymentsTelephoneDetailsPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "123456789")
+        ) mustBe
+          repaymentsQuestionsCYA
       }
 
     }
-
   }
 }

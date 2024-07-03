@@ -17,29 +17,23 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.TestAuthRetrievals.Ops
 import controllers.actions.{AgentIdentifierAction, AmendAuthIdentifierAction, FakeIdentifierAction}
 import generators.ModelGenerators
-import models.requests.IdentifierRequest
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.AgentClientPillar2ReferencePage
 import play.api.inject.bind
-import play.api.mvc.{PlayBodyParsers, Request}
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import views.html.DashboardView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 import scala.concurrent.Future
 
 class DashboardControllerSpec extends SpecBase with ModelGenerators {

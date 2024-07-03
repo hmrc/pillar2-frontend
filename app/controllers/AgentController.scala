@@ -23,6 +23,7 @@ import controllers.actions.{AgentWithoutAuthIdentifierAction, AmendAuthIdentifie
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -56,7 +57,8 @@ class AgentController @Inject() (
   formProvider:                AgentClientPillar2ReferenceFormProvider
 )(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -107,7 +109,7 @@ class AgentController @Inject() (
         .getOrElse(Future successful Redirect(routes.AgentController.onPageLoadError))
     }
 
-  def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
+  def onSubmitConfirmClientDetails: Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentWithAuthIdentify andThen getData andThen requireData).async {
       Future successful Redirect(routes.DashboardController.onPageLoad)
     }

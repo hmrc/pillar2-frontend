@@ -18,22 +18,18 @@ package controllers.actions
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
 import controllers.actions.AmendIdentifierAction.HMRC_PILLAR2_ORG_KEY
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
-import models.UserAnswers
-import models.subscription.SubscriptionLocalData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.AgentClientPillar2ReferencePage
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 
@@ -42,7 +38,6 @@ import scala.concurrent.Future
 
 class AmendIdentifierActionSpec extends SpecBase {
 
-//  private type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val enrolmentKey    = "HMRC-PILLAR2-ORG"

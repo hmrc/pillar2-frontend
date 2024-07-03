@@ -25,7 +25,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
@@ -325,7 +324,7 @@ class AgentControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails(PlrReference).url)
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
@@ -351,7 +350,7 @@ class AgentControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails(PlrReference).url)
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.AgentController.onPageLoadUnauthorised.url

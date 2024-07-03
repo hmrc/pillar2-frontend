@@ -32,7 +32,6 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Pillar2SessionKeys
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,7 +70,7 @@ class AgentIdentifierAction @Inject() (
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadOrganisationError)))
             case _ ~ _ ~ Some(Individual) ~ _ ~ _ => Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
             case _ =>
-              logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+              logger.warn(" Unable to retrieve internal id or affinity group")
               Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
           } recover {
           case _: NoActiveSession =>

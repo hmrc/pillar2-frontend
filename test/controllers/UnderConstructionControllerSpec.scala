@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
-import views.html.UnderConstruction
+import views.html.{UnderConstruction, UnderConstructionAgent}
 
 class UnderConstructionControllerSpec extends SpecBase {
 
@@ -35,6 +35,22 @@ class UnderConstructionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UnderConstruction]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET for agent in repayments" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.UnderConstructionController.onPageLoadAgent.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UnderConstructionAgent]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString

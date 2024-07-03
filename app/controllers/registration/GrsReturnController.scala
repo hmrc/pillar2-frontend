@@ -32,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Pillar2SessionKeys, RowStatus}
+import utils.RowStatus
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -341,43 +341,37 @@ class GrsReturnController @Inject() (
     journeyType:      JourneyType,
     journeyId:        String,
     entityType:       EntityType
-  )(implicit hc:      HeaderCarrier): Result =
+  ): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Filing Member Business Verification failed for $entityType with journey ID $journeyId"
+          s"Filing Member Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
+          s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.ReplaceFilingMember =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Replace Filing Member Business Verification failed for $entityType with journey ID $journeyId"
+          s"Replace Filing Member Business Verification failed for $entityType with journey ID $journeyId"
         )
         Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadRfm)
       case (true, _, _, Some(_)) if journeyType == JourneyType.ReplaceFilingMember =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
+          s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
         )
         Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
 
       case (true, _, _, Some(_)) =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
+          s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
         )
         Redirect(controllers.routes.TaskListController.onPageLoad)
       case (_, _, RegistrationFailed, _) =>
         logger.info(
-          s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - " +
-            s"$journeyType registration failed for $entityType with journey ID $journeyId"
+          s"$journeyType registration failed for $entityType with journey ID $journeyId"
         )
         (grsResult.failures, journeyType) match {
           case (_, JourneyType.FilingMember) =>

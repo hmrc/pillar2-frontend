@@ -14,37 +14,31 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.UkOrAbroadBankAccountPage
+import pages.NonUKBankPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object UkOrAbroadBankAccountSummary {
+object NonUKBankNameSummary {
 
-  def row(maybeClientPillar2Id: Option[String], answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(UkOrAbroadBankAccountPage).map { answer =>
-      val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(messages(s"ukOrAbroadBankAccount.$answer"))
-        )
-      )
-
-      SummaryListRowViewModel(
-        key = "ukOrAbroadBankAccount.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers
+      .get(NonUKBankPage)
+      .map { answer =>
+        SummaryListRowViewModel(
+          key = "repayments.nonUKBank.summary.bankName.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(answer.bankName)),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden"))
+              .withCssClass("govuk-!-display-none-print")
           )
-            .withVisuallyHiddenText(messages("ukOrAbroadBankAccount.change.hidden"))
         )
-      )
-    }
+      }
+
 }
