@@ -50,7 +50,7 @@ class AgentControllerSpec extends SpecBase {
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
   )
-  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+  type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString

@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{ASAEnrolmentIdentifierAction, AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, EnrolmentAuthIdentifierAction, EnrolmentIdentifierAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, EnrolmentAuthIdentifierAction, EnrolmentIdentifierAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -67,9 +67,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
   val mockAuditService:                               AuditService                               = mock[AuditService]
   val mockEnrolmentConnector:                         TaxEnrolmentConnector                      = mock[TaxEnrolmentConnector]
-  val mockAgentIdentifierAction:                      AgentIdentifierAction                      = mock[AgentIdentifierAction]
-  val mockAmendIdentifierAction:                      EnrolmentIdentifierAction                  = mock[EnrolmentIdentifierAction]
-  val mockAmendAuthIdentifierAction:                  EnrolmentAuthIdentifierAction              = mock[EnrolmentAuthIdentifierAction]
+  val mockEnrolmentIdentifierAction:                  EnrolmentIdentifierAction                  = mock[EnrolmentIdentifierAction]
+  val mockEnrolmentAuthIdentifierAction:              EnrolmentAuthIdentifierAction              = mock[EnrolmentAuthIdentifierAction]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -91,8 +90,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockEnrolmentStoreProxyConnector,
       mockAuditService,
       mockEnrolmentConnector,
-      mockAgentIdentifierAction,
-      mockAmendIdentifierAction,
-      mockAmendAuthIdentifierAction
+      mockEnrolmentIdentifierAction,
+      mockEnrolmentAuthIdentifierAction
     ).foreach(Mockito.reset(_))
 }

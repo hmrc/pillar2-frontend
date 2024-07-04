@@ -49,8 +49,8 @@ class AgentController @Inject() (
   agentClientUnauthorisedView: AgentClientUnauthorisedView,
   agentIndividualErrorView:    AgentIndividualErrorView,
   agentOrganisationErrorView:  AgentOrganisationErrorView,
-  agentWithAuthIdentify:       EnrolmentAuthIdentifierAction,
-  agentWithoutAuthIdentify:    ASAEnrolmentIdentifierAction,
+  identify:                    EnrolmentAuthIdentifierAction,
+  asaIdentify:                 ASAEnrolmentIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
   getData:                     SessionDataRetrievalAction,
   requireData:                 SessionDataRequiredAction,
@@ -67,7 +67,7 @@ class AgentController @Inject() (
   }
 
   def onPageLoadClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
       val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -77,7 +77,7 @@ class AgentController @Inject() (
     }
 
   def onSubmitClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -101,7 +101,7 @@ class AgentController @Inject() (
     }
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
       (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
         .mapN { (clientPillar2Id, clientUpeName) =>
           Future successful Ok(clientConfirmView(clientUpeName, clientPillar2Id))
@@ -110,12 +110,12 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithAuthIdentify andThen getData andThen requireData).async {
+    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async {
       Future successful Redirect(routes.DashboardController.onPageLoad)
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData) { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(clientNoMatchView())
     }
 
@@ -125,7 +125,7 @@ class AgentController @Inject() (
     }
 
   def onPageLoadUnauthorised: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentWithoutAuthIdentify andThen getData andThen requireData) { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(agentClientUnauthorisedView())
     }
 

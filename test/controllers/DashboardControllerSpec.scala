@@ -17,23 +17,24 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, EnrolmentAuthIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import views.html.DashboardView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 import scala.concurrent.Future
 
 class DashboardControllerSpec extends SpecBase with ModelGenerators {
@@ -57,6 +58,11 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     )
 
   val dashboardInfo: DashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
+
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "Dashboard Controller" should {
 
@@ -137,16 +143,19 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+            bind[AuthConnector].toInstance(mockAuthConnector)
           )
           .build()
-      running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
+      running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, Enrolments(agentEnrolment)))
-
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url

@@ -18,23 +18,29 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.ContactCaptureTelephoneDetailsFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsView
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "ContactCaptureTelephoneDetails Controller for Organisation View Contact details" when {
 
@@ -131,22 +137,22 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val userAnswers =
         emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
         )
-
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
-
+        val view   = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name")(
           request,
@@ -163,22 +169,22 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123132")
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
         )
-
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
-
+        val view   = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name")(
           request,
@@ -193,14 +199,17 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubCapturePhone))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
             .withFormUrlEncodedBody(("value", "33333222" * 100))
@@ -212,19 +221,21 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -232,19 +243,21 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
     "must redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           POST,
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }

@@ -17,57 +17,65 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import views.html.ASAStubView
+
+import java.util.UUID
+import scala.concurrent.Future
 
 class ASAStubControllerSpec extends SpecBase {
   val agentEnrolments: Enrolments = Enrolments(
     Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None))
   )
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
+  type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   "Stub ASA Controller" must {
 
     "must return the correct view if the feature flag is true and user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.ASAStubController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ASAStubView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[ASAStubView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
+
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
-
         val request = FakeRequest(GET, routes.ASAStubController.onPageLoad.url)
-
-        val result = route(application, request).value
-
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }

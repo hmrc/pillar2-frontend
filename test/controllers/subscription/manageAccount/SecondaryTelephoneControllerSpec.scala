@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.SecondaryTelephoneFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
@@ -27,19 +27,26 @@ import org.mockito.Mockito.{verify, when}
 import pages._
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.mvc.{Call, PlayBodyParsers}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryTelephoneView
 import play.api.inject.bind
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
   val form = new SecondaryTelephoneFormProvider()
   val formProvider: Form[String] = form("test")
+  val id:           String       = UUID.randomUUID().toString
+  val providerId:   String       = UUID.randomUUID().toString
+  val providerType: String       = UUID.randomUUID().toString
 
   "SecondaryTelephone Controller for Organisation View Contact details" when {
 
@@ -183,27 +190,26 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
   "SecondaryTelephone Controller for Agent View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
         )
-
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SecondaryTelephoneView]
-
+        val view   = application.injector.instanceOf[SecondaryTelephoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, "name")(
           request,
@@ -214,29 +220,27 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
         .setOrException(SubSecondaryCapturePhonePage, "1234567")
-
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
         )
-
-        val view = application.injector.instanceOf[SecondaryTelephoneView]
-
+        val view   = application.injector.instanceOf[SecondaryTelephoneView]
         val result = route(application, request).value
-
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill("1234567"), "name")(
           request,
@@ -247,30 +251,28 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bigString   = "123" * 100
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      val bigString = "123" * 100
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(
             POST,
             controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
           )
             .withFormUrlEncodedBody(("value", bigString))
-
         val boundForm = formProvider.bind(Map("value" -> bigString))
-
-        val view = application.injector.instanceOf[SecondaryTelephoneView]
-
-        val result = route(application, request).value
-
+        val view      = application.injector.instanceOf[SecondaryTelephoneView]
+        val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
@@ -279,42 +281,45 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "redirect to bookmark page if previous page not answered" in {
 
+    "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
         val result =
           route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
-
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
       val request = FakeRequest(
         POST,
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url
       )
         .withFormUrlEncodedBody("value" -> "12233444")
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -326,35 +331,33 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       val mockNavigator    = mock[AmendSubscriptionNavigator]
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubAddSecondaryContactPage, true)
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryEmailPage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
-
       val expectedUserAnswers = userAnswers.setOrException(SubSecondaryCapturePhonePage, "123456")
-
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           POST,
           controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url
         )
           .withFormUrlEncodedBody("value" -> "123456")
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])

@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.AddSecondaryContactFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
@@ -27,17 +27,24 @@ import org.mockito.Mockito.{verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, PlayBodyParsers}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class AddSecondaryContactControllerSpec extends SpecBase {
 
   val formProvider = new AddSecondaryContactFormProvider()
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "AddSecondaryContactController for Organisation View Contact details" when {
 
@@ -185,20 +192,20 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .setOrException(SubAddSecondaryContactPage, true)
 
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-      when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AddSecondaryContactView]
-
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[AddSecondaryContactView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true), "name")(
           request,
@@ -215,24 +222,23 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .value
 
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-      when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
-
         val boundForm = formProvider().bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[AddSecondaryContactView]
-
-        val result = route(application, request).value
-
+        val view      = application.injector.instanceOf[AddSecondaryContactView]
+        val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
@@ -244,17 +250,19 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
 
-      val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-        val result =
-          route(application, request).value
-
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -263,21 +271,22 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-      when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
-        .withFormUrlEncodedBody(
-          "value" -> "true"
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
         )
 
       running(application) {
-        val result =
-          route(application, request).value
-
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+          .withFormUrlEncodedBody(
+            "value" -> "true"
+          )
+        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -317,20 +326,21 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
 
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
           .withFormUrlEncodedBody("value" -> "false")
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])

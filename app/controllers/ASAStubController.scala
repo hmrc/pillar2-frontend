@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions.{ASAEnrolmentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -31,7 +31,7 @@ class ASAStubController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   val userAnswersConnectors: UserAnswersConnectors,
   view:                      ASAStubView,
-  identify:                  AgentIdentifierAction,
+  asaIdentify:               ASAEnrolmentIdentifierAction,
   featureAction:             FeatureFlagActionFactory,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction
@@ -40,7 +40,7 @@ class ASAStubController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen identify.agentIdentify() andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
       Future.successful(Ok(view()))
     }
 }

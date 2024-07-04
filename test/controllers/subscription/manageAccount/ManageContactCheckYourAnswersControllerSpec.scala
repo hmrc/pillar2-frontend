@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import org.apache.pekko.Done
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import models.fm.{FilingMember, FilingMemberNonUKData}
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
@@ -27,14 +27,16 @@ import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, User}
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
+import java.util.UUID
 import scala.concurrent.Future
 
 class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -103,6 +105,10 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(FmDashboardPage, DashboardInfo("org name", LocalDate.of(2025, 12, 31)))
     .setOrException(NominateFilingMemberPage, false)
 
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
+
   "Contact Check Your Answers Controller" must {
 
     "return OK and the correct view if an answer is provided to every question " in {
@@ -127,15 +133,17 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
     "return OK and correct view if an Agent" in {
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
@@ -167,8 +175,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     }
 
     "onSubmit" should {
-      "trigger amend subscription API if all data is available for contact detail" in {
 
+      "trigger amend subscription API if all data is available for contact detail" in {
         val application = applicationBuilder(subscriptionLocalData = Some(amendSubscription), enrolments = enrolments)
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
@@ -184,21 +192,20 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "trigger amend subscription API for Agent if all data is available for contact detail" in {
-
         val application = applicationBuilder(subscriptionLocalData = Some(amendSubscription), enrolments = enrolments)
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
-          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
 
         running(application) {
           when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
             .thenReturn(Future.successful(Done))
-
-          when(mockAgentIdentifierAction.agentIdentify(any()))
-            .thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER

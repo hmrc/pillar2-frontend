@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import org.apache.pekko.Done
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
@@ -26,15 +26,17 @@ import org.mockito.Mockito.when
 import pages._
 import play.api.inject
 import play.api.inject.bind
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
+import java.util.UUID
 import scala.concurrent.Future
 
 class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -74,6 +76,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       )
     )
 
+    val id:           String = UUID.randomUUID().toString
+    val providerId:   String = UUID.randomUUID().toString
+    val providerType: String = UUID.randomUUID().toString
+
     "onPageLoad" should {
       "return OK and the correct view if an answer is provided to every question " in {
         val userAnswer = emptySubscriptionLocalData
@@ -94,17 +100,17 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val userAnswer = emptySubscriptionLocalData
           .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
           .setOrException(SubAccountingPeriodPage, date)
-
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
-          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-
-        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
 
         running(application) {
-          when(mockAgentIdentifierAction.agentIdentify(any()))
-            .thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
           val request = FakeRequest(
             GET,
             controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
@@ -168,13 +174,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       val application =
         applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), enrolments = pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
-          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-      when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
       when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
         .thenReturn(Future.failed(UnexpectedResponse))
 
@@ -183,7 +190,6 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url
       )
       val result = route(application, request).value
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
     }
@@ -206,16 +212,18 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       val application =
         applicationBuilder(subscriptionLocalData = Some(amendSubUserAnswers), enrolments = pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
-          .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Done))
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Done))
         val request = FakeRequest(
           POST,
           controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url
