@@ -19,7 +19,7 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{EnrolmentAuthIdentifierAction, EnrolmentWithoutAuthIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.{ASAEnrolmentIdentifierAction, EnrolmentAuthIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
@@ -50,7 +50,7 @@ class AgentController @Inject() (
   agentIndividualErrorView:    AgentIndividualErrorView,
   agentOrganisationErrorView:  AgentOrganisationErrorView,
   agentWithAuthIdentify:       EnrolmentAuthIdentifierAction,
-  agentWithoutAuthIdentify:    EnrolmentWithoutAuthIdentifierAction,
+  agentWithoutAuthIdentify:    ASAEnrolmentIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
   getData:                     SessionDataRetrievalAction,
   requireData:                 SessionDataRequiredAction,

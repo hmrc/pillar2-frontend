@@ -110,7 +110,9 @@ class EnrolmentAuthIdentifierAction @Inject() (
                 and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
             ) {
               case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
-                logger.info(s"EnrolmentAuthIdentifierAction -authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
+                logger.info(
+                  s"EnrolmentAuthIdentifierAction -authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+                )
                 Future.successful(
                   Right(
                     IdentifierRequest(
@@ -123,7 +125,9 @@ class EnrolmentAuthIdentifierAction @Inject() (
                   )
                 )
               case _ =>
-                logger.warn(s"EnrolmentAuthIdentifierAction - authAsAgent - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id")
+                logger.warn(
+                  s"EnrolmentAuthIdentifierAction - authAsAgent - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id"
+                )
                 Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
             } recover {
             case _: NoActiveSession =>
@@ -154,7 +158,7 @@ class EnrolmentAuthIdentifierAction @Inject() (
 }
 
 @Singleton
-class EnrolmentWithoutAuthIdentifierAction @Inject() (
+class ASAEnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
@@ -171,7 +175,9 @@ class EnrolmentWithoutAuthIdentifierAction @Inject() (
           and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
-          logger.info(s"EnrolmentWithoutAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials")
+          logger.info(
+            s"EnrolmentWithoutAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+          )
           Future.successful(
             Right(
               IdentifierRequest(
@@ -190,7 +196,9 @@ class EnrolmentWithoutAuthIdentifierAction @Inject() (
           logger.info("EnrolmentWithoutAuthIdentifierAction - Individual login attempt")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
         case _ =>
-          logger.warn(s"EnrolmentWithoutAuthIdentifierAction - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+          logger.warn(
+            s"EnrolmentWithoutAuthIdentifierAction - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group"
+          )
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
       } recover {
       case _: NoActiveSession =>

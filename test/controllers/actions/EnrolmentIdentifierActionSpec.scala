@@ -557,7 +557,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe OK
@@ -577,7 +577,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -598,7 +598,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -619,7 +619,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -639,7 +639,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
@@ -658,7 +658,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction  = new EnrolmentWithoutAuthIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction  = new ASAEnrolmentIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller  = new Harness(authAction)
           val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER

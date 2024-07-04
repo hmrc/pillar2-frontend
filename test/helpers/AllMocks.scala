@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, EnrolmentAuthIdentifierAction, EnrolmentIdentifierAction, EnrolmentWithoutAuthIdentifierAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{ASAEnrolmentIdentifierAction, AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, EnrolmentAuthIdentifierAction, EnrolmentIdentifierAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
