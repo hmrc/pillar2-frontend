@@ -26,6 +26,7 @@
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
         heading: heading,
+        govukWarningText: GovukWarningText,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
@@ -46,7 +47,10 @@
         @sectionHeader(messages("nfmRegisteredAddress.heading.caption"))
 
         @heading(messages("nfmRegisteredAddress.heading", UserName), "govuk-heading-l long-word")
-
+        @govukWarningText(WarningText(
+        iconFallbackText = Some(messages("address.warning")),
+        content = HtmlContent(messages("address.warning"))
+        ))
         @govukInput(
             InputViewModel(
                 field = form("addressLine1"),
