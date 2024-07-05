@@ -237,6 +237,22 @@ class RepaymentNavigatorSpec extends SpecBase {
           journeyRecovery
       }
 
+      "go to Repayments CYA page from Bank Account type page if UK bank account page is previously answered" in {
+        val ua = emptyUserAnswers
+          .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+          .setOrException(BankAccountDetailsPage, BankAccountDetails("BankName", "Name", "123456", "12345678"))
+        navigator.nextPage(UkOrAbroadBankAccountPage, None, CheckMode, ua) mustBe
+          repaymentsQuestionsCYA
+      }
+
+      "go to Repayments CYA page from Bank Account type page if Non-UK bank account page is previously answered" in {
+        val ua = emptyUserAnswers
+          .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+          .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+        navigator.nextPage(UkOrAbroadBankAccountPage, None, CheckMode, ua) mustBe
+          repaymentsQuestionsCYA
+      }
+
       "go to Repayment questions CYA page from bank account details page" in {
         navigator.nextPage(
           NonUKBankPage,
