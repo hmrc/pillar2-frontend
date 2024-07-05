@@ -80,6 +80,10 @@ class RepaymentsCheckYourAnswersController @Inject() (
     SummaryListViewModel(
       rows = Seq(
         UkOrAbroadBankAccountSummary.row(userAnswers, clientPillar2Id),
+        UKBankNameSummary.row(userAnswers, clientPillar2Id),
+        UKBankNameOnAccountSummary.row(userAnswers, clientPillar2Id),
+        UKBankSortCodeSummary.row(userAnswers, clientPillar2Id),
+        UKBankAccNumberSummary.row(userAnswers, clientPillar2Id),
         NonUKBankNameSummary.row(userAnswers, clientPillar2Id),
         NonUKBankNameOnAccountSummary.row(userAnswers, clientPillar2Id),
         NonUKBankBicOrSwiftCodeSummary.row(userAnswers, clientPillar2Id),
