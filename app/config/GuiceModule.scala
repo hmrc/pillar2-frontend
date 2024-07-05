@@ -41,6 +41,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[RfmIdentifierAction]).to(classOf[RfmAuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[EnrolmentIdentifierAction]).to(classOf[EnrolmentAuthIdentifierAction]).asEagerSingleton()
+    bind(classOf[BannerIdentifierAction]).to(classOf[AuthenticatedBannerIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")

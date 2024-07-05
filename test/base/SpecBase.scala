@@ -46,7 +46,6 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase

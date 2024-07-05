@@ -27,12 +27,18 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase {
+
   type RetrievalsType = Option[AffinityGroup] ~ Enrolments
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "Index Controller" must {
 
@@ -78,15 +84,15 @@ class IndexControllerSpec extends SpecBase {
   "redirect Organisation to the tasklist if no pillar 2 reference is found" in {
 
     val application = applicationBuilder(userAnswers = None).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
+    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      .thenReturn(
+        Future.successful(Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))),
+        Future.successful(Some(id) ~ Enrolments(Set.empty) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+      )
 
     running(application) {
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(Future.successful(Some(Organisation) ~ Enrolments(Set.empty)))
-
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
-
-      val result = route(application, request).value
-
+      val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.TaskListController.onPageLoad.url
     }
@@ -106,8 +112,11 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = None, enrolments).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
 
     running(application) {
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(Future.successful(Some(Organisation) ~ Enrolments(enrolments)))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))),
+          Future.successful(Some(id) ~ Enrolments(enrolments) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+        )
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
 
@@ -124,8 +133,11 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-      .thenReturn(Future.successful(Some(Agent) ~ pillar2AgentEnrolmentWithDelegatedAuth))
+    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      .thenReturn(
+        Future.successful(Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))),
+        Future.successful(Some(id) ~ pillar2AgentEnrolmentWithDelegatedAuth ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+      )
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
     running(application) {
@@ -141,8 +153,11 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolment.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-      .thenReturn(Future.successful(Some(Agent) ~ pillar2AgentEnrolment))
+    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      .thenReturn(
+        Future.successful(Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))),
+        Future.successful(Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+      )
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
     running(application) {
@@ -159,8 +174,11 @@ class IndexControllerSpec extends SpecBase {
       .build()
 
     running(application) {
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(Future.successful(Some(Individual) ~ Enrolments(Set.empty)))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(Some(id) ~ Enrolments(Set.empty) ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))),
+          Future.successful(Some(id) ~ Enrolments(Set.empty) ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+        )
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
 

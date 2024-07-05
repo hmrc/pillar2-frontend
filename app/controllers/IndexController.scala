@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.{BannerIdentifierAction, EnrolmentIdentifierAction, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -37,6 +37,7 @@ class IndexController @Inject() (
   override val authConnector: AuthConnector,
   getData:                    SessionDataRetrievalAction,
   identify:                   IdentifierAction,
+  bannerIdentity:             BannerIdentifierAction,
   requireData:                SessionDataRequiredAction
 )(implicit appConfig:         FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -53,16 +54,20 @@ class IndexController @Inject() (
 
   }
 
-  def onPageLoadBanner(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoadBanner(): Action[AnyContent] = (bannerIdentity andThen getData andThen requireData).async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
-        case Some(Organisation) ~ e if hasPillarEnrolment(e) =>
+      .retrieve(
+        Retrievals.internalId and Retrievals.allEnrolments
+          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
+      ) {
+        case _ ~ e ~ Some(Organisation) ~ _ ~ _ if hasPillarEnrolment(e) =>
           Future successful Redirect(routes.DashboardController.onPageLoad)
-        case Some(Organisation) ~ _ => Future successful Redirect(routes.TaskListController.onPageLoad)
-        case Some(Agent) ~ _ if request.userAnswers.get(AgentClientPillar2ReferencePage).isDefined =>
+        case _ ~ _ ~ Some(Organisation) ~ _ ~ _ => Future successful Redirect(routes.TaskListController.onPageLoad)
+        case _ ~ _ ~ Some(Agent) ~ _ ~ _ if request.userAnswers.get(AgentClientPillar2ReferencePage).isDefined =>
           Future successful Redirect(routes.DashboardController.onPageLoad)
-        case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
-        case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+        case _ ~ _ ~ Some(Agent) ~ _ ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
+        case _ ~ _ ~ Some(Individual) ~ _ ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+        case _                                => Future successful Redirect(controllers.routes.UnauthorisedController.onPageLoad)
       }
       .recover {
         case _: NoActiveSession =>
