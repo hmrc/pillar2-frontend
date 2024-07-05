@@ -157,62 +157,6 @@ class EnrolmentAuthIdentifierAction @Inject() (
 
 }
 
-@Singleton
-class ASAEnrolmentIdentifierAction @Inject() (
-  override val authConnector: AuthConnector,
-  config:                     FrontendAppConfig,
-  val bodyParser:             BodyParsers.Default
-)(implicit val ec:            ExecutionContext)
-    extends EnrolmentIdentifierAction
-    with AuthorisedFunctions
-    with Logging {
-
-  override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    authorised(defaultPredicate)
-      .retrieve(
-        Retrievals.internalId and Retrievals.allEnrolments
-          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
-      ) {
-        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
-          logger.info(
-            s"EnrolmentWithoutAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
-          )
-          Future.successful(
-            Right(
-              IdentifierRequest(
-                request,
-                internalId,
-                enrolments = enrolments.enrolments,
-                isAgent = true,
-                userIdForEnrolment = credentials.providerId
-              )
-            )
-          )
-        case _ ~ _ ~ Some(Organisation) ~ _ ~ _ =>
-          logger.info("EnrolmentWithoutAuthIdentifierAction - Organisation login attempt")
-          Future.successful(Left(Redirect(routes.AgentController.onPageLoadOrganisationError)))
-        case _ ~ _ ~ Some(Individual) ~ _ ~ _ =>
-          logger.info("EnrolmentWithoutAuthIdentifierAction - Individual login attempt")
-          Future.successful(Left(Redirect(routes.AgentController.onPageLoadIndividualError)))
-        case _ =>
-          logger.warn(
-            s"EnrolmentWithoutAuthIdentifierAction - [Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group"
-          )
-          Future.successful(Left(Redirect(routes.AgentController.onPageLoadError)))
-      } recover {
-      case _: NoActiveSession =>
-        Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
-      case _ =>
-        logger.info(s"EnrolmentWithoutAuthIdentifierAction - Error returned from auth for Agent")
-        Left(Redirect(routes.AgentController.onPageLoadError))
-    }
-  }
-  override def parser:                     BodyParser[AnyContent] = bodyParser
-  override protected def executionContext: ExecutionContext       = ec
-
-}
-
 object EnrolmentIdentifierAction {
   private[controllers] val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
   private[controllers] val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
