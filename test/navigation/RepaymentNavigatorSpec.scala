@@ -27,7 +27,6 @@ class RepaymentNavigatorSpec extends SpecBase {
   val navigator = new RepaymentNavigator
 
   private lazy val journeyRecovery        = routes.JourneyRecoveryController.onPageLoad()
-  private lazy val underConstruction      = routes.UnderConstructionController.onPageLoad
   private lazy val repaymentsQuestionsCYA = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
 
   "Navigator" when {
