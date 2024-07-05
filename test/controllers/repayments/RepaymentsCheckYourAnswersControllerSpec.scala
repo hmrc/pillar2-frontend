@@ -18,7 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{UKAddress, UserAnswers}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -29,7 +29,6 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {

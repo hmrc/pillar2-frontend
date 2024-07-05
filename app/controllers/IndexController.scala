@@ -17,11 +17,12 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{BannerIdentifierAction, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.IdentifierAction
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -35,10 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class IndexController @Inject() (
   val controllerComponents:   MessagesControllerComponents,
   override val authConnector: AuthConnector,
-  getData:                    SessionDataRetrievalAction,
-  identify:                   IdentifierAction,
-  bannerIdentity:             BannerIdentifierAction,
-  requireData:                SessionDataRequiredAction
+  sessionRepository:          SessionRepository,
+  identify:                   IdentifierAction
 )(implicit appConfig:         FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -54,20 +53,21 @@ class IndexController @Inject() (
 
   }
 
-  def onPageLoadBanner(): Action[AnyContent] = (bannerIdentity andThen getData andThen requireData).async { implicit request =>
+  def onPageLoadBanner(): Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(
-        Retrievals.internalId and Retrievals.allEnrolments
-          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
-      ) {
-        case _ ~ e ~ Some(Organisation) ~ _ ~ _ if hasPillarEnrolment(e) =>
-          Future successful Redirect(routes.DashboardController.onPageLoad)
-        case _ ~ _ ~ Some(Organisation) ~ _ ~ _ => Future successful Redirect(routes.TaskListController.onPageLoad)
-        case _ ~ _ ~ Some(Agent) ~ _ ~ _ if request.userAnswers.get(AgentClientPillar2ReferencePage).isDefined =>
-          Future successful Redirect(routes.DashboardController.onPageLoad)
-        case _ ~ _ ~ Some(Agent) ~ _ ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
-        case _ ~ _ ~ Some(Individual) ~ _ ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
-        case _                                => Future successful Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+      .retrieve(Retrievals.internalId and Retrievals.affinityGroup and Retrievals.allEnrolments) {
+        case Some(_) ~ Some(Organisation) ~ e if hasPillarEnrolment(e) => Future.successful(Redirect(routes.DashboardController.onPageLoad))
+        case Some(_) ~ Some(Organisation) ~ _                          => Future.successful(Redirect(routes.TaskListController.onPageLoad))
+        case Some(internalId) ~ Some(Agent) ~ _ =>
+          sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
+            if (maybeUserAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)).isDefined) {
+              Future.successful(Redirect(routes.DashboardController.onPageLoad))
+            } else {
+              Future.successful(Redirect(appConfig.asaHomePageUrl))
+            }
+          }
+        case Some(_) ~ Some(Individual) ~ _ => Future.successful(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad))
+        case _                              => Future.successful(Redirect(controllers.routes.UnauthorisedController.onPageLoad))
       }
       .recover {
         case _: NoActiveSession =>
