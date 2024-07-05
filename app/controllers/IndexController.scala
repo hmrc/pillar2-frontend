@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{BannerIdentifierAction, EnrolmentIdentifierAction, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.{BannerIdentifierAction, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport

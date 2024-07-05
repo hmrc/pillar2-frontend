@@ -114,7 +114,6 @@ class BannerIdentifierActionSpec extends SpecBase {
 
     }
 
-
     "the user hasn't logged in - no active session on 1st authorised call" must {
       "redirect the user to log in " in {
         val application = applicationBuilder(userAnswers = None).build()
@@ -156,7 +155,8 @@ class BannerIdentifierActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-          val authAction = new AuthenticatedBannerIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)(ec)
+          val authAction =
+            new AuthenticatedBannerIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER

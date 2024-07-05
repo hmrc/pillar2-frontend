@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results._
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
@@ -67,7 +67,7 @@ class AuthenticatedBannerIdentifierAction @Inject() (
               )
             )
           )
-        case Some(internalId) ~ enrolments ~ _ ~ _ ~ Some(credentials)  =>
+        case Some(internalId) ~ enrolments ~ _ ~ _ ~ Some(credentials) =>
           Future.successful(
             Right(
               IdentifierRequest(
@@ -78,6 +78,7 @@ class AuthenticatedBannerIdentifierAction @Inject() (
               )
             )
           )
+        case _ => Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
         Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
