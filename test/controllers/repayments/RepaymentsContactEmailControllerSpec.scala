@@ -47,6 +47,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     "must redirect to error page if the feature flag is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
+
       running(application) {
         val request =
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode).url)
@@ -57,18 +58,14 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET" in {
-
       val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
-
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
-//        .overrides(inject.bind[AmendIdentifierAction].toInstance(mockAmendIdentifierAction))
         .build()
+      when(mockSessionRepository.get(any()))
+        .thenReturn(Future.successful(Some(userAnswers)))
+
       running(application) {
-//        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-//        when(mockAmendIdentifierAction.thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolmentWithDelegatedAuth))
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(userAnswers)))
         val request =
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode).url)
         val view   = application.injector.instanceOf[RepaymentsContactEmailView]
@@ -93,13 +90,14 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      running(application) {
-        when(mockSessionRepository.get(any()))
-          .thenReturn(
-            Future.successful(
-              Some(ua)
-            )
+      when(mockSessionRepository.get(any()))
+        .thenReturn(
+          Future.successful(
+            Some(ua)
           )
+        )
+
+      running(application) {
         val request =
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode).url)
         val view   = application.injector.instanceOf[RepaymentsContactEmailView]
@@ -116,12 +114,12 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
 
     "must redirect to next Page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
-
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
+
       running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("contactEmail", "hello@bye.com"))
@@ -134,10 +132,10 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
-
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
+
       running(application) {
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(NormalMode).url)
@@ -169,15 +167,14 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     }
 
     "Journey Recovery when no data found for contact name in POST" in {
-
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("contactEmail" -> "alll@gmail.com")
+
       running(application) {
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }

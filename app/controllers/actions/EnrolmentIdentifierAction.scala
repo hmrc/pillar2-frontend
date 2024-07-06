@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait EnrolmentIdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
     with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest] {}
+    with ActionFunction[Request, IdentifierRequest]
 
 @Singleton
 class EnrolmentAuthIdentifierAction @Inject() (
