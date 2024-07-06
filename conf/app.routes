@@ -516,5 +516,6 @@ POST       /repayment/method                                                    
 GET        /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = CheckMode)
 
-GET         /repayment/check-answers-non-uk                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad
-POST        /repayment/check-answers-non-uk                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit
+GET        /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad
+POST       /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit
+

@@ -92,16 +92,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-//      "redirect to inProgress error page if no user data is found" in {
-//        val application = applicationBuilder(userAnswers = None).build()
-//        running(application) {
-//          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
-//          val result  = route(application, request).value
-//          status(result) mustBe SEE_OTHER
-//          redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
-//        }
-//      }
-
     }
   }
 }

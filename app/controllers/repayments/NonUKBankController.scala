@@ -40,10 +40,10 @@ class NonUKBankController @Inject() (
   requireSessionData:       SessionDataRequiredAction,
   identify:                 EnrolmentIdentifierAction,
   sessionRepository:        SessionRepository,
+  navigator:                RepaymentNavigator,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView,
-  navigator:                RepaymentNavigator
+  view:                     NonUKBankView
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

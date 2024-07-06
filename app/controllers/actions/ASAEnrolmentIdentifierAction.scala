@@ -89,4 +89,3 @@ class ASAEnrolmentIdentifierAction @Inject() (
   override protected def executionContext: ExecutionContext       = ec
 
 }
-
