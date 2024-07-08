@@ -52,7 +52,7 @@ class GroupRegistrationDateReportController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
-      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(form.fill).getOrElse(form)
+      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(v => form.fill(RegistrationDate(v))).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.UnderConstructionController.onPageLoad)
@@ -66,7 +66,7 @@ class GroupRegistrationDateReportController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value.rfmRegistrationDate))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )

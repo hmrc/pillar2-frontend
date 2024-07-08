@@ -75,7 +75,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
       val date = RegistrationDate(startDate)
-      val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, date)
+      val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
       val application = applicationBuilder(Some(ua))
         .build()
 

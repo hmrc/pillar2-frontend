@@ -105,7 +105,7 @@ class CorporatePositionControllerSpec extends SpecBase {
     "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
@@ -131,7 +131,7 @@ class CorporatePositionControllerSpec extends SpecBase {
 
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
@@ -155,7 +155,7 @@ class CorporatePositionControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
@@ -199,7 +199,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
-        .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),

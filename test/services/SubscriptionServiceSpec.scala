@@ -733,7 +733,7 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "matchingPillar2Records" when {
-      val registrationDate = RegistrationDate(LocalDate.now())
+      val registrationDate = LocalDate.now()
       "return true if the pillar2 and reg date records in FE and BE database match" in {
         val userAnswers = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, "matchingPillar2Id")

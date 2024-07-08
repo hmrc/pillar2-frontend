@@ -18,7 +18,6 @@ package views.rfm
 
 import base.ViewSpecBase
 import models.NormalMode
-import models.rfm.RegistrationDate
 import org.jsoup.Jsoup
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import viewmodels.checkAnswers.RfmRegistrationDateSummary.dateHelper
@@ -31,7 +30,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
   val userAnswer = emptyUserAnswers
     .setOrException(RfmPillar2ReferencePage, plrReference)
-    .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+    .setOrException(RfmRegistrationDatePage, registrationDate)
 
   val list = SummaryListViewModel(
     rows = Seq(

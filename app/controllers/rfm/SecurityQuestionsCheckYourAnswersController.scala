@@ -76,7 +76,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     } yield
       if (matchingPillar2Records) {
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
-      } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
+      } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate)) {
         userAnswersConnectors.remove(request.userId)
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
       } else {
