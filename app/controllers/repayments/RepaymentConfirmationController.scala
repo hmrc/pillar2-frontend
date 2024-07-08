@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction, SessionDataRetrievalAction}
+import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction}
 import controllers.subscription.manageAccount.identifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +31,7 @@ class RepaymentConfirmationController @Inject() (
   agentIdentifierAction:    AgentIdentifierAction,
   identify:                 IdentifierAction,
   view:                     RepaymentsConfirmationView,
-  featureAction:            FeatureFlagActionFactory,
-  getSessionData:           SessionDataRetrievalAction
+  featureAction:            FeatureFlagActionFactory
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
