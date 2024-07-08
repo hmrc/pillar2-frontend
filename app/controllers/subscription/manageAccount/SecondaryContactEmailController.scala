@@ -28,19 +28,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactEmailView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactEmailController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  EnrolmentIdentifierAction,
-  navigator:                 AmendSubscriptionNavigator,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  formProvider:              SecondaryContactEmailFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryContactEmailView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  navigator:                              AmendSubscriptionNavigator,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  formProvider:                           SecondaryContactEmailFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   SecondaryContactEmailView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.ContactEmailAddressFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
@@ -27,19 +27,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ContactEmailAddressView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactEmailAddressController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  EnrolmentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              ContactEmailAddressFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactEmailAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  navigator:                              AmendSubscriptionNavigator,
+  formProvider:                           ContactEmailAddressFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ContactEmailAddressView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -23,15 +23,15 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundBeforeStartView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 class RequestRefundBeforeStartController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RequestRefundBeforeStartView,
-  identify:                 EnrolmentIdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  featureAction:            FeatureFlagActionFactory
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RequestRefundBeforeStartView,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  featureAction:                          FeatureFlagActionFactory
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

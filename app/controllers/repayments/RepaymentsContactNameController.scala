@@ -30,20 +30,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsContactNameView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject() (
-  identify:                 EnrolmentIdentifierAction,
-  formProvider:             RepaymentsContactNameFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  featureAction:            FeatureFlagActionFactory,
-  navigator:                RepaymentNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactNameView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  formProvider:                           RepaymentsContactNameFormProvider,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  featureAction:                          FeatureFlagActionFactory,
+  navigator:                              RepaymentNavigator,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RepaymentsContactNameView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

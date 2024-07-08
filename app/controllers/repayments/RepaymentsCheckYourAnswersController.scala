@@ -28,17 +28,18 @@ import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.Future
 
 class RepaymentsCheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify:                 EnrolmentIdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  featureAction:            FeatureFlagActionFactory,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+  override val messagesApi:               MessagesApi,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  featureAction:                          FeatureFlagActionFactory,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RepaymentsCheckYourAnswersView
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

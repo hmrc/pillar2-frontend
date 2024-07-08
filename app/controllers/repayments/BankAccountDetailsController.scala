@@ -32,20 +32,21 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.BankAccountDetailsView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
 class BankAccountDetailsController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify:                 EnrolmentIdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  formProvider:             BankAccountDetailsFormProvider,
-  featureAction:            FeatureFlagActionFactory,
-  navigator:                RepaymentNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BankAccountDetailsView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:               MessagesApi,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  formProvider:                           BankAccountDetailsFormProvider,
+  featureAction:                          FeatureFlagActionFactory,
+  navigator:                              RepaymentNavigator,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   BankAccountDetailsView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

@@ -40,7 +40,7 @@ class ASAEnrolmentIdentifierAction @Inject() (
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)
-    extends EnrolmentIdentifierAction
+    extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
 

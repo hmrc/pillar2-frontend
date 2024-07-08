@@ -30,25 +30,25 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmPrimaryContactNameView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmPrimaryContactNameController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              RfmPrimaryContactNameFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmPrimaryContactNameView,
-  navigator:                 ReplaceFilingMemberNavigator
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:        UserAnswersConnectors,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  formProvider:                     RfmPrimaryContactNameFormProvider,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             RfmPrimaryContactNameView,
+  navigator:                        ReplaceFilingMemberNavigator
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
@@ -61,7 +61,7 @@ class RfmPrimaryContactNameController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

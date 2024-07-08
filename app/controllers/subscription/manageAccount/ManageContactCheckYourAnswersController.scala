@@ -20,7 +20,7 @@ import cats.data.OptionT
 import com.google.inject.Inject
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
 import play.api.Logging
@@ -33,17 +33,18 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
-  identify:                 EnrolmentIdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     ManageContactCheckYourAnswersView,
-  countryOptions:           CountryOptions,
-  subscriptionService:      SubscriptionService,
-  referenceNumberService:   ReferenceNumberService
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ManageContactCheckYourAnswersView,
+  countryOptions:                         CountryOptions,
+  subscriptionService:                    SubscriptionService,
+  referenceNumberService:                 ReferenceNumberService
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

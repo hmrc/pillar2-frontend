@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
 import play.api.Logging
@@ -33,17 +33,18 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                  EnrolmentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageGroupDetailsCheckYourAnswersView,
-  subscriptionService:       SubscriptionService,
-  referenceNumberService:    ReferenceNumberService,
-  val userAnswersConnectors: UserAnswersConnectors
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ManageGroupDetailsCheckYourAnswersView,
+  subscriptionService:                    SubscriptionService,
+  referenceNumberService:                 ReferenceNumberService,
+  val userAnswersConnectors:              UserAnswersConnectors
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

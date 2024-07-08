@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions.{EnrolmentIdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import forms.CaptureSubscriptionAddressFormProvider
 import models.NonUKAddress
 import pages.SubRegisteredAddressPage
@@ -30,19 +30,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.manageAccount.CaptureSubscriptionAddressView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureSubscriptionAddressController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  EnrolmentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  formProvider:              CaptureSubscriptionAddressFormProvider,
-  val countryOptions:        CountryOptions,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      CaptureSubscriptionAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  formProvider:                           CaptureSubscriptionAddressFormProvider,
+  val countryOptions:                     CountryOptions,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   CaptureSubscriptionAddressView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

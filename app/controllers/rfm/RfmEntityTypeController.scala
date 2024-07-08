@@ -32,12 +32,12 @@ import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmEntityTypeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
-  rfmIdentify:                                       RfmIdentifierAction,
+  @Named("RfmIdentifier") identify:                  IdentifierAction,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,
@@ -51,7 +51,7 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
 
@@ -78,35 +78,34 @@ class RfmEntityTypeController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case EntityType.UkLimitedCompany =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Rfm, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-            case EntityType.LimitedLiabilityPartnership =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                createJourneyRes <-
-                  partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Rfm, EntityType.LimitedLiabilityPartnership, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+        {
+          case value @ EntityType.UkLimitedCompany =>
+            for {
+              updatedAnswers <-
+                Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
+              _                <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Rfm, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+          case value @ EntityType.LimitedLiabilityPartnership =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
+              _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              createJourneyRes <-
+                partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Rfm, EntityType.LimitedLiabilityPartnership, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
-            case EntityType.Other =>
-              for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, false))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmEntityTypePage, value))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
-              } yield Redirect(controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(mode))
-          }
+          case value @ EntityType.Other =>
+            for {
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, false))
+              updatedAnswers1 <- Future.fromTry(updatedAnswers.set(RfmEntityTypePage, value))
+              _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
+            } yield Redirect(controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(mode))
+        }
       )
   }
 }

@@ -31,20 +31,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.NonUKBankView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class NonUKBankController @Inject() (
-  formProvider:             NonUKBankFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  identify:                 EnrolmentIdentifierAction,
-  sessionRepository:        SessionRepository,
-  navigator:                RepaymentNavigator,
-  featureAction:            FeatureFlagActionFactory,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     NonUKBankView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  formProvider:                           NonUKBankFormProvider,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  sessionRepository:                      SessionRepository,
+  navigator:                              RepaymentNavigator,
+  featureAction:                          FeatureFlagActionFactory,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   NonUKBankView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

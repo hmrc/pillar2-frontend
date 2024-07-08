@@ -20,7 +20,7 @@ import cats.data.OptionT
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRetrievalAction, EnrolmentIdentifierAction}
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.InternalIssueError
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
@@ -34,19 +34,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  EnrolmentIdentifierAction,
-  getData:                   DataRetrievalAction,
-  val subscriptionService:   SubscriptionService,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      DashboardView,
-  referenceNumberService:    ReferenceNumberService,
-  sessionRepository:         SessionRepository
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:              UserAnswersConnectors,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                DataRetrievalAction,
+  val subscriptionService:                SubscriptionService,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   DashboardView,
+  referenceNumberService:                 ReferenceNumberService,
+  sessionRepository:                      SessionRepository
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

@@ -28,19 +28,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactCaptureTelephoneDetailsController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  EnrolmentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              ContactCaptureTelephoneDetailsFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactCaptureTelephoneDetailsView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  navigator:                              AmendSubscriptionNavigator,
+  formProvider:                           ContactCaptureTelephoneDetailsFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ContactCaptureTelephoneDetailsView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

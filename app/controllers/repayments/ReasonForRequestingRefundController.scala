@@ -30,20 +30,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.ReasonForRequestingRefundView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReasonForRequestingRefundController @Inject() (
-  val sessionRepository:    SessionRepository,
-  identify:                 EnrolmentIdentifierAction,
-  getData:                  SessionDataRetrievalAction,
-  navigator:                RepaymentNavigator,
-  featureAction:            FeatureFlagActionFactory,
-  requireData:              SessionDataRequiredAction,
-  formProvider:             ReasonForRequestingRefundFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     ReasonForRequestingRefundView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  val sessionRepository:                  SessionRepository,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SessionDataRetrievalAction,
+  navigator:                              RepaymentNavigator,
+  featureAction:                          FeatureFlagActionFactory,
+  requireData:                            SessionDataRequiredAction,
+  formProvider:                           ReasonForRequestingRefundFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ReasonForRequestingRefundView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

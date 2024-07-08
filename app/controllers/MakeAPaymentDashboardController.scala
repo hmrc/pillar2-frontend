@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, EnrolmentIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,15 +25,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 class MakeAPaymentDashboardController @Inject() (
-  identify:                 EnrolmentIdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     MakeAPaymentDashboardView,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction
-)(implicit appConfig:       FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   MakeAPaymentDashboardView,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

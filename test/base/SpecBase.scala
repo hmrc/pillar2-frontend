@@ -141,8 +141,9 @@ trait SpecBase
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
-        bind[EnrolmentIdentifierAction].to[FakeEnrolmentIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("RfmIdentifier").to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("ASAEnrolmentIdentifier").to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
         bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(userAnswers))

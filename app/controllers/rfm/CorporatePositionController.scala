@@ -33,26 +33,26 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CorporatePositionView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class CorporatePositionController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  sessionRepository:         SessionRepository,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              RfmCorporatePositionFormProvider,
-  navigator:                 ReplaceFilingMemberNavigator,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      CorporatePositionView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:        UserAnswersConnectors,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  sessionRepository:                SessionRepository,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  formProvider:                     RfmCorporatePositionFormProvider,
+  navigator:                        ReplaceFilingMemberNavigator,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             CorporatePositionView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[CorporatePosition] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
@@ -65,7 +65,7 @@ class CorporatePositionController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userId).flatMap { maybeSessionUserAnswers =>
       (for {
         pillar2Id        <- maybeSessionUserAnswers.map(_.get(RfmPillar2ReferencePage)).getOrElse(request.userAnswers.get(RfmPillar2ReferencePage))

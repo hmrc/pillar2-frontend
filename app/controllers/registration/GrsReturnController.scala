@@ -18,7 +18,7 @@ package controllers.registration
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -34,14 +34,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   identify:                                          IdentifierAction,
-  rfmIdentify:                                       RfmIdentifierAction,
+  @Named("RfmIdentifier") rfmIdentify:               IdentifierAction,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,

@@ -38,19 +38,14 @@ import utils.Pillar2SessionKeys
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EnrolmentIdentifierAction
-    extends ActionRefiner[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
-
 @Singleton
-class EnrolmentAuthIdentifierAction @Inject() (
+class EnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   sessionRepository:          SessionRepository,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
 )(implicit val ec:            ExecutionContext)
-    extends EnrolmentIdentifierAction
+    extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
 

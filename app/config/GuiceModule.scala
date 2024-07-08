@@ -16,7 +16,7 @@
 
 package config
 
-import com.google.inject.name.Named
+import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl, PartnershipIdentificationFrontendConnector, PartnershipIdentificationFrontendConnectorImpl}
 import controllers.actions._
@@ -39,8 +39,9 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
 
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
-    bind(classOf[RfmIdentifierAction]).to(classOf[RfmAuthenticatedIdentifierAction]).asEagerSingleton()
-    bind(classOf[EnrolmentIdentifierAction]).to(classOf[EnrolmentAuthIdentifierAction]).asEagerSingleton()
+    bind(classOf[IdentifierAction]).annotatedWith(Names.named("RfmIdentifier")).to(classOf[RfmIdentifierAction]).asEagerSingleton()
+    bind(classOf[IdentifierAction]).annotatedWith(Names.named("EnrolmentIdentifier")).to(classOf[EnrolmentIdentifierAction]).asEagerSingleton()
+    bind(classOf[IdentifierAction]).annotatedWith(Names.named("ASAEnrolmentIdentifier")).to(classOf[ASAEnrolmentIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
