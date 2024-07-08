@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction}
+import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction}
 import controllers.subscription.manageAccount.identifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

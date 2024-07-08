@@ -18,8 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.registration._
-import models.{UKAddress, UserAnswers}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -30,22 +29,9 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
-
-  private val plrReference = "XE1111123456789"
-
-  private val date = LocalDate.now()
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
 
   val amount: BigDecimal = BigDecimal(9.99)
   private val subData = emptyUserAnswers

@@ -22,7 +22,7 @@ import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
-import pages.{RepaymentsRefundAmountPage, UkOrAbroadBankAccountPage}
+import pages.RepaymentsRefundAmountPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
