@@ -17,12 +17,9 @@
 package controllers.repayments
 
 import base.SpecBase
-import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
-import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
+import connectors.UserAnswersConnectors
 import models.registration._
-import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
-import org.apache.pekko.Done
+import models.{UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -31,8 +28,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.SubscriptionService
-import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -111,16 +106,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation")
         }
       }
-
-//      "redirect to inProgress error page if no user data is found" in {
-//        val application = applicationBuilder(userAnswers = None).build()
-//        running(application) {
-//          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
-//          val result  = route(application, request).value
-//          status(result) mustBe SEE_OTHER
-//          redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
-//        }
-//      }
 
     }
   }
