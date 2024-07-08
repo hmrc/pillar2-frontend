@@ -52,7 +52,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     countryCode = "AB"
   )
 
-  val amount = BigDecimal(9.99)
+  val amount: BigDecimal = BigDecimal(9.99)
   private val subData = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "The reason for refund")
@@ -108,6 +108,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation")
         }
       }
 
