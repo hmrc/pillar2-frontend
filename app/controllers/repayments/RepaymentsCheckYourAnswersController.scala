@@ -19,11 +19,15 @@ package controllers.repayments
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
-import models.UserAnswers
+import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import pages.{PlrReferencePage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.RepaymentsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
@@ -39,7 +43,9 @@ class RepaymentsCheckYourAnswersController @Inject() (
   agentIdentifierAction:    AgentIdentifierAction,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsCheckYourAnswersView
+  view:                     RepaymentsCheckYourAnswersView,
+  repaymentService:         RepaymentsService,
+  val sessionRepository:    SessionRepository
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -63,6 +69,21 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (for {
+      plr <- repaymentService.createSubscription(request.userAnswers)
+      dataToSave = UserAnswers(request.userAnswers.id).setOrException(PlrReferencePage, plr)
+      _ <- sessionRepository.set(dataToSave)
+      _ <- sessionRepository.clear(request.userId)
+    } yield Redirect(routes.UnderConstructionController.onPageLoad))
+      .recover {
+        case InternalIssueError =>
+          logger.error("Repayment failed due to failed call to the backend")
+          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad) // change it
+
+        case DuplicateSubmissionError =>
+          logger.error("Repayment failed due to a Duplicate Submission")
+          Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
+      }
     Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
   }
 
