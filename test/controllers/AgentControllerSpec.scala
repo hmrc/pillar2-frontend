@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
+import models.ReadSubscriptionError
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,8 +33,8 @@ import play.api.test.Helpers._
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import views.html.rfm.AgentView
 import views.html._
+import views.html.rfm.AgentView
 
 import scala.concurrent.Future
 
@@ -185,7 +185,7 @@ class AgentControllerSpec extends SpecBase {
         when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, agentEnrolments))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         when(mockSubscriptionService.readSubscription(any())(any()))
-          .thenReturn(Future.failed(InternalIssueError))
+          .thenReturn(Future.failed(ReadSubscriptionError))
 
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
           .withFormUrlEncodedBody("value" -> "XMPLR0123456789")

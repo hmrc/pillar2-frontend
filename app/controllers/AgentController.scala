@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
 import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
 import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
+import models.ReadSubscriptionError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.data.Form
@@ -31,8 +31,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.AgentView
 import views.html._
+import views.html.rfm.AgentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -92,7 +92,7 @@ class AgentController @Inject() (
               _                  <- userAnswersConnectors.save(answersWithOrgName.id, Json.toJson(answersWithOrgName.data))
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)
 
-            result.recover { case InternalIssueError =>
+            result.recover { case ReadSubscriptionError =>
               Redirect(
                 routes.AgentController.onPageLoadNoClientMatch
               )

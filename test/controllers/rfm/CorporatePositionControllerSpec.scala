@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import navigation.ReplaceFilingMemberNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo

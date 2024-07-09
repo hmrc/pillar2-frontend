@@ -20,7 +20,6 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.GroupRegistrationDateReportFormProvider
 import models.NormalMode
-import models.rfm.RegistrationDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmRegistrationDatePage
@@ -74,8 +73,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
-      val date = RegistrationDate(startDate)
-      val ua   = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
+      val ua = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
       val application = applicationBuilder(Some(ua))
         .build()
 
@@ -86,7 +84,11 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupRegistrationDateReportView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(date), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(startDate), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 

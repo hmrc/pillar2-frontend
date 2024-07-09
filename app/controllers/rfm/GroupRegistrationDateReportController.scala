@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
-import models.rfm.RegistrationDate
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmRegistrationDatePage
 import play.api.data.Form
@@ -31,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.GroupRegistrationDateReportView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,11 +48,11 @@ class GroupRegistrationDateReportController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form: Form[RegistrationDate] = formProvider()
+  val form: Form[LocalDate] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (featureAction.rfmAccessAction andThen rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(v => form.fill(RegistrationDate(v))).getOrElse(form)
+      val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(v => form.fill(v)).getOrElse(form)
       Ok(view(preparedForm, mode))
     }
 
@@ -61,9 +61,9 @@ class GroupRegistrationDateReportController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        rfmRegistrationDate =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, value.rfmRegistrationDate))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmRegistrationDatePage, rfmRegistrationDate))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RfmRegistrationDatePage, mode, updatedAnswers))
       )

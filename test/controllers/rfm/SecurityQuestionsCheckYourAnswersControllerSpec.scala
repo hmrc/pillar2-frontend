@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{InternalIssueError, NormalMode}
+import models.{NormalMode, ReadSubscriptionError}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -154,13 +154,13 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(ReadSubscriptionError))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
         }
       }
       "redirect to journey recovery if no input pillar 2 id is found" in {

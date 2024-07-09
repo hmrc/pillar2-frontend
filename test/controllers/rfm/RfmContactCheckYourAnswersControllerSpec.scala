@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
+import models.{InternalIssueError, ReadSubscriptionError, UnexpectedResponse, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -430,7 +430,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .build()
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(ReadSubscriptionError))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
           when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
           when(

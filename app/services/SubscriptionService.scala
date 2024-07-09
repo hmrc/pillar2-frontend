@@ -21,7 +21,7 @@ import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFa
 import models.registration.{CRN, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, ReadSubscriptionError, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
 import play.api.Logging
@@ -77,7 +77,7 @@ class SubscriptionService @Inject() (
         Future.successful(readSubscriptionResponse)
       case error =>
         logger.warn(s"readSubscription error: - $error")
-        Future.failed(InternalIssueError)
+        Future.failed(ReadSubscriptionError)
     }
 
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit
